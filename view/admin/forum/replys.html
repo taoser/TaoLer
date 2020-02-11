@@ -1,0 +1,139 @@
+{extend name="public:base" /}
+
+{block name="body"}
+
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline layuiadmin-input-useradmin">
+            <label class="layui-form-label">回帖人</label>
+            <div class="layui-input-block">
+              <input type="text" name="replyer" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">回帖内容</label>
+            <div class="layui-input-block">
+              <input type="text" name="content" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-replys" data-type="reload" lay-submit lay-filter="LAY-app-forumreply-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="layui-card-body">
+        <div style="padding-bottom: 10px;">
+          <button class="layui-btn layuiadmin-btn-replys" data-type="batchdel">删除</button>
+        </div>
+        <table id="LAY-app-forumreply-list" lay-filter="LAY-app-forumreply-list"></table> 
+        <script type="text/html" id="imgTpl">
+          <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+        </script>
+		<script type="text/html" id="title">
+		<a href="/index/jie/{{d.cid}}.html" target="_blank">{{d.cardid}}</a>
+		</script>
+		<script type="text/html" id="buttonCheck">
+            {if condition="checkRuleButton('admin/forum/recheck')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="recheck" lay-text="已审核|未审核" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无审核权</button>{/if}
+        </script>		
+        <script type="text/html" id="table-forum-replys">
+          <a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+        </script>
+      </div>
+    </div>
+  </div>
+
+{/block}
+
+{block name="js"}  
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'forum', 'table'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table;
+    
+    //监听搜索
+    form.on('submit(LAY-app-forumreply-search)', function(data){
+      var field = data.field;
+      
+      //执行重载
+      table.reload('LAY-app-forumreply-list', {
+        where: field
+      });
+    });
+    
+    var active = {
+      batchdel: function(){
+        var checkStatus = table.checkStatus('LAY-app-forumreply-list')
+        ,checkData = checkStatus.data; //得到选中的数据
+
+        if(checkData.length === 0){
+          return layer.msg('请选择数据');
+        }
+      
+        layer.confirm('确定删除吗？', function(index) {
+          
+          //执行 Ajax 后重载
+          /*
+          admin.req({
+            url: 'xxx'
+            //,……
+          });
+          */
+          table.reload('LAY-app-forumreply-list');
+          layer.msg('已删除');
+        });
+      }
+    }
+	
+	//监听回贴审核
+	form.on('switch(recheck)', function(data){
+	var data= data.elem;
+	
+	if(data.checked == true){
+		data.value = 1;
+	}else{
+		data.value = 0;
+	}
+	//执行回帖审核
+		$.ajax({
+			type:'post',
+			url:"{:url('admin/Forum/recheck')}",
+			data:{id:data.id,status:data.value,},
+			dataType:'json',
+			success:function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{
+						icon:res.icon,
+						time:2000
+					}
+					//,function(){location.reload();}
+					);
+				} else {
+					layer.open({
+						title:'审核失败',
+						content:res.msg,
+						icon:5,
+						adim:6
+					})
+				}
+			}
+		});
+		return false;
+	}); 
+    
+    $('.layui-btn.layuiadmin-btn-replys').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+  });
+  </script>
+{/block}

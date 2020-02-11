@@ -1,0 +1,238 @@
+{extend name="public/user" /}
+
+{block name="content"}
+    <!--
+    <div class="fly-msg" style="margin-top: 15px;">
+      您的邮箱尚未验证，这比较影响您的帐号安全，<a href="activate.html">立即去激活？</a>
+    </div>
+    -->
+    <div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_uc">
+      <ul class="layui-tab-title" id="LAY_mine">
+        <li data-type="mine-jie" lay-id="index" class="layui-this">我发的帖（<span>{$article->total()}</span>）</li>
+        <li data-type="collection" lay-id="collection">我收藏的帖（<span>{$collect->total()}</span>）</li>
+		<li  lay-id="postarc"><a href="{:url('article/add')}">我要发帖</a></li>
+      </ul>
+	  
+      <div class="layui-tab-content" style="padding: 20px 0;">
+        <div class="layui-form layui-form-pane  layui-tab-item layui-show">
+			<table class="layui-table" lay-skin="line">
+			  <colgroup>
+				<col >
+				<col width="100">
+				<col width="150">
+				<col width="150">
+				<col width="150">
+			  </colgroup>
+			  <thead>
+				<tr>
+				  <th>帖子标题</th>
+				  <th>状态</th>
+				  <th>发表时间</th>
+				  <th>数据</th>
+				  <th>操作</th>
+				</tr> 
+			  </thead>
+			  <tbody>
+			  {volist name="article" id="vo" }
+				<tr>
+				  <td><a class="jie-title" href="{:url('article/detail',['id'=>$vo.id])}" target="_blank">{$vo.title}</a></td>
+				  <td>{if $vo.status ==1}正常{else /}待审{/if}</td>
+				  <td>{$vo.update_time|date='Y-m-d'}</td>
+				  <td>{$vo.pv}阅/{$vo.comments_count}答</td>
+				  <td><a class="layui-btn layui-btn-xs" href="{:url('article/edit',['id'=>$vo.id])}" target="_blank">编辑</a>
+				  <a class="layui-btn layui-btn-xs article-del" href="javacript:;" dataid="{$vo.id}" return false;" target="_blank">删除</a>
+				  </td>
+				</tr>
+				{/volist}
+			  </tbody>
+
+			</table>
+			<div style="text-align: center" id="LAY_page">{$page|raw}</div>
+        </div>
+		
+        <div class="layui-form layui-form-pane  layui-tab-item">
+			<table class="layui-table" lay-skin="line">
+			  <colgroup>
+				<col >
+				<col width="150">
+				<col width="150">
+				<col width="100">
+			  </colgroup>
+			  <thead>
+				<tr>
+				  <th>帖子标题</th>
+				  <th>作者</th>
+				  <th>收藏时间</th>
+				  <th>取消收藏</th>
+				</tr> 
+			  </thead>
+			  <tbody>
+			  {volist name="collect" id="vo" }
+				<tr>
+				  <td><a class="jie-title" href="{:url('article/detail',['id'=>$vo.article_id])}" target="_blank">{$vo.article_id|getArticName}</a></td>
+				  <td>{$vo.article.user.name}</td>
+				  <td>{$vo.create_time|date='Y-m-d'}</td>
+				  <td><a class="layui-btn layui-btn-xs collection-quxiao" href="javacript:;" dataid="{$vo.article_id}" target="_blank">取消</a>
+				  </td>
+				</tr>
+				{/volist}
+			  </tbody>  
+			</table>
+			<div id="LAY_page1"></div>
+		</div>
+		
+		<div class="layui-form layui-form-pane layui-tab-item">
+            <ul class="app-bind">
+              <li class="fly-msg app-havebind">
+                <i class="iconfont icon-qq"></i>
+                <span>已成功绑定，您可以使用QQ帐号直接登录Fly社区，当然，您也可以</span>
+                <a href="javascript:;" class="acc-unbind" type="qq_id">解除绑定</a>
+                
+                <!-- <a href="" onclick="layer.msg('正在绑定微博QQ', {icon:16, shade: 0.1, time:0})" class="acc-bind" type="qq_id">立即绑定</a>
+                <span>，即可使用QQ帐号登录Fly社区</span> -->
+              </li>
+              <li class="fly-msg">
+                <i class="iconfont icon-weibo"></i>
+                <!-- <span>已成功绑定，您可以使用微博直接登录Fly社区，当然，您也可以</span>
+                <a href="javascript:;" class="acc-unbind" type="weibo_id">解除绑定</a> -->
+                
+                <a href="" class="acc-weibo" type="weibo_id"  onclick="layer.msg('正在绑定微博', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
+                <span>，即可使用微博帐号登录Fly社区</span>
+              </li>
+            </ul>
+        </div>
+
+      </div>
+    </div>
+
+{/block}
+
+{block name="script"}
+<!--
+onclick="dele();
+
+<script>
+	function dele(){
+		if(confirm('确定删除吗') == true){
+			window.location.href = "{:url('article/delete')}"
+		}
+	}
+</script>
+-->
+
+<script>
+layui.use('laypage', function(){
+  var laypage = layui.laypage;
+  var url = '{:url('user/post')}?page='
+  
+  //执行一个laypage实例
+  laypage.render({
+    elem: 'LAY_page1' //注意，这里的 test1 是 ID，不用加 # 号
+    ,count: {$count} //数据总数，从服务端得到
+	,limit: 10
+	,curr :{$Request.param.page ?: 1} //获取起始页
+	//,hash: 'page' //自定义hash值
+	,jump: function(obj, first){
+      //console.log(obj);
+	//console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+	//console.log(obj.limit); //得到每页显示的条数
+	  if(!first){  //跳转必须放在这个里边，不然无限刷新
+						window.location.href= url+obj.curr+'&limit='+obj.limit+'#collection'; //跳转
+						//layer.msg('第'+ url +'页');
+				}
+    }
+  });
+});
+</script>
+
+<script>
+$(function(){
+	$('.collection-quxiao').click(function(){
+		var id = $(this).attr('dataid');
+		layer.confirm('确定取消吗?',{
+			title:'取消收藏',
+			icon:3
+		},function(index){
+			layer.close(index);
+			$.ajax({
+				type:'post',
+				url:"{:url('user/colltdel')}",
+				data:{id:id},
+				dataType:'json',
+				success:function(data){
+					if(data.code == 1){
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						},function(){
+							location.href = data.url;
+						});
+					} else {
+						layer.open({
+							title:'取消失败',
+							content:data.msg,
+							icon:5,
+							adim:6
+						})
+					}
+				}
+			});
+		});
+		return false;
+	});
+	
+	$('.article-del').click(function(){
+		var id = $(this).attr('dataid');
+		layer.confirm('确定删除吗?',{
+			title:'删除文章',
+			icon:3
+		},function(index){
+			layer.close(index);
+			$.ajax({
+				type:'post',
+				url:"{:url('article/delete')}",
+				data:{id:id},
+				dataType:'json',
+				success:function(data){
+					if(data.code == 1){
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						},function(){
+							location.href = data.url;
+						});
+					} else {
+						layer.open({
+							title:'删除失败',
+							content:data.msg,
+							icon:5,
+							adim:6
+						})
+					}
+				}
+			});
+		});
+		return false;
+	});	
+	
+	
+});
+</script>
+
+<script>
+    layui.cache.page = 'user';
+    layui.cache.user = {
+        username: '{$user.name??'游客'}'
+        ,uid: {$user.id ? 168*$user.id : -1}
+        ,avatar: '{if condition="$user['user_img'] neq ''"}/uploads/{$user['user_img']}{else /}/static/res/images/avatar/00.jpg{/if}'
+        ,experience: 83
+        ,sex: '{if condition="$user['sex'] eq 0"}男{else/}女{/if}'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: '/static/res/mods/'
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+</script>
+{/block}

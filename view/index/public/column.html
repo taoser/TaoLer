@@ -1,0 +1,27 @@
+<div class="fly-panel fly-column">
+  <div class="layui-container">
+    <ul class="layui-clear">
+      <li class="layui-hide-xs {if ($Request.param.ename =='' && $Request.param.id =='')} layui-this {/if}" >
+	  <a href="/">首页</a>
+	  </li> 
+	  {volist name="cateList" id="cate"}
+	  <li {if condition="$cate.catename eq getCateName($Request.param.ename)"} class="layui-this" {/if}>
+	  <a href="{:url('article/cate',['ename' => $cate.ename])}">{$cate.catename}{if condition="$cate.id eq 3"}<span class="layui-badge-dot"></span>{/if}</a>
+	  </li> 
+	  {/volist}     
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>   
+    {if session('?user_id')}
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post')}">我发表的贴</a></li> 
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post#collection')}">我收藏的贴</a></li>
+	{/if}
+    </ul> 
+    
+    <div class="fly-column-right layui-hide-xs"> 
+      <span class="fly-search"><i class="layui-icon">&#xe615;</i></span> 
+      <a href="{:url('article/add')}" class="layui-btn" >发表新帖</a> 
+    </div> 
+    <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;"> 
+      <a href="javascript:void(0)" class="layui-btn" id="add_post">发表新帖</a> 
+    </div> 
+  </div>
+</div>

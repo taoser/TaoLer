@@ -1,0 +1,139 @@
+{extend name="index/base" /}
+
+{block name="body"}
+    <div class="inside2">
+        <div class="inwp cl">
+            <form class="layui-form layui-form-pane" >
+                <h2>创建数据库：</h2>
+
+                <input type="hidden" name="DB_TYPE" value="mysql">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">数据库服务器</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="DB_HOST" value="127.0.0.1" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                
+                <div class="layui-form-item">
+                    <label class="layui-form-label">数据库账号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="DB_USER" value="root" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">数据库密码</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="DB_PWD" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+				<div class="layui-form-item">
+                    <label class="layui-form-label">数据库端口</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="DB_PORT" value="3306" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">数据库名</label>
+                    <div class="layui-input-block">
+                        <input type="text" type="text" name="DB_NAME" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">设置表前缀</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="DB_PREFIX" value="tao_" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+				<h2>网站信息：</h2>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网站名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="webname" placeholder="请输入网站名称" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">副标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="webtitle" placeholder="请输入网站副标题" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <h2>管理员账号：</h2>
+				<div class="layui-form-item">
+                    <label class="layui-form-label">管理员用户名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="admin_user" placeholder="至少4字符" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">管理员邮箱</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="admin_email" placeholder="请输入正确邮箱" required lay-verify="email" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">登录密码</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="admin_pass" placeholder="至少包含6个字符。可使用字母，数字和符号" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">登录密码确认</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="admin_pass2" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="inout1">
+                    <a href="{:url('/index/test')}">上一步</a>
+                </div>
+                <div class="inout2">
+                    <input type="submit" lay-submit lay-filter="formDemo" value="确认安装">
+                </div>
+            </form>
+            <script>
+                layui.use('form', function() {
+                    var $ = layui.jquery,
+					form = layui.form;
+					 
+					form.on('submit(formDemo)', function(data){
+					var field = data.field;
+					//console.log(field); //当前容器的全部表单字段，名值对形式：{name: value}
+					loading = layer.load(2, {
+						shade: [0.2, '#000'],
+						time: 2000,
+					});
+					
+					$.ajax({
+						type:"post",
+						url:"{:url('/index/install')}",
+						data:{"DB_TYPE":field.DB_TYPE,"DB_HOST":field.DB_HOST,"DB_USER":field.DB_USER,"DB_PWD":field.DB_PWD,"DB_PORT":field.DB_PORT,"DB_NAME":field.DB_NAME,"DB_PREFIX":field.DB_PREFIX,"webname":field.webname,"webtitle":field.webtitle,"admin_user":field.admin_user,"admin_email":field.admin_email,"admin_pass":field.admin_pass,"admin_pass2":field.admin_pass2},
+						daType:"json",
+						success:function (data){
+							if (data.code == 0) {
+							layer.close(loading);
+								layer.msg(data.msg,{
+									icon:6,
+									time:2000
+								}, function(){
+									location.href = data.url;
+								});
+							} else {
+								layer.open({
+									tiele:'安装失败',
+									content:data.msg,
+									icon:5,
+									anim:6
+								});
+							}
+						}
+					});
+					
+					
+					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+					});
+                });
+            </script>
+        </div>
+    </div>
+{/block}

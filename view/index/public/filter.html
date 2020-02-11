@@ -1,0 +1,15 @@
+<div class="fly-panel-title fly-filter">
+
+        <a href="{:url('article/cate',['ename' => $Request.param.ename ,'type' => 'all'])} " {if condition="$type eq 'all'" } class="layui-this" {/if} >综合</a>
+		<span class="fly-mid"></span>
+        <a href="{:url('article/cate',['ename' => $Request.param.ename ,'type' => 'hot'])} " {if condition="$type eq 'hot'" } class="layui-this" {/if} >热帖</a>
+        <span class="fly-mid"></span>
+        <a href="{:url('article/cate',['ename' => $Request.param.ename ,'type' => 'top'])} " {if condition="$type eq 'top'" } class="layui-this" {/if} >精华</a>
+		  
+        <!--span class="fly-filter-right layui-hide-xs">
+          <a href="" class="layui-this">按最新</a>
+        <span class="fly-mid"></span>
+          <a href="">按热议</a>
+        </span-->
+</div>
+

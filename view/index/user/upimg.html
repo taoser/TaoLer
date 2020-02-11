@@ -1,0 +1,31 @@
+{layout name="public:layout" /}
+<div class="layui-tab layui-tab-brief" lay-filter="user">
+<ul class="layui-tab-title" id="LAY_mine">
+        
+        <li class="layui-this" lay-id="avatar">头像</li>
+        
+ </ul>
+<div class="layui-tab-content" style="padding: 20px 0;">
+<div class="layui-form layui-form-pane layui-tab-item">
+            <div class="layui-form-item">
+              <div class="avatar-add">
+                <p>建议尺寸168*168，支持jpg、png、gif，最大不能超过50KB</p>
+				
+			<div class="layui-upload ">
+				<div align="center">
+				<button type="button" class="layui-btn" id="test1"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+				</div>
+					<div class="layui-upload-list">
+						<img class="layui-upload-img" id="demo1">
+						<p id="demoText"></p>
+					</div>
+			</div> 
+				
+                <img class="layui-upload-img" src="/uploads/{$userHead.user_img}" id="headimg">
+				<span class="loading"></span>
+              </div>
+            </div>
+          </div>
+	</div>
+	</div>	  	  
+		  

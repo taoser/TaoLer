@@ -1,0 +1,81 @@
+{extend name="public:base" /}
+
+{block name="body"}
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-card-header layuiadmin-card-header-auto">
+        <button class="layui-btn layuiadmin-btn-tags" data-type="add">添加</button>
+      </div>
+      <div class="layui-card-body">    
+        <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>  
+        <script type="text/html" id="layuiadmin-app-cont-tagsbar">
+          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+        </script>
+      </div>
+    </div>
+  </div>
+
+{/block}
+
+{block name="js"}
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'contlist', 'table'], function(){
+
+    var table = layui.table;
+    var $ = layui.$, active = {
+      add: function(){
+        layer.open({
+          type: 2
+          ,title: '添加分类'
+          ,content: '/admin/Forum/addtags'
+          ,area: ['400px', '350px']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
+            ,tags = othis.find('input[name="tags"]').val()
+			,sort = othis.find('input[name="sort"]').val()
+			,ename = othis.find('input[name="ename"]').val();
+            
+            if(!tags.replace(/\s/g, '')) return;
+			
+            $.ajax({
+				type:"post",
+				url:"{:url('admin/Forum/addtags')}",
+				data:{"catename":tags,"sort":sort,"ename":ename},
+				daType:"json",
+				success:function (data){
+					if (data.code == 0) {
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						}, function(){
+							location.reload();
+						});
+					} else {
+						layer.open({
+							tiele:'添加失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+            //table.reload('LAY-app-content-tags');
+            layer.close(index);
+          }
+        }); 
+      }
+    }  
+    $('.layui-btn.layuiadmin-btn-tags').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+  });
+  </script>
+{/block}

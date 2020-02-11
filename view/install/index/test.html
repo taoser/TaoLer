@@ -1,0 +1,104 @@
+{extend name="index/base" /}
+
+{block name="body"}
+    <div class="inside2">
+        <div class="inwp cl">
+            <h2>环境检测：</h2>
+            <table width="100%">
+                <tr>
+                    <th width="25%">坏境</th>
+                    <th width="25%">最低配置</th>
+                    <th width="25%">当前配置</th>
+                    <th width="25%">是否符合</th>
+                </tr>
+                <tr>
+                    <td>操作系统</td>
+                    <td>不限</td>
+                    <td>
+                        <?php echo php_uname('s'); ?>
+                    </td>
+                    <td class="yes">√</td>
+                </tr>
+                <tr>
+                    <td>php版本</td>
+                    <td>&gt;7.1</td>
+                    <td>
+                        <?php echo PHP_VERSION ?>
+                    </td>
+                    <?php $php_version=explode('.', PHP_VERSION); ?>
+                    <td class="<?php if(($php_version['0']>=7) || ($php_version['0']>=5 && $php_version['1']>=6))echo 'yes'; ?>">
+                        <?php if (($php_version['0']>=7) || ($php_version['0']>=5 && $php_version['1']>=3)): ?> √
+                        <?php else: ?> ×
+                        <?php endif ?>
+                    </td>
+                </tr>
+            </table>
+            <h2>目录权限：</h2>
+            <table width="100%">
+                <tr>
+                    <th width="25%">坏境</th>
+                    <th width="25%">最低配置</th>
+                    <th width="25%">当前配置</th>
+                    <th width="25%">是否符合</th>
+                </tr>
+                <tr>
+                    <td>./runtime</td>
+                    <td>可写</td>
+                    <td>
+                        <?php if (is_writable('../runtime')): ?> 可写
+                        <?php else: ?> 不可写
+                        <?php endif ?>
+                    </td>
+                    <td class="<?php if(is_writable('../runtime'))echo 'yes'; ?>">
+                        <?php if (is_writable('../runtime')): ?> √
+                        <?php else: ?> ×
+                        <?php endif ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>./install</td>
+                    <td>可写</td>
+                    <td>
+                        <?php if (is_writable('../app/install')): ?> 可写
+                        <?php else: ?> 不可写
+                        <?php endif ?>
+                    </td>
+                    <td class="<?php if(is_writable('../app/install'))echo 'yes'; ?>">
+                        <?php if (is_writable('../app/install')): ?> √
+                        <?php else: ?> ×
+                        <?php endif ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>./app</td>
+                    <td>可写</td>
+                    <td>
+                        <?php if (is_writable('../app')): ?> 可写
+                        <?php else: ?> 不可写
+                        <?php endif ?>
+                    </td>
+                    <td class="<?php if(is_writable('../app'))echo 'yes'; ?>">
+                        <?php if (is_writable('../app')): ?> √
+                        <?php else: ?> ×
+                        <?php endif ?>
+                    </td>
+                </tr>
+            </table>
+            <div class="inout1">
+                <a href="{:url('/index/index')}">上一步</a>
+            </div>
+            <div class="inout2">
+                <a href="javascript:;" onclick="testClick()">下一步</a>
+            </div>
+        </div>
+    </div>
+	<script>
+        function testClick() {
+            if ($('.yes').length != 5) {
+                alert('您的配置或权限不符合要求');
+            } else {
+                location.href = '{:url('/index/create')}';
+            }
+        }
+    </script>
+{/block}

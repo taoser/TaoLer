@@ -1,0 +1,216 @@
+{extend name="public/base" /}
+
+{block name="body"}
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">首页幻灯</div>
+          <div class="layui-card-body">
+            
+            <div class="layui-form" wid100 lay-filter="">
+			
+				<div class="layui-upload">
+				  <button type="button" class="layui-btn layui-btn-normal" id="slid-add">添加</button> 
+				  <div class="layui-upload-list">
+					<table class="layui-table">
+					  <thead>
+						<tr>
+						<th>ID</th>
+						<th>名称</th>
+						<th>图片</th>
+						<th>位置</th>
+						<th>路径</th>
+						<th>颜色</th>
+						<th>开始</th>
+						<th>结束</th>
+						<th>状态</th>
+						<th>操作</th>
+					  </tr></thead>
+					  
+					  <tbody id="demoList">
+					  {volist name="slider" id="vo"}
+					  <tr>
+						<th>{$vo.id}</th>
+						<th>{$vo.slid_name}</th>
+						<th>{if condition="$vo.slid_img != ''"}<img src="{$vo.slid_img}" height="40" width="80" />{/if}</th>
+						<th>{$vo.slid_type}</th>
+						<th><a href="{$vo.slid_href}" target="_blank">{$vo.slid_href}</a></th>
+						<th>{$vo.slid_color}</th>
+						<th>{$vo.slid_start|date='Y-m-d'}</th>
+						<th>{$vo.slid_over|date='Y-m-d'}</th>
+						<th>{$vo.slid_status ?'显示':'禁止'}</th>
+						<th>
+						<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id-data="{$vo.id}"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" id-data="{$vo.id}"><i class="layui-icon layui-icon-delete"></i>删除</a>
+						</th>
+					  </tr>
+					  {/volist}
+					  </tbody>
+					</table>
+				  </div>
+
+				</div> 
+			
+
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{/block}
+{block name="js"}
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'set']);
+  </script>
+  
+  <script>
+layui.use(['layer','table','form','upload','laydate'], function(){
+  var $ = layui.jquery
+  ,layer = layui.layer
+  ,table = layui.table
+  ,form = layui.form
+  ,laydate = layui.laydate
+  ,upload = layui.upload;
+  //添加幻灯
+  $('#slid-add').on('click', function(){
+      layer.open({
+		  type: 2,
+		  title: '添加广告',
+		  content: 'add.html',
+		  maxmin: true,
+		  area : ['500px' , '450px'],
+		  btn: ['确定', '取消'],
+          yes: function(index, layero){
+		  var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submitID = 'LAY-slider-submit'
+            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+            //监听提交
+            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var field = data.field; //获取提交的字段
+			  //console.log(field);
+              
+              //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+				type:"post",
+				url:"{:url('admin/slider/add')}",
+				data:{"slid_type":field.slid_type,"slid_name":field.slid_name,"slid_color":field.slid_color,"slid_start":field.slid_start,"slid_over":field.slid_over,"slid_href":field.slid_href,"slid_img":field.slid_img},
+				daType:"json",
+				success:function (data){
+					if (data.code == 1) {
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						}, function(){
+							location.reload();
+						});
+					} else {
+						layer.open({
+							tiele:'添加失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+		   layer.close(index);
+		   });
+		   submit.trigger('click');
+		  }
+		});
+    });
+  //编辑广告
+  $('a[lay-event=edit]').on('click', function(){
+  var id = $(this).attr('id-data');
+      layer.open({
+		  type: 2,
+		  title: '编辑幻灯',
+		  content: 'edit.html?id='+ id,
+		  maxmin: true,
+		  area : ['500px' , '450px'],
+		  btn: ['确定', '取消'],
+          yes: function(index, layero){
+		  var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submitID = 'LAY-slider-submit'
+            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+            //监听提交
+            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var field = data.field; //获取提交的字段
+			  //console.log(field);
+              
+              //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+				type:"post",
+				url:"{:url('admin/slider/edit')}",
+				data:{"id":id,"slid_type":field.slid_type,"slid_name":field.slid_name,"slid_color":field.slid_color,"slid_start":field.slid_start,"slid_over":field.slid_over,"slid_href":field.slid_href,"slid_img":field.slid_img},
+				daType:"json",
+				success:function (data){
+					if (data.code == 1) {
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						}, function(){
+							location.reload();
+						});
+					} else {
+						layer.open({
+							tiele:'添加失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			 });
+		   layer.close(index);
+		   });
+		   submit.trigger('click');
+		}
+		});
+    }); 
+
+	//删除幻灯
+	$('a[lay-event=del]').on('click', function(){
+	  var id = $(this).attr('id-data');
+		  layer.confirm('确定删除?', {icon: 3, title:'删除幻灯'}, function(index){				  
+				  //提交 Ajax 成功后，静态更新表格中的数据
+				  $.ajax({
+					type:"post",
+					url:"{:url('admin/slider/delete')}",
+					data:{"id":id},
+					daType:"json",
+					success:function (data){
+						if (data.code == 1) {
+							layer.msg(data.msg,{
+								icon:6,
+								time:2000
+							}, function(){
+								location.reload();
+							});
+						} else {
+							layer.open({
+								tiele:'删除失败',
+								content:data.msg,
+								icon:5,
+								anim:6
+							});
+						}
+					}
+				 });
+			   layer.close(index);
+			   });
+		});  	
+  
+  });
+</script>
+{/block}

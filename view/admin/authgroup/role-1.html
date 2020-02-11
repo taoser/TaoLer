@@ -1,0 +1,164 @@
+{extend name="public/base" /}
+
+{block name="body"}
+
+  <div class="layui-fluid">   
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            角色筛选
+          </div>
+          <div class="layui-inline">
+            <select name="rolename" lay-filter="LAY-user-adminrole-type">
+              <option value="-1">全部角色</option>
+              <option value="0">管理员</option>
+              <option value="1">超级管理员</option>
+              <option value="2">纠错员</option>
+              <option value="3">采购员</option>
+              <option value="4">推销员</option>
+              <option value="5">运营人员</option>
+              <option value="6">编辑</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="layui-card-body">
+        <div style="padding-bottom: 10px;">
+          <button class="layui-btn layuiadmin-btn-role" data-type="batchdel">删除</button>
+          <button class="layui-btn layuiadmin-btn-role" data-type="add">添加</button>
+        </div>
+      
+        <table id="LAY-user-back-role" lay-filter="LAY-user-back-role"></table>  
+        <script type="text/html" id="buttonTpl">
+          {{#  if(d.check == true){ }}
+            <button class="layui-btn layui-btn-xs">已审核</button>
+          {{#  } else { }}
+            <button class="layui-btn layui-btn-primary layui-btn-xs">未审核</button>
+          {{#  } }}
+        </script>
+        <script type="text/html" id="table-useradmin-admin">
+          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+        </script>
+      </div>
+    </div>
+  </div>
+
+{/block}
+{block name="js"} 
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'useradmin', 'table'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table;
+    
+    //搜索角色
+    form.on('select(LAY-user-adminrole-type)', function(data){
+      //执行重载
+      table.reload('LAY-user-back-role', {
+        where: {
+          role: data.value
+        }
+      });
+    });
+  
+    //事件
+    var active = {
+      batchdel: function(){
+        var checkStatus = table.checkStatus('LAY-user-back-role')
+        ,checkData = checkStatus.data; //得到选中的数据
+console.log(checkData);
+        if(checkData.length === 0){
+          return layer.msg('请选择数据');
+        }
+        
+        layer.confirm('确定删除吗？', function(index) {
+            
+          //执行 Ajax 后重载
+          /*
+          admin.req({
+            url: 'xxx'
+            //,……
+          });
+          */
+          table.reload('LAY-user-back-role');
+          layer.msg('已删除');
+        });
+      },
+      add: function(){
+        layer.open({
+          type: 2
+          ,title: '添加新角色'
+          ,content: 'roleadd.html'
+          ,area: ['500px', '480px']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submit = layero.find('iframe').contents().find("#LAY-user-role-submit");
+
+            //监听提交
+            iframeWindow.layui.form.on('submit(LAY-user-role-submit)', function(data){
+              var field = data.field;
+			//checkbox 父子级级联或取id
+			var mId = "";
+			var e =iframeWindow.$(":checkbox");
+			e.each(function () {
+			   if($(this).next().hasClass("layui-form-checked")){
+				  mId+=$(this).val()+",";
+			   };
+			})
+			rules = mId.substring(0,mId.length-1);	
+			
+/*			  
+			  var arr = new Array(); //获取提交的字段
+			  $(iframeWindow.document).find('input[name=rules]:checked').each(function(){
+				arr.push($(this).val());
+			  });
+				var rules = arr.join(',');//将数组元素连接起来以构建一个字符串
+				//console.log(rules);
+*/              
+              //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+				type:"post",
+				url:"{:url('admin/authgroup/roleAdd')}",
+				data:{"rules":rules,"title":field.title,"descr":field.descr},
+				daType:"json",
+				success:function (data){
+					if (data.code == 1) {
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							tiele:'添加失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+              
+              table.reload('LAY-user-back-role');
+              layer.close(index); //关闭弹层
+            });  
+            
+            submit.trigger('click');
+          }
+        }); 
+      }
+    }  
+    $('.layui-btn.layuiadmin-btn-role').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+  });
+  </script>
+{/block}
+

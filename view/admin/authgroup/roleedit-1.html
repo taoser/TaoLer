@@ -1,0 +1,154 @@
+{extend name="public/base" /}
+
+{block name="body"}
+
+  <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
+	<div class="layui-form-item layui-hide">
+	 <input type="text" name="id" class="layui-input" value="{$auth.id}">
+	</div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">角色</label>
+      <div class="layui-input-block">
+        <select name="title">
+		{volist name="authGroup" id="vo"}
+          <option {if condition="$vo.id eq $Request.param.id"} selected {/if} id="{$vo.id}" value="{$vo.title}">{$vo.title}</option>
+		{/volist}  
+        </select>
+      </div>
+    </div>
+    {volist name="menu" id="vo1"}
+		<div class="layui-form-item" id="{$vo1.id}">
+		  <label class="layui-form-label">{$vo1.title}</label>
+	
+		  <div class="layui-input-block">
+		  <input type="checkbox" name="rules" class="rule1" lay-skin="primary" id="{$vo1.id}" value="{$vo1.id}" title="{$vo1.title}">
+		  <hr>
+			{if condition="isset($vo1['children'])"}
+				{volist name="vo1['children']" id="vo2"}
+					{if condition="isset($vo2['children'])"}
+						{volist name="vo2['children']" id="vo3"}
+						<input type="checkbox" name="rules" class="rule" lay-skin="primary" id="{$vo3.id}" value="{$vo3.id}" title="{$vo3.title}">
+						{/volist}
+					{else /}
+					
+					<input type="checkbox" name="rules" class="rule" lay-skin="primary" id="{$vo2.id}" value="{$vo2.id}" title="{$vo2.title}">
+				
+					{/if}
+				{/volist}
+			{/if}
+		  </div>	  
+		</div>
+	{/volist}
+    <div class="layui-form-item">
+      <label class="layui-form-label">具体描述</label>
+      <div class="layui-input-block">
+        <textarea type="text" name="descr" lay-verify="required" autocomplete="off" class="layui-textarea" value="{$auth.descr}">{$auth.descr}</textarea>
+      </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <button class="layui-btn" lay-submit lay-filter="LAY-user-role-submit" id="LAY-user-role-submit">提交</button>
+    </div>
+  </div>
+
+{/block}
+{block name="js"}
+
+	<script type="text/javascript">
+		$(document).ready(function(){  
+		  var name = "{$ru}";
+				var names = name.split(",");
+				var inputs = $('input[name=rules]');
+				 for (var i =0;i<inputs.length;i++) {
+					for (var n =0;n<names.length;n++) {
+						if (names[n]===inputs[i].value) {
+							inputs[i].checked = true;
+							//var v = inputs[i].value;
+							//console.log($("input[id=v]").parent().parent().val());
+						}
+					}
+				}
+		});
+
+		
+	function selectfather1(){
+console.log(222);
+			var zi = $('input[class=rule]');
+			var fu = $('input[class=rule1]');
+			for(i=0;i<zi.length;i++){
+              if(zi[i].checked){
+                fu.checked = true;         
+                }
+              }
+			
+			//input.checked
+			//console.log(input.checked);
+			//console.log(input.parent().prev().children('input').checked =true);
+	}
+
+	</script> 
+  
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','form'], function(){
+    var $ = layui.$
+    ,form = layui.form 
+	,table = layui.table;
+	
+	form.on('checkbox()', function(data){
+                        var pc =  data.elem.classList; //获取选中的checkbox的class属性
+                        
+                        /* checkbox处于选中状态  */
+                        if(data.elem.checked==true){//并且当前checkbox为选中状态
+                                /*如果是parent节点 */
+                                if(pc=="parent"){  //如果当前选中的checkbox class里面有parent
+                                    //获取当前checkbox的兄弟节点的孩子们是 input[type='checkbox']的元素
+                                    var c =$(data.elem).siblings().children("input[type='checkbox']");
+                                     c.each(function(){//遍历他们的孩子们
+                                        var e = $(this); //添加layui的选中的样式   控制台看元素
+                                        e.next().addClass("layui-form-checked");
+                                   });
+                                }else{/*如果不是parent*/
+                                    //选中子级选中父级
+                                    $(data.elem).parent().prev().addClass("layui-form-checked");
+                                }
+                            
+                        }else{    /*checkbox处于 false状态*/
+                               
+                              //父级没有选中 取消所有的子级选中
+                              if(pc=="parent"){/*判断当前取消的是父级*/
+                                var c =$(data.elem).siblings().children("input[type='checkbox']");
+                                 c.each(function(){
+                                    var e = $(this);
+                                    e.next().removeClass("layui-form-checked")
+                                 });
+                              }else{/*不是父级*/
+                                      
+                                    var c = $(data.elem).siblings("div");
+                                    var count =0;
+                                      c.each(function(){//遍历他们的孩子们
+                                             //如果有一个==3那么久说明是处于选中状态
+                                              var is =  $(this).get(0).classList;
+                                              if(is.length==3){
+                                                  count++;
+                                              }
+                                      });
+                                     //如果大于0说明还有子级处于选中状态
+                                     if(count>0){
+                                         
+                                     }else{/*如果不大于那么就说明没有子级处于选中状态那么就移除父级的选中状态*/
+                                         $(data.elem).parent().prev().removeClass("layui-form-checked");
+                                     }
+                              }
+                        }
+            });      
+    
+        });
+	
+
+  })
+  </script>
+ 
+{/block}

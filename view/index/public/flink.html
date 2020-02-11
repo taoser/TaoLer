@@ -1,0 +1,9 @@
+<div class="fly-panel fly-link">
+        <h3 class="fly-panel-title">友情链接</h3>
+        <dl class="fly-panel-main">
+		{volist name="flinks" id="vo"}
+          <dd><a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a><dd>
+		{/volist}
+          <dd><a href="javascript:void(0)" id="friend-link" class="fly-link">申请友链</a><dd>
+        </dl>
+</div>
