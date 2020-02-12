@@ -1,8 +1,14 @@
 # TaoLer
 
-版本：	TaoLer 1.0.0
-日期：	2020.1.1
-官网：	http://www.aieok.com
+版本：TaoLer 1.0.0
+日期：2020.1.1
+官网：http://www.aieok.com
+
+#### 项目地址
+
+gitee	https://www.gitee.com/toogee/Taoler
+github	https://www.github.com/taoser/TaoLer
+
 #### 介绍
 
 1.	采用动态密码加密，相同密码在入库时具有唯一性，即使管理员也无法破解，用户信息安全牢固。
@@ -28,9 +34,9 @@
 
 1.	git下载：https://gitee.com/toogee/TaoLer
 2.	官网下载：http://www.aieok.com
-3.	解压后，项目域名部署为public目录对外访问，首页安装，访问http://www.youdomain.com可自动跳转到/install.php/index，,如果重新安装需要删除根目录下install.lock。
-4.	安装前需要先建立好数据库(需求：数据库连接地址，数据库用户名，数据库密码，数据库端口，数据库名称)
-5.	安装过程注意记录好设置的管理员用户名和密码，默认admin/123456。前后台的管理员密码一致。安装好后，前后端管理员是分开的，前端主要对文章内容的审查，置顶等操作。
+3.	解压后，项目绑定域名为public目录对外访问，首次安装，访问域名http://www.youdomain.com可自动跳转到/install.php/index进行引导安装，重新安装需删除根目录下install.lock。
+4.	安装前需要先创建mysql数据库(准备：数据库连接地址，数据库用户名，数据库密码，数据库端口，建好在数据库名)
+5.	请牢记安装设置的管理员用户名和密码，默认admin/123456。前后台的管理员密码一致。前后端管理员账户是独立的，前端主要对文章内容的审查管理等操作。
 
 #### 使用说明
 

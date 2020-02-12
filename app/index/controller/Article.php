@@ -92,10 +92,10 @@ class Article extends BaseController
     }
 
 	//文章详情页
-    public function detail($id = 1)
+    public function detail($id)
     {
 		//获取文章ID
-		$id = Request::param('id');
+		//$id = Request::param('id');
 		//查询文章
 		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,create_time')->where('status',1)->with([
             'cate' => function($query){
@@ -104,7 +104,8 @@ class Article extends BaseController
 			'user' => function($query){
 				$query->field('id,name,nickname,user_img,area_id');
 			}
-        ])->withCount(['comments'])->find($id);
+        ])->find($id);
+		$comments = $article->comments()->where('status',1)->select();
 		$article->inc('pv')->update();
 
 /*		
@@ -129,7 +130,7 @@ class Article extends BaseController
 		//通用右栏
 		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
 		
-		View::assign(['article'=>$article,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm]);
+		View::assign(['article'=>$article,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm]);
 		return View::fetch();
     }
 	

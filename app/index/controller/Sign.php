@@ -18,13 +18,12 @@ class Sign extends BaseController
     {
         parent::_initialize();
         $this->uid = session('user_id');
-		
     }
 
     public function lists()
     {
         //总榜
-        $totallist = Db::name('user_sign')->alias('s')->join('user u', 's.uid=u.id', 'LEFT')->field('s.uid,s.id,max(s.days) as days,u.name as name,u.user_img as user_img')->group('s.uid')->order('days desc')->limit(20)->select();
+        $list = Db::name('user_sign')->alias('s')->leftJoin('user u', 's.uid=u.id')->field('uid,s.id as id,max(days) as days,name,user_img')->group('uid')->order('days desc')->limit(20)->select();
         $time = time();
         $start_stime = strtotime(date('Y-m-d 0:0:0', $time)) - 1;
         $end_stime = strtotime(date('Y-m-d 23:59:59', $time)) + 1;
@@ -70,7 +69,7 @@ class Sign extends BaseController
                     $score = $todayData['will_getscore'];
                     $date=date('Ymd');
                     $msg='';
-                    $teshudate=['20180215','20180216','20180217','20180218','20180219','20180220','20180221'];
+                    $teshudate=['20200214','20200501','20201001'];
                     //签到奖励
                     if(in_array($date,$teshudate)){
                         $randnum=rand(1,99);
@@ -89,9 +88,8 @@ class Sign extends BaseController
                       
                     }
                     return json(['code'=>200,'score'=>$score,'days'=>$days,'msg'=>$msg]);
-                   // exit('{"code":200,"score":"' . $score . '","days":"' . $days . '"}');
                 } else {
-                    exit('{"code":-1,"msg":"签到失败，请刷新后重试！"}');
+					return json(['code'=>-1,'msg'=>'签到失败，请刷新后重试！']);
                 }
             }
         }

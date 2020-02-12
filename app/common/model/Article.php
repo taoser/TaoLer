@@ -31,7 +31,7 @@ class Article extends Model
 	//文章关联评论
 	public function comments()
 	{
-		return $this->hasMany('Comment','article_id','id');
+		return $this->hasMany(Comment::class);
 	}
 	
 	//文章关联用户
