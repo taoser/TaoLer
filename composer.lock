@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a265ecc15ad9efdc9addab19cbb739a",
+    "content-hash": "6ebd3a4578a0960080346336d4970bfd",
     "packages": [
         {
             "name": "league/flysystem",
-            "version": "1.0.63",
+            "version": "1.0.64",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "8132daec326565036bc8e8d1876f77ec183a7bd6"
+                "reference": "d13c43dbd4b791f815215959105a008515d1a2e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8132daec326565036bc8e8d1876f77ec183a7bd6",
-                "reference": "8132daec326565036bc8e8d1876f77ec183a7bd6",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/d13c43dbd4b791f815215959105a008515d1a2e0",
+                "reference": "d13c43dbd4b791f815215959105a008515d1a2e0",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -35,7 +35,7 @@
             },
             "require-dev": {
                 "phpspec/phpspec": "^3.4",
-                "phpunit/phpunit": "^5.7.10"
+                "phpunit/phpunit": "^5.7.26"
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
@@ -94,7 +94,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2020-01-04T16:30:31+00:00"
+            "time": "2020-02-05T18:14:17+00:00"
         },
         {
             "name": "league/flysystem-cached-adapter",
@@ -499,17 +499,72 @@
             "time": "2017-10-23T01:57:42+00:00"
         },
         {
-            "name": "topthink/framework",
-            "version": "6.0.x-dev",
+            "name": "taoser/think-auth",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/top-think/framework.git",
-                "reference": "dbe7e9d7159d767b37c05627069289a07138e13e"
+                "url": "https://github.com/taoser/think-auth.git",
+                "reference": "19bb04e4fb957a95ff3fdc142939922c19167b43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/framework/zipball/dbe7e9d7159d767b37c05627069289a07138e13e",
-                "reference": "dbe7e9d7159d767b37c05627069289a07138e13e",
+                "url": "https://api.github.com/repos/taoser/think-auth/zipball/19bb04e4fb957a95ff3fdc142939922c19167b43",
+                "reference": "19bb04e4fb957a95ff3fdc142939922c19167b43",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=7.1.0",
+                "topthink/framework": "^6.0"
+            },
+            "type": "think-extend",
+            "extra": {
+                "think": {
+                    "config": {
+                        "auth": "src/config/auth.php"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "taoser\\think\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "taoser",
+                    "email": "changlin_zhao@qq.com"
+                }
+            ],
+            "description": "The Auth package forThinkphp6,ThinkPHP6的Auth权限扩展",
+            "homepage": "https://github.com/taoser/think-auth",
+            "keywords": [
+                "think-auth",
+                "thinkphp6"
+            ],
+            "time": "2020-02-11T06:16:10+00:00"
+        },
+        {
+            "name": "topthink/framework",
+            "version": "v6.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/framework.git",
+                "reference": "1444cce94b40a836958380b160a5fb7bfc165daf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/framework/zipball/1444cce94b40a836958380b160a5fb7bfc165daf",
+                "reference": "1444cce94b40a836958380b160a5fb7bfc165daf",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -564,7 +619,7 @@
                 "orm",
                 "thinkphp"
             ],
-            "time": "2020-01-14T12:45:58+00:00"
+            "time": "2020-01-13T05:48:05+00:00"
         },
         {
             "name": "topthink/think-captcha",
@@ -718,7 +773,7 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "2.0.x-dev",
+            "version": "v2.0.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
@@ -812,16 +867,16 @@
         },
         {
             "name": "topthink/think-view",
-            "version": "v1.0.13",
+            "version": "v1.0.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-view.git",
-                "reference": "90803b73f781db5d42619082c4597afc58b2d4c5"
+                "reference": "edce0ae2c9551ab65f9e94a222604b0dead3576d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-view/zipball/90803b73f781db5d42619082c4597afc58b2d4c5",
-                "reference": "90803b73f781db5d42619082c4597afc58b2d4c5",
+                "url": "https://api.github.com/repos/top-think/think-view/zipball/edce0ae2c9551ab65f9e94a222604b0dead3576d",
+                "reference": "edce0ae2c9551ab65f9e94a222604b0dead3576d",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -851,51 +906,7 @@
                 }
             ],
             "description": "thinkphp template driver",
-            "time": "2019-10-07T12:23:10+00:00"
-        },
-        {
-            "name": "xiaodi/think-auth",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/edenleung/think-auth.git",
-                "reference": "1ab2e2f8b85bfe55bd218578660c8ec9b90d751c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/edenleung/think-auth/zipball/1ab2e2f8b85bfe55bd218578660c8ec9b90d751c",
-                "reference": "1ab2e2f8b85bfe55bd218578660c8ec9b90d751c",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "php": ">=7.1.0",
-                "topthink/framework": "6.0.*-dev"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "xiaodi\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "xiaodi",
-                    "email": "758861884@qq.com"
-                }
-            ],
-            "description": "Auth Package For ThinkPHP 6.0",
-            "homepage": "https://github.com/xiaodit/think-auth",
-            "time": "2019-04-24T09:54:42+00:00"
+            "time": "2019-11-06T11:40:13+00:00"
         }
     ],
     "packages-dev": [
@@ -1027,16 +1038,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v4.4.2",
+            "version": "v4.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "be330f919bdb395d1e0c3f2bfb8948512d6bdd99"
+                "reference": "46b53fd714568af343953c039ff47b67ce8af8d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/be330f919bdb395d1e0c3f2bfb8948512d6bdd99",
-                "reference": "be330f919bdb395d1e0c3f2bfb8948512d6bdd99",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/46b53fd714568af343953c039ff47b67ce8af8d6",
+                "reference": "46b53fd714568af343953c039ff47b67ce8af8d6",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1105,7 +1116,7 @@
                 "debug",
                 "dump"
             ],
-            "time": "2019-12-18T13:41:29+00:00"
+            "time": "2020-01-25T12:44:29+00:00"
         },
         {
             "name": "topthink/think-trace",
@@ -1163,10 +1174,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "topthink/framework": 20,
-        "topthink/think-orm": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

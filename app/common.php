@@ -5,6 +5,7 @@ use PHPMailer\PHPMailer\Exception;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
+use taoser\think\Auth;
 // 应用公共文件
 function mailto($to,$title,$content)
 {
@@ -229,7 +230,7 @@ function getTree($data)
 function checkRuleButton($rules_button)
 {
 	$admin_id = Session::get('admin_id');
-	$auth = new xiaodi\Auth();
+	$auth = new Auth();
 	$res = $auth->check($rules_button,$admin_id );
 	
 	if($res || $admin_id == 1){

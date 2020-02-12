@@ -13,7 +13,7 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\View;
 use think\facade\Db;
-use xiaodi\Auth;
+use taoser\think\Auth;
 
 /**
  * 控制器基础类

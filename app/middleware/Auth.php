@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace app\middleware;
 
-use xiaodi\Auth as UserAuth;
+use taoser\think\Auth as UserAuth;
 use think\facade\Session;
 
 class Auth
