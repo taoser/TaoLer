@@ -38,13 +38,15 @@ CREATE TABLE `tao_article` (
   `is_reply` enum('1','0') NOT NULL DEFAULT '1' COMMENT '0禁评1可评',
   `pv` int(11) NOT NULL DEFAULT '0' COMMENT '浏览量',
   `jie` enum('1','0') NOT NULL DEFAULT '0' COMMENT '0未结1已结',
+  `upzip` varchar(70) DEFAULT NULL,
+  `tags` varchar(255) DEFAULT NULL,
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 
-INSERT INTO `tao_article` VALUES ('1', 'Fly Template 社区模版', '[quote]\r\n  你们认为layui官方Fly Template 社区模版怎么样？\r\n[/quote]\r\nimg[https://cdn.layui.com/upload/2017_11/168_1512035128058_80242.jpg] \r\n你喜欢吗？\r\n很多人都说比较喜欢，我个人认为不错的，这个板子非常喜欢，我看到有一些人做了开发，可惜的是都没有很好的维护，有的漏洞比较多，不完善，很美好的一个板子，但没有长久 的更新，非常的可惜。\r\n如果用别人的不好用，那我就做一个出来吧。喜欢的人多关注，适当时候放出来大家一起用。\r\n关于详情页的内容解析\r\n该模板自带一个特定语法的编辑器，当你把内容存储到数据库后，在页面读取后浏览，会发现诸如“表情、代码、图片”等无法解析，这是因为需要对该内容进行一次转义，通常来说这是在服务端完成的，但鉴于简单化，你还可以直接在前端去解析，在模板的detail.html中，我们已经把相关的代码写好了，你只需打开注释即可（在代码的最下面）。当然，如果觉得编辑器无法满足你的需求，你也可以把该编辑器换成别的HTML编辑器或MarkDown编辑器。', '1', '1', '1', '0', '0', '1', '13', '0', '1546698225', '1577772362', '0');
+INSERT INTO `tao_article` VALUES ('1', 'Fly Template 社区模版', '[quote]\r\n  你们认为layui官方Fly Template 社区模版怎么样？\r\n[/quote]\r\nimg[https://cdn.layui.com/upload/2017_11/168_1512035128058_80242.jpg] \r\n你喜欢吗？\r\n很多人都说比较喜欢，我个人认为不错的，这个板子非常喜欢，我看到有一些人做了开发，可惜的是都没有很好的维护，有的漏洞比较多，不完善，很美好的一个板子，但没有长久 的更新，非常的可惜。\r\n如果用别人的不好用，那我就做一个出来吧。喜欢的人多关注，适当时候放出来大家一起用。\r\n关于详情页的内容解析\r\n该模板自带一个特定语法的编辑器，当你把内容存储到数据库后，在页面读取后浏览，会发现诸如“表情、代码、图片”等无法解析，这是因为需要对该内容进行一次转义，通常来说这是在服务端完成的，但鉴于简单化，你还可以直接在前端去解析，在模板的detail.html中，我们已经把相关的代码写好了，你只需打开注释即可（在代码的最下面）。当然，如果觉得编辑器无法满足你的需求，你也可以把该编辑器换成别的HTML编辑器或MarkDown编辑器。', '1', '1', '1', '0', '0', '1', '155', '0', null, null, '1546698225', '1577772362', '0');
 
 DROP TABLE IF EXISTS `tao_auth_group`;
 CREATE TABLE `tao_auth_group` (
@@ -285,7 +287,7 @@ CREATE TABLE `tao_system` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='系统配置表';
 
-INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href=\"http://www.aieok.com\" target=\"_blank\">aieok.com 版权所有</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.0.0', '', 'http://www.aieok.com/api/index/cy', 'http://www.aieok.com/api/upload/check', 'http://www.aieok.com/api/upload/api', '0', '1577419197');
+INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href=\"http://www.aieok.com\" target=\"_blank\">aieok.com 版权所有</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.0.0', '', 'http://www.aieok.com/api/index/cy', 'http://www.aieok.com/api/upload/check', 'http://www.aieok.com/api/upload/api', '1581221008', '1577419197');
 
 
 DROP TABLE IF EXISTS `tao_user`;

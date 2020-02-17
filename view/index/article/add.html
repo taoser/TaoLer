@@ -11,9 +11,9 @@
         <ul class="layui-tab-title">
           <li class="layui-this">发表新帖<!-- 编辑帖子 --></li>
         </ul>
-        <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+        <div class="layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
           <div class="layui-tab-item layui-show">
-            <form action="" method="post">
+
               <div class="layui-row layui-col-space15 layui-form-item">
                 <div class="layui-col-md3">
                   <label class="layui-form-label">所在专栏</label>
@@ -76,6 +76,21 @@
                 </div>
               </div>
 			  
+			  <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">添加标签</label>
+                  <div class="layui-input-inline" style="width: 190px;">
+                   <input type="text" class="layui-input" name="tags" placeholder="多个标签用,号隔开" title="添加标签"/>
+                  </div>
+                 <button type="button" class="layui-btn" id="article-tags-button">添加</button> 
+                </div>
+              </div>
+			  <div class="layui-form-item">
+                <div class="layui-btn-container">
+				  <!--button type="button" class="layui-btn">标签</button-->
+				</div>
+              </div>
+			  
               <!--div class="layui-form-item">
                 <div class="layui-inline">
                   <label class="layui-form-label">悬赏飞吻</label>
@@ -101,9 +116,9 @@
                 </div>
               </div>
               <div class="layui-form-item">
-                <button type="submit" class="layui-btn" lay-filter="user" lay-submit id="add">立即发布</button>
+                <button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="add">立即发布</button>
               </div>
-            </form>
+
           </div>
         </div>
       </div>
@@ -112,24 +127,26 @@
 </div>
 {/block}
 
-{/*验证码JS*/}
-<script>
-	function captcha(){
-	var captcha = document.getElementById('captcha');
-	captcha.src = '{:captcha_src()}?'+'rand='+Math.random();
-	}
-</script>
 
 
 {block name="script"}
 
 <script>
-$(function() {
-	$('#add').click(function() {
+layui.use('form', function(){
+  var form = layui.form;
+	
+	 form.on('submit(article-add)', function(data){	
+			var field = data.field;
+			var numArr = new Array();
+			$('.layui-btn-container').children('button').each(function(){
+				numArr.push($(this).val());//添加至数组
+			});
+			tags = numArr.join(',');
+
 			$.ajax({
 				type:"post",
 				url:"{:url('article/add')}",
-				data:$('form').serialize(),
+				data:{"cate_id":field.cate_id,"title":field.title,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha},
 				dataType:"json",
 				success:function (data){
 					if (data.code == 1) {
@@ -152,6 +169,29 @@ $(function() {
 			});
 	return false;	
 	});
+	
+	$('#article-tags-button').on('click',function(){
+	var tags = $("input[name='tags']").val();
+	if(tags == ''){
+		layer.msg('不能为空');
+		return false;
+	}
+		//console.log(tags);
+		$.ajax({
+				type:"post",
+				url:"{:url('article/tags')}",
+				data:{"tags":tags},
+				daType:"json",
+				success:function (data){
+					if (data.code == 0) {
+					$('.layui-btn-container').append('<button type="button" class="layui-btn" value='+data.data+'>'+data.data+'</button>');
+					$("input[name='tags']").val("");		
+					}
+				}
+			});
+		return false;	
+	});
+	
 });
 </script>
 <script>

@@ -174,6 +174,20 @@ class Article extends BaseController
 		}
 		return View::fetch();
     }
+	
+	/添加tag
+	public function tags(){
+		$data = Request::only(['tags']);
+		$att = explode(',',$data['tags']);
+		$tags = [];
+			foreach($att as $v){
+				if ($v !='') {
+				$tags = $v;
+				}
+			}
+		//var_dump($tags);
+		 return json(['code'=>0,'data'=>$tags]);
+	}
 
     //编辑文章
     public function edit()

@@ -15,7 +15,7 @@
           <div class="layui-inline">
             <label class="layui-form-label">用户名</label>
             <div class="layui-input-block">
-              <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+              <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
@@ -28,9 +28,9 @@
             <label class="layui-form-label">性别</label>
             <div class="layui-input-block">
               <select name="sex">
-                <option value="0">不限</option>
-                <option value="1">男</option>
-                <option value="2">女</option>
+                <option value="">不限</option>
+                <option value="0">男</option>
+                <option value="1">女</option>
               </select>
             </div>
           </div>
@@ -53,7 +53,7 @@
           <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
         </script>
         <script type="text/html" id="sex">
-          {{#  if(d.sex == 1){ }}
+          {{#  if(d.sex == 0){ }}
           <button class="layui-btn layui-btn-normal layui-btn-xs" >男</button>
           {{#  } else { }}
           <button class="layui-btn layui-btn-danger layui-btn-xs">女</button>
@@ -96,6 +96,27 @@
     //监听搜索
     form.on('submit(LAY-user-front-search)', function(data){
       var field = data.field;
+	  //console.log(field);
+	  
+	  //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+				type:"post",
+				url:"{:url('admin/user/list')}",
+				data:{"id":field.id,"name":field.name,"email":field.email,"sex":field.sex},
+				daType:"json",
+				success:function (data){
+					if (data.code == 0) {
+						
+					} else {
+						layer.open({
+							tiele:'搜索失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
       
       //执行重载
       table.reload('LAY-user-manage', {

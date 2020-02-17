@@ -2,8 +2,8 @@
 {extend name="public/base" /}
 
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
-{block name="keywords"}{$article.title}{/block}
-{block name="description"}{$article.title}{/block}
+{block name="keywords"}{$article.title}-{$article.tags}{/block}
+{block name="description"}{$article.title}-{:getArtContent($article.content)}{/block}
 {block name="column"}{include file="/public/column" /}{/block}
 {block name="content"}
 <div class="layui-container">
@@ -178,11 +178,9 @@
         {volist name="artHot" id="vo"}
 		<dd>
           <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
-          <span><i class="iconfont icon-pinglun1"></i> {$comments->total()}</span>
+          <span><i class="iconfont icon-pinglun1"></i> {$comments->count()}</span>
         </dd>
 		{/volist}
-       
-        
 
         <!-- 无数据时 -->
         <!--

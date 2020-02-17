@@ -82,7 +82,7 @@ function getCateName($cate_ename)
 //过滤文章摘要
 function getArtContent($content)
 {
-    return mb_substr(strip_tags($content),0,50).'更多详情...';
+    return mb_substr(strip_tags($content),0,100).'...';
 }
 
 

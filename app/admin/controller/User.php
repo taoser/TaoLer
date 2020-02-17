@@ -26,15 +26,19 @@ class User extends AdminController
 	public function list()
 	{
 		if(Request::isAjax()){
-			$user = Db::name('user')->where(['delete_time'=>0])->select();
+			$datas = Request::only(['id','name','email','sex']);
+			$map = array_filter($datas);
+			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->select();
 			$count = $user->count();
 			$res = [];
-			if($user){
+			if($count){
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($user as $k => $v){
 				$data = ['id'=>$v['id'],'username'=>$v['name'],'avatar'=>$v['user_img'],'phone'=>$v['phone'],'email'=>$v['email'],'sex'=>$v['sex'],'ip'=>$v['last_login_ip'],'jointime'=>date("Y-m-d",$v['create_time']),'check'=>$v['status'],'auth'=>$v['auth']];
 				$res['data'][] = $data; 
 				}
+			} else {
+				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
 			}
 			return json($res);
 		}
