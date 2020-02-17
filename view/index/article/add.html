@@ -87,7 +87,6 @@
               </div>
 			  <div class="layui-form-item">
                 <div class="layui-btn-container">
-				  <!--button type="button" class="layui-btn">标签</button-->
 				</div>
               </div>
 			  
@@ -127,11 +126,16 @@
 </div>
 {/block}
 
-
-
 {block name="script"}
-
 <script>
+
+//删除tag
+	$(document).ready(function(){
+		$('.layui-btn-container').on('click','button',function(){
+			$(this).remove();	
+		});
+	});
+
 layui.use('form', function(){
   var form = layui.form;
 	
