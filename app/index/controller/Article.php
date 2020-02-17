@@ -175,7 +175,7 @@ class Article extends BaseController
 		return View::fetch();
     }
 	
-	/添加tag
+	//添加tag
 	public function tags(){
 		$data = Request::only(['tags']);
 		$att = explode(',',$data['tags']);
