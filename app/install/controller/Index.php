@@ -54,87 +54,60 @@ class Index extends BaseController
 		//if(Session::get('install') != 3){
 		//	return redirect('./create.html');
 		//}
-		
-    // 判断是否为post
-    //if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
 	if(Request::isAjax()){	
 		$data = Request::param();
-        //$data = $_POST;
 		//var_dump($data);
         if (!preg_match("/^[a-zA-Z]{1}([0-9a-zA-Z]|[._]){4,19}$/", $data['admin_user'])) {
             die("<script>alert('后台管理用户名不符合规范：至少包含4个字符，需以字母开头');history.go(-1)</script>");
         }
        
-            if (!preg_match("/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/", $data['admin_pass'])) {
-                die("<script>alert('登录密码至少包含6个字符。可使用字母，数字和符号。');history.go(-1)</script>");
-            }
-            if ($data['admin_pass'] != $data['admin_pass2']) {
-                die("<script>alert('两次输入的密码不一致');history.go(-1)</script>");
-       
-            }
-            $_SESSION['adminusername'] = $data['admin_user'];
-			$email = $data['admin_email'];
-			$user = $data['admin_user'];
-			$create_time = time();
-			$salt = substr(md5($create_time),-6);
-			$pass = md5(substr_replace(md5($data['admin_pass']),$salt,0,6));
-        
+		if (!preg_match("/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/", $data['admin_pass'])) {
+			die("<script>alert('登录密码至少包含6个字符。可使用字母，数字和符号。');history.go(-1)</script>");
+		}
+		if ($data['admin_pass'] != $data['admin_pass2']) {
+			die("<script>alert('两次输入的密码不一致');history.go(-1)</script>");
+		}
+
+		$email = $data['admin_email'];
+		$user = $data['admin_user'];
+		$create_time = time();
+		$salt = substr(md5($create_time),-6);
+		$pass = md5(substr_replace(md5($data['admin_pass']),$salt,0,6));
+		
+		$dbhost = $data['DB_HOST'];
+		$dbuser = $data['DB_USER'];
+		$dbpass = $data['DB_PWD'];
+		$dbport = $data['DB_PORT'];
+		$dbname = $data['DB_NAME'];
+		$prefix	= $data['DB_PREFIX'];
        
 		if ($data['DB_TYPE'] == 'mysql') {
-						
-		//数据库			
-		$db_s = <<<php
-<?php
-return [
-    // 数据库连接配置信息
-    'connections'     => [
-    'mysql' => [
-	// 数据库类型
-	'type'              => 'mysql',
-	// 服务器地址
-	'hostname'          => '{$data['DB_HOST']}',
-	// 数据库名
-	'database'          => '{$data['DB_NAME']}',
-	// 用户名
-	'username'          => '{$data['DB_USER']}',
-	// 密码
-	'password'          => '{$data['DB_PWD']}',
-	// 端口
-	'hostport'          => '{$data['DB_PORT']}',
-	// 数据库编码默认采用utf8
-	'charset'           => 'utf8',
-	// 数据库表前缀
-	'prefix'            => '{$data['DB_PREFIX']}',
-	],
-    ],
-];
-php;
-        // 创建数据库链接配置文件
-
-        $fp = fopen('../app/install/config/database.php', "r+b");
-        fputs($fp, $db_s);
-        fclose($fp);	
-
-			$db = Db::connect('mysql');
-
-			//$sql = 'CREATE DATABASE IF NOT EXISTS '.$data['DB_NAME'].' DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci';
-			//$db->execute($sql);
 			
-			//创建数据表
-			create_tables($db, $data['DB_PREFIX']);
+			//创建数据库
+			try { 
+				$conn = new \PDO("mysql:host=$dbhost", $dbuser, $dbpass); 
+			} 
+			catch(\PDOException $e) 
+			{ 
+				return json(['code'=>-1,'msg'=>"数据库连接失败" . $e->getMessage()]); 
+			}
 			
-			$table_admin = $data['DB_PREFIX'] . "admin";
-			$table_user = $data['DB_PREFIX'] . "user";
-			$table_system = $data['DB_PREFIX'] . "system";
+			$sql = 'CREATE DATABASE IF NOT EXISTS '.$dbname.' DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci'; 
+			 
+			// 使用 exec() ，没有结果返回 
+			$conn->exec($sql); 
+			//echo $dbname."数据库创建成功<br>"; 
+			 
+			$conn = null;
+			
+			//写入数据表
+			$db = new \PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
+			create_tables($db,$prefix);
+			$db = null;
+			
 
-			$res_a = Db::table($table_admin)->where('id',1)->update(['username'=>$user,'email'=>$email,'password'=>$pass,'status'=>1,'auth_group_id'=>1,'create_time'=>$create_time]);
-			$res_u = Db::table($table_user)->where('id',1)->update(['name'=>$user,'email'=>$email,'password'=>$pass,'auth'=>1,'status'=>1,'create_time'=>$create_time]);
-			$res_s = Db::table($table_system)->where('id',1)->update(['webname'=>$data['webname'],'webtitle'=>$data['webtitle'],'domain'=>Request::domain(),'create_time'=>time()]);
-
-			Db::getConnection()->close();
-        }
-
-        $db_str = <<<php
+		$db_str = <<<php
 <?php
 return [
     // 自定义时间查询规则
@@ -189,13 +162,28 @@ return [
 ];
 php;
         // 创建数据库链接配置文件
-        $fp = fopen('../config/database.php', "r+b");
-        fwrite($fp, $db_str);
+        $fp = fopen("../config/database.php","w");
+        $res = fwrite($fp, $db_str);
         fclose($fp);
+		if(!$res){
+			echo '数据库配置文件创建失败！';
+		}
+
+		//写入初始配置	
+		$table_admin = $data['DB_PREFIX'] . "admin";
+		$table_user = $data['DB_PREFIX'] . "user";
+		$table_system = $data['DB_PREFIX'] . "system";
+
+		$res_a = Db::table($table_admin)->where('id',1)->update(['username'=>$user,'email'=>$email,'password'=>$pass,'status'=>1,'auth_group_id'=>1,'create_time'=>$create_time]);
+		$res_u = Db::table($table_user)->where('id',1)->update(['name'=>$user,'email'=>$email,'password'=>$pass,'auth'=>1,'status'=>1,'create_time'=>$create_time]);
+		$res_s = Db::table($table_system)->where('id',1)->update(['webname'=>$data['webname'],'webtitle'=>$data['webtitle'],'domain'=>Request::domain(),'create_time'=>time()]);
+
+        }
+
 		//安装上锁
 		file_put_contents('../install.lock', 'lock');
 		Session::clear();
-		//return View::fetch('complete');
+
 		return json(['code' => 0,'msg'=>'安装成功','url'=>'/install.php/success/complete']);
     } else {
 		return '请求失败！';

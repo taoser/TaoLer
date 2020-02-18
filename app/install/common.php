@@ -43,7 +43,7 @@ function write_config($config)
 /**
  * 创建数据表
  * @param  resource $db 数据库连接资源
- * @param string $prefix
+ * @param string $prefix 数据表前缀
  */
 function create_tables($db, $prefix = '') {
 	// 导入sql数据并创建表
@@ -58,17 +58,12 @@ function create_tables($db, $prefix = '') {
             if (!empty($v)) {
 	            //$v=$v.';';
 	           if (substr($v, 0, 12) == 'CREATE TABLE') {
-		           //echo 'ddddddddddddddddd';
 		            $name = preg_replace("/^CREATE TABLE `(\w+)` .*/s", "\\1", $v);
 		            $msg = "创建数据表{$name}";
 		            if (false !== $db->query($v)) {
-		                //show_msg($msg . '...成功!');
-						//echo '成功';
+						//echo $msg.'成功';
 		            } else {
-		                echo '失败';
-						
-					//show_msg($msg . '...失败！', 'error');
-		                //Session::set('error', true, 'install');
+		                echo $msg.'失败';
 		            }
 				} else {
 					$db->query($v);
