@@ -1,5 +1,5 @@
 {extend name="public/base" /}
-{block name="title"}帖子编辑{/block}
+{block name="title"}编辑帖子{/block}
 {block name="column"}{/block}
 {block name="content"}
 <div class="layui-container fly-marginTop">
@@ -8,11 +8,11 @@
     <div class="layui-form layui-form-pane">
       <div class="layui-tab layui-tab-brief" lay-filter="user">
         <ul class="layui-tab-title">
-          <li class="layui-this">发表新帖<!-- 编辑帖子 --></li>
+          <li class="layui-this">编辑帖子</li>
         </ul>
         <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
           <div class="layui-tab-item layui-show">
-            <form action="" method="post">
+           
 			<input type="hidden" name="id" value="{$article.id}">
               <div class="layui-row layui-col-space15 layui-form-item">
                 <div class="layui-col-md3">
@@ -82,6 +82,32 @@
                   <div class="layui-form-mid layui-word-aux">发表后无法更改飞吻</div>
                 </div>
               </div>
+			  <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">上传附件</label>
+                  <div class="layui-input-inline" style="width: 190px;">
+                   <input type="text" class="layui-input" name="upzip" value="" placeholder="下一版本再开发这个" title="上传附件"/>
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">是否回复可下载或者密码下载</div>
+                </div>
+              </div>
+			  
+			  <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">添加标签</label>
+                  <div class="layui-input-inline" style="width: 190px;">
+                   <input type="text" class="layui-input" name="tags" placeholder="多个标签用,号隔开" title="添加标签"/>
+                  </div>
+                 <button type="button" class="layui-btn" id="article-tags-button">添加</button> 
+                </div>
+              </div>
+			  <div class="layui-form-item">
+                <div class="layui-btn-container">
+				{volist name="tags" id="vo" }
+				<button type="button" class="layui-btn" value="{$vo.0}">{$vo.0}</button>
+				{/volist}
+				</div>
+              </div>
               <div class="layui-form-item">
                 <label for="L_vercode" class="layui-form-label">验证码</label>
                 <div class="layui-input-inline">
@@ -92,9 +118,9 @@
                 </div>
               </div>
               <div class="layui-form-item">
-                <button type="submit" class="layui-btn" lay-filter="user" lay-submit id="edit">立即发布</button>
+                <button type="submit" class="layui-btn" lay-filter="article-edit" lay-submit id="edit">立即发布</button>
               </div>
-            </form>
+
           </div>
         </div>
       </div>
@@ -106,12 +132,28 @@
 {block name="script"}
 
 <script>
-$(function() {
-	$('#edit').click(function() {
+
+//删除tag
+	$(document).ready(function(){
+		$('.layui-btn-container').on('click','button',function(){
+			$(this).remove();	
+		});
+	});
+
+layui.use('form', function(){
+  var form = layui.form;
+  	
+	 form.on('submit(article-edit)', function(data){	
+		var field = data.field;
+		var numArr = new Array();
+		$('.layui-btn-container').children('button').each(function(){
+			numArr.push($(this).val());//添加至数组
+		});
+		tags = numArr.join(',');
 			$.ajax({
 				type:"post",
 				url:"{:url('article/edit')}",
-				data:$('form').serialize(),
+				data:{"id":field.id,"cate_id":field.cate_id,"title":field.title,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha},
 				daType:"json",
 				success:function (data){
 					if (data.code == 1) {
@@ -134,6 +176,52 @@ $(function() {
 			});
 	return false;	
 	});
+	
+	//添加tags
+	$('#article-tags-button').on('click',function(){
+	var tags = $("input[name='tags']").val();
+	if(tags == ''){
+		layer.msg('不能为空');
+		return false;
+	}
+	
+	var numArr = new Array();
+	$('.layui-btn-container').children('button').each(function(){
+		numArr.push($(this).val());//添加至数组
+	});
+	
+	for(var i=0; i<numArr.length; i++){
+		if(tags.indexOf(numArr[i])>=0){
+			layer.msg('不能重复添加'+numArr[i]);
+			return false;
+		}
+	}
+
+		$.ajax({
+				type:"post",
+				url:"{:url('article/tags')}",
+				data:{"tags":tags},
+				daType:"json",
+				success:function (data){
+					if (data.code == 0) {
+						for(var i=0; i<data.data.length; i++){
+							$('.layui-btn-container').append('<button type="button" class="layui-btn" value='+data.data[i]+'>'+data.data[i]+'</button>');
+						}
+					$("input[name='tags']").val("");		
+					} else {
+						layer.open({
+							tiele:'添加失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					};
+				}
+			});
+			
+		return false;	
+	});
+	
 });
 </script>
 

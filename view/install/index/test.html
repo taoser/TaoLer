@@ -85,7 +85,7 @@
                 </tr>
             </table>
             <div class="inout1">
-                <a href="{:url('/index/index')}">上一步</a>
+                <a href="{:url('index/index')}">上一步</a>
             </div>
             <div class="inout2">
                 <a href="javascript:;" onclick="testClick()">下一步</a>
@@ -97,7 +97,7 @@
             if ($('.yes').length != 5) {
                 alert('您的配置或权限不符合要求');
             } else {
-                location.href = '{:url('/index/create')}';
+                location.href = '{:url('index/create')}';
             }
         }
     </script>

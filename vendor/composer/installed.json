@@ -1201,5 +1201,65 @@
             }
         ],
         "description": "thinkphp template driver"
+    },
+    {
+        "name": "zzstudio/think-addons",
+        "version": "2.0.5",
+        "version_normalized": "2.0.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zz-studio/think-addons.git",
+            "reference": "7eb740cb219a111d593a05ad88248a74f640fe5c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zz-studio/think-addons/zipball/7eb740cb219a111d593a05ad88248a74f640fe5c",
+            "reference": "7eb740cb219a111d593a05ad88248a74f640fe5c",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=7.1.0",
+            "topthink/framework": "^6.0",
+            "topthink/think-helper": "^3.0.0",
+            "topthink/think-view": "^1.0"
+        },
+        "time": "2020-01-06T06:42:39+00:00",
+        "type": "library",
+        "extra": {
+            "think": {
+                "services": [
+                    "think\\addons\\Service"
+                ],
+                "config": {
+                    "addons": "src/config.php"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "think\\": "src/"
+            },
+            "files": [
+                "src/helper.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "byron",
+                "email": "xiaobo.sun@qq.com"
+            }
+        ],
+        "description": "The ThinkPHP6 Addons Package"
     }
 ]

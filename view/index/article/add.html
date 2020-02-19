@@ -138,15 +138,15 @@
 
 layui.use('form', function(){
   var form = layui.form;
-	
+  
+//发布文章
 	 form.on('submit(article-add)', function(data){	
-			var field = data.field;
-			var numArr = new Array();
-			$('.layui-btn-container').children('button').each(function(){
-				numArr.push($(this).val());//添加至数组
-			});
-			tags = numArr.join(',');
-
+		var field = data.field;
+		var numArr = new Array();
+		$('.layui-btn-container').children('button').each(function(){
+			numArr.push($(this).val());//添加至数组
+		});	
+		tags = numArr.join(',');
 			$.ajax({
 				type:"post",
 				url:"{:url('article/add')}",
@@ -174,11 +174,24 @@ layui.use('form', function(){
 	return false;	
 	});
 	
+	//添加tags
 	$('#article-tags-button').on('click',function(){
 	var tags = $("input[name='tags']").val();
 	if(tags == ''){
 		layer.msg('不能为空');
 		return false;
+	}
+	
+	var numArr = new Array();
+	$('.layui-btn-container').children('button').each(function(){
+		numArr.push($(this).val());//添加至数组
+	});
+
+	for(var i=0; i<numArr.length; i++){
+		if(tags.indexOf(numArr[i])>=0){
+			layer.msg('不能重复添加'+numArr[i]);
+			return false;
+		}
 	}
 		//console.log(tags);
 		$.ajax({
@@ -188,7 +201,9 @@ layui.use('form', function(){
 				daType:"json",
 				success:function (data){
 					if (data.code == 0) {
-					$('.layui-btn-container').append('<button type="button" class="layui-btn" value='+data.data+'>'+data.data+'</button>');
+						for(var i=0; i<data.data.length; i++){
+							$('.layui-btn-container').append('<button type="button" class="layui-btn" value='+data.data[i]+'>'+data.data[i]+'</button>');
+						}
 					$("input[name='tags']").val("");		
 					}
 				}

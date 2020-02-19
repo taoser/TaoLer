@@ -85,7 +85,7 @@
                     </div>
                 </div>
                 <div class="inout1">
-                    <a href="{:url('/index/test')}">上一步</a>
+                    <a href="{:url('index/test')}">上一步</a>
                 </div>
                 <div class="inout2">
                     <input type="submit" lay-submit lay-filter="formDemo" value="确认安装">
@@ -106,7 +106,7 @@
 					
 					$.ajax({
 						type:"post",
-						url:"{:url('/index/install')}",
+						url:"{:url('index/install')}",
 						data:{"DB_TYPE":field.DB_TYPE,"DB_HOST":field.DB_HOST,"DB_USER":field.DB_USER,"DB_PWD":field.DB_PWD,"DB_PORT":field.DB_PORT,"DB_NAME":field.DB_NAME,"DB_PREFIX":field.DB_PREFIX,"webname":field.webname,"webtitle":field.webtitle,"admin_user":field.admin_user,"admin_email":field.admin_email,"admin_pass":field.admin_pass,"admin_pass2":field.admin_pass2},
 						daType:"json",
 						success:function (data){

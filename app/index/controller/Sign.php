@@ -23,7 +23,7 @@ class Sign extends BaseController
     public function lists()
     {
         //总榜
-        $list = Db::name('user_sign')->alias('s')->leftJoin('user u', 's.uid=u.id')->field('uid,s.id as id,max(days) as days,name,user_img')->group('uid')->order('days desc')->limit(20)->select();
+        $totallist = Db::name('user_sign')->alias('s')->leftJoin('user u', 's.uid=u.id')->field('uid,s.id as id,max(days) as days,name,user_img')->group('uid')->order('days desc')->limit(20)->select();
         $time = time();
         $start_stime = strtotime(date('Y-m-d 0:0:0', $time)) - 1;
         $end_stime = strtotime(date('Y-m-d 23:59:59', $time)) + 1;

@@ -97,7 +97,7 @@ class Article extends BaseController
 		//获取文章ID
 		//$id = Request::param('id');
 		//查询文章
-		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,create_time')->where('status',1)->with([
+		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,tags,create_time')->where('status',1)->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
@@ -129,7 +129,7 @@ class Article extends BaseController
 		$ad_article = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',4)->whereTime('slid_over','>=',time())->select();
 		//通用右栏
 		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
-		
+
 		View::assign(['article'=>$article,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm]);
 		return View::fetch();
     }
@@ -156,13 +156,13 @@ class Article extends BaseController
     public function add()
 	{
 		if(Request::isAjax()){
-			$data = Request::post();
+			$data = Request::only(['cate_id','title','user_id','content','upzip','tags','captcha']);
 			$validate = new \app\common\validate\Article; //调用验证器
 			$result = $validate->scene('Artadd')->check($data); //进行数据验证		
 			if(true !==$result){	
 				return $this->error($validate->getError());
 			} else {	
-				$article = new \app\common\model\Article;
+				$article = new \app\common\model\Article();
 				$result = $article->add($data);
 				if($result == 1) {
 					$aid = Db::name('article')->max('id');
@@ -176,27 +176,27 @@ class Article extends BaseController
     }
 	
 	//添加tag
-	public function tags(){
+	public function tags()
+	{
 		$data = Request::only(['tags']);
 		$att = explode(',',$data['tags']);
 		$tags = [];
 			foreach($att as $v){
 				if ($v !='') {
-				$tags = $v;
+					
+				$tags[] = $v;
 				}
 			}
-		//var_dump($tags);
 		 return json(['code'=>0,'data'=>$tags]);
 	}
 
     //编辑文章
-    public function edit()
+    public function edit($id)
     {
-		$aid = input('id');
-		$article = Db::name('article')->find($aid);
+		$article = Db::name('article')->find($id);
 		
 		if(Request::isAjax()){
-			$data = Request::post();
+			$data = Request::only(['id','cate_id','title','user_id','content','upzip','tags','captcha']);
 			$validate = new \app\common\validate\Article(); //调用验证器
 			$res = $validate->scene('Artadd')->check($data); //进行数据验证
 			
@@ -207,14 +207,23 @@ class Article extends BaseController
 				$article = new \app\common\model\Article();
 				$result = $article->edit($data);
 				if($result == 1) {
-					return json(['code'=>1,'msg'=>'修改成功','url'=>'/'.app('http')->getName().'/jie/'.$aid.'.html']);
+					return json(['code'=>1,'msg'=>'修改成功','url'=>'/'.app('http')->getName().'/jie/'.$id.'.html']);
 				} else {
 				$this->error($result);
 				}
 			}
 		}
-        
-        View::assign('article',$article);
+		
+		$tag = Db::name('article')->where('id',$id)->value('tags');
+		$attr = explode(',',$tag);
+		$tags = [];
+			foreach($attr as $key=>$v){
+				if ($v !='') {
+				$tags[] = $v;
+				}
+			}
+			
+        View::assign(['article'=>$article,'tags'=>$tags]);
 		return View::fetch();
     }
 	

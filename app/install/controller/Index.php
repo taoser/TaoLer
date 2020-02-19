@@ -34,7 +34,7 @@ class Index extends BaseController
 			Session::set('install',2);
 			return View::fetch('test');
 		} else {
-			return redirect('./index.html');
+			return redirect('index.html');
 		} 
     }
 	
@@ -44,7 +44,7 @@ class Index extends BaseController
 			Session::set('install',3);
 			return View::fetch('create');
 		} else {
-			return redirect('./test.html');
+			return redirect('test.html');
 		} 
     }
 	
@@ -74,6 +74,8 @@ class Index extends BaseController
 		$create_time = time();
 		$salt = substr(md5($create_time),-6);
 		$pass = md5(substr_replace(md5($data['admin_pass']),$salt,0,6));
+		$webtitle = $data['webtitle'];
+		$webname = $data['webname'];
 		
 		$dbhost = $data['DB_HOST'];
 		$dbuser = $data['DB_USER'];
@@ -98,12 +100,42 @@ class Index extends BaseController
 			// 使用 exec() ，没有结果返回 
 			$conn->exec($sql); 
 			//echo $dbname."数据库创建成功<br>"; 
-			 
 			$conn = null;
 			
 			//写入数据表
-			$db = new \PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
+						//创建数据库
+			try { 
+				$db = new \PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass); 
+			} 
+			catch(\PDOException $e) 
+			{ 
+				return json(['code'=>-1,'msg'=>"PDO数据库连接失败" . $e->getMessage()]); 
+			}
+
 			create_tables($db,$prefix);
+			
+			//写入初始配置	
+			$table_admin = $data['DB_PREFIX'] . "admin";
+			$table_user = $data['DB_PREFIX'] . "user";
+			$table_system = $data['DB_PREFIX'] . "system";
+			
+			$sql_a = "UPDATE $table_admin SET username='{$user}',email='{$email}',password='{$pass}',status=1,auth_group_id=1,create_time='{$create_time}' WHERE id = 1";
+			$sql_u = "UPDATE $table_user SET name='{$user}',email='{$email}',password='{$pass}',auth=1,status=1,create_time='{$create_time}' WHERE id = 1"; 
+			$sql_s = "UPDATE $table_system SET webname='{$webname}',webtitle='{$webtitle}',domain='{Request::domain()}',create_time='{$create_time}' WHERE id = 1";
+			
+			$res_a = $db->exec($sql_a);
+			//var_dump($db->errorInfo());
+			if($res_a == 0){
+				return json(['code'=>-1,'msg'=>"管理员账号写入失败"]); 
+			}
+			$res_u = $db->exec($sql_u);
+			if($res_u == 0){
+				return json(['code'=>-1,'msg'=>"前台管理员写入失败"]); 
+			}
+			$res_s = $db->exec($sql_s);
+			if($res_s == 0){
+				return json(['code'=>-1,'msg'=>"网站配置写入失败"]); 
+			}
 			$db = null;
 			
 
@@ -169,22 +201,13 @@ php;
 			echo '数据库配置文件创建失败！';
 		}
 
-		//写入初始配置	
-		$table_admin = $data['DB_PREFIX'] . "admin";
-		$table_user = $data['DB_PREFIX'] . "user";
-		$table_system = $data['DB_PREFIX'] . "system";
-
-		$res_a = Db::table($table_admin)->where('id',1)->update(['username'=>$user,'email'=>$email,'password'=>$pass,'status'=>1,'auth_group_id'=>1,'create_time'=>$create_time]);
-		$res_u = Db::table($table_user)->where('id',1)->update(['name'=>$user,'email'=>$email,'password'=>$pass,'auth'=>1,'status'=>1,'create_time'=>$create_time]);
-		$res_s = Db::table($table_system)->where('id',1)->update(['webname'=>$data['webname'],'webtitle'=>$data['webtitle'],'domain'=>Request::domain(),'create_time'=>time()]);
-
         }
 
 		//安装上锁
 		file_put_contents('../install.lock', 'lock');
 		Session::clear();
 
-		return json(['code' => 0,'msg'=>'安装成功','url'=>'/install.php/success/complete']);
+		return json(['code' => 0,'msg'=>'安装成功','url'=>'/install/success/complete']);
     } else {
 		return '请求失败！';
 		} 
