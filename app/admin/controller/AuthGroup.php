@@ -23,19 +23,26 @@ class AuthGroup extends AdminController
 	//角色
 	public function list()
 	{
+		
 		if(Request::isAjax()){
-			$role = Db::name('auth_group')->select();
+			$data = Request::only(['id']);
+			$map = array_filter($data);
+			$role = Db::name('auth_group')->field('id,title,limits,descr,status')->where('status',1)->where($map)->select();
 			$count = $role->count();
 			$res = [];
-			if($role){
+			if($count){
 				$res = ['code'=>0,'msg'=>'','count'=>$count];			
 				foreach($role as $k => $v){
 				$data = ['id'=>$v['id'],'rolename'=>$v['title'],'limits'=>$v['limits'],'descr'=>$v['descr'],'check'=>$v['status']];
 				$res['data'][] = $data; 
 				}
+			} else {
+				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
 			}
 			return json($res);
 		}
+		$roles = Db::name('auth_group')->field('id,title')->where('status',1)->select();
+		View::assign('roles',$roles);
 		return View::fetch('role');
 	}
 	

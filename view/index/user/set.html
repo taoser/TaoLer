@@ -120,11 +120,11 @@ $(function(){
 	$('#ziliao').click(function(){
 		$.ajax({
 		type:'post',
-		url:"{:url('index/user/set')}",
+		url:"{:url('user/set')}",
 		data:$('#zl').serialize(),
 		dataType:"json",
 		success:function(data){
-			if(data.code == 1){
+			if(data.code == 0){
 				layer.msg(data.msg,{
 					icon:6,
 					tiye:2000

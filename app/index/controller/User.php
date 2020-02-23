@@ -73,7 +73,7 @@ class User extends BaseController
 	public function set()
 	{
 		if(Request::isAjax()){
-			$data = Request::param();
+			$data = Request::only(['user_id','email','nickname','sex','city','sign']);
 			$validate = new \app\common\validate\User();
 			$result = $validate->scene('Set')->check($data);
 			if(!$result){
@@ -82,7 +82,7 @@ class User extends BaseController
                 $user = new \app\common\model\User();
                 $result = $user->setNew($data);
 				if($result==1){
-				    return ['code'=>1,'msg'=>'资料更新成功','url'=>'/index/user/set'];
+				    return ['code'=>0,'msg'=>'资料更新成功','url'=>'/index/user/set'];
 				} else {
 					$this->error($result);
 				}

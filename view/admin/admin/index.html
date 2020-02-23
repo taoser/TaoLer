@@ -8,13 +8,13 @@
           <div class="layui-inline">
             <label class="layui-form-label">登录名</label>
             <div class="layui-input-block">
-              <input type="text" name="loginname" placeholder="请输入" autocomplete="off" class="layui-input">
+              <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
             <label class="layui-form-label">手机</label>
             <div class="layui-input-block">
-              <input type="text" name="telphone" placeholder="请输入" autocomplete="off" class="layui-input">
+              <input type="text" name="mobile" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
@@ -26,14 +26,11 @@
           <div class="layui-inline">
             <label class="layui-form-label">角色</label>
             <div class="layui-input-block">
-              <select name="role">
-                <option value="0">管理员</option>
-                <option value="1">超级管理员</option>
-                <option value="2">纠错员</option>
-                <option value="3">采购员</option>
-                <option value="4">推销员</option>
-                <option value="5">运营人员</option>
-                <option value="6">编辑</option>
+              <select name="auth_group_id">
+			  <option value="">选择角色</option>
+			  {volist name="authGroup" id="vo"}
+                <option value="{$vo.id}">{$vo.title}</option>
+			  {/volist}
               </select>
             </div>
           </div>
@@ -94,7 +91,23 @@
     //监听搜索
     form.on('submit(LAY-user-back-search)', function(data){
       var field = data.field;
-      
+	  $.ajax({
+		type:"post",
+		url:"{:url('admin/admin/index')}",
+		data:{"id":field.id,"username":field.username,"mobile":field.mobile,"email":field.email,"auth_group_id":field.auth_group_id},
+		daType:"json",
+		success:function (data){
+			if (data.code == 0) {
+				
+			} else {
+				layer.open({
+					content:data.msg,
+					icon:5,
+					anim:6
+				});
+			}
+		}
+	});
       //执行重载
       table.reload('LAY-user-back-manage', {
         where: field

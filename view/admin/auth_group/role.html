@@ -10,15 +10,11 @@
             角色筛选
           </div>
           <div class="layui-inline">
-            <select name="rolename" lay-filter="LAY-user-adminrole-type">
-              <option value="-1">全部角色</option>
-              <option value="0">管理员</option>
-              <option value="1">超级管理员</option>
-              <option value="2">纠错员</option>
-              <option value="3">采购员</option>
-              <option value="4">推销员</option>
-              <option value="5">运营人员</option>
-              <option value="6">编辑</option>
+            <select name="id" lay-filter="LAY-user-adminrole-type">
+              <option value="">全部角色</option>
+			  {volist name="roles" id="vo"}
+              <option value="{$vo.id}">{$vo.title}</option>
+			  {/volist}
             </select>
           </div>
         </div>
@@ -55,12 +51,31 @@
     
     //搜索角色
     form.on('select(LAY-user-adminrole-type)', function(data){
-      //执行重载
-      table.reload('LAY-user-back-role', {
-        where: {
-          role: data.value
-        }
-      });
+	console.log(data);
+	  $.ajax({
+		type:"post",
+		url:"{:url('admin/AuthGroup/list')}",
+		data:{"id":data.value},
+		daType:"json",
+		success:function (data){
+			if (data.code == 0) {
+			  				
+			} else {
+				layer.open({
+					content:data.msg,
+					icon:5,
+					anim:6
+				});
+			}
+		}
+	});
+	//执行重载
+			  table.reload('LAY-user-back-role', {
+				where: {
+				  id: data.value
+				}
+			  });
+
     });
 	
 	//监听角色审核

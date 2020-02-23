@@ -24,23 +24,30 @@ class Admin extends AdminController
 	public function index()
 	{
 		if(Request::isAjax()){
+		$data = Request::only(['id','username','mobile','email','auth_group_id']);
+		$map = array_filter($data);
 			$admins = Db::name('admin')
 			->alias('a')
 			->join('auth_group u','a.auth_group_id = u.id')
-			->field('a.id as aid,username,mobile,email,title,last_login_ip,a.status as astatus,last_login_time')
+			->field('a.id as aid,username,mobile,email,auth_group_id,title,last_login_ip,a.status as astatus,last_login_time')
 			->where('a.delete_time',0)
+			->where($map)
 			->select();
 			
 			$count = $admins->count();
-			if($admins){
+			if($count){
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($admins as $k => $v){
 					$data = ['id'=>$v['aid'],'loginname'=>$v['username'],'telphone'=>$v['mobile'],'email'=>$v['email'],'role'=>$v['title'],'ip'=>$v['last_login_ip'],'check'=>$v['astatus'],'logintime'=>date("Y-m-d",$v['last_login_time'])];
 					$res['data'][] = $data;
 				}
+			} else {
+				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
 			}
 			return json($res);
 			}
+			$authGroup = Db::name('auth_group')->field('id,title')->select();
+			View::assign('authGroup',$authGroup);
 		return View::fetch();
 	}
 
@@ -73,9 +80,9 @@ class Admin extends AdminController
 			$data['create_time'] = time();
 			$salt = substr(md5($data['create_time']),-6);
 			$data['password'] = substr_replace(md5($data['password']),$salt,0,6);
-			$result = Db::name('admin')->save($data);
-			Db::name('auth_group_access')->save(['uid'=>$data['id'],'group_id'=>$data['auth_group_id']]);
-			if($result){
+			$adminId = Db::name('admin')->insertGetId($data);
+			Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
+			if($adminId){
 				$res = ['code'=>0,'msg'=>'添加成功'];
 			}else{
 				$res = ['code'=>-1,'msg'=>'添加失败'];
@@ -88,9 +95,9 @@ class Admin extends AdminController
 	}
 	
 	//管理员编辑
-	public function edit()
+	public function edit($id)
 	{
-		$admin = AdminModel::find(input('id'));
+		$admin = AdminModel::find($id);
 		
 		if(Request::isAjax()){
 			$data = Request::param();

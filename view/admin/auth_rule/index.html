@@ -12,7 +12,7 @@
         <table id="LAY-user-auth-rule" lay-filter="LAY-user-auth-rule"></table>  
 		<script type="text/html" id="rules-sort">
 		<div class="layui-input-inline" style="width: 30px; high: 30">
-			<input type="text" name="sort"  autocomplete="off" placeholder="排序" dataid="{{d.id}}" class="layui-input" value="{{d.sort}}">
+			<input type="text" name="sort"  autocomplete="off" placeholder="排序" dataid="{{d.id}}" lay-filter="sort" class="layui-input" value="{{d.sort}}">
 		</div>
         </script>
 		<script type="text/html" id="rules-title">
@@ -45,10 +45,10 @@
 <script>
 //排序
 	$(function(){
-		$('input[name=sort]').change(function(){
+		$('body').on('change','.layui-input',function(){
 		var id = $(this).attr('dataid'),
 			sort = $(this).val();
-			console.log(id);
+			
 			$.ajax({
 				type:'post',
 				url:"{:url('admin/AuthRule/sort')}",
@@ -60,7 +60,7 @@
 							icon:6,
 							time:2000
 						}
-						//,function(){location.reload();}
+						,function(){location.reload();}
 						);
 					} else {
 						layer.open({
@@ -172,7 +172,8 @@
 	  //console.log(data.value); //开关value值，也可以通过data.elem.value得到
 	  //console.log(data.othis); //得到美化后的DOM对象
 	}); 
-
+	
+	
     //事件
     var active = {
       batchdel: function(){
