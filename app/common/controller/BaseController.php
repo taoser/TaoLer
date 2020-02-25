@@ -249,7 +249,7 @@ abstract class BaseController
     protected function showSystem()
     {
         //1.查询分类表获取所有分类
-		$sysInfo = Db::name('system')->cache(true)->find(1);
+		$sysInfo = Db::name('system')->cache(120)->find(1);
         View::assign('sysInfo',$sysInfo);
     }
 	

@@ -212,8 +212,8 @@ layui.define(function(exports){
       ,cellMinWidth: 120
       ,cols: [[
         {type: 'numbers', fixed: 'left'}
-		,{field: 'content', title: '评论'}
-        ,{field: 'title', title: '帖子', minWidth: 300, templet: '<div><a href="/index/jie/{{d.cid}}.html" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
+		,{field: 'content', title: '评论', minWidth: 300}
+        ,{field: 'title', title: '帖子', minWidth: 200, templet: '<div><a href="/index/jie/{{d.cid}}.html" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
         ,{field: 'name', title: '评论者'}
  
       ]]

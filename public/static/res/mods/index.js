@@ -165,8 +165,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                           //执行上传实例
                           upload.render({
                               elem: '#uploadImg'
+							  ,acceptMime: 'image/*'
+							  ,exts: 'jpg|png|gif|bmp|jpeg'
                               ,url: '/index/article/text_img_upload'
-                              ,size: 1024
+                              ,size: 2048
                               ,done: function(res){
                                   if(res.status == 0){
                                       image.val(res.url);
