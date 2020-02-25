@@ -9,9 +9,6 @@ use think\facade\Session;
 
 class Index extends BaseController
 {
-	/**
-	* 安装向导
-	*/
 	// 检测是否安装过
 	protected function initialize(){
         if(file_exists('../install.lock')){
@@ -59,14 +56,15 @@ class Index extends BaseController
 		$data = Request::param();
 		//var_dump($data);
         if (!preg_match("/^[a-zA-Z]{1}([0-9a-zA-Z]|[._]){4,19}$/", $data['admin_user'])) {
-            die("<script>alert('后台管理用户名不符合规范：至少包含4个字符，需以字母开头');history.go(-1)</script>");
+			return json(['code'=>-1,'msg'=>"管理用户名：至少包含5个字符，需以字母开头"]);
         }
        
 		if (!preg_match("/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/", $data['admin_pass'])) {
-			die("<script>alert('登录密码至少包含6个字符。可使用字母，数字和符号。');history.go(-1)</script>");
+			return json(['code'=>-1,'msg'=>'登录密码至少包含6个字符。可使用字母，数字和符号']);
 		}
 		if ($data['admin_pass'] != $data['admin_pass2']) {
-			die("<script>alert('两次输入的密码不一致');history.go(-1)</script>");
+			return json(['code'=>-1,'msg'=>'两次输入的密码不一致']);
+			//die("<script>alert('两次输入的密码不一致');history.go(-1)</script>");
 		}
 
 		$email = $data['admin_email'];
@@ -74,9 +72,10 @@ class Index extends BaseController
 		$create_time = time();
 		$salt = substr(md5($create_time),-6);
 		$pass = md5(substr_replace(md5($data['admin_pass']),$salt,0,6));
-		$webtitle = $data['webtitle'];
 		$webname = $data['webname'];
-		
+		$webtitle = $data['webtitle'];
+		$web = Request::domain();
+		//数据库配置
 		$dbhost = $data['DB_HOST'];
 		$dbuser = $data['DB_USER'];
 		$dbpass = $data['DB_PWD'];
@@ -92,7 +91,7 @@ class Index extends BaseController
 			} 
 			catch(\PDOException $e) 
 			{ 
-				return json(['code'=>-1,'msg'=>"数据库连接失败" . $e->getMessage()]); 
+				return json(['code'=>-1,'msg'=>"数据库信息错误" . $e->getMessage()]); 
 			}
 			
 			$sql = 'CREATE DATABASE IF NOT EXISTS '.$dbname.' DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci'; 
@@ -103,16 +102,18 @@ class Index extends BaseController
 			$conn = null;
 			
 			//写入数据表
-						//创建数据库
 			try { 
 				$db = new \PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass); 
 			} 
 			catch(\PDOException $e) 
 			{ 
-				return json(['code'=>-1,'msg'=>"PDO数据库连接失败" . $e->getMessage()]); 
+				return json(['code'=>-1,'msg'=>"数据库连接失败" . $e->getMessage()]); 
 			}
-
-			create_tables($db,$prefix);
+			//创建表
+			$res = create_tables($db,$prefix);
+			if(!$res){
+				return json(['code'=>-1,'msg'=>"数据表创建失败"]); 
+			}
 			
 			//写入初始配置	
 			$table_admin = $data['DB_PREFIX'] . "admin";
@@ -121,7 +122,7 @@ class Index extends BaseController
 			
 			$sql_a = "UPDATE $table_admin SET username='{$user}',email='{$email}',password='{$pass}',status=1,auth_group_id=1,create_time='{$create_time}' WHERE id = 1";
 			$sql_u = "UPDATE $table_user SET name='{$user}',email='{$email}',password='{$pass}',auth=1,status=1,create_time='{$create_time}' WHERE id = 1"; 
-			$sql_s = "UPDATE $table_system SET webname='{$webname}',webtitle='{$webtitle}',domain='{Request::domain()}',create_time='{$create_time}' WHERE id = 1";
+			$sql_s = "UPDATE $table_system SET webname='{$webname}',webtitle='{$webtitle}',domain='{$web}',create_time='{$create_time}' WHERE id = 1";
 			
 			$res_a = $db->exec($sql_a);
 			//var_dump($db->errorInfo());

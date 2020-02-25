@@ -9,7 +9,7 @@
           <div class="layui-inline layuiadmin-input-useradmin">
             <label class="layui-form-label">回帖人</label>
             <div class="layui-input-block">
-              <input type="text" name="replyer" placeholder="请输入" autocomplete="off" class="layui-input">
+              <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
@@ -63,6 +63,23 @@
     //监听搜索
     form.on('submit(LAY-app-forumreply-search)', function(data){
       var field = data.field;
+	  $.ajax({
+		type:"post",
+		url:"{:url('admin/Forum/replys')}",
+		data:{field},
+		daType:"json",
+		success:function (data){
+			if (data.code == 0) {
+				
+			} else {
+				layer.open({
+					content:data.msg,
+					icon:5,
+					anim:6
+				});
+			}
+		}
+	});
       
       //执行重载
       table.reload('LAY-app-forumreply-list', {

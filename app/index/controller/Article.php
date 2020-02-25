@@ -200,8 +200,7 @@ class Article extends BaseController
 			$validate = new \app\common\validate\Article(); //调用验证器
 			$res = $validate->scene('Artadd')->check($data); //进行数据验证
 			
-			if(true !==$res){	
-				//echo '<script>alert("'.$res.'");location.back()</script>';
+			if(true !==$res){
 				return $this->error($validate->getError());
 			} else {	
 				$article = new \app\common\model\Article();
@@ -240,47 +239,13 @@ class Article extends BaseController
 		return json($res);
 	}
 	
-	//添加文章和编辑页富文本编辑器图片上传
-	public function lay_img_upload()
-    {
-        $file = Request()->file('file');
-        if(empty($file)){
-            $result["code"] = "1";
-            $result["msg"] = "请选择图片";
-            $result['data']["src"] = '';
-        }else{
-            // 移动到框架应用根目录/public/uploads/ 目录下
-            $info = $file->move('uploads/' );
-            if($info){
-                $infos = $info->getInfo();
-                // 源文件名
-                $name = $infos['name'];
- 
-                $name_path =str_replace('\\',"/",$info->getSaveName());
-                //成功上传后 获取上传信息
-                $result["code"] = '0';
-                $result["msg"] = "上传成功";
-                $result['data']["src"] = "/uploads/".$name_path;
-                $result['data']["title"] = $name;
-            }else{
-                // 上传失败获取错误信息
-                $result["code"] = "2";
-                $result["msg"] = "上传出错";
-                $result['data']["src"] ='';
-            }
-        }
- 
-        return json_encode($result);
- 
-    }
-	
 	//文本编辑器图片上传
 	public function text_img_upload()
     {
         $file = request()->file('file');
 		try {
 			validate(['file'=>'fileSize:2048|fileExt:jpg,png,gif'])
-            ->check(array($file));
+            ->check(['file'=>$file]);
 			$savename = \think\facade\Filesystem::disk('public')->putFile('article_pic',$file);
 		} catch (ValidateException $e) {
 			echo $e->getMessage();
@@ -296,7 +261,7 @@ class Article extends BaseController
 
             $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
         }else{
-            $res = ['status'=>1,'msg'=>'上传错误'];
+            $res = ['status'=>-1,'msg'=>'上传错误'];
         }
 	return json($res);
     }
@@ -305,26 +270,22 @@ class Article extends BaseController
 	//文章置顶，状态
 	public function jieset(){
 		$data = Request::param();
-		$article = ArticleModel::find($data['id']);
+		$article = ArticleModel::field('id,is_top,is_hot')->find($data['id']);
 		if($data['field'] === 'top') {
 			if($data['rank']==1){
 				$article->save(['is_top' => 1]);
-				$res['status'] = 0;
-				$res['msg'] ='置顶成功';
+				$res = ['status'=>0,'msg'=>'置顶成功'];
 			} else {
 				$article->save(['is_top' => 0]);
-				$res['status'] = 0;
-				$res['msg'] ='已取消置顶';
+				$res = ['status'=>0,'msg'=>'已取消置顶'];
 			}
 		} else {
 			if($data['rank']==1){
 				$article->save(['is_hot' => 1]);
-				$res['status'] = 0;
-				$res['msg'] ='已设精贴';
+				$res = ['status'=>0,'msg'=>'已设精贴'];
 			} else {
 				$article->save(['is_hot' => 0]);
-				$res['status'] = 0;
-				$res['msg'] ='精贴已取消';
+				$res = ['status'=>0,'msg'=>'精贴已取消'];
 			}
 		}
 		return json($res);	

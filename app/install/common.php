@@ -45,33 +45,41 @@ function write_config($config)
  * @param  resource $db 数据库连接资源
  * @param string $prefix 数据表前缀
  */
-function create_tables($db, $prefix = '') {
-	// 导入sql数据并创建表
+function create_tables($db, $prefix = '') 
+{
+	// 导入sql数据表
     $sql = file_get_contents('../app/install/data/taoler.sql');
-    //替换表前缀
-    $orginal = 'tao_';
-    ($orginal==$prefix) ? true : $sql = str_replace(" `{$orginal}", " `{$prefix}", $sql);
-    $sql_array=preg_split("/;[\r\n]+/", $sql);
-	//开始安装
-	//var_dump($sql_array);
+	if ($sql) {
+		//sql表前缀
+		$orginal = 'tao_';
+		($orginal==$prefix) ? true : $sql = str_replace(" `{$orginal}", " `{$prefix}", $sql);
+		$sql_array = preg_split("/;[\r\n]+/", $sql);
+		//var_dump($sql_array);
+	
+	//开始写入表
         foreach ($sql_array as $k => $v) {
             if (!empty($v)) {
 	            //$v=$v.';';
 	           if (substr($v, 0, 12) == 'CREATE TABLE') {
 		            $name = preg_replace("/^CREATE TABLE `(\w+)` .*/s", "\\1", $v);
 		            $msg = "创建数据表{$name}";
-		            if (false !== $db->query($v)) {
-						//echo $msg.'成功';
-		            } else {
+					$res = $db->query($v);
+		            if ($res == false) {
 		                echo $msg.'失败';
 		            }
 				} else {
-					$db->query($v);
+					//执行插入数据
+					$res = $db->query($v);
+					if ($res == false) {
+		                echo '数据插入失败';
+		            }
 				}
-	            //echo substr($v, 0, 12).'--';
-               // $db->query($v);
             }
         }
+	} else {
+		return false;
+	}
+   return true; 
 }
 
 function register_administrator($db, $prefix, $admin) {

@@ -64,7 +64,7 @@
 		  
           <div class="detail-hits" id="LAY_jieAdmin" data-id="{$article['id']}">
             <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
-			{if(session('user_name')==$article.user.name)}
+			{if(session('user_name')==$article.user.name  || $user.auth == 1)}
             <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">编辑此贴</a></span>
 			{/if}
           </div>

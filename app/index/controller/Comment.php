@@ -61,7 +61,7 @@ class Comment extends BaseController
 		return json($res);
 	}
 	
-		//更新评论
+	//更新评论
 	public function updateDa()
 	{
 		$this->isLogin();
@@ -103,7 +103,7 @@ class Comment extends BaseController
 			}
 			
 		} else {
-			return $res=['msg' => '你已赞过了'];
+			return $res=['status'=>1,'msg' => '你已赞过了'];
 		}
 	}	
 }

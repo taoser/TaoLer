@@ -19,22 +19,67 @@ class Forum extends AdminController
     //帖子列表
 	public function list()
 	{
-		if(Request::isAjax()){
+		if(Request::isAjax()){	
+		$data = Request::only(['id','name','title','sec']);
+		$where =array();
+//var_dump($data);
+		if (!empty($data['sec'])) {
+			switch ($data['sec']) {
+			case '0':
+			$data['status'] = $data['sec'];
+			break;
+			case '1':
+			$data['status'] = $data['sec'];
+			break;
+			case '2':
+			$data['is_top'] = 1;
+			break;
+			case '3':
+			$data['is_hot'] = 1;
+			break;
+			case '4':
+			$data['is_replay'] = 0;
+			break;
+		}
+		unset($data['sec']);
+		}
+		
+		if(!empty($data['id'])){
+			$data['a.id'] = $data['id'];
+			unset($data['id']);
+		}
+		if(!empty($data['status'])){
+			$data['a.status'] = $data['status'];
+			unset($data['status']);
+		}
+		if(!empty($data['title'])){
+			$where[] = ['title', 'like', '%'.$data['title'].'%'];
+			//var_dump($map);
+			unset($data['title']);
+		}
+		
+		$map = array_filter($data);
+
 			$forumList = Db::name('article')
 			->alias('a')
 			->join('user u','a.user_id = u.id')
 			->field('a.id as aid,name,user_img,title,a.update_time as update_time,is_top,is_hot,a.status as astatus')
 			->where('a.delete_time',0)
+			->where($map)
+			->where($where)
 			->order('a.create_time', 'desc')
 			->paginate(15);
 			$res = [];
-			if($forumList){
+			$count = $forumList->total();
+			if($count){
 				$res['code'] = 0;
 				$res['msg'] = '';
-				$res['count'] = $forumList->total();
+				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
 				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'content'=>$v['title'],'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'check'=>$v['astatus']];
 				}
+			} else {
+				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
 			}
 			return json($res);
 		}
@@ -171,6 +216,14 @@ class Forum extends AdminController
 	public function replys()
 	{
 		if(Request::isAjax()) {
+			$data = Request::only(['name','content']);
+			$map = array_filter($data);
+			$where = array();
+			if(!empty($map['content'])){
+				$where[] = ['a.content','like','%'.$map['content'].'%'];
+				unset($map['content']);
+			}
+
 /*			
 			$replys = Comment::field('id,article_id,user_id,content,create_time')->with([
 				'user' => function($query){
@@ -187,17 +240,21 @@ class Forum extends AdminController
 				->join('article c','a.article_id = c.id')
 				->field('a.id as aid,name,title,user_img,a.content as content,a.create_time as create_time,a.status as astatus,c.id as cid')
 				->where('a.delete_time',0)
+				->where($map)
+				->where($where)
 				->order('a.create_time', 'desc')
 				->paginate(15);
 			
 			$count = $replys->total();
 			$res = [];
-			if ($replys) {
+			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
 					//$res['data'][] = ['id'=>$v['id'],'replyer'=>$v->user->name,'cardid'=>$v->article->title,'avatar'=>$v->user->user_img,'content'=>$v['content'],'replytime'=>$v['create_time']];
 					$res['data'][] = ['id'=>$v['aid'],'replyer'=>$v['name'],'cardid'=>$v['title'],'avatar'=>$v['user_img'],'content'=>$v['content'],'replytime'=>date("Y-m-d",$v['create_time']),'check'=>$v['astatus'],'cid'=>$v['cid']];
 				}
+			} else {
+				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
 			}
 			return json($res);
 			}

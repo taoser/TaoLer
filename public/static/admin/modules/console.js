@@ -188,32 +188,34 @@ layui.define(function(exports){
     var $ = layui.$
     ,table = layui.table;
     
-    //今日热搜
+    //本周发贴
     table.render({
       elem: '#LAY-index-topSearch'
-      ,url: layui.setter.base + 'json/console/top-search.js' //模拟接口
-      ,page: true
-      ,cols: [[
-        {type: 'numbers', fixed: 'left'}
-        ,{field: 'keywords', title: '关键词', minWidth: 300, templet: '<div><a href="https://www.baidu.com/s?wd={{ d.keywords }}" target="_blank" class="layui-table-link">{{ d.keywords }}</div>'}
-        ,{field: 'frequency', title: '搜索次数', minWidth: 120, sort: true}
-        ,{field: 'userNums', title: '用户数', sort: true}
-      ]]
-      ,skin: 'line'
-    });
-    
-    //今日热贴
-    table.render({
-      elem: '#LAY-index-topCard'
-      ,url: layui.setter.base + 'json/console/top-card.js' //模拟接口
+      ,url: '/admin/index/forums' //模拟接口
       ,page: true
       ,cellMinWidth: 120
       ,cols: [[
         {type: 'numbers', fixed: 'left'}
-        ,{field: 'title', title: '标题', minWidth: 300, templet: '<div><a href="{{ d.href }}" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
-        ,{field: 'username', title: '发帖者'}
-        ,{field: 'channel', title: '类别'}
-        ,{field: 'crt', title: '点击率', sort: true}
+        ,{field: 'title', title: '标题', minWidth: 300, templet: '<div><a href="/index/jie/{{d.id}}.html" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
+        ,{field: 'name', title: '发帖者'}
+        ,{field: 'catename', title: '类别'}
+        ,{field: 'pv', title: '点击率', sort: true}
+      ]]
+      ,skin: 'line'
+    });
+    
+    //本周评论
+    table.render({
+      elem: '#LAY-index-topCard'
+      ,url: '/admin/index/replys' //模拟接口
+      ,page: true
+      ,cellMinWidth: 120
+      ,cols: [[
+        {type: 'numbers', fixed: 'left'}
+		,{field: 'content', title: '评论'}
+        ,{field: 'title', title: '帖子', minWidth: 300, templet: '<div><a href="/index/jie/{{d.cid}}.html" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
+        ,{field: 'name', title: '评论者'}
+ 
       ]]
       ,skin: 'line'
     });
