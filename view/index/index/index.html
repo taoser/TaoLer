@@ -32,7 +32,7 @@
           <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
         </div>
         <ul class="fly-list">
-		{volist name="artTop" id="top"}
+		{volist name="artTop" id="top"  empty="还没有推荐"}
           <li>
             <a href="{:url('user/home',['id'=>$top.user_id])}" class="fly-avatar">
               <img src="{$top.user.user_img}" alt="{$top.user.name}">
@@ -68,7 +68,7 @@
       <div class="fly-panel" style="margin-bottom: 0;">
 	  {include file="public/filter" /}
         <ul class="fly-list">   
-		{volist name="artList" id="art"}
+		{volist name="artList" id="art" empty="还没有帖子"}
           <li>
             <a href="{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
               <img src="{$art.user_id|getUserImg}" alt="{$art.user.name}">  

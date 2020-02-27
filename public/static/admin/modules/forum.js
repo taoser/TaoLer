@@ -19,13 +19,14 @@ layui.define(['table', 'form'], function(exports){
     ,url: '/admin/Forum/list' //帖子数据接口
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
-      ,{field: 'id', width: 100, title: 'ID', sort: true}
-      ,{field: 'poster', title: '发帖人'}
-      ,{field: 'avatar', title: '头像', width: 100, templet: '#imgTpl'}
-      ,{field: 'content', title: '发帖内容',templet: '#title'}
-      ,{field: 'posttime', title: '发帖时间', sort: true}
+      ,{field: 'id', width: 55, title: 'ID', sort: true}
+      ,{field: 'poster', title: '贴主'}
+      ,{field: 'avatar', title: '头像', width: 100, templet: '#imgTpl', align: 'center'}
+      ,{field: 'content', title: '标题', width: 200,templet: '#title'}
+      ,{field: 'posttime', title: '时间', sort: true}
       ,{field: 'top', title: '置顶', templet: '#buttonTpl', minWidth: 80, align: 'center'}
 	  ,{field: 'hot', title: '精贴', templet: '#buttonHot', minWidth: 80, align: 'center'}
+	  ,{field: 'reply', title: '评论状态', templet: '#buttonReply', minWidth: 80, align: 'center'}
 	  ,{field: 'check', title: '审帖', templet: '#buttonCheck', minWidth: 80, align: 'center'}
       ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-forum-list'}
     ]]

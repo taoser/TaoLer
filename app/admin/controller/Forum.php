@@ -22,14 +22,10 @@ class Forum extends AdminController
 		if(Request::isAjax()){	
 		$data = Request::only(['id','name','title','sec']);
 		$where =array();
-//var_dump($data);
 		if (!empty($data['sec'])) {
 			switch ($data['sec']) {
-			case '0':
-			$data['status'] = $data['sec'];
-			break;
 			case '1':
-			$data['status'] = $data['sec'];
+			$data['a.status'] = 1;
 			break;
 			case '2':
 			$data['is_top'] = 1;
@@ -38,32 +34,32 @@ class Forum extends AdminController
 			$data['is_hot'] = 1;
 			break;
 			case '4':
-			$data['is_replay'] = 0;
+			$data['is_reply'] = 0;
 			break;
+			case '5':
+			$data['a.status'] = 0;
+			break;
+			}
 		}
 		unset($data['sec']);
-		}
-		
+		unset($data['status']);
+
 		if(!empty($data['id'])){
 			$data['a.id'] = $data['id'];
 			unset($data['id']);
 		}
-		if(!empty($data['status'])){
-			$data['a.status'] = $data['status'];
-			unset($data['status']);
-		}
+		
 		if(!empty($data['title'])){
 			$where[] = ['title', 'like', '%'.$data['title'].'%'];
-			//var_dump($map);
 			unset($data['title']);
 		}
-		
-		$map = array_filter($data);
+
+		$map = array_filter($data,[$this,"filtr"]);
 
 			$forumList = Db::name('article')
 			->alias('a')
 			->join('user u','a.user_id = u.id')
-			->field('a.id as aid,name,user_img,title,a.update_time as update_time,is_top,is_hot,a.status as astatus')
+			->field('a.id as aid,name,user_img,title,a.update_time as update_time,is_top,is_hot,is_reply,a.status as status')
 			->where('a.delete_time',0)
 			->where($map)
 			->where($where)
@@ -76,7 +72,7 @@ class Forum extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'content'=>$v['title'],'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'check'=>$v['astatus']];
+				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'content'=>$v['title'],'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
@@ -298,5 +294,12 @@ class Forum extends AdminController
 		}else {
 			return json(['code'=>-1,'msg'=>'审核出错']);
 		}
+	}
+	//array_filter过滤函数
+	public function  filtr($arr){
+			if($arr === '' || $arr === null){
+				return false;
+			}
+        return true;
 	}
 }

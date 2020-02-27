@@ -31,9 +31,8 @@
                 <option value="1">正常</option>
                 <option value="2">置顶</option>
 				<option value="3">热门</option>
-				<option value="4">禁回</option>
-				<option value="0">封禁</option>
-                
+				<option value="4">禁评</option>
+				<option value="5">封禁</option>
               </select>
             </div>
           </div>
@@ -69,7 +68,14 @@
           {{#  } else { }}
             <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
           {{#  } }}
-        </script> 
+        </script>
+		<script type="text/html" id="buttonReply">
+            {{#  if(d.reply == 1){ }}
+            <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
+          {{#  } else { }}
+            <button class="layui-btn  layui-btn-xs">禁评</button>
+          {{#  } }}
+        </script>
 		<script type="text/html" id="buttonCheck">
             {if condition="checkRuleButton('admin/forum/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="forumcheck" lay-text="正常|封禁" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无审核权</button>{/if}
         </script>

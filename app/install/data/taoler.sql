@@ -46,7 +46,7 @@ CREATE TABLE `tao_article` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 
-INSERT INTO `tao_article` VALUES ('1', 'Fly Template 社区模版', '[quote]\r\n  你们认为layui官方Fly Template 社区模版怎么样？\r\n[/quote]\r\nimg[https://cdn.layui.com/upload/2017_11/168_1512035128058_80242.jpg] \r\n你喜欢吗？\r\n很多人都说比较喜欢，我个人认为不错的，这个板子非常喜欢，我看到有一些人做了开发，可惜的是都没有很好的维护，有的漏洞比较多，不完善，很美好的一个板子，但没有长久 的更新，非常的可惜。\r\n如果用别人的不好用，那我就做一个出来吧。喜欢的人多关注，适当时候放出来大家一起用。\r\n关于详情页的内容解析\r\n该模板自带一个特定语法的编辑器，当你把内容存储到数据库后，在页面读取后浏览，会发现诸如“表情、代码、图片”等无法解析，这是因为需要对该内容进行一次转义，通常来说这是在服务端完成的，但鉴于简单化，你还可以直接在前端去解析，在模板的detail.html中，我们已经把相关的代码写好了，你只需打开注释即可（在代码的最下面）。当然，如果觉得编辑器无法满足你的需求，你也可以把该编辑器换成别的HTML编辑器或MarkDown编辑器。', '1', '1', '1', '0', '0', '1', '155', '0', null, null, '1546698225', '1577772362', '0');
+INSERT INTO `tao_article` VALUES ('1', 'Fly Template 社区模版', '[quote]\r\n  你们认为layui官方Fly Template 社区模版怎么样？\r\n[/quote]\r\n你喜欢吗？\r\n很多人都说比较喜欢，我个人认为不错的，这个板子非常喜欢，我看到有一些人做了开发，可惜的是都没有很好的维护，有的漏洞比较多，不完善，很美好的一个板子，但没有长久 的更新，非常的可惜。\r\n如果用别人的不好用，那我就做一个出来吧。喜欢的人多关注，适当时候放出来大家一起用。\r\n关于详情页的内容解析\r\n该模板自带一个特定语法的编辑器，当你把内容存储到数据库后，在页面读取后浏览，会发现诸如“表情、代码、图片”等无法解析，这是因为需要对该内容进行一次转义，通常来说这是在服务端完成的，但鉴于简单化，你还可以直接在前端去解析，在模板的detail.html中，我们已经把相关的代码写好了，你只需打开注释即可（在代码的最下面）。当然，如果觉得编辑器无法满足你的需求，你也可以把该编辑器换成别的HTML编辑器或MarkDown编辑器。', '1', '1', '1', '0', '0', '1', '155', '0', null, null, '1546698225', '1577772362', '0');
 
 DROP TABLE IF EXISTS `tao_auth_group`;
 CREATE TABLE `tao_auth_group` (
@@ -115,7 +115,7 @@ INSERT INTO `tao_auth_rule` VALUES ('10', 'admin/set/website', '网站设置', '
 INSERT INTO `tao_auth_rule` VALUES ('11', 'admin/set/email', '邮件服务', '1', '1', '2', '1', '', '1', '3', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('12', 'admin/Admin/info', '基本资料', '1', '1', '3', '1', '', '1', '50', '', '0', '1578980034', '0');
 INSERT INTO `tao_auth_rule` VALUES ('13', 'admin/Admin/repass', '修改密码', '1', '1', '3', '1', '', '1', '51', '', '0', '1578980034', '0');
-INSERT INTO `tao_auth_rule` VALUES ('15', 'admin/Forum/list', '帖子列表', '1', '1', '5', '1', '', '1', '1', '', '0', '1578902605', '0');
+INSERT INTO `tao_auth_rule` VALUES ('15', 'admin/Forum/list', '帖子管理', '1', '1', '5', '1', '', '1', '1', '', '0', '1578902605', '0');
 INSERT INTO `tao_auth_rule` VALUES ('16', 'admin/Forum/tags', '分类管理', '1', '1', '5', '1', '', '1', '11', '', '0', '1578904950', '0');
 INSERT INTO `tao_auth_rule` VALUES ('17', 'admin/Forum/replys', '评论管理', '1', '1', '5', '1', '', '1', '7', '', '0', '1578904590', '0');
 INSERT INTO `tao_auth_rule` VALUES ('18', 'admin/slider/index', '广告投放', '1', '1', '2', '1', '', '1', '4', '', '0', '0', '0');
@@ -194,8 +194,6 @@ CREATE TABLE `tao_collection` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=149 DEFAULT CHARSET=utf8 COMMENT='文章收藏表';
 
-INSERT INTO `tao_collection` VALUES ('141', '11', '1', '1567586177', '0');
-
 
 DROP TABLE IF EXISTS `tao_comment`;
 CREATE TABLE `tao_comment` (
@@ -248,15 +246,7 @@ CREATE TABLE `tao_slider` (
 ) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_slider` VALUES ('1', 'CODING', '1', '/storage/slider/F1.jpg', '#', '', '1574870400', '1575043200', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('2', '无人机', '1', '/storage/slider/F2.jpg', 'www.taobao.com', '', '-28800', '1606665600', '1', '0', '0', '0');
 INSERT INTO `tao_slider` VALUES ('3', '通用右栏底部广告', '2', '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'http://www.aieok.com', '', '1571155200', '1609344000', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('4', 'Layui前端经典框架', '3', '/storage/slider/20191210/d35a49fda5839d4b27f65076fb57b7f2.jpg', 'https://www.layui.com', '#1E9FFF', '1575907200', '1609344000', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('5', 'Taoler专业社区系统就是强大', '4', '/storage/slider/20191210/e87f15527f32e690538671753010fd00.jpg', 'http://www.aieok.com', '', '-28800', '1609344000', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('6', '更快更好的PHP快速开发框架', '5', '', 'http://www.thinkphp.cn', '', '1577894400', '1640880000', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('7', 'Layui前端框架', '6', '', 'https://www.layui.com', '', '1577894400', '1612022400', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('8', 'ThinkPHP框架', '6', '', 'http://www.thinkphp.cn/', '', '1577894400', '1612022400', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('9', 'Taoler社区系统', '6', '', 'http://www.aieok.com', '', '1577894400', '2147483647', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('10', 'Flay模板-layui社区', '3', '', 'https://fly.layui.com/', '#009688', '1577894400', '1612022400', '1', '0', '0', '0');
 
 
 DROP TABLE IF EXISTS `tao_system`;
@@ -349,9 +339,6 @@ CREATE TABLE `tao_user_sign` (
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='用户签到表';
-
-INSERT INTO `tao_user_sign` VALUES ('16', '2', '1', '0', '0', '1558750514', '0');
-
 
 
 DROP TABLE IF EXISTS `tao_user_signrule`;
