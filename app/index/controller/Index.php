@@ -5,6 +5,7 @@ use app\common\controller\BaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
+use think\facade\Cache;
 use app\common\model\Article;
 use app\common\model\User;
 use app\common\model\Cate;
@@ -17,39 +18,63 @@ class Index extends BaseController
     {
 		$types = input('type');
 		//幻灯
-		$sliders = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',1)->whereTime('slid_over','>=',time())->select();
-	
+		$sliders = Cache::get('slider');
+		if(!$sliders){
+			$sliders = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',1)->whereTime('slid_over','>=',time())->select();
+			Cache::set('slider',$sliders,3600);
+		}
+		
 		//置顶文章
-		$artTop = Article::field('id,title,cate_id,user_id,create_time,is_top')->where(['is_top'=>1,'status'=>1,'delete_time'=>0])->with([
+		$artTop = Cache::get('arttop');
+		if(!$artTop){
+			$artTop = Article::field('id,title,cate_id,user_id,create_time,is_top')->where(['is_top'=>1,'status'=>1,'delete_time'=>0])->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
 			'user' => function($query){
 				$query->field('id,name,nickname,user_img,area_id');
 			}
-        ])->withCount(['comments'])->order('create_time','desc')->limit(5)->withCache(30)->select();
-	
-		//首页文章显示15条
-		$artList = Article::field('id,title,cate_id,user_id,create_time,is_hot')->with([
+			])->withCount(['comments'])->order('create_time','desc')->limit(5)->select();
+			Cache::set('arttop',$artTop,60);
+		}
+		
+		//首页文章显示20条
+		$artList = Cache::get('artlist');
+		if(!$artList){
+			$artList = Article::field('id,title,cate_id,user_id,create_time,is_hot')->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
 			'user' => function($query){
 				$query->field('id,name,nickname,user_img,area_id');
 			}
-        ])->withCount(['comments'])->where(['status'=>1,'delete_time'=>0])->order('create_time','desc')->limit(15)->withCache(30)->select();
-
+			])->withCount(['comments'])->where(['status'=>1,'delete_time'=>0])->order('create_time','desc')->limit(20)->select();
+			Cache::set('artlist',$artList,60);
+		}
+		
 		//热议文章
 		$artHot = Article::field('id,title')->withCount('comments')->where(['status'=>1,'delete_time'=>0])->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
-		
+
 		//首页赞助
-		$ad_index = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>3])->whereTime('slid_over','>=',time())->select();
+		$ad_index = Cache::get('adindex');
+		if(!$ad_index){
+			$ad_index = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>3])->whereTime('slid_over','>=',time())->select();
+			Cache::set('adindex',$ad_index,3600);
+		}
 		
 		//首页右栏
-		$ad_comm = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>2])->whereTime('slid_over','>=',time())->select();
+		$ad_comm = Cache::get('adcomm');
+		if(!$ad_comm){
+			$ad_comm = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>2])->whereTime('slid_over','>=',time())->select();
+			Cache::set('adcomm',$ad_comm,3600);
+		}
 		
 		//友情链接
-		$friend_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>6])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
+		$friend_links = Cache::get('flinks');
+		if(!$friend_links){
+			$friend_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>6])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
+			Cache::set('flinks',$friend_links,3600);
+		}
 		
 		$vs = [
 			'slider'	=>	$sliders,
@@ -100,30 +125,30 @@ class Index extends BaseController
         $map[] = ['status','=',1]; //这里等号不能省略
 
         //实现搜索功能
-        $keywords = input('keywords');
-        if(!empty($keywords)){
+        $keywords = Request::only(['keywords']);
+		//var_dump($keywords['keywords']);
+        if(!empty($keywords['keywords'])){
 			//条件2
-            $map[] = ['title','like','%'.$keywords.'%'];
+            $map[] = ['title','like','%'.$keywords['keywords'].'%'];
 			$artList = Article::where($map)->withCount('comments')->order('create_time','desc')->paginate(10);
 			$counts = $artList->count(); 
 			$searchs = [
 				'artList' => $artList,
-				'keywords' => $keywords,
+				'keywords' => $keywords['keywords'],
 				'counts' => $counts
-			];
-			
+			];	
+					
+        } else {
+			return response('输入非法');
+		}
 		View::assign($searchs);
-			//友情链接
-		$friend_links = Db::name('friend_link')->field('linkname,linksrc')->select();
-		View::assign('flinks',$friend_links);
+		//友情链接
+		$friend_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>6])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
 		
 		//	查询热议
 		$artHot = Article::withCount('comments')->field('title,comments_count')->where('status',1)->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
-		View::assign('artHot',$artHot);
-			    	
-        } else{
-			return '请输入关键词';
-		}
+		
+		View::assign(['flinks'=>$friend_links,'artHot'=>$artHot]);
 		return View::fetch('search');
 	}
 

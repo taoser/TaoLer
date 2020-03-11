@@ -14,6 +14,7 @@ use think\facade\Cache;
 use think\facade\View;
 use think\facade\Db;
 use taoser\think\Auth;
+use taoler\com\Files;
 
 /**
  * 控制器基础类
@@ -234,5 +235,16 @@ abstract class AdminController
 		}
 	  }
 	}
+	//清除缓存Cache
+	public function clearData(){
+        $dir = app()->getRootPath().'runtime/admin/temp';
+        $cache = app()->getRootPath().'runtime/cache';
+        if(is_dir($cache)){
+            Files::delDirs($cache);
+        }
+        if(Files::delDirs($dir) ){
+            return json(['code'=>0,'msg'=>'清除成功']);
+        }
+    }
 
 }

@@ -226,7 +226,7 @@ abstract class BaseController
     protected function showNav()
     {
         //1.查询分类表获取所有分类
-		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->select();
+		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache(3600)->select();
 		
         //2.将catelist变量赋给模板 公共模板nav.html
         View::assign('cateList',$cateList);
@@ -236,20 +236,17 @@ abstract class BaseController
 	//显示用户
     protected function showUser()
     {
-		$user['user_id'] = Session::get('user_id');
         //1.查询用户
-		$user = Db::name('user')->field('id,name,nickname,user_img,sex,auth,city,email,sign,point')->where('id',$user['user_id'])->find();
-	
-        //2.将User变量赋给模板 公共模板nav.html
-        View::assign('user',$user);
-
+		$user = Db::name('user')->field('id,name,nickname,user_img,sex,auth,city,email,sign,point')->where('id',Session::get('user_id'))->cache(120)->find();
+		//2.将User变量赋给模板 公共模板nav.html
+		View::assign('user',$user);
     }
 	
 	 //显示网站设置
     protected function showSystem()
     {
         //1.查询分类表获取所有分类
-		$sysInfo = Db::name('system')->cache(120)->find(1);
+		$sysInfo = Db::name('system')->cache(3600)->find(1);
         View::assign('sysInfo',$sysInfo);
     }
 	

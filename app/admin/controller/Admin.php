@@ -17,6 +17,7 @@ use think\facade\Db;
 use think\facade\Session;
 use think\exception\ValidateException;
 use app\common\model\User as UserModel;
+use taoler\com\Files;
 
 class Admin extends AdminController
 {
@@ -187,5 +188,19 @@ class Admin extends AdminController
 		}	
 		View::assign('admin',$admin);
 		return View::fetch('set/user/repass');
+    }
+	
+	//清除缓存Cache
+	public function clearCache(){
+        $atemp = app()->getRootPath().'runtime/admin/temp/';
+		$itemp = app()->getRootPath().'runtime/index/temp/';
+        $cache = app()->getRootPath().'runtime/cache/';
+		Files::delDirAndFile($atemp);
+		Files::delDirAndFile($itemp);
+        if(is_dir($cache) && Files::delDirAndFile($cache)){
+           return json(['code'=>0,'msg'=>'清除缓存成功']);
+        } else {
+			return json(['code'=>-1,'msg'=>'清除缓存失败']);
+		} 
     }
 }

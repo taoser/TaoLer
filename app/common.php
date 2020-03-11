@@ -4,6 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use think\facade\Request;
 use think\facade\Db;
+use think\facade\Cache;
 use think\facade\Session;
 use taoser\think\Auth;
 // 应用公共文件

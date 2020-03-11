@@ -5,6 +5,7 @@ use app\common\controller\BaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
+use think\facade\Cache;
 use app\common\model\Cate;
 use app\common\model\User;
 use app\common\model\Comment;
@@ -94,9 +95,9 @@ class Article extends BaseController
 	//文章详情页
     public function detail($id)
     {
-		//获取文章ID
-		//$id = Request::param('id');
-		//查询文章
+		$article = Cache::get('article');
+		if(!$article){
+			//查询文章
 		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,tags,create_time')->where('status',1)->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
@@ -105,6 +106,8 @@ class Article extends BaseController
 				$query->field('id,name,nickname,user_img,area_id');
 			}
         ])->find($id);
+		Cache::set('article',$article,3600);
+		}
 		$comments = $article->comments()->where('status',1)->select();
 		$article->inc('pv')->update();
 

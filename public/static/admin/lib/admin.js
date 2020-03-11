@@ -450,6 +450,33 @@ layui.define('view', function(exports){
         iconElem.addClass(SCREEN_FULL).removeClass(SCREEN_REST);
       }
     }
+	
+	//清除缓存
+    ,clearcache: function(){
+		loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+      admin.req({
+	   type: "post"
+      ,url: '/admin/Admin/clearCache'
+      ,success: function(data){
+		  if (data.code == 0) {
+			layer.close(loading);
+				layer.msg(data.msg,{
+					icon:6,
+					time:2000
+				});
+			} else {
+				layer.close(loading);
+				layer.open({
+					content:data.msg,
+					icon:5,
+					anim:6
+				});
+			}
+		}
+		});
+    }
 
     //弹出关于面板
     ,about: function(){
