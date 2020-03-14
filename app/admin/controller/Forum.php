@@ -147,7 +147,7 @@ class Forum extends AdminController
 				$res['count']= count($list);
 				$res['data'] = [];
 				foreach($list as $k=>$v){
-				$res['data'][] = ['id' => $v['id'],'tags'=>$v['catename'],'sort'=>$v['sort'],'ename'=>$v['ename']];
+				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'tags'=>$v['catename'],'ename'=>$v['ename'],'desc'=>$v['desc']];
 				}
 			}
 			return json($res);
@@ -160,8 +160,7 @@ class Forum extends AdminController
 	{
 		if(Request::isAjax()){
 		$data = Request::param();
-		//halt($data);
-		$list = Db::name('cate')->save($data);
+		$list = Db::name('cate')->cache('catename')->save($data);
 		
 			if($list){
 				return json(['code'=>0,'msg'=>'添加分类成功']);
@@ -178,8 +177,7 @@ class Forum extends AdminController
 	{
 		if(Request::isAjax()){
 		$data = Request::param();
-		//halt($data);
-		$list = Db::name('cate')->where('id',$data['id'])->save($data);
+		$list = Db::name('cate')->cache('catename')->update($data);
 		
 			if($list){
 				return json(['code'=>0,'msg'=>'修改分类成功']);
@@ -201,6 +199,7 @@ class Forum extends AdminController
 		
 		
 			if($result == 1){
+				Cache::tag('catename')->clear();
 				return json(['code'=>0,'msg'=>'删除分类成功']);
 			}else{
 				return json(['code'=>-1,'msg'=>'删除分类失败']);

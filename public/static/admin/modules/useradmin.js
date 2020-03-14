@@ -26,7 +26,9 @@ layui.define(['table', 'form'], function(exports){
       ,{field: 'email', title: '邮箱'}
       ,{field: 'sex', width: 60, title: '性别',templet: '#sex'}
       ,{field: 'ip', title: '登录IP'}
-      ,{field: 'jointime', title: '申请时间', sort: true}
+	  ,{field: 'city', title: '城市'}
+	  ,{field: 'logintime', title: '最后登录', sort: true}
+      ,{field: 'jointime', title: '注册时间', sort: true}
 	  ,{field: 'check', title: '状态', templet: '#buttonCheck', minWidth: 80, align: 'center'}
 	  ,{field: 'auth', title: '超级管理员', templet: '#buttonAuth', minWidth: 80, align: 'center'}
       ,{title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#table-useradmin-webuser'}

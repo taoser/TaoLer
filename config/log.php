@@ -40,6 +40,38 @@ return [
             'realtime_write' => false,
         ],
         // 其它日志通道配置
+		'login' => [
+            // 日志记录方式
+            'type'           => 'File',
+            // 日志保存目录
+            'path'           => '../runtime/log/login/',
+            // 单文件日志写入
+            'single'         => false,
+            // 最大日志文件数量
+            'max_files'      => 0,
+            // 日志处理
+            'processor'      => null,
+            // 日志输出格式化
+            'format'         => '[%s][%s] %s',
+            // 是否实时写入
+            'realtime_write' => true,
+        ],
+		'browse' => [
+            // 日志记录方式
+            'type'           => 'File',
+            // 日志保存目录
+            'path'           => '../runtime/log/browse/',
+            // 单文件日志写入
+            'single'         => false,
+            // 最大日志文件数量
+            'max_files'      => 0,
+            // 日志处理
+            'processor'      => null,
+            // 日志输出格式化
+            'format'         => '[%s][%s] %s',
+            // 是否实时写入
+            'realtime_write' => true,
+        ],
     ],
 
 ];

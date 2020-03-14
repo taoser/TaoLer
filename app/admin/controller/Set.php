@@ -30,7 +30,7 @@ class Set extends AdminController
 			unset($data['file']);
 			//$system = System::find(1);
 			//$result = $system->allowField(['webname','webtitle','domain','keywords','descript','copyright','blackname'])->save($data);
-			$result = Db::name('system')->cache(true)->where('id', 1)->update($data);
+			$result = Db::name('system')->cache('system')->where('id', 1)->update($data);
 			if($result){
 				return json(['code'=>0,'msg'=>'更新成功']);
 			} else {

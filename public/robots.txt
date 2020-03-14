@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:
+
+Disallow: /admin/
+Disallow: /index/user/
+Disallow: /index/api/
+Disallow: /index/login.html
+Disallow: /index/reg.html
+Disallow: /*?*

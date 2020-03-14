@@ -2,7 +2,7 @@
 
 {block name="title"}{$sysInfo.webname}-{$sysInfo.webtitle}{/block}
 {block name="keywords"}{$sysInfo.keywords}{/block}
-{block name="description"} {$sysInfo.descript}{/block}
+{block name="description"}{$sysInfo.descript}{/block}
 {block name="column"}{include file="public/column" /}{/block}
 
 {block name="content"}
@@ -102,7 +102,7 @@
         </ul>
         <div style="text-align: center">
           <div class="laypage-main">
-            <a href="{:url('article/cate')}" class="laypage-next">更多帖子</a>
+            <a href="{:url('article/cate',['ename'=>'all'])}" class="laypage-next">更多帖子</a>
           </div>
         </div>
 

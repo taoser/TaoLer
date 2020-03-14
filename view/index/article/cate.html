@@ -1,7 +1,8 @@
 
 {extend name="public/base" /}
-{block name="title"}{$Request.param.ename|getCateName} - {$sysInfo.webname}-帖子列表{/block}
-
+{block name="title"}{$Request.param.ename|getCateName}-{$sysInfo.webname}{/block}
+{block name="keywords"}{$Request.param.ename|getCateName},{$sysInfo.webname}{/block}
+{block name="description"}{$Request.param.ename|getCateDesc}{/block}
 {block name="column"}{include file="/public/column" /}{/block}
 
 {block name="content"}
@@ -15,7 +16,7 @@
 		{volist name="artList" id="art"}
           <li>
             <a href="{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
-              <img src="{$art.user_id|getUserImg}" alt="{$art.user_id|getUserName}">
+              <img src="{$art.user.user_img}" alt="{$art.user.name}">
             </a>
             <h2>
               <a class="layui-badge">{$art.cate.catename}</a>
@@ -92,6 +93,7 @@
     </div>
   </div>
 </div>
+
 {/block}
 {block name="script"}
 <script>

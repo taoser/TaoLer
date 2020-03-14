@@ -169,19 +169,17 @@ CREATE TABLE `tao_cate` (
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '状态1启用0禁用',
   `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0帖子1文章',
+  `desc` varchar(255) NOT NULL,
+  `is_hot` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否是热点',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `updata_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
-INSERT INTO `tao_cate` VALUES ('1', '提问', 'ask', '1', '1', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('2', '分享', 'share', '2', '1', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('3', '讨论', 'talk', '3', '1', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('4', '新闻', 'news', '5', '1', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('5', '咸鱼', 'fish', '7', '1', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('6', '求助', 'help', '6', '1', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('7', '工作', 'work', '5', '1', '0', '0', '0', '1571231165');
+INSERT INTO `tao_cate` VALUES ('1', '提问', 'ask', '1', '1', '0', 'TaoLer社区提问专栏1', '0', '0', '0', '0');
+INSERT INTO `tao_cate` VALUES ('2', '分享', 'share', '2', '1', '0', '', '0', '0', '0', '0');
+INSERT INTO `tao_cate` VALUES ('3', '讨论', 'talk', '3', '1', '0', '', '1', '0', '0', '0');
 
 
 DROP TABLE IF EXISTS `tao_collection`;

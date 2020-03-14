@@ -81,13 +81,13 @@ layui.define(['table', 'form'], function(exports){
     elem: '#LAY-app-content-tags'
     ,url: '/admin/Forum/tags' //模拟接口
     ,cols: [[
-      {type: 'numbers', fixed: 'left'}
-	  ,{field: 'sort', title: '排序', width: 100, sort: true}
-	  ,{field: 'id', title: 'ID',minWidth: 30}
-      ,{field: 'tags', title: '分类名', minWidth: 100}
+    {type: 'numbers', fixed: 'left'}
+	  ,{field: 'sort', title: '排序', width: 80, sort: true}
+	  ,{field: 'id', title: 'ID',Width: 50}
+    ,{field: 'tags', title: '分类名', minWidth: 100}
 	  ,{field: 'ename', title: 'EN别名', minWidth: 100}
-	  
-      ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#layuiadmin-app-cont-tagsbar'}
+	  ,{field: 'desc', title: '描述', minWidth: 100}
+    ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#layuiadmin-app-cont-tagsbar'}
     ]]
     ,text: '对不起，加载出现异常！'
   });
@@ -134,16 +134,17 @@ layui.define(['table', 'form'], function(exports){
         ,yes: function(index, layero){
           //获取iframe元素的值
           var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
+          ,sort = othis.find('input[name="sort"]').val()
           ,tags = othis.find('input[name="tags"]').val()
-		  ,ename = othis.find('input[name="ename"]').val()
-		  ,sort = othis.find('input[name="sort"]').val();
+		      ,ename = othis.find('input[name="ename"]').val()
+		      ,desc = othis.find('input[name="desc"]').val();
           
           if(!tags.replace(/\s/g, '')) return;
 	  
 			$.ajax({
 				type:"post",
 				url:"/admin/Forum/tagsform",
-				data:{"id":data.id,"catename":tags,"sort":sort,"ename":ename},
+				data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"desc":desc},
 				daType:"json",
 				success:function (data){
 					if (data.code == 0) {
@@ -175,9 +176,10 @@ layui.define(['table', 'form'], function(exports){
         ,success: function(layero, index){
           //给iframe元素赋值
           var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags").click();
-          othis.find('input[name="tags"]').val(data.tags)
-		  ,othis.find('input[name="ename"]').val(data.ename)
-		  ,othis.find('input[name="sort"]').val(data.sort);
+          othis.find('input[name="sort"]').val(data.sort)
+          ,othis.find('input[name="tags"]').val(data.tags)
+		      ,othis.find('input[name="ename"]').val(data.ename)
+		      ,othis.find('input[name="desc"]').val(data.desc);
         }
       });
     }

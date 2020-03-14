@@ -226,7 +226,7 @@ abstract class BaseController
     protected function showNav()
     {
         //1.查询分类表获取所有分类
-		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache(3600)->select();
+		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select();
 		
         //2.将catelist变量赋给模板 公共模板nav.html
         View::assign('cateList',$cateList);
@@ -237,7 +237,7 @@ abstract class BaseController
     protected function showUser()
     {
         //1.查询用户
-		$user = Db::name('user')->field('id,name,nickname,user_img,sex,auth,city,email,sign,point')->where('id',Session::get('user_id'))->cache(120)->find();
+		$user = Db::name('user')->field('id,name,nickname,user_img,sex,auth,city,email,sign,point')->where('id',Session::get('user_id'))->cache(true)->find();
 		//2.将User变量赋给模板 公共模板nav.html
 		View::assign('user',$user);
     }
@@ -246,7 +246,7 @@ abstract class BaseController
     protected function showSystem()
     {
         //1.查询分类表获取所有分类
-		$sysInfo = Db::name('system')->cache(3600)->find(1);
+		$sysInfo = Db::name('system')->cache('system',3600)->find(1);
         View::assign('sysInfo',$sysInfo);
     }
 	

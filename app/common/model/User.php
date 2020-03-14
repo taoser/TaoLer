@@ -5,6 +5,8 @@ use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Db;
 use think\facade\Session;
+use think\facade\Log;
+use taoler\com\Api;
 
 class User extends Model
 {
@@ -52,6 +54,25 @@ class User extends Model
 			//将用户数据写入Session
 			Session::set('user_id',$user['id']);
 			Session::set('user_name',$user['name']);
+			$ip = request()->ip();
+			$url = 'http://ip-api.com/json/'.$ip.'?lang=zh-CN';
+			//$url = 'http://ip-api.com/json/?lang=zh-CN';
+			$add = Api::urls($url);
+			if($add->status == 'success'){
+				$city = $add->city;
+			} else {
+				$city ='未知';
+			}
+			
+			Db::name('user')->where('id',$user['id'])->update(
+                        [
+							'city' => $city,
+							'last_login_ip' => $ip,
+                            'last_login_time' => time()
+                        ]
+                    );
+			Log::channel('login')->info('login:{user} {ip}:{city}',['user'=>$user['name'],'ip'=>$ip,'city'=>$city]);
+			
             //查询结果1表示有用户，用户名密码正确
             return 1;
         }else{

@@ -26,16 +26,19 @@ class Article extends BaseController
 		$where =[];
 		//获取分类ID
 		$ename = Request::param('ename');
-		$cate = Db::name('cate')->where('ename',$ename)->find();
-		$types = input('type');
-		if($cate){
-			$where = ['cate_id' => $cate['id']];
-		}else{
-			$where = true;
+		$type = Request::param('type');
+		$page = Request::param('page');
+		
+		$cateId = Db::name('cate')->where('ename',$ename)->value('id');
+		if($cateId){
+			$where = ['cate_id' => $cateId];
 		}
-		switch ($types) {
+		
+		$artList = Cache::get('arts'.$ename.$type.$page);
+		if(!$artList){
+			switch ($type) {
 				//查询文章,15个分1页
-                case 'all':
+                case 'jie':
 				$artList = ArticleModel::field('id,title,cate_id,user_id,create_time,is_top,is_hot')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
@@ -43,7 +46,7 @@ class Article extends BaseController
 					'user' => function($query){
 						$query->field('id,name,nickname,user_img,area_id');
 					}
-				])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])->paginate(15);
+				])->withCount(['comments'])->where(['status'=>1,'jie'=>1])->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])->paginate(15);
 				break;
 				
 				case 'hot':
@@ -76,10 +79,13 @@ class Article extends BaseController
 					'user' => function($query){
 						$query->field('id,name,nickname,user_img,area_id');
 					}
-				])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])->withCache(30)->paginate(15);
-
+				])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])->paginate(15);
+	
 				break;
+			}
+			Cache::set('arts'.$ename.$type.$page,$artList,600);
 		}
+		
 		
 		//	热议文章
 		$artHot = ArticleModel::field('id,title')->withCount('comments')->where('status',1)->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
@@ -88,14 +94,14 @@ class Article extends BaseController
 		//通用右栏
 		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
 		
-		View::assign(['type'=>$types,'artList'=>$artList,'artHot'=>$artHot,'ad_cate'=>$ad_cate,'ad_comm'=>$ad_comm]);
+		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cate'=>$ad_cate,'ad_comm'=>$ad_comm]);
 		return View::fetch();
     }
 
 	//文章详情页
     public function detail($id)
     {
-		$article = Cache::get('article');
+		$article = Cache::get('article_'.$id);
 		if(!$article){
 			//查询文章
 		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,tags,create_time')->where('status',1)->with([
@@ -106,10 +112,11 @@ class Article extends BaseController
 				$query->field('id,name,nickname,user_img,area_id');
 			}
         ])->find($id);
-		Cache::set('article',$article,3600);
+		Cache::set('article_'.$id,$article,3600);
 		}
 		$comments = $article->comments()->where('status',1)->select();
 		$article->inc('pv')->update();
+		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
 
 /*		
 		$nt = time();
@@ -133,7 +140,7 @@ class Article extends BaseController
 		//通用右栏
 		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
 
-		View::assign(['article'=>$article,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm]);
+		View::assign(['article'=>$article,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm]);
 		return View::fetch();
     }
 	

@@ -52,7 +52,7 @@ try {
 
 //根据user area_id查询区域简称
 function getAsing($area_id){
-	return Db::name('user_area')->where('id',$area_id)->value('asing');
+	return Db::name('user_area')->where('id',$area_id)->cache(3600)->value('asing');
 }
 
 //根据用户主键ID，查询用户名称
@@ -74,11 +74,17 @@ if(!function_exists('getUserImg'))
 
 
 //根据文章分类ID查询分类名
-function getCateName($cate_ename)
+function getCateName($ename)
     {
-       return Db::name('cate')->where('ename',$cate_ename)->value('catename');
+       
+        return  Db::name('cate')->where('ename',$ename)->cache(3600)->value('catename');  
     }
 
+//根据文章分类ID查询分类描述
+function getCateDesc($ename)
+    {
+        return  Db::name('cate')->where('ename',$ename)->cache(3600)->value('desc');
+    }
 
 //过滤文章摘要
 function getArtContent($content)

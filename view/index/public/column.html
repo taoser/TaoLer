@@ -5,8 +5,8 @@
 	  <a href="/">首页</a>
 	  </li> 
 	  {volist name="cateList" id="cate"}
-	  <li {if condition="$cate.catename eq getCateName($Request.param.ename)"} class="layui-this" {/if}>
-	  <a href="{:url('article/cate',['ename' => $cate.ename])}">{$cate.catename}{if condition="$cate.id eq 3"}<span class="layui-badge-dot"></span>{/if}</a>
+	  <li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if}>
+	  <a href="{:url('article/cate',['ename' => $cate.ename])}">{$cate.catename}{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}</a>
 	  </li> 
 	  {/volist}     
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>   

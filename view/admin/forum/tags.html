@@ -37,16 +37,17 @@
           ,btn: ['确定', '取消']
           ,yes: function(index, layero){
             var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
+            ,sort = othis.find('input[name="sort"]').val()
             ,tags = othis.find('input[name="tags"]').val()
-			,sort = othis.find('input[name="sort"]').val()
-			,ename = othis.find('input[name="ename"]').val();
+            ,ename = othis.find('input[name="ename"]').val()
+            ,desc = othis.find('input[name="desc"]').val();
             
             if(!tags.replace(/\s/g, '')) return;
 			
-            $.ajax({
+        $.ajax({
 				type:"post",
 				url:"{:url('admin/Forum/addtags')}",
-				data:{"catename":tags,"sort":sort,"ename":ename},
+				data:{"sort":sort,"catename":tags,"ename":ename,"desc":desc},
 				daType:"json",
 				success:function (data){
 					if (data.code == 0) {
