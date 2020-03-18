@@ -1,9 +1,9 @@
 
 {extend name="public/base" /}
 
-{block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
-{block name="keywords"}{$article.title}-{$article.tags}{/block}
-{block name="description"}{$article.title}-{:getArtContent($article.content)}{/block}
+{block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
+{block name="keywords"}{$article.title},{$article.tags}{/block}
+{block name="description"}{$article.title},{:getArtContent($article.content)}{/block}
 {block name="column"}{include file="/public/column" /}{/block}
 {block name="content"}
 <div class="layui-container">
@@ -61,7 +61,6 @@
             <span>{$article.create_time|date='Y-m-d H:d'}</span>
           </div>
 		  
-		  
           <div class="detail-hits" id="LAY_jieAdmin" data-id="{$article['id']}">
             <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
 			{if(session('user_name')==$article.user.name  || $user.auth == 1)}
@@ -99,7 +98,7 @@
                   <i class="layui-badge fly-badge-vip">VIP3</i-->              
                 </a>
                 {if condition="$article.user.id eq $vo.user.id"}
-                <span>(楼主)</span>
+                <span>(贴主)</span>
 				{/if}
                 <!--
                 <span style="color:#5FB878">(管理员)</span>
@@ -120,35 +119,26 @@
 			
             <div class="jieda-reply">
               <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
-                <i class="iconfont icon-zan"></i>
-                <em>{$vo.zan}</em>
+                <i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
               </span>
-              <span type="reply">
-                <i class="iconfont icon-svgmoban53"></i>
-                回复
-              </span>
+              <span type="reply"><i class="iconfont icon-svgmoban53"></i>回复</span>
 
               <div class="jieda-admin">
-			{if session('user_id') == $vo.user.id}
-				{if getLimtTime($vo.create_time) < 2}
-                <span type="edit">编辑</span>
-                <span type="del">删除</span>
-				{/if}	
-			{else}
+				{if (session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2) OR $user.auth == 1}
+					<span type="edit">编辑</span>
+					<span type="del">删除</span>
 					{if $vo.cai == 0 && session('user_id') == $article.user_id /}
 					<span class="jieda-accept" type="accept">采纳</span>
 					{/if}				
-			{/if}
+				{/if}
               </div>
             </div>
           </li>
         {/volist} 
-    
-          <!-- 无数据时 -->
-          <!-- <li class="fly-none">消灭零回复</li> -->
         </ul>
 		
-		<div style="text-align: center"> 
+		<div style="text-align: center">
+			{$comments|raw}
         </div>
 
         {if condition="$article.is_reply == 1"}

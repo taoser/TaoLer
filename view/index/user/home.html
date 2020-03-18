@@ -1,5 +1,6 @@
 {extend name="public/base" /}
-{block name="title"}{$u.nickname ?: $u.name}的主页 - {$sysInfo.webname}{/block}
+{block name="title"}{$u.nickname ?: $u.name}的主页-{$sysInfo.webname}{/block}
+{block name="description"}{$u.sign}{/block}
 {block name="column"}{/block}
 {block name="content"}
 <div class="fly-home fly-panel" style="background-image: url();">
@@ -16,22 +17,18 @@
     <span>（该号已被封）</span>
     -->
   </h1>
-
   <p style="padding: 10px 0; color: #5FB878;">认证信息： 作者</p>
-
   <p class="fly-home-info">
     <i class="iconfont icon-kiss" title="飞吻"></i><span style="color: #FF7200;">{$u.point} 飞吻</span>
     <i class="iconfont icon-shijian"></i><span>{$u.create_time|date='Y-m-d'} 加入</span>
-    <i class="iconfont icon-chengshi"></i><span>来自{$user.city}</span>
+    <i class="iconfont icon-chengshi"></i><span>{:session('user_id') ? '来自'.$user.city:'登录查看'}</span>
   </p>
-
   <p class="fly-home-sign">（{$u.sign ?:'懒得还没有签名'}）</p>
 
   <div class="fly-sns" data-user="">
     <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">加为好友</a>
     <a href="javascript:;" class="layui-btn layui-btn-normal fly-imActive" data-type="chat">发起会话</a>
   </div>
-
 </div>
 
 <div class="layui-container">
@@ -59,7 +56,7 @@
       <div class="fly-panel">
         <h3 class="fly-panel-title">{$u.nickname ?? $u.name} 最近的回答</h3>
         <ul class="home-jieda">
-		{volist name="$reys" id="vo"}
+		{volist name="$reys" id="vo" empty="没有回答任何问题"}
           <li>
           <p>
           <span>{$vo.create_time|date='Y-m-d H-m'}</span>
@@ -81,7 +78,7 @@
     layui.cache.page = 'jie';
     layui.cache.user = {
         username: '{$user.name??'游客'}'
-        ,uid: {$user.id ? 168*$user.id : -1}
+        ,uid: {$user.id ? $user.id : -1}
         ,avatar: '{if condition="$user['user_img'] neq ''"}/uploads/{$user['user_img']}{else /}/static/res/images/avatar/00.jpg{/if}'
         ,experience: 83
         ,sex: '{if condition="$user['sex'] eq 0"}男{else/}女{/if}'
@@ -94,12 +91,13 @@
     }).use(['fly', 'face'], function(){
   var $ = layui.$
   ,fly = layui.fly;
-  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
   
+  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
   $('.detail-body').each(function(){
     var othis = $(this), html = othis.html();
     othis.html(fly.content(html));
   });
+  
 });
 </script>
 {/block}

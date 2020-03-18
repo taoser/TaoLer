@@ -31,7 +31,7 @@
                   <label for="L_title" class="layui-form-label">标题</label>
                   <div class="layui-input-block">
                     <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$article.title}">
-                    <input type="hidden" name="user_id" value="{:session('user_id')}">
+                    <input type="hidden" name="user_id" value="{$article.user_id}">
                   </div>
                 </div>
               </div>

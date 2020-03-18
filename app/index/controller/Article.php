@@ -114,7 +114,7 @@ class Article extends BaseController
         ])->find($id);
 		Cache::set('article_'.$id,$article,3600);
 		}
-		$comments = $article->comments()->where('status',1)->select();
+		$comments = $article->comments()->where('status',1)->paginate(10);
 		$article->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
 
@@ -172,7 +172,7 @@ class Article extends BaseController
 			if(true !==$result){	
 				return $this->error($validate->getError());
 			} else {	
-				$article = new \app\common\model\Article();
+				$article = new \app\common\model\Article;
 				$result = $article->add($data);
 				if($result == 1) {
 					$aid = Db::name('article')->max('id');
@@ -212,8 +212,8 @@ class Article extends BaseController
 			
 			if(true !==$res){
 				return $this->error($validate->getError());
-			} else {	
-				$article = new \app\common\model\Article();
+			} else {
+				$article = new \app\common\model\Article;
 				$result = $article->edit($data);
 				if($result == 1) {
 					return json(['code'=>1,'msg'=>'修改成功','url'=>'/'.app('http')->getName().'/jie/'.$id.'.html']);
@@ -254,11 +254,11 @@ class Article extends BaseController
     {
         $file = request()->file('file');
 		try {
-			validate(['file'=>'fileSize:2048|fileExt:jpg,png,gif'])
+			validate(['file'=>'fileSize:1024000|fileExt:jpg,png,gif'])
             ->check(['file'=>$file]);
 			$savename = \think\facade\Filesystem::disk('public')->putFile('article_pic',$file);
 		} catch (ValidateException $e) {
-			echo $e->getMessage();
+			return json(['status'=>-1,'msg'=>$e->getMessage()]);
 		}
 		$upload = Config::get('filesystem.disks.public.url');
 

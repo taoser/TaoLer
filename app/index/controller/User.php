@@ -7,7 +7,6 @@ use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\Session;
-use think\facade\Cookie;
 use think\facade\Cache;
 use think\facade\View;
 use app\common\model\Article;
@@ -24,8 +23,7 @@ class User extends BaseController
 	//用户中心
 	public function index()
 	{
-		//$this->isLogin();
-		$user['user_id'] = session::get('user_id');
+		$user['user_id'] = Session::get('user_id');
 		$username = session::get('user_name');
 		
         return view();
@@ -74,12 +72,12 @@ class User extends BaseController
 	{
 		if(Request::isAjax()){
 			$data = Request::only(['user_id','email','nickname','sex','city','sign']);
-			$validate = new \app\common\validate\User();
+			$validate = new \app\common\validate\User;
 			$result = $validate->scene('Set')->check($data);
 			if(!$result){
 				$this->error($validate->getError());
 			} else {
-                $user = new \app\common\model\User();
+                $user = new \app\common\model\User;
                 $result = $user->setNew($data);
 				if($result==1){
 				    return ['code'=>0,'msg'=>'资料更新成功','url'=>'/index/user/set'];
@@ -96,11 +94,11 @@ class User extends BaseController
     {
         $file = request()->file('file');
 		try {
-			validate(['image'=>'filesize:2048|fileExt:jpg,png,gif|image:200,200,jpg'])
-            ->check(array($file));
+			validate(['file'=>'fileSize:204800|fileExt:jpg,png,gif'])
+            ->check(['file'=>$file]);
 			$savename = \think\facade\Filesystem::disk('public')->putFile('head_pic',$file);
 		} catch (think\exception\ValidateException $e) {
-			echo $e->getMessage();
+			return json(['status'=>-1,'msg'=>$e->getMessage()]);
 		}
 		$upload = Config::get('filesystem.disks.public.url');
         if($savename){
@@ -133,20 +131,16 @@ class User extends BaseController
     }
 	
 	//个人页
-    public function home()
+    public function home($id)
     {
-		$userID = input('id');
-		Session::get('user_id');
 		//用户
-		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,create_time')->find($userID ?: Session::get('user_id'));
+		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,create_time')->cache(3600)->find($id);
 		//用户发贴
-		$arts = Db::name('user')->alias('u')->join('article a','u.id = a.user_id')->field('u.id,a.id,a.title,a.pv,a.is_hot,a.create_time,a.delete_time')->where('a.delete_time',0)->where('a.user_id',input('id') ?: Session::get('user_id'))->select();
+		$arts = Db::name('user')->alias('u')->join('article a','u.id = a.user_id')->field('u.id,a.id,a.title,a.pv,a.is_hot,a.create_time,a.delete_time')->where('a.delete_time',0)->where('a.user_id',$id)->order(['a.create_time'=>'desc'])->cache(3600)->select();
 		//用户回答
-        $reys = Db::name('comment')->alias('c')->join('article a','c.article_id = a.id')->field('a.id,a.title,c.content,c.create_time,c.delete_time')->where('a.delete_time',0)->where('c.user_id',input('id') ?: Session::get('user_id'))->select();
+        $reys = Db::name('comment')->alias('c')->join('article a','c.article_id = a.id')->field('a.id,a.title,c.content,c.create_time,c.delete_time')->where(['a.delete_time'=>0,'c.delete_time'=>0])->where('c.user_id',$id)->order(['c.create_time'=>'desc'])->cache(3600)->select();
 		
-		View::assign('u',$u);
-		View::assign('arts',$arts);
-		View::assign('reys',$reys);
+		View::assign(['u'=>$u,'arts'=>$arts,'reys'=>$reys]);
         return View::fetch();
     }
 	
@@ -177,7 +171,7 @@ class User extends BaseController
 			if(!$res){
 				return $this->error($validate->getError());
 			}
-		$user = new \app\common\model\User();
+		$user = new \app\common\model\User;
 		$result = $user->setpass($data);
 			if($result == 1) {
 				Session::clear();
