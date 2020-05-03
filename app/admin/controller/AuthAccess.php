@@ -71,7 +71,7 @@ class AuthAccess extends AdminController
 		return json($res);
 		}
 		
-		$admins = Db::name('admin')->field('id,username')->select();
+		$admins = Db::name('admin')->field('id,username')->where('delete_time',0)->select();
 		$auth_groups = Db::name('auth_group')->field('id,title')->select();
 		View::assign(['admins'=>$admins,'auth_groups'=>$auth_groups]);
 		
@@ -99,7 +99,7 @@ class AuthAccess extends AdminController
 		}
 		
 		$access = Db::name('auth_group_access')->group('uid')->find($id);
-		$admins = Db::name('admin')->field('id,username')->select();
+		$admins = Db::name('admin')->field('id,username')->where('delete_time',0)->select();
 		$auth_groups = Db::name('auth_group')->field('id,title')->select();
 		
 		View::assign(['admins'=>$admins,'auth_groups'=>$auth_groups,'access'=>$access]);
