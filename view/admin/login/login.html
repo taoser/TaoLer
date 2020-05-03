@@ -38,7 +38,7 @@
         </div>
         <div class="layui-form-item">
 			
-          <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
+          <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit" id="LAY-user-login-submit">登 入</button>
         </div>
         <div class="layui-trans layui-form-item layadmin-user-login-other">
           <label>社交账号登入</label>
@@ -123,7 +123,7 @@
             ,icon: 1
             ,time: 1000
           }, function(){
-            location.href = '/admin/index/index'; //后台主页
+            location.href = "{:url('admin/index/index')}"; //后台主页
           });
 		} else {	
 			layer.open({

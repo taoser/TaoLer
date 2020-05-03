@@ -58,7 +58,7 @@ layui.define(['form', 'upload'], function(exports){
     
     admin.req({
 	   type: "post"
-      ,url: '/admin/set/website'
+      ,url: setWebSite
       ,data: obj.field
       ,success: function(data){
 		  if (data.code == 0) {
@@ -93,7 +93,7 @@ layui.define(['form', 'upload'], function(exports){
     
     admin.req({
 		type: 'post'
-      ,url: '/admin/set/email'
+      ,url: setEmail
       ,data: obj.field
       ,success: function(data){
         if (data.code == 0) {
@@ -126,7 +126,7 @@ layui.define(['form', 'upload'], function(exports){
     
     admin.req({
 		type: 'post'
-      ,url: '/admin/admin/info'
+      ,url: adminInfoSet
       ,data: obj.field
       ,success: function(res){
 		if(res.code == 0){         
@@ -190,7 +190,7 @@ layui.define(['form', 'upload'], function(exports){
     //提交修改
     admin.req({
 		type: 'post'
-      ,url: '/admin/admin/repass'
+      ,url: adminRepassSet
       ,data: obj.field
       ,success: function(res){
         if(res.code == 0){         

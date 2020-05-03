@@ -31,16 +31,6 @@
         <input type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input" value="{$admin.email}">
       </div>
     </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">角色</label>
-	  <div class="layui-input-block">
-            <select name="auth_group_id" lay-verify="required">
-			{volist name="auth_group" id="vo"}
-                <option {if condition="$admin.auth_group_id eq $vo.id"} selected {/if} value="{$vo.id}">{$vo.title}</option>
-			{/volist}
-            </select>
-       </div>
-    </div>
     <div class="layui-form-item layui-hide">
       <input type="button" lay-submit lay-filter="LAY-user-back-submit" id="LAY-user-back-submit" value="确认">
     </div>

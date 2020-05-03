@@ -147,7 +147,7 @@ class Forum extends AdminController
 				$res['count']= count($list);
 				$res['data'] = [];
 				foreach($list as $k=>$v){
-				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'tags'=>$v['catename'],'ename'=>$v['ename'],'desc'=>$v['desc']];
+				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'tags'=>$v['catename'],'ename'=>$v['ename'],'is_hot'=>$v['is_hot'],'desc'=>$v['desc']];
 				}
 			}
 			return json($res);
@@ -294,6 +294,25 @@ class Forum extends AdminController
 			return json(['code'=>-1,'msg'=>'审核出错']);
 		}
 	}
+	
+	//帖子分类开启热点
+	//评论审核
+	public function tagshot()
+	{
+		$data = Request::only(['id','is_hot']);
+		$cate = Db::name('cate')->save($data);
+		if($cate){
+			if($data['is_hot'] == 1){
+				return json(['code'=>0,'msg'=>'设置热点成功','icon'=>6]);
+			} else {
+				return json(['code'=>0,'msg'=>'取消热点显示','icon'=>5]);
+			}
+		}else{
+			$res = ['code'=>-1,'msg'=>'热点设置失败'];
+		} 
+		return json($res);
+	}
+	
 	//array_filter过滤函数
 	public function  filtr($arr){
 			if($arr === '' || $arr === null){

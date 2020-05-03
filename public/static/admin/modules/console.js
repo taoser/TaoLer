@@ -191,7 +191,7 @@ layui.define(function(exports){
     //本周发贴
     table.render({
       elem: '#LAY-index-topSearch'
-      ,url: '/admin/index/forums' //模拟接口
+      ,url: indexForums //发贴接口
       ,page: true
       ,cellMinWidth: 120
       ,cols: [[
@@ -207,7 +207,7 @@ layui.define(function(exports){
     //本周评论
     table.render({
       elem: '#LAY-index-topCard'
-      ,url: '/admin/index/replys' //模拟接口
+      ,url: indexReplys //评论接口
       ,page: true
       ,cellMinWidth: 120
       ,cols: [[

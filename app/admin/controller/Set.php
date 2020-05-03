@@ -17,12 +17,18 @@ class Set extends AdminController
         parent::initialize();
       
     }
+	//网站设置显示
+	public function index()
+    {
+		$mailserver = MailServer::find(1);
+		$sysInfo = Db::name('system')->find(1);
+		$syscy = $this->check($sysInfo['base_url']);
+		
+        View::assign(['sysInfo'=>$sysInfo,'syscy'=>$syscy,'mailserver'=>$mailserver]);
+		return View::fetch('set/system/website');
+    }
 	
-    /**
-     * 显示资源列表
-     *
-     * @return \think\Response
-     */
+    //网站设置
     public function website()
     {
 		if(Request::isAjax()){
@@ -37,35 +43,30 @@ class Set extends AdminController
 				return json(['code'=>-1,'msg'=>'更新失败']);
 			}
 		}
-		$sysInfo = Db::name('system')->find(1);
-		$syscy = $this->check($sysInfo['base_url']);
-        View::assign(['sysInfo'=>$sysInfo,'syscy'=>$syscy]);
-		return View::fetch('set/system/website');
     }
+	
+	//综合设置
+	public function server()
+	{
+		return View::fetch('set/system/server');
+	}
 
-    /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
+    /**邮箱设置
+     * parem $id
      */
     public function email()
     {
-		//$mailserver = Db::name('mail_server')->find(1);
 		$mailserver = MailServer::find(1);
         //邮箱配置
 		if(Request::isAjax()){
-			$data = Request::param();
+			$data = Request::only(['host','port','mail','nickname','password']);
 			$res = $mailserver->save($data);
-			//dump($data);
 			if($res){
 				return json(['code'=>0,'msg'=>'更新成功']);
 			} else {
 				return json(['code'=>-1,'msg'=>'更新失败']);
 			}
 		}
-		
-		View::assign('mailserver',$mailserver);
-		return View::fetch('set/system/email');
     }
 
     /**

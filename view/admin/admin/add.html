@@ -23,15 +23,6 @@
       </div>
     </div>
     <div class="layui-form-item">
-      <label class="layui-form-label">角色</label>
-	  <div class="layui-input-block">
-		<select name="auth_group_id" lay-verify="required">
-		{volist name="auth_group" id="vo"}
-			<option value="{$vo.id}">{$vo.title}</option>
-		{/volist}
-       </div>
-    </div>
-    <div class="layui-form-item">
       <label class="layui-form-label">审核状态</label>
       <div class="layui-input-inline">
         <input type="checkbox" lay-filter="switch" name="status" lay-skin="switch" lay-text="通过|待审核">

@@ -11,7 +11,7 @@
         <a href="case/case.html"><i class="iconfont icon-iconmingxinganli"></i>案例</a>
       </li>
       <li class="layui-nav-item">
-        <a href="/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
+        <a href="{:url('doc/timeline')}" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
       </li>
     </ul>
     
@@ -26,7 +26,7 @@
         <a class="fly-nav-avatar" href="javascript:;">
           <cite class="layui-hide-xs">{:session('user_name')}</cite>
           <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
-          <i class="layui-badge fly-badge-vip layui-hide-xs">VIP3</i>
+          <i class="layui-badge fly-badge-vip layui-hide-xs">VIP{$user.vip}</i>
           <img src="{$user.user_img}">
         </a>
 		
@@ -34,7 +34,7 @@
 		  <dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>用户中心</a></dd>
           <dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
 		  <hr>
-          <!--dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd-->
+          <dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
           <dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
           <hr style="margin: 5px 0;">
           <dd><a data-url="{:url('user/logout')}" location-url="{:url('index/index')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">退出</a></dd>

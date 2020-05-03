@@ -19,7 +19,7 @@ class Jump extends BaseController
 		//查询用户
         $user = Db::name('user')->whereOr('name',$u['name'])->whereOr('nickname',$u['name'])->find();
 		$id = $user['id'];
-		return redirect('/index/u/'.$id.'.html');
+		return redirect((string) url('user/home',['id'=>$id]));
     }
     
 

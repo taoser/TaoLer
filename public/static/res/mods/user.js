@@ -25,11 +25,10 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   };
 
 
-
-/*
   //我的相关数据
   var elemUC = $('#LAY_uc'), elemUCM = $('#LAY_ucm');
   gather.minelog = {};
+/*  
   gather.mine = function(index, type, url){
     var tpl = [
       //求解
@@ -136,14 +135,14 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       page();
     }
   };
-
+*/
   if(elemUC[0]){
     layui.each(dom.mine.children(), function(index, item){
       var othis = $(item)
       gather.mine(index, othis.data('type'), othis.data('url'));
     });
   }
-*/
+
   //显示当前tab
   if(location.hash){
     element.tabChange('user', location.hash.replace(/^#/, ''));
@@ -170,14 +169,14 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
 
       upload.render({
         elem: '.upload-img'
-        ,url: '/index/user/uploadHeadImg/'
+        ,url: uploadHeadImg
         ,size: 300
         ,before: function(){
           avatarAdd.find('.loading').show();
         }
         ,done: function(res){
           if(res.status == 0){
-            $.post('/index/user/set/', {
+            $.post(userSet, {
               avatar: res.url
             }, function(res){
               location.reload();
@@ -307,7 +306,11 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       <ul class="mine-msg">\
       {{# for(var i = 0; i < len; i++){ }}\
         <li data-id="{{d.rows[i].id}}">\
-          <blockquote class="layui-elem-quote">{{ d.rows[i].content}}</blockquote>\
+		{{# if(d.rows[i].type == 1){ }}\
+          <blockquote class="layui-elem-quote"><a href= "'+ userNameJump +'?username={{ d.rows[i].name}}" target="_blank"><cite>{{ d.rows[i].name}}</cite></a>回答了您的帖子<a target="_blank" class="art-title" id-data="{{ d.rows[i].id}}" href="{{ d.rows[i].link}}"><cite>{{ d.rows[i].title}}</cite></a> <span class="float:right">{{ d.rows[i].read}}</span></blockquote>\
+		{{# } else { }}\
+		<blockquote class="layui-elem-quote">系统消息：<a class="sys-title" id-data="{{ d.rows[i].id}}" href="javascript:;"><cite>{{ d.rows[i].title}}</cite></a> <span class="float:right">{{ d.rows[i].read}}</span></blockquote>\
+		{{# } }}\
           <p><span>{{d.rows[i].time}}</span><a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger fly-delete">删除</a></p>\
         </li>\
       {{# } }}\
@@ -320,20 +323,21 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     }
     
     
-    /*
-    fly.json('/message/find/', {}, function(res){
+    fly.json(messageFind, {}, function(res){
       var html = laytpl(tpl).render(res);
       dom.minemsg.html(html);
       if(res.rows.length > 0){
         delAll.removeClass('layui-hide');
-      }
+      } else {
+		  delAll.addClass('layui-hide');
+	  }
     });
-    */
+    
     
     //阅读后删除
     dom.minemsg.on('click', '.mine-msg li .fly-delete', function(){
       var othis = $(this).parents('li'), id = othis.data('id');
-      fly.json('/index/message/remove/', {
+      fly.json(messageRemove, {
         id: id
       }, function(res){
         if(res.status === 0){
@@ -347,8 +351,8 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     $('#LAY_delallmsg').on('click', function(){
       var othis = $(this);
       layer.confirm('确定清空吗？', function(index){
-        fly.json('/index/message/remove/', {
-          all: true
+        fly.json(messageRemove, {
+          id: true
         }, function(res){
           if(res.status === 0){
             layer.close(index);

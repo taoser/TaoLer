@@ -6,14 +6,12 @@ use think\facade\Session;
 use app\common\model\Comment as CommentModel;
 use app\common\model\Article;
 use app\common\model\UserZan;
-use think\facade\Request;
-use think\Db;
 
 class Comment extends BaseController
 {
 	//采纳评论
-    public function jiedaCai(){
-		
+    public function jiedaCai()
+    {
 		$id = input('id');
         $comms = CommentModel::find($id);
 		$result = $comms->save(['cai' =>1]);
@@ -29,33 +27,30 @@ class Comment extends BaseController
     }
 
     //删除评论
-    public function jiedaDelete(){
-		
+    public function jiedaDelete()
+    {
 		$id = input('id');
         //$arid = intval($id);
 
         $comms = CommentModel::find($id);
 		$result = $comms->delete();
-        //$result =  Db::name('collection')->where('article_id',$arid)->delete();
         if($result){
-            //$res=['type' => 'add','type' => 'remove', 'msg' => '收藏成功'];
-            $res = [
-                'status' => 0,
-            ]; 
+            $res = ['status' => 0,'msg' => '删除成功'];
+        } else {
+            $res = ['status' => -1,'msg' => '删除失败'];
         }
 	 return json($res);
     }
-	
-	
+
 	//编辑评论
 	public function getDa()
 	{
+	    //获取原评论
 		$this->isLogin();
 		$id = input('id');
 		$comms = CommentModel::find($id);
 		$res['rows'] = [];
 		if($comms) {
-			$res['status'] = 0;
 			$res['rows']['content'] = $comms['content'];		
 		}
 		return json($res);
@@ -78,7 +73,7 @@ class Comment extends BaseController
 		return json($res);
 	}
 	
-	//点赞评论
+	//评论点赞
 	public function jiedaZan()
 	{
 		$this->isLogin();
@@ -90,20 +85,20 @@ class Comment extends BaseController
 		if(!$zan ){ //如果没有点过赞执行点赞操作
 			$coms = CommentModel::find(input('post.id'));
 			if($coms['user_id'] == session('user_id')){
-				return $res=['msg' => '不能给自己点赞哦'];
+				$res = ['msg' => '不能给自己点赞哦'];
 			} else {
-				$res = UserZan::create($data);
-				if($res){
+				$result = UserZan::create($data);
+				if($result){
 					//评论点赞数加1
 					$coms->save(['zan' => $coms['zan']+1]);
-					return $res=['status' => 0, 'msg' => '点赞成功'];
+					$res = ['status' => 0, 'msg' => '点赞成功'];
 				}else {
-					$this->error('点赞失败');
+                    $res = ['status' => -1, 'msg' => '点赞失败'];
 				}
 			}
-			
 		} else {
-			return $res=['status'=>1,'msg' => '你已赞过了'];
+			$res = ['status'=>-1,'msg' => '你已赞过了'];
 		}
-	}	
+		return json($res);
+	}
 }

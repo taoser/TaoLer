@@ -14,6 +14,13 @@
 {block name="body"}内容{/block}
 <script src="/static/layui/jquery.min.js" charset="utf-8"></script>
 <script src="/static/layui/layui.js"></script>
+<script type="text/javascript" charset="utf-8">
+var AdminLogin = "{:url('Login/index')}",
+	AdminLogout = "{:url('Admin/logout')}",
+	adminClearCache = "{:url('Admin/clearCache')}";
+	//var c = "{:config('app.domain_bind.www')}";
+	//console.log(c);
+</script>
 {block name="js"}js文件{/block}
 </body>
 </html>

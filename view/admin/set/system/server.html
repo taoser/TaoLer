@@ -1,0 +1,190 @@
+{extend name="public/base" /}
+
+{block name="body"}
+  <div class="layui-fluid" id="component-tabs">
+    <div class="layui-row">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+		  
+            <div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief">
+              <ul class="layui-tab-title">
+                <li class="layui-this" lay-id="score">积分设置</li>
+                <li lay-id="vip">用户等级</li>
+              </ul>
+              <div class="layui-tab-content">
+                <div class="layui-tab-item  layui-show">
+					<div class="layui-tab-content" style="padding: 20px 0;">
+						<div class="layui-form layui-card-header layuiadmin-card-header-auto">
+
+							<div class="layui-form-item">
+								<div class="layui-inline">
+								  <label class="layui-form-label">连续签到</label>
+									<div class="layui-input-inline">
+										<select name="days">
+										  <option value="1">1天</option>
+										  <option value="2">2天</option>
+										  <option value="3">3天</option>
+										  <option value="5">5天</option>
+										  <option value="7">7天</option>
+										  <option value="10">10天</option>
+										  <option value="20">20天</option>
+										  <option value="100">100天</option>
+										  <option value="365">365天</option>
+										</select>
+									</div>
+									<div class="layui-input-inline">
+										<input type="tel" name="score" lay-verify="required" placeholder="获得积分" autocomplete="off" class="layui-input">
+									</div>
+									<div class="layui-input-inline">
+									{if condition="checkRuleButton('admin/Sign/add')"}
+									<input type="submit" class="layui-btn" lay-submit lay-filter="sign-rule-submit" id="sign-rule-submit" value="立即提交">
+									{else /}<input type="submit" class="layui-btn layui-btn-disabled" value="立即提交">{/if}
+									</div>
+								</div>	
+							</div>
+							<div class="layui-form-item">
+							 <table id="sign-rule" lay-filter="sign-rule"></table>
+							 <script type="text/html" id="sign-rule-button">
+							 {if condition="checkRuleButton('admin/Sin/edit')"}
+							 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+							 {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
+							 {if condition="checkRuleButton('admin/Sign/delete')"}
+							 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+							 {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
+							 </script>
+							</div>	
+						</div>	 
+					</div>
+				</div>
+                <div class="layui-tab-item">
+					<div class="layui-tab-content" style="padding: 20px 0;">
+						<div class="layui-form layui-card-header layuiadmin-card-header-auto">
+
+							<div class="layui-form-item">
+								<div class="layui-inline">
+								  <label class="layui-form-label">用户积分</label>
+									<div class="layui-input-inline" style="width: 120px;">
+										<select name="vip">
+										  <option value="0">普通</option>
+										  <option value="1">VIP1</option>
+										  <option value="2">VIP2</option>
+										  <option value="3">VIP3</option>
+										  <option value="4">VIP4</option>
+										  <option value="5">VIP5</option>
+										  
+										</select>
+									</div>
+									<div class="layui-input-inline">
+										<input type="tel" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input">
+									</div>
+									<div class="layui-input-inline">
+									{if condition="checkRuleButton('admin/Vip/add')"}
+									<input type="submit" class="layui-btn" lay-submit lay-filter="vip-rule-submit" id="vip-rule-submit" value="立即提交">
+									{else /}<input type="submit" class="layui-btn layui-btn-disabled" value="立即提交">{/if}
+									</div>
+								</div>	
+							</div>
+							<div class="layui-form-item">
+							 <table id="vip-rule" lay-filter="vip-rule"></table>
+							 <script type="text/html" id="vip-rule-button">
+							 {if condition="checkRuleButton('admin/Vip/vipEdit')"}
+							 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+							 {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
+							 {if condition="checkRuleButton('admin/Vip/delete')"}
+							 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+							 {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
+							 </script>
+							</div>	
+						</div>	 
+					</div>
+				</div>
+              </div>
+            </div>
+			
+          </div>
+        </div>
+     </div>
+  </div>
+</div>
+  
+{/block}
+{block name="js"} 
+  <script>
+      var signSignRule ="{:url('Sign/signRule')}";
+      var signDelete ="{:url('Sign/delete')}";
+      var signSignEdit ="{:url('Sign/signEdit')}";
+      var vipRule ="{:url('Vip/vipRule')}";
+      var vipDelete ="{:url('Vip/delete')}";
+      var vipEdit ="{:url('Vip/vipEdit')}";
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'element','table', 'webset',  'form'], function(){
+    var $ = layui.$
+    ,element = layui.element
+	,table = layui.table
+	,form = layui.form;
+	
+	//添加签到规则
+	form.on('submit(sign-rule-submit)',function(data){
+			var field = data.field;
+				$.ajax({
+					type:"post",
+					url:"{:url('admin/Sign/add')}",
+					data:field,
+					daType:"json",
+					success:function (data){
+							if (data.code == 0) {
+								layer.msg(data.msg,{
+									icon:6,
+									time:2000
+								}, function(){
+								table.reload('sign-rule'); //数据刷新
+								});
+							} else {
+								layer.open({
+									tiele:'添加失败',
+									content:data.msg,
+									icon:5,
+									anim:6
+								});
+							}
+						}
+				});
+			return false;
+		});
+	
+	//添加VIP规则
+	form.on('submit(vip-rule-submit)',function(data){
+			var field = data.field;
+				$.ajax({
+					type:"post",
+					url:"{:url('admin/Vip/add')}",
+					data:field,
+					daType:"json",
+					success:function (data){
+							if (data.code == 0) {
+								layer.msg(data.msg,{
+									icon:6,
+									time:2000
+								}, function(){
+								table.reload('vip-rule'); //数据刷新
+								});
+							} else {
+								layer.open({
+									tiele:'添加失败',
+									content:data.msg,
+									icon:5,
+									anim:6
+								});
+							}
+						}
+				});
+			return false;
+		});
+		
+  });
+  </script>
+{/block}

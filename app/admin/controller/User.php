@@ -27,14 +27,14 @@ class User extends AdminController
 	{
 		if(Request::isAjax()){
 			$datas = Request::only(['id','name','email','sex']);
-			$map = array_filter($datas);
-			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->select();
-			$count = $user->count();
+			$map = array_filter($datas,[$this,'filtrArr']);
+			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->paginate(30);
+			$count = $user->total();
 			$res = [];
 			if($count){
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($user as $k => $v){
-				$data = ['id'=>$v['id'],'username'=>$v['name'],'avatar'=>$v['user_img'],'phone'=>$v['phone'],'email'=>$v['email'],'sex'=>$v['sex'],'ip'=>$v['last_login_ip'],'jointime'=>date("Y-m-d",$v['create_time']),'check'=>$v['status'],'auth'=>$v['auth']];
+				$data = ['id'=>$v['id'],'username'=>$v['name'],'avatar'=>$v['user_img'],'phone'=>$v['phone'],'email'=>$v['email'],'sex'=>$v['sex'],'ip'=>$v['last_login_ip'],'city'=>$v['city'],'logintime'=>date("Y-m-d H:i",$v['last_login_time']),'jointime'=>date("Y-m-d",$v['create_time']),'check'=>$v['status'],'auth'=>$v['auth']];
 				$res['data'][] = $data; 
 				}
 			} else {
@@ -102,8 +102,8 @@ class User extends AdminController
     {
         $file = request()->file('file');
 		try {
-			validate(['image'=>'filesize:2048|fileExt:jpg,png,gif|image:200,200,jpg'])
-            ->check(array($file));
+			validate(['file'=>'fileSize:204800|fileExt:jpg,png,gif'])
+            ->check(['file'=>$file]);
 			$savename = \think\facade\Filesystem::disk('public')->putFile('head_pic',$file);
 		} catch (think\exception\ValidateException $e) {
 			echo $e->getMessage();
@@ -157,14 +157,13 @@ class User extends AdminController
 		return json($res);
 	}
 	
-	
-	//退出登陆
-	public function logout()
+	//过滤数组中为空和null的值
+	public function filtrArr($arr)
 	{
-		Session::clear();
-		$res = ['code'=>0,'msg'=>'退出成功' ];
-		
-		return json($res);
+		if($arr === '' || $arr === null){
+            return false;
+        }
+        return true;
 	}
 	
 }

@@ -11,7 +11,7 @@ class LoginCheck
 		if(Session::has('user_id')){
 			return $next($request);
 		} else {
-			return redirect('/index/login');
+			return redirect((string) url('login/index'));
 		}
     }
 }

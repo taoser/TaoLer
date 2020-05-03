@@ -8,6 +8,7 @@ use think\facade\Db;
 use think\facade\View;
 use think\Collection;
 use think\Response;
+use taoler\com\Level;
 
 class Sign extends BaseController
 {
@@ -45,24 +46,24 @@ class Sign extends BaseController
     public function sign()
     {
         if (!Session::has('user_id') || !Session::has('user_name')) {
-            return json(array('code' => 0, 'msg' => '亲，登陆后才能签到哦','url' => 'index/login/index'));
+            return json(array('code' => 0, 'msg' => '亲，登陆后才能签到哦','url' => url('Login/index')));
         } else {
             $uid = session('user_id');
 			$todayData = $this->todayData()->getData();    
 			//var_dump($todayData);
 
             if ($todayData['is_sign'] == 1) { //数组中是返回的是一个对象，不能直接用[]来显示，正确的输出方法是：$pic[0]->title问题解决！
-                exit('{"code":-1,"msg":"你今天已经签过到了"}');
+                //exit('{"code":-1,"msg":"你今天已经签过到了"}');
+				return json(['code'=>-1,'msg'=>'你今天已签过到!']);
             } else {
                 $data = $this->getInsertData($uid);
-
+								
                 $days = $data['days'];
                 // 无今天数据
-
                 $data['uid'] = $uid;
                 $data['stime'] = time();
                 $id = Db::name('user_sign')->insertGetId($data);
-
+	
                 if ($id) {
                     //$will_getscore
                     //$score = $this->getTodayScores($days);
@@ -85,7 +86,9 @@ class Sign extends BaseController
 						$point = $user['point']+$score;
 						$user->save(['point' => $point]);
                         //point_note($score, $uid,  $id);
-                      
+						
+						//到达积分值升级Vip等级
+						$viplv = Level::writeLv($uid);
                     }
                     return json(['code'=>200,'score'=>$score,'days'=>$days,'msg'=>$msg]);
                 } else {

@@ -27,12 +27,17 @@
       
         <table id="LAY-user-back-role" lay-filter="LAY-user-back-role"></table>  
         <script type="text/html" id="buttonCheck">
-			{if condition="checkRuleButton('admin/admin/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="rolecheck" lay-text="已审核|未审核" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无审核权</button>{/if}
+			{if condition="checkRuleButton('admin/AuthGroup/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="rolecheck" lay-text="打开|关闭" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
+			{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>
         <script type="text/html" id="table-useradmin-admin">
+		{if condition="checkRuleButton('admin/AuthGroup/roleedit')"}
           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-        </script>
+		{else /} <a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
+        {if condition="checkRuleButton('admin/AuthGroup/roledel')"}
+		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+        {else /} <a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
+		</script>
       </div>
     </div>
   </div>
@@ -40,6 +45,21 @@
 {/block}
 {block name="js"} 
   <script>
+      var userList = "{:url('User/list')}";
+      var userDelete = "{:url('User/delete')}";
+      var userEdit = "{:url('User/userEdit')}";
+      var adminIndex = "{:url('Admin/index')}";
+      var adminDelete = "{:url('Admin/delete')}";
+      var adminEdit = "{:url('Admin/edit')}";
+      var authGroupList = "{:url('AuthGroup/list')}";
+      var authGroupRoledel = "{:url('AuthGroup/roleDel')}";
+      var authGroupRoleEdit = "{:url('AuthGroup/roleEdit')}";
+      var authAccessIndex = "{:url('AuthAccess/index')}";
+      var authAccessDelete = "{:url('AuthAccess/delete')}";
+      var authAccessEdit = "{:url('AuthAccess/edit')}";
+      var authRuleIndex = "{:url('AuthRule/index')}";
+      var authRuleDelete = "{:url('AuthRule/delete')}";
+      var authRuleEdit = "{:url('AuthRule/edit')}";
   layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({

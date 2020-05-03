@@ -36,8 +36,8 @@
               <div class="layui-form-item">
                 <label class="layui-form-label">性别</label>
                 <div class="layui-input-block">
-                  <input type="radio" name="sex" value="0" {if condition="$admin['sex'] eq 1"} checked {/if} title="男">
-                  <input type="radio" name="sex" value="1" {if condition="$admin['sex'] eq 0"} checked {/if} title="女">
+                  <input type="radio" name="sex" value="0" {if condition="$admin['sex'] eq 0"} checked {/if} title="男">
+                  <input type="radio" name="sex" value="1" {if condition="$admin['sex'] eq 1"} checked {/if} title="女">
                 </div>
               </div>
               <!--div class="layui-form-item">
@@ -72,8 +72,12 @@
               </div>
               <div class="layui-form-item">
                 <div class="layui-input-block">
+				{if condition="checkRuleButton('admin/Admin/infoSet')"}
                   <button class="layui-btn" lay-submit lay-filter="setmyinfo">确认修改</button>
-                  <button type="reset" class="layui-btn layui-btn-primary">重新填写</button>
+				{else /}
+				<button class="layui-btn layui-btn-disabled">确认修改</button>
+				{/if}
+                  <!--button type="reset" class="layui-btn layui-btn-primary">重新填写</button-->
                 </div>
               </div>
             </div>
@@ -87,6 +91,7 @@
 {/block}
 {block name="js"} 
   <script>
+      var adminInfoSet ="{:url('Admin/infoSet')}";
   layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({

@@ -116,11 +116,13 @@
 
 {block name="script"}
 <script>
+var uploadHeadImg = "{:url('User/uploadHeadImg')}",
+    userSet = "{:url('User/set')}";
 $(function(){
 	$('#ziliao').click(function(){
 		$.ajax({
 		type:'post',
-		url:"{:url('user/set')}",
+		url:"{:url('User/set')}",
 		data:$('#zl').serialize(),
 		dataType:"json",
 		success:function(data){
@@ -129,7 +131,7 @@ $(function(){
 					icon:6,
 					tiye:2000
 				},function(){
-					location.href = data.url;
+					location.reload();
 				});
 			} else {
 				layer.open({
@@ -146,51 +148,51 @@ $(function(){
 });
 </script>	
 <script>
-$(function(){	
-	$('#setpass').click(function(){
-		$.ajax({
-		type:"post",
-		url:"{:url('index/user/setpass')}",
-		data:$('#newpass').serialize(),
-		dataType:"json",
-		success:function(data){
-			if(data.code == 1){
-				layer.msg(data.msg,{
-					icon:6,
-					tiye:2000
-				},function(){
-					location.href = data.url;
-				});
-			} else{
-				layer.open({
-					title:"密码设置失败",
-					content:data.msg,
-					icon:5,
-					anim:6
-				});
-			}
-		}
-		});
-	return false;
-	});
+$(function(){
+    $('#setpass').click(function(){
+        $.ajax({
+            type:"post",
+            url:"{:url('User/setpass')}",
+            data:$('#newpass').serialize(),
+            dataType:"json",
+            success:function(data){
+                if(data.code == 1){
+                    layer.msg(data.msg,{
+                        icon:6,
+                        tiye:2000
+                    },function(){
+                        location.href = data.url;
+                    });
+                } else{
+                    layer.open({
+                        title:"密码设置失败",
+                        content:data.msg,
+                        icon:5,
+                        anim:6
+                    });
+                }
+            }
+        });
+        return false;
+    });
 	
 });
 </script>
 
 <script>
-    layui.cache.page = 'user';
-    layui.cache.user = {
-        username: '游客'
-        ,uid: -1
-        ,avatar: '/static/res/images/avatar/00.jpg'
-        ,experience: 83
-        ,sex: '男'
-    };
-    layui.config({
-        version: "3.0.0"
-        ,base: '/static/res/mods/'
-    }).extend({
-        fly: 'index'
-    }).use('fly');
+layui.cache.page = 'user';
+layui.cache.user = {
+    username: '{$user.name??'游客'}'
+    ,uid: "{$user.id ? $user.id : -1}"
+    ,avatar: "{$user.name? $user['user_img']:'/static/res/images/avatar/00.jpg'}"
+    ,experience: 83
+    ,sex: "{if condition="$user['sex'] eq 0"}男{else /}女{/if}"
+};
+layui.config({
+    version: "3.0.0"
+    ,base: '/static/res/mods/'
+}).extend({
+    fly: 'index'
+}).use('fly');
 </script>
 {/block}

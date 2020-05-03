@@ -16,7 +16,7 @@ layui.define(['table', 'form'], function(exports){
   //帖子管理
   table.render({
     elem: '#LAY-app-forum-list'
-    ,url: '/admin/Forum/list' //帖子数据接口
+    ,url: forumList //帖子数据接口
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 55, title: 'ID', sort: true}
@@ -28,7 +28,7 @@ layui.define(['table', 'form'], function(exports){
 	  ,{field: 'hot', title: '精贴', templet: '#buttonHot', minWidth: 80, align: 'center'}
 	  ,{field: 'reply', title: '评论状态', templet: '#buttonReply', minWidth: 80, align: 'center'}
 	  ,{field: 'check', title: '审帖', templet: '#buttonCheck', minWidth: 80, align: 'center'}
-      ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-forum-list'}
+      ,{title: '操作', width: 80, align: 'center', fixed: 'right', toolbar: '#table-forum-list'}
     ]]
     ,page: true
     ,limit: 15
@@ -44,7 +44,7 @@ layui.define(['table', 'form'], function(exports){
         //obj.del();
 		$.ajax({
 				type:'post',
-				url:"/admin/Forum/listdel",
+				url:forumListdel,
 				data:{id:data.id},
 				dataType:'json',
 				success:function(data){
@@ -132,7 +132,7 @@ layui.define(['table', 'form'], function(exports){
   //评论管理
   table.render({
     elem: '#LAY-app-forumreply-list'
-    ,url: '/admin/Forum/replys'
+    ,url: forumReplys
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 100, title: 'ID', sort: true}
@@ -142,7 +142,7 @@ layui.define(['table', 'form'], function(exports){
       ,{field: 'content', title: '回帖内容', width: 200}
       ,{field: 'replytime', title: '回帖时间', sort: true}
 	  ,{field: 'check', title: '审核', templet: '#buttonCheck'}
-      ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-forum-replys'}
+      ,{title: '操作', width: 80, align: 'center', fixed: 'right', toolbar: '#table-forum-replys'}
     ]]
     ,page: true
     ,limit: 15
@@ -158,7 +158,7 @@ layui.define(['table', 'form'], function(exports){
         //obj.del();
 		$.ajax({
 				type:'post',
-				url:"/admin/Forum/redel",
+				url:forumRedel,
 				data:{id:data.id},
 				dataType:'json',
 				success:function(data){
@@ -209,6 +209,116 @@ layui.define(['table', 'form'], function(exports){
       });
     }
   });
+
+    //帖子分类管理
+    table.render({
+        elem: '#LAY-app-content-tags'
+        ,url: forumTags //帖子分类接口
+        ,cols: [[
+            {type: 'numbers', fixed: 'left'}
+            ,{field: 'sort', title: '排序', width: 80, sort: true}
+            ,{field: 'id', title: 'ID',width: 60}
+            ,{field: 'tags', title: '分类名', minWidth: 100}
+            ,{field: 'ename', title: 'EN别名', minWidth: 100}
+            ,{field: 'is_hot', title: '热门', templet: '#buttonHot'}
+            ,{field: 'desc', title: '描述', minWidth: 100}
+            ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#layuiadmin-app-cont-tagsbar'}
+        ]]
+        ,text: '对不起，加载出现异常！'
+    });
+
+    //监听工具条
+    table.on('tool(LAY-app-content-tags)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('确定删除此分类？', function(index){
+                $.ajax({
+                    type:'post',
+                    url:forumTagsDelete,
+                    data:{id:data.id},
+                    dataType:'json',
+                    success:function(data){
+                        if(data.code == 0){
+                            layer.msg(data.msg,{
+                                icon:6,
+                                time:2000
+                            },function(){
+                                location.reload();
+                            });
+                        } else {
+                            layer.open({
+                                title:'删除失败',
+                                content:data.msg,
+                                icon:5,
+                                adim:6
+                            })
+                        }
+                    }
+                });
+                //obj.del();
+                layer.close(index);
+            });
+        } else if(obj.event === 'edit'){
+            var tr = $(obj.tr);
+            layer.open({
+                type: 2
+                ,title: '编辑分类'
+                ,content: forumTagsForm + '?id='+ data.id
+                ,area: ['450px', '300px']
+                ,btn: ['确定', '取消']
+                ,yes: function(index, layero){
+                    //获取iframe元素的值
+                    var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
+                        ,sort = othis.find('input[name="sort"]').val()
+                        ,tags = othis.find('input[name="tags"]').val()
+                        ,ename = othis.find('input[name="ename"]').val()
+                        ,desc = othis.find('input[name="desc"]').val();
+
+                    if(!tags.replace(/\s/g, '')) return;
+
+                    $.ajax({
+                        type:"post",
+                        url:forumTagsForm,
+                        data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"desc":desc},
+                        daType:"json",
+                        success:function (data){
+                            if (data.code == 0) {
+                                layer.msg(data.msg,{
+                                    icon:6,
+                                    time:2000
+                                }, function(){
+                                    location.reload();
+                                });
+                            } else {
+                                layer.open({
+                                    tiele:'修改失败',
+                                    content:data.msg,
+                                    icon:5,
+                                    anim:6
+                                });
+                            }
+                        }
+                    });
+                    /*
+                              obj.update({
+                                tags: tags
+                                ,ename: ename
+                                ,sort: sort
+                              });
+                    */
+                    layer.close(index);
+                }
+                ,success: function(layero, index){
+                    //给iframe元素赋值
+                    var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags").click();
+                    othis.find('input[name="sort"]').val(data.sort)
+                        ,othis.find('input[name="tags"]').val(data.tags)
+                        ,othis.find('input[name="ename"]').val(data.ename)
+                        ,othis.find('input[name="desc"]').val(data.desc);
+                }
+            });
+        }
+    });
   
   exports('forum', {})
 });

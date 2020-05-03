@@ -11,7 +11,6 @@ use app\common\model\User;
 use app\common\model\Cate;
 use app\common\model\Comment;
 
-
 class Index extends BaseController
 {	
     public function index()
@@ -27,33 +26,33 @@ class Index extends BaseController
 		//置顶文章
 		$artTop = Cache::get('arttop');
 		if(!$artTop){
-			$artTop = Article::field('id,title,cate_id,user_id,create_time,is_top')->where(['is_top'=>1,'status'=>1,'delete_time'=>0])->with([
+			$artTop = Article::field('id,title,title_color,cate_id,user_id,create_time,is_top,jie')->where(['is_top'=>1,'status'=>1,'delete_time'=>0])->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
 			'user' => function($query){
-				$query->field('id,name,nickname,user_img,area_id');
+				$query->field('id,name,nickname,user_img,area_id,vip');
 			}
 			])->withCount(['comments'])->order('create_time','desc')->limit(5)->select();
-			Cache::set('arttop',$artTop,60);
+			Cache::tag('tagArtDetail')->set('arttop',$artTop,60);
 		}
 		
 		//首页文章显示20条
 		$artList = Cache::get('artlist');
 		if(!$artList){
-			$artList = Article::field('id,title,cate_id,user_id,create_time,is_hot')->with([
+			$artList = Article::field('id,title,title_color,cate_id,user_id,create_time,is_hot,jie')->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
 			'user' => function($query){
-				$query->field('id,name,nickname,user_img,area_id');
+				$query->field('id,name,nickname,user_img,area_id,vip');
 			}
 			])->withCount(['comments'])->where(['status'=>1,'delete_time'=>0])->order('create_time','desc')->limit(20)->select();
-			Cache::set('artlist',$artList,60);
+			Cache::tag('tagArt')->set('artlist',$artList,60);
 		}
 		
 		//热议文章
-		$artHot = Article::field('id,title')->withCount('comments')->where(['status'=>1,'delete_time'=>0])->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
+		$artHot = Article::field('id,title')->withCount('comments')->where(['status'=>1,'delete_time'=>0])->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->withCache(60)->select();
 
 		//首页赞助
 		$ad_index = Cache::get('adindex');
@@ -94,7 +93,7 @@ class Index extends BaseController
 	//回帖榜
 	public function reply()
 	{
-		$user = User::withCount('comments')->order('comments_count','desc')->limit(20)->select();
+		$user = User::withCount('comments')->order(['comments_count'=>'desc','last_login_time'=>'desc'])->limit(20)->select();
 		if($user)
 		{	
 			$res['status'] = 0;
@@ -156,7 +155,7 @@ class Index extends BaseController
     {
         $username = Request::param('username');
         $u = Db::name('user')->whereOr('nickname', $username)->whereOr('name', $username)->find();
-        return redirect('index/user/home',['id'=>$u['id']]);
+        return redirect((string) url('user/home',['id'=>$u['id']]));
 
     }
 

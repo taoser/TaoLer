@@ -6,13 +6,14 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
-use app\common\model\Cate;
-use app\common\model\User;
+use think\facade\Config;
 use app\common\model\Comment;
-use app\common\model\Collection;
 use app\common\model\Article as ArticleModel;
 use think\exception\ValidateException;
-use think\facade\Config;
+use taoler\com\Message;
+use app\common\model\Cate;
+use app\common\model\User;
+use app\common\model\Collection;
 
 class Article extends BaseController
 {
@@ -27,8 +28,32 @@ class Article extends BaseController
 		//获取分类ID
 		$ename = Request::param('ename');
 		$type = Request::param('type');
-		$page = Request::param('page');
-		
+		//分页伪静态
+		$str = Request::baseUrl();	//不带参数在url
+		$patterns = "/\d+/"; //数字正则
+		preg_match($patterns,$str,$arr);	//正则查询页码出现在位置
+		//检测route配置中是否设置了伪静态后缀
+		$suffix = Config::get('route.url_html_suffix') ? '.'.Config::get('route.url_html_suffix') : '/';
+		if(Config::get('route.url_html_suffix')){
+			//伪静态有后缀
+			if(isset($arr[0])){
+				$page = $arr[0];
+				$url = strstr($str,$arr[0],true);
+			} else {
+				$page = 1;
+				$url = strstr($str,'.html',true).'/';
+			}
+		} else {
+			//伪静态后缀false
+			if(isset($arr[0])){
+				$page = $arr[0];
+				$url = strstr($str,$arr[0],true);
+			} else {
+				$page = 1;
+				$url = $str.'/';
+			}
+		}
+
 		$cateId = Db::name('cate')->where('ename',$ename)->value('id');
 		if($cateId){
 			$where = ['cate_id' => $cateId];
@@ -39,48 +64,67 @@ class Article extends BaseController
 			switch ($type) {
 				//查询文章,15个分1页
                 case 'jie':
-				$artList = ArticleModel::field('id,title,cate_id,user_id,create_time,is_top,is_hot')->with([
+				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
 					},
 					'user' => function($query){
-						$query->field('id,name,nickname,user_img,area_id');
+						$query->field('id,name,nickname,user_img,area_id,vip');
 					}
-				])->withCount(['comments'])->where(['status'=>1,'jie'=>1])->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])->paginate(15);
+				])->withCount(['comments'])->where(['status'=>1,'jie'=>1])->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
+				->paginate([
+					'list_rows' => 15,	
+					'page' => $page,
+					'path' =>$url.'[PAGE]'.$suffix
+				]);
 				break;
 				
 				case 'hot':
-				$artList = ArticleModel::field('id,title,cate_id,user_id,create_time,is_top,is_hot')->with([
+				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
 					},
 					'user' => function($query){
-						$query->field('id,name,nickname,user_img,area_id');
+						$query->field('id,name,nickname,user_img,area_id,vip');
 					}
-				])->withCount(['comments'])->where('status',1)->where($where)->where('is_hot',1)->order(['is_top'=>'desc','create_time'=>'desc'])->paginate(15);
+				])->withCount(['comments'])->where('status',1)->where($where)->where('is_hot',1)->order(['is_top'=>'desc','create_time'=>'desc'])
+				->paginate([
+					'list_rows' => 15,	
+					'page' => $page,
+					'path' =>$url.'[PAGE]'.$suffix
+				]);
 				break;
 				
 				case 'top':
-				$artList = ArticleModel::field('id,title,cate_id,user_id,create_time,is_top,is_hot')->with([
+				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
 					},
 					'user' => function($query){
-						$query->field('id,name,nickname,user_img,area_id');
+						$query->field('id,name,nickname,user_img,area_id,vip');
 					}
-				])->withCount(['comments'])->where('status',1)->where($where)->where('is_top',1)->order(['is_top'=>'desc','create_time'=>'desc'])->paginate(15);
+				])->withCount(['comments'])->where('status',1)->where($where)->where('is_top',1)->order(['is_top'=>'desc','create_time'=>'desc'])
+				->paginate([
+					'list_rows' => 15,	
+					'page' => $page,
+					'path' =>$url.'[PAGE]'.$suffix
+				]);
 				break;
 				
 				default:
-				$artList = ArticleModel::field('id,title,cate_id,user_id,create_time,is_top,is_hot')->with([
+				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
 					},
 					'user' => function($query){
-						$query->field('id,name,nickname,user_img,area_id');
+						$query->field('id,name,nickname,user_img,area_id,vip');
 					}
-				])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])->paginate(15);
-	
+				])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
+				->paginate([
+					'list_rows' => 15,	
+					'page' => $page,
+					'path' =>$url.'[PAGE]'.$suffix
+				]);
 				break;
 			}
 			Cache::set('arts'.$ename.$type.$page,$artList,600);
@@ -104,15 +148,15 @@ class Article extends BaseController
 		$article = Cache::get('article_'.$id);
 		if(!$article){
 			//查询文章
-		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,tags,create_time')->where('status',1)->with([
+		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,tags,title_color,create_time')->where('status',1)->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
 			'user' => function($query){
-				$query->field('id,name,nickname,user_img,area_id');
+				$query->field('id,name,nickname,user_img,area_id,vip');
 			}
         ])->find($id);
-		Cache::set('article_'.$id,$article,3600);
+		Cache::tag('tagArtDetail')->set('article_'.$id,$article,3600);
 		}
 		$comments = $article->comments()->where('status',1)->paginate(10);
 		$article->inc('pv')->update();
@@ -150,23 +194,40 @@ class Article extends BaseController
 		//if (Request::isAjax()){
 		//获取评论
 		$data = Request::only(['content','article_id','user_id']);
-		
+		$sendId = $data['user_id'];
+		if(empty($data['content'])){
+					return json(['code'=>0, 'msg'=>'评论不能为空！']);
+			}
 		//用户留言存入数据库
 		if (Comment::create($data)) {
-			$res = ['code'=>1, 'msg'=>'留言成功'];
-		} else{
-			$res = ['code'=>0, 'msg'=>'留言失败'];
+			//站内信
+			$article = Db::name('article')->field('id,title,user_id')->where('id',$data['article_id'])->find();
+			$title = $article['title'];
+			$link = (string) url('article/detail',['id'=>$data['article_id']]);
+
+			//@user comment
+			$preg = "/@([^@\s]*)\s/";
+			preg_match($preg,$data['content'],$username);
+			if(isset($username[1])){
+				$receveId = Db::name('user')->whereOr('nickname', $username[1])->whereOr('name', $username[1])->value('id'); 
+			} else {
+				$receveId = $article['user_id'];
+			}
+			$data = ['title'=>$title,'content'=>'评论通知','link'=>$link,'user_id'=>$sendId,'type'=>1];
+			Message::sendMsg($sendId,$receveId,$data);
+			
+			$res = ['code'=>0, 'msg'=>'留言成功'];
+		} else {
+			$res = ['code'=>-1, 'msg'=>'留言失败'];
 		}
 		return json($res);
 	}
-	
-	
 
     //添加文章
     public function add()
 	{
 		if(Request::isAjax()){
-			$data = Request::only(['cate_id','title','user_id','content','upzip','tags','captcha']);
+			$data = Request::only(['cate_id','title','title_color','user_id','content','upzip','tags','captcha']);
 			$validate = new \app\common\validate\Article; //调用验证器
 			$result = $validate->scene('Artadd')->check($data); //进行数据验证		
 			if(true !==$result){	
@@ -176,7 +237,8 @@ class Article extends BaseController
 				$result = $article->add($data);
 				if($result == 1) {
 					$aid = Db::name('article')->max('id');
-					return json(['code'=>1,'msg'=>'发布成功','url'=>'/'.app('http')->getName().'/jie/'.$aid.'.html']);
+                    $link = (string) url('article/detail',['id'=> $aid]);
+                    return json(['code'=>1,'msg'=>'发布成功','url'=> $link]);
 				} else {
 					$this->error($result);
 				}
@@ -193,7 +255,6 @@ class Article extends BaseController
 		$tags = [];
 			foreach($att as $v){
 				if ($v !='') {
-					
 				$tags[] = $v;
 				}
 			}
@@ -206,7 +267,7 @@ class Article extends BaseController
 		$article = Db::name('article')->find($id);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id','cate_id','title','user_id','content','upzip','tags','captcha']);
+			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','tags','captcha']);
 			$validate = new \app\common\validate\Article(); //调用验证器
 			$res = $validate->scene('Artadd')->check($data); //进行数据验证
 			
@@ -216,7 +277,10 @@ class Article extends BaseController
 				$article = new \app\common\model\Article;
 				$result = $article->edit($data);
 				if($result == 1) {
-					return json(['code'=>1,'msg'=>'修改成功','url'=>'/'.app('http')->getName().'/jie/'.$id.'.html']);
+                    //删除缓存显示编辑后内容
+                    Cache::delete('article_'.$id);
+                    $link = (string) url('article/detail',['id'=> $id]);
+					return json(['code'=>0,'msg'=>'修改成功','url'=> $link]);
 				} else {
 				$this->error($result);
 				}
@@ -236,21 +300,21 @@ class Article extends BaseController
 		return View::fetch();
     }
 	
-	//删除文章
+	//删除帖子
     public function delete()
 	{
 		$article = ArticleModel::find(input('id'));
 		$result = $article->together(['comments'])->delete();
 		if($result) {
-			$res = ['code'=>1,'msg'=>'删除文章成功','url'=>'/index/user/post'];
+			$res = ['code'=>0,'msg'=>'删除文章成功','url'=>'/index/user/post'];
 		} else {
-			$res = ['code'=>0,'msg'=>'删除文章失败'];	
+			$res = ['code'=>-1,'msg'=>'删除文章失败'];
 		}
 		return json($res);
 	}
 	
 	//文本编辑器图片上传
-	public function text_img_upload()
+	public function textImgUpload()
     {
         $file = request()->file('file');
 		try {
@@ -298,7 +362,27 @@ class Article extends BaseController
 				$res = ['status'=>0,'msg'=>'精贴已取消'];
 			}
 		}
+
+        //删除本贴设置缓存显示编辑后内容
+        Cache::delete('article_'.$data['id']);
+		//清除文章tag缓存
+		//Cache::tag('tagArtDetail')->clear();
 		return json($res);	
+	}
+	
+	//改变标题颜色
+	public function titleColor()
+	{
+		$data = Request::param();
+		$result = ArticleModel::update($data);
+		if($result){
+			//清除文章缓存
+			Cache::tag(['tagArt','tagArtDetail'])->clear();
+			$res = ['code'=> 0, 'msg'=>'标题颜色设置成功'];
+		}else{
+			$res = ['code'=> -1, 'msg'=>'标题颜色设置失败'];
+		}
+		return json($res);
 	}
 	
 }

@@ -24,7 +24,7 @@ layui.define(function(exports){
   admin.events.logout = function(){
     //执行退出接口
     admin.req({
-      url: '/admin/user/logout'
+      url: AdminLogout
       ,type: 'get'
       ,data: {}
       ,done: function(res){ //这里要说明一下：done 是只有 response 的 code 正常才会执行。而 succese 则是只要 http 为 200 就会执行
@@ -36,10 +36,8 @@ layui.define(function(exports){
 				icon:1,
 				time:2000
 			}, function(){
-				location.href = '/admin/login/index';
+				location.href = AdminLogin;
 				});
-			
-          //location.href = '/admin/login/index';
         });
       }
     });

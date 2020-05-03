@@ -1,16 +1,17 @@
-
 {extend name="public/base" /}
-
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.title},{$article.tags}{/block}
 {block name="description"}{$article.title},{:getArtContent($article.content)}{/block}
-{block name="column"}{include file="/public/column" /}{/block}
+{block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md8 content detail">
       <div class="fly-panel detail-box">
-        <h1>{$article.title}</h1>
+        <h1 style="color:{$article.title_color};font-weight:bold">{$article.title}
+		<span><div onclick="PhoneDown();" style="" class="detail_qrcode" id="mobile"></div></span>
+		</h1>
+		
         <div class="fly-detail-info">
           <!-- <span class="layui-badge">审核中</span> -->
           <span class="layui-badge layui-bg-green fly-detail-column">{$article.cate.catename}</span>
@@ -25,7 +26,6 @@
 		  {if ($article.is_hot == 1)}
           <span class="layui-badge layui-bg-red">精帖</span>
 		  {/if}
-          
           <div class="fly-admin-box" data-id="{$article.id}">
 		  {if ($user.auth == 1)}
             <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
@@ -39,6 +39,7 @@
 			{else /}
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">取消加精</span>
 			{/if}
+			<span id="color">高亮</span>
 		  {/if}
           </div>
 		  
@@ -56,24 +57,19 @@
 			<i class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($article.user.area_id) ?: '无'}</i>
               <cite>{$article.user.nickname ?: $article.user.name}</cite>
               <i class="iconfont icon-renzheng" title="认证信息：{{ rows.user.approve }}"></i>
-              <!--i class="layui-badge fly-badge-vip">VIP3</i-->
+              {if($article.user.vip > 0)}
+                <i class="layui-badge fly-badge-vip">VIP{$article.user.vip}</i>
+				{/if}
             </a>
             <span>{$article.create_time|date='Y-m-d H:d'}</span>
           </div>
-		  
           <div class="detail-hits" id="LAY_jieAdmin" data-id="{$article['id']}">
             <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
 			{if(session('user_name')==$article.user.name  || $user.auth == 1)}
             <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">编辑此贴</a></span>
 			{/if}
           </div>
-		  <!--	
-			{if(session('user_id') != '')}
-			<span class="layui-btn layui-btn-xs jie-admin" type="collect" data-type="add" user_id="{session('user_id')}">收藏</span>
-			{/if}
-		-->	
         </div>
-
         <div class="detail-body photos">{$article.content|raw}</div>
       </div>
 
@@ -136,14 +132,14 @@
           </li>
         {/volist} 
         </ul>
-		
+
 		<div style="text-align: center">
 			{$comments|raw}
         </div>
 
         {if condition="$article.is_reply == 1"}
 		<div class="layui-form layui-form-pane">
-          <form action="post" method="post" >
+          <form  >
             <div class="layui-form-item layui-form-text">
               <a name="comment"></a>
               <div class="layui-input-block">
@@ -153,7 +149,7 @@
             <div class="layui-form-item">
               <input type="hidden" name="article_id" value="{$article.id}">
 			  <input type="hidden" name="user_id" value="{:session('user_id')}">
-              <button type="button" class="layui-btn"  lay-submit id="recomment">提交回复</button>
+              <button type="button" class="layui-btn" lay-filter="*" lay-submit id="recomment">提交回复</button>
             </div>
           </form>
         </div>
@@ -195,7 +191,7 @@
         </div>
 				
         <div class="fly-panel-main">
-          <a href="" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">TaoLer 1.0 旗舰之作</a>
+          <a href="" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">TaoLer 社区快速轻论坛</a>
         </div>
       </div>
 
@@ -212,73 +208,132 @@
 {/block}
 {block name="script"}
 <script>
-$(function() {
-	$('#recomment').click(function (){
-	var uid = "{:session('user_id')}";
-		if (uid != '') {
-			$.ajax({
-			type:"post",
-			url:"{:url('article/comment')}",			
-			data:$('form').serialize(),
-			dataType:"json",
-			success:function (data) {
-				if (data.code == 1) {
-					layer.msg(data.msg,{
-						icon:6,
-						time:2000
-					},function () {
-					location.reload(true);
-					
-				});
-				}else {
-					layer.open({
-						title:'评论失败',
-						content:data.msg,
-						icon:5,
-						anim:6
-					});
-				}
-			}
-			});
-		} else {
-			layer.msg('请先登陆',{
-				icon:5,
-				time:2000
-			},function () {
-				location.href = "{:url('login/index')}";
-			});
-		}
-		
-	return false;
-	});
-});
-</script>
-<script>
+var collectionFind = "{:url('index/Collection/find')}",
+    articleJieset = "{:url('index/Article/jieset')}",
+    articleDelete = "{:url('index/Article/delete')}",
+    collection = "{:url('index/Collection/')}",
+    commentJiedaZan = "{:url('index/Comment/jiedaZan')}",
+    commentJiedaCai = "{:url('index/Comment/jiedaCai')}",
+    commentGetDa = "{:url('index/Comment/getDa')}",
+    commentUpdateDa = "{:url('index/Comment/updateDa')}",
+    commentJiedaDelete = "{:url('index/Comment/jiedaDelete')}";
 layui.cache.page = 'jie';
 layui.cache.user = {
-  username: '{$user.name??'游客'}'
-  ,uid: {$user.id ? 168*$user.id : -1}
-  ,avatar: '{if condition="$user['user_img'] neq ''"}{$user['user_img']}{else /}/static/res/images/avatar/00.jpg{/if}'
-  ,experience: 83
-  ,sex: '{if condition="$user['sex'] eq 0"}男{else/}女{/if}'
+    username: '{$user.name??'游客'}'
+    ,uid: "{$user.id ? $user.id : -1}"
+    ,avatar: "{$user.name? $user['user_img']:'/static/res/images/avatar/00.jpg'}"
+    ,experience: 83
+    ,sex: "{if condition="$user['sex'] eq 0"}男{else /}女{/if}"
 };
 layui.config({
   version: "3.0.0"
   ,base: '/static/res/mods/'
 }).extend({
   fly: 'index'
-}).use(['fly', 'face'], function(){
+}).use(['fly', 'face','colorpicker'], function(){
   var $ = layui.$
-  ,fly = layui.fly;
-  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+  ,fly = layui.fly
+  ,colorpicker = layui.colorpicker;
   
+	//预定义颜色项
+	colorpicker.render({
+		elem: '#color'
+		,color: '#393d49'
+		,predefine: true // 开启预定义颜色
+		,size: 'xs'
+		,done: function(color){
+			  //改变标题颜色
+			  $('h1').css("color", color);
+			  var id = {$article.id};
+			  $.ajax({
+				type:'post',
+				url:"{:url('Article/titleColor')}",
+				data:{id: id,title_color: color},
+				dataType:'json',
+				success:function(data){
+					if(data.code == 0){
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							content:data.msg,
+							icon:5,
+							adim:6
+						})
+					}
+				}
+				});
+			}
+		  });
+  
+    //评论需要登陆
+    $('#recomment').click(function (){
+        var uid = "{:session('user_id')}";
+        if (uid != '') {
+            $.ajax({
+                type:"post",
+                url:"{:url('article/comment')}",
+                data:$('form').serialize(),
+                dataType:"json",
+                success:function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg,{
+                            icon:6,
+                            time:2000
+                        },function () {
+                            location.reload(true);
+                        });
+                    }else {
+                        layer.open({
+                            title:'评论失败',
+                            content:data.msg,
+                            icon:5,
+                            anim:6
+                        });
+                    }
+                }
+            });
+        } else {
+            layer.msg('请先登陆',{
+                icon:5,
+                time:2000
+            },function () {
+                location.href = "{:url('login/index')}";
+            });
+        }
+        return false;
+    });
+
+  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
   $('.detail-body').each(function(){
     var othis = $(this), html = othis.html();
     othis.html(fly.content(html));
-  });
+  })
 });
 </script>
 <script>
+$("#rdown").hover(function(){
+		 $("#phonedl").show().stop();
+	},function(){
+		 $("#phonedl").hide().stop();
+	});
+	
+	$("#phonedl").hover(function(){
+		 $("#phonedl").show().stop();
+	},function(){
+		 $("#phonedl").hide().stop();
+	});
+	
+	function PhoneDown(){
+		layer.open({                         
+			title: "扫码查阅",
+			skin: 'layui-layer',
+			content: "<img src='/qrcode/?text={$Request.domain}{:url('article/detail',['id' => $article.id])}&size=230'>"
+		});
+	}
+
 (function(){
     var bp = document.createElement('script');
     var curProtocol = window.location.protocol.split(':')[0];

@@ -76,114 +76,115 @@ layui.define(['table', 'form'], function(exports){
     }
   });
 
-  //分类管理
-  table.render({
-    elem: '#LAY-app-content-tags'
-    ,url: '/admin/Forum/tags' //模拟接口
-    ,cols: [[
-    {type: 'numbers', fixed: 'left'}
-	  ,{field: 'sort', title: '排序', width: 80, sort: true}
-	  ,{field: 'id', title: 'ID',Width: 50}
-    ,{field: 'tags', title: '分类名', minWidth: 100}
-	  ,{field: 'ename', title: 'EN别名', minWidth: 100}
-	  ,{field: 'desc', title: '描述', minWidth: 100}
-    ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#layuiadmin-app-cont-tagsbar'}
-    ]]
-    ,text: '对不起，加载出现异常！'
-  });
-  
-  //监听工具条
-  table.on('tool(LAY-app-content-tags)', function(obj){
-    var data = obj.data;
-    if(obj.event === 'del'){
-      layer.confirm('确定删除此分类？', function(index){
-		  $.ajax({
-				type:'post',
-				url:"/admin/Forum/tagsdelete",
-				data:{id:data.id},
-				dataType:'json',
-				success:function(data){
-					if(data.code == 0){
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						},function(){
-							location.reload();
-						});
-					} else {
-						layer.open({
-							title:'删除失败',
-							content:data.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			});
-        //obj.del();
-        layer.close(index);
-      });
-    } else if(obj.event === 'edit'){
-      var tr = $(obj.tr);
-      layer.open({
-        type: 2
-        ,title: '编辑分类'
-        ,content: '/admin/Forum/tagsform?id='+ data.id
-        ,area: ['450px', '300px']
-        ,btn: ['确定', '取消']
-        ,yes: function(index, layero){
-          //获取iframe元素的值
-          var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
-          ,sort = othis.find('input[name="sort"]').val()
-          ,tags = othis.find('input[name="tags"]').val()
-		      ,ename = othis.find('input[name="ename"]').val()
-		      ,desc = othis.find('input[name="desc"]').val();
-          
-          if(!tags.replace(/\s/g, '')) return;
-	  
-			$.ajax({
-				type:"post",
-				url:"/admin/Forum/tagsform",
-				data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"desc":desc},
-				daType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						}, function(){
-							location.reload();
-						});
-					} else {
-						layer.open({
-							tiele:'修改失败',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-					}
-				}
-			});
-/*	  
-          obj.update({
-            tags: tags
-			,ename: ename
-			,sort: sort
-          });
-*/		  
-          layer.close(index);
+    //文章分类管理
+    table.render({
+        elem: '#LAY-app-content-tags'
+        ,url: '/Forum/tags' //模拟接口
+        ,cols: [[
+            {type: 'numbers', fixed: 'left'}
+            ,{field: 'sort', title: '排序', width: 80, sort: true}
+            ,{field: 'id', title: 'ID',width: 60}
+            ,{field: 'tags', title: '分类名', minWidth: 100}
+            ,{field: 'ename', title: 'EN别名', minWidth: 100}
+            ,{field: 'is_hot', title: '热门', templet: '#buttonHot'}
+            ,{field: 'desc', title: '描述', minWidth: 100}
+            ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#layuiadmin-app-cont-tagsbar'}
+        ]]
+        ,text: '对不起，加载出现异常！'
+    });
+
+    //监听工具条
+    table.on('tool(LAY-app-content-tags)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('确定删除此分类？', function(index){
+                $.ajax({
+                    type:'post',
+                    url:"/admin/Forum/tagsdelete",
+                    data:{id:data.id},
+                    dataType:'json',
+                    success:function(data){
+                        if(data.code == 0){
+                            layer.msg(data.msg,{
+                                icon:6,
+                                time:2000
+                            },function(){
+                                location.reload();
+                            });
+                        } else {
+                            layer.open({
+                                title:'删除失败',
+                                content:data.msg,
+                                icon:5,
+                                adim:6
+                            })
+                        }
+                    }
+                });
+                //obj.del();
+                layer.close(index);
+            });
+        } else if(obj.event === 'edit'){
+            var tr = $(obj.tr);
+            layer.open({
+                type: 2
+                ,title: '编辑分类'
+                ,content: '/admin/Forum/tagsform?id='+ data.id
+                ,area: ['450px', '300px']
+                ,btn: ['确定', '取消']
+                ,yes: function(index, layero){
+                    //获取iframe元素的值
+                    var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
+                        ,sort = othis.find('input[name="sort"]').val()
+                        ,tags = othis.find('input[name="tags"]').val()
+                        ,ename = othis.find('input[name="ename"]').val()
+                        ,desc = othis.find('input[name="desc"]').val();
+
+                    if(!tags.replace(/\s/g, '')) return;
+
+                    $.ajax({
+                        type:"post",
+                        url:"/admin/Forum/tagsform",
+                        data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"desc":desc},
+                        daType:"json",
+                        success:function (data){
+                            if (data.code == 0) {
+                                layer.msg(data.msg,{
+                                    icon:6,
+                                    time:2000
+                                }, function(){
+                                    location.reload();
+                                });
+                            } else {
+                                layer.open({
+                                    tiele:'修改失败',
+                                    content:data.msg,
+                                    icon:5,
+                                    anim:6
+                                });
+                            }
+                        }
+                    });
+                    /*
+                              obj.update({
+                                tags: tags
+                                ,ename: ename
+                                ,sort: sort
+                              });
+                    */
+                    layer.close(index);
+                }
+                ,success: function(layero, index){
+                    //给iframe元素赋值
+                    var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags").click();
+                    othis.find('input[name="sort"]').val(data.sort)
+                        ,othis.find('input[name="tags"]').val(data.tags)
+                        ,othis.find('input[name="ename"]').val(data.ename)
+                        ,othis.find('input[name="desc"]').val(data.desc);
+                }
+            });
         }
-        ,success: function(layero, index){
-          //给iframe元素赋值
-          var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags").click();
-          othis.find('input[name="sort"]').val(data.sort)
-          ,othis.find('input[name="tags"]').val(data.tags)
-		      ,othis.find('input[name="ename"]').val(data.ename)
-		      ,othis.find('input[name="desc"]').val(data.desc);
-        }
-      });
-    }
-  });
+    });
 
   //评论管理
   table.render({

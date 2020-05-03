@@ -480,9 +480,15 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-body ul>li{margin-top: 0;}
 .detail-body .layui-elem-quote{margin: 10px 0; font-size: 14px; line-height: 26px;}
 
+/*标题颜色展示方式*/
+.layui-colorpicker.layui-colorpicker-xs {width: 30px;height: 20px;line-height: 16px;border: 0px solid #e6e6e6;padding: 0;vertical-align: top;border-radius: 0;}
+.layui-colorpicker-trigger-span {display: block;height: 100%;box-sizing: border-box;border: 1px solid rgba(2, 0, 0, 0.24);border-radius: 2px;text-align: center;}
+.layui-icon-down:before {font-size: 12px;content: "高亮";}
+/*扫码阅读*/
+.detail_qrcode{position: absolute;top: 7px;right: 7px;width: 30px;height: 30px;background: url(/static/res/images/detail_qrcode.png) no-repeat;background-size: 30px 30px;}
+
 /* 发帖 */
 .layui-form-item.layui-col-space15{margin-bottom: 7.5px;}
-
 
 /* 求解管理 */
 .jie-admin{cursor: pointer;}

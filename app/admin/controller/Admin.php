@@ -25,13 +25,11 @@ class Admin extends AdminController
 	public function index()
 	{
 		if(Request::isAjax()){
-		$data = Request::only(['id','username','mobile','email','auth_group_id']);
+		$data = Request::only(['id','username','mobile','email']);
 		$map = array_filter($data);
 			$admins = Db::name('admin')
-			->alias('a')
-			->join('auth_group u','a.auth_group_id = u.id')
-			->field('a.id as aid,username,mobile,email,auth_group_id,title,last_login_ip,a.status as astatus,last_login_time')
-			->where('a.delete_time',0)
+			->field('id,username,mobile,email,last_login_ip,status,last_login_time')
+			->where('delete_time',0)
 			->where($map)
 			->select();
 			
@@ -39,7 +37,7 @@ class Admin extends AdminController
 			if($count){
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($admins as $k => $v){
-					$data = ['id'=>$v['aid'],'loginname'=>$v['username'],'telphone'=>$v['mobile'],'email'=>$v['email'],'role'=>$v['title'],'ip'=>$v['last_login_ip'],'check'=>$v['astatus'],'logintime'=>date("Y-m-d",$v['last_login_time'])];
+					$data = ['id'=>$v['id'],'loginname'=>$v['username'],'telphone'=>$v['mobile'],'email'=>$v['email'],'ip'=>$v['last_login_ip'],'check'=>$v['status'],'logintime'=>date("Y-m-d",$v['last_login_time'])];
 					$res['data'][] = $data;
 				}
 			} else {
@@ -47,8 +45,6 @@ class Admin extends AdminController
 			}
 			return json($res);
 			}
-			$authGroup = Db::name('auth_group')->field('id,title')->select();
-			View::assign('authGroup',$authGroup);
 		return View::fetch();
 	}
 
@@ -81,17 +77,18 @@ class Admin extends AdminController
 			$data['create_time'] = time();
 			$salt = substr(md5($data['create_time']),-6);
 			$data['password'] = substr_replace(md5($data['password']),$salt,0,6);
-			$adminId = Db::name('admin')->insertGetId($data);
-			Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
-			if($adminId){
+			//$adminId = Db::name('admin')->insertGetId($data);
+			$admin = Db::name('admin')->save($data);
+			//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
+			if($admin){
 				$res = ['code'=>0,'msg'=>'添加成功'];
 			}else{
 				$res = ['code'=>-1,'msg'=>'添加失败'];
 			}
 		return json($res);
 		}
-		$auth_group = Db::name('auth_group')->select();
-		View::assign(['auth_group'=>$auth_group]);
+		//$auth_group = Db::name('auth_group')->select();
+		//View::assign(['auth_group'=>$auth_group]);
 		return View::fetch();
 	}
 	
@@ -111,7 +108,7 @@ class Admin extends AdminController
 			}
 			$data['update_time'] = time();
 			$result = $admin->update($data);
-			Db::name('auth_group_access')->where('uid',$data['id'])->update(['group_id'=>$data['auth_group_id']]);
+			//Db::name('auth_group_access')->where('uid',$data['id'])->update(['group_id'=>$data['auth_group_id']]);
 			if($result){
 				$res = ['code'=>0,'msg'=>'编辑成功'];
 			}else{
@@ -119,8 +116,8 @@ class Admin extends AdminController
 			}
 			return json($res);
 		}
-		$auth_group = Db::name('auth_group')->select();
-		View::assign(['admin'=>$admin,'auth_group'=>$auth_group]);
+		//$auth_group = Db::name('auth_group')->select();,'auth_group'=>$auth_group
+		View::assign(['admin'=>$admin]);
 		return View::fetch();
 	}
 	
@@ -138,8 +135,15 @@ class Admin extends AdminController
 				}
 			}
 	}
-	//管理员资料更新
+	//基本资料显示
 	public function info()
+    {
+		$admin = AdminModel::find(Session::get('admin_id'));	
+		View::assign('admin',$admin);
+		return View::fetch('set/user/info');
+    }
+	//管理员资料更新
+	public function infoSet()
     {
 		$admin = AdminModel::find(Session::get('admin_id'));
         if(Request::isAjax()){
@@ -152,14 +156,20 @@ class Admin extends AdminController
 			}
 		return json($res);
 		}	
-		View::assign('admin',$admin);
-		return View::fetch('set/user/info');
     }
 
-    //改密码
+    //显示改密码页面
     public function repass()
     {
-        //
+		$admin = AdminModel::find(Session::get('admin_id'));
+  	
+		View::assign('admin',$admin);
+		return View::fetch('set/user/repass');
+    }
+	
+	//密码重设
+    public function repassSet()
+    {
 		$admin = AdminModel::find(Session::get('admin_id'));
         if(Request::isAjax()){
 			$data = Request::param();
@@ -183,18 +193,18 @@ class Admin extends AdminController
 				}
 				return json($res);
 			}
-
-		
-		}	
-		View::assign('admin',$admin);
-		return View::fetch('set/user/repass');
+		}
     }
 	
 	//清除缓存Cache
 	public function clearCache(){
-        $atemp = app()->getRootPath().'runtime/admin/temp/';
-		$itemp = app()->getRootPath().'runtime/index/temp/';
-        $cache = app()->getRootPath().'runtime/cache/';
+        //$atemp = app()->getRootPath().'runtime/admin/temp/';
+		//$itemp = app()->getRootPath().'runtime/index/temp/';
+		//$cache = app()->getRootPath().'runtime/cache/';
+		
+		$atemp = str_replace('\\',"/",app()->getRootPath().'runtime/admin/temp/');
+		$itemp = str_replace('\\',"/",app()->getRootPath().'runtime/index/temp/');
+		$cache = str_replace('\\',"/",app()->getRootPath().'runtime/cache/');
 		Files::delDirAndFile($atemp);
 		Files::delDirAndFile($itemp);
         if(is_dir($cache) && Files::delDirAndFile($cache)){
@@ -203,4 +213,13 @@ class Admin extends AdminController
 			return json(['code'=>-1,'msg'=>'清除缓存失败']);
 		} 
     }
+	
+	//退出登陆
+	public function logout()
+	{
+		Session::clear();
+		$res = ['code'=>0,'msg'=>'退出成功' ];
+		
+		return json($res);
+	}
 }

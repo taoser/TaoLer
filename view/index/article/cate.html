@@ -19,7 +19,7 @@
             </a>
             <h2>
               <a class="layui-badge">{$art.cate.catename}</a>
-              <a href="{:url('article/detail',['id' => $art.id])}">{$art.title}</a>
+              <a href="{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
             </h2>
             <div class="fly-list-info">
               <a href="{:url('user/home',['id'=>$art.user.id])}" link>
@@ -27,13 +27,15 @@
                 <cite>{$art.user.nickname ?: $art.user.name}</cite>
                 <!--
                 <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
-                <i class="layui-badge fly-badge-vip">VIP3</i>
                 -->
+				{if($art.user.vip > 0)}
+                <i class="layui-badge fly-badge-vip">VIP{$art.user.vip}</i>
+				{/if}
               </a>
               <span>{$art.create_time|date='Y-m-d'}</span>
 
-              <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> 60</span>
-              <!--<span class="layui-badge fly-badge-accept layui-hide-xs">已结</span>-->
+              <!--span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> 60</span-->
+              {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">已结</span>{/if}
               <span class="fly-list-nums">
                 <i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}
               </span>
@@ -45,7 +47,6 @@
           </li>
 		    {/volist}	
         </ul>
-        <!-- <div class="fly-none">没有相关数据</div> -->
         <div style="text-align: center" id="page">{$artList|raw}</div>
 
       </div>
@@ -60,10 +61,6 @@
           <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
         </dd>
 		{/volist} 
-        <!-- 无数据时 -->
-        <!--
-        <div class="fly-none">没有相关数据</div>
-        -->
       </dl>
 
 		<div class="fly-panel">
@@ -108,19 +105,5 @@
     }).extend({
         fly: 'index'
     }).use('fly');
-</script>
-<script>
-(function(){
-    var bp = document.createElement('script');
-    var curProtocol = window.location.protocol.split(':')[0];
-    if (curProtocol === 'https') {
-        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-    }
-    else {
-        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-    }
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(bp, s);
-})();
 </script>
 {/block}

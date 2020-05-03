@@ -458,7 +458,7 @@ layui.define('view', function(exports){
             });
       admin.req({
 	   type: "post"
-      ,url: '/admin/Admin/clearCache'
+      ,url: adminClearCache
       ,success: function(data){
 		  if (data.code == 0) {
 			layer.close(loading);

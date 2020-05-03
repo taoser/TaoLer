@@ -3,34 +3,18 @@
 {block name="content"}
 	<div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px;">
 	    <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">清空全部消息</button>
-	    <div  id="LAY_minemsg" style="margin-top: 10px;">
-        <!--<div class="fly-none">您暂时没有最新消息</div>-->
-        <ul class="mine-msg">
-          <li data-id="123">
-            <blockquote class="layui-elem-quote">
-              <a href="/jump?username=Absolutely" target="_blank"><cite>Absolutely</cite></a>回答了您的求解<a target="_blank" href="/jie/8153.html/page/0/#item-1489505778669"><cite>layui后台框架</cite></a>
-            </blockquote>
-            <p><span>1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
-          </li>
-          <li data-id="123">
-            <blockquote class="layui-elem-quote">
-              系统消息：欢迎使用 layui
-            </blockquote>
-            <p><span>1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
-          </li>
-        </ul>
-      </div>
+	    <div id="LAY_minemsg" style="margin-top: 10px;"></div>		
 	</div>
 {/block}
 {block name="script"}
 <script>
-    layui.cache.page = '';
+    layui.cache.page = 'user';
     layui.cache.user = {
-        username: '游客'
-        ,uid: -1
-        ,avatar: '/static/res/images/avatar/00.jpg'
+        username: '{$user.name??'游客'}'
+        ,uid: {$user.id ? $user.id : -1}
+        ,avatar: '{$user.name? $user['user_img']:'/static/res/images/avatar/00.jpg'}'
         ,experience: 83
-        ,sex: '男'
+        ,sex: '{if condition="$user['sex'] eq 0"}男{else/}女{/if}'
     };
     layui.config({
         version: "3.0.0"
@@ -38,5 +22,51 @@
     }).extend({
         fly: 'index'
     }).use('fly');
+	var messageFind = "{:url('index/Message/find')}",
+		messageRemove = "{:url('index/Message/remove')}",
+		userNameJump = "{:url('index/Index/jump')}";
+	
+	//点开标题改变帖子已读状态
+	$('#LAY_minemsg').on('click','.art-title', function(){
+		var id = $(this).attr('id-data');
+		var othis = $(this);
+		$.ajax({
+			type:"post",
+			url:"{:url('message/read')}",
+			data:{"id":id},
+			daType:"json",
+			success:function (res){
+			if(res.status == 0){
+			othis.next().html('已读');
+				//location.reload();
+				//othis.append('<span class="float:right">已读</span>');
+				}
+			}
+		});
+	});
+	
+	//点开系统消息改变已读状态
+	$('#LAY_minemsg').on('click','.sys-title', function(){
+		var id = $(this).attr('id-data');
+		var othis = $(this);
+		$.ajax({
+			type:"post",
+			url:"{:url('message/read')}",
+			data:{"id":id},
+			daType:"json",
+			success:function (res){
+				if(res.status == 0){
+					layer.open({
+					  type: 1,
+					  skin: 'layui-layer-rim', //加上边框
+					  area: ['400px', '350px'], //宽高
+					  content: '<div class="layui-form" style="padding: 10px 20px 0 20px;"> '+ res.content +'</div>'
+					}),
+					othis.next().html('已读');
+				}
+			}
+		});
+	});
+
 </script>
 {/block}

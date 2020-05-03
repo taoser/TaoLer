@@ -10,7 +10,7 @@
     {$u.nickname ?: $u.name}
     {if($u.sex==0)}<i class="iconfont icon-nan"></i>
     {else}<i class="iconfont icon-nv"></i> {/if}
-    <i class="layui-badge fly-badge-vip">VIP3</i>
+    <i class="layui-badge fly-badge-vip">VIP{$u.vip}</i>
     <!--
     <span style="color:#c00;">（管理员）</span>
     <span style="color:#5FB878;">（社区之光）</span>
@@ -21,7 +21,7 @@
   <p class="fly-home-info">
     <i class="iconfont icon-kiss" title="飞吻"></i><span style="color: #FF7200;">{$u.point} 飞吻</span>
     <i class="iconfont icon-shijian"></i><span>{$u.create_time|date='Y-m-d'} 加入</span>
-    <i class="iconfont icon-chengshi"></i><span>{:session('user_id') ? '来自'.$user.city:'登录查看'}</span>
+    <i class="iconfont icon-chengshi"></i><span>{:session('user_id') ? '来自'.$u.city:'登录查看'}</span>
   </p>
   <p class="fly-home-sign">（{$u.sign ?:'懒得还没有签名'}）</p>
 

@@ -237,7 +237,7 @@ abstract class BaseController
     protected function showUser()
     {
         //1.查询用户
-		$user = Db::name('user')->field('id,name,nickname,user_img,sex,auth,city,email,sign,point,create_time')->where('id',Session::get('user_id'))->cache(600)->find();
+		$user = Db::name('user')->field('id,name,nickname,user_img,sex,auth,city,email,sign,point,vip,create_time')->where('id',Session::get('user_id'))->cache(600)->find();
 		//2.将User变量赋给模板 公共模板nav.html
 		View::assign('user',$user);
     }

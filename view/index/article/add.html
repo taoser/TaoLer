@@ -25,13 +25,19 @@
                     </select>
                   </div>
                 </div>
-                <div class="layui-col-md9">
+                <div class="layui-col-md8">
                   <label for="L_title" class="layui-form-label">标题</label>
                   <div class="layui-input-block">
                     <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input">
+					<input type="hidden" id="L_title_color"  name="title_color" autocomplete="off" class="layui-input">
                     <input type="hidden" name="user_id" value="{:session('user_id')}">
                   </div>
                 </div>
+				{if ($user.auth == 1)}
+				<div class="layui-col-md1">
+				<div id="color"></div>
+				</div>
+				{/if}
               </div>
               <div class="layui-row layui-col-space15 layui-form-item layui-hide" id="LAY_quiz">
                 <div class="layui-col-md3">
@@ -127,105 +133,119 @@
 
 {block name="script"}
 <script>
-
 //删除tag
 	$(document).ready(function(){
 		$('.layui-btn-container').on('click','button',function(){
 			$(this).remove();	
 		});
 	});
-
-layui.use('form', function(){
-  var form = layui.form;
-  
-//发布文章
-	 form.on('submit(article-add)', function(data){	
-		var field = data.field;
-		var numArr = new Array();
-		$('.layui-btn-container').children('button').each(function(){
-			numArr.push($(this).val());//添加至数组
-		});	
-		tags = numArr.join(',');
-			$.ajax({
-				type:"post",
-				url:"{:url('article/add')}",
-				data:{"cate_id":field.cate_id,"title":field.title,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha},
-				dataType:"json",
-				success:function (data){
-					if (data.code == 1) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						}, function(){
-							location.href = data.url;
-						});
-					} else {
-						layer.open({
-							tiele:'发布失败',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-						layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-					}
-				}
-			});
-	return false;	
-	});
-	
-	//添加tags
-	$('#article-tags-button').on('click',function(){
-	var tags = $("input[name='tags']").val();
-	if(tags == ''){
-		layer.msg('不能为空');
-		return false;
-	}
-	
-	var numArr = new Array();
-	$('.layui-btn-container').children('button').each(function(){
-		numArr.push($(this).val());//添加至数组
-	});
-
-	for(var i=0; i<numArr.length; i++){
-		if(tags.indexOf(numArr[i])>=0){
-			layer.msg('不能重复添加'+numArr[i]);
-			return false;
-		}
-	}
-		//console.log(tags);
-		$.ajax({
-				type:"post",
-				url:"{:url('article/tags')}",
-				data:{"tags":tags},
-				daType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						for(var i=0; i<data.data.length; i++){
-							$('.layui-btn-container').append('<button type="button" class="layui-btn" value='+data.data[i]+'>'+data.data[i]+'</button>');
-						}
-					$("input[name='tags']").val("");		
-					}
-				}
-			});
-		return false;	
-	});
-	
-});
 </script>
 <script>
-    layui.cache.page = '';
-    layui.cache.user = {
-        username: '游客'
-        ,uid: -1
-        ,avatar: '/static/res/images/avatar/00.jpg'
-        ,experience: 83
-        ,sex: '男'
-    };
-    layui.config({
-        version: "3.0.0"
-        ,base: '/static/res/mods/'
-    }).extend({
-        fly: 'index'
-    }).use('fly');
+
+layui.cache.page = 'jie';
+layui.cache.user = {
+      username: '{$user.name??'游客'}'
+      ,uid: "{$user.id ? $user.id : -1}"
+      ,avatar: "{$user.name? $user['user_img']:'/static/res/images/avatar/00.jpg'}"
+      ,experience: 83
+      ,sex: "{if condition="$user['sex'] eq 0"}男{else /}女{/if}"
+};
+layui.config({
+      version: "3.0.0"
+      ,base: '/static/res/mods/'
+}).extend({
+      fly: 'index'
+}).use(['fly','form','colorpicker'], function(){
+      var $ = layui.$
+      ,form = layui.form
+      ,colorpicker = layui.colorpicker;
+
+      //预定义颜色项
+        colorpicker.render({
+          elem: '#color'
+          ,color: '#393d49'
+          ,predefine: true // 开启预定义颜色
+          ,done: function(color){
+            console.log(color);
+            //譬如你可以在回调中把得到的 color 赋值给表单
+            $('#L_title_color').val(color);
+            //改变标题颜色
+            $('#L_title').css("color", color);
+          }
+        });
+
+      //发布文章
+       form.on('submit(article-add)', function(data){
+          var field = data.field;
+          var numArr = new Array();
+          $('.layui-btn-container').children('button').each(function(){
+              numArr.push($(this).val());//添加至数组
+          });
+          tags = numArr.join(',');
+              $.ajax({
+                  type:"post",
+                  url:"{:url('article/add')}",
+                  data:{"cate_id":field.cate_id,"title":field.title,"title_color":field.title_color,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha},
+                  dataType:"json",
+                  success:function (data){
+                      if (data.code == 1) {
+                          layer.msg(data.msg,{
+                              icon:6,
+                              time:2000
+                          }, function(){
+                              location.href = data.url;
+                          });
+                      } else {
+                          layer.open({
+                              tiele:'发布失败',
+                              content:data.msg,
+                              icon:5,
+                              anim:6
+                          });
+                          layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+                      }
+                  }
+              });
+      return false;
+      });
+		
+      //添加tags
+      $('#article-tags-button').on('click',function(){
+      var tags = $("input[name='tags']").val();
+      if(tags == ''){
+          layer.msg('不能为空');
+          return false;
+      }
+      //把得到的tags放进数组
+      var numArr = new Array();
+      $('.layui-btn-container').children('button').each(function(){
+          numArr.push($(this).val());//添加至数组
+      });
+
+      for(var i=0; i<numArr.length; i++){
+          if(tags.indexOf(numArr[i])>=0){
+              layer.msg('不能重复添加'+numArr[i]);
+              return false;
+          }
+      }
+        //console.log(tags);
+        $.ajax({
+                type:"post",
+                url:"{:url('article/tags')}",
+                data:{"tags":tags},
+                daType:"json",
+                success:function (data){
+                    if (data.code == 0) {
+                        for(var i=0; i<data.data.length; i++){
+                            $('.layui-btn-container').append('<button type="button" class="layui-btn" value='+data.data[i]+'>'+data.data[i]+'</button>');
+                        }
+                    $("input[name='tags']").val("");
+                    }
+                }
+            });
+        return false;
+    });
+
+});
 </script>
 {/block}

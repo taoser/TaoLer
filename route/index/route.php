@@ -9,6 +9,8 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 use think\facade\Route;
+
+Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 Route::rule('/', 'index'); // 首页访问路由
 Route::group(function () {
 	Route::get('jie/:id', 'article/detail'); 

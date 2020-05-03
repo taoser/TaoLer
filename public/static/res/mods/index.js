@@ -167,7 +167,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                               elem: '#uploadImg'
 							  ,acceptMime: 'image/*'
 							  ,exts: 'jpg|png|gif|bmp|jpeg'
-                              ,url: '/index/article/text_img_upload'
+                              ,url: textImgUpload
                               ,size: 2048
                               ,done: function(res){
                                   if(res.status == 0){
@@ -395,16 +395,16 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     ,newmsg: function(){
       var elemUser = $('.fly-nav-user');
       if(layui.cache.user.uid !== -1 && elemUser[0]){
-        fly.json('/index/message/nums', {
+        fly.json(messageNums, {
           _: new Date().getTime()
         }, function(res){
           if(res.status === 0 && res.count > 0){
             var msg = $('<a class="fly-nav-msg" href="javascript:;">'+ res.count +'</a>');
             elemUser.append(msg);
             msg.on('click', function(){
-              fly.json('/message/read', {}, function(res){
+              fly.json(messageRead, {}, function(res){
                 if(res.status === 0){
-                  location.href = '/user/message';
+                  location.href = userMessage;
                 }
               });
             });
@@ -672,7 +672,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 
   if(elemReply[0]){
     
-    fly.json('/index/index/reply', {
+    fly.json(replyurl, {
       limit: 20
     }, function(res){
       var html = laytpl(tplReply).render(res);
@@ -705,7 +705,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       ,shadeClose: true
       ,maxWidth: 10000
       ,skin: 'fly-layer-search'
-      ,content: ['<form action="/index/index/search">'
+      ,content: ['<form action="/index/search">'
         ,'<input autocomplete="off" placeholder="搜索内容，回车跳转" type="text" name="keywords">'
       ,'</form>'].join('')
       ,success: function(layero){
@@ -819,13 +819,13 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 		  loading = layer.load(2, {
             shade: [0.2, '#000']
         });
-		location.href = '/index/add';	
+		location.href = articleAdd;
 		} else {
 			layer.msg('请先登陆',{
 				icon:5,
 				time:2000
 			},function () {
-				location.href = '/index/login';
+				location.href = login;
 			});
 		}
 		return false;
@@ -858,7 +858,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     ,click: function(type){
       if(type === 'bar1'){
         //slayer.msg('打开 index.js，开启发表新帖的路径');
-        location.href = '/index/add';
+        location.href = articleAdd;
       }
     }
   });

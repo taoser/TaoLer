@@ -11,6 +11,7 @@ use think\facade\Cookie;
 use think\facade\Cache;
 use think\facade\View;
 use app\common\model\User as userModel;
+use taoler\com\Message;
 
 class Login extends BaseController
 {
@@ -56,6 +57,9 @@ class Login extends BaseController
 			$user = new \app\common\model\User();
 			$res = $user->login($data);
             if ($res == 1) {
+				//获取系统站内通知信息
+				Message::insertMsg(session('user_id'));
+				
                 return json(['code'=>0,'msg'=>'登陆成功','url'=>'/']);
             } else {
 				return json(['code'=>-1,'msg'=>$res]);

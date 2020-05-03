@@ -100,7 +100,7 @@ class AuthGroup extends AdminController
 	}
 
 	//角色删除
-	public function roledel($id)
+	public function roleDel($id)
 	{
 		if(Request::isAjax()){
 			$role =AuthGroupModel::find($id);

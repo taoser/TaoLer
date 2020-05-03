@@ -13,6 +13,7 @@ use app\common\model\Article;
 use app\common\model\Collection;
 use app\common\model\User as userModel;
 use think\facade\Config;
+use taoler\com\Message;
 
 class User extends BaseController
 {	
@@ -80,7 +81,7 @@ class User extends BaseController
                 $user = new \app\common\model\User;
                 $result = $user->setNew($data);
 				if($result==1){
-				    return ['code'=>0,'msg'=>'资料更新成功','url'=>'/index/user/set'];
+				    return ['code'=>0,'msg'=>'资料更新成功'];
 				} else {
 					$this->error($result);
 				}
@@ -127,14 +128,18 @@ class User extends BaseController
 
     public function message()
     {
-        return view();
+		$uid = Session::get('user_id');
+		$msg = Message::receveMsg($uid);
+		
+		View::assign('msg',$msg);
+        return View::fetch();
     }
 	
 	//个人页
     public function home($id)
     {
 		//用户
-		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,create_time')->cache(3600)->find($id);
+		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->cache(3600)->find($id);
 		//用户发贴
 		$arts = Db::name('user')->alias('u')->join('article a','u.id = a.user_id')->field('u.id,a.id,a.title,a.pv,a.is_hot,a.create_time,a.delete_time')->where('a.delete_time',0)->where('a.user_id',$id)->order(['a.create_time'=>'desc'])->cache(3600)->select();
 		//用户回答
@@ -175,7 +180,7 @@ class User extends BaseController
 		$result = $user->setpass($data);
 			if($result == 1) {
 				Session::clear();
-				return $this->success('密码修改成功 请登录', '/index/user/login');
+				return $this->success('密码修改成功 请登录', '/login');
 			} else {
 				return $this->error($result);
 			}

@@ -37,11 +37,14 @@
 		<a href="/index/jie/{{d.cid}}.html" target="_blank">{{d.cardid}}</a>
 		</script>
 		<script type="text/html" id="buttonCheck">
-            {if condition="checkRuleButton('admin/forum/recheck')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="recheck" lay-text="已审核|未审核" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无审核权</button>{/if}
+            {if condition="checkRuleButton('admin/forum/recheck')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="recheck" lay-text="通过|禁止" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
+			{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>		
         <script type="text/html" id="table-forum-replys">
-          <a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+		{if condition="checkRuleButton('admin/forum/redel')"}
+          <!--a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a-->
           <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+		{else / }<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
         </script>
       </div>
     </div>
@@ -50,7 +53,16 @@
 {/block}
 
 {block name="js"}  
-  <script>
+<script>
+var forumList = "{:url('Forum/list')}",
+    forumListdel = "{:url('Forum/listdel')}",
+    forumListform = "{:url('Forum/listform')}",
+    forumReplys = "{:url('Forum/replys')}",
+    forumRedel = "{:url('Forum/redel')}",
+    forumReplysform = "{:url('Forum/replysform')}",
+    forumTags = "{:url('Forum/tags')}",
+    forumTagsDelete = "{:url('Forum/tagsdelete')}",
+    forumTagsForm = "{:url('Forum/tagsform')}";
   layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({

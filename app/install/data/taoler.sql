@@ -19,15 +19,15 @@ CREATE TABLE `tao_admin` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '软删除',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_admin` VALUES ('1', 'admin', '管理员', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'taoler@qq.com', '13812345678', '1', '1', '1', '2019.1.1 新年发布新版本！', '127.0.0.1', '1578986287', '1579053025', '1578986600', '0');
-INSERT INTO `tao_admin` VALUES ('2', 'test', '', '3dbfa76bd34a2a0274f5d52f5529ccb3', 'tao@qq.com', '13567891236', '0', '0', '2', '', '127.0.0.1', '1578643147', '1555892325', '1576554415', '0');
+INSERT INTO `tao_admin` VALUES ('2', 'test', '', '3dbfa76bd34a2a0274f5d52f5529ccb3', 'test@qq.com', '13567891236', '0', '0', '2', '', '127.0.0.1', '1578643147', '1555892325', '1576554415', '0');
 
 
 DROP TABLE IF EXISTS `tao_article`;
 CREATE TABLE `tao_article` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文章ID',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `title` varchar(50) NOT NULL COMMENT '标题',
   `content` text NOT NULL COMMENT '内容',
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '状态1显示0隐藏',
@@ -38,15 +38,19 @@ CREATE TABLE `tao_article` (
   `is_reply` enum('1','0') NOT NULL DEFAULT '1' COMMENT '0禁评1可评',
   `pv` int(11) NOT NULL DEFAULT '0' COMMENT '浏览量',
   `jie` enum('1','0') NOT NULL DEFAULT '0' COMMENT '0未结1已结',
-  `upzip` varchar(70) DEFAULT NULL,
-  `tags` varchar(255) DEFAULT NULL,
+  `upzip` varchar(70) DEFAULT NULL COMMENT '文章附件',
+  `tags` varchar(255) DEFAULT NULL COMMENT 'tag',
+  `read_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '阅读权限0开放1回复可读2密码可读3私密',
+  `art_pass` varchar(6) DEFAULT NULL COMMENT '文章加密密码',
+  `title_color` varchar(10) DEFAULT NULL COMMENT '标题颜色',
+  `title_font` varchar(20) DEFAULT NULL COMMENT '标题字形',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `tao_article` VALUES ('1', 'Fly Template 社区模版', '[quote]\r\n  你们认为layui官方Fly Template 社区模版怎么样？\r\n[/quote]\r\n你喜欢吗？\r\n很多人都说比较喜欢，我个人认为不错的，这个板子非常喜欢，我看到有一些人做了开发，可惜的是都没有很好的维护，有的漏洞比较多，不完善，很美好的一个板子，但没有长久 的更新，非常的可惜。\r\n如果用别人的不好用，那我就做一个出来吧。喜欢的人多关注，适当时候放出来大家一起用。\r\n关于详情页的内容解析\r\n该模板自带一个特定语法的编辑器，当你把内容存储到数据库后，在页面读取后浏览，会发现诸如“表情、代码、图片”等无法解析，这是因为需要对该内容进行一次转义，通常来说这是在服务端完成的，但鉴于简单化，你还可以直接在前端去解析，在模板的detail.html中，我们已经把相关的代码写好了，你只需打开注释即可（在代码的最下面）。当然，如果觉得编辑器无法满足你的需求，你也可以把该编辑器换成别的HTML编辑器或MarkDown编辑器。', '1', '1', '1', '0', '0', '1', '155', '0', null, null, '1546698225', '1577772362', '0');
+INSERT INTO `tao_article` VALUES ('1', 'Fly Template 社区模版', '[quote]\r\n  你们认为layui官方Fly Template 社区模版怎么样？\r\n[/quote]\r\n你喜欢吗？\r\n很多人都说比较喜欢，我个人认为不错的，这个板子非常喜欢，我看到有一些人做了开发，可惜的是都没有很好的维护，有的漏洞比较多，不完善，很美好的一个板子，但没有长久 的更新，非常的可惜。\r\n如果用别人的不好用，那我就做一个出来吧。喜欢的人多关注，适当时候放出来大家一起用。\r\n关于详情页的内容解析\r\n该模板自带一个特定语法的编辑器，当你把内容存储到数据库后，在页面读取后浏览，会发现诸如“表情、代码、图片”等无法解析，这是因为需要对该内容进行一次转义，通常来说这是在服务端完成的，但鉴于简单化，你还可以直接在前端去解析，在模板的detail.html中，我们已经把相关的代码写好了，你只需打开注释即可（在代码的最下面）。当然，如果觉得编辑器无法满足你的需求，你也可以把该编辑器换成别的HTML编辑器或MarkDown编辑器。', '1', '1', '1', '0', '0', '1', '12', '0', null, null, '0', null, null, null, '1546698225', '1577772362', '0');
 
 DROP TABLE IF EXISTS `tao_auth_group`;
 CREATE TABLE `tao_auth_group` (
@@ -60,7 +64,7 @@ CREATE TABLE `tao_auth_group` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_auth_group` VALUES ('1', '超级管理员', '5,15,21,22,62,63,23,17,27,28,64,16,24,26,25,4,20,32,33,34,14,29,30,31,1,65,6,35,36,37,38,7,39,40,41,42,8,43,44,45,66,9,47,48,49,50,46,67,2,10,51,11,18,52,54,55,19,56,57,58,59,60,53,3,12,13', '管理所有的管理员', '所有权限', '1', '0', '1578984825', '0');
 INSERT INTO `tao_auth_group` VALUES ('2', '管理员', '5,15,21,22,62,63,23,17,27,28,64,16,24,26,25,1,65,6,35,36,37,38,67,3,12,13', '所有列表的管理', '普通管理员', '1', '0', '1578984832', '0');
@@ -68,20 +72,19 @@ INSERT INTO `tao_auth_group` VALUES ('3', '帖子管理', '5,15,21,22,62,63,23,1
 INSERT INTO `tao_auth_group` VALUES ('4', '网站维护', '2,10,51,11,18,52,54,55,19,56,57,58,59,60,53,3,12,13', '对数据进行统计', '网站维护', '1', '0', '1578980364', '0');
 
 
-DROP TABLE IF EXISTS `tao_auth_group_access`;
 CREATE TABLE `tao_auth_group_access` (
-  `uid` mediumint(8) unsigned NOT NULL,
-  `group_id` mediumint(8) unsigned NOT NULL,
-  UNIQUE KEY `uid_group_id` (`uid`,`group_id`),
+  `id` int(2) NOT NULL AUTO_INCREMENT COMMENT '用户组id',
+  `uid` int(11) unsigned NOT NULL,
+  `group_id` int(8) unsigned NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户权限组状态0禁止1正常',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
+  PRIMARY KEY (`id`),
   KEY `uid` (`uid`),
-  KEY `group_id` (`group_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-INSERT INTO `tao_auth_group_access` VALUES ('1', '1');
-INSERT INTO `tao_auth_group_access` VALUES ('2', '2');
-INSERT INTO `tao_auth_group_access` VALUES ('3', '3');
-INSERT INTO `tao_auth_group_access` VALUES ('4', '3');
-
+  KEY `group_id` (`group_id`),
+  KEY `uid_group_id` (`uid`,`group_id`) USING BTREE
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `tao_auth_rule`;
 CREATE TABLE `tao_auth_rule` (
@@ -101,24 +104,25 @@ CREATE TABLE `tao_auth_rule` (
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=77 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_auth_rule` VALUES ('1', 'admin', '管理', '1', '1', '0', '0', 'layui-icon-user', '1', '3', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('2', 'set', '设置', '1', '1', '0', '0', 'layui-icon-set', '1', '4', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('3', 'administrator', '账户', '1', '1', '0', '0', 'layui-icon-username', '1', '5', '', '0', '1578980034', '0');
+INSERT INTO `tao_auth_rule` VALUES ('4', 'app', '应用', '1', '1', '0', '0', 'layui-icon-app', '1', '2', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('5', 'article', '内容', '1', '1', '0', '0', 'layui-icon-read', '1', '0', '', '0', '1578902321', '0');
 INSERT INTO `tao_auth_rule` VALUES ('6', 'admin/User/list', '用户管理', '1', '1', '1', '1', '', '1', '1', '', '0', '1578901015', '0');
 INSERT INTO `tao_auth_rule` VALUES ('7', 'admin/Admin/index', '管理员', '1', '1', '1', '1', '', '1', '6', '', '0', '1578901133', '0');
 INSERT INTO `tao_auth_rule` VALUES ('8', 'admin/AuthGroup/list', '角色管理', '1', '1', '1', '1', '', '1', '11', '', '0', '1578901282', '0');
 INSERT INTO `tao_auth_rule` VALUES ('9', 'admin/AuthRule/index', '权限管理', '1', '1', '1', '1', '', '1', '16', '', '0', '1578981541', '0');
-INSERT INTO `tao_auth_rule` VALUES ('10', 'admin/set/website', '网站设置', '1', '1', '2', '1', '', '1', '1', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('11', 'admin/set/email', '邮件服务', '1', '1', '2', '1', '', '1', '3', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('10', 'admin/Set/index', '网站设置', '1', '1', '2', '1', '', '1', '1', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('11', 'admin/Set/server', '综合服务', '1', '1', '2', '1', '', '1', '3', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('12', 'admin/Admin/info', '基本资料', '1', '1', '3', '1', '', '1', '50', '', '0', '1578980034', '0');
 INSERT INTO `tao_auth_rule` VALUES ('13', 'admin/Admin/repass', '修改密码', '1', '1', '3', '1', '', '1', '51', '', '0', '1578980034', '0');
 INSERT INTO `tao_auth_rule` VALUES ('15', 'admin/Forum/list', '帖子管理', '1', '1', '5', '1', '', '1', '1', '', '0', '1578902605', '0');
 INSERT INTO `tao_auth_rule` VALUES ('16', 'admin/Forum/tags', '分类管理', '1', '1', '5', '1', '', '1', '11', '', '0', '1578904950', '0');
 INSERT INTO `tao_auth_rule` VALUES ('17', 'admin/Forum/replys', '评论管理', '1', '1', '5', '1', '', '1', '7', '', '0', '1578904590', '0');
-INSERT INTO `tao_auth_rule` VALUES ('18', 'admin/slider/index', '广告投放', '1', '1', '2', '1', '', '1', '4', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('18', 'admin/Slider/index', '广告投放', '1', '1', '2', '1', '', '1', '4', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('19', 'admin/Upgrade/index', '系统升级', '1', '1', '2', '1', '', '1', '8', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('21', 'admin/Forum/listform', '编辑帖子', '1', '1', '5', '1', '', '0', '2', '', '0', '1578903229', '0');
 INSERT INTO `tao_auth_rule` VALUES ('22', 'admin/Forum/listdel', '删除帖子', '1', '1', '5', '1', '', '0', '3', '', '0', '1578903919', '0');
@@ -128,38 +132,60 @@ INSERT INTO `tao_auth_rule` VALUES ('25', 'admin/Forum/tagsform', '编辑分类'
 INSERT INTO `tao_auth_rule` VALUES ('26', 'admin/Forum/tagsdelete', '删除分类', '1', '1', '5', '1', '', '0', '13', '', '0', '1578904996', '0');
 INSERT INTO `tao_auth_rule` VALUES ('27', 'admin/Forum/replysform', '编辑评论', '1', '1', '5', '1', '', '0', '8', '', '0', '1578904627', '0');
 INSERT INTO `tao_auth_rule` VALUES ('28', 'admin/Forum/redel', '删除评论', '1', '1', '5', '1', '', '0', '9', '', '0', '1578904856', '0');
-INSERT INTO `tao_auth_rule` VALUES ('35', 'admin/User/userform', '添加用户', '1', '1', '1', '1', '', '0', '2', '', '0', '1578901074', '0');
-INSERT INTO `tao_auth_rule` VALUES ('36', 'admin/User/useredit', '编辑用户', '1', '1', '1', '1', '', '0', '3', '', '0', '1578901089', '0');
+INSERT INTO `tao_auth_rule` VALUES ('35', 'admin/User/userForm', '添加用户', '1', '1', '1', '1', '', '0', '2', '', '0', '1578901074', '0');
+INSERT INTO `tao_auth_rule` VALUES ('36', 'admin/User/userEdit', '编辑用户', '1', '1', '1', '1', '', '0', '3', '', '0', '1578901089', '0');
 INSERT INTO `tao_auth_rule` VALUES ('37', 'admin/User/delete', '删除用户', '1', '1', '1', '1', '', '0', '4', '', '0', '1578901099', '0');
 INSERT INTO `tao_auth_rule` VALUES ('38', 'admin/User/check', '审核用户', '1', '1', '1', '1', '', '0', '5', '', '0', '1578905291', '0');
 INSERT INTO `tao_auth_rule` VALUES ('39', 'admin/Admin/add', '添加管理员', '1', '1', '1', '1', '', '0', '7', '', '0', '1578901163', '0');
 INSERT INTO `tao_auth_rule` VALUES ('40', 'admin/Admin/edit', '编辑管理员', '1', '1', '1', '1', '', '0', '8', '', '0', '1578901184', '0');
 INSERT INTO `tao_auth_rule` VALUES ('41', 'admin/Admin/delete', '删除管理员', '1', '1', '1', '1', '', '0', '9', '', '0', '1578901198', '0');
 INSERT INTO `tao_auth_rule` VALUES ('42', 'admin/Admin/check', '审核管理员', '1', '1', '1', '1', '', '0', '10', '', '0', '1578901216', '0');
-INSERT INTO `tao_auth_rule` VALUES ('43', 'admin/AuthGroup/roleadd', '添加角色', '1', '1', '1', '1', '', '0', '12', '', '0', '1578981437', '0');
-INSERT INTO `tao_auth_rule` VALUES ('44', 'admin/AuthGroup/roleedit', '编辑角色', '1', '1', '1', '1', '', '0', '13', '', '0', '1578901349', '0');
+INSERT INTO `tao_auth_rule` VALUES ('43', 'admin/AuthGroup/roleAdd', '添加角色', '1', '1', '1', '1', '', '0', '12', '', '0', '1578981437', '0');
+INSERT INTO `tao_auth_rule` VALUES ('44', 'admin/AuthGroup/roleEdit', '编辑角色', '1', '1', '1', '1', '', '0', '13', '', '0', '1578901349', '0');
 INSERT INTO `tao_auth_rule` VALUES ('45', 'admin/AuthGroup/roledel', '删除角色', '1', '1', '1', '1', '', '0', '14', '', '0', '1578971659', '0');
 INSERT INTO `tao_auth_rule` VALUES ('46', 'admin/AuthRule/add', '添加权限', '1', '1', '1', '1', '', '0', '21', '', '0', '1578981581', '0');
 INSERT INTO `tao_auth_rule` VALUES ('47', 'admin/AuthRule/edit', '编辑权限', '1', '1', '1', '1', '', '0', '17', '', '0', '1578901457', '0');
 INSERT INTO `tao_auth_rule` VALUES ('48', 'admin/AuthRule/delete', '删除权限', '1', '1', '1', '1', '', '0', '18', '', '0', '1578901469', '0');
 INSERT INTO `tao_auth_rule` VALUES ('49', 'admin/AuthRule/check', '审核权限', '1', '1', '1', '1', '', '0', '19', '', '0', '1578901484', '0');
 INSERT INTO `tao_auth_rule` VALUES ('50', 'admin/AuthRule/menushow', '菜单权限', '1', '1', '1', '1', '', '0', '20', '', '0', '1578901495', '0');
-INSERT INTO `tao_auth_rule` VALUES ('51', 'admin/set/upload', '上传logo', '1', '1', '2', '1', '', '0', '2', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('52', 'admin/slider/add', '添加广告', '1', '1', '2', '1', '', '0', '5', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('53', 'admin/slider/edit', '编辑广告', '1', '1', '2', '1', '', '0', '14', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('54', 'admin/slider/delete', '删除广告', '1', '1', '2', '1', '', '0', '6', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('51', 'admin/Set/upload', '上传logo', '1', '1', '2', '1', '', '0', '2', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('52', 'admin/Slider/add', '添加广告', '1', '1', '2', '1', '', '0', '5', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('53', 'admin/Slider/edit', '编辑广告', '1', '1', '2', '1', '', '0', '14', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('54', 'admin/Slider/delete', '删除广告', '1', '1', '2', '1', '', '0', '6', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('55', 'admin/Slider/uploadimg', '上传广告图片', '1', '1', '2', '1', '', '0', '7', '', '0', '1578906577', '0');
-INSERT INTO `tao_auth_rule` VALUES ('56', 'admin/upgrade/key', '设置key', '1', '1', '2', '1', '', '0', '9', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('57', 'admin/upgrade/keyedit', '修改key', '1', '1', '2', '1', '', '0', '10', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('58', 'admin/upgrade/check', '升级检测', '1', '1', '2', '1', '', '0', '11', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('59', 'admin/upgrade/upload', '自动升级', '1', '1', '2', '1', '', '0', '12', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('60', 'admin/upgrade/uploadzip', '上传升级包', '1', '1', '2', '1', '', '0', '13', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('56', 'admin/Upgrade/key', '设置key', '1', '1', '2', '1', '', '0', '9', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('57', 'admin/Upgrade/keyedit', '修改key', '1', '1', '2', '1', '', '0', '10', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('58', 'admin/Upgrade/check', '升级检测', '1', '1', '2', '1', '', '0', '11', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('59', 'admin/Upgrade/upload', '自动升级', '1', '1', '2', '1', '', '0', '12', '', '0', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('60', 'admin/Upgrade/uploadzip', '上传升级包', '1', '1', '2', '1', '', '0', '13', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('62', 'admin/Forum/top', '置顶帖子', '1', '1', '5', '1', '', '0', '4', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('63', 'admin/Forum/hot', '加精帖子', '1', '1', '5', '1', '', '0', '5', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('64', 'admin/Froum/recheck', '审核评论', '1', '1', '5', '1', '', '0', '10', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('65', 'admin/User/uploadImg', '上传用户头像', '1', '1', '1', '1', '', '0', '0', '', '0', '1578981624', '0');
 INSERT INTO `tao_auth_rule` VALUES ('66', 'admin/AuthGroup/check', '审核角色', '1', '1', '1', '1', '', '0', '15', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('67', 'admin/User/auth', '设置超级用户', '1', '1', '1', '1', '', '0', '22', '', '1578984801', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('67', 'admin/Sign/signRule', '签到规则', '1', '1', '2', '1', '', '0', '15', '', '1585547595', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('68', 'admin/Sign/add', '添加签到', '1', '1', '2', '1', '', '0', '16', '', '1585547705', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('69', 'admin/Sign/signEdit', '编辑签到', '1', '1', '2', '1', '', '0', '17', '', '1585547774', '1585548298', '0');
+INSERT INTO `tao_auth_rule` VALUES ('70', 'admin/Sign/delete', '删除签到', '1', '1', '2', '1', '', '0', '18', '', '1585547817', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('71', 'admin/Vip/vipRule', '用户等级', '1', '1', '2', '1', '', '0', '19', '', '1585547921', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('72', 'admin/Vip/add', '添加vip等级', '1', '1', '2', '1', '', '0', '20', '', '1585547981', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('73', 'admin/Vip/vipEdit', '编辑vip等级', '1', '1', '1', '1', '', '0', '21', '', '1585548029', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('74', 'admin/Vip/delete', '删除vip等级', '1', '1', '2', '1', '', '0', '22', '', '1585548077', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('75', 'admin/Set/email', '邮箱设置', '1', '1', '2', '1', '', '0', '23', '', '1585548143', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('76', 'admin/Notice/index', '发布通知', '1', '1', '4', '1', '', '1', '10', '', '1585618141', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('77', 'admin/Notice/add', '添加通知', '1', '1', '4', '1', '', '0', '11', '', '1585663336', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('78', 'admin/Notice/edit', '编辑通知', '1', '1', '4', '1', '', '0', '12', '', '1585663366', '1585663465', '0');
+INSERT INTO `tao_auth_rule` VALUES ('79', 'admin/Notice/delete', '删除通知', '1', '1', '4', '1', '', '0', '13', '', '1585663412', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('83', 'admin/AuthAccess/index', '管理员权限', '1', '1', '1', '1', '', '1', '22', '', '1585794015', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('84', 'admin/AuthAccess/add', '添加管理员权限', '1', '1', '1', '1', '', '0', '23', '', '1585806544', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('85', 'admin/AuthAccess/edit', '编辑管理员权限', '1', '1', '1', '1', '', '0', '24', '', '1585806592', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('86', 'admin/AuthAccess/delete', '删除管理员权限', '1', '1', '1', '1', '', '0', '25', '', '1585806620', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('87', 'admin/AuthAccess/check', '审核管理员权限', '1', '1', '1', '1', '', '0', '26', '', '1585806653', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('88', 'admin/Set/website', '网站信息保存', '1', '1', '2', '1', '', '0', '24', '', '1585819936', '1585820211', '0');
+INSERT INTO `tao_auth_rule` VALUES ('89', 'admin/User/auth', '设置超级用户', '1', '1', '1', '1', '', '0', '22', '', '1578984801', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('90', 'admin/Forum/tagshot', '开启热点', '1', '1', '5', '1', '', '0', '15', '', '1585841826', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('91', 'admin/Admin/infoSet', '资料设置', '1', '1', '3', '1', '', '0', '62', '', '1586245669', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('92', 'admin/Admin/repassSet', '密码设置', '1', '1', '3', '1', '', '0', '64', '', '1586245727', '0', '0');
 
 DROP TABLE IF EXISTS `tao_cate`;
 CREATE TABLE `tao_cate` (
@@ -175,7 +201,7 @@ CREATE TABLE `tao_cate` (
   `updata_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_cate` VALUES ('1', '提问', 'ask', '1', '1', '0', 'TaoLer社区提问专栏1', '0', '0', '0', '0');
 INSERT INTO `tao_cate` VALUES ('2', '分享', 'share', '2', '1', '0', '', '0', '0', '0', '0');
@@ -190,7 +216,7 @@ CREATE TABLE `tao_collection` (
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=149 DEFAULT CHARSET=utf8 COMMENT='文章收藏表';
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='文章收藏表';
 
 
 DROP TABLE IF EXISTS `tao_comment`;
@@ -206,7 +232,7 @@ CREATE TABLE `tao_comment` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_comment` VALUES ('1', 'https://www.aieok.com', '1', '1', '0', '0', '1', '1555127897', '1578977505', '1578977505');
 
@@ -225,6 +251,34 @@ CREATE TABLE `tao_mail_server` (
 
 INSERT INTO `tao_mail_server` VALUES ('1', 'xxxx@aliyun.com', 'smtp.aliyun.com', '25', 'user', '123456', '0');
 
+DROP TABLE IF EXISTS `tao_message`;
+CREATE TABLE `tao_message` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '消息ID',
+  `title` varchar(255) NOT NULL COMMENT '消息标题',
+  `content` text COMMENT '消息内容',
+  `user_id` int(11) NOT NULL COMMENT '发送人ID',
+  `link` varchar(255) COMMENT '链接',
+  `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '消息类型0系统消息1普通消息',
+  `create_time` int(11) NOT NULL COMMENT '创建时间',
+  `update_time` int(11) NOT NULL COMMENT '更新时间',
+  `delete_time` int(11) NOT NULL COMMENT '删除时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `tao_message_to`;
+CREATE TABLE `tao_message_to` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '消息ID',
+  `send_id` int(11) NOT NULL COMMENT '发送人ID',
+  `receve_id` int(11) NOT NULL COMMENT '接收人ID',
+  `message_id` varchar(255) NOT NULL COMMENT '消息标题',
+  `message_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '消息类型0系统消息1普通消息',
+  `is_read` tinyint(1) NOT NULL DEFAULT '0' COMMENT '消息状态',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `tao_slider`;
 CREATE TABLE `tao_slider` (
@@ -241,7 +295,7 @@ CREATE TABLE `tao_slider` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_slider` VALUES ('1', 'CODING', '1', '/storage/slider/F1.jpg', '#', '', '1574870400', '1575043200', '1', '0', '0', '0');
 INSERT INTO `tao_slider` VALUES ('3', '通用右栏底部广告', '2', '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'http://www.aieok.com', '', '1571155200', '1609344000', '1', '0', '0', '0');
@@ -291,7 +345,7 @@ CREATE TABLE `tao_user` (
   `sign` varchar(255) NOT NULL DEFAULT '' COMMENT '签名',
   `user_img` varbinary(70) NOT NULL DEFAULT '' COMMENT '头像',
   `auth` enum('1','0') NOT NULL DEFAULT '0' COMMENT '管理员权限0普通1超级',
-  `point` tinyint(11) NOT NULL DEFAULT '0' COMMENT '积分',
+  `point` int(11) NOT NULL DEFAULT '0' COMMENT '积分',
   `area_id` int(11) DEFAULT NULL COMMENT '用户所属区域ID',
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '1启用0禁用',
   `vip` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'vip',
@@ -304,7 +358,7 @@ CREATE TABLE `tao_user` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_user` VALUES ('1', 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', '管理员', '北京市', '1', '这是我的第一个TP5系统，2019北京。OK! OK!ok@', 0x2F73746F726167652F686561645F7069632F32303139313231372F39343036636334623866336538323731613238616339646239353339333766352E6A7067, '1', '14', '1', '1', '0', '127.0.0.1', '0', '0', '0', '0', '1579053025', '1578469091', '0');
 
@@ -336,7 +390,7 @@ CREATE TABLE `tao_user_sign` (
   `stime` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '签到的时间',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='用户签到表';
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户签到表';
 
 
 DROP TABLE IF EXISTS `tao_user_signrule`;
@@ -344,13 +398,33 @@ CREATE TABLE `tao_user_signrule` (
   `id` int(2) unsigned NOT NULL AUTO_INCREMENT,
   `days` int(5) unsigned NOT NULL DEFAULT '0' COMMENT '连续天数',
   `score` int(3) unsigned NOT NULL DEFAULT '0' COMMENT '积分',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '升级时间',
+  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='用户签到积分规则';
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='用户签到积分规则';
 
-INSERT INTO `tao_user_signrule` VALUES ('1', '1', '2');
-INSERT INTO `tao_user_signrule` VALUES ('2', '3', '3');
-INSERT INTO `tao_user_signrule` VALUES ('3', '5', '5');
+INSERT INTO `tao_user_signrule` VALUES ('1', '1', '2', '0', '0', '0');
+INSERT INTO `tao_user_signrule` VALUES ('2', '3', '3', '0', '0', '0');
+INSERT INTO `tao_user_signrule` VALUES ('3', '5', '5', '0', '0', '0');
 
+DROP TABLE IF EXISTS `tao_user_viprule`;
+CREATE TABLE `tao_user_viprule` (
+  `id` int(2) NOT NULL AUTO_INCREMENT COMMENT '用户等级ID',
+  `score` varchar(255) NOT NULL DEFAULT '0' COMMENT '积分区间',
+  `vip` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'vip等级',
+  `nick` varchar(20) DEFAULT NULL COMMENT '认证昵称',
+  `rules` varchar(255) DEFAULT NULL COMMENT '权限',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '升级时间',
+  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+INSERT INTO `tao_user_viprule` VALUES ('1', '0-99', '0', '游民', '', '1585476523', '1585544577', '0');
+INSERT INTO `tao_user_viprule` VALUES ('2', '100-299', '1', '富农', '', '1585476551', '1585546376', '0');
+INSERT INTO `tao_user_viprule` VALUES ('3', '300-500', '2', '地主', '', '1585545450', '1585546241', '0');
+INSERT INTO `tao_user_viprule` VALUES ('4', '501-699', '3', '土豪', '', '1585545542', '1585569657', '0');
 
 DROP TABLE IF EXISTS `tao_user_zan`;
 CREATE TABLE `tao_user_zan` (
@@ -359,5 +433,5 @@ CREATE TABLE `tao_user_zan` (
   `user_id` int(11) NOT NULL COMMENT '用户id',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '点赞时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 

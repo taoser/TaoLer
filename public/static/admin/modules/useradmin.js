@@ -16,7 +16,7 @@ layui.define(['table', 'form'], function(exports){
   //用户管理
   table.render({
     elem: '#LAY-user-manage'
-    ,url: '/admin/User/list' //模拟接口
+    ,url: userList //模拟接口
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 50, title: 'ID', sort: true}
@@ -53,7 +53,7 @@ layui.define(['table', 'form'], function(exports){
           //obj.del();
 		  $.ajax({
 				type:'post',
-				url:"/admin/User/delete",
+				url:userDelete,
 				data:{id:data.id},
 				dataType:'json',
 				success:function(data){
@@ -84,7 +84,7 @@ layui.define(['table', 'form'], function(exports){
       layer.open({
         type: 2
         ,title: '编辑用户'
-        ,content: '/admin/User/userEdit?id='+ data.id
+        ,content: userEdit +'?id='+ data.id
         ,maxmin: true
         ,area: ['500px', '450px']
         ,btn: ['确定', '取消']
@@ -101,7 +101,7 @@ layui.define(['table', 'form'], function(exports){
             //提交 Ajax 成功后，静态更新表格中的数据
             $.ajax({
 				type:"post",
-				url:"/admin/User/userEdit",
+				url:userEdit,
 				data:{"id":field.id,"name":field.username,"phone":field.phone,"email":field.email,"user_img":field.avatar,"sex":field.sex},
 				daType:"json",
 				success:function (res){
@@ -139,14 +139,13 @@ layui.define(['table', 'form'], function(exports){
   //管理员管理
   table.render({
     elem: '#LAY-user-back-manage'
-    ,url: '/admin/Admin/index' //模拟接口
+    ,url: adminIndex //模拟接口
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 80, title: 'ID', sort: true}
       ,{field: 'loginname', title: '登录名'}
       ,{field: 'telphone', title: '手机'}
       ,{field: 'email', title: '邮箱'}
-      ,{field: 'role', title: '角色'}
       ,{field: 'check', title:'审核状态', templet: '#buttonTpl', minWidth: 80, align: 'center'}
       ,{field: 'ip', title: 'IP'}
 	  ,{field: 'logintime', title: '最后登陆'}
@@ -168,7 +167,7 @@ layui.define(['table', 'form'], function(exports){
           //obj.del();
 		  $.ajax({
 				type:'post',
-				url:"/admin/Admin/delete",
+				url:adminDelete,
 				data:{id:data.id},
 				dataType:'json',
 				success:function(data){
@@ -199,7 +198,7 @@ layui.define(['table', 'form'], function(exports){
       layer.open({
         type: 2
         ,title: '编辑管理员'
-        ,content: '/admin/Admin/edit?id='+ data.id
+        ,content: adminEdit +'?id='+ data.id
         ,area: ['420px', '420px']
         ,btn: ['确定', '取消']
         ,yes: function(index, layero){
@@ -214,8 +213,8 @@ layui.define(['table', 'form'], function(exports){
             //提交 Ajax 成功后，静态更新表格中的数据
             $.ajax({
 				type:"post",
-				url:"/admin/Admin/edit",
-				data:{"id":field.id,"password":field.password,"mobile":field.mobile,"email":field.email,"auth_group_id":field.auth_group_id},
+				url:adminEdit,
+				data:{"id":field.id,"password":field.password,"mobile":field.mobile,"email":field.email},
 				daType:"json",
 				success:function (res){
 					if (res.code == 0) {
@@ -245,15 +244,13 @@ layui.define(['table', 'form'], function(exports){
         }
       })
     }
-	//执行管理员审核
-	$('#adcheck').click(function() {})
 	
   });
 
   //角色管理
   table.render({
     elem: '#LAY-user-back-role'
-    ,url: '/admin/AuthGroup/list' //模拟接口
+    ,url: authGroupList //role接口
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 80, title: 'ID', sort: true}
@@ -275,7 +272,7 @@ layui.define(['table', 'form'], function(exports){
         //obj.del();
 		$.ajax({
 				type:'post',
-				url:"/admin/AuthGroup/roledel",
+				url:authGroupRoledel,
 				data:{id:data.id},
 				dataType:'json',
 				success:function(data){
@@ -304,7 +301,7 @@ layui.define(['table', 'form'], function(exports){
       layer.open({
         type: 2
         ,title: '编辑角色'
-        ,content: '/admin/AuthGroup/roleEdit?id='+ data.id
+        ,content: authGroupRoleEdit +'?id='+ data.id
         ,area: ['500px', '480px']
         ,btn: ['确定', '取消']
         ,yes: function(index, layero){
@@ -336,7 +333,7 @@ layui.define(['table', 'form'], function(exports){
             //提交 Ajax 成功后，静态更新表格中的数据
             $.ajax({
 				type:"post",
-				url:"/admin/AuthGroup/roleEdit",
+				url:authGroupRoleEdit,
 				data:{"id":field.id,"rules":rules,"title":field.title,"descr":field.descr},
 				daType:"json",
 				success:function (res){
@@ -370,10 +367,108 @@ layui.define(['table', 'form'], function(exports){
   });
   
   
+    //用户组管理
+  table.render({
+    elem: '#LAY-user-back-group'
+    ,url: authAccessIndex //用户组access接口
+    ,cols: [[
+      {type: 'checkbox', fixed: 'left'}
+      ,{field: 'id', width: 80, title: 'ID', sort: true}
+      ,{field: 'username', title: '管理员'}
+      ,{field: 'title', title: '权限'}
+	  ,{field: 'check', title: '状态', toolbar: '#buttonCheck'}
+      ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-useradmin-admin'}
+    ]]
+    ,text: '对不起，加载出现异常！'
+  });
+  
+  //监听工具条
+  table.on('tool(LAY-user-back-group)', function(obj){
+    var data = obj.data;
+
+    if(obj.event === 'del'){
+      layer.confirm('确定删除此角色？', function(index){
+        //obj.del();
+		$.ajax({
+				type:'post',
+				url:authAccessDelete,
+				data:{id:data.id},
+				dataType:'json',
+				success:function(data){
+					if(data.code == 0){
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							title:'删除失败',
+							content:data.msg,
+							icon:5,
+							adim:6
+						})
+					}
+				}
+			});
+		table.reload('LAY-user-back-group'); //数据重载	
+        layer.close(index);
+      });
+    }else if(obj.event === 'edit'){
+      var tr = $(obj.tr);
+
+      layer.open({
+        type: 2
+        ,title: '编辑用户权限'
+        ,content: authAccessEdit +'?id='+ data.id
+        ,area: ['350px', '420px']
+        ,btn: ['确定', '取消']
+        ,yes: function(index, layero){
+          var iframeWindow = window['layui-layer-iframe'+ index]
+          ,submit = layero.find('iframe').contents().find("#LAY-admin-group-submit");
+
+          //监听提交
+          iframeWindow.layui.form.on('submit(LAY-admin-group-submit)', function(data){
+            var field = data.field; //获取提交的字段
+            //提交 Ajax 成功后，静态更新表格中的数据
+            $.ajax({
+				type:"post",
+				url:authAccessEdit,
+				data:field,
+				daType:"json",
+				success:function (res){
+					if (res.code == 0) {
+						layer.msg(res.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							tiele:'修改失败',
+							content:res.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+			
+            table.reload('LAY-user-back-group'); //数据刷新
+            layer.close(index); //关闭弹层
+          });  
+          
+          submit.trigger('click');
+        }
+        ,success: function(layero, index){
+        
+        }
+      })
+    }
+  });
+  
   //权限管理
   table.render({
     elem: '#LAY-user-auth-rule'
-    ,url: '/admin/AuthRule/index' //权限接口
+    ,url: authRuleIndex //权限接口
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 50, title: 'ID', align: 'center'}
@@ -403,7 +498,7 @@ layui.define(['table', 'form'], function(exports){
 		  //console.log(data.id);
 		 $.ajax({
 				type:'post',
-				url:"/admin/AuthRule/delete",
+				url:authRuleDelete,
 				data:{id:data.id},
 				dataType:'json',
 				success:function(data){
@@ -433,7 +528,7 @@ layui.define(['table', 'form'], function(exports){
       layer.open({
         type: 2
         ,title: '编辑权限'
-        ,content: '/admin/AuthRule/edit?id='+ data.id
+        ,content: authRuleEdit +'?id='+ data.id
         ,area: ['420px', '420px']
         ,btn: ['确定', '取消']
         ,yes: function(index, layero){
@@ -454,7 +549,7 @@ layui.define(['table', 'form'], function(exports){
             //提交 Ajax 成功后，静态更新表格中的数据
 			$.ajax({
 				type:"post",
-				url:"/admin/AuthRule/edit",
+				url:authRuleEdit,
 				data:{"id":field.id,"pid":field.pid,"title":field.title,"name":field.name,"icon":field.icon,"sort":field.sort,"ishidden":field.ishidden},
 				daType:"json",
 				success:function (res){
@@ -489,8 +584,7 @@ layui.define(['table', 'form'], function(exports){
     }
 	
   });
-  
-  
+
 
   exports('useradmin', {})
 });
