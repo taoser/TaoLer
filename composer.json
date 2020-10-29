@@ -1,6 +1,6 @@
 {
-    "name": "topthink/think",
-    "description": "the new thinkphp framework",
+    "name": "taoser/taoler",
+    "description": "fly bbs system",
     "type": "project",
     "keywords": [
         "framework",
