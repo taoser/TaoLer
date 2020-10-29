@@ -1,0 +1,68 @@
+
+{extend name="public:base" /}
+
+{block name="body"}
+
+  <div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-rule-edit" style="padding: 20px 30px 0 0;">
+  <div class="layui-form-item layui-hide">
+ <input type="text" name="id" class="layui-input" value="{$rules.id}">
+ </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">上级菜单</label>
+      <div class="layui-input-block">
+        <select name="pid" lay-verify="required">
+        <option value="0">顶级菜单</option>
+		{volist name="AuthRule" id="vo"}
+		<option {if condition="$rules['pid'] eq $vo.id"} selected {/if} value="{$vo.id}"><?php echo str_repeat('--',$vo['level']*2) ?>{$vo.title}</option>
+		{/volist}
+		</select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">权限名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="title" lay-verify="required" placeholder="请输入权限名" autocomplete="off" class="layui-input" value="{$rules.title}">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">权限地址</label>
+      <div class="layui-input-inline">
+        <input type="text" name="name" lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input" value="{$rules.name}">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">图标</label>
+      <div class="layui-input-inline">
+        <input type="text" name="icon" lay-verify="" placeholder="请输入角色类型" autocomplete="off" class="layui-input" value="{$rules.icon}">
+      </div>
+    </div>
+	<div class="layui-form-item">
+      <label class="layui-form-label">排序</label>
+      <div class="layui-input-inline">
+        <input type="text" name="sort" lay-verify="required" placeholder="请输入角色类型" autocomplete="off" class="layui-input" value="{$rules.sort}">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">显示</label>
+      <div class="layui-input-block">
+        <input type="checkbox" name="ishidden" lay-skin="primary" title="隐藏" {if condition="$rules.ishidden == 0"}checked{/if}>
+      </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit lay-filter="LAY-user-rule-submit" id="LAY-user-rule-submit" value="确认">
+    </div>
+  </div>
+
+{/block}
+{block name="js"}  
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function(){
+    var $ = layui.$
+    ,form = layui.form ;
+  })
+  </script>
+{/block}

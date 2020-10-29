@@ -25,7 +25,7 @@ class Admin extends Model
     public function login($data)
     {	
         //查询用户
-        $admin = Db::name('admin')->where('username',$data['username'])->find();
+        $admin = Db::name('admin')->where('username',$data['username'])->where('delete_time',0)->find();
 		
 		if($admin['status'] !=1){
 			return '用户被禁用或未审核,请联系管理员';

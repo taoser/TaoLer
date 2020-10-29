@@ -51,6 +51,7 @@ class Comment extends BaseController
 		$comms = CommentModel::find($id);
 		$res['rows'] = [];
 		if($comms) {
+			$res['status'] = 0;
 			$res['rows']['content'] = $comms['content'];		
 		}
 		return json($res);
@@ -81,8 +82,8 @@ class Comment extends BaseController
 		$data['user_id'] = session('user_id');
 		//查询是否已存在点赞
 		$zan = UserZan::where(['comment_id'=>input('post.id'),'user_id'=>session('user_id')])->find();
-		Session::set('ok',$zan['comment_id']);
-		if(!$zan ){ //如果没有点过赞执行点赞操作
+		
+		if(!$zan){ //如果没有点过赞执行点赞操作
 			$coms = CommentModel::find(input('post.id'));
 			if($coms['user_id'] == session('user_id')){
 				$res = ['msg' => '不能给自己点赞哦'];
@@ -97,6 +98,7 @@ class Comment extends BaseController
 				}
 			}
 		} else {
+			Session::set('ok',$zan['comment_id']);
 			$res = ['status'=>-1,'msg' => '你已赞过了'];
 		}
 		return json($res);

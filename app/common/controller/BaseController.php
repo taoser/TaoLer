@@ -40,6 +40,12 @@ abstract class BaseController
      * @var array
      */
     protected $middleware = [];
+	
+	/**
+	 * 用户id
+	 * @var int
+	 */
+	protected $uid;
 
     /**
      * 构造方法
@@ -50,6 +56,7 @@ abstract class BaseController
     {
         $this->app     = $app;
         $this->request = $this->app->request;
+		$this->uid = Session::get('user_id');
 
         // 控制器初始化
         $this->initialize();
@@ -233,11 +240,17 @@ abstract class BaseController
 
     }
 	
-	//显示用户
+	//显示当前登录用户
     protected function showUser()
     {
-        //1.查询用户
-		$user = Db::name('user')->field('id,name,nickname,user_img,sex,auth,city,email,sign,point,vip,create_time')->where('id',Session::get('user_id'))->cache(600)->find();
+		$id = $this->uid;
+		$user = Cache::get('user'.$id);
+		if(!$user){
+			//1.查询用户
+			$user = Db::name('user')->field('id,name,nickname,user_img,sex,area_id,auth,city,email,sign,point,vip,create_time')->find($id);
+			Cache::tag('user')->set('user'.$id,$user,600);
+		}
+        
 		//2.将User变量赋给模板 公共模板nav.html
 		View::assign('user',$user);
     }

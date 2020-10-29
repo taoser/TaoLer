@@ -1,0 +1,278 @@
+{extend name="public/base" /}
+
+{block name="body"}
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">升级服务</div>
+          <div class="layui-card-body">
+            
+            <div class="layui-form" wid100 lay-filter="">
+				{if ($ver_num.key == '')}
+				<div class="layui-form-item">
+					<label class="layui-form-label">配置Key</label>
+					<div class="layui-input-inline">
+					  <input type="text" name="key" value="{$ver_num.key}" required class="layui-input" placeholder="填写申请得到在Key">
+					</div>
+					<div class="layui-input-inline layui-input-company"><button style="float: left;" type="button" class="layui-btn layui-btn-sm" id="upgrade-key">保存</button></div>
+					<div class="layui-form-mid layui-word-aux" >无Key不能升级</div>
+					<div class="layui-form-mid layui-word-aux " ><a href="http://www.aieok.com" target="_blank">去官网申请Key</a></div>
+				</div>
+				{else /}
+				<div class="layui-form-item">
+					<label class="layui-form-label">升级Key</label>
+					<div class="layui-form-item layui-hide">
+					<input  type="text" name="key" value="{$ver_num.key}"  class="layui-input">
+					</div>
+					<div class="layui-form-mid layui-word-aux " ><span style="color:red">{$ver_num.key}</span></div>
+					<div class="layui-input-inline layui-input-company">
+					{if condition="checkRuleButton('admin/Upgrade/keyedit')"}
+					<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id-data="{:url('upgrade/keyedit')}" ><i class="layui-icon layui-icon-edit"></i>修改？</a>
+					{else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled" ><i class="layui-icon layui-icon-edit"></i>修改？</a>{/if}
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">在线升级</label>
+					<div class="layui-input-inline layui-input-company" id="ver_nums" >当前版本：Taole v_{$ver_num.sys_version_num}</div>
+					<div class="layui-upload">
+					{if condition="checkRuleButton('admin/Upgrade/check')"}
+					<button type="button" class="layui-btn layui-btn-sm" data-url="{$ver_num.upcheck_url}" id="upload-check">检查更新</button>
+					{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">检查更新</button>{/if}
+					</div>
+				</div>				
+				<div class="layui-form-item">
+                <label class="layui-form-label">手动更新</label>
+					<div class="layui-upload">
+					{if condition="checkRuleButton('admin/Upgrade/uploadzip')"}
+					  <button type="button" class="layui-btn layui-btn-sm" id="select-file">选择文件</button>
+					  <button type="button" class="layui-btn layui-btn-sm" id="upgrade-sys-button">开始升级</button>
+					{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">无权限</button>{/if}
+					</div>
+				</div>
+				
+				{/if}
+				
+				<div  style="margin-top: 10px;">
+				<div class="layui-form-item">
+				  <div class="layui-card-header">升级说明</div>
+				  <div style="padding-left: 20px;">1.升级服务需要去官网申请key配置文件</div>
+				  <div style="padding-left: 20px;">2.多个版本需要升级时,会自行判断依次序升级</div>
+				  <div style="padding-left: 20px;">3.升级过程尽管会自动备份文件，但为了安全起见可以自行备份文件</div>
+				  <div style="padding-left: 20px;">4.在某些特殊场合，可能需要手动升级</div>
+				</div>
+				
+				</div>
+				
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{/block}
+{block name="js"}
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'set']);
+  </script>
+  <script>
+	layui.use(['layer','form','upload'], function(){
+	  var $ = layui.jquery
+	  ,layer = layui.layer
+	  ,form = layui.form
+	  ,upload = layui.upload;  
+		  
+	//手动更新，选完文件后不自动上传
+	upload.render({
+		elem: '#select-file'
+		,url: '/admin/upgrade/uploadzip'
+		,accept: 'file'
+		,field: 'file'
+		,auto: false
+		,exts: 'zip|rar|7z'
+		,size: 10000
+		//,multiple: true
+		,bindAction: '#upgrade-sys-button'
+		,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+			layer.load(); //上传loading
+		  }
+		,done: function(res){
+			layer.closeAll('loading'); //关闭loading
+		  if(res.code == 1){
+			layer.msg(res.msg,{
+						icon:6,
+						tiye:2000
+				},function(){
+						location.reload();
+					});
+			} else {
+					layer.open({
+						title:"上传失败",
+						content:res.msg,
+						icon:5,
+						anim:6
+					});
+			}
+		}
+	});	  
+		  
+	//检测更新
+	$('#upload-check').on('click',function(){
+	var url = $(this).attr('data-url'),
+		loading = layer.load(2, {
+                    shade: [0.2, '#000'],
+					time: 2000,
+                });
+		$.ajax({
+				type:"post",
+				url:"{:url('admin/upgrade/check')}",
+				data:{"url":url},
+				daType:"json",
+				success:function (data){
+					if (data.code == 1) {
+					layer.close(loading);
+					$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.upnum+'</span>个新版本：<span style="color:red">可更新至v'+data.version+'</span></div> <button class="layui-btn layui-btn-sm" lay-submit lay-filter="update_system" data-url="{$ver_num.upgrade_url}" id="update_system">确认升级</button>');
+					$('button#upload-check').hide();
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							tiele:'添加失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+		return false;	
+	});
+
+
+	//确定升级操作
+	$(document).on('click','#update_system',function(){
+	var url = $(this).attr('data-url'),
+		key = $('input[name=key]').attr("value"),
+		loading = layer.load(2, {
+                    shade: [0.2, '#000'],
+                });
+		$.ajax({
+				type:"post",
+				url:"{:url('admin/upgrade/upload')}",
+				data:{"url":url,"key":key},
+				daType:"json",
+				success:function (data){
+					if (data.code == 1) {
+					layer.close(loading);
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						},function(){
+							location.reload();
+						});
+					} else {
+					layer.close(loading);
+						layer.open({
+							tiele:'升级失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+		return false;
+	});  	
+	//设置key 
+	$('#upgrade-key').on('click',function(){
+	var key = $('input[name=key]').val(); 
+	console.log(key);
+		$.ajax({
+				type:"post",
+				url:"{:url('admin/upgrade/key')}",
+				data:{"key":key},
+				daType:"json",
+				success:function (data){
+					if (data.code == 1) {
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						},function(){
+							location.reload();
+						});
+					} else {
+						layer.open({
+							tiele:'保存失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+		return false;	
+	});
+	  
+	
+	//修改key
+  $('a[lay-event=edit]').on('click', function(){
+      layer.open({
+		  type: 2,
+		  title: '修改key',
+		  content: 'keyedit.html',
+		  maxmin: true,
+		  area : ['420px' , '380px'],
+		  btn: ['确定', '取消'],
+          yes: function(index, layero){
+		  var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submitID = 'LAY-keyedit-submit'
+            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+            //监听提交
+            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var field = data.field; //获取提交的字段
+			  //console.log(field);
+              
+              //提交 Ajax 成功后，静态更新表格中的数据
+				$.ajax({
+					type:"post",
+					url:"{:url('admin/upgrade/keyedit')}",
+					data:{"key":field.key,"upcheck_url":field.upcheck_url,"upgrade_url":field.upgrade_url},
+					daType:"json",
+					success:function (data){
+						if (data.code == 1) {
+							layer.msg(data.msg,{
+								icon:6,
+								time:2000
+							}, function(){
+								location.reload();
+							});
+						} else {
+							layer.open({
+								tiele:'修改失败',
+								content:data.msg,
+								icon:5,
+								anim:6
+							});
+						}
+					}
+				});
+			layer.close(index);
+		   });
+		   submit.trigger('click');
+			}
+		});
+		return false;	
+    });
+	  
+	});
+</script>
+{/block}

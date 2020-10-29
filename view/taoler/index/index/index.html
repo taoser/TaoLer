@@ -1,0 +1,242 @@
+{extend name="public:base" /}
+
+{block name="title"}{$sysInfo.webname}-{$sysInfo.webtitle}{/block}
+{block name="keywords"}{$sysInfo.keywords}{/block}
+{block name="description"}{$sysInfo.descript}{/block}
+{block name="column"}{include file="public/column" /}{/block}
+
+{block name="content"}
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+  
+    <div class="layui-col-md8">
+		<!--首页幻灯-->
+		<div class="fly-panel layui-hide-xs"> 
+		  {include file="public/index-slider" /}
+		 </div> 
+		<!--置顶文章-->
+		  <div class="fly-panel">
+			<div class="fly-panel-title fly-filter">
+			  <a>置顶</a>
+			  <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
+			</div>
+			<ul class="fly-list">
+			{volist name="artTop" id="top"  empty="还没有推荐"}
+			  {include file="public/index-topforum" /}
+			{/volist}
+			</ul>
+		  </div>
+		<!--文章列表-->
+		  <div class="fly-panel" style="margin-bottom: 0;">
+		  {include file="public/filter" /}
+			<ul class="fly-list">   
+			{volist name="artList" id="art" empty="还没有帖子"}
+			  {include file="public/index-forumlist" /}
+			{/volist}  
+			</ul>
+			<div style="text-align: center">
+			  <div class="laypage-main">
+				<a href="{:url('article/cate',['ename'=>'all'])}" class="laypage-next">更多帖子</a>
+			  </div>
+			</div>
+		  </div>
+    </div>
+    <div class="layui-col-md4">
+		<!--温馨通道-->
+		<div class="fly-panel">
+		<h3 class="fly-panel-title">温馨通道</h3>
+		{include file="public/index-static" /}
+		</div>
+		{include file="public/sign" /}
+		<!--广告赞助-->
+		<div class="fly-panel"> 
+			<div class="fly-panel-title">钻级赞助商<span class="fly-mid"></span> 
+				<a href="/" class="fly-link fly-joinad">我要加入</a> 
+			</div> 
+		<div class="fly-panel-main" style="padding: 13px 15px;"> 
+		{volist name="ad_index" id="vo"}
+			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+		{/volist}
+		</div>
+		</div>
+
+		<div class="fly-panel fly-rank fly-rank-reply" id="LAY_replyRank">
+			<h3 class="fly-panel-title">回贴周榜</h3>
+			<dl>
+			  <i class="layui-icon fly-loading">&#xe63d;</i>
+			</dl>
+		</div>
+
+      <dl class="fly-panel fly-list-one">
+        <dt class="fly-panel-title">本周热议</dt>
+        {volist name="artHot" id="vo"}
+		<dd>
+          <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+        </dd>
+		{/volist}
+      </dl>
+
+      <div class="fly-panel">
+        <div class="fly-panel-title">
+          官方产品
+		</div> 
+        <div class="fly-panel-main">
+          <a href="http://www.aieok.com" target="_blank" class="fly-zanzhu" style="background-color: #5FB878;">TaoLer 1.0 - 旗舰之作</a>
+        </div>
+      </div>
+	  <div class="fly-panel" style="padding: 20px 0; text-align: center;">
+		{volist name="ad_comm" id="vo"}		
+		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+		{/volist}
+        </div>
+	<!--友情链接-->  
+	{include file="public/flink" /}
+    </div>
+	
+  </div>
+</div>
+{/block}
+
+{block name="script"}
+<script>
+    layui.use(['form', 'layer'], function() {
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var jifenname = "金币";
+        var uid = "{:session('user_id')}";
+        if (uid != '') {
+            $.get("{:url('sign/todayData')}", function(data) {
+
+                $('.fly-signin-days').html('已连续签到<cite>' + data.days + '</cite>天');
+
+                if (data.is_sign == 1) {
+
+                    $('.fly-signin-main').html('<button class="layui-btn layui-btn-disabled">今日已签到</button><span>获得了<cite>' + data.score + '</cite>' + jifenname + '</span>');
+
+                } else {
+                    $('.fly-signin-main').html('<button id="LAY_signin" class="layui-btn layui-btn-danger">今日签到</button><span>可获得<cite>' + data.will_getscore + '</cite>' + jifenname + '</span>');
+
+                    $("#LAY_signin").on("click", function() {
+
+                        $.getJSON("{:url('sign/sign')}", function(data) {
+
+                            if (data.code == 200) {
+                                $('.fly-signin-days').html('已连续签到<cite>' + data.days + '</cite>天');
+                                $('.fly-signin-main').html('<button class="layui-btn layui-btn-disabled">今日已签到</button><span>获得了<cite>' + data.score + '</cite>' + jifenname + '</span>');
+                                if (data.msg != '') {
+                                    layer.msg(data.msg, {
+                                        icon: 6,
+                                        time: 5000
+                                    });
+                                }
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        });
+                    });
+                }
+            });
+        } else {
+            $('.fly-signin-main').html('<button class="layui-btn layui-btn-danger" id="LAY_signin">签到得' + jifenname + '</button>');
+            $("#LAY_signin").on("click", function() {
+                layer.msg('请先登录',{
+						icon:5,
+						anim:6,
+						time: 2000
+					},function(){
+						location.href = "{:url('login/index')}";
+					});
+            });
+        }
+
+        //查看签到积分规则
+        $("#LAY_signinHelp").on("click", function() {
+            loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+            var url = "{:url('sign/getsignrule')}";
+
+
+            $.getJSON(url, function(data) {
+                $str = '';
+                $.each(data.msg, function(k, v) {
+                    $str += '<tr><td>≥' + v.days + '</td><td>' + v.score + '</td></tr>';
+                });
+                var content = '<div class="layui-text" style="padding: 20px;">' +
+                    '<blockquote class="layui-elem-quote">“签到”可获得社区' + jifenname + '，规则如下</blockquote>' +
+                    '<table class="layui-table">' +
+                    '<thead>' +
+                    '<tr><th>连续签到天数</th><th>每天可获' + jifenname + '</th></tr>' +
+                    '</thead>' +
+                    '<tbody>' +
+                    $str +
+                    '</tbody>' +
+                    '</table>' +
+                    '<ul>' +
+                    '<li style="color: #FF5722;">新年期间签到额外赠送最高99金币</li>' +
+                    '<li>中间若有间隔，则连续天数重新计算</li>' +
+                    // '<li style="color: #FF5722;">不可利用程序自动签到，否则' + jifenname + '清零</li>' +
+                    '</ul></div>'
+                layer.open({
+                    type: 1,
+                    title: '签到说明',
+                    area: '300px',
+                    shade: 0.8,
+                    shadeClose: true,
+                    content: content,
+                    success: function(index, layero) {
+                        //do something
+                        layer.close(loading); //如果设定了yes回调，需进行手工关闭
+                    }
+                });
+            });
+        });
+
+        //查看积分榜单
+        $("#LAY_signinTop").on("click", function() {
+
+            var signlisturl = "{:url('sign/lists')}";
+
+            layer.open({
+                type: 2,
+                title: '签到活跃榜 - TOP 20',
+                shade: 0.8,
+                area: ['300px', '430px'], //宽高
+                scrollbar: false,
+                shadeClose: true,
+                content: signlisturl,
+            });
+        });
+    });
+	
+	$('#friend-link').on('click', function(){
+		layer.open({
+		  title: '申请友链',
+		  content: '发送邮件至：changlin_zhao@qq.com ',
+		  yes: function(index, layero){
+				layer.close(index);
+			}
+		});
+		return false;
+	});
+	
+</script>
+<script>
+	var replyUrl = "{:url('index/reply')}";
+    layui.cache.page = 'index';
+    layui.cache.user = {
+        username: '{$user.name??'游客'}'
+        ,uid: '{$user.id ?? -1}'
+        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
+        ,experience: '{$user.point ?? ''}'
+        ,sex: '{$user.sex ? '女':'男'}'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: '/static/res/mods/'
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+</script>
+{/block}

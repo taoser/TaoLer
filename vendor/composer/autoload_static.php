@@ -4,13 +4,13 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit9b80d9a7bd440d07cac42880e0942921
+class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
 {
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
-        '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         '39594db8502267d6df2fe2dca5f3914d' => __DIR__ . '/..' . '/zzstudio/think-addons/src/helper.php',
@@ -32,6 +32,7 @@ class ComposerStaticInit9b80d9a7bd440d07cac42880e0942921
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\VarDumper\\' => 28,
@@ -44,12 +45,9 @@ class ComposerStaticInit9b80d9a7bd440d07cac42880e0942921
             'Psr\\Cache\\' => 10,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
-        'O' => 
-        array (
-            'Opis\\Closure\\' => 13,
-        ),
         'L' => 
         array (
+            'League\\MimeTypeDetection\\' => 25,
             'League\\Flysystem\\Cached\\' => 24,
             'League\\Flysystem\\' => 17,
         ),
@@ -88,6 +86,10 @@ class ComposerStaticInit9b80d9a7bd440d07cac42880e0942921
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
         'Symfony\\Polyfill\\Php72\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
@@ -120,9 +122,9 @@ class ComposerStaticInit9b80d9a7bd440d07cac42880e0942921
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
-        'Opis\\Closure\\' => 
+        'League\\MimeTypeDetection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/opis/closure/src',
+            0 => __DIR__ . '/..' . '/league/mime-type-detection/src',
         ),
         'League\\Flysystem\\Cached\\' => 
         array (
@@ -138,12 +140,21 @@ class ComposerStaticInit9b80d9a7bd440d07cac42880e0942921
         0 => __DIR__ . '/../..' . '/extend',
     );
 
+    public static $classMap = array (
+        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit9b80d9a7bd440d07cac42880e0942921::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit9b80d9a7bd440d07cac42880e0942921::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit9b80d9a7bd440d07cac42880e0942921::$fallbackDirsPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1b32198725235c8d6500c87262ef30c2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1b32198725235c8d6500c87262ef30c2::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit1b32198725235c8d6500c87262ef30c2::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit1b32198725235c8d6500c87262ef30c2::$classMap;
 
         }, null, ClassLoader::class);
     }

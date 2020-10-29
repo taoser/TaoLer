@@ -7,8 +7,14 @@ use app\common\model\Message as MessageModel;
 use app\common\model\MessageTo;
 
 class Message
-{	
-	//send msg
+{
+    /**
+     * 发送消息
+     * @param $sendId       发送者
+     * @param $receveId     接收者
+     * @param $data         发送数据
+     * @return bool
+     */
 	public static function sendMsg($sendId,$receveId,$data)
 	{
 		//写入消息库
@@ -28,8 +34,15 @@ class Message
 			return false;
 		}
     }
-	
-	//receve msg
+
+    /**
+     * 接收消息
+     * @param $uid  接收消息用户ID
+     * @return \think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
 	public static function receveMsg($uid)
 	{
 		 $msg = Db::name('message_to')
@@ -43,14 +56,20 @@ class Message
 		->select();
 		return $msg;
     }
-	
-	//登录后插入系统消息
+
+    /**
+     *  登录用户把消息写入数据表
+     * @param $uid  登陆用户ID
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
 	public static function insertMsg($uid)
 	{
 		//得到所有系统消息
 		$sysmsg = MessageModel::where(['type'=>0,'delete_time'=>0])->select();
 		foreach($sysmsg as $smg){
-			//检验通知是否被写入个人收件箱
+			//检验通知ID是否被写入个人收件箱
 			$msgId = Db::name('message_to')->where('message_id',$smg['id'])->find();
 			if(!$msgId){
 				$result = MessageTo::create(['send_id'=>$smg['user_id'],'receve_id'=>$uid,'message_id'=>$smg['id'],'message_type'=>$smg['type']]);

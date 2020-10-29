@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS `tao_auth_group`;
 CREATE TABLE `tao_auth_group` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '角色ID',
   `title` varchar(100) NOT NULL DEFAULT '' COMMENT '角色名称',
-  `rules` char(255) NOT NULL DEFAULT '',
+  `rules` varchar(500) NOT NULL DEFAULT '' COMMENT '拥有权限',
   `limits` varchar(255) NOT NULL DEFAULT '' COMMENT '权限范围',
   `descr` varchar(255) NOT NULL DEFAULT '' COMMENT '权限描述',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '角色状态1可用0禁止',
@@ -259,9 +259,9 @@ CREATE TABLE `tao_message` (
   `user_id` int(11) NOT NULL COMMENT '发送人ID',
   `link` varchar(255) COMMENT '链接',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '消息类型0系统消息1普通消息',
-  `create_time` int(11) NOT NULL COMMENT '创建时间',
-  `update_time` int(11) NOT NULL COMMENT '更新时间',
-  `delete_time` int(11) NOT NULL COMMENT '删除时间',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -298,7 +298,7 @@ CREATE TABLE `tao_slider` (
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 INSERT INTO `tao_slider` VALUES ('1', 'CODING', '1', '/storage/slider/F1.jpg', '#', '', '1574870400', '1575043200', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('3', '通用右栏底部广告', '2', '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'http://www.aieok.com', '', '1571155200', '1609344000', '1', '0', '0', '0');
+INSERT INTO `tao_slider` VALUES ('3', '通用右栏底部广告', '2', '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'https://www.aieok.com', '', '1571155200', '1609344000', '1', '0', '0', '0');
 
 
 DROP TABLE IF EXISTS `tao_system`;
@@ -307,6 +307,7 @@ CREATE TABLE `tao_system` (
   `webname` varchar(20) NOT NULL COMMENT '网站名称',
   `webtitle` varchar(30) NOT NULL,
   `domain` varchar(50) NOT NULL,
+  `template` varchar(30) NOT NULL DEFAULT '' COMMENT '模板',
   `logo` varchar(70) NOT NULL DEFAULT '' COMMENT '网站logo',
   `cache` tinyint(5) NOT NULL DEFAULT '0' COMMENT '缓存时间分钟',
   `upsize` int(5) NOT NULL DEFAULT '0' COMMENT '上传文件大小KB',
@@ -329,7 +330,7 @@ CREATE TABLE `tao_system` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='系统配置表';
 
-INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href=\"http://www.aieok.com\" target=\"_blank\">aieok.com 版权所有</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.0.0', '', 'http://www.aieok.com/api/index/cy', 'http://www.aieok.com/api/upload/check', 'http://www.aieok.com/api/upload/api', '1581221008', '1577419197');
+INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href=\"http://www.aieok.com\" target=\"_blank\">aieok.com 版权所有</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.5.2', '', 'http://api.aieok.com/v1/index/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
 
 
 DROP TABLE IF EXISTS `tao_user`;
@@ -343,7 +344,7 @@ CREATE TABLE `tao_user` (
   `city` varchar(50) NOT NULL DEFAULT '' COMMENT '归属地',
   `sex` enum('0','1') NOT NULL DEFAULT '0' COMMENT '性别0男1女',
   `sign` varchar(255) NOT NULL DEFAULT '' COMMENT '签名',
-  `user_img` varbinary(70) NOT NULL DEFAULT '' COMMENT '头像',
+  `user_img` varchar(70) NOT NULL DEFAULT '' COMMENT '头像',
   `auth` enum('1','0') NOT NULL DEFAULT '0' COMMENT '管理员权限0普通1超级',
   `point` int(11) NOT NULL DEFAULT '0' COMMENT '积分',
   `area_id` int(11) DEFAULT NULL COMMENT '用户所属区域ID',
@@ -360,7 +361,7 @@ CREATE TABLE `tao_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `tao_user` VALUES ('1', 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', '管理员', '北京市', '1', '这是我的第一个TP5系统，2019北京。OK! OK!ok@', 0x2F73746F726167652F686561645F7069632F32303139313231372F39343036636334623866336538323731613238616339646239353339333766352E6A7067, '1', '14', '1', '1', '0', '127.0.0.1', '0', '0', '0', '0', '1579053025', '1578469091', '0');
+INSERT INTO `tao_user` VALUES ('1', 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', '管理员', '北京市', '1', '这是我的第一个TP5系统，2019北京。OK! OK!ok@', '/static/res/images/avatar/00.jpg', '1', '14', '1', '1', '0', '127.0.0.1', '0', '0', '0', '0', '1579053025', '1578469091', '0');
 
 
 DROP TABLE IF EXISTS `tao_user_area`;
@@ -435,3 +436,20 @@ CREATE TABLE `tao_user_zan` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `tao_webconfig`;
+CREATE TABLE `tao_webconfig` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ename` varchar(30) NOT NULL COMMENT '英文名',
+  `cname` varchar(50) NOT NULL COMMENT '中文名',
+  `form_type` varchar(10) DEFAULT '' COMMENT '表单类型',
+  `conf_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '配置类型1论坛2网店3企业站',
+  `values` varchar(255) NOT NULL,
+  `value` varchar(60) NOT NULL COMMENT '默认值',
+  `sort` tinyint(2) NOT NULL DEFAULT '20',
+  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+INSERT INTO `tao_webconfig` VALUES ('1', 'template', '', '', '0', '', 'taoler', '20', '0', '0', '0');

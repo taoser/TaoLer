@@ -68,7 +68,7 @@ class HasOne extends OneToOne
         if ($relationModel) {
             if (!empty($this->bindAttr)) {
                 // 绑定关联属性
-                $this->bindAttr($relationModel, $this->parent);
+                $this->bindAttr($this->parent, $relationModel);
             }
 
             $relationModel->setParent(clone $this->parent);
@@ -181,7 +181,7 @@ class HasOne extends OneToOne
 
         $fields     = $this->getRelationQueryFields($fields, $model);
         $softDelete = $this->query->getOptions('soft_delete');
-        $query      = $query ?: $this->parent->db()->alias($model);
+        $query      = $query ? $query->alias($model) : $this->parent->db()->alias($model);
 
         return $query->field($fields)
             ->join([$table => $relation], $model . '.' . $this->localKey . '=' . $relation . '.' . $this->foreignKey, $joinType ?: $this->joinType)
@@ -232,9 +232,9 @@ class HasOne extends OneToOne
                     $relationModel->exists(true);
                 }
 
-                if ($relationModel && !empty($this->bindAttr)) {
+                if (!empty($this->bindAttr)) {
                     // 绑定关联属性
-                    $this->bindAttr($relationModel, $result);
+                    $this->bindAttr($result, $relationModel);
                 } else {
                     // 设置关联属性
                     $result->setRelation($relation, $relationModel);
@@ -273,9 +273,9 @@ class HasOne extends OneToOne
             $relationModel->exists(true);
         }
 
-        if ($relationModel && !empty($this->bindAttr)) {
+        if (!empty($this->bindAttr)) {
             // 绑定关联属性
-            $this->bindAttr($relationModel, $result);
+            $this->bindAttr($result, $relationModel);
         } else {
             $result->setRelation($relation, $relationModel);
         }

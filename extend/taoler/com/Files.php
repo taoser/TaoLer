@@ -5,7 +5,31 @@ use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 class Files
 {
-	//´´½¨ÎÄ¼ş¼Ğ¼°×ÓÎÄ¼ş¼Ğ
+    /**
+     * è·å–ç›®å½•ä¸‹å­ç›®å½•å
+     * @param $path ç›®å½•
+     * @return array
+     */
+	public static function getDirName($path)
+	{
+		if (is_dir($path)) {
+			$arr = array();
+			$data = scandir($path);
+			foreach ($data as $value){
+				if($value !='.' && $value != '..' && !stripos($value,".")){
+				  $arr[] = strtolower($value);
+				}
+			  }
+			 //return array_merge(array_diff($arr, array('install')));
+			 return $arr;
+		}
+	}
+
+    /**
+     * åˆ›å»ºæ–‡ä»¶å¤¹åŠå­æ–‡ä»¶å¤¹
+     * @param $path
+     * @return bool
+     */
 	public static function create_dirs($path)
 	{
 	  if (!is_dir($path))
@@ -26,12 +50,13 @@ class Files
 	  }
 	  return true;
 	}
-	
-	/**
-	 * É¾³ıÎÄ¼ş¼Ğ¼°ÄÚÈİ 
-	 * @param $dirPath ËùÉ¾³ıµÄÄ¿Â¼
-	 * @param $nowDir ÊÇ·ñÉ¾³ıµ±Ç°ÎÄ¼ş¼Ğ$dirPath true false
-	 */
+
+    /**
+     * åˆ é™¤æ–‡ä»¶å¤¹åŠå†…å®¹
+     * @param $dirPath  æ‰€åˆ é™¤çš„ç›®å½•
+     * @param bool $nowDir  æ˜¯å¦åˆ é™¤å½“å‰æ–‡ä»¶å¤¹$dirPath true false
+     * @return bool
+     */
 	public static function delDirAndFile( $dirPath, $nowDir=false ) 
 	{ 
 		if ( $handle = opendir($dirPath) ) { 
@@ -47,8 +72,8 @@ class Files
 					} 
 				} 
 			} 
-			closedir( $handle ); 
-			//É¾³ıµ±Ç°ÎÄ¼ş¼Ğ
+			closedir( $handle );
+            //åˆ é™¤å½“å‰æ–‡ä»¶å¤¹
 			if($nowDir == true){
 				if(rmdir($dirPath)){
 					return true;
@@ -62,12 +87,13 @@ class Files
 		return true;
 	}
 
-	/**
-	 * ¸´ÖÆÎÄ¼ş¼Ğ$sourceÏÂµÄÎÄ¼şºÍ×ÓÎÄ¼ş¼ĞÏÂµÄÄÚÈİµ½$destÏÂ Éı¼¶+±¸·İ´úÂë
-	 * @param $source
-	 * @param $dest
-	 * @param $ex Ö¸¶¨Ö»¸´ÖÆ$sourceÏÂµÄÄ¿Â¼,Ä¬ÈÏÈ«¸´ÖÆ
-	 */
+    /**
+     * å¤åˆ¶æ–‡ä»¶å¤¹$sourceä¸‹çš„æ–‡ä»¶å’Œå­æ–‡ä»¶å¤¹ä¸‹çš„å†…å®¹åˆ°$destä¸‹ å‡çº§+å¤‡ä»½ä»£ç 
+     * @param $source
+     * @param $dest
+     * @param array $ex æŒ‡å®šåªå¤åˆ¶$sourceä¸‹çš„ç›®å½•,é»˜è®¤å…¨å¤åˆ¶
+     * @return bool
+     */
 	public function copyDirs($source, $dest, $ex=array())
 	{
 		$count = count($ex);
@@ -76,7 +102,7 @@ class Files
 				while (($file = readdir($handle)) !== false) {
 					if (( $file != '.' ) && ( $file != '..' )) {
 						if ( is_dir($source . $file) ) {
-							//Ö¸¶¨ÎÄ¼ş¼Ğ
+							//Ö¸ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
 							if($count != 0){
 								if(in_array($file,$ex)){
 									self::copyDirs($source . $file.'/', $dest . $file.'/');
@@ -95,12 +121,11 @@ class Files
 		}
 		return true;	
 	}
-	
-	
+
     /**
-     * ¼ì²âÄ¿Â¼²¢Ñ­»·´´½¨Ä¿Â¼
-     *
-     * @param $catalogue
+     * æ£€æµ‹ç›®å½•å¹¶å¾ªç¯åˆ›å»ºç›®å½•
+     * @param $dir
+     * @return bool
      */
     public static function mkdirs($dir)
     {
@@ -110,14 +135,14 @@ class Files
         }
         return true;
     }
-	
+
     /**
+     * åˆ é™¤æ–‡ä»¶ä»¥åŠç›®å½•
      * @param $dir
      * @return bool
-     * É¾³ıÎÄ¼şÒÔ¼°Ä¿Â¼
      */
     public static function delDir($dir) {
-        //ÏÈÉ¾³ıÄ¿Â¼ÏÂµÄÎÄ¼ş£º
+        //å…ˆåˆ é™¤ç›®å½•ä¸‹çš„æ–‡ä»¶ï¼š
 //        var_dump(is_dir($dir));
 //        if(!is_dir($dir)){
 //            return true;
@@ -134,7 +159,7 @@ class Files
             }
         }
         closedir($dh);
-        //É¾³ıµ±Ç°ÎÄ¼ş¼Ğ£º
+        //åˆ é™¤å½“å‰æ–‡ä»¶å¤¹
         if(rmdir($dir)) {
             return true;
         } else {
@@ -143,9 +168,10 @@ class Files
     }
 
     /**
+     * å¤åˆ¶æ–‡ä»¶åˆ°æŒ‡å®šæ–‡ä»¶
      * @param $source
      * @param $dest
-     * ¸´ÖÆÎÄ¼şµ½Ö¸¶¨ÎÄ¼ş
+     * @return bool
      */
     public static function copyDir($source, $dest)
     {
@@ -170,10 +196,13 @@ class Files
         return true;
     }
 
-    /*Ğ´Èë
-    * @param  string  $type 1 ÎªÉú³É¿ØÖÆÆ÷ 2 Ä£ĞÍ
-    */
-
+    /**
+     * å†™å…¥
+     * @param $content
+     * @param $filepath
+     * @param $type $type 1 ä¸ºç”Ÿæˆæ§åˆ¶å™¨ 2 æ¨¡å‹
+     * @throws \Exception
+     */
     public static function filePutContents($content,$filepath,$type){
         if($type==1){
             $str = file_get_contents($filepath);
@@ -197,11 +226,11 @@ class Files
             $File->write($filepath, $_cache);
         }
     }
+
     /**
-     * »ñÈ¡ÎÄ¼ş¼Ğ´óĞ¡
-     *
-     * @param string $dir ¸ùÎÄ¼ş¼ĞÂ·¾¶
-     * @return int
+     * è·å–æ–‡ä»¶å¤¹å¤§å°
+     * @param $dir æ ¹æ–‡ä»¶å¤¹è·¯å¾„
+     * @return bool|int
      */
     public static function getDirSize($dir)
     {
@@ -225,9 +254,10 @@ class Files
     }
 
     /**
-     * ´´½¨ÎÄ¼ş
-     *
-     * @param $files
+     * åˆ›å»ºæ–‡ä»¶
+     * @param $file
+     * @param $content
+     * @return bool
      */
     public static function createFile($file,$content)
     {
@@ -237,9 +267,9 @@ class Files
         fclose($myfile);
         return true;
     }
+
     /**
-     * »ùÓÚÊı×é´´½¨Ä¿Â¼
-     *
+     * åŸºäºæ•°ç»„åˆ›å»ºç›®å½•
      * @param $files
      */
     public static function createDirOrFiles($files)
@@ -253,7 +283,12 @@ class Files
         }
     }
 
-    // ÅĞ¶ÏÎÄ¼ş»òÄ¿Â¼ÊÇ·ñÓĞĞ´µÄÈ¨ÏŞ
+
+    /**
+     * åˆ¤æ–­æ–‡ä»¶æˆ–ç›®å½•æ˜¯å¦æœ‰å†™çš„æƒé™
+     * @param $file
+     * @return bool
+     */
     public static function isWritable($file)
     {
         if (DIRECTORY_SEPARATOR == '/' AND @ ini_get("safe_mode") == FALSE) {
@@ -267,8 +302,7 @@ class Files
     }
 
     /**
-     * Ğ´ÈëÈÕÖ¾
-     *
+     * å†™å…¥æ—¥å¿—
      * @param $path
      * @param $content
      * @return bool|int

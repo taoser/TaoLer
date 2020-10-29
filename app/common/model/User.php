@@ -5,6 +5,7 @@ use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Db;
 use think\facade\Session;
+use think\facade\Cookie;
 use think\facade\Log;
 use taoler\com\Api;
 
@@ -44,7 +45,7 @@ class User extends Model
     {	
         //查询用户
         $user = Db::name('user')->whereOr('email',$data['name'])->whereOr('name',$data['name'])->find();
-		//halt($user);
+
 		//对输入的密码字段进行MD5加密，再进行数据库的查询
 		$salt = substr(md5($user['create_time']),-6);
 		$pwd = substr_replace(md5($data['password']),$salt,0,6);
@@ -53,7 +54,16 @@ class User extends Model
         if($user['password'] == $data['password']){
 			//将用户数据写入Session
 			Session::set('user_id',$user['id']);
-			Session::set('user_name',$user['name']);
+			//Session::set('user_name',$user['name']);
+			if(isset($data['remember'])){
+				$salt = 'taoler';
+				//加密auth存入cookie
+				$auth = md5($user['name'].$salt).":".$user['id'];
+				Cookie::set('auth',$auth,604800);
+				//Cookie::set('user_id', $user['id'], 604800);
+				//Cookie::set('user_name', $user['name'], 604800);
+			}
+			
 			$ip = request()->ip();
 /*
 			$url = 'http://ip-api.com/json/'.$ip.'?lang=zh-CN';
@@ -117,7 +127,7 @@ class User extends Model
     {
         $userId = $data['user_id'];
         $user = User::where('id',$userId)->find();
-        $result = $user->allowField(['email','nickname','sex','city','sign'])->save($data);
+        $result = $user->allowField(['email','nickname','sex','city','area_id','sign'])->save($data);
         if($result){
             return 1;
         }else{

@@ -1,0 +1,157 @@
+{extend name="public:base" /}
+
+{block name="title"}{$sysInfo.webname}-{$sysInfo.webtitle}{/block}
+{block name="keywords"}{$sysInfo.keywords}{/block}
+{block name="description"}{$sysInfo.descript}{/block}
+{block name="column"}{include file="public/column" /}{/block}
+
+{block name="content"}
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+  
+    <div class="layui-col-md8">
+		<!--首页幻灯-->
+		<div class="fly-panel layui-hide-xs"> 
+		  <div class="layui-row fly-panel-main" style="padding: 15px;"> 
+		   <div class="layui-carousel fly-topline" id="FLY_topline" > 
+			<div carousel-item=""> 
+			{volist name="slider" id="vo"}
+			 <div time-limit="2019-04-18 0:0:0" > 
+			  <a href="{$vo.slid_href}" target="_blank" rel="nofollow"> <img src="{$vo.slid_img}" alt="{$vo.slid_name}" /> </a> 
+			 </div> 
+			{/volist} 
+			</div> 
+		   </div> 
+		  </div>
+		</div> 
+		<!--更新日志-->
+		<div class="layui-card">
+			<div class="layui-card-header"><h1 class="site-h1">更新日志</h1></div>
+			<div class="layui-card-body">
+				<ul class="layui-timeline">
+				{volist name="timeline" id="vo"}
+				<li class="layui-timeline-item">
+					<i class="layui-icon layui-timeline-axis"></i>
+					<div class="layui-timeline-content layui-text">
+					  <h3 class="layui-timeline-title">{$vo.timeline_title}<span class="layui-badge-rim">{$vo.create_time|date='Y-m-d'}</span></h3>
+					   {$vo.timeline_content|raw}
+					</div>
+				  </li>
+				{/volist}  
+				</ul> 
+			</div>
+		</div>		
+    </div>
+	<!--右栏-->
+    <div class="layui-col-md4">
+      <div class="fly-panel">
+        <h3 class="fly-panel-title">温馨通道</h3>
+        <div class="layui-row fly-panel-main" style="padding: 15px;">
+          <div class="layui-clear fly-list-quick">
+            <div class="layui-col-xs6">
+              <div><a href="https://gitee.com/toogee/TaoLer/repository/archive/master.zip" target="_blank"> 程序下载 </a></div>
+            </div>
+            <div class="layui-col-xs6">
+              <div><a href="{:url('article/detail',['id'=>25])}" target="_blank"> 应用说明 </a></div>
+            </div>
+            <div class="layui-col-xs6">
+              <div><a href="#" target="_blank"> 申请Key </a></div>
+            </div>
+            <div class="layui-col-xs6">
+              <div><a href="https://gitee.com/toogee/TaoLer" target="_blank"> Git 仓库 </a></div>
+            </div>
+            <div class="layui-col-xs6">
+              <div><a href="{:url('doc/timeline')}" target="_blank">版本更新日志</a></div>
+            </div>
+            <div class="layui-col-xs6">
+              <div><a href="#" target="_blank"> 关于积分 </a></div>
+            </div>
+            <a name="signin"> </a></div>
+        </div>
+      </div>
+
+	<div class="fly-panel"> 
+		<div class="fly-panel-title"> 钻级赞助商 <span class="fly-mid"></span> 
+			<a href="/" class="fly-link fly-joinad">我要加入</a> 
+		</div> 
+	<div class="fly-panel-main" style="padding: 13px 15px;"> 
+	{volist name="ad_index" id="vo"}
+		<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+	{/volist}
+	<!--a href="/" target="_blank" rel="nofollow" class="fly-zanzhu  fly-zanzhu-img" ><img src="//11886.png" alt="topjui"></a--> 
+	</div>
+	</div>
+
+      <dl class="fly-panel fly-list-one">
+        <dt class="fly-panel-title">本周热议</dt>
+        {volist name="artHot" id="vo"}
+		<dd>
+          <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+        </dd>
+		{/volist}
+
+        <!-- 无数据时 -->
+        <!--
+        <div class="fly-none">没有相关数据</div>
+        -->
+      </dl>
+
+      <div class="fly-panel">
+        <div class="fly-panel-title">
+          官方产品
+		</div> 
+        <div class="fly-panel-main">
+          <a href="http://www.aieok.com" target="_blank" class="fly-zanzhu" style="background-color: #5FB878;">TaoLer 1.0 - 旗舰之作</a>
+        </div>
+      </div>
+	  <div class="fly-panel" style="padding: 20px 0; text-align: center;">
+		{volist name="ad_comm" id="vo"}		
+		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+		{/volist}
+       </div>
+	  
+	{include file="public/flink" /}
+    </div>
+	
+  </div>
+</div>
+{/block}
+
+{block name="script"}
+<script>
+    layui.use(['form', 'layer'], function() {
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var jifenname = "金币";
+
+	$('#friend-link').on('click', function(){
+		layer.open({
+		  title: '申请友链',
+		  content: '发送邮件至：changlin_zhao@qq.com ',
+		  yes: function(index, layero){
+				layer.close(index);
+			}
+		});
+		return false;
+	});
+	
+</script>
+<script>
+    layui.cache.page = 'index';
+    layui.cache.user = {
+        username: '{$user.name??'游客'}'
+        ,uid: '{$user.id ?? -1}'
+        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
+        ,experience: '{$user.point ?? ''}'
+        ,sex: '{$user.sex ? '女':'男'}'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: '/static/res/mods/'
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+</script>
+
+{/block}

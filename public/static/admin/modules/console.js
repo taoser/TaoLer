@@ -196,7 +196,7 @@ layui.define(function(exports){
       ,cellMinWidth: 120
       ,cols: [[
         {type: 'numbers', fixed: 'left'}
-        ,{field: 'title', title: '标题', minWidth: 300, templet: '<div><a href="/index/jie/{{d.id}}.html" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
+        ,{field: 'title', title: '标题', minWidth: 300, templet: '<div><a href="{{d.id}}" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
         ,{field: 'name', title: '发帖者'}
         ,{field: 'catename', title: '类别'}
         ,{field: 'pv', title: '点击率', sort: true}
@@ -213,7 +213,7 @@ layui.define(function(exports){
       ,cols: [[
         {type: 'numbers', fixed: 'left'}
 		,{field: 'content', title: '评论', minWidth: 300}
-        ,{field: 'title', title: '帖子', minWidth: 200, templet: '<div><a href="/index/jie/{{d.cid}}.html" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
+        ,{field: 'title', title: '帖子', minWidth: 200, templet: '<div><a href="{{d.cid}}" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
         ,{field: 'name', title: '评论者'}
  
       ]]

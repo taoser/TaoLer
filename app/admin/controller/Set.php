@@ -9,6 +9,8 @@ use app\admin\model\System;
 use app\admin\model\MailServer;
 use think\facade\Config;
 use think\exception\ValidateException;
+use taoler\com\Files;
+use taoler\com\Api;
 
 class Set extends AdminController
 {
@@ -23,8 +25,8 @@ class Set extends AdminController
 		$mailserver = MailServer::find(1);
 		$sysInfo = Db::name('system')->find(1);
 		$syscy = $this->check($sysInfo['base_url']);
-		
-        View::assign(['sysInfo'=>$sysInfo,'syscy'=>$syscy,'mailserver'=>$mailserver]);
+		$template = Files::getDirName('../view');
+        View::assign(['sysInfo'=>$sysInfo,'syscy'=>$syscy,'mailserver'=>$mailserver,'template'=>$template]);
 		return View::fetch('set/system/website');
     }
 	
@@ -133,24 +135,12 @@ class Set extends AdminController
 	public function check($url)
 	{
 		$url = $url.'?u='.Request::domain();
-		$ch =curl_init ();
-		curl_setopt($ch,CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT, 20);
-		curl_setopt($ch,CURLOPT_POST, 1);
-		$data = curl_exec($ch);
-		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
-		curl_close($ch);
-		if($httpCode == '200'){
-			$cy = json_decode($data);
-			if($cy->code != 0){
-				$cylevel = $cy->level;
-			return $cylevel;
-			} else {
-			return 0;
-			}
+		$cy = Api::urlGet($url);
+		if($cy->code != 0){
+			$cylevel = $cy->level;
+		return $cylevel;
 		} else {
-			return 0;
+		return 0;
 		}
 	}
 		

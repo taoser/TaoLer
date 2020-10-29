@@ -1,0 +1,21 @@
+<div class="fly-footer html5plus-hide">
+  <p> Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}</p>
+  <p>
+    <a href="#" target="_blank">站务反馈</a>
+    <a href="#" target="_blank">获取本站源码</a>
+    <a href="#" target="_blank">微信公众号</a>
+  </p>
+</div>
+
+<script src="/static/layui/jquery.min.js" charset="utf-8"></script>
+<script src="/static/layui/layui.js" charset="utf-8"></script>
+<script>
+var messageNums = "{:url('index/Message/nums')}",
+	messageRead = "{:url('index/Message/read')}",
+	userMessage = "{:url('index/User/message')}",
+    login = "{:url('Login/index')}",
+    articleAdd = "{:url('Article/add')}",
+    websearch = "{:url('index/index/search')}",
+    textImgUpload = "{:url('index/article/textImgUpload')}",
+	searchUrl = "{:url('index/search')}";
+</script>

@@ -8,6 +8,7 @@ use think\facade\Session;
 use think\facade\Request;
 use app\admin\model\Admin;
 use app\admin\model\Article;
+use think\facade\Config;
 
 class Index extends AdminController
 {
@@ -15,7 +16,8 @@ class Index extends AdminController
 	protected function initialize()
     {
         parent::initialize();
-       
+		$this->domain = Request::scheme().'://www.'.Request::rootDomain();
+		//dump($this->domain);
     }
 
     public function index()
@@ -29,7 +31,8 @@ class Index extends AdminController
         return view();
     }
 
-    public function message(){
+    public function message()
+	{
         return view();
     }
 
@@ -43,7 +46,8 @@ class Index extends AdminController
 		View::assign(['sys'=>$sys,'day'=>$days,'hos'=>$hos,'mins'=>$mins]);
         return View::fetch();
     }
-	//
+	
+	//本周发帖
 	public function forums()
 	{
 		$forumList = Db::name('article')
@@ -61,7 +65,7 @@ class Index extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-				$res['data'][]= ['id'=>$v['aid'],'title'=>$v['title'],'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
+				$res['data'][]= ['id'=>str_replace("admin","index",$this->domain.(string) url('article/detail',['id'=>$v['aid']])),'title'=>$v['title'],'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没有发帖！'];
@@ -69,7 +73,7 @@ class Index extends AdminController
 			return json($res);
 	}
 	
-	//帖子评论
+	//本周评论
 	public function replys()
 	{
 		if(Request::isAjax()) {
@@ -88,7 +92,7 @@ class Index extends AdminController
 			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
-					$res['data'][] = ['content'=>$v['content'],'title'=>$v['title'],'cid'=>$v['cid'],'name'=>$v['name']];
+					$res['data'][] = ['content'=>$v['content'],'title'=>$v['title'],'cid'=>str_replace("admin","index",$this->domain.(string) url('article/detail',['id'=>$v['cid']])),'name'=>$v['name']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没评论'];

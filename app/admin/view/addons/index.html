@@ -1,0 +1,125 @@
+{extend name="public/base" /}
+
+{block name="body"}
+  <div class="layui-fluid">
+        <div class="layui-card">
+          <div class="layui-card-header">插件管理</div>
+          <div class="layui-card-body">
+				<div style="padding-bottom: 10px;">
+				  <!--button class="layui-btn layuiadmin-btn-admin" data-type="batchdel">删除</button-->
+				  <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
+				</div>            
+            <table id="addons-list" lay-filter="addons-list"></table>
+			<script type="text/html" id="addons-tool">
+			
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="install"><i class="layui-icon layui-icon-edit"></i>安装</a>
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>卸载</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+			
+			</script>
+          </div>
+        </div>
+  </div>
+  
+{/block}
+{block name="js"}
+<script>
+	var addonsIndex = "{:url('Addons/index')}",
+        addonsDelete = "{:url('Addons/delete')}",
+        addonsEdit = "{:url('Addons/edit')}";
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'addons','table','form','upload'], function(){
+  var $ = layui.jquery
+  ,table = layui.table
+  ,form = layui.form
+  ,upload = layui.upload;
+
+  //事件
+    var active = {
+      batchdel: function(){
+        var checkStatus = table.checkStatus('addons-list')
+        ,checkData = checkStatus.data; //得到选中的数据
+
+        if(checkData.length === 0){
+          return layer.msg('请选择数据');
+        }
+        
+        layer.prompt({
+          formType: 1
+          ,title: '敏感操作，请验证口令'
+        }, function(value, index){
+          layer.close(index);
+          
+          layer.confirm('确定删除吗？', function(index) {
+            
+            //执行 Ajax 后重载
+            /*
+            admin.req({
+              url: 'xxx'
+              //,……
+            });
+            */
+            table.reload('addons-list');
+            layer.msg('已删除');
+          });
+        }); 
+      }
+      ,add: function(){
+        layer.open({
+          type: 2
+          ,title: '添加插件'
+          ,content: 'add.html'
+          ,area: ['400px', '620px']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submitID = 'LAY-addons-submit'
+            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+            //监听提交
+            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var field = data.field; //获取提交的字段
+
+              //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+				type:"post",
+				url:"{:url('admin/Addons/add')}",
+				data:field,
+				daType:"json",
+				success:function (data){
+					if (data.code == 0) {
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							tiele:'添加失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+			  
+              table.reload('addons-list'); //数据刷新
+              layer.close(index); //关闭弹层
+            });  
+            
+            submit.trigger('click');
+          }
+        }); 
+      }
+    }
+	$('.layui-btn.layuiadmin-btn-admin').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+
+  });
+</script>
+{/block}

@@ -100,6 +100,26 @@ abstract class Relation
     }
 
     /**
+     * 获取关联表外键
+     * @access public
+     * @return string
+     */
+    public function getForeignKey()
+    {
+        return $this->foreignKey;
+    }
+
+    /**
+     * 获取关联表主键
+     * @access public
+     * @return string
+     */
+    public function getLocalKey()
+    {
+        return $this->localKey;
+    }
+
+    /**
      * 获取当前的关联模型类的实例
      * @access public
      * @return Model
@@ -228,7 +248,7 @@ abstract class Relation
 
         if (!empty($params)) {
             $type = $params[0]->getType();
-            return Relation::class == $type || is_null($type) ? $this : $this->query;
+            return is_null($type) || Relation::class == $type->getName() ? $this : $this->query;
         }
 
         return $this;

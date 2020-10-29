@@ -6,7 +6,7 @@ use think\Validate;
 class User extends Validate
 {
     protected $rule = [
-        'name|用户名' => 'require|min:2|max:18|unique:user',
+        'name|用户名' => 'require|min:2|max:18|chsDash|unique:user',
 		'email|邮箱' => 'require|email|unique:user',
         'password|密码' => 'require|min:6|max:20',
         'repassword|确认密码'=>'require|confirm:password',

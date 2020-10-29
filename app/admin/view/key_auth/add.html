@@ -1,0 +1,67 @@
+{extend name="public/base" /}
+
+{block name="body"}
+
+  <div class="layui-form" lay-filter="layuiadmin-form-keyauth" id="layuiadmin-form-keyauth" style="padding: 20px 30px 0 0;">
+	<div class="layui-form-item">
+      <label class="layui-form-label">授权等级</label>
+      <div class="layui-input-inline">
+        <select name="auth_level" lay-verify="required">
+		  <option  value="0">普通</option>
+		  <option  value="1">初级</option>
+		  <option  value="2">中级</option>
+		  <option  value="3">高级</option>
+		</select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">用户</label>
+      <div class="layui-input-inline">
+        <input type="text" name="user" lay-verify="required" placeholder="请输入用户" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+	<div class="layui-form-item">
+      <label class="layui-form-label">域名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="domain" lay-verify="required" placeholder="请输入域名" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+	<div class="layui-form-item">
+      <label class="layui-form-label">到期时间</label>
+      <div class="layui-input-inline">
+        <input type="text" name="end_time"  id="end-time" lay-verify="required" placeholder="请选择日期" autocomplete="off" class="layui-input" >
+      </div>
+    </div>
+	<div class="layui-form-item">
+      <label class="layui-form-label">状态</label>
+      <div class="layui-input-inline">
+        <input type="text" name="status" lay-verify="required" placeholder="请设置状态" autocomplete="off" class="layui-input" >
+      </div>
+    </div>
+		
+    <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit lay-filter="LAY-keyauth-submit" id="LAY-keyauth-submit" value="确认">
+    </div>
+  </div>
+
+{/block}
+{block name="js"}  
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form', 'laydate','table'], function(){
+    var $ = layui.$
+	,laydate = layui.laydate
+    ,form = layui.form;
+	
+	//结束时间
+	  laydate.render({
+		elem: '#end-time'
+		,btns: ['clear', 'now']
+		,trigger: 'click'
+	  });
+  })
+  </script>
+{/block}

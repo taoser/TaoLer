@@ -26,7 +26,7 @@ class Index extends BaseController
 		//置顶文章
 		$artTop = Cache::get('arttop');
 		if(!$artTop){
-			$artTop = Article::field('id,title,title_color,cate_id,user_id,create_time,is_top,jie')->where(['is_top'=>1,'status'=>1,'delete_time'=>0])->with([
+			$artTop = Article::field('id,title,title_color,cate_id,user_id,create_time,is_top,jie,pv')->where(['is_top'=>1,'status'=>1,'delete_time'=>0])->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
@@ -40,7 +40,7 @@ class Index extends BaseController
 		//首页文章显示20条
 		$artList = Cache::get('artlist');
 		if(!$artList){
-			$artList = Article::field('id,title,title_color,cate_id,user_id,create_time,is_hot,jie')->with([
+			$artList = Article::field('id,title,title_color,cate_id,user_id,create_time,is_hot,jie,pv')->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
@@ -93,23 +93,27 @@ class Index extends BaseController
 	//回帖榜
 	public function reply()
 	{
-		$user = User::withCount('comments')->order(['comments_count'=>'desc','last_login_time'=>'desc'])->limit(20)->select();
-		if($user)
-		{	
-			$res['status'] = 0;
-			$res['data'] = array();
-				foreach ($user as $key=>$v) {
-					
-					$u['uid'] = $v['id'];
-					$u['count(*)'] = $v['comments_count'];
-					if($v['nickname'])
-					{
-						$u['user'] = ['username'=>$v['nickname'],'avatar'=>$v['user_img']];
-					} else {
-						$u['user'] = ['username'=>$v['name'],'avatar'=>$v['user_img']];
-					}
-					$res['data'][] = $u;					
-				}					
+		$res = Cache::get('reply');
+		if(!$res){		
+			$user = User::withCount('comments')->order(['comments_count'=>'desc','last_login_time'=>'desc'])->limit(20)->select();
+			if($user)
+			{	
+				$res['status'] = 0;
+				$res['data'] = array();
+					foreach ($user as $key=>$v) {
+						
+						$u['uid'] = (string) url('user/home',['id'=>$v['id']]);
+						$u['count(*)'] = $v['comments_count'];
+						if($v['nickname'])
+						{
+							$u['user'] = ['username'=>$v['nickname'],'avatar'=>$v['user_img']];
+						} else {
+							$u['user'] = ['username'=>$v['name'],'avatar'=>$v['user_img']];
+						}
+						$res['data'][] = $u;					
+					}					
+			}
+			Cache::set('reply',$res,3600);
 		}
 	return json($res);		
 	}

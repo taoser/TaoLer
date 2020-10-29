@@ -26,14 +26,15 @@ class Auth
 		//登陆后检验权限
 		if (Session::has('admin_id')) {
 			// 排除权限
-			$not_check = ['admin/Index/index','admin/Index/home','admin/Set/info','admin/Set/password','admin/User/logout'];
+			$not_check = ['admin/Login/index','admin/Index/index','admin/Index/home','admin/Set/info','admin/Set/password','admin/User/logout'];
 
 			if (!in_array($app . '/' . $controller . '/' . $action, $not_check)) {
 				$auth     = new UserAuth();
 				$admin_id = Session::get('admin_id');	//登录用户的id
 
 				if (!$auth->check($app . '/' . $controller . '/' . $action, $admin_id) && $admin_id != 1) {
-					return json(['code'=>-1,'msg'=>'没有权限!']);
+					//return json(['code'=>-1,'msg'=>'没有权限!']);
+					return view('public/auth');
 				}
 			}
 			

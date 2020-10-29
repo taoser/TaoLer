@@ -76,7 +76,8 @@ class Admin extends AdminController
 			$data = Request::param();
 			$data['create_time'] = time();
 			$salt = substr(md5($data['create_time']),-6);
-			$data['password'] = substr_replace(md5($data['password']),$salt,0,6);
+			$data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
+			$data['status'] = 1;
 			//$adminId = Db::name('admin')->insertGetId($data);
 			$admin = Db::name('admin')->save($data);
 			//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);

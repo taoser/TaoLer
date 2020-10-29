@@ -661,7 +661,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   //回帖榜
   var tplReply = ['{{# layui.each(d.data, function(index, item){ }}'
     ,'<dd>'
-      ,'<a href="/u/{{item.uid}}.html">'
+      ,'<a href="{{item.uid}}">'
         ,'<img src="{{item.user.avatar}}">'
         ,'<cite>{{item.user.username}}</cite>'
         ,'<i>{{item["count(*)"]}}次回答</i>'
@@ -672,7 +672,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 
   if(elemReply[0]){
     
-    fly.json(replyurl, {
+    fly.json(replyUrl, {
       limit: 20
     }, function(res){
       var html = laytpl(tplReply).render(res);
@@ -705,7 +705,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       ,shadeClose: true
       ,maxWidth: 10000
       ,skin: 'fly-layer-search'
-      ,content: ['<form action="/index/search">'
+      ,content: ['<form action='+searchUrl+'>'
         ,'<input autocomplete="off" placeholder="搜索内容，回车跳转" type="text" name="keywords">'
       ,'</form>'].join('')
       ,success: function(layero){

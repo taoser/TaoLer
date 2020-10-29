@@ -69,15 +69,15 @@ class Message extends BaseController
 	//消息删除
 	public function remove()
 	{
-		$uid = Session::get('user_id');
+		$uid = $this->uid;
 		
 		$id = Request::only(['id']);
 		if($id['id'] == 'true'){
 			//删除所有此用户消息
-			$msg = Db::name('message_to')->where(['receve_id'=>$uid,'delete_time'=>0])->delete();
+			$msg = Db::name('message_to')->where(['receve_id'=>$uid,'delete_time'=>0])->useSoftDelete('delete_time',time())->delete();
 		} else {
 			//删除单条消息
-			$msg = Db::name('message_to')->where('id',$id['id'])->delete();
+			$msg = Db::name('message_to')->where('id',$id['id'])->useSoftDelete('delete_time',time())->delete();
 		}
 		
         if($msg){

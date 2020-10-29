@@ -1,4 +1,4 @@
-//网站后台综合设置
+//网站通知
 
 layui.define(['table', 'form', 'layedit','upload'], function(exports){
   var $ = layui.$
@@ -78,10 +78,8 @@ layui.define(['table', 'form', 'layedit','upload'], function(exports){
 				dataType:"json",
 				success:function (data){
 					if (data.code == 0) {
-                        conosle.log('123');
-                        $('#L_title').text('');
-
-						$('#L_content').text('');
+                        //$('#L_title').text('');
+						//$('#L_content').text('');
 						layer.msg(data.msg,{
 							icon:6,
 							time:2000
@@ -95,6 +93,9 @@ layui.define(['table', 'form', 'layedit','upload'], function(exports){
 					}
 				}
 			});
+			
+		$('#L_title').val('');
+		$('#L_content').val('');
 		table.reload('notice-list'); //数据刷新	
 	return false;	
 	});

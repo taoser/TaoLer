@@ -290,11 +290,7 @@ trait WhereQuery
      */
     public function whereExp(string $field, string $where, array $bind = [], string $logic = 'AND')
     {
-        if (!empty($bind)) {
-            $this->bindParams($where, $bind);
-        }
-
-        $this->options['where'][$logic][] = [$field, 'EXP', new Raw($where)];
+        $this->options['where'][$logic][] = [$field, 'EXP', new Raw($where, $bind)];
 
         return $this;
     }
@@ -329,11 +325,7 @@ trait WhereQuery
      */
     public function whereRaw(string $where, array $bind = [], string $logic = 'AND')
     {
-        if (!empty($bind)) {
-            $this->bindParams($where, $bind);
-        }
-
-        $this->options['where'][$logic][] = new Raw($where);
+        $this->options['where'][$logic][] = new Raw($where, $bind);
 
         return $this;
     }
@@ -386,7 +378,7 @@ trait WhereQuery
         } elseif (is_string($field)) {
             if (preg_match('/[,=\<\'\"\(\s]/', $field)) {
                 return $this->whereRaw($field, is_array($op) ? $op : [], $logic);
-            } elseif (is_string($op) && strtolower($op) == 'exp') {
+            } elseif (is_string($op) && strtolower($op) == 'exp' && !is_null($condition)) {
                 $bind = isset($param[2]) && is_array($param[2]) ? $param[2] : [];
                 return $this->whereExp($field, $condition, $bind, $logic);
             }
@@ -522,17 +514,9 @@ trait WhereQuery
         }
 
         if ($condition) {
-            if ($query instanceof Closure) {
-                $query($this, $condition);
-            } elseif (is_array($query)) {
-                $this->where($query);
-            }
+            $this->where($query);
         } elseif ($otherwise) {
-            if ($otherwise instanceof Closure) {
-                $otherwise($this, $condition);
-            } elseif (is_array($otherwise)) {
-                $this->where($otherwise);
-            }
+            $this->where($otherwise);
         }
 
         return $this;

@@ -37,7 +37,7 @@ class Notice extends AdminController
 	public function add()
 	{
 		$sendId = Session::get('admin_id');
-		var_dump($sendId);
+
 		$data = Request::only(['type','title','receve_id','content']);
 		if($data['type'] == 1){
 			$receveId = $data['receve_id']; //个人通知
@@ -49,6 +49,7 @@ class Notice extends AdminController
 		//写入信息库
 		$result = Message::sendMsg($sendId,$receveId,$data);
 		if($result){
+			event('Message');
 			$res = ['code'=>0,'msg'=>'发布成功'];
 		} else {
 			$res = ['code'=>0,'msg'=>'发布失败'];

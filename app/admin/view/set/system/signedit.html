@@ -1,0 +1,38 @@
+{extend name="public/base" /}
+
+{block name="body"}
+
+  <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 30px 0 0;">
+	<div class="layui-form-item layui-hide">
+	 <input type="text" name="id" class="layui-input" value="{$sign.id}">
+	</div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">签到天数</label>
+      <div class="layui-input-inline">
+        <input type="text" name="days" disabled lay-verify="required" placeholder="请输入天数" autocomplete="off" class="layui-input layui-disabled" value="{$sign.days}">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">获得积分</label>
+      <div class="layui-input-inline">
+        <input type="text" name="score" lay-verify="required" placeholder="请输入号码" autocomplete="off" class="layui-input" value="{$sign.score}">
+      </div>
+    </div>  
+    <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit lay-filter="LAY-user-sign-submit" id="LAY-user-sign-submit" value="确认">
+    </div>
+  </div>
+
+{/block}
+{block name="js"}  
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function(){
+    var $ = layui.$
+    ,form = layui.form;
+  })
+  </script>
+{/block}

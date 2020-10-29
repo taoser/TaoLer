@@ -1,0 +1,147 @@
+<link rel="stylesheet" href="/static/layui/css/layui.css">
+<style>
+    .fly-link {
+        color: #01AAED;
+    }
+    
+    .fly-link:hover {
+        color: #5FB878;
+    }
+    
+    .fly-grey {
+        color: #999;
+    }
+    
+    i {
+        font-style: normal;
+    }
+    
+    .fly-signin cite {
+        padding: 0 5px;
+        color: #FF5722;
+        font-style: normal;
+    }
+    
+    .fly-signin .layui-badge-dot {
+        top: -7px;
+        margin-left: 0px;
+    }
+    
+    .fly-signin-list {
+        padding: 0;
+        line-height: 30px;
+    }
+    
+    .fly-signin-list .layui-tab-item {
+        padding: 10px;
+        height: 320px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    .fly-signin-list li {
+        margin-top: 5px;
+        padding-bottom: 5px;
+        border-bottom: 1px dotted #e2e2e2;
+        white-space: nowrap;
+    }
+    
+    .fly-signin-list li:first-child {
+        margin-top: 0;
+    }
+    
+    .fly-signin-list li:last-child {
+        border: none 0;
+    }
+    
+    .fly-signin-list img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        border-radius: 2px;
+    }
+    
+    .fly-signin-list span {
+        padding-left: 10px;
+    }
+    
+    .fly-signin-list span i {
+        color: #FF5722;
+    }
+    
+    .fly-signin-list .fly-none {
+        padding-top: 20px;
+        min-height: 0;
+    }
+    
+    .fly-signin-days {
+        position: absolute;
+        right: 15px;
+        padding-left: 10px;
+        color: #999;
+    }
+    
+    .fly-signin-main {
+        position: relative;
+        height: 38px;
+        padding: 24px 15px;
+        text-align: center;
+    }
+    
+    .fly-signin-main span {
+        padding-left: 10px;
+    }
+</style>
+<script src="/static/layui/layui.js"></script>
+<div id="layer-pop-signintop" class="layui-layer-content">
+    <div class="layui-tab layui-tab-brief" style="margin: 5px 0 0;">
+        <ul class="layui-tab-title">
+            <li class="layui-this">最新签到</li>
+            <li>今日最快</li>
+            <li>总签到榜</li>
+        </ul>
+        <div class="layui-tab-content fly-signin-list" id="LAY_signin_list">
+            <ul class="layui-tab-item layui-show">
+                {volist name="newlist" id="vo" empty="暂无数据"}
+                <li>
+                    <a href="{:url('user/home',array('id'=>$vo.uid))}" target="_blank">
+                        <img src="{$vo.user_img}">
+                        <cite class="fly-link">{$vo.name}</cite>
+                    </a>
+                    <span class="fly-grey">签到于 {$vo.stime|date='Y-m-d H:i'}</span>
+                </li>
+                <li>
+                    {/volist}
+            </ul>
+            <ul class="layui-tab-item">
+                {volist name="fastlist" id="vo" empty="今天还没有人签到"}
+                <li>
+                    <a href="{:url('user/home',array('id'=>$vo.uid))}" target="_blank">
+                        <img src="{$vo.user_img}">
+                        <cite class="fly-link">{$vo.name}</cite>
+                    </a>
+                    <span class="fly-grey">签到于 {$vo.stime|date='Y-m-d H:i'}</span>
+                </li>
+                {/volist}
+            </ul>
+            <ul class="layui-tab-item">
+                {volist name="totallist" id="vo" empty="暂无数据"}
+                <li>
+                    <a href="{:url('user/home',array('id'=>$vo.uid))}" target="_blank">
+                        <img src="{$vo.user_img}">
+                        <cite class="fly-link">{$vo.name}</cite>
+                    </a>
+                    <span class="fly-grey">已连续签到
+            <i>{$vo.days}</i> 天</span>
+                </li>
+                {/volist}
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use('element', function() {
+        var $ = layui.jquery,
+            element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+    })
+</script>

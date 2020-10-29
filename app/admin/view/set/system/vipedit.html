@@ -1,0 +1,54 @@
+{extend name="public/base" /}
+
+{block name="body"}
+
+  <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 30px 0 0;">
+	<div class="layui-form-item layui-hide">
+	 <input type="text" name="id" class="layui-input" value="{$vip.id}">
+	</div>
+	<div class="layui-form-item">
+      <label class="layui-form-label">Vip级别</label>
+		<div class="layui-input-inline" >
+			<select name="vip">
+			{volist name="level" id="vo"}
+			  <option {if condition="$vip.vip eq $vo"} selected {/if} value="{$vo}">{if condition="$vo eq 0"}普通{else /}VIP{$vo}{/if}</option>
+			{/volist}
+			</select>
+		</div>
+	</div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">积分区间</label>
+      <div class="layui-input-inline">
+        <input type="text" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input" value="{$vip.score}">
+      </div>
+    </div>
+	<div class="layui-form-item">
+      <label class="layui-form-label">认证</label>
+      <div class="layui-input-inline">
+        <input type="text" name="nick" lay-verify="required" placeholder="等级昵称" autocomplete="off" class="layui-input" value="{$vip.nick}">
+      </div>
+    </div>	
+	<div class="layui-form-item">
+      <label class="layui-form-label">权限</label>
+      <div class="layui-input-inline">
+        <input type="text" name="rules" lay-verify="" placeholder="请选择" autocomplete="off" class="layui-input" value="{$vip.rules}">
+      </div>
+    </div>	
+    <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit lay-filter="LAY-user-vip-submit" id="LAY-user-vip-submit" value="确认">
+    </div>
+  </div>
+
+{/block}
+{block name="js"}  
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function(){
+    var $ = layui.$
+    ,form = layui.form;
+  })
+  </script>
+{/block}

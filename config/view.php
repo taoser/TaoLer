@@ -2,6 +2,13 @@
 // +----------------------------------------------------------------------
 // | 模板设置
 // +----------------------------------------------------------------------
+use think\facade\Db;
+	//如果网站安装从数据库查询选择的模板
+	if(file_exists('../install.lock')){
+			$template = Db::name('system')->where('id',1)->value('template');
+	} else {
+		$template = '';
+	}
 
 return [
     // 模板引擎类型使用Think
@@ -9,7 +16,7 @@ return [
     // 默认模板渲染规则 1 解析为小写+下划线 2 全部转换小写 3 保持操作方法
     'auto_rule'     => 1,
     // 模板目录名
-    'view_dir_name' => 'view',
+    'view_dir_name' => 'view/'.$template,
     // 模板后缀
     'view_suffix'   => 'html',
     // 模板文件名分隔符

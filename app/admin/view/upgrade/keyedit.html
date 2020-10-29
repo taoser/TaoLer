@@ -1,0 +1,52 @@
+{extend name="public/base" /}
+
+{block name="body"}
+
+	<div class="layui-form" lay-filter="layuiadmin-form-keyedit" id="layuiadmin-form-keyedit" style="padding: 20px 30px 0 0;">
+		<div class="layui-form-item">
+			<label class="layui-form-label">配置Key</label>
+				<div class="layui-input-inline">
+				<input type="text" name="key" value="{$key.key}" required class="layui-input" autocomplete="off" placeholder="填写申请得到在Key">
+				</div>				
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">检测api</label>
+				<div class="layui-input-inline">
+				<input type="text" name="upcheck_url" value="{$key.upcheck_url}" required class="layui-input" autocomplete="off" placeholder="没换官网服务器情况下不要改">
+				</div>				
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">升级api</label>
+				<div class="layui-input-inline">
+				<input type="text" name="upgrade_url" value="{$key.upgrade_url}" required class="layui-input" autocomplete="off" placeholder="没换官网服务器情况下不要改">
+				</div>				
+		</div>
+		<div class="layui-form-item">
+		  <label class="layui-form-label">申请key?</label>
+		  <div class="layui-input-inline">
+			<div class="layui-form-mid layui-word-aux " ><a href="http://www.aieok.com" target="_blank">更换网址,请去官网重新申请key</a></div>
+			<div class="layui-form-mid layui-word-aux " ><span>未通知api接口变更,请不要私自更改api，否则无法升级</span></div>
+		  </div>
+		</div>
+				
+		<div class="layui-form-item layui-hide">
+		<input type="button" lay-submit lay-filter="LAY-keyedit-submit" id="LAY-keyedit-submit" value="确认">
+		</div>
+				
+    </div>
+  
+{/block}
+{block name="js"}
+<script>
+layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form','table'], function(){
+    var $ = layui.$
+	,table = layui.table
+    ,form = layui.form;
+ 
+  });
+ </script>
+{/block}

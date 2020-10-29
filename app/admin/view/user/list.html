@@ -1,0 +1,300 @@
+{extend name="public/base" /}
+
+{block name="body"}
+
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">ID</label>
+            <div class="layui-input-block">
+              <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+              <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-block">
+              <input type="text" name="email" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+              <select name="sex">
+                <option value="">不限</option>
+                <option value="0">男</option>
+                <option value="1">女</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit lay-filter="LAY-user-front-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="layui-card-body">
+        <div style="padding-bottom: 10px;">
+          <button class="layui-btn layuiadmin-btn-useradmin" data-type="batchdel">删除</button>
+          <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+        </div>
+        
+        <table id="LAY-user-manage" lay-filter="LAY-user-manage"></table>
+        <script type="text/html" id="imgTpl"> 
+          <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+        </script>
+        <script type="text/html" id="sex">
+          {{#  if(d.sex == 0){ }}
+          <button class="layui-btn layui-btn-normal layui-btn-xs" >男</button>
+          {{#  } else { }}
+          <button class="layui-btn layui-btn-danger layui-btn-xs">女</button>
+          {{#  } }}
+        </script>
+		<script type="text/html" id="buttonCheck">
+		{{#  if(d.id == '1'){ }}
+		<input type="checkbox" name="check" lay-skin="switch" disabled lay-text="通过|禁用" value="1" checked id="{{d.id}}">
+		{{#  } else { }}
+		{if condition="checkRuleButton('admin/user/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="usercheck" lay-text="通过|禁用" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
+		{{#  } }}
+        </script>
+		<script type="text/html" id="buttonAuth">
+		{{#  if(d.id == '1'){ }}
+			<input type="checkbox" name="auth" lay-skin="primary"  checked disabled >
+		 {{#  } else { }}
+			{if condition="checkRuleButton('admin/user/auth')"}<input type="checkbox" name="auth" lay-skin="primary" lay-filter="auth" {{# if(d.auth ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs  layui-btn-disabled">无权限</button>{/if}
+		 {{#  } }}
+        </script>
+        <script type="text/html" id="table-useradmin-webuser">
+		{if condition="checkRuleButton('admin/user/useredit')"}
+          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id={{ d.id }}><i class="layui-icon layui-icon-edit"></i>编辑</a>
+		  {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
+          {if condition="checkRuleButton('admin/user/delete')"}
+		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" id={{ d.id }}><i class="layui-icon layui-icon-delete"></i>删除</a>
+		  {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
+        </script>
+      </div>
+    </div>
+  </div>
+
+{/block}
+{block name="js"}
+  <script>
+      var userList = "{:url('User/list')}";
+      var userDelete = "{:url('User/delete')}";
+      var userEdit = "{:url('User/userEdit')}";
+      var adminIndex = "{:url('Admin/index')}";
+      var adminDelete = "{:url('Admin/delete')}";
+      var adminEdit = "{:url('Admin/edit')}";
+      var authGroupList = "{:url('AuthGroup/list')}";
+      var authGroupRoledel = "{:url('AuthGroup/roleDel')}";
+      var authGroupRoleEdit = "{:url('AuthGroup/roleEdit')}";
+      var authAccessIndex = "{:url('AuthAccess/index')}";
+      var authAccessDelete = "{:url('AuthAccess/delete')}";
+      var authAccessEdit = "{:url('AuthAccess/edit')}";
+      var authRuleIndex = "{:url('AuthRule/index')}";
+      var authRuleDelete = "{:url('AuthRule/delete')}";
+      var authRuleEdit = "{:url('AuthRule/edit')}";
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'useradmin', 'table'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table;
+    
+    //监听搜索
+    form.on('submit(LAY-user-front-search)', function(data){
+      var field = data.field;
+	  //提交 Ajax 成功后，静态更新表格中的数据
+	  $.ajax({
+		type:"post",
+		url:"{:url('admin/User/list')}",
+		data:{"id":field.id,"name":field.name,"email":field.email,"sex":field.sex},
+		daType:"json",
+		success:function (data){
+			if (data.code == 0) {
+				
+			} else {
+				layer.open({
+					tiele:'搜索失败',
+					content:data.msg,
+					icon:5,
+					anim:6
+				});
+			}
+		}
+	});
+      
+      //执行重载
+      table.reload('LAY-user-manage', {
+        where: field
+      });
+    });
+  
+    //事件
+    var active = {
+      batchdel: function(){
+        var checkStatus = table.checkStatus('LAY-user-manage')
+        ,checkData = checkStatus.data; //得到选中的数据
+
+        if(checkData.length === 0){
+          return layer.msg('请选择数据');
+        }
+        
+        layer.prompt({
+          formType: 1
+          ,title: '敏感操作，请验证口令'
+        }, function(value, index){
+          layer.close(index);
+          
+          layer.confirm('确定删除吗？', function(index) {
+            
+            //执行 Ajax 后重载
+            /*
+            admin.req({
+              url: 'xxx'
+              //,……
+            });
+            */
+            table.reload('LAY-user-manage');
+            layer.msg('已删除');
+          });
+        });
+      }
+      ,add: function(){
+        layer.open({
+          type: 2
+          ,title: '添加用户'
+          ,content: 'userform.html'
+          ,maxmin: true
+          ,area: ['480px', '450px']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submitID = 'LAY-user-front-submit'
+            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+            //监听提交
+            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var field = data.field; //获取提交的字段
+			  
+              //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+				type:"post",
+				url:"{:url('admin/User/userform')}",
+				data:{"name":field.username,"phone":field.phone,"email":field.email,"user_img":field.avatar,"sex":field.sex},
+				daType:"json",
+				success:function (data){
+					if (data.code == 0) {
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							tiele:'添加失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+              table.reload('LAY-user-manage'); //数据刷新
+              layer.close(index); //关闭弹层
+            });  
+            
+            submit.trigger('click');
+          }
+        }); 
+      }
+    };
+	
+	//监听用户审核
+	form.on('switch(usercheck)', function(data){
+	var data= data.elem;
+	
+	if(data.checked == true){
+		data.value = 1;
+	}else{
+		data.value = 0;
+	}
+	//执行用户审核
+		$.ajax({
+			type:'post',
+			url:"{:url('admin/User/check')}",
+			data:{"id":data.id,"status":data.value,},
+			dataType:'json',
+			success:function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{
+						icon:res.icon,
+						time:2000
+					}
+					//,function(){location.reload();}
+					);
+				} else {
+					layer.open({
+						title:'审核失败',
+						content:res.msg,
+						icon:5,
+						adim:6
+					})
+				}
+			}
+		});
+		return false;
+	}); 
+	
+	//超级管理auth控制
+	form.on('checkbox(auth)', function(data){
+	var data = data.elem;
+	if(data.checked == true){
+			data.value = 1;
+		}else{
+			data.value = 0;
+		}
+	$.ajax({
+			type:'post',
+			url:"{:url('admin/User/auth')}",
+			data:{"id":data.id,"auth":data.value,},
+			dataType:'json',
+			success:function(data){
+				if(data.code == 0){
+					layer.msg(data.msg,{
+						icon:6,
+						time:2000
+					}
+					//,function(){location.reload();}
+					);
+				} else {
+					layer.open({
+						title:'修改失败',
+						content:data.msg,
+						icon:5,
+						adim:6
+					})
+				}
+			}
+		});
+	return false;
+
+	});
+    
+    $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+  });
+  </script>
+{/block}

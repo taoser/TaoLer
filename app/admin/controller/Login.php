@@ -15,8 +15,8 @@ class Login
 	{
 		
 		if(Session::has('admin_id')){
-			return redirect('/admin/index/index');
-		}	
+			return redirect((string) url('index/index'));
+		}
 			
 		if(Request::isAjax()){
 			$data = Request::param();
@@ -33,7 +33,7 @@ class Login
 			$res = $user->login($data);
 
 			if ($res == 1) {
-				$res = ['code'=>0,'msg'=>'登陆成功'];
+				$res = ['code'=>0,'msg'=>'登陆成功', 'url'=>(string) url('index/index')];
 				//$res['data']['access_token'] = $data['__token__'];
 			} else {
 				$res = ['code'=>-1,'msg'=>$res,'url'=>'admin/login'];

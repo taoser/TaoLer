@@ -8,6 +8,7 @@ use think\facade\Db;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cache;
+use think\facade\Cookie;
 use think\facade\View;
 use app\common\model\Article;
 use app\common\model\Collection;
@@ -72,7 +73,7 @@ class User extends BaseController
 	public function set()
 	{
 		if(Request::isAjax()){
-			$data = Request::only(['user_id','email','nickname','sex','city','sign']);
+			$data = Request::only(['user_id','email','nickname','sex','city','area_id','sign']);
 			$validate = new \app\common\validate\User;
 			$result = $validate->scene('Set')->check($data);
 			if(!$result){
@@ -81,12 +82,15 @@ class User extends BaseController
                 $user = new \app\common\model\User;
                 $result = $user->setNew($data);
 				if($result==1){
+					Cache::tag('user')->clear();
 				    return ['code'=>0,'msg'=>'资料更新成功'];
 				} else {
 					$this->error($result);
 				}
 			}
 		}
+		$area = Db::name('user_area')->select();
+		View::assign(['area'=>$area]);
 		return View::fetch();
     }
 
@@ -113,7 +117,7 @@ class User extends BaseController
             $result = Db::name('user')
                 ->where('id',$userId)
                 ->update(['user_img'=>$name_path]);
-
+			Cache::tag(['user','tagArtDetail','tagArt'])->clear();
             if($result) {
 				$res = ['status'=>0,'msg'=>'头像更新成功'];
             } else {
@@ -139,7 +143,12 @@ class User extends BaseController
     public function home($id)
     {
 		//用户
-		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->cache(3600)->find($id);
+		$u = Cache::get('user'.$id);
+		if(!$u){
+			$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->cache(3600)->find($id);
+		}
+		
+		
 		//用户发贴
 		$arts = Db::name('user')->alias('u')->join('article a','u.id = a.user_id')->field('u.id,a.id,a.title,a.pv,a.is_hot,a.create_time,a.delete_time')->where('a.delete_time',0)->where('a.user_id',$id)->order(['a.create_time'=>'desc'])->cache(3600)->select();
 		//用户回答
@@ -191,7 +200,14 @@ class User extends BaseController
 	public function logout()
 	{
 		Session::clear();
-		return json(array('code' => 200, 'msg' => '退出成功'));
+		Cookie::delete('auth');
+		//Cookie::delete('user_name');
+		//Cookie::delete('user_id');
+		if(Session::has('user_id')){
+			return json(['code' => -1, 'msg' => '退出失败']);
+		} else {
+			return json(['code' => 200, 'msg' => '退出成功', 'url' => '/']);	
+		}
 	}
 
 }

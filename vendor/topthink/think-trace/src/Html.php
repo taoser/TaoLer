@@ -40,13 +40,14 @@ class Html
      */
     public function output(App $app, Response $response, array $log = [])
     {
-        $request = $app->request;
-
+        $request     = $app->request;
         $contentType = $response->getHeader('Content-Type');
-        $accept      = $request->header('accept', '');
-        if (strpos($accept, 'application/json') === 0 || $request->isAjax()) {
+
+        if ($request->isJson() || $request->isAjax()) {
             return false;
         } elseif (!empty($contentType) && strpos($contentType, 'html') === false) {
+            return false;
+        } elseif ($response->getCode() == 204) {
             return false;
         }
 
@@ -63,7 +64,7 @@ class Html
         }
 
         $base = [
-            '请求信息' => date('Y-m-d H:i:s', $request->time()) . ' ' . $uri,
+            '请求信息' => date('Y-m-d H:i:s', $request->time() ?: time()) . ' ' . $uri,
             '运行时间' => number_format((float) $runtime, 6) . 's [ 吞吐率：' . $reqs . 'req/s ] 内存消耗：' . $mem . 'kb 文件加载：' . count(get_included_files()),
             '查询信息' => $app->db->getQueryTimes() . ' queries',
             '缓存信息' => $app->cache->getReadTimes() . ' reads,' . $app->cache->getWriteTimes() . ' writes',

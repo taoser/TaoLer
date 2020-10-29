@@ -1,0 +1,11 @@
+<div class="layui-row fly-panel-main" style="padding: 15px;"> 
+	<div class="layui-carousel fly-topline" id="FLY_topline" > 
+		<div carousel-item=""> 
+		{volist name="slider" id="vo"}
+		 <div time-limit="2019-04-18 0:0:0" > 
+		  <a href="{$vo.slid_href}" target="_blank" rel="nofollow"> <img src="{$vo.slid_img}" alt="{$vo.slid_name}" /> </a> 
+		 </div> 
+		{/volist} 
+		</div> 
+	</div> 
+</div>

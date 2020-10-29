@@ -57,6 +57,11 @@ class Article extends BaseController
 		$cateId = Db::name('cate')->where('ename',$ename)->value('id');
 		if($cateId){
 			$where = ['cate_id' => $cateId];
+		} else {
+			if($ename != 'all'){
+				// 抛出 HTTP 异常
+				throw new \think\exception\HttpException(404, '异常消息');
+			}
 		}
 		
 		$artList = Cache::get('arts'.$ename.$type.$page);
@@ -64,7 +69,7 @@ class Article extends BaseController
 			switch ($type) {
 				//查询文章,15个分1页
                 case 'jie':
-				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie')->with([
+				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
 					},
@@ -80,7 +85,7 @@ class Article extends BaseController
 				break;
 				
 				case 'hot':
-				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie')->with([
+				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
 					},
@@ -96,7 +101,7 @@ class Article extends BaseController
 				break;
 				
 				case 'top':
-				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie')->with([
+				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
 					},
@@ -112,7 +117,7 @@ class Article extends BaseController
 				break;
 				
 				default:
-				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie')->with([
+				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
 					'cate' => function($query){
 						$query->where('delete_time',0)->field('id,catename');
 					},
@@ -127,12 +132,12 @@ class Article extends BaseController
 				]);
 				break;
 			}
-			Cache::set('arts'.$ename.$type.$page,$artList,600);
+			Cache::tag('tagArtDetail')->set('arts'.$ename.$type.$page,$artList,600);
 		}
 		
 		
 		//	热议文章
-		$artHot = ArticleModel::field('id,title')->withCount('comments')->where('status',1)->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
+		$artHot = ArticleModel::field('id,title')->withCount('comments')->where(['status'=>1,'delete_time'=>0])->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
 		//分类右栏广告
 		$ad_cate = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',5)->whereTime('slid_over','>=',time())->select();
 		//通用右栏
@@ -148,7 +153,7 @@ class Article extends BaseController
 		$article = Cache::get('article_'.$id);
 		if(!$article){
 			//查询文章
-		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,tags,title_color,create_time')->where('status',1)->with([
+		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,upzip,tags,title_color,create_time')->where('status',1)->with([
             'cate' => function($query){
 				$query->where('delete_time',0)->field('id,catename');
             },
@@ -158,9 +163,14 @@ class Article extends BaseController
         ])->find($id);
 		Cache::tag('tagArtDetail')->set('article_'.$id,$article,3600);
 		}
-		$comments = $article->comments()->where('status',1)->paginate(10);
+		if(!$article){
+			// 抛出 HTTP 异常
+			throw new \think\exception\HttpException(404, '异常消息');
+		}
+		$comments = $article->comments()->where('status',1)->order(['cai'=>'asc','create_time'=>'asc'])->paginate(10);
 		$article->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
+		$download = download($article->upzip,'file');
 
 /*		
 		$nt = time();
@@ -178,13 +188,13 @@ class Article extends BaseController
 */		
 		
 		//	热议文章
-		$artHot = ArticleModel::field('id,title')->withCount('comments')->where('status',1)->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
+		$artHot = ArticleModel::field('id,title')->withCount('comments')->where(['status'=>1,'delete_time'=>0])->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
 		//文章广告
 		$ad_article = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',4)->whereTime('slid_over','>=',time())->select();
 		//通用右栏
 		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
 
-		View::assign(['article'=>$article,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm]);
+		View::assign(['article'=>$article,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm,$download]);
 		return View::fetch();
     }
 	
@@ -215,7 +225,7 @@ class Article extends BaseController
 			}
 			$data = ['title'=>$title,'content'=>'评论通知','link'=>$link,'user_id'=>$sendId,'type'=>1];
 			Message::sendMsg($sendId,$receveId,$data);
-			
+			//event('CommMsg');
 			$res = ['code'=>0, 'msg'=>'留言成功'];
 		} else {
 			$res = ['code'=>-1, 'msg'=>'留言失败'];
@@ -238,6 +248,8 @@ class Article extends BaseController
 				if($result == 1) {
 					$aid = Db::name('article')->max('id');
                     $link = (string) url('article/detail',['id'=> $aid]);
+					//清除文章tag缓存
+					Cache::tag('tagArtDetail')->clear();
                     return json(['code'=>1,'msg'=>'发布成功','url'=> $link]);
 				} else {
 					$this->error($result);
@@ -246,6 +258,36 @@ class Article extends BaseController
 		}
 		return View::fetch();
     }
+	
+	//上传附件
+    public function upzip()
+	{
+		$file = request()->file('file');
+		try {
+			validate(['file'=>'fileSize:1024000|fileExt:jpg,zip'])
+            ->check(['file'=>$file]);
+			$savename = \think\facade\Filesystem::disk('public')->putFile('article_zip',$file);
+		} catch (ValidateException $e) {
+			return json(['status'=>-1,'msg'=>$e->getMessage()]);
+		}
+		$upload = Config::get('filesystem.disks.public.url');
+
+		if($savename){
+            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
+            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
+        }else{
+            $res = ['status'=>-1,'msg'=>'上传错误'];
+        }
+	return json($res);
+    }
+	
+	//附件下载
+	public function download($id)
+	{
+		$zipdir = Db::name('article')->where('id',$id)->value('upzip');
+		$zip = substr($zipdir,1);
+			return download($zip,'my');
+	}
 	
 	//添加tag
 	public function tags()
@@ -366,7 +408,7 @@ class Article extends BaseController
         //删除本贴设置缓存显示编辑后内容
         Cache::delete('article_'.$data['id']);
 		//清除文章tag缓存
-		//Cache::tag('tagArtDetail')->clear();
+		Cache::tag('tagArtDetail')->clear();
 		return json($res);	
 	}
 	

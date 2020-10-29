@@ -21,7 +21,15 @@ class Login extends BaseController
     //用户登陆
 	public function index()
 	{
-		//var_dump($_SERVER);
+		//获取登录前访问页面refer
+		$refer = Request::server('HTTP_REFERER');
+		$domain = Request::domain();
+		//截取域名后面的字符
+		$url = substr($refer,strlen($domain));
+		if(empty($url)){
+			$url = '/';
+		}
+		 Cookie::set('url',$url);
         if(Request::isAjax()) {
 			$data = Request::param();
 
@@ -58,9 +66,9 @@ class Login extends BaseController
 			$res = $user->login($data);
             if ($res == 1) {
 				//获取系统站内通知信息
-				Message::insertMsg(session('user_id'));
-				
-                return json(['code'=>0,'msg'=>'登陆成功','url'=>'/']);
+				//Message::insertMsg(session('user_id'));
+				//跳转到登陆前页面
+                return json(['code'=>0,'msg'=>'登陆成功','url'=> Cookie::get('url')]);
             } else {
 				return json(['code'=>-1,'msg'=>$res]);
             }
