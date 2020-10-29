@@ -1,7 +1,7 @@
 # TaoLer
 
-	版本：TaoLer 1.5.1
-	日期：2020.9.20
+	版本：TaoLer 1.6.1
+	日期：2020.10.28
 	官网：http://www.aieok.com
 	测试：http://adm.aieok.com 账号test 密码test123
 
@@ -9,6 +9,7 @@
 
 1.	gitee	https://www.gitee.com/toogee/Taoler
 2.	github	https://www.github.com/taoser/TaoLer
+3.  composer create-project taoser/taoler
 
 #### 介绍
 
