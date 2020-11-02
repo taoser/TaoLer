@@ -10,6 +10,7 @@ use app\common\model\Article;
 use app\common\model\User;
 use app\common\model\Cate;
 use app\common\model\Comment;
+use think\facade\Cookie;
 
 class Index extends BaseController
 {	
@@ -121,7 +122,6 @@ class Index extends BaseController
 	//搜索功能
 	public function search()
 	{
-		//$this->showUser();
         //全局查询条件
         $map = []; //所有的查询条件封装到数组中
         //条件1：
@@ -162,5 +162,25 @@ class Index extends BaseController
         return redirect((string) url('user/home',['id'=>$u['id']]));
 
     }
+	
+	public function select()
+	{
+		$lang = input('language');
+		//dump($lang);
+		switch ($lang) {
+			case 'cn':
+				Cookie::set('think_lang','zh-cn');
+			break;
+			case 'en':
+				Cookie::set('think_lang','en-us');
+			break;
+			case 'tw':
+				Cookie::set('think_lang','zh-tw');
+				
+			break;
+			default:
+			break;
+		}
+	}
 
 }

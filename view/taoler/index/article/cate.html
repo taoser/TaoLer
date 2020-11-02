@@ -35,14 +35,14 @@
               <span>{$art.create_time|date='Y-m-d'}</span>
 
               <span class="layui-hide-xs" title="人气"><i class="iconfont" title="人气">&#xe60b;</i> {$art.pv}</span>
-              {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">已结</span>{/if}
+              {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('finished')}</span>{/if}
               <span class="fly-list-nums">
                 <i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}
               </span>
             </div>
             <div class="fly-list-badge">
-			      {if ($art.is_top == 1)} <span class="layui-badge layui-bg-black" >置顶</span> {/if}
-            {if ($art.is_hot == 1)} <span class="layui-badge layui-bg-red">精帖</span> {/if}
+			      {if ($art.is_top == 1)} <span class="layui-badge layui-bg-black" >{:lang('top')}</span> {/if}
+            {if ($art.is_hot == 1)} <span class="layui-badge layui-bg-red">{:lang('hot')}</span> {/if}
             </div>
           </li>
 		    {/volist}	
@@ -54,7 +54,7 @@
     </div>
     <div class="layui-col-md4">
       <dl class="fly-panel fly-list-one">
-        <dt class="fly-panel-title">本周热议</dt>
+        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
 		<dd>
           <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
@@ -64,8 +64,8 @@
       </dl>
 
 		<div class="fly-panel">
-		<div class="fly-panel-title">心级赞助商 <span style="padding: 0 3px;">-</span>
-		<a href="" class="fly-link fly-joinad    ">我要加入</a>
+		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
+		<a href="" class="fly-link fly-joinad    ">{:lang('i want to join')}</a>
 		</div>  
 		<div class="fly-panel-main">
 		{volist name="ad_cate" id="vo"}

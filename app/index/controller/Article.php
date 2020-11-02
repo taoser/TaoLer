@@ -14,6 +14,8 @@ use taoler\com\Message;
 use app\common\model\Cate;
 use app\common\model\User;
 use app\common\model\Collection;
+use think\facade\Lang;
+use app\common\lib\Msg;
 
 class Article extends BaseController
 {
@@ -250,7 +252,9 @@ class Article extends BaseController
                     $link = (string) url('article/detail',['id'=> $aid]);
 					//清除文章tag缓存
 					Cache::tag('tagArtDetail')->clear();
-                    return json(['code'=>1,'msg'=>'发布成功','url'=> $link]);
+					
+                    //return json(['code'=>1,'msg'=>'发布成功','url'=> $link]);
+					return json(['code'=>Msg::getCode('success'),'msg'=>Msg::getMsg('add_success'),'url'=> $link]);
 				} else {
 					$this->error($result);
 				}
@@ -322,7 +326,10 @@ class Article extends BaseController
                     //删除缓存显示编辑后内容
                     Cache::delete('article_'.$id);
                     $link = (string) url('article/detail',['id'=> $id]);
-					return json(['code'=>0,'msg'=>'修改成功','url'=> $link]);
+					//return json(['code'=>0,'msg'=>'修改成功','url'=> $link]);
+					 return Msg::show('error','edit_success',$link);
+				
+					 
 				} else {
 				$this->error($result);
 				}

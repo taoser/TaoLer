@@ -850,12 +850,23 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
             }
         });
     });
+	
+	
+	//监听语音选择提交
+	form.on('select(language)', function(data){
+	  var data = data.value;
+		$.post(langUrl,{language:data},function(result){
+			location.reload();
+		});
+		return false;
+	});
   
   //固定Bar
   util.fixbar({
     bar1: '&#xe642;'
     ,bgcolor: '#009688'
     ,click: function(type){
+		//添加文章
       if(type === 'bar1'){
         //slayer.msg('打开 index.js，开启发表新帖的路径');
         location.href = articleAdd;

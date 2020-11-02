@@ -16,35 +16,35 @@
           <!-- <span class="layui-badge">审核中</span> -->
           <span class="layui-badge layui-bg-green fly-detail-column">{$article.cate.catename}</span>
           {if ($article.jie == 0)}
-          <span class="layui-badge" style="background-color: #999;">未结</span>
+          <span class="layui-badge" style="background-color: #999;">{:lang('no finished')}</span>
 		  {else /}
-          <span class="layui-badge" style="background-color: #5FB878;">已结</span>
+          <span class="layui-badge" style="background-color: #5FB878;">{:lang('finished')}</span>
 		  {/if}
           {if ($article.is_top == 1)}
-          <span class="layui-badge layui-bg-black">置顶</span>
+          <span class="layui-badge layui-bg-black">{:lang('top')}</span>
 		  {/if}
 		  {if ($article.is_hot == 1)}
-          <span class="layui-badge layui-bg-red">精帖</span>
+          <span class="layui-badge layui-bg-red">{:lang('hot')}</span>
 		  {/if}
           <div class="fly-admin-box" data-id="{$article.id}">
 		  {if ($user.auth ?? '')}
-            <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="del">{:lang('delete')}</span>
             {if($article.is_top == 0)}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1">置顶</span> 
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1">{:lang('top')}</span> 
 			{else /}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">取消置顶</span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>
             {/if}
 			{if($article.is_hot == 0)}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1">加精</span> 
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1">{:lang('hot')}</span> 
 			{else /}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">取消加精</span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">{:lang('cancel hoting')}</span>
 			{/if}
-			<span id="color">高亮</span>
+			<span id="color">{:lang('title color')}</span>
 		  {/if}
           </div>
 		  
           <span class="fly-list-nums"> 
-            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> {$comments->count()} </a>
+            <a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i> {$comments->count()} </a>
             <i class="iconfont" title="人气">&#xe60b;</i> {$pv}
           </span>
         </div>
@@ -66,26 +66,26 @@
           <div class="detail-hits" id="LAY_jieAdmin" data-id="{$article['id']}">
             <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
 			{if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">编辑此贴</a></span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
 			{/if}
           </div>
         </div>
         <div class="detail-body photos">{$article.content|raw}</div>
 		{notempty name="$article.upzip"}
 			<div class="layui-inline">
-			  <label ">附件：</label>
-			 <button type="button" class="layui-btn" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>下载文件</button>
+			  <label ">{:lang('enclosure')}：</label>
+			 <button type="button" class="layui-btn" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}</button>
 			</div>
 		{/notempty}
       </div>
 
       <div class="fly-panel detail-box" id="flyReply">
         <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
-          <legend>回帖</legend>
+          <legend>{:lang('reply')}</legend>
         </fieldset>
 
         <ul class="jieda" id="jieda">
-		{volist name="comments" id="vo" empty="暂时还没有评论"}
+		{volist name="comments" id="vo" empty="lang('no comments')"}
           <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
@@ -123,14 +123,14 @@
               <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
                 <i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
               </span>
-              <span type="reply"><i class="iconfont icon-svgmoban53"></i>回复</span>
+              <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
 
               <div class="jieda-admin">
 				{if (session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2) OR ($user.auth  ?? '')}
-					<span type="edit">编辑</span>
-					<span type="del">删除</span>
+					<span type="edit">{:lang('edit')}</span>
+					<span type="del">{:lang('delete')}</span>
 					{if $vo.cai == 0 && session('user_id') == $article.user_id /}
-					<span class="jieda-accept" type="accept">采纳</span>
+					<span class="jieda-accept" type="accept">{:lang('accept')}</span>
 					{/if}				
 				{/if}
               </div>
@@ -149,13 +149,13 @@
             <div class="layui-form-item layui-form-text">
               <a name="comment"></a>
               <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+                <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
               <input type="hidden" name="article_id" value="{$article.id}">
 			  <input type="hidden" name="user_id" value="{:session('user_id')}">
-              <button type="button" class="layui-btn" lay-filter="*" lay-submit id="recomment">提交回复</button>
+              <button type="button" class="layui-btn" lay-filter="*" lay-submit id="recomment">{:lang('submit comments')}</button>
             </div>
           </form>
         </div>
@@ -166,7 +166,7 @@
     </div>
     <div class="layui-col-md4">
       <dl class="fly-panel fly-list-one">
-        <dt class="fly-panel-title">本周热议</dt>
+        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
 		<dd>
           <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
@@ -181,8 +181,8 @@
       </dl>
 
 		<div class="fly-panel">
-		<div class="fly-panel-title">心级赞助商 <span style="padding: 0 3px;">-</span>
-		<a href="" class="fly-link fly-joinad    ">我要加入</a>
+		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
+		<a href="" class="fly-link fly-joinad    ">{:lang('i want to join')}</a>
 		</div>  
 		<div class="fly-panel-main">
 		{volist name="ad_art" id="vo"}
@@ -192,9 +192,7 @@
 		</div>
 
       <div class="fly-panel">
-        <div class="fly-panel-title">
-          这里可作为广告区域
-        </div>
+        <div class="fly-panel-title">{:lang('ads area')}</div>
 				
         <div class="fly-panel-main">
           <a href="" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">TaoLer 社区快速轻论坛</a>

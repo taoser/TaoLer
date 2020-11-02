@@ -5,13 +5,13 @@
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item layui-this">
-        <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
+        <a href="/"><i class="iconfont icon-jiaoliu"></i>{:lang('discuss')}</a>
       </li>
       <li class="layui-nav-item">
-        <a href="case/case.html"><i class="iconfont icon-iconmingxinganli"></i>案例</a>
+        <a href="case/case.html"><i class="iconfont icon-iconmingxinganli"></i>{:lang('case')}</a>
       </li>
       <li class="layui-nav-item">
-        <a href="{:url('doc/timeline')}" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
+        <a href="{:url('doc/timeline')}" target="_blank"><i class="iconfont icon-ui"></i>{:lang('timeline')}</a>
       </li>
     </ul>
     
@@ -19,7 +19,7 @@
 	  {if session('?user_id')}
 		{if($Request.action=='user')}
 	  <li class="layui-nav-item">
-	  <a href="/">前台首页</a>
+	  <a href="/">{:lang('home page')}</a>
 	  </li>
 		{/if}
       <li class="layui-nav-item">
@@ -31,13 +31,13 @@
         </a>
 		
         <dl class="layui-nav-child">
-		  <dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>用户中心</a></dd>
-          <dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
+		  <dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
+          <dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>
 		  <hr>
-          <dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
-          <dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
+          <dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
+          <dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
           <hr style="margin: 5px 0;">
-          <dd><a data-url="{:url('user/logout')}" location-url="{:url('index/index')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">退出</a></dd>
+          <dd><a data-url="{:url('user/logout')}" location-url="{:url('index/index')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
         </dl>
       </li>
 	  {else /}
@@ -47,11 +47,20 @@
         <a class="iconfont icon-touxiang layui-hide-xs" href="{:url('login/index')}"></a>
       </li>
       <li class="layui-nav-item">
-        <a href="{:url('login/index')}">登入</a>
+        <a href="{:url('login/index')}">{:lang('login')}</a>
       </li>
       <li class="layui-nav-item">
-        <a href="{:url('login/reg')}">注册</a>
+        <a href="{:url('login/reg')}">{:lang('register')}</a>
       </li>
+	  <li class="layui-nav-item">
+	  <div class="layui-form" style="width:98px;line-height:20px;color:black;padding: 0 2px;">
+		<select name="language" lay-filter="language" lay-verify="">
+		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >中文简体</option>
+		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >中文繁体</option>
+		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >Englishi</option>
+		</select>
+	  </div>
+	  </li>	
       <!--li class="layui-nav-item layui-hide-xs">
         <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" title="QQ登入" class="iconfont icon-qq"></a>
       </li>
