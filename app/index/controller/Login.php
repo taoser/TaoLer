@@ -95,7 +95,7 @@ class Login extends BaseController
 		$result = $user->reg($data);
 		
            if ($result == 1) {
-			   $res = ['code'=>0,'msg'=>'注册成功','url'=>'/index/login'];
+			   $res = ['code'=>0,'msg'=>'注册成功','url'=>(string) url('login/index')];
            }else {
 			   $res = ['code'=>-1,'msg'=>$result];
            }
@@ -128,7 +128,7 @@ class Login extends BaseController
                 $result = mailto($data['email'],'重置密码','Hi亲爱的'.$user['name'].':</br>您正在维护您的信息，请在10分钟内验证，您的验证码为:'.$code);
                 if($result){
                     Cache::set('repass',1,60);	//设置repass标志为1存入Cache
-					$res = ['code'=>0,'msg'=>'验证码已发送成功，请去邮箱查看！','url'=>'/index/postcode']; 
+					$res = ['code'=>0,'msg'=>'验证码已发送成功，请去邮箱查看！','url'=>(string) url('login/postcode')]; 
                 } else {
                     $res = ['code'=>-1,'msg'=>'验证码发送失败!'];
                 }	
@@ -144,7 +144,7 @@ class Login extends BaseController
 	public function postcode()
 	{
         if(Cache::get('repass') != 1){
-			return redirect('/index/forget');
+			return redirect((string) url('login/forget'));
         }
         if(Request::isAjax()){
 		$code = Request::only(['code']);
@@ -159,7 +159,7 @@ class Login extends BaseController
 		    if(Cache::get('code')==$code['code']) { //无任何输入情况下需排除code为0和Cache为0的情况
                 //Cache::delete('repass');
                 Cache::set('repass',2,60);
-				$res = ['code'=>0,'msg'=>'验证成功','url'=>'/index/respass'];
+				$res = ['code'=>0,'msg'=>'验证成功','url'=>(string) url('login/respass')];
 		    } else {
 			    $res = ['code'=>-1,'msg'=>'验证码错误或已过期！'];
 		    }
@@ -172,7 +172,7 @@ class Login extends BaseController
 	public function respass()
 	{
         if(Cache::get('repass') != 2){
-            return redirect('/index/forget');
+            return redirect((string) url('login/forget'));
         }
         if(Request::isAjax()){
             $data = Request::param();
@@ -188,7 +188,7 @@ class Login extends BaseController
 			$user = new \app\common\model\User();
 			$res = $user->respass($data);
 				if ($res == 1) {
-						return json(['code'=>0,'msg'=>'修改成功','url'=>'/index/login']);
+						return json(['code'=>0,'msg'=>'修改成功','url'=>(string) url('login/index')]);
 				} else {
 						return json(['code'=>-1,'msg'=>'$res']);		
 				}

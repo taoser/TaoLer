@@ -2,17 +2,17 @@
   <div class="layui-container">
     <ul class="layui-clear">
       <li class="layui-hide-xs {if ($Request.param.ename =='' && $Request.param.id =='')} layui-this {/if}" >
-	  <a href="/">{:lang('home')}</a>
+	  <a href="/">{:lang('home page')}</a>
 	  </li> 
 	  {volist name="cateList" id="cate"}
 	  <li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if}>
-	  <a href="{:url('article/cate',['ename' => $cate.ename])}">{$cate.catename}{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}</a>
+	  <a href="{:url('article/cate',['ename' => $cate.ename])}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}</a>
 	  </li> 
 	  {/volist}     
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>   
     {if session('?user_id')}
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post')}">{:lang('add_post')}</a></li> 
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post#collection')}">{:lang('my_collection')}</a></li>
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post#collection')}">{:lang('my collection')}</a></li>
 	  {/if}
     </ul> 
     

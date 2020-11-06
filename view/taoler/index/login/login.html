@@ -7,41 +7,41 @@
   <div class="fly-panel fly-panel-user" pad20>
     <div class="layui-tab layui-tab-brief" lay-filter="user">
       <ul class="layui-tab-title">
-        <li class="layui-this">登入</li>
-        <li><a href="{:url('login/reg')}">注册</a></li>
+        <li class="layui-this">{:lang('login')}</li>
+        <li><a href="{:url('login/reg')}">{:lang('sign up')}</a></li>
       </ul>
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
         <div class="layui-tab-item layui-show">
           <div class="layui-form layui-form-pane">
             <form method="post" >
               <div class="layui-form-item">
-                <label  class="layui-form-label">用户</label>
+                <label  class="layui-form-label">{:lang('username')}</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_name" name="name" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="邮箱/用户名">
+                  <input type="text" id="L_name" name="name" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('mail/username')}">
                 </div>
               </div>
               <div class="layui-form-item">
-                <label for="L_pass" class="layui-form-label">密码</label>
+                <label for="L_pass" class="layui-form-label">{:lang('password')}</label>
                 <div class="layui-input-inline">
-                  <input type="password" id="L_pass" name="password" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="密码">
+                  <input type="password" id="L_pass" name="password" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('please input the password')}">
                 </div>
               </div>
               <div class="layui-form-item">
-                <label for="L_vercode" class="layui-form-label">验证码</label>
+                <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input">
+                  <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
                 </div>
                 <div >                 
 					<img src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();" style="float:left; cursor:pointer;" id="captcha" alt="captcha"  />
                 </div>
               </div>
 			  <div class="layui-form-item">
-                <input type="checkbox" name="remember" title="记住密码" lay-skin="primary"  lay-filter="remember" value="1">
+                <input type="checkbox" name="remember" title="{:lang('remember password')}" lay-skin="primary"  lay-filter="remember" value="1">
               </div>
               <div class="layui-form-item">
-                <button type="submit" name="submit" class="layui-btn" lay-filter="user" lay-submit id="login">立即登录</button>
+                <button type="submit" name="submit" class="layui-btn" lay-filter="user" lay-submit id="login">{:lang('login now')}</button>
                 <span style="padding-left:20px;">
-                  <a href="{:url('login/forget')}">忘记密码？</a>
+                  <a href="{:url('login/forget')}">{:lang('forget password')}？</a>
                 </span>
               </div>
               <!--div class="layui-form-item fly-form-app">

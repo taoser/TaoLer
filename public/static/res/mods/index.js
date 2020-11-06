@@ -851,12 +851,13 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         });
     });
 	
-	
-	//监听语音选择提交
-	form.on('select(language)', function(data){
-	  var data = data.value;
-		$.post(langUrl,{language:data},function(result){
-			location.reload();
+  //监听语音选择提交
+	$('#language').on('change',function(){
+	  var data = $(this).val();
+		$.post(langUrl,{language:data},function(res){
+			if(res.code == 0){
+				location.reload();
+			}
 		});
 		return false;
 	});

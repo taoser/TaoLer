@@ -31,6 +31,7 @@ class Msg
 		'add_error'		=> Lang::get('add error'),
 		'edit_success'	=> Lang::get('edit success'),
 		'edit_error'	=> Lang::get('edit error'),
+		'illegal_request'	=> Lang::get('illegal request'),
 		
 		];
 		

@@ -11,6 +11,7 @@ use app\common\model\User;
 use app\common\model\Cate;
 use app\common\model\Comment;
 use think\facade\Cookie;
+use app\common\lib\Msg;
 
 class Index extends BaseController
 {	
@@ -29,7 +30,7 @@ class Index extends BaseController
 		if(!$artTop){
 			$artTop = Article::field('id,title,title_color,cate_id,user_id,create_time,is_top,jie,pv')->where(['is_top'=>1,'status'=>1,'delete_time'=>0])->with([
             'cate' => function($query){
-				$query->where('delete_time',0)->field('id,catename');
+				$query->where('delete_time',0)->field('id,catename,ename');
             },
 			'user' => function($query){
 				$query->field('id,name,nickname,user_img,area_id,vip');
@@ -43,7 +44,7 @@ class Index extends BaseController
 		if(!$artList){
 			$artList = Article::field('id,title,title_color,cate_id,user_id,create_time,is_hot,jie,pv')->with([
             'cate' => function($query){
-				$query->where('delete_time',0)->field('id,catename');
+				$query->where('delete_time',0)->field('id,catename,ename');
             },
 			'user' => function($query){
 				$query->field('id,name,nickname,user_img,area_id,vip');
@@ -163,23 +164,16 @@ class Index extends BaseController
 
     }
 	
-	public function select()
+	public function language()
 	{
-		$lang = input('language');
-		//dump($lang);
-		switch ($lang) {
-			case 'cn':
-				Cookie::set('think_lang','zh-cn');
-			break;
-			case 'en':
-				Cookie::set('think_lang','en-us');
-			break;
-			case 'tw':
-				Cookie::set('think_lang','zh-tw');
-				
-			break;
-			default:
-			break;
+		if(request()->isPost()){
+			$language = new \app\common\controller\Language;
+			$lang = $language->select(input('language'));
+			if($lang){
+				return json(['code'=>0,'msg'=>'']);
+			}
+		}else {
+			return json(['code'=>Msg::get('error'),'msg'=>Msg::getMsg('illegal_request')]);
 		}
 	}
 

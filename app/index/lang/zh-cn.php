@@ -1,7 +1,12 @@
 <?php
 
 return [
-	 //menu
+	//语言
+	 'language'			=> 'language',
+	 'chinese'			=> '中文简体',
+	 'english'			=> 'english',
+	 
+	//menu
      'index'			=> 'index',
      'home page'		=> '首页',
 	 'user center'		=> '用户中心',
@@ -11,18 +16,22 @@ return [
 	 
 	 'login'			=> '登录',
 	 'logout'			=> '退出',
+	 'sign in'			=> '签到',
+	 'sign up'			=> '注册',
 	 'register'			=> '注册',
 	 'discuss'			=> '讨论',
 	 'case'				=> '案例',
 	 'timeline'			=> '框架日志',
 	 
-	 //帖子
+	//帖子
+	 'poster'			=> '贴主',
 	 'title color'		=> '颜色',
 	 'add_post'			=> '添加帖子',
 	 'my collection'	=> '我的收藏',
 	 'cancel collection' => '取消收藏',
 	 'all'				=> '综合',
 	 'finished'			=> '已结',
+	 'end'				=> '已结',
 	 'no finished'		=> '未结',
 	 'hot'				=> '热贴',
 	 'top'				=> '精贴',
@@ -34,7 +43,6 @@ return [
 	 'reviewers list'	=> '回帖热榜',
 	 'hot post list'	=> '本周热议',
 	 'links list'		=> '温馨通道',
-	 'Sign in'			=> '签到',
 	 'statement'		=> '说明',
 	 'trends'			=> '动态',
 	 'sponsor'			=> '钻级赞助商',
@@ -48,12 +56,37 @@ return [
 	 'ads area'			=> '广告区',
 	 'enclosure'		=> '附件',
 	 'download files'	=> '下载文件',
-
 	
+	//message
      'add'				=> '添加',
 	 'delete'			=> '删除',
 	 'add success'		=> '添加成功!',
 	 'add error'		=> '添加失败',
 	 'edit success'		=> '修改成功',
 	 'edit error'		=> '修改失败',
+	 'illegal request'	=> '非法请求',
+	 
+	 //Sign in/up
+	 'username'			=> '用户',
+	 'password'			=> '密码',
+	 'new password'		=> '新密码',
+	 'reset password'	=> '重置密码',
+	 'retrieve password'	=> '找回密码',
+	 'email'			=> '邮箱',
+	 'confirm password'	=> '确认密码',
+	 'captcha'			=> '验证码',
+	 'remember password'	=> '一周内记住密码',
+	 'forget password'	=> '忘记密码',
+	 'login now'		=> '立即登录',
+	 'submit'			=> '提交',
+	 'go back'			=> '返回',
+	 'register now'		=> '立即注册',
+	 'mail/username'	=> '邮箱/用户名',
+	 '6-16 characters'	=> '6-16 字符',
+	 'strong type encryption'	=> '经过强类型加密',
+	 'it cannot be changed'	=> '不能更改',
+	 'the only way to get back your password'	=> '找回密码唯一途径',
+	 'please input the password' => '请输入密码',
+	 'please confirm the password' => '请确认密码',
+	 'please input the captcha' => '请输入验证码',
 ];

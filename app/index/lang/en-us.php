@@ -1,9 +1,14 @@
 <?php
 
 return [
+	//语言
+	 'language'			=> 'language',
+	 'chinese'			=> '中文简体',
+	 'english'			=> 'English',
+	 
 	//menu
      'index'			=> 'Index',
-     'home page'		=> 'Home page',
+     'home page'		=> 'Home',
 	 'user center'		=> 'Center',
 	 'set info'			=> 'Set info',
 	 'my message'		=> 'Message',
@@ -11,18 +16,23 @@ return [
 	 
 	 'login'			=> 'Login',
 	 'logout'			=> 'Logout',
+	 'sign in'			=> 'Sign in',
+	 'sign up'			=> 'Sign up',
 	 'register'			=> 'Register',
 	 'discuss'			=> 'Discuss',
 	 'case'				=> 'Case',
 	 'timeline'			=> 'Timeline',
 	 
 	 //帖子
+	 'poster'			=> 'poster',
 	 'title color'		=> 'Title color',
 	 'add_post'			=> 'Add post',
+	 'collection'		=> 'collection',
 	 'my collection'	=> 'My collection',
 	 'cancel collection' => 'cancel collection',
 	 'all'				=> 'All',
 	 'finished'			=> 'Finished',
+	 'end'				=> 'End',
 	 'no finished'		=> 'no finished',
 	 'hot'				=> 'Hot',
 	 'top'				=> 'Top',
@@ -34,10 +44,9 @@ return [
 	 'reviewers list'	=> 'Reviewers list',
 	 'hot post list'	=> 'Hot post list',
 	 'links list'		=> 'Links list',
-	 'Sign in'			=> 'Sign in',
 	 'statement'		=> 'Statement',
 	 'trends'			=> 'Trends',
-	 'sponsor'			=> 'Sponsor sponsor',
+	 'sponsor'			=> 'Super sponsor',
 	 'i want to join'	=> 'i want to join',
 	 'official products'  => 'Official products',
 	 'no comments'		=> 'No comments',
@@ -48,9 +57,6 @@ return [
 	 'ads area'			=> 'Ads area',
 	 'enclosure'		=> 'enclosure',
 	 'download files'	=> 'Download files',
-
-
-	 
 	 
 	 //message
 	 'add'				=> 'add',
@@ -60,4 +66,31 @@ return [
 	 'add error'		=> 'add error',
 	 'edit success'		=> 'articel edit success',
 	 'edit error'		=> 'articel edit error',
+	 'illegal_request'	=> 'illegal request',
+	 
+	 //Sign in/up
+	 'username'			=> 'Username',
+	 'password'			=> 'Password',
+	 'new password'		=> 'New Password',
+	 'reset password'	=> 'Reset password',
+	 'retrieve password'	=> 'Retrieve password',
+	 'email'			=> 'Email',
+	 'confirm password'	=> 'Confirm password',
+	 'captcha'			=> 'Captcha',
+	 'remember password'	=> 'Remember password',
+	 'forget password'	=> 'Forget password',
+	 'login now'		=> 'Login now',
+	 'submit'			=> 'Submit',
+	 'go back'			=> 'Go back',
+	 'register now'		=> 'Register now',
+	 'mail/username'	=> 'mail/username',
+	 '6-16 characters'	=> '6-16 characters',
+	 'strong type encryption'	=> 'Strong type encryption',
+	 'it cannot be changed'	=> 'It cannot be changed',
+	 'the only way to get back your password'	=> 'The only way to get back your password',
+	 'please input the password' => 'Please input the password',
+	 'please confirm the password' => 'Please confirm the password',
+	 'please input the captcha' => 'Please input the captcha',
+	 
+	 
 ];

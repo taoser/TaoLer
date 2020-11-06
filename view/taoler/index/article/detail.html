@@ -14,7 +14,7 @@
 		
         <div class="fly-detail-info">
           <!-- <span class="layui-badge">审核中</span> -->
-          <span class="layui-badge layui-bg-green fly-detail-column">{$article.cate.catename}</span>
+          <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.cate.ename : $article.cate.catename}</span>
           {if ($article.jie == 0)}
           <span class="layui-badge" style="background-color: #999;">{:lang('no finished')}</span>
 		  {else /}
@@ -85,7 +85,7 @@
         </fieldset>
 
         <ul class="jieda" id="jieda">
-		{volist name="comments" id="vo" empty="lang('no comments')"}
+		{volist name="comments" id="vo" empty= ""}
           <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
@@ -100,7 +100,7 @@
                   <i class="layui-badge fly-badge-vip">VIP3</i-->              
                 </a>
                 {if condition="$article.user.id eq $vo.user.id"}
-                <span>(贴主)</span>
+                <span>({:lang('poster')})</span>
 				{/if}
                 <!--
                 <span style="color:#5FB878">(管理员)</span>
@@ -220,7 +220,9 @@ var collectionFind = "{:url('index/Collection/find')}",
     commentJiedaCai = "{:url('index/Comment/jiedaCai')}",
     commentGetDa = "{:url('index/Comment/getDa')}",
     commentUpdateDa = "{:url('index/Comment/updateDa')}",
-    commentJiedaDelete = "{:url('index/Comment/jiedaDelete')}";
+    commentJiedaDelete = "{:url('index/Comment/jiedaDelete')}",
+	langCollection = "{:lang('collection')}",
+	langCancelCollection = "{:lang('cancel collection')}";
 layui.cache.page = 'jie';
 layui.cache.user = {
         username: '{$user.name??'游客'}'

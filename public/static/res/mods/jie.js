@@ -124,9 +124,9 @@ layui.define('fly', function(exports){
         cid: div.data('id')
       }, function(res){
         if(type === 'add'){
-          othis.data('type', 'remove').html('取消收藏').addClass('layui-btn-danger');
+          othis.data('type', 'remove').html(langCancelCollection).addClass('layui-btn-danger');
         } else if(type === 'remove'){
-          othis.data('type', 'add').html('收藏').removeClass('layui-btn-danger');
+          othis.data('type', 'add').html(langCollection).removeClass('layui-btn-danger');
         }
       });
     }
@@ -145,7 +145,7 @@ layui.define('fly', function(exports){
       fly.json(collectionFind, {
         cid: div.data('id')
       }, function(res){
-        jieAdmin.append('<span class="layui-btn layui-btn-xs jie-admin '+ (res.data.collection ? 'layui-btn-danger' : '') +'" type="collect" data-type="'+ (res.data.collection ? 'remove' : 'add') +'">'+ (res.data.collection ? '取消收藏' : '收藏') +'</span>');
+        jieAdmin.append('<span class="layui-btn layui-btn-xs jie-admin '+ (res.data.collection ? 'layui-btn-danger' : '') +'" type="collect" data-type="'+ (res.data.collection ? 'remove' : 'add') +'">'+ (res.data.collection ? langCancelCollection : langCollection) +'</span>');
       });
     }
   }();
@@ -200,7 +200,6 @@ layui.define('fly', function(exports){
         layer.prompt({
           formType: 2
           ,value: data.content
-		  
           ,maxlength: 100000
           ,title: '编辑回帖'
           ,area: ['738px', '310px']

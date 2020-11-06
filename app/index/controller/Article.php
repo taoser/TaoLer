@@ -73,7 +73,7 @@ class Article extends BaseController
                 case 'jie':
 				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
 					'cate' => function($query){
-						$query->where('delete_time',0)->field('id,catename');
+						$query->where('delete_time',0)->field('id,catename,ename');
 					},
 					'user' => function($query){
 						$query->field('id,name,nickname,user_img,area_id,vip');
@@ -89,7 +89,7 @@ class Article extends BaseController
 				case 'hot':
 				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
 					'cate' => function($query){
-						$query->where('delete_time',0)->field('id,catename');
+						$query->where('delete_time',0)->field('id,catename,ename');
 					},
 					'user' => function($query){
 						$query->field('id,name,nickname,user_img,area_id,vip');
@@ -105,7 +105,7 @@ class Article extends BaseController
 				case 'top':
 				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
 					'cate' => function($query){
-						$query->where('delete_time',0)->field('id,catename');
+						$query->where('delete_time',0)->field('id,catename,ename');
 					},
 					'user' => function($query){
 						$query->field('id,name,nickname,user_img,area_id,vip');
@@ -121,7 +121,7 @@ class Article extends BaseController
 				default:
 				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
 					'cate' => function($query){
-						$query->where('delete_time',0)->field('id,catename');
+						$query->where('delete_time',0)->field('id,catename,ename');
 					},
 					'user' => function($query){
 						$query->field('id,name,nickname,user_img,area_id,vip');
@@ -153,11 +153,12 @@ class Article extends BaseController
     public function detail($id)
     {
 		$article = Cache::get('article_'.$id);
+		
 		if(!$article){
 			//查询文章
 		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,upzip,tags,title_color,create_time')->where('status',1)->with([
             'cate' => function($query){
-				$query->where('delete_time',0)->field('id,catename');
+				$query->where('delete_time',0)->field('id,catename,ename');
             },
 			'user' => function($query){
 				$query->field('id,name,nickname,user_img,area_id,vip');
@@ -172,7 +173,7 @@ class Article extends BaseController
 		$comments = $article->comments()->where('status',1)->order(['cai'=>'asc','create_time'=>'asc'])->paginate(10);
 		$article->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
-		$download = download($article->upzip,'file');
+		$download = $article->upzip ? download($article->upzip,'file') : '';
 
 /*		
 		$nt = time();

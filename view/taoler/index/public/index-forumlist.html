@@ -3,7 +3,7 @@
 	  <img src="{$art.user.user_img}" alt="{$art.user.name}">  
 	</a>
 	<h2>
-	  <a class="layui-badge">{$art.cate.catename}</a>
+	  <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
 	  <a href="{:url('article/detail',['id' => $art.id])}" style="color:{$art.title_color};">{$art.title}</a>
 	</h2>
 	<div class="fly-list-info">
@@ -20,14 +20,14 @@
 	  <span>{$art.create_time|date='Y-m-d'}</span>
 	  
 	  <span class="layui-hide-xs" title="人气"><i class="iconfont" title="人气">&#xe60b;</i> {$art.pv}</span>
-	  {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">已结</span>{/if}
+	  {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/if}
 	  
 	  <span class="fly-list-nums"> 			
 		<i class="iconfont icon-pinglun1" title="回答"></i>{$art.comments_count}
 	  </span> 
 	</div>
 	<div class="fly-list-badge">
-	  {if ($art.is_top == 1)} <span class="layui-badge layui-bg-black" >置顶</span> {/if}	
-	  {if ($art.is_hot == 1)} <span class="layui-badge layui-bg-red">精帖</span> {/if}
+	  {if ($art.is_top == 1)} <span class="layui-badge layui-bg-black" >{:lang('top')}</span> {/if}	
+	  {if ($art.is_hot == 1)} <span class="layui-badge layui-bg-red">{:lang('hot')}</span> {/if}
 	</div>
 </li>

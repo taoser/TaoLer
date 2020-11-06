@@ -53,13 +53,11 @@
         <a href="{:url('login/reg')}">{:lang('register')}</a>
       </li>
 	  <li class="layui-nav-item">
-	  <div class="layui-form" style="width:98px;line-height:20px;color:black;padding: 0 2px;">
-		<select name="language" lay-filter="language" lay-verify="">
+		<select name="language" lay-filter="language" lay-verify="" id="language">
 		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >中文简体</option>
 		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >中文繁体</option>
-		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >Englishi</option>
+		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >English</option>
 		</select>
-	  </div>
 	  </li>	
       <!--li class="layui-nav-item layui-hide-xs">
         <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" title="QQ登入" class="iconfont icon-qq"></a>
