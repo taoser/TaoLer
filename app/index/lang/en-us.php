@@ -52,6 +52,7 @@ return [
 	 'no comments'		=> 'No comments',
 	 'submit comments'	=> 'Submit comments',
 	 'reply'			=> 'reply',
+	 'replies'			=> 'replies',
 	 'accept'			=> 'accept',
 	 'please input the content' => 'please input the content',
 	 'ads area'			=> 'Ads area',
@@ -92,5 +93,17 @@ return [
 	 'please confirm the password' => 'Please confirm the password',
 	 'please input the captcha' => 'Please input the captcha',
 	 
-	 
+	 //user
+	 'add friends'		=> 'Add friends',
+	 'start a chat'		=> 'Start a chat',
+	 'authentication information'	=> 'Authentication information',
+	 'it is not signed yet'	=> 'It is not signed yet',
+	 'log in to view'	=> 'Log in to view',
+	 'join'				=> 'Join',
+	 'recent statements'	=> 'Recent statements',
+	 'recent answers'		=> 'Recent answers',
+	 'browses'			=> 'Browses',
+	 'in' => 'in',
+	 'accumulate points'	=> 'Accumulate points',
+	 'my post'			=> 'My post',
 ];

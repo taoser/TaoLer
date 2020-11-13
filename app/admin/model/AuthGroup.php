@@ -3,8 +3,6 @@
 namespace app\admin\model;
 
 use think\Model;
-use think\facade\Db;
-use think\facade\Session;
 //use think\model\concern\SoftDelete;
 
 class AuthGroup extends Model
@@ -13,6 +11,12 @@ class AuthGroup extends Model
     //use SoftDelete;
    // protected $deleteTime = 'delete_time';
     //protected $defaultSoftDelete = 0;
+
+    //角色多对多关联角色分配表
+    public function GroupAccess()
+    {
+        return $this->hasMany('AuthGroupAccess','group_id','id');
+    }
 	
 	//登陆校验
     public function authRuleTree()

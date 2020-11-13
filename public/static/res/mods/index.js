@@ -664,7 +664,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       ,'<a href="{{item.uid}}">'
         ,'<img src="{{item.user.avatar}}">'
         ,'<cite>{{item.user.username}}</cite>'
-        ,'<i>{{item["count(*)"]}}次回答</i>'
+        ,'<i>{{item["count(*)"]}}' +replyNum+'</i>'
       ,'</a>'
     ,'</dd>'
   ,'{{# }); }}'].join('')

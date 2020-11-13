@@ -51,6 +51,7 @@ return [
 	 'no comments'		=> '暫時還沒有評論',
 	 'submit comments'	=> '提交評論',
 	 'reply'			=> '回復',
+	 'replies'			=> '次回復',
 	 'accept'			=> '采納',
 	 'please input the content' => '請輸入內容',
 	 'ads area'			=> '廣告區',

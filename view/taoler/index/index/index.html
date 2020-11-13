@@ -59,31 +59,31 @@
 		{/volist}
 		</div>
 		</div>
-
+		<!--回帖榜-->
 		<div class="fly-panel fly-rank fly-rank-reply" id="LAY_replyRank">
 			<h3 class="fly-panel-title">{:lang('reviewers list')}</h3>
 			<dl>
 			  <i class="layui-icon fly-loading">&#xe63d;</i>
 			</dl>
 		</div>
-
-      <dl class="fly-panel fly-list-one">
-        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
-        {volist name="artHot" id="vo"}
-		<dd>
-          <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
-          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-        </dd>
-		{/volist}
-      </dl>
-
-      <div class="fly-panel">
+		<!--热帖榜-->
+		<dl class="fly-panel fly-list-one">
+			<dt class="fly-panel-title">{:lang('hot post list')}</dt>
+			{volist name="artHot" id="vo"}
+			<dd>
+			  <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+			  <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+			</dd>
+			{/volist}
+		</dl>
+		<!--自定义-->
+		<div class="fly-panel">
         <div class="fly-panel-title">{:lang('official products')}</div> 
         <div class="fly-panel-main">
           <a href="http://www.aieok.com" target="_blank" class="fly-zanzhu" style="background-color: #5FB878;">TaoLer 1.0 - 旗舰之作</a>
         </div>
-      </div>
-	  <div class="fly-panel" style="padding: 20px 0; text-align: center;">
+		</div>
+		<div class="fly-panel" style="padding: 20px 0; text-align: center;">
 		{volist name="ad_comm" id="vo"}		
 		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}

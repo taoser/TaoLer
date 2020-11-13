@@ -136,10 +136,13 @@ class Set extends AdminController
 	{
 		$url = $url.'?u='.Request::domain();
 		$cy = Api::urlGet($url);
-		if($cy->code != 0){
-			$cylevel = $cy->level;
-		return $cylevel;
-		} else {
+
+		if(!$cy){
+            if($cy->code == 1){
+                $cylevel = $cy->level;
+                return $cylevel;
+            }
+        } else {
 		return 0;
 		}
 	}

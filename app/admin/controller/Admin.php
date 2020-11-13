@@ -139,8 +139,15 @@ class Admin extends AdminController
 	//基本资料显示
 	public function info()
     {
-		$admin = AdminModel::find(Session::get('admin_id'));	
-		View::assign('admin',$admin);
+		$admin = AdminModel::find(Session::get('admin_id'));
+		$auths = $admin->adminGroup;
+		$authname = [];
+		foreach($auths as $v){
+            $authname[] = $v->title;
+        }
+        $authGroupTitle = implode('|', $authname);
+
+		View::assign(['admin'=>$admin,'authGroupTitle'=>$authGroupTitle]);
 		return View::fetch('set/user/info');
     }
 	//管理员资料更新

@@ -21,7 +21,7 @@ class Api
 		if($httpCode == '200'){
 			return json_decode($data);
 		} else {
-			return json(['code'=>-1,'msg'=>'Ô¶³Ì·şÎñÆ÷Ê§°Ü']);
+			return json(['code'=>-1,'msg'=>'è¿œç¨‹æœåŠ¡å™¨å¤±è´¥']);
 		}
 	}
 	
@@ -30,15 +30,16 @@ class Api
 		$ch =curl_init ();
 		curl_setopt($ch,CURLOPT_URL, $url);
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
-		//curl_setopt($ch, CURLOPT_HEADER, 0); //ÆôÓÃÊ±»á½«Í·ÎÄ¼şµÄĞÅÏ¢×÷ÎªÊı¾İÁ÷Êä³ö¡£ ²ÎÊıÎª1±íÊ¾Êä³öĞÅÏ¢Í·,Îª0±íÊ¾²»Êä³ö
-		curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1) ; // ÔÚÆôÓÃ CURLOPT_RETURNTRANSFER Ê±ºò½«»ñÈ¡Êı¾İ·µ»Ø
+		//curl_setopt($ch, CURLOPT_HEADER, 0); //å¯ç”¨æ—¶ä¼šå°†å¤´æ–‡ä»¶çš„ä¿¡æ¯ä½œä¸ºæ•°æ®æµè¾“å‡ºã€‚ å‚æ•°ä¸º1è¡¨ç¤ºè¾“å‡ºä¿¡æ¯å¤´,ä¸º0è¡¨ç¤ºä¸è¾“å‡º
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1) ; // åœ¨å¯ç”¨ CURLOPT_RETURNTRANSFER æ—¶å€™å°†è·å–æ•°æ®è¿”å›
 		$data = curl_exec($ch);
 		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		if($httpCode == '200'){
 			return json_decode($data);
 		} else {
-			return json(['code'=>-1,'msg'=>'Ô¶³Ì·şÎñÆ÷Ê§°Ü']);
+			//return json(['code'=>-1,'msg'=>'è¿œç¨‹æœåŠ¡å™¨å¤±è´¥']);
+            return false;
 		}
 	}
 	

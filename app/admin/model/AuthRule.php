@@ -3,8 +3,6 @@
 namespace app\admin\model;
 
 use think\Model;
-use think\facade\Db;
-use think\facade\Session;
 use think\model\concern\SoftDelete;
 
 class AuthRule extends Model

@@ -51,6 +51,7 @@ return [
 	 'no comments'		=> '暂时还没有评论',
 	 'submit comments'	=> '提交评论',
 	 'reply'			=> '回复',
+	 'replies'			=> '次回复',
 	 'accept'			=> '采纳',
 	 'please input the content' => '请输入内容',
 	 'ads area'			=> '广告区',
@@ -89,4 +90,20 @@ return [
 	 'please input the password' => '请输入密码',
 	 'please confirm the password' => '请确认密码',
 	 'please input the captcha' => '请输入验证码',
+	 
+	 //user
+	 'add friends'		=> '添加为好友',
+	 'start a chat'		=> '开始会话',
+	 'authentication information'	=> '认证信息',
+	 'it is not signed yet'	=> '懒得还没有任何签名',
+	 'log in to view'	=> '登录查看',
+	 'join'				=> '加入',
+	 'recent statements'	=> '最近发帖',
+	 'recent answers'		=> '最近回贴',
+	 'browses'			=> '浏览',
+	 'in' => '在',
+	 'accumulate points'	=> '积分',
+	 'my post'			=> '我的帖子',
+	 
+
 ];

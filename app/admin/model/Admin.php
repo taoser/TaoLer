@@ -5,7 +5,6 @@ namespace app\admin\model;
 use think\Model;
 use think\facade\Db;
 use think\facade\Session;
-//use think\facade\Request;
 use think\model\concern\SoftDelete;
 
 class Admin extends Model
@@ -16,9 +15,22 @@ class Admin extends Model
     protected $defaultSoftDelete = 0;
 	
 	//管理员关联角色
+/*
     public function authGroup()
     {
         return $this->belongsTo('AuthGroup','auth_group_id','id');
+    }
+*/
+
+    //远程一对多管理员关联角色
+    public function adminGroup()
+    {
+        return $this->hasManyThrough('AuthGroup', 'AuthGroupAccess','uid','id','id','group_id');
+    }
+    //管理员关联角色分配表
+    public function authGroupAccess()
+    {
+        return $this->hasMany('AuthGroupAccess','uid','id');
     }
 	
 	//登陆校验

@@ -3,9 +3,6 @@
 namespace app\admin\model;
 
 use think\Model;
-use think\facade\Db;
-use think\facade\Session;
-use think\facade\Request;
 //use think\model\concern\SoftDelete;
 
 class MailServer extends Model

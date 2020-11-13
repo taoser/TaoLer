@@ -54,7 +54,7 @@ class User extends Model
         if($user['password'] == $data['password']){
 			//将用户数据写入Session
 			Session::set('user_id',$user['id']);
-			//Session::set('user_name',$user['name']);
+			Session::set('user_name',$user['name']);
 			if(isset($data['remember'])){
 				$salt = 'taoler';
 				//加密auth存入cookie
