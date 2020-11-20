@@ -49,10 +49,10 @@ class Notice extends AdminController
 		//写入信息库
 		$result = Message::sendMsg($sendId,$receveId,$data);
 		if($result){
-			event('Message');
+			//event('Message');
 			$res = ['code'=>0,'msg'=>'发布成功'];
 		} else {
-			$res = ['code'=>0,'msg'=>'发布失败'];
+			$res = ['code'=>-1,'msg'=>'发布失败'];
 		}
 		return json($res);
 	}

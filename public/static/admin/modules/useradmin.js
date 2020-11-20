@@ -472,7 +472,7 @@ layui.define(['table', 'form'], function(exports){
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 50, title: 'ID', align: 'center'}
-	  ,{field: 'sort', title: '排序',width: 60 , align: 'center',templet: '#rules-sort'}
+	  ,{field: 'sort', title: '排序',width: 60 , align: 'center',edit: 'text'}
       ,{field: 'title', title: '权限名', templet: '#rules-title'}
       ,{field: 'name', title: '权限地址', minWidth: 150}
       ,{field: 'icon', title: '图标'}

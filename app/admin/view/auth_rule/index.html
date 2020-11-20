@@ -10,20 +10,16 @@
           <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
         </div>
         <table id="LAY-user-auth-rule" lay-filter="LAY-user-auth-rule"></table>  
-		<script type="text/html" id="rules-sort">
-		<div class="layui-input-inline" style="width: 30px; high: 30">
-		{if condition="checkRuleButton('admin/AuthRule/sort')"}
-			<input type="text" name="sort"  autocomplete="off" placeholder="排序" dataid="{{d.id}}" lay-filter="sort" class="layui-input" value="{{d.sort}}">
-		{else /}<input type="text" placeholder="排序"  class="layui-input" value="{{d.sort}}">{/if}
-		</div>
-        </script>
+
 		<script type="text/html" id="rules-title">
 		<span >{{# if(d.level !==1){ }}|{{#  } }} {{d.title}}</span>
         </script>
+		
 		<script type="text/html" id="buttonAuth">
 		{if condition="checkRuleButton('admin/authrule/check')"}<input type="checkbox" name="status" lay-skin="switch" lay-filter="authcheck" lay-text="开启|关闭" {{#  if(d.status == 1){ }} checked {{#  } }} id="{{d.id}}" >
 		{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>
+		
 		<script type="text/html" id="menu">
 		 {{#  if(d.id == '1' | d.id == '2' | d.id == '9' | d.id == '10' ){ }}
 			<input type="checkbox" name="ishidden" lay-skin="primary"  checked disabled >
@@ -32,6 +28,7 @@
 			{else /}<input type="checkbox" title="禁用" disabled> {/if}
 		 {{#  } }}
         </script>
+		
         <script type="text/html" id="table-authrule-edit">
 		{if condition="checkRuleButton('admin/authrule/edit')"}
           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
@@ -67,37 +64,6 @@
     var authRuleDelete = "{:url('AuthRule/delete')}";
     var authRuleEdit = "{:url('AuthRule/edit')}";
 
-	//排序change方法
-	$(function(){
-		$('body').on('change','.layui-input',function(){
-		var id = $(this).attr('dataid'),
-			sort = $(this).val();
-			$.ajax({
-				type:'post',
-				url:"{:url('admin/AuthRule/sort')}",
-				data:{id:id,sort:sort},
-				dataType:'json',
-				success:function(data){
-					if(data.code == 0){
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						}
-						,function(){location.reload();}
-						);
-					} else {
-						layer.open({
-							title:'排序失败',
-							content:data.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			});
-		});
-		return false;
-	});
 </script>
   <script>
   layui.config({
@@ -118,6 +84,32 @@
         where: field
       });
     });
+	//排序
+	table.on('edit(LAY-user-auth-rule)',function(obj){
+		var data = obj.data; //得到所在行所有键值
+		$.ajax({
+				type:'post',
+				url:"{:url('admin/AuthRule/sort')}",
+				data:{id:data.id,sort:data.sort},
+				dataType:'json',
+				success:function(data){
+					if(data.code == 0){
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						}
+						)
+					} else {
+						layer.open({
+							title:'排序失败',
+							content:data.msg,
+							icon:5,
+							adim:6
+						})
+					}
+				}
+			});
+	});
 
 	//菜单控制
 	form.on('checkbox(menu-show)', function(data){

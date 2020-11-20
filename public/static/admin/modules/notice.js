@@ -71,6 +71,7 @@ layui.define(['table', 'form', 'layedit','upload'], function(exports){
 	//发布通知
 	 form.on('submit(notice-add)', function(data){	
 		var field = data.field;
+
 			$.ajax({
 				type:"post",
 				url:noticeAdd,
@@ -95,7 +96,7 @@ layui.define(['table', 'form', 'layedit','upload'], function(exports){
 			});
 			
 		$('#L_title').val('');
-		$('#L_content').val('');
+		
 		table.reload('notice-list'); //数据刷新	
 	return false;	
 	});
