@@ -48,7 +48,7 @@ class Article extends Model
 		if($result) {
 			return 1;
 		} else {
-			return '文章添加失败！';
+			return 'add_error';
 		}
 	}
 	
@@ -60,7 +60,7 @@ class Article extends Model
 		if($result) {
 			return 1;
 		} else {
-			return '文章修改失败！';
+			return 'edit_error';
 		}
 	}
 	

@@ -171,9 +171,10 @@ class Index extends BaseController
 			$lang = $language->select(input('language'));
 			if($lang){
 				return json(['code'=>0,'msg'=>'']);
+				//return Msg::success('')
 			}
 		}else {
-			return json(['code'=>Msg::get('error'),'msg'=>Msg::getMsg('illegal_request')]);
+			return Msg::error('illegal_request');
 		}
 	}
 

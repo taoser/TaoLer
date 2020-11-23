@@ -8,25 +8,25 @@
     <div class="layui-form layui-form-pane">
       <div class="layui-tab layui-tab-brief" lay-filter="user">
         <ul class="layui-tab-title">
-          <li class="layui-this">发表新帖<!-- 编辑帖子 --></li>
+          <li class="layui-this">{:lang('add post')}<!-- 编辑帖子 --></li>
         </ul>
         <div class="layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
           <div class="layui-tab-item layui-show">
 
               <div class="layui-row layui-col-space15 layui-form-item">
                 <div class="layui-col-md3">
-                  <label class="layui-form-label">所在专栏</label>
+                  <label class="layui-form-label">{:lang('special column')}</label>
                   <div class="layui-input-block">
                     <select lay-verify="required" name="cate_id" lay-filter="column"> 
                       <option></option>
 					  {volist name="cateList" id="cate"}
-                      <option value="{$cate.id}">{$cate.catename}</option> 
+                      <option value="{$cate.id}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
 					  {/volist}
                     </select>
                   </div>
                 </div>
                 <div class="layui-col-md8">
-                  <label for="L_title" class="layui-form-label">标题</label>
+                  <label for="L_title" class="layui-form-label">{:lang('title')}</label>
                   <div class="layui-input-block">
                     <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input">
 					<input type="hidden" id="L_title_color"  name="title_color" autocomplete="off" class="layui-input">
@@ -68,26 +68,26 @@
               </div>
               <div class="layui-form-item layui-form-text">
                 <div class="layui-input-block">
-                  <textarea id="L_content" name="content" required lay-verify="required" placeholder="详细描述" class="layui-textarea fly-editor" style="height: 260px;"></textarea>
+                  <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea fly-editor" style="height: 260px;"></textarea>
                 </div>
               </div>
 			  <div class="layui-form-item">
                 <div class="layui-inline">
-                  <label class="layui-form-label">上传附件</label>
+                  <label class="layui-form-label">{:lang('enclosure')}</label>
                   <div class="layui-input-inline" style="width: 190px;">
                    <input type="text" class="layui-input" name="upzip" value="" placeholder="zip,jpg格式" title="上传附件"/>
                   </div>
-				  <button type="button" class="layui-btn" id="zip-button"><i class="layui-icon"></i>上传文件</button>
+				  <button type="button" class="layui-btn" id="zip-button"><i class="layui-icon"></i>{:lang('uploads')}</button>
                 </div>
               </div>
 			  
 			  <div class="layui-form-item">
                 <div class="layui-inline">
-                  <label class="layui-form-label">添加标签</label>
+                  <label class="layui-form-label">{:lang('add tags')}</label>
                   <div class="layui-input-inline" style="width: 190px;">
                    <input type="text" class="layui-input" name="tags" placeholder="多个标签用,号隔开" title="添加标签"/>
                   </div>
-                 <button type="button" class="layui-btn" id="article-tags-button">添加</button> 
+                 <button type="button" class="layui-btn" id="article-tags-button">{:lang('add')}</button>
                 </div>
               </div>
 			  <div class="layui-form-item">
@@ -111,16 +111,16 @@
                 </div>
               </div-->
               <div class="layui-form-item">
-                <label for="L_vercode" class="layui-form-label">验证码</label>
+                <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input">
+                  <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
                 </div>
                 <div >
                   <span style="color: #c00;"><img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();" style="float:left; cursor:pointer;"  alt="captcha" /></span>
                 </div>
               </div>
               <div class="layui-form-item">
-                <button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="add">立即发布</button>
+                <button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="add">{:lang('post now')}</button>
               </div>
 
           </div>
@@ -210,7 +210,7 @@
                   data:{"cate_id":field.cate_id,"title":field.title,"title_color":field.title_color,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha},
                   dataType:"json",
                   success:function (data){
-                      if (data.code == 1) {
+                      if (data.code == 0) {
                           layer.msg(data.msg,{
                               icon:6,
                               time:2000

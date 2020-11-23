@@ -30,6 +30,7 @@ class Login extends BaseController
 			$url = '/';
 		}
 		 Cookie::set('url',$url);
+
         if(Request::isAjax()) {
 			$data = Request::param();
 

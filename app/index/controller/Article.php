@@ -11,9 +11,6 @@ use app\common\model\Comment;
 use app\common\model\Article as ArticleModel;
 use think\exception\ValidateException;
 use taoler\com\Message;
-use app\common\model\Cate;
-use app\common\model\User;
-use app\common\model\Collection;
 use think\facade\Lang;
 use app\common\lib\Msg;
 
@@ -236,108 +233,68 @@ class Article extends BaseController
 		return json($res);
 	}
 
-    //添加文章
+    /**
+     * 添加帖子文章
+     * @return string|\think\Response|\think\response\Json|void
+     */
     public function add()
-	{
-		if(Request::isAjax()){
-			$data = Request::only(['cate_id','title','title_color','user_id','content','upzip','tags','captcha']);
-			$validate = new \app\common\validate\Article; //调用验证器
-			$result = $validate->scene('Artadd')->check($data); //进行数据验证		
-			if(true !==$result){	
-				return $this->error($validate->getError());
-			} else {	
-				$article = new \app\common\model\Article;
-				$result = $article->add($data);
-				if($result == 1) {
-					$aid = Db::name('article')->max('id');
-                    $link = (string) url('article/detail',['id'=> $aid]);
-					//清除文章tag缓存
-					Cache::tag('tagArtDetail')->clear();
-					
-                    //return json(['code'=>1,'msg'=>'发布成功','url'=> $link]);
-					return json(['code'=>Msg::getCode('success'),'msg'=>Msg::getMsg('add_success'),'url'=> $link]);
-				} else {
-					$this->error($result);
-				}
-			}
-		}
-		return View::fetch();
-    }
-	
-	//上传附件
-    public function upzip()
-	{
-		$file = request()->file('file');
-		try {
-			validate(['file'=>'fileSize:1024000|fileExt:jpg,zip'])
-            ->check(['file'=>$file]);
-			$savename = \think\facade\Filesystem::disk('public')->putFile('article_zip',$file);
-		} catch (ValidateException $e) {
-			return json(['status'=>-1,'msg'=>$e->getMessage()]);
-		}
-		$upload = Config::get('filesystem.disks.public.url');
-
-		if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
-        }else{
-            $res = ['status'=>-1,'msg'=>'上传错误'];
+    {
+        if (Request::isAjax()) {
+            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'captcha']);
+            $validate = new \app\common\validate\Article; //调用验证器
+            $result = $validate->scene('Artadd')->check($data); //进行数据验证
+            if (true !== $result) {
+                return Msg::error($validate->getError());
+            }
+            $result = ArticleModel::add($data);
+            if ($result == 1) {
+                $aid = Db::name('article')->max('id');
+                $link = (string)url('article/detail', ['id' => $aid]);
+                //清除文章tag缓存
+                Cache::tag('tagArtDetail')->clear();
+                $res = Msg::success('add_success', $link);
+            } else {
+                $res = Msg::error('add_error');
+            }
+            return $res;
         }
-	return json($res);
+        return View::fetch();
     }
-	
-	//附件下载
-	public function download($id)
-	{
-		$zipdir = Db::name('article')->where('id',$id)->value('upzip');
-		$zip = substr($zipdir,1);
-			return download($zip,'my');
-	}
-	
-	//添加tag
-	public function tags()
-	{
-		$data = Request::only(['tags']);
-		$att = explode(',',$data['tags']);
-		$tags = [];
-			foreach($att as $v){
-				if ($v !='') {
-				$tags[] = $v;
-				}
-			}
-		 return json(['code'=>0,'data'=>$tags]);
-	}
 
-    //编辑文章
+    /**
+     * 编辑文章
+     * @param $id
+     * @return string|\think\Response|\think\response\Json|void
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function edit($id)
     {
-		$article = Db::name('article')->find($id);
-		
+		$article = ArticleModel::find($id);
+		//编辑
 		if(Request::isAjax()){
 			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','tags','captcha']);
 			$validate = new \app\common\validate\Article(); //调用验证器
 			$res = $validate->scene('Artadd')->check($data); //进行数据验证
 			
 			if(true !==$res){
-				return $this->error($validate->getError());
+                return Msg::error($validate->getError());
 			} else {
-				$article = new \app\common\model\Article;
 				$result = $article->edit($data);
 				if($result == 1) {
-                    //删除缓存显示编辑后内容
+                    //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
                     $link = (string) url('article/detail',['id'=> $id]);
-					//return json(['code'=>0,'msg'=>'修改成功','url'=> $link]);
-					 return Msg::show('error','edit_success',$link);
-				
-					 
+					$editRes = Msg::success('edit_success',$link);
 				} else {
-				$this->error($result);
+                    $editRes = Msg::error($result);
 				}
+				return $editRes;
 			}
 		}
-		
-		$tag = Db::name('article')->where('id',$id)->value('tags');
+		//查询标签
+		$tag = $article->tags;
 		$attr = explode(',',$tag);
 		$tags = [];
 			foreach($attr as $key=>$v){
@@ -390,6 +347,49 @@ class Article extends BaseController
 	return json($res);
     }
 
+    //上传附件
+    public function upzip()
+    {
+        $file = request()->file('file');
+        try {
+            validate(['file'=>'fileSize:1024000|fileExt:jpg,zip'])
+                ->check(['file'=>$file]);
+            $savename = \think\facade\Filesystem::disk('public')->putFile('article_zip',$file);
+        } catch (ValidateException $e) {
+            return json(['status'=>-1,'msg'=>$e->getMessage()]);
+        }
+        $upload = Config::get('filesystem.disks.public.url');
+
+        if($savename){
+            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
+            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
+        }else{
+            $res = ['status'=>-1,'msg'=>'上传错误'];
+        }
+        return json($res);
+    }
+
+    //附件下载
+    public function download($id)
+    {
+        $zipdir = Db::name('article')->where('id',$id)->value('upzip');
+        $zip = substr($zipdir,1);
+        return download($zip,'my');
+    }
+
+    //添加tag
+    public function tags()
+    {
+        $data = Request::only(['tags']);
+        $att = explode(',',$data['tags']);
+        $tags = [];
+        foreach($att as $v){
+            if ($v !='') {
+                $tags[] = $v;
+            }
+        }
+        return json(['code'=>0,'data'=>$tags]);
+    }
 	
 	//文章置顶，状态
 	public function jieset(){

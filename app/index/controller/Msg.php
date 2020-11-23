@@ -1,7 +1,7 @@
 <?php
 declare (strict_types = 1);
 
-namespace app\common\lib;
+namespace app\index\controller;
 
 use think\facade\Lang;
 
@@ -20,12 +20,12 @@ class Msg
             'error'             => 1,
             'add_success'       => Lang::get('add success'),
             'add_error'         => Lang::get('add error'),
-            'edit_success'      => Lang::get('edit success'),
+            'edit_success'      => Lang::get('编辑成功1'),
             'edit_error'        => Lang::get('edit error'),
             'delete_success'    => Lang::get('delete success'),
             'delete_error'      => Lang::get('delete error'),
-            'upload_success'   => Lang::get('upload success'),
-            'upload_error'     => Lang::get('upload error'),
+            'uploade_success'   => Lang::get('uploade success'),
+            'uploade_error'     => Lang::get('uploade error'),
             'upgrade_success'   => Lang::get('upgrade success'),
             'upgrade_error'     => Lang::get('upgrade error'),
             'illegal_request'   => Lang::get('illegal request'),
@@ -52,7 +52,22 @@ class Msg
      * @return mixed string
      */
 	public static function getMsg(string $strMsg){
-		foreach(self::setCodes() as $k => $v){
+        $res = [
+            'success'           => 0,
+            'error'             => 1,
+            'add_success'       => Lang::get('add success'),
+            'add_error'         => Lang::get('add error'),
+            'edit_success'      => Lang::get('edit success'),
+            'edit_error'        => Lang::get('edit error'),
+            'delete_success'    => Lang::get('delete success'),
+            'delete_error'      => Lang::get('delete error'),
+            'uploade_success'   => Lang::get('uploade success'),
+            'uploade_error'     => Lang::get('uploade error'),
+            'upgrade_success'   => Lang::get('upgrade success'),
+            'upgrade_error'     => Lang::get('upgrade error'),
+            'illegal_request'   => Lang::get('illegal request'),
+        ];
+		foreach($res as $k => $v){
 			if($k == $strMsg){
 				return $v;
 			}
