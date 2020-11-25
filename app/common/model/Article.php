@@ -3,6 +3,7 @@ namespace app\common\model;
 
 use think\Model;
 use think\model\concern\SoftDelete;
+use think\facade\Cache;
 
 class Article extends Model
 {
@@ -70,13 +71,85 @@ class Article extends Model
 		$arts = Article::all();
 		return $arts;
 	}
-	
-	
-	//置顶文章
-	public function artTop()
-	{
-		$artTop = Article::where('status',1)->where('is_top',1)->select();
-		
-		return $artTop;
-	}
+
+    /**
+     * 获取置顶文章
+     * @return mixed|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getArtTop($pnum)
+    {
+        $artTop = Cache::get('arttop');
+        if (!$artTop) {
+            $artTop = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,jie,pv')->where(['is_top' => 1, 'status' => 1, 'delete_time' => 0])->with([
+                'cate' => function ($query) {
+                    $query->where('delete_time', 0)->field('id,catename,ename');
+                },
+                'user' => function ($query) {
+                    $query->field('id,name,nickname,user_img,area_id,vip');
+                }
+            ])->withCount(['comments'])->order('create_time', 'desc')->limit($pnum)->select();
+            Cache::tag('tagArtDetail')->set('arttop', $artTop, 60);
+        }
+        return $artTop;
+    }
+
+    /**
+     * 获取首页文章列表，显示20个。
+     * @return mixed|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getArtList($pnum)
+    {
+        $artList = Cache::get('artlist');
+		if(!$artList){
+			$artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_hot,jie,pv')
+            ->with([
+            'cate' => function($query){
+                $query->where('delete_time',0)->field('id,catename,ename');
+            },
+			'user' => function($query){
+                $query->field('id,name,nickname,user_img,area_id,vip');
+			} ])
+            ->withCount(['comments'])->where(['status'=>1,'delete_time'=>0])->order('create_time','desc')->limit($pnum)->select();
+			Cache::tag('tagArt')->set('artlist',$artList,60);
+		}
+		return $artList;
+    }
+
+    //热议文章
+    public function getArtHot($pnum)
+    {
+        $artHot = $this::field('id,title')
+            ->withCount('comments')
+            ->where(['status'=>1,'delete_time'=>0])
+            ->whereTime('create_time', 'year')
+            ->order('comments_count','desc')
+            ->limit($pnum)
+            ->withCache(60)->select();
+        return $artHot;
+    }
+
+    //详情
+    public function getArtDetail($id)
+    {
+        $article = Cache::get('article_'.$id);
+        if(!$article){
+            //查询文章
+            $article = $this::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,upzip,tags,title_color,create_time')->where('status',1)->with([
+                'cate' => function($query){
+                    $query->where('delete_time',0)->field('id,catename,ename');
+                },
+                'user' => function($query){
+                    $query->field('id,name,nickname,user_img,area_id,vip');
+                }
+            ])->find($id);
+            Cache::tag('tagArtDetail')->set('article_'.$id,$article,3600);
+        }
+        return $article;
+    }
 }

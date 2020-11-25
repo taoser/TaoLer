@@ -12,7 +12,7 @@ use app\common\model\Article as ArticleModel;
 use think\exception\ValidateException;
 use taoler\com\Message;
 use think\facade\Lang;
-use app\common\lib\Msg;
+use app\common\lib\Msgres;
 
 class Article extends BaseController
 {
@@ -149,28 +149,19 @@ class Article extends BaseController
 	//文章详情页
     public function detail($id)
     {
-		$article = Cache::get('article_'.$id);
-		
-		if(!$article){
-			//查询文章
-		$article = ArticleModel::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,upzip,tags,title_color,create_time')->where('status',1)->with([
-            'cate' => function($query){
-				$query->where('delete_time',0)->field('id,catename,ename');
-            },
-			'user' => function($query){
-				$query->field('id,name,nickname,user_img,area_id,vip');
-			}
-        ])->find($id);
-		Cache::tag('tagArtDetail')->set('article_'.$id,$article,3600);
-		}
-		if(!$article){
+        $article = new ArticleModel();
+        $artDetail = $article->getArtDetail($id);
+		if(!$artDetail){
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '异常消息');
 		}
-		$comments = $article->comments()->where('status',1)->order(['cai'=>'asc','create_time'=>'asc'])->paginate(10);
-		$article->inc('pv')->update();
+		$comments = $artDetail->comments()->where('status',1)->order(['cai'=>'asc','create_time'=>'asc'])->paginate(10);
+        //$comment = new \app\common\model\Comment();
+        //$comments = $comment->getComment($id);
+		//dump($comments);
+        $artDetail->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
-		$download = $article->upzip ? download($article->upzip,'file') : '';
+		$download = $artDetail->upzip ? download($artDetail->upzip,'file') : '';
 
 /*		
 		$nt = time();
@@ -188,13 +179,13 @@ class Article extends BaseController
 */		
 		
 		//	热议文章
-		$artHot = ArticleModel::field('id,title')->withCount('comments')->where(['status'=>1,'delete_time'=>0])->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
+		$artHot = $article->getArtHot(10);
 		//文章广告
 		$ad_article = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',4)->whereTime('slid_over','>=',time())->select();
 		//通用右栏
 		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
 
-		View::assign(['article'=>$article,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm,$download]);
+		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm,$download]);
 		return View::fetch();
     }
 	
@@ -244,17 +235,18 @@ class Article extends BaseController
             $validate = new \app\common\validate\Article; //调用验证器
             $result = $validate->scene('Artadd')->check($data); //进行数据验证
             if (true !== $result) {
-                return Msg::error($validate->getError());
+                return Msgres::error($validate->getError());
             }
-            $result = ArticleModel::add($data);
+            $article = new ArticleModel();
+            $result = $article->add($data);
             if ($result == 1) {
                 $aid = Db::name('article')->max('id');
                 $link = (string)url('article/detail', ['id' => $aid]);
                 //清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
-                $res = Msg::success('add_success', $link);
+                $res = Msgres::success('add_success', $link);
             } else {
-                $res = Msg::error('add_error');
+                $res = Msgres::error('add_error');
             }
             return $res;
         }
@@ -279,16 +271,16 @@ class Article extends BaseController
 			$res = $validate->scene('Artadd')->check($data); //进行数据验证
 			
 			if(true !==$res){
-                return Msg::error($validate->getError());
+                return Msgres::error($validate->getError());
 			} else {
 				$result = $article->edit($data);
 				if($result == 1) {
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
                     $link = (string) url('article/detail',['id'=> $id]);
-					$editRes = Msg::success('edit_success',$link);
+					$editRes = Msgres::success('edit_success',$link);
 				} else {
-                    $editRes = Msg::error($result);
+                    $editRes = Msgres::error($result);
 				}
 				return $editRes;
 			}

@@ -8,10 +8,7 @@ use think\facade\Db;
 use think\facade\Cache;
 use app\common\model\Article;
 use app\common\model\User;
-use app\common\model\Cate;
-use app\common\model\Comment;
-use think\facade\Cookie;
-use app\common\lib\Msg;
+use app\common\lib\Msgres;
 
 class Index extends BaseController
 {	
@@ -19,42 +16,16 @@ class Index extends BaseController
     {
 		$types = input('type');
 		//幻灯
-		$sliders = Cache::get('slider');
-		if(!$sliders){
-			$sliders = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',1)->whereTime('slid_over','>=',time())->select();
-			Cache::set('slider',$sliders,3600);
-		}
-		
+        $slider = new \app\common\model\Slider();
+        $sliders = $slider->getSliderList();
+
+        $article = new Article();
 		//置顶文章
-		$artTop = Cache::get('arttop');
-		if(!$artTop){
-			$artTop = Article::field('id,title,title_color,cate_id,user_id,create_time,is_top,jie,pv')->where(['is_top'=>1,'status'=>1,'delete_time'=>0])->with([
-            'cate' => function($query){
-				$query->where('delete_time',0)->field('id,catename,ename');
-            },
-			'user' => function($query){
-				$query->field('id,name,nickname,user_img,area_id,vip');
-			}
-			])->withCount(['comments'])->order('create_time','desc')->limit(5)->select();
-			Cache::tag('tagArtDetail')->set('arttop',$artTop,60);
-		}
-		
-		//首页文章显示20条
-		$artList = Cache::get('artlist');
-		if(!$artList){
-			$artList = Article::field('id,title,title_color,cate_id,user_id,create_time,is_hot,jie,pv')->with([
-            'cate' => function($query){
-				$query->where('delete_time',0)->field('id,catename,ename');
-            },
-			'user' => function($query){
-				$query->field('id,name,nickname,user_img,area_id,vip');
-			}
-			])->withCount(['comments'])->where(['status'=>1,'delete_time'=>0])->order('create_time','desc')->limit(20)->select();
-			Cache::tag('tagArt')->set('artlist',$artList,60);
-		}
-		
-		//热议文章
-		$artHot = Article::field('id,title')->withCount('comments')->where(['status'=>1,'delete_time'=>0])->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->withCache(60)->select();
+		$artTop = $article->getArtTop(5);
+        //首页文章列表,显示20个
+        $artList = $article->getArtList(20);
+        //热议文章
+        $artHot = $article->getArtHot(10);
 
 		//首页赞助
 		$ad_index = Cache::get('adindex');
@@ -174,7 +145,7 @@ class Index extends BaseController
 				//return Msg::success('')
 			}
 		}else {
-			return Msg::error('illegal_request');
+			return Msgres::error('illegal_request');
 		}
 	}
 
