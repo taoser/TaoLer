@@ -11,7 +11,6 @@ use app\common\model\Comment;
 use app\common\model\Article as ArticleModel;
 use think\exception\ValidateException;
 use taoler\com\Message;
-use think\facade\Lang;
 use app\common\lib\Msgres;
 
 class Article extends BaseController
@@ -23,10 +22,10 @@ class Article extends BaseController
 	//文章分类
     public function cate(){
 
-		$where =[];
 		//获取分类ID
 		$ename = Request::param('ename');
-		$type = Request::param('type');
+		$type = Request::param('type') ?? 'all';
+
 		//分页伪静态
 		$str = Request::baseUrl();	//不带参数在url
 		$patterns = "/\d+/"; //数字正则
@@ -52,91 +51,13 @@ class Article extends BaseController
 				$url = $str.'/';
 			}
 		}
-
-		$cateId = Db::name('cate')->where('ename',$ename)->value('id');
-		if($cateId){
-			$where = ['cate_id' => $cateId];
-		} else {
-			if($ename != 'all'){
-				// 抛出 HTTP 异常
-				throw new \think\exception\HttpException(404, '异常消息');
-			}
-		}
-		
-		$artList = Cache::get('arts'.$ename.$type.$page);
-		if(!$artList){
-			switch ($type) {
-				//查询文章,15个分1页
-                case 'jie':
-				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
-					'cate' => function($query){
-						$query->where('delete_time',0)->field('id,catename,ename');
-					},
-					'user' => function($query){
-						$query->field('id,name,nickname,user_img,area_id,vip');
-					}
-				])->withCount(['comments'])->where(['status'=>1,'jie'=>1])->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
-				->paginate([
-					'list_rows' => 15,	
-					'page' => $page,
-					'path' =>$url.'[PAGE]'.$suffix
-				]);
-				break;
-				
-				case 'hot':
-				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
-					'cate' => function($query){
-						$query->where('delete_time',0)->field('id,catename,ename');
-					},
-					'user' => function($query){
-						$query->field('id,name,nickname,user_img,area_id,vip');
-					}
-				])->withCount(['comments'])->where('status',1)->where($where)->where('is_hot',1)->order(['is_top'=>'desc','create_time'=>'desc'])
-				->paginate([
-					'list_rows' => 15,	
-					'page' => $page,
-					'path' =>$url.'[PAGE]'.$suffix
-				]);
-				break;
-				
-				case 'top':
-				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
-					'cate' => function($query){
-						$query->where('delete_time',0)->field('id,catename,ename');
-					},
-					'user' => function($query){
-						$query->field('id,name,nickname,user_img,area_id,vip');
-					}
-				])->withCount(['comments'])->where('status',1)->where($where)->where('is_top',1)->order(['is_top'=>'desc','create_time'=>'desc'])
-				->paginate([
-					'list_rows' => 15,	
-					'page' => $page,
-					'path' =>$url.'[PAGE]'.$suffix
-				]);
-				break;
-				
-				default:
-				$artList = ArticleModel::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
-					'cate' => function($query){
-						$query->where('delete_time',0)->field('id,catename,ename');
-					},
-					'user' => function($query){
-						$query->field('id,name,nickname,user_img,area_id,vip');
-					}
-				])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
-				->paginate([
-					'list_rows' => 15,	
-					'page' => $page,
-					'path' =>$url.'[PAGE]'.$suffix
-				]);
-				break;
-			}
-			Cache::tag('tagArtDetail')->set('arts'.$ename.$type.$page,$artList,600);
-		}
+        //分类列表
+        $article = new ArticleModel();
+		$artList = $article->getCateList($ename,$type,$page,$url,$suffix);
 		
 		
 		//	热议文章
-		$artHot = ArticleModel::field('id,title')->withCount('comments')->where(['status'=>1,'delete_time'=>0])->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
+		$artHot = $article->getArtHot(10);
 		//分类右栏广告
 		$ad_cate = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',5)->whereTime('slid_over','>=',time())->select();
 		//通用右栏
@@ -305,11 +226,11 @@ class Article extends BaseController
 		$article = ArticleModel::find(input('id'));
 		$result = $article->together(['comments'])->delete();
 		if($result) {
-			$res = ['code'=>0,'msg'=>'删除文章成功','url'=>'/index/user/post'];
+		    $res = Msgres::success('delete_success');
 		} else {
-			$res = ['code'=>-1,'msg'=>'删除文章失败'];
+			$res = Msgres::error('delete_error');
 		}
-		return json($res);
+		return $res;
 	}
 	
 	//文本编辑器图片上传

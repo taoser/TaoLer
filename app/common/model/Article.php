@@ -1,4 +1,6 @@
 <?php
+declare (strict_types = 1);
+
 namespace app\common\model;
 
 use think\Model;
@@ -40,9 +42,13 @@ class Article extends Model
 	{
 		return $this->belongsTo('User','user_id','id');
 	}
-	
-	//文章添加
-	public function add($data)
+
+    /**
+     * 添加
+     * @param array $data
+     * @return int|string
+     */
+	public function add(array $data)
 	{
 		$result = $this->save($data);
 
@@ -52,9 +58,16 @@ class Article extends Model
 			return 'add_error';
 		}
 	}
-	
-	//文章编辑
-	public function edit($data)
+
+    /**
+     * 编辑
+     * @param array $data
+     * @return int|string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+	public function edit(array $data)
 	{
 		$article = $this->find($data['id']);
 		$result = $article->save($data);
@@ -64,22 +77,16 @@ class Article extends Model
 			return 'edit_error';
 		}
 	}
-	
-	//文章
-	public function detail()
-	{
-		$arts = Article::all();
-		return $arts;
-	}
 
     /**
      * 获取置顶文章
+     * @param int $num 列表数量
      * @return mixed|\think\Collection
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getArtTop($pnum)
+    public function getArtTop(int $num)
     {
         $artTop = Cache::get('arttop');
         if (!$artTop) {
@@ -90,20 +97,21 @@ class Article extends Model
                 'user' => function ($query) {
                     $query->field('id,name,nickname,user_img,area_id,vip');
                 }
-            ])->withCount(['comments'])->order('create_time', 'desc')->limit($pnum)->select();
+            ])->withCount(['comments'])->order('create_time', 'desc')->limit($num)->select();
             Cache::tag('tagArtDetail')->set('arttop', $artTop, 60);
         }
         return $artTop;
     }
 
     /**
-     * 获取首页文章列表，显示20个。
+     * 获取首页文章列表
+     * @param int $num 列表显示数量
      * @return mixed|\think\Collection
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getArtList($pnum)
+    public function getArtList(int $num)
     {
         $artList = Cache::get('artlist');
 		if(!$artList){
@@ -115,27 +123,41 @@ class Article extends Model
 			'user' => function($query){
                 $query->field('id,name,nickname,user_img,area_id,vip');
 			} ])
-            ->withCount(['comments'])->where(['status'=>1,'delete_time'=>0])->order('create_time','desc')->limit($pnum)->select();
+            ->withCount(['comments'])->where(['status'=>1,'delete_time'=>0])->order('create_time','desc')->limit($num)->select();
 			Cache::tag('tagArt')->set('artlist',$artList,60);
 		}
 		return $artList;
     }
 
-    //热议文章
-    public function getArtHot($pnum)
+    /**
+     * 热点文章
+     * @param int $num 热点列表数量
+     * @return \think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getArtHot(int $num)
     {
         $artHot = $this::field('id,title')
             ->withCount('comments')
             ->where(['status'=>1,'delete_time'=>0])
             ->whereTime('create_time', 'year')
             ->order('comments_count','desc')
-            ->limit($pnum)
+            ->limit($num)
             ->withCache(60)->select();
         return $artHot;
     }
 
-    //详情
-    public function getArtDetail($id)
+    /**
+     * 获取详情
+     * @param int $id 文章id
+     * @return array|mixed|Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getArtDetail(int $id)
     {
         $article = Cache::get('article_'.$id);
         if(!$article){
@@ -152,4 +174,102 @@ class Article extends Model
         }
         return $article;
     }
+
+    /**
+     * 获取分类列表
+     * @param string $ename 分类英文名
+     * @param string $type  all\top\hot\jie 分类类型
+     * @param int $page 页面
+     * @param string $url
+     * @param string $suffix
+     * @return mixed|\think\Paginator
+     * @throws \think\db\exception\DbException
+     */
+    public function getCateList(string $ename, string $type, int $page, string $url, string $suffix)
+    {
+        $where = [];
+        $cateId = Cate::where('ename',$ename)->value('id');
+        if($cateId){
+            $where = ['cate_id' => $cateId];
+        } else {
+            if($ename != 'all'){
+                // 抛出 HTTP 异常
+                throw new \think\exception\HttpException(404, '异常消息');
+            }
+        }
+
+        $artList = Cache::get('arts'.$ename.$type.$page);
+        if(!$artList){
+            switch ($type) {
+                //查询文章,15个分1页
+                case 'jie':
+                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
+                        'cate' => function($query){
+                            $query->where('delete_time',0)->field('id,catename,ename');
+                        },
+                        'user' => function($query){
+                            $query->field('id,name,nickname,user_img,area_id,vip');
+                        }
+                    ])->withCount(['comments'])->where(['status'=>1,'jie'=>1])->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
+                        ->paginate([
+                            'list_rows' => 15,
+                            'page' => $page,
+                            'path' =>$url.'[PAGE]'.$suffix
+                        ]);
+                    break;
+
+                case 'hot':
+                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
+                        'cate' => function($query){
+                            $query->where('delete_time',0)->field('id,catename,ename');
+                        },
+                        'user' => function($query){
+                            $query->field('id,name,nickname,user_img,area_id,vip');
+                        }
+                    ])->withCount(['comments'])->where('status',1)->where($where)->where('is_hot',1)->order(['is_top'=>'desc','create_time'=>'desc'])
+                        ->paginate([
+                            'list_rows' => 15,
+                            'page' => $page,
+                            'path' =>$url.'[PAGE]'.$suffix
+                        ]);
+                    break;
+
+                case 'top':
+                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
+                        'cate' => function($query){
+                            $query->where('delete_time',0)->field('id,catename,ename');
+                        },
+                        'user' => function($query){
+                            $query->field('id,name,nickname,user_img,area_id,vip');
+                        }
+                    ])->withCount(['comments'])->where('status',1)->where($where)->where('is_top',1)->order(['is_top'=>'desc','create_time'=>'desc'])
+                        ->paginate([
+                            'list_rows' => 15,
+                            'page' => $page,
+                            'path' =>$url.'[PAGE]'.$suffix
+                        ]);
+                    break;
+
+                default:
+                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
+                        'cate' => function($query){
+                            $query->where('delete_time',0)->field('id,catename,ename');
+                        },
+                        'user' => function($query){
+                            $query->field('id,name,nickname,user_img,area_id,vip');
+                        }
+                    ])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
+                        ->paginate([
+                            'list_rows' => 15,
+                            'page' => $page,
+                            'path' =>$url.'[PAGE]'.$suffix
+                        ]);
+                    break;
+            }
+            Cache::tag('tagArtDetail')->set('arts'.$ename.$type.$page,$artList,600);
+        }
+        return $artList;
+    }
+
+
 }

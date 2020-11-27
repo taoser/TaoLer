@@ -3,6 +3,7 @@ namespace app\common\model;
 
 use think\Model;
 use think\model\concern\SoftDelete;
+use think\facade\Cache;
 
 class Comment extends Model
 {
@@ -32,6 +33,35 @@ class Comment extends Model
     {
 	    $comments = $this::where(['article_id'=>$id,'status'=>1])->order(['cai'=>'asc','create_time'=>'asc'])->paginate(10);
 	    return $comments;
+    }
+
+    //回帖榜
+    public function reply($num)
+    {
+        $res = Cache::get('reply');
+        if(!$res){
+            $user = User::withCount('comments')->order(['comments_count'=>'desc','last_login_time'=>'desc'])->limit($num)->select();
+            if($user)
+            {
+                $res['status'] = 0;
+                $res['data'] = array();
+                foreach ($user as $key=>$v) {
+
+                    $u['uid'] = (string) url('user/home',['id'=>$v['id']]);
+                    $u['count(*)'] = $v['comments_count'];
+                    if($v['nickname'])
+                    {
+                        $u['user'] = ['username'=>$v['nickname'],'avatar'=>$v['user_img']];
+                    } else {
+                        $u['user'] = ['username'=>$v['name'],'avatar'=>$v['user_img']];
+                    }
+                    $res['data'][] = $u;
+                }
+            }
+            Cache::set('reply',$res,3600);
+        }
+
+        return json($res);
     }
 	
 }

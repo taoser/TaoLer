@@ -1,5 +1,5 @@
 <div class="fly-panel-title fly-filter">
-	<a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all' ,'type' => ''])} " {if condition="$type eq ''" } class="layui-this" {/if} >{:lang('all')}</a>
+	<a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all' ,'type' => 'all'])} " {if condition="$type eq 'all'" } class="layui-this" {/if} >{:lang('all')}</a>
 	<span class="fly-mid"></span>
 	<a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all','type' => 'jie'])} " {if condition="$type eq 'jie'" } class="layui-this" {/if} >{:lang('end')}</a>
 	<span class="fly-mid"></span>

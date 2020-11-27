@@ -2,6 +2,7 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
+use think\App;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -11,7 +12,14 @@ use app\common\model\User;
 use app\common\lib\Msgres;
 
 class Index extends BaseController
-{	
+{
+    /**
+     * 首页
+     * @return string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function index()
     {
 		$types = input('type');
@@ -66,63 +74,31 @@ class Index extends BaseController
 	//回帖榜
 	public function reply()
 	{
-		$res = Cache::get('reply');
-		if(!$res){		
-			$user = User::withCount('comments')->order(['comments_count'=>'desc','last_login_time'=>'desc'])->limit(20)->select();
-			if($user)
-			{	
-				$res['status'] = 0;
-				$res['data'] = array();
-					foreach ($user as $key=>$v) {
-						
-						$u['uid'] = (string) url('user/home',['id'=>$v['id']]);
-						$u['count(*)'] = $v['comments_count'];
-						if($v['nickname'])
-						{
-							$u['user'] = ['username'=>$v['nickname'],'avatar'=>$v['user_img']];
-						} else {
-							$u['user'] = ['username'=>$v['name'],'avatar'=>$v['user_img']];
-						}
-						$res['data'][] = $u;					
-					}					
-			}
-			Cache::set('reply',$res,3600);
-		}
-	return json($res);		
+        $comment = new \app\common\model\Comment();
+        return $comment->reply(20);
 	}
 
 	//搜索功能
 	public function search()
 	{
-        //全局查询条件
-        $map = []; //所有的查询条件封装到数组中
-        //条件1：
-        $map[] = ['status','=',1]; //这里等号不能省略
+        $ser = Request::only(['keywords']);
 
-        //实现搜索功能
-        $keywords = Request::only(['keywords']);
-		//var_dump($keywords['keywords']);
-        if(!empty($keywords['keywords'])){
-			//条件2
-            $map[] = ['title','like','%'.$keywords['keywords'].'%'];
-			$artList = Article::where($map)->withCount('comments')->order('create_time','desc')->paginate(10);
-			$counts = $artList->count(); 
-			$searchs = [
-				'artList' => $artList,
-				'keywords' => $keywords['keywords'],
-				'counts' => $counts
-			];	
-					
-        } else {
-			return response('输入非法');
-		}
-		View::assign($searchs);
+	    $search = new \app\index\controller\Search();
+	    $artList = $search->getSearch($ser['keywords']);
+        $counts = $artList->count();
+        $searchs = [
+            'artList' => $artList,
+            'keywords' => $ser['keywords'],
+            'counts' => $counts
+        ];
+
 		//友情链接
 		$friend_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>6])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
-		
-		//	查询热议
-		$artHot = Article::withCount('comments')->field('title,comments_count')->where('status',1)->whereTime('create_time', 'year')->order('comments_count','desc')->limit(10)->select();
-		
+        //	查询热议
+		$article = new Article();
+		$artHot = $article->getArtHot(10);
+
+        View::assign($searchs);
 		View::assign(['flinks'=>$friend_links,'artHot'=>$artHot]);
 		return View::fetch('search');
 	}
@@ -141,8 +117,7 @@ class Index extends BaseController
 			$language = new \app\common\controller\Language;
 			$lang = $language->select(input('language'));
 			if($lang){
-				return json(['code'=>0,'msg'=>'']);
-				//return Msg::success('')
+				return Msgres::success();
 			}
 		}else {
 			return Msgres::error('illegal_request');

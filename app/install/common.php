@@ -42,9 +42,11 @@ function write_config($config)
 
 /**
  * 创建数据表
- * @param  resource $db 数据库连接资源
+ * @param $db 数据库连接资源
  * @param string $prefix 数据表前缀
+ * @return bool
  */
+
 function create_tables($db, $prefix = '') 
 {
 	// 导入sql数据表
