@@ -11,6 +11,8 @@ return [
 	'delete'			=> '删除',
     'edit'				=> '编辑',
     'uploads'            => '上传',
+	'login success'     => '登录成功',
+    'login error'     	=> '登录失败',
 	'add success'		=> '添加成功!',
 	'add error'			=> '添加失败',
 	'edit success'		=> '修改成功',
@@ -86,6 +88,7 @@ return [
 	 //Sign in/up
 	 'username'			=> '用户',
 	 'password'			=> '密码',
+	 'username or password error' => '用户或密码错误',
 	 'new password'		=> '新密码',
 	 'reset password'	=> '重置密码',
 	 'retrieve password'	=> '找回密码',

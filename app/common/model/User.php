@@ -43,8 +43,8 @@ class User extends Model
 	//登陆校验
     public function login($data)
     {	
-        //查询用户
-        $user = Db::name('user')->whereOr('email',$data['name'])->whereOr('name',$data['name'])->find();
+        //查询使用邮箱或者用户名登陆
+        $user = $this::whereOr('email',$data['name'])->whereOr('name',$data['name'])->find();
 
 		//对输入的密码字段进行MD5加密，再进行数据库的查询
 		$salt = substr(md5($user['create_time']),-6);
@@ -63,32 +63,18 @@ class User extends Model
 				//Cookie::set('user_id', $user['id'], 604800);
 				//Cookie::set('user_name', $user['name'], 604800);
 			}
-			
-			$ip = request()->ip();
-/*
-			$url = 'http://ip-api.com/json/'.$ip.'?lang=zh-CN';
-			//$url = 'http://ip-api.com/json/?lang=zh-CN';
-			$add = Api::urlGet($url);
-			if($add->status == 'success'){
-				$city = $add->city;
-			} else {
-				$city ='未知';
-			}
-*/			
-			Db::name('user')->where('id',$user['id'])->update(
-                        [
-							//'city' => $city,
-							'last_login_ip' => $ip,
-                            'last_login_time' => time()
-                        ]
-                    );
-			Log::channel('login')->info('login:{user} {ip}',['user'=>$user['name'],'ip'=>$ip]);
-			
+            
             //查询结果1表示有用户，用户名密码正确
             return 1;
         }else{
             return '用户名或密码错误';
         }
+    }
+
+    //更新数据
+    public function updata($data)
+    {
+        //dump($data);
     }
 	
     //注册校验

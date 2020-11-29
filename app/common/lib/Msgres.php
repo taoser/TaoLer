@@ -18,6 +18,8 @@ class Msgres
         return $res = [
             'success'           => 0,
             'error'             => 1,
+            'login_success'     => Lang::get('login success'),
+            'login_error'     => Lang::get('login error'),
             'add_success'       => Lang::get('add success'),
             'add_error'         => Lang::get('add error'),
             'edit_success'      => Lang::get('edit success'),

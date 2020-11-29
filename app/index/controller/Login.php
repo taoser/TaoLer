@@ -2,6 +2,7 @@
 namespace app\index\Controller;
 
 use app\common\controller\BaseController;
+use app\common\lib\Msgres;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
 use think\facade\Db;
@@ -10,8 +11,9 @@ use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Cache;
 use think\facade\View;
-use app\common\model\User as userModel;
+use app\common\model\User;
 use taoler\com\Message;
+use app\event\UserLogin;
 
 class Login extends BaseController
 {
@@ -32,15 +34,16 @@ class Login extends BaseController
 		 Cookie::set('url',$url);
 
         if(Request::isAjax()) {
+            //登陆前数据校验
 			$data = Request::param();
 
 			//邮箱正则表达式
 			$pattern = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
 			//判断输入的是邮箱还是用户名
-		   if (preg_match($pattern, $data['name'])){ 
+		   if (preg_match($pattern, $data['name'])){
+               //输入邮箱email登陆验证
                $data['email'] = $data['name'];
 			   unset($data['name']);
-				//输入邮箱email登陆验证
 			   try{
                     validate(userValidate::class)
                         ->scene('loginEmail')
@@ -63,13 +66,18 @@ class Login extends BaseController
                 }  
 		   }			
 			//登陆请求
-			$user = new \app\common\model\User();
+			$user = new User();
 			$res = $user->login($data);
             if ($res == 1) {
+                $ip = request()->ip();
+                $name = $data['name'];
+                //时间更新ip和日志
+                event(new UserLogin($name,$ip));
 				//获取系统站内通知信息
 				//Message::insertMsg(session('user_id'));
 				//跳转到登陆前页面
-                return json(['code'=>0,'msg'=>'登陆成功','url'=> Cookie::get('url')]);
+                //return json(['code'=>0,'msg'=>'登陆成功','url'=> Cookie::get('url')]);
+                return Msgres::success('login_success',Cookie::get('url'));
             } else {
 				return json(['code'=>-1,'msg'=>$res]);
             }
@@ -92,7 +100,7 @@ class Login extends BaseController
 				return json(['code'=>-1,'msg'=>$e->getError()]);
         }
 		
-		$user = new userModel;
+		$user = new User();
 		$result = $user->reg($data);
 		
            if ($result == 1) {
@@ -186,7 +194,7 @@ class Login extends BaseController
 			}	
 			
 			$data['uid'] = Cache::get('userid');
-			$user = new \app\common\model\User();
+			$user = new User();
 			$res = $user->respass($data);
 				if ($res == 1) {
 						return json(['code'=>0,'msg'=>'修改成功','url'=>(string) url('login/index')]);

@@ -2,7 +2,8 @@
 // 事件定义文件
 return [
     'bind'      => [
-	'Message' => 'app\event\Message',
+        'UserLogin' => 'app\event\UserLogin',
+	    'Message' => 'app\event\Message',
     ],
 
     'listen'    => [
@@ -11,6 +12,7 @@ return [
         'HttpEnd'  => [],
         'LogLevel' => [],
         'LogWrite' => [],
+        'UserLogin' => ['app\listener\UserLogin'],
 		'Message'  => ['app\listener\Message'],
 		'CommMsg'  => ['app\listener\CommMsg'],
     ],

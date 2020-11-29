@@ -11,6 +11,8 @@ return [
 	'delete'			=> 'delete',
 	'edit'				=> 'edit',
     'uploads'            => 'Upload',
+	'login success'     => 'login success',
+    'login error'     	=> 'login error',
 	'add success'		=> 'add success!',
 	'add error'			=> 'add error',
 	'edit success'		=> 'edit success',
@@ -85,6 +87,7 @@ return [
 	 //Sign in/up
 	'username'			=> 'Username',
 	'password'			=> 'Password',
+	'username or password error' => 'username or password error',
 	'new password'		=> 'New Password',
 	'reset password'	=> 'Reset password',
 	'retrieve password'	=> 'Retrieve password',

@@ -23,6 +23,7 @@ class Index extends BaseController
     public function index()
     {
 		$types = input('type');
+
 		//幻灯
         $slider = new \app\common\model\Slider();
         $sliders = $slider->getSliderList();
