@@ -296,10 +296,10 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   });
 
 
-  //我的消息
-  gather.minemsg = function(){
-    var delAll = $('#LAY_delallmsg')
-    ,tpl = '{{# var len = d.rows.length;\
+//我的消息
+    gather.minemsg = function(){
+        var delAll = $('#LAY_delallmsg')
+            ,tpl = '{{# var len = d.rows.length;\
     if(len === 0){ }}\
       <div class="fly-none">您暂时没有最新消息</div>\
     {{# } else { }}\
@@ -307,8 +307,12 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       {{# for(var i = 0; i < len; i++){ }}\
         <li data-id="{{d.rows[i].id}}">\
 		{{# if(d.rows[i].type == 1){ }}\
+          <blockquote class="layui-elem-quote"><a href= "'+ userNameJump +'?username={{ d.rows[i].name}}" target="_blank"><cite>{{ d.rows[i].name}}</cite></a>给您发了站内信<a class="sys-title" id-data="{{ d.rows[i].id}}" href="javascript:;"><cite>{{ d.rows[i].title}}</cite></a> <span class="float:right">{{ d.rows[i].read}}</span></blockquote>\
+		{{# } }}\
+		{{# if(d.rows[i].type == 2){ }}\
           <blockquote class="layui-elem-quote"><a href= "'+ userNameJump +'?username={{ d.rows[i].name}}" target="_blank"><cite>{{ d.rows[i].name}}</cite></a>回答了您的帖子<a target="_blank" class="art-title" id-data="{{ d.rows[i].id}}" href="{{ d.rows[i].link}}"><cite>{{ d.rows[i].title}}</cite></a> <span class="float:right">{{ d.rows[i].read}}</span></blockquote>\
-		{{# } else { }}\
+		{{# } }}\
+		{{# if(d.rows[i].type == 0){ }}\
 		<blockquote class="layui-elem-quote">系统消息：<a class="sys-title" id-data="{{ d.rows[i].id}}" href="javascript:;"><cite>{{ d.rows[i].title}}</cite></a> <span class="float:right">{{ d.rows[i].read}}</span></blockquote>\
 		{{# } }}\
           <p><span>{{d.rows[i].time}}</span><a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger fly-delete">删除</a></p>\
@@ -316,11 +320,11 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       {{# } }}\
       </ul>\
     {{# } }}'
-    ,delEnd = function(clear){
-      if(clear || dom.minemsg.find('.mine-msg li').length === 0){
-        dom.minemsg.html('<div class="fly-none">您暂时没有最新消息</div>');
-      }
-    }
+            ,delEnd = function(clear){
+            if(clear || dom.minemsg.find('.mine-msg li').length === 0){
+                dom.minemsg.html('<div class="fly-none">您暂时没有最新消息</div>');
+            }
+        }
     
     
     fly.json(messageFind, {}, function(res){

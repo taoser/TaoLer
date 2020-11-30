@@ -7,8 +7,7 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
-use app\common\model\Article;
-use app\common\model\User;
+use app\facade\Article;
 use app\common\lib\Msgres;
 
 class Index extends BaseController
@@ -28,13 +27,12 @@ class Index extends BaseController
         $slider = new \app\common\model\Slider();
         $sliders = $slider->getSliderList();
 
-        $article = new Article();
 		//置顶文章
-		$artTop = $article->getArtTop(5);
+		$artTop = Article::getArtTop(5);
         //首页文章列表,显示20个
-        $artList = $article->getArtList(20);
+        $artList = Article::getArtList(20);
         //热议文章
-        $artHot = $article->getArtHot(10);
+        $artHot = Article::getArtHot(10);
 
 		//首页赞助
 		$ad_index = Cache::get('adindex');
@@ -96,8 +94,8 @@ class Index extends BaseController
 		//友情链接
 		$friend_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>6])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
         //	查询热议
-		$article = new Article();
-		$artHot = $article->getArtHot(10);
+		//$article = new Article()1;
+		$artHot = Article::getArtHot(10);
 
         View::assign($searchs);
 		View::assign(['flinks'=>$friend_links,'artHot'=>$artHot]);

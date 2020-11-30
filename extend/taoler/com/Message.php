@@ -10,9 +10,9 @@ class Message
 {
     /**
      * 发送消息
-     * @param $sendId       发送者
-     * @param $receveId     接收者
-     * @param $data         发送数据
+     * @param $sendId
+     * @param $receveId
+     * @param $data
      * @return bool
      */
 	public static function sendMsg($sendId,$receveId,$data)
@@ -22,7 +22,7 @@ class Message
 		$msgId = $msg->id;
 		
 		//类型1为用户，写入用户收件箱
-		if($data['type'] == 1){
+		if($data['type'] == 1 || $data['type'] == 2 ){
 			$result = MessageTo::create(['send_id'=>$sendId,'receve_id'=>$receveId,'message_id'=>$msgId,'message_type'=>$data['type']]);
 			if(!$result){
 				return false;
@@ -58,13 +58,13 @@ class Message
     }
 
     /**
-     *  登录用户把消息写入数据表
-     * @param $uid  登陆用户ID
+     * 登录用户把系统消息写入数据表
+     * @param int $uid
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-	public static function insertMsg($uid)
+	public static function insertMsg(int $uid)
 	{
 		//得到所有系统消息
 		$sysmsg = MessageModel::where(['type'=>0,'delete_time'=>0])->select();

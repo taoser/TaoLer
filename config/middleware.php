@@ -3,8 +3,9 @@
 return [
     // 别名或分组
     'alias'    => [
-	'logedcheck' => \app\middleware\LogedCheck::class,
-	'logincheck' => \app\middleware\LoginCheck::class,
+	    'logedcheck' => \app\middleware\LogedCheck::class,
+	    'logincheck' => \app\middleware\LoginCheck::class,
+        'message'    => \app\middleware\Message::class,
 	],
     // 优先级设置，此数组中的中间件会按照数组中的顺序优先执行
     'priority' => [],

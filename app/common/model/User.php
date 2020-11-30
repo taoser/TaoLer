@@ -3,11 +3,10 @@ namespace app\common\model;
 
 use think\Model;
 use think\model\concern\SoftDelete;
-use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
-use think\facade\Log;
-use taoler\com\Api;
+use think\facade\Config;
+use think\facade\Lang;
 
 class User extends Model
 {
@@ -44,31 +43,31 @@ class User extends Model
     public function login($data)
     {	
         //查询使用邮箱或者用户名登陆
-        $user = $this::whereOr('email',$data['name'])->whereOr('name',$data['name'])->find();
+        $user = $this::whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
+        if(!$user->isEmpty()){
+            //对输入的密码字段进行MD5加密，再进行数据库的查询
+            $salt = substr(md5($user['create_time']),-6);
+            $pwd = substr_replace(md5($data['password']),$salt,0,6);
+            $data['password'] = md5($pwd);
 
-		//对输入的密码字段进行MD5加密，再进行数据库的查询
-		$salt = substr(md5($user['create_time']),-6);
-		$pwd = substr_replace(md5($data['password']),$salt,0,6);
-		$data['password'] = md5($pwd);
+            if($user['password'] == $data['password']){
+                //将用户数据写入Session
+                Session::set('user_id',$user['id']);
+                Session::set('user_name',$user['name']);
+                if(isset($data['remember'])){
+                    $salt = Config::get('taoler.salt');
+                    //加密auth存入cookie
+                    $auth = md5($user['name'].$salt).":".$user['id'];
+                    Cookie::set('auth',$auth,604800);
+                    //Cookie::set('user_id', $user['id'], 604800);
+                    //Cookie::set('user_name', $user['name'], 604800);
+                }
 
-        if($user['password'] == $data['password']){
-			//将用户数据写入Session
-			Session::set('user_id',$user['id']);
-			Session::set('user_name',$user['name']);
-			if(isset($data['remember'])){
-				$salt = 'taoler';
-				//加密auth存入cookie
-				$auth = md5($user['name'].$salt).":".$user['id'];
-				Cookie::set('auth',$auth,604800);
-				//Cookie::set('user_id', $user['id'], 604800);
-				//Cookie::set('user_name', $user['name'], 604800);
-			}
-            
-            //查询结果1表示有用户，用户名密码正确
-            return 1;
-        }else{
-            return '用户名或密码错误';
+                //查询结果1表示有用户，用户名密码正确
+                return 1;
+            }
         }
+        return Lang::get('username or password error');
     }
 
     //更新数据

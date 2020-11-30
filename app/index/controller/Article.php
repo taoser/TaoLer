@@ -113,36 +113,37 @@ class Article extends BaseController
 	//文章评论
 	public function comment()
 	{
-		//if (Request::isAjax()){
-		//获取评论
-		$data = Request::only(['content','article_id','user_id']);
-		$sendId = $data['user_id'];
-		if(empty($data['content'])){
-					return json(['code'=>0, 'msg'=>'评论不能为空！']);
-			}
-		//用户留言存入数据库
-		if (Comment::create($data)) {
-			//站内信
-			$article = Db::name('article')->field('id,title,user_id')->where('id',$data['article_id'])->find();
-			$title = $article['title'];
-			$link = (string) url('article/detail',['id'=>$data['article_id']]);
+		if (Request::isAjax()){
+			//获取评论
+			$data = Request::only(['content','article_id','user_id']);
+			$sendId = $data['user_id'];
+			if(empty($data['content'])){
+						return json(['code'=>0, 'msg'=>'评论不能为空！']);
+				}
+			//用户留言存入数据库
+			if (Comment::create($data)) {
+				//站内信
+				$article = Db::name('article')->field('id,title,user_id')->where('id',$data['article_id'])->find();
+				$title = $article['title'];
+				$link = (string) url('article/detail',['id'=>$data['article_id']]);
 
-			//@user comment
-			$preg = "/@([^@\s]*)\s/";
-			preg_match($preg,$data['content'],$username);
-			if(isset($username[1])){
-				$receveId = Db::name('user')->whereOr('nickname', $username[1])->whereOr('name', $username[1])->value('id'); 
+				//评论中回复@user comment
+				$preg = "/@([^@\s]*)\s/";
+				preg_match($preg,$data['content'],$username);
+				if(isset($username[1])){
+					$receveId = Db::name('user')->whereOr('nickname', $username[1])->whereOr('name', $username[1])->value('id'); 
+				} else {
+					$receveId = $article['user_id'];
+				}
+				$data = ['title'=>$title,'content'=>'评论通知','link'=>$link,'user_id'=>$sendId,'type'=>2]; //type=2为评论留言
+				Message::sendMsg($sendId,$receveId,$data);
+
+				$res = ['code'=>0, 'msg'=>'留言成功'];
 			} else {
-				$receveId = $article['user_id'];
+				$res = ['code'=>-1, 'msg'=>'留言失败'];
 			}
-			$data = ['title'=>$title,'content'=>'评论通知','link'=>$link,'user_id'=>$sendId,'type'=>1];
-			Message::sendMsg($sendId,$receveId,$data);
-			//event('CommMsg');
-			$res = ['code'=>0, 'msg'=>'留言成功'];
-		} else {
-			$res = ['code'=>-1, 'msg'=>'留言失败'];
+			return json($res);
 		}
-		return json($res);
 	}
 
     /**

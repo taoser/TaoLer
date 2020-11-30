@@ -69,17 +69,16 @@ class Login extends BaseController
 			$user = new User();
 			$res = $user->login($data);
             if ($res == 1) {
+                //登陆成功
                 $ip = request()->ip();
                 $name = $data['name'];
+
                 //时间更新ip和日志
                 event(new UserLogin($name,$ip));
-				//获取系统站内通知信息
-				//Message::insertMsg(session('user_id'));
-				//跳转到登陆前页面
-                //return json(['code'=>0,'msg'=>'登陆成功','url'=> Cookie::get('url')]);
+
                 return Msgres::success('login_success',Cookie::get('url'));
             } else {
-				return json(['code'=>-1,'msg'=>$res]);
+				return Msgres::error($res);
             }
         }
         return View::fetch('login');

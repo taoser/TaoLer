@@ -5,7 +5,9 @@ namespace app\event;
 
 class Message
 {
-	public function msg(){
-		echo "这是一个事件";
+    //public $userId;
+	public function __construct(){
+        //echo '1111';
+        //$this->userId = $userId;
 	}
 }

@@ -23,7 +23,7 @@ class Notice extends AdminController
 			if($count){
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($notices as $msg){
-				 $res['data'][] = ['id'=>$msg['id'],'type'=>$msg['type'],'title'=>$msg['title'],'user_id'=>$msg['user_id'],'content'=>$msg['content'],'ctime'=>$msg['create_time']];
+				 $res['data'][] = ['id'=>$msg['id'],'type'=>$msg['type'] == 0 ? '系统消息': '个人消息','title'=>$msg['title'],'user_id'=>$msg['user_id'],'content'=>$msg['content'],'ctime'=>$msg['create_time']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'还没有发布任何通知'];
@@ -48,8 +48,8 @@ class Notice extends AdminController
 		$data['user_id'] = $sendId; //发信人入信息库
 		//写入信息库
 		$result = Message::sendMsg($sendId,$receveId,$data);
+
 		if($result){
-			//event('Message');
 			$res = ['code'=>0,'msg'=>'发布成功'];
 		} else {
 			$res = ['code'=>-1,'msg'=>'发布失败'];
