@@ -12,27 +12,28 @@ use think\facade\Cookie;
 use think\facade\Cache;
 use think\facade\View;
 use app\common\model\User;
-use taoler\com\Message;
 use app\event\UserLogin;
 
 class Login extends BaseController
 {
 	//已登陆检测
-	protected $middleware = ['logedcheck'];
+	protected $middleware = [
+	    'logedcheck' => ['except' 	=> ['index'] ]
+    ];
 
     //用户登陆
 	public function index()
 	{
+        //已登陆跳出
+        if(Session::has('user_id')){
+            return redirect((string) url('user/index'));
+        }
 		//获取登录前访问页面refer
 		$refer = Request::server('HTTP_REFERER');
-		$domain = Request::domain();
+		//$domain = Request::domain();
 		//截取域名后面的字符
-		$url = substr($refer,strlen($domain));
-		if(empty($url)){
-			$url = '/';
-		}
-		 Cookie::set('url',$url);
-
+		//$url = substr($refer,strlen($domain));
+        Cookie::set('url',$refer);
         if(Request::isAjax()) {
             //登陆前数据校验
 			$data = Request::param();
@@ -72,7 +73,6 @@ class Login extends BaseController
                 //登陆成功
                 $ip = request()->ip();
                 $name = $data['name'];
-
                 //时间更新ip和日志
                 event(new UserLogin($name,$ip));
 
