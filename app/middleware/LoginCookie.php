@@ -4,6 +4,7 @@ namespace app\middleware;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Db;
+use think\facade\Config;
 
 class LoginCookie
 {
@@ -18,7 +19,7 @@ class LoginCookie
 			$user = Db::name('user')->where('id',$userId)->find();
 			if($user){
 				//验证cookie
-				$salt = 'taoler';
+				$salt = Config::get('taoler.salt');
 				$auth = md5($user['name'].$salt).":".$userId;
 				if($auth==$cooAuth){
 					Session::set('user_name',$user['name']);
