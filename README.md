@@ -1,7 +1,7 @@
 # TaoLer
 
-	版本：TaoLer 1.6.1
-	日期：2020.10.28
+	版本：TaoLer 1.6.4
+	日期：2020.12.09
 	官网：http://www.aieok.com
 	测试：http://adm.aieok.com 账号test 密码test123
 
