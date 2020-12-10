@@ -94,12 +94,12 @@
     form.render();
 	
 	//回车登陆
-	//$('input').keydown(function(e){
-	//	if(e.key.Code == 13){
-			//form.on();
-	//	}
-	//});
-
+	$(document).keydown(function(e){
+		if(e.keyCode == 13){
+			 $("#LAY-user-login-submit").click()
+		}
+	})
+	
     //提交
     form.on('submit(LAY-user-login-submit)', function(obj){
     
