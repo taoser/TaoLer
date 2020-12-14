@@ -90,7 +90,7 @@ class Article extends Model
     {
         $artTop = Cache::get('arttop');
         if (!$artTop) {
-            $artTop = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,jie,pv')->where(['is_top' => 1, 'status' => 1, 'delete_time' => 0])->with([
+            $artTop = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,jie,upzip')->where(['is_top' => 1, 'status' => 1, 'delete_time' => 0])->with([
                 'cate' => function ($query) {
                     $query->where('delete_time', 0)->field('id,catename,ename');
                 },
@@ -115,7 +115,7 @@ class Article extends Model
     {
         $artList = Cache::get('artlist');
 		if(!$artList){
-			$artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_hot,jie,pv')
+			$artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_hot,pv,jie,upzip')
             ->with([
             'cate' => function($query){
                 $query->where('delete_time',0)->field('id,catename,ename');
@@ -162,7 +162,7 @@ class Article extends Model
         $article = Cache::get('article_'.$id);
         if(!$article){
             //查询文章
-            $article = $this::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,upzip,tags,title_color,create_time')->where('status',1)->with([
+            $article = $this::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,tags,title_color,create_time')->where('status',1)->with([
                 'cate' => function($query){
                     $query->where('delete_time',0)->field('id,catename,ename');
                 },
@@ -203,7 +203,7 @@ class Article extends Model
             switch ($type) {
                 //查询文章,15个分1页
                 case 'jie':
-                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
+                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip')->with([
                         'cate' => function($query){
                             $query->where('delete_time',0)->field('id,catename,ename');
                         },
@@ -219,7 +219,7 @@ class Article extends Model
                     break;
 
                 case 'hot':
-                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
+                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip')->with([
                         'cate' => function($query){
                             $query->where('delete_time',0)->field('id,catename,ename');
                         },
@@ -235,7 +235,7 @@ class Article extends Model
                     break;
 
                 case 'top':
-                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
+                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip')->with([
                         'cate' => function($query){
                             $query->where('delete_time',0)->field('id,catename,ename');
                         },
@@ -251,7 +251,7 @@ class Article extends Model
                     break;
 
                 default:
-                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,jie,pv')->with([
+                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip')->with([
                         'cate' => function($query){
                             $query->where('delete_time',0)->field('id,catename,ename');
                         },

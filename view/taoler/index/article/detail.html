@@ -45,7 +45,7 @@
 		  
           <span class="fly-list-nums"> 
             <a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i> {$comments->count()} </a>
-            <i class="iconfont" title="人气">&#xe60b;</i> {$pv}
+            <i class="iconfont" title="浏览">&#xe60b;</i> {$pv}
           </span>
         </div>
         <div class="detail-about">
@@ -58,7 +58,7 @@
               <cite>{$article.user.nickname ?: $article.user.name}</cite>
               <i class="iconfont icon-renzheng" title="认证信息：{{ rows.user.approve }}"></i>
               {if($article.user.vip > 0)}
-                <i class="layui-badge fly-badge-vip">VIP{$article.user.vip}</i>
+                <i class="layui-badge fly-badge-vip">vip{$article.user.vip}</i>
 				{/if}
             </a>
             <span>{$article.create_time|date='Y-m-d H:d'}</span>
@@ -74,7 +74,7 @@
 		{notempty name="$article.upzip"}
 			<div class="layui-inline">
 			  <label ">{:lang('enclosure')}：</label>
-			 <button type="button" class="layui-btn" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}</button>
+			 <button type="button" class="layui-btn" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
 			</div>
 		{/notempty}
       </div>

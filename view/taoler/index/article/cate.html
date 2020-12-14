@@ -29,14 +29,15 @@
                 <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
                 -->
 				{if($art.user.vip > 0)}
-                <i class="layui-badge fly-badge-vip">VIP{$art.user.vip}</i>
+                <i class="layui-badge fly-badge-vip">vip{$art.user.vip}</i>
 				{/if}
               </a>
               <span>{$art.create_time|date='Y-m-d'}</span>
-
-              <span class="layui-hide-xs" title="人气"><i class="iconfont" title="人气">&#xe60b;</i> {$art.pv}</span>
+			  
+              <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
               {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/if}
               <span class="fly-list-nums">
+				{notempty name="$art.upzip"}<i class="layui-icon layui-icon-file" style="font-size: 15px; color: #393D49;" title="附件"></i>{/notempty}
                 <i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}
               </span>
             </div>
