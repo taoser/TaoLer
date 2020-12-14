@@ -16,7 +16,7 @@ use app\common\lib\Msgres;
 class Article extends BaseController
 {
 	protected $middleware = [ 
-    	'logincheck' => ['except' 	=> ['cate','detail'] ],
+    	'logincheck' => ['except' 	=> ['cate','detail','download'] ],
     ];
 	
 	//文章分类
