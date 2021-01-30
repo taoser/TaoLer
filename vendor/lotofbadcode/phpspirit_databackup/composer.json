@@ -1,0 +1,24 @@
+{
+    "name": "lotofbadcode/phpspirit_databackup",
+    "description": "一个PHP数据库备份恢复的插件",
+    "license": "Apache-2.0",
+    "type": "library",
+    "keywords": [
+        "php",
+        "library"
+    ],
+    "authors": [
+        {
+            "name": "代码庸医",
+            "email": "3359964266@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "phpspirit\\databackup\\": "src/"
+        }
+    }
+}

@@ -1,14 +1,14 @@
 {extend name="public/base" /}
 
-{block name="title"}登入 - TaoLer{/block}
+{block name="title"}登入 - TaoilSys加油站管理系统{/block}
 {block name="css"}<link rel="stylesheet" href="/static/admin/style/login.css" media="all">{/block}
 {block name="body"}
   <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
 
     <div class="layadmin-user-login-main">
       <div class="layadmin-user-login-box layadmin-user-login-header">
-        <h2>TaolerAdmin</h2>
-        <p>TaoLer后台管理系统</p>
+        <h2>TaoilSysAdmin</h2>
+        <p>TaoilSys油站管理系统-专业版</p>
       </div>
       <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
         <div class="layui-form-item">
@@ -23,7 +23,7 @@
           <div class="layui-row">
             <div class="layui-col-xs7">
               <label class="layadmin-user-login-icon layui-icon layui-icon-vercode" for="LAY-user-login-vercode"></label>
-              <input type="text" name="captcha" id="LAY-user-login-vercode" lay-verify="required" placeholder="图形验证码" class="layui-input">
+              <input type="text" name="captcha"  autocomplete="off" id="LAY-user-login-vercode" lay-verify="required" placeholder="图形验证码" class="layui-input">
             </div>
             <div class="layui-col-xs5">
               <div style="margin-left: 10px;">
@@ -37,7 +37,7 @@
           <a href="{:url('admin/login/forget')}" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
         </div>
         <div class="layui-form-item">
-			
+			<input type="hidden" class="layui-hide" name="__token__" value="{:token()}" />
           <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit" id="LAY-user-login-submit">登 入</button>
         </div>
         <div class="layui-trans layui-form-item layadmin-user-login-other">
@@ -123,7 +123,7 @@
             ,icon: 1
             ,time: 1000
           }, function(){
-            location.href = "{:url('admin/index/index')}"; //后台主页
+            location.href = "{:url('index/index')}"; //后台主页
           });
 		} else {	
 			layer.open({

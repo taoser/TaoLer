@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>数据备份</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js" ></script>
+        <link href="css/jquery.circliful.css" rel="stylesheet" type="text/css" />
+        <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <script src="js/jquery.circliful.js"></script>
+        <script>
+            function backup(predate)
+            {
+                $.ajax({
+                    url: 'backupajax.php',
+                    type: 'POST', //POST
+                    async: true, //或false,是否异步
+                    dataType: 'json',
+                    data:predate,
+                    success: function (data, textStatus, jqXHR) {
+
+                        datainfo = '表[' + data.nowtable + ']完成' + data.tablepercentage + '%';
+                        if (data.totalpercentage >= 100)
+                        {
+                            datainfo = '备份完成';
+                        }
+
+                        html = '<div id="myStat2" data-dimension="250" data-text="' + data.totalpercentage + '%" data-info="' + datainfo + '" data-width="30" data-fontsize="38" data-percent="' + data.totalpercentage + '" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>';
+                        $('#tongji').html(html);
+                        $('#myStat2').circliful();
+                        if (data.totalpercentage < 100)
+                        {
+                            backup(data);
+                        }
+                    }
+                })
+            }
+        </script>
+    </head>
+    <body>
+        <div><input type="button" value="备份" onclick="backup({})" /></div>
+    <center>
+
+        <div id="tongji"></div>
+    </center>
+    <script>
+        $(document).ready(function () {
+
+        });
+    </script>
+</body>
+</html>

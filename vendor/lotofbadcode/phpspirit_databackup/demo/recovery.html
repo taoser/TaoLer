@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>数据恢复</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js" ></script>
+        <link href="css/jquery.circliful.css" rel="stylesheet" type="text/css" />
+        <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <script src="js/jquery.circliful.js"></script>
+        <script>
+
+            $(document).ready(function () {
+                $('#myStat2').circliful();
+            });
+
+            function recovey(predate)
+            {
+                $.ajax({
+                    url: 'recoveryajax.php',
+                    type: 'POST', //GET
+                    async: true, //或false,是否异步
+                    data:predate,
+                    dataType: 'json',
+                    success: function (data, textStatus, jqXHR) {
+
+                        if (data.totalpercentage < 100)
+                        {
+                            datainfo = '正在恢复...';
+                        } else
+                        {
+                            datainfo = '恢复完成';
+                        }
+
+                        html = '<div id="myStat2" data-dimension="250" data-text="' + data.totalpercentage + '%" data-info="' + datainfo + '" data-width="30" data-fontsize="38" data-percent="' + data.totalpercentage + '" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>';
+                        $('#tongji').html(html);
+                        $('#myStat2').circliful();
+                        if (data.totalpercentage < 100)
+                        {
+                            recovey(data);
+                        }
+                    }
+                })
+            }
+        </script>
+    </head>
+    <body>
+        <div><input type="button" value="恢复" onclick="recovey({})" /></div>
+    <center>
+
+        <div id="tongji">
+
+            <div id="myStat2" data-dimension="250" data-text="0%" data-info="等待恢复" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>
+        </div>
+    </center>
+
+</body>
+</html>

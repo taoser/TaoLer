@@ -26,6 +26,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'think\\' => 6,
             'taoser\\think\\' => 13,
         ),
+        'p' => 
+        array (
+            'phpspirit\\databackup\\' => 21,
+        ),
         'a' => 
         array (
             'app\\' => 4,
@@ -50,6 +54,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'League\\MimeTypeDetection\\' => 25,
             'League\\Flysystem\\Cached\\' => 24,
             'League\\Flysystem\\' => 17,
+        ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
         ),
     );
 
@@ -81,6 +89,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'taoser\\think\\' => 
         array (
             0 => __DIR__ . '/..' . '/taoser/think-auth/src',
+        ),
+        'phpspirit\\databackup\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lotofbadcode/phpspirit_databackup/src',
         ),
         'app\\' => 
         array (
@@ -133,6 +145,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'League\\Flysystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
     );
 

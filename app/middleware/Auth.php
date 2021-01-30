@@ -31,7 +31,7 @@ class Auth
 		}
 		
 		// 排除公共权限
-		$not_check = ['admin/login/index','admin/index/index','admin/index/home','admin/Set/info','admin/Set/password','admin/Admin/logout','admin/captcha'];
+		$not_check = ['admin/','admin/login/index','admin/index/index','admin/index/home','admin/Admin/info','admin/Admin/repass','admin/Admin/logout','admin/captcha'];
 
 		if (!in_array($path, $not_check)) {
 			$auth     = new UserAuth();
@@ -39,8 +39,6 @@ class Auth
 
 			if (!$auth->check($path, $admin_id) && $admin_id != 1) {
 				return view('public/auth');
-				//return json(['status'=>-1,'msg'=>'没有权限!']);
-				//return response("<script> alert('没有权限!'); </script>");
 			}
 		}
 	return $next($request);	
