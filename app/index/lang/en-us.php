@@ -122,4 +122,5 @@ return [
 	'in' 				=> 'in',
 	'accumulate points'	=> 'Accumulate points',
 	'my post'			=> 'My post',
+	'my auth'			=> 'My authorize'
 ];

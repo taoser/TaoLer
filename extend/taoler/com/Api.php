@@ -15,11 +15,11 @@ class Api
 		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT, 20);
 		curl_setopt($ch,CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		$data = curl_exec($ch);
+		$res = curl_exec($ch);
 		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		if($httpCode == '200'){
-			return json_decode($data);
+			return json_decode($res);
 		} else {
 			return json(['code'=>-1,'msg'=>'远程服务器失败']);
 		}

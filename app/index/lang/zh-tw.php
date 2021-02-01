@@ -123,6 +123,7 @@ return [
 	 'in' 				=> '在',
 	 'accumulate points'	=> '積分',
 	 'my post'			=> '我的帖子',
+	 'my auth'			=> '我的授权'
 
 
 ];

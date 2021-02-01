@@ -20,7 +20,7 @@ class Message
         $response = $next($request);
 
         if(session('user_id')){
-            MessageIns::insertMsg(session('user_id'));
+            MessageIns::insertMsg((int)session('user_id'));
         }
         return $response;
     }
