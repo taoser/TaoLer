@@ -188,6 +188,41 @@ layui.define(function(exports){
     var $ = layui.$
     ,table = layui.table;
     
+	//动态
+    table.render({
+      elem: '#LAY-index-topnews'
+      ,url: indexNews //接口
+      ,cellMinWidth: 120
+      ,cols: [[
+        {type: 'numbers', fixed: 'left'}
+		,{field: 'time', title: '时间', sort: true}
+        ,{field: 'title', title: '标题', minWidth: 300, templet: '<div><a href="{{d.id}}" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
+        ,{field: 'name', title: '发帖者'}
+        ,{field: 'catename', title: '类别'}
+      ]]
+		,page: true
+		,limit: 10
+		,limits: [10, 15, 20, 25, 30]
+        ,text: '对不起，加载出现异常！'
+      ,skin: 'line'
+    });
+    
+    //反馈
+    table.render({
+      elem: '#LAY-index-topreply'
+      ,url: indexReply //评论接口
+      ,page: true
+      ,cellMinWidth: 120
+      ,cols: [[
+        {type: 'numbers', fixed: 'left'}
+		,{field: 'time', title: '时间', width: 120}
+        ,{field: 'content', title: '内容', minWidth: 300}
+		,{field: '操作', width: 80, align: 'center', fixed: 'right', toolbar: '#tao-reply'}
+ 
+      ]]
+      ,skin: 'line'
+    });
+	
     //本周发贴
     table.render({
       elem: '#LAY-index-topSearch'

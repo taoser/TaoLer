@@ -13,8 +13,10 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\View;
 use think\facade\Db;
+use think\facade\Request;
 use taoser\think\Auth;
 use taoler\com\Files;
+use taoler\com\Api;
 
 /**
  * 控制器基础类
@@ -105,42 +107,18 @@ abstract class AdminController
     }
 
 
-	//权限检查
-	/**
-     * 权限检查
-     * @return bool
-     */
-/*	 
-    protected function checkAuth()
-    {
-        if (!Session::has('admin_id')) {
-			echo '请去登陆';
-            return redirect('/admin/login/index');
-			 //$this->error('请登录');
-			 //return ['code'=>0,'url'=>'/user/login'];
-        }
+	protected function cyCheck($url)
+	{
+		$url = $url.'?u='.Request::domain();
+		$cy = Api::urlGet($url);
+		if($cy && $cy->code == 0){
+            $cylevel = $cy->level;
+            return $cylevel;
+        } else {
+			return 0;
+		}
+	}
 
-        $app = app('http')->getName();
-        $controller = $this->request->controller();
-        $action     = $this->request->action();
-
-        // 排除权限
-        $not_check = ['admin/Index/index','admin/Index/home','admin/Set/info','admin/Set/password'];
-
-        if (!in_array($app . '/' . $controller . '/' . $action, $not_check)) {
-            $auth     = new Auth();
-            $admin_id = Session::get('admin_id');
-
-            if (!$auth->check($app . '/' . $controller . '/' . $action, $admin_id) && $admin_id != 1) {
-                //$this->error('没有权限');
-				echo '<script>alert("没有权限");location.back()</script>';
-				//return redirect('admin/user/login');
-            }
-        }
-    }
-*/	
-
-	
     /**
      * 获取侧边栏菜单
      */
@@ -179,34 +157,6 @@ abstract class AdminController
 		//$menu2 = getTree($menu);
 		return $menus;
         //return View::assign('menus', $menus);
-    }
-	
-	//判断是否已登录？
-	protected function isLogged()
-	{
-		if(Session::has('admin_id')){
-			return redirect('admin/index/index');
-		}
-	}
-
-    //判断是否需要登录？
-    protected function isLogin()
-    {
-        if(!Session::has('admin_id')){
-			return redirect('/admin/login/index');
-        }
-    }
-
-	//显示当前登录管理员
-    protected function showAdmin()
-    {
-		$id = Session::get('admin_id');
-
-        //1.查询管理用户
-		$adminHead = Admin::find($id);
-	
-        //2.将User变量赋给模板 公共模板nav.html
-        View::assign('adminHead',$adminHead);
     }
 	
 	/**创建目录

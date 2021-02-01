@@ -4,13 +4,13 @@ Navicat MySQL Data Transfer
 Source Server         : lc
 Source Server Version : 50730
 Source Host           : localhost:3306
-Source Database       : taotao
+Source Database       : taoler
 
 Target Server Type    : MYSQL
 Target Server Version : 50730
 File Encoding         : 65001
 
-Date: 2021-01-30 17:41:02
+Date: 2021-02-01 15:15:36
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -41,7 +41,7 @@ CREATE TABLE `tao_admin` (
 -- ----------------------------
 -- Records of tao_admin
 -- ----------------------------
-INSERT INTO `tao_admin` VALUES ('1', 'admin', '管理员', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'taoler@qq.com', '13812345678', '1', '1', '1', '2019.1.1 新年发布新版本！', '127.0.0.1', '1611997302', '1579053025', '1578986600', '0');
+INSERT INTO `tao_admin` VALUES ('1', 'admin', '管理员', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'taoler@qq.com', '13812345678', '1', '1', '1', '2019.1.1 新年发布新版本！', '127.0.0.1', '1612162986', '1579053025', '1578986600', '0');
 INSERT INTO `tao_admin` VALUES ('2', 'test', '', '3dbfa76bd34a2a0274f5d52f5529ccb3', 'test@qq.com', '13567891236', '0', '0', '2', '', '127.0.0.1', '1578643147', '1555892325', '1576554415', '0');
 
 -- ----------------------------
@@ -334,6 +334,26 @@ CREATE TABLE `tao_comment` (
 INSERT INTO `tao_comment` VALUES ('1', 'https://www.aieok.com', '1', '1', '0', '0', '1', '1555127897', '1578977505', '1578977505');
 
 -- ----------------------------
+-- Table structure for tao_cunsult
+-- ----------------------------
+DROP TABLE IF EXISTS `tao_cunsult`;
+CREATE TABLE `tao_cunsult` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` tinyint(2) NOT NULL COMMENT '问题类型1问题资讯2提交BUG',
+  `title` varchar(30) NOT NULL DEFAULT '' COMMENT '问题',
+  `content` tinytext NOT NULL COMMENT '内容',
+  `poster` tinyint(4) NOT NULL COMMENT '发送人ID',
+  `create_time` int(10) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `delete_time` int(10) NOT NULL DEFAULT '0' COMMENT '删除时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of tao_cunsult
+-- ----------------------------
+INSERT INTO `tao_cunsult` VALUES ('2', '2', '的', '的', '3', '1612162069', '0');
+
+-- ----------------------------
 -- Table structure for tao_friend_link
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_friend_link`;
@@ -418,52 +438,6 @@ CREATE TABLE `tao_message_to` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for tao_plugins
--- ----------------------------
-DROP TABLE IF EXISTS `tao_plugins`;
-CREATE TABLE `tao_plugins` (
-  `id` int(5) unsigned NOT NULL AUTO_INCREMENT,
-  `plugins_name` varchar(20) NOT NULL COMMENT '插件名称',
-  `plugins_version` varchar(20) NOT NULL COMMENT '插件版本',
-  `plugins_auther` varchar(20) NOT NULL COMMENT '插件作者',
-  `plugins_resume` varchar(255) NOT NULL DEFAULT '' COMMENT '简介',
-  `plugins_price` int(5) NOT NULL COMMENT '差价售价',
-  `plugins_src` varchar(70) NOT NULL DEFAULT '' COMMENT '插件获取路径',
-  `plugins_status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '插件状态1开启0禁止',
-  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
-  PRIMARY KEY (`id`,`plugins_version`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of tao_plugins
--- ----------------------------
-INSERT INTO `tao_plugins` VALUES ('1', '1.1.1', '', '', '第1个版本', '0', '/storage/version/20191215/536c65fc4df42100016fa3d97b584d26.zip', '1', '1575862901', '0', '0');
-INSERT INTO `tao_plugins` VALUES ('2', '1.1.2', '', '', '第2个版本', '0', '/storage/version/20191215/832e150dfbc0e88e04a408e475bce8bb.zip', '1', '1575862901', '0', '0');
-INSERT INTO `tao_plugins` VALUES ('3', '1.1.3', '', '', '第3个版本', '0', '/storage/version/20191215/9ff1153045f1ad1e26c74aad148bdde3.zip', '1', '1575862901', '1575862901', '0');
-INSERT INTO `tao_plugins` VALUES ('4', '1.1.4', '1.0.0', 'au', '第四个版本', '5', '/storage/version/20191209/1fae8a15fcd41181490a0c02e0218ef1.zip', '1', '1575864450', '1575864587', '0');
-INSERT INTO `tao_plugins` VALUES ('5', 'hello', 'v0.0.1', 'taoler', '第一款欢迎插件', '10', '/storage/addons/20201016/2c5b581d90a92b6b154fa9bc0c73d494.zip', '1', '1602833500', '1602833500', '0');
-
--- ----------------------------
--- Table structure for tao_point_note
--- ----------------------------
-DROP TABLE IF EXISTS `tao_point_note`;
-CREATE TABLE `tao_point_note` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `controller` varchar(255) NOT NULL,
-  `uid` int(10) unsigned NOT NULL,
-  `pointid` int(10) unsigned NOT NULL,
-  `score` int(10) NOT NULL,
-  `add_time` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of tao_point_note
--- ----------------------------
-
--- ----------------------------
 -- Table structure for tao_slider
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_slider`;
@@ -526,102 +500,6 @@ CREATE TABLE `tao_system` (
 -- Records of tao_system
 -- ----------------------------
 INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href=\"http://www.aieok.com\" target=\"_blank\">aieok.com 版权所有</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 'http://api.aieok.com', 'http://api.aieok.com/v1/index/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
-
--- ----------------------------
--- Table structure for tao_time_line
--- ----------------------------
-DROP TABLE IF EXISTS `tao_time_line`;
-CREATE TABLE `tao_time_line` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '时间线Id',
-  `timeline_title` varchar(255) NOT NULL COMMENT '时间线标题',
-  `timeline_content` text NOT NULL COMMENT '时间线内容',
-  `create_time` int(11) NOT NULL DEFAULT '0',
-  `update_time` int(11) NOT NULL DEFAULT '0',
-  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of tao_time_line
--- ----------------------------
-INSERT INTO `tao_time_line` VALUES ('8', '2019年5月1日', '<p>thinkphp5.1+layui2.4+fly3.0</p><p>TBLs0.1</p>', '1584870099', '1584870099', '0');
-INSERT INTO `tao_time_line` VALUES ('9', '2019年5月5日', '<p>创建数据表结构,</p><p>建立前台框架,</p><p>构建用户端html；</p><p>登录，注册，密码找回。</p>', '1584871136', '1584871136', '0');
-INSERT INTO `tao_time_line` VALUES ('10', '2019年5月10日', '<p>[新增]&nbsp;注册模块，进行动态密码双重加密</p><p>[新增]登录模块，加入validata验证</p><p>[新增]密码找回</p><p>[安装]phpmailer插件</p><p>[优化]验证码captcha</p>', '1584871314', '1584871314', '0');
-INSERT INTO `tao_time_line` VALUES ('11', '2019年5月15日', '<p><span>[优化]</span><span>&nbsp;</span>注册模块，邮箱用户名多态登录</p><p>[优化]密码找回，更新验证码</p>', '1584871602', '1584871602', '0');
-INSERT INTO `tao_time_line` VALUES ('12', '2019年5月25日', '<p>[新增]文章添加，编辑，删除</p><p>[新增]首页，分类，详情</p><p>[新增]回帖</p><p>[优化]多态登录</p><p>[优化]邮件首发验证码</p>', '1585208263', '1585208263', '0');
-INSERT INTO `tao_time_line` VALUES ('13', '2019年6月1日', '<p>[新增]右栏各模块</p><p>[新增]签到</p><p>[优化]帖子发布</p><p>[更新]layui2.5</p>', '1585208481', '1585208481', '0');
-INSERT INTO `tao_time_line` VALUES ('14', '2019年6月10日', '<p>[优化]前台分类导航选择</p><p>[优化]前台分类筛选选择</p><p>[优化]cate控制</p><p>[修复]未登录状态点文章发布跳转</p>', '1585208796', '1585208796', '0');
-INSERT INTO `tao_time_line` VALUES ('15', '2019年6月20日', '<p>[新增]后台模版的更换</p><p>[新增]账户管理</p>', '1585209047', '1585209047', '0');
-INSERT INTO `tao_time_line` VALUES ('16', '2019年7月5日', '<p>[新增]内容的管理模块</p><p>[新增]设置管理模块</p><p>[修复]前台用户页面bug</p>', '1585209329', '1585209329', '0');
-INSERT INTO `tao_time_line` VALUES ('17', '2019年7月25日', '<p>[新增]应用模块，系统升级，版本发布，授权管理等</p><p><br></p>', '1585209434', '1585209434', '0');
-INSERT INTO `tao_time_line` VALUES ('18', '2019年8月10日', '[优化]管理，用户，管理员，角色，权限', '1585209551', '1585209551', '0');
-INSERT INTO `tao_time_line` VALUES ('19', '2019年9月10日', '<p>[更新]layui2.5.5</p><p>[修复]授权前后台</p><p>[修复]前台版本升级系统的检测</p><p><br></p>', '1585209783', '1585209783', '0');
-INSERT INTO `tao_time_line` VALUES ('20', '2019年9月25日 ', '<p>[修复]权限控制</p><p>[修复]角色管理</p><p>[优化]网站设置Logo保存</p><p>[优化]前台注册在一些信息</p><p><br></p>', '1585210095', '1585210095', '0');
-INSERT INTO `tao_time_line` VALUES ('21', '2019年10月5日', '[修复]一些已知bug', '1585210220', '1585210220', '0');
-INSERT INTO `tao_time_line` VALUES ('22', '2019年10月25日', '<p>[更新] 升级Thinkphp6框架为正式版</p><p>[优化] 各查询条件相关优化</p>', '1585210342', '1585210342', '0');
-INSERT INTO `tao_time_line` VALUES ('23', '2019年11月5日', '<p><span>[优化] 后台多模块功能的优化</span></p><p><span>[新增] 后台多个功能的增加</span></p>', '1585210449', '1585210449', '0');
-INSERT INTO `tao_time_line` VALUES ('24', '2019年11月20日', '<p>[新增]广告管理</p><p>[优化]幻灯和广告合并</p><p>[修复] 账户密码，基本资料设置</p>', '1585210712', '1585210712', '0');
-INSERT INTO `tao_time_line` VALUES ('25', '2019年12月5日', '<p>[新增] 安装引导程序</p><p>[优化] 数据库表</p><p>[优化] 后台数个页面的优化和新增</p>', '1585210905', '1585210905', '0');
-INSERT INTO `tao_time_line` VALUES ('26', '2019年12月15日', '<p>[修复] 修复多数已知问题</p><p>[修复] 转移测试平台</p>', '1585211052', '1585211052', '0');
-INSERT INTO `tao_time_line` VALUES ('27', '2019年12月30日', '<p><span>[修复] 安装引导文件的修复</span></p><p><span>[新增] 发布测试版本前的准备</span></p><p><span>[新增] 系统的介绍</span></p>', '1585211146', '1585211146', '0');
-INSERT INTO `tao_time_line` VALUES ('28', '2020年1月1日 Beat 1.0', '[新增] 发布1.0测试版本，命名TaoLer。', '1585211259', '1585211259', '0');
-INSERT INTO `tao_time_line` VALUES ('29', '2020年1月1-31日', '<p><span>[修复] 数个问题修复和完善</span></p>', '1585211340', '1585211340', '0');
-INSERT INTO `tao_time_line` VALUES ('30', '2020年2月1-29日', '<p>[新增] 帖子tags</p><p>[优化] 帖子文章的SEO</p><p>[新增] auth模块发布至github</p><p>[更新] auth权限管理插件</p><p>[修复] 引导文件的数据库配置</p><p>[修复] 授权在某些服务器的获取</p><p>[修复] 文件上传</p>', '1585211685', '1585211685', '0');
-INSERT INTO `tao_time_line` VALUES ('31', '2020年3月10', '<p><span>[优化] 帖子，分类各类缓存，数据库查询，性能优化等</span></p><p>[优化] 前台超级管理员权限的分配</p><p><span>[修复] 编辑帖子，发帖人改变的bug</span></p><p>[新增] 插件管理模块</p><p>[新增] 登录日志文件，浏览帖子日志</p>', '1585212061', '1585212061', '0');
-INSERT INTO `tao_time_line` VALUES ('32', '2020年3月20', '<p>[新增] 版本更新日志线</p><p>[修复] 前台会员页面展示</p><p>[优化] 多个页面的缓存</p><p>[优化] 前台用户授权页面</p>', '1585212188', '1585212188', '0');
-INSERT INTO `tao_time_line` VALUES ('33', '2020年3月26', '<p>[新增] 站内信消息模块</p><p><br></p>', '1585212283', '1585212283', '0');
-INSERT INTO `tao_time_line` VALUES ('34', '2020年3月29', '<p><span>[新增] 用户后台签到模块</span></p><p>[新增] 积分等级后台设置</p><p>[优化] 消息通知功能</p>', '1585484428', '1585484428', '0');
-INSERT INTO `tao_time_line` VALUES ('35', '2020年3月30', '<p>[新增] VIP模块</p><p>[优化] 优化签到积分规则</p><p>[修复] 权限规则</p>', '1585577995', '1585577995', '0');
-INSERT INTO `tao_time_line` VALUES ('36', 'TaoLer V1.0.0正式版', '<p>[新增] 后台消息管理模块，发全站内信，单独推送用户消息</p><p>[优化] 前台用户系统消息和接收系统消息&nbsp;</p><p>[版本] 框架基本定型，推送1.0正式版，其它待优化事项逐步完成</p>', '1585669343', '1585669343', '0');
-INSERT INTO `tao_time_line` VALUES ('37', '222', '222', '1585752242', '1585752256', '1585752256');
-INSERT INTO `tao_time_line` VALUES ('38', '111', '1111', '1585754796', '1585754830', '1585754830');
-INSERT INTO `tao_time_line` VALUES ('39', 'TaoLer V1.1.0', '<p>[修复] 后台权限控制更加仔细，权限，角色，用户组分配三级设置</p><p>[修复] 移除管理员的角色直接分配</p><p>[新增] 后台分类的热点的单选设置选项</p><p>[新增] 添加数据库auth_group_access id字段,可以更改用户的编辑操作</p><p>[新增] 权限控制菜单和按钮规则的添加</p><p>[优化] 站内信后台通知和前台之间的系统通知和用户通知的读取</p>', '1585898118', '1585898118', '0');
-INSERT INTO `tao_time_line` VALUES ('40', 'qqq', 'qqqqqq', '1588050588', '1605504731', '1605504731');
-INSERT INTO `tao_time_line` VALUES ('41', 'ddd', 'dddd', '1605507216', '1605507216', '0');
-
--- ----------------------------
--- Table structure for tao_upgrade_auth
--- ----------------------------
-DROP TABLE IF EXISTS `tao_upgrade_auth`;
-CREATE TABLE `tao_upgrade_auth` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `user` varchar(20) NOT NULL COMMENT '用户',
-  `domain` varchar(30) NOT NULL COMMENT '域名',
-  `key` varchar(60) NOT NULL COMMENT '授权秘钥',
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
-  `auth_level` tinyint(1) NOT NULL DEFAULT '0' COMMENT '授权等级0无授权1初级2中级3高级',
-  `end_time` int(11) NOT NULL DEFAULT '0' COMMENT '结束时间',
-  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of tao_upgrade_auth
--- ----------------------------
-INSERT INTO `tao_upgrade_auth` VALUES ('1', 'admin', 'http://www.tp6.com', '9ee40f0c4f5c8f2f10b06ae2e1ddda96ac709c4a', '1', '0', '0', '0', '0', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('2', 'tao', 'http://www.tp6.com', '123456', '1', '1', '1577721600', '0', '1577172802', '1577172802');
-INSERT INTO `tao_upgrade_auth` VALUES ('3', 'admin', 'https://www.tp.com', 'e49183beee30d0b463fbf415d63cce3908d95599', '1', '0', '0', '1576835663', '1583765865', '1583765865');
-INSERT INTO `tao_upgrade_auth` VALUES ('4', 'admin', 'https://www.tp6.com', '9ee40f0c4f5c8f2f10b06ae2e1ddda96ac709c4a', '1', '1', '0', '1576835915', '1576835915', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('5', 'admin', 'http://www.baidu.com', 'fd27553322b3ed27ff7114b1c540901d36ac1ef8', '1', '0', '0', '1576836110', '1576836110', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('6', 'admin', 'https://www.taobao.com', 'b5d63bc7ae0d86c4d4019e2aea8d828f06818cc7', '1', '1', '0', '1576836142', '1583765908', '1583765908');
-INSERT INTO `tao_upgrade_auth` VALUES ('7', 'admin', 'http://www.taobao.com', '4931b81d82673528828d2fd64a0414e8925c9221', '1', '0', '0', '1576836211', '1583765821', '1583765821');
-INSERT INTO `tao_upgrade_auth` VALUES ('8', 'admin', 'http://qianniu.com', '0106c5c4f8e0a1d97745353bee6201783d481ac2', '1', '1', '0', '1576836529', '1583765837', '1583765837');
-INSERT INTO `tao_upgrade_auth` VALUES ('9', 'admin', 'http://baidu.com', '4ce7a1d87218353d09081a291f38ddb290b0630b', '1', '0', '0', '1576836712', '1583765886', '1583765886');
-INSERT INTO `tao_upgrade_auth` VALUES ('10', 'zhao', 'http://tao.tp6.com', '374f2e2a63f1201924a07561095cd078acae238b', '1', '1', '0', '1576837200', '1576837200', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('11', 'ZhiQ', 'http://www.hicheng.cn', '20b32d07aa9c2fb24afed0bf72f420144928fd22', '1', '0', '0', '1579012640', '1579012640', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('12', 'ZhiQ', 'https://www.hicheng.cn', '9a2e0b92f54238760c48d6021adba6e20c9ede0a', '1', '0', '0', '1579012652', '1579012652', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('13', 'lingkur', 'http://demo.biudj.com', '15eacf288cc4e8a1a9b69da3338607d0710b8cd1', '1', '0', '0', '1579455284', '1579455284', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('14', '云飞', 'https://www.cqtl520.com', 'db88afaedaacc1cabc15013dd3ea5f412f6086c9', '1', '0', '0', '1579665257', '1579665257', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('15', '123', 'http://http://www.aieok.com/', '13971a9975a4e4eb9827a01767a2796c68e03b69', '1', '0', '0', '1583659119', '1583659119', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('16', '22553456', 'http://www.srsn.com', 'fb86db60328ada7c0180a3f32765777dc4250a7f', '1', '0', '0', '1584153862', '1584153862', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('17', 'maqiang', 'https://www.wujiangpu.com', 'b4c22df2a87ecd0524b90cf8d56eeadeba58a8a1', '1', '0', '0', '1584278073', '1584278073', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('18', 'admin', 'https://www.igoke.cn', '8e8a3c05508f853fb06e3d5accd927d949194971', '1', '0', '0', '1585382531', '1590487273', '1590487273');
-INSERT INTO `tao_upgrade_auth` VALUES ('19', 'tt', 'http://www.tt.com', 'ff9f48057c831cb5db3af907b799b754f0499050', '1', '0', '2020', '1590486647', '1590487269', '1590487269');
-INSERT INTO `tao_upgrade_auth` VALUES ('20', 'dfdf', 'http://wwerw.com', '1675905f7042fcdbca2c2de43ba79827ee62631f', '1', '0', '2020', '1590486715', '1590486715', '0');
-INSERT INTO `tao_upgrade_auth` VALUES ('21', 'fdfdf', 'dfdfdsf', 'cb71fef668253fe6b2761f10500af9440acdcd8d', '1', '0', '2020', '1590486752', '1590487269', '1590487269');
-INSERT INTO `tao_upgrade_auth` VALUES ('22', 'fdfdf', 'http://wwwe.com', '1db68d6d7d0cb9fd44ad51e22611680f3aa26a7d', '1', '0', '1590854400', '1590486950', '1590486950', '0');
 
 -- ----------------------------
 -- Table structure for tao_user
@@ -762,51 +640,3 @@ CREATE TABLE `tao_user_zan` (
 -- ----------------------------
 -- Records of tao_user_zan
 -- ----------------------------
-
--- ----------------------------
--- Table structure for tao_version
--- ----------------------------
-DROP TABLE IF EXISTS `tao_version`;
-CREATE TABLE `tao_version` (
-  `id` int(5) unsigned NOT NULL AUTO_INCREMENT,
-  `version_name` varchar(20) NOT NULL COMMENT '版本名称',
-  `version_src` varchar(70) NOT NULL DEFAULT '' COMMENT '版本文件路径',
-  `version_resume` varchar(255) NOT NULL DEFAULT '' COMMENT '简介',
-  `version_status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '1开启0禁止',
-  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of tao_version
--- ----------------------------
-INSERT INTO `tao_version` VALUES ('1', '1.1.1', '/storage/version/20191215/536c65fc4df42100016fa3d97b584d26.zip', '第1个版本', '1', '1575862901', '0', '1575864587');
-INSERT INTO `tao_version` VALUES ('2', '1.1.2', '/storage/version/20191215/832e150dfbc0e88e04a408e475bce8bb.zip', '第2个版本', '1', '1575862901', '0', '1575864587');
-INSERT INTO `tao_version` VALUES ('3', '1.1.3', '/storage/version/20191215/9ff1153045f1ad1e26c74aad148bdde3.zip', '第3个版本', '1', '1575862901', '1575862901', '1575864587');
-INSERT INTO `tao_version` VALUES ('4', '1.1.4', '/storage/version/20191209/1fae8a15fcd41181490a0c02e0218ef1.zip', '第四个版本', '1', '1575864450', '1575864587', '1575864587');
-
--- ----------------------------
--- Table structure for tao_webconfig
--- ----------------------------
-DROP TABLE IF EXISTS `tao_webconfig`;
-CREATE TABLE `tao_webconfig` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ename` varchar(30) NOT NULL COMMENT '英文名',
-  `cname` varchar(50) NOT NULL COMMENT '中文名',
-  `form_type` varchar(10) DEFAULT '' COMMENT '表单类型',
-  `conf_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '配置类型1论坛2网店3企业站',
-  `values` varchar(255) NOT NULL,
-  `value` varchar(60) NOT NULL COMMENT '默认值',
-  `sort` tinyint(2) NOT NULL DEFAULT '20',
-  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of tao_webconfig
--- ----------------------------
-INSERT INTO `tao_webconfig` VALUES ('1', 'template', '', '', '0', '', 'taoler', '20', '0', '0', '0');

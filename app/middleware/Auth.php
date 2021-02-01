@@ -31,7 +31,7 @@ class Auth
 		}
 		
 		// 排除公共权限
-		$not_check = ['admin/','admin/login/index','admin/index/index','admin/index/home','admin/Admin/info','admin/Admin/repass','admin/Admin/logout','admin/captcha'];
+		$not_check = ['admin/','admin/login/index','admin/index/index','admin/index/home','admin/Admin/info','admin/Admin/repass','admin/Admin/logout','admin/Index/news','admin/Index/cunsult','admin/Index/replys','admin/Index/reply','admin/captcha'];
 
 		if (!in_array($path, $not_check)) {
 			$auth     = new UserAuth();

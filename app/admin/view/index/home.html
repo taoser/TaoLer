@@ -32,9 +32,9 @@
                         </a>
                       </li>
                       <li class="layui-col-xs3">
-                        <a lay-href="{:url('Admin/repass')}">
-                          <i class="layui-icon layui-icon-password"></i>
-                          <cite>密码</cite>
+                        <a lay-href="{:url('Notice/index')}">
+                          <i class="layui-icon layui-icon-voice"></i>
+                          <cite>通知</cite>
                         </a>
                       </li>
                       <li class="layui-col-xs3">
@@ -44,9 +44,9 @@
                         </a>
                       </li>
                       <li class="layui-col-xs3">
-                        <a lay-href="{:url('Admin/info')}">
-                          <i class="layui-icon layui-icon-form"></i>
-                          <cite>资料</cite>
+                        <a lay-href="{:url('Database/index')}">
+                          <i class="layui-icon layui-icon-template-1"></i>
+                          <cite>备份</cite>
                         </a>
                       </li>
                       <li class="layui-col-xs3">
@@ -56,17 +56,9 @@
                         </a>
                       </li>
                       <li class="layui-col-xs3">
-                        <a lay-href="{:url('Set/website')}">
-                          <i class="layui-icon layui-icon-set"></i>
-                          <cite>设置</cite>
-                        </a>
-                      </li>
-                    </ul>
-                    <ul class="layui-row layui-col-space10">
-                      <li class="layui-col-xs3">
-                        <a lay-href="">
-                          <i class="layui-icon layui-icon-set"></i>
-                          <cite>我的资料</cite>
+                        <a lay-href="{:url('Upgrade/index')}">
+                          <i class="layui-icon layui-icon-refresh"></i>
+                          <cite>更新</cite>
                         </a>
                       </li>
                     </ul>
@@ -141,11 +133,53 @@
             <div class="layui-card">
               <div class="layui-tab layui-tab-brief layadmin-latestData">
                 <ul class="layui-tab-title">
-                  <li class="layui-this">今周发帖</li>
+				<li class="layui-this">官方动态</li>
+                  <li>发送反馈</li>
+                  <li>今周发帖</li>
                   <li>今周评论</li>
                 </ul>
                 <div class="layui-tab-content">
-                  <div class="layui-tab-item layui-show">
+					
+					<div class="layui-tab-item layui-show">
+                    <table id="LAY-index-topnews"></table>
+                  </div>
+                  <div class="layui-tab-item  layui-form-text">
+					<div class="layui-form  layui-form-pane">    
+						<div class="layui-row layui-col-space12 layui-form-item" >
+							<div class="layui-col-md5">
+							  <label class="layui-form-label">发送类型</label>
+							  <div class="layui-input-block">
+								<select name="type" lay-verify="required" lay-filter="type"> 
+								  <option value="1">问题资讯</option>
+								  <option value="2">提交BUG</option>
+								</select>
+							  </div>
+							</div>
+							<div class="layui-col-md7">
+							   <label for="L_title" class="layui-form-label">标题</label>
+							   <div class="layui-input-block">
+									<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" >
+							   </div>
+							</div>
+						</div>
+						<div class="layui-form-item layui-form-text">
+							<div class="layui-input-block">		
+							<textarea id="L_content" name="content" required lay-verify="content" autocomplete="off"  class="layui-textarea"></textarea>
+							</div>
+						</div>
+						<div class="layui-form-item">						
+							<button type="submit" class="layui-btn " lay-filter="cunsult-add" lay-submit id="cunsult-add">立即发布</button>	  
+						</div>
+					</div>
+					<div class="layui-form-item">
+					<table id="LAY-index-topreply" lay-filter="LAY-index-topreply"></table>
+					<script type="text/html" id="tao-reply">
+					<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+					</script>
+					</div>
+                  </div>
+				
+                  <div class="layui-tab-item">
                     <table id="LAY-index-topSearch"></table>
                   </div>
                   <div class="layui-tab-item">
@@ -286,8 +320,111 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'console']);
-  var indexForums = "{:url('Index/forums')}",
-	indexReplys = "{:url('Index/replys')}";
+  }).use(['index', 'console','element', 'layedit','form','table'],function(){
+		var $ = layui.jquery
+		,form = layui.form
+		,layedit = layui.layedit
+		,table = layui.table
+		,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+		
+	var index = layedit.build('L_content', {
+		  height: 120 //设置编辑器高度
+		  ,tool: [
+		  'strong' //加粗
+		  ,'italic' //斜体
+		  ,'underline' //下划线
+		  ,'del' //删除线
+		  ,'|' //分割线
+		  ,'left' //左对齐
+		  ,'center' //居中对齐
+		  ,'right' //右对齐
+		  ,'link' //超链接
+		  ,'unlink' //清除链接
+		  ,'face' //表情
+		  //,'image' //插入图片
+		],
+		  
+		}); 
+		form.verify({
+		content: function(value){
+			return layedit.sync(index);
+		}
+	});
+		
+		form.on('submit(cunsult-add)',function(data){
+		var field = data.field;
+		
+			$.ajax({
+				type:"post",
+				url:"{:url('Index/cunsult')}",
+				data:field,
+				dataType:"json",
+				success:function (data){
+					if (data.code == 0) {
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						}, function(){
+							location.reload();
+						});
+					} else {
+						layer.open({
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+		return false;	
+		});
+		
+		//监听工具条
+    table.on('tool(LAY-index-topreply)', function(obj){
+        var data = obj.data;
+	
+        if(obj.event === 'del'){
+            layer.confirm('确定删除此站点？', function(index){
+                $.ajax({
+                    type:'post',
+                    url:"{:url('Index/delReply')}",
+                    data:{id:data.id},
+                    dataType:'json',
+                    success:function(data){
+                        if(data.code == 0){
+                            layer.msg(data.msg,{
+                                icon:6,
+                                time:2000
+                            },function(){
+                                location.reload();
+                            });
+                        } else {
+                            layer.open({
+                                title:'删除失败',
+                                content:data.msg,
+                                icon:5,
+                                adim:6
+                            })
+                        }
+                    }
+                });
+                //obj.del();
+				table.reload('LAY-index-topreply');
+                layer.close(index);
+            });
+        }
+	});
+		
+		
+	$('.layui-btn.layuiadmin-btn-oiltank').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });		
+		
+  });
+  var indexForums = "{:url('Index/forums')}",	//帖子
+	indexReplys = "{:url('Index/replys')}";		//回复
+	var indexNews = "{:url('Index/news')}",	 //动态
+		indexReply = "{:url('Index/reply')}";	//反馈
   </script>
 {/block}

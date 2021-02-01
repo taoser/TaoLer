@@ -24,7 +24,7 @@ class Set extends AdminController
     {
 		$mailserver = MailServer::find(1);
 		$sysInfo = Db::name('system')->find(1);
-		$syscy = $this->check($sysInfo['base_url']);
+		$syscy = $this->cyCheck($sysInfo['base_url']);
 		$template = Files::getDirName('../view');
         View::assign(['sysInfo'=>$sysInfo,'syscy'=>$syscy,'mailserver'=>$mailserver,'template'=>$template]);
 		return View::fetch('set/system/website');
@@ -130,21 +130,6 @@ class Set extends AdminController
             
         }
 	return json($res);
-	}
-	
-	public function check($url)
-	{
-		$url = $url.'?u='.Request::domain();
-		$cy = Api::urlGet($url);
-
-		if(!$cy){
-            if($cy->code == 1){
-                $cylevel = $cy->level;
-                return $cylevel;
-            }
-        } else {
-		return 0;
-		}
 	}
 		
 }
