@@ -3,11 +3,31 @@
 {block name="body"}
   <div class="layui-fluid">
         <div class="layui-card">
-          <div class="layui-card-header">插件管理</div>
+          <div class="layui-form layui-card-header  layuiadmin-card-header-auto">
+			 <div class="layui-form-item">
+          <div class="layui-inline">
+            插件分类
+          </div>
+          <div class="layui-inline">
+            <select name="id" lay-filter="LAY-user-adminrole-type">
+              <option value="">全部插件</option>
+			  <option value="">支付</option>
+			  <option value="">第三方登陆</option>
+			  
+            </select>
+          </div>
+        </div>
+		  </div>
           <div class="layui-card-body">
-				<div style="padding-bottom: 10px;">
-				  <!--button class="layui-btn layuiadmin-btn-admin" data-type="batchdel">删除</button-->
-				  <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
+				<div class="layui-btn-group" style="padding-bottom: 10px;">
+				  <button class="layui-btn layuiadmin-btn-admin" data-type="batchdel">刷新</button>
+				  <button class="layui-btn layuiadmin-btn-admin" data-type="add">离线安装</button>
+				</div>  
+				<div class="layui-btn-group" style="padding-bottom: 10px;">
+				  <button type="button" class="layui-btn">全部</button>
+				  <button type="button" class="layui-btn">免费</button>
+				  <button type="button" class="layui-btn">付费</button>
+				  <button type="button" class="layui-btn">已安装</button>
 				</div>            
             <table id="addons-list" lay-filter="addons-list"></table>
 			<script type="text/html" id="addons-tool">
@@ -97,7 +117,7 @@
 						});
 					} else {
 						layer.open({
-							tiele:'添加失败',
+							title:'添加失败',
 							content:data.msg,
 							icon:5,
 							anim:6
