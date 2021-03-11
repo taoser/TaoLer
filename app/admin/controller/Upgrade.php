@@ -21,6 +21,8 @@ use think\facade\Db;
 use think\exception\ValidateException;
 use app\admin\controller\Uzip;
 use think\facade\Cache;
+use taoler\com\Api;
+use think\facade\Config;
 
 class Upgrade extends AdminController
 {
@@ -34,9 +36,9 @@ class Upgrade extends AdminController
 	
 	public function __construct()
 	{
-		$this->sys_version_num = Db::name('system')->where('id',1)->value('sys_version_num');
+		$this->sys_version = Config::get('taoler.version');
+		$this->sys = Db::name('system')->where('id',1)->find();
 	}
-	
     
 	
 	/** 升级界面 */
@@ -88,63 +90,56 @@ class Upgrade extends AdminController
 	//升级前的版本检测
 	public function check($url)
 	{
-		$url = $url.'?ver='.$this->sys_version_num;
-		$ch =curl_init ();
-		curl_setopt($ch,CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT, 20);
-		curl_setopt($ch,CURLOPT_POST, 1);
-		$data = curl_exec($ch);
-		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
-		curl_close($ch);
-		if($httpCode != '200'){
-			return json(['code'=>0,'msg'=>'连接服务器失败,稍后重试...']);
-		}
-		$versions = json_decode($data);
-		//判断状态
+		$url = $url.'?ver='.$this->sys_version;
+		//$versions = json_decode(Api::urlGet($url));
+		$versions = Api::urlGet($url);
+		//var_dump($versions);
+		
+		//判断服务器状态
 		$version_code = $versions->code;
-		if($version_code == 0){
+		if($version_code == -1){
 			return json(['code'=>$version_code,'msg'=>$versions->msg]);
 		}
+		
+		if($version_code == 1){
+			return json(['code'=>$versions->code,'msg'=>$versions->msg,'version'=>$versions->version,'upnum'=>$versions->up_num]);
+		}
+		
+		if($version_code == 0){
+			return json(['code'=>$versions->code,'msg'=>$versions->msg]);
+		}
+		
 		//版本比较
-		$version_num = $versions->version;
-		$up_num =$versions->up_num;
+/*		
+		$version_num = $versions->version;	//最新版本
+		$up_num =$versions->up_num;	//可更新版本数
 		$res = version_compare($version_num,$this->sys_version_num,'>');
 		if($res){
 			return json(['code'=>1,'msg'=>'发现新版本','version'=>$version_num,'upnum'=>$up_num]);
 		} else {
 			return json(['code'=>0,'msg'=>'暂时还没更新哦！ ==8']);
 		}
+*/		
 	}
 	
 	
     /**
-     * 自动更新
+     * 在线更新
      */
     public function upload()
     {
-		$data = Request::param();
+		$data = Request::only(['url','key']);
+		
 		if(empty($data['key'])){
 			return json(["code"=>0,"msg"=>"请配置正确升级key"]);
 		}
-		$url = $data['url'].'?domain='.Request::domain().'&key='.$data['key'].'&ver='.$this->sys_version_num;
-
-		$ch =curl_init ();
-		curl_setopt($ch,CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT, 20);
-		curl_setopt($ch,CURLOPT_POST, 1);
-		$data = curl_exec($ch);
-		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
-		curl_close($ch);
-		if($httpCode != '200'){
-			return json(['code'=>0,'msg'=>'连接服务器失败,稍后重试...']);
-		}
-		//获取远程文件
-		$versions = json_decode($data);
-		//判断状态
+		$url = $data['url'].'?url='.$this->sys['domain'].'&key='.$data['key'].'&ver='.$this->sys_version;
+//var_dump($url);
+		$versions = Api::urlGet($url);
+	
+		//判断服务器状态
 		$version_code = $versions->code;
-		if($version_code == 0){
+		if($version_code == -1){
 			return json(['code'=>$version_code,'msg'=>$versions->msg]);
 		}
 		
@@ -154,7 +149,7 @@ class Upgrade extends AdminController
 		//判断远程文件是否可用存在
 		$header = get_headers($file_url, true);
 		if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
-			return json(["code"=>0,"msg"=>"获取远程文件失败"]);
+			return json(["code"=>-1,"msg"=>"获取远程文件失败"]);
 		}
 		
 		 if(!is_dir($this->upload_dir)){
@@ -165,7 +160,7 @@ class Upgrade extends AdminController
 		$cpfile = copy($file_url,$package_file);
         if(!$cpfile)
         {
-            return json(["code"=>0,"msg"=>"下载升级文件失败"]);  
+            return json(["code"=>-1,"msg"=>"下载升级文件失败"]);  
         } 
 
         //记录下日志
@@ -185,10 +180,12 @@ class Upgrade extends AdminController
         $upres = $this->execute_update($package_file);
 		//更新版本
 		Db::name('system')->update(['sys_version_num'=>$version_num,'id'=>1]);
+		//$res = Config::set(['version' => $version_num,'salt' => 'taoler'], 'taoler');
+		//var_dump($res);
 		if($upres){
-			return json(["code"=>1,"msg"=>"升级成功"]);
+			return json(["code"=>0,"msg"=>"升级成功"]);
 		}else {
-			return json(["code"=>0,"msg"=>"升级失败"]);
+			return json(["code"=>-1,"msg"=>"升级失败"]);
 		}
     }
 	
@@ -262,6 +259,7 @@ class Upgrade extends AdminController
 		
 		//更新版本
 		Db::name('system')->update(['sys_version_num'=>$version_num,'id'=>1]);
+		//Config::set(['version' => $version_num], 'taoler');
 		if($upres){
 			return json(["code"=>1,"msg"=>"升级成功"]);
 		}else {

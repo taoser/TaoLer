@@ -74,7 +74,7 @@ class Index extends BaseController
 		$pass = md5(substr_replace(md5($data['admin_pass']),$salt,0,6));
 		$webname = $data['webname'];
 		$webtitle = $data['webtitle'];
-		$web = Request::domain();
+		$web = Request::host();
 		//数据库配置
 		$dbhost = $data['DB_HOST'];
 		$dbuser = $data['DB_USER'];
