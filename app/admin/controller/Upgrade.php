@@ -22,6 +22,7 @@ use think\exception\ValidateException;
 use app\admin\controller\Uzip;
 use think\facade\Cache;
 use taoler\com\Api;
+use taoler\com\Str;
 use think\facade\Config;
 
 class Upgrade extends AdminController
@@ -43,9 +44,14 @@ class Upgrade extends AdminController
 	
 	/** 升级界面 */
     public function index()
-    {
-		$sys_version_num = Db::name('system')->field('sys_version_num,key,upcheck_url,upgrade_url')->find(1);
-		View::assign('ver_num',$sys_version_num);
+    {	//字符隐藏
+		$key = Str::func_substr_replace($this->sys['key']);
+		$sys_base = [
+			'key' => $key,
+			'upcheck_url' => $this->sys['upcheck_url'],
+			'upgrade_url' => $this->sys['upgrade_url'],
+		];
+		View::assign('ver_num',$sys_base);
        return View::fetch(); 
     }
 
