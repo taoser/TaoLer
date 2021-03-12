@@ -34,7 +34,7 @@
 				</div>
 				<div class="layui-form-item">
 					<label class="layui-form-label">在线升级</label>
-					<div class="layui-input-inline layui-input-company" id="ver_nums" >当前版本：Taole v_{:config('taoler.version')}</div>
+					<div class="layui-input-inline layui-input-company" id="ver_nums" >当前版本：Taoler v_{:config('taoler.version')}</div>
 					<div class="layui-upload">
 					{if condition="checkRuleButton('admin/Upgrade/check')"}
 					<button type="button" class="layui-btn layui-btn-sm" data-url="{$ver_num.upcheck_url}" id="upload-check">检查更新</button>
@@ -87,100 +87,53 @@
 	  ,layer = layui.layer
 	  ,form = layui.form
 	  ,upload = layui.upload;  
-		  
-	//手动更新，选完文件后不自动上传
-	upload.render({
-		elem: '#select-file'
-		,url: '/admin/upgrade/uploadzip'
-		,accept: 'file'
-		,field: 'file'
-		,auto: false
-		,exts: 'zip|rar|7z'
-		,size: 10000
-		//,multiple: true
-		,bindAction: '#upgrade-sys-button'
-		,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
-			layer.load(); //上传loading
-		  }
-		,done: function(res){
-			layer.closeAll('loading'); //关闭loading
-		  if(res.code == 1){
-			layer.msg(res.msg,{
-						icon:6,
-						tiye:2000
-				},function(){
-						location.reload();
-					});
-			} else {
-					layer.open({
-						title:"上传失败",
-						content:res.msg,
-						icon:5,
-						anim:6
-					});
-			}
-		}
-	});	  
-		  
+
 	//检测并更新系统
 	$('#upload-check').on('click',function(){
-		var url = $(this).attr('data-url'),
-		loading = layer.load(2, {
+        var loading = layer.load(2, {
                     shade: [0.2, '#000'],
 					//time: 2000,
                 });
-		$.ajax({
-				type:"post",
-				url:"{:url('admin/upgrade/check')}",
-				data:{"url":url},
-				daType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						//已件最新版本
-						layer.close(loading);
-						layer.msg(data.msg,{
-								icon:6,
-								time:2000
-							});
-					
-					} else if (data.code == 1) {
-						//可升级
-						layer.close(loading);
-						$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.upnum+'</span>个新版本：<span style="color:red">可更新至v'+data.version+'</span></div>');
-						//$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.upnum+'</span>个新版本：<span style="color:red">可更新至v'+data.version+'</span></div> <button class="layui-btn layui-btn-sm" lay-submit lay-filter="update_system" data-url="{$ver_num.upgrade_url}" id="update_system">确认升级</button>');
-						$('button#upload-check').hide();
-						
-						//更新系统
-						layer.confirm('可更新至v'+data.version+' 确定升级？',{icon: 3, title:'升级系统'}, function(index){
-							uploads();	//更新
-							layer.close(index);	//关闭load加载层
+		$.get("{:url('admin/upgrade/check')}",function (data){
+				if (data.code == 0) {
+					//已件最新版本
+					layer.close(loading);
+					layer.msg(data.msg,{
+							icon:6,
+							time:2000
 						});
-					} else {
-						//服务器错误
-						layer.close(loading);
-						layer.open({
-							title:'服务错误',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-					}
+
+				} else if (data.code == 1) {
+					//可升级
+					layer.close(loading);
+					$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.upnum+'</span>个新版本：<span style="color:red">可更新至v'+data.version+'</span></div>');
+					//$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.upnum+'</span>个新版本：<span style="color:red">可更新至v'+data.version+'</span></div> <button class="layui-btn layui-btn-sm" lay-submit lay-filter="update_system" data-url="{$ver_num.upgrade_url}" id="update_system">确认升级</button>');
+					$('button#upload-check').hide();
+
+					//更新系统
+					layer.confirm('可更新至v'+data.version+' 确定升级？',{icon: 3, title:'升级系统'}, function(index){
+						uploads();	//更新
+						layer.close(index);	//关闭load加载层
+					});
+				} else {
+					//服务器错误
+					layer.close(loading);
+					layer.open({
+						title:'服务错误',
+						content:data.msg,
+						icon:5,
+						anim:6
+					});
 				}
-			});
+			}
+		);
 		return false;	
 	});
 
 	//更新
 	function uploads(){
-	var url = "{$ver_num.upgrade_url}",
-		key = $('input[name=key]').attr("value"),
-		load = layer.load(); //loading
-		$.ajax({
-			type:"post",
-			url:"{:url('admin/upgrade/upload')}",
-			data:{"url":url,"key":key},
-			daType:"json",
-			success:function (data){
+		var load = layer.load(); //loading
+		$.get("{:url('admin/upgrade/upload')}",function (data){
 				if (data.code == 0) {
 					layer.close(load);
 					layer.msg(data.msg,{
@@ -199,8 +152,42 @@
 					});
 				}
 			}
-		});
+		);
 	}
+
+	//手动更新，选完文件后不自动上传
+	upload.render({
+		elem: '#select-file'
+		,url: "{:url('admin/upgrade/uploadzip')}"
+		,accept: 'file'
+		,field: 'file'
+		,auto: false
+		,exts: 'zip|rar|7z'
+		,size: 10000
+		//,multiple: true
+		,bindAction: '#upgrade-sys-button'
+		,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+			layer.load(); //上传loading
+		}
+		,done: function(res){
+			layer.closeAll('loading'); //关闭loading
+			if(res.code == 1){
+				layer.msg(res.msg,{
+					icon:6,
+					tiye:2000
+				},function(){
+					location.reload();
+				});
+			} else {
+				layer.open({
+					title:"上传失败",
+					content:res.msg,
+					icon:5,
+					anim:6
+				});
+			}
+		}
+	});
 
 	//确定升级操作
 	$(document).on('click','#update_system',function(){

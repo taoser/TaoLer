@@ -6,8 +6,18 @@ use RecursiveDirectoryIterator;
 class Files
 {
     /**
+     * 转换为/结尾的路径
+     * @param $path string 文件夹路径
+     * @return string
+     */
+    public static function getDirPath($path)
+    {
+        return substr($path,-1) == '/' ? $path : $path.'/';
+    }
+
+    /**
      * 获取目录下子目录名
-     * @param $path 目录
+     * @param $path string 目录
      * @return array
      */
 	public static function getDirName($path)
@@ -47,17 +57,20 @@ class Files
 			chmod($directory_path, 0777);
 		  }
 		}
-	  }
-	  return true;
+		return true;
+	  }else {
+          return false;
+      }
+
 	}
 
     /**
      * 删除文件夹及内容
-     * @param $dirPath  所删除的目录
-     * @param bool $nowDir  是否删除当前文件夹$dirPath true false
+     * @param string $dirPath
+     * @param bool $nowDir 是否删除当前文件夹目录 true false
      * @return bool
      */
-	public static function delDirAndFile( $dirPath, $nowDir=false ) 
+	public static function delDirAndFile(string $dirPath, $nowDir=false )
 	{ 
 		if ( $handle = opendir($dirPath) ) { 
 
@@ -94,23 +107,19 @@ class Files
      * @param array $ex 指定只复制$source下的目录,默认全复制
      * @return bool
      */
-	public function copyDirs($source, $dest, $ex=array())
+	public static function copyDirs($source, $dest, $ex=array())
 	{
-		$count = count($ex);
 		if (!file_exists($dest)) mkdir($dest);
 			if($handle = opendir($source)){
 				while (($file = readdir($handle)) !== false) {
 					if (( $file != '.' ) && ( $file != '..' )) {
-						if ( is_dir($source . $file) ) {
-							//ָ���ļ���
-							if($count != 0){
-								if(in_array($file,$ex)){
-									self::copyDirs($source . $file.'/', $dest . $file.'/');
-								}
-							} else {
-								self::copyDirs($source . $file.'/', $dest . $file.'/');
-							}
+						if (is_dir($source . $file) ) {
+							//拷贝排除的文件夹
+                            if(!in_array($file,$ex)){
+                                self::copyDirs($source . $file.'/', $dest . $file.'/');
+                            }
 						} else {
+						    //拷贝文件
 							copy($source. $file, $dest . $file);
 						}
 					}
