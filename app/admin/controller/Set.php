@@ -24,7 +24,7 @@ class Set extends AdminController
     {
 		$mailserver = MailServer::find(1);
 		$sysInfo = Db::name('system')->find(1);
-		$syscy = $this->cyCheck($sysInfo['base_url']);
+		$syscy = $this->cyCheck($sysInfo['base_url'],$sysInfo['domain']);
 		$template = Files::getDirName('../view');
         View::assign(['sysInfo'=>$sysInfo,'syscy'=>$syscy,'mailserver'=>$mailserver,'template'=>$template]);
 		return View::fetch('set/system/website');

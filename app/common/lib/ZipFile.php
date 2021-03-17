@@ -50,7 +50,7 @@ class ZipFile
 								//zip_entry_close($zip);	
 							}else{
 								//echo '文件夹内已存在文件 "' . $file_name . '" <pre />';
-								return json(['code'=>0,'msg'=>'文件夹内已存在文件']);
+								return json(['code'=>-1,'msg'=>'文件夹内已存在文件']);
 							}
 							
 						}else {

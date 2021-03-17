@@ -101,15 +101,18 @@ class Files
 	}
 
     /**
-     * 复制文件夹$source下的文件和子文件夹下的内容到$dest下 升级+备份代码
-     * @param $source
-     * @param $dest
-     * @param array $ex 指定只复制$source下的目录,默认全复制
-     * @return bool
+     * 复制文件夹文件和子文目录文件，可排除目录复制 升级+备份代码
+     * @param string $source 源目录
+     * @param string $dest  目标目录
+     * @param array $ex 排除目录
+     * @return \think\response\Json
      */
-	public static function copyDirs($source, $dest, $ex=array())
+	public static function copyDirs(string $source,string $dest, array $ex=array())
 	{
-		if (!file_exists($dest)) mkdir($dest);
+		if (is_dir($source)){
+			if (!is_dir($dest)) {
+            	self::mkdirs($dest, 0777, true);
+        	}
 			if($handle = opendir($source)){
 				while (($file = readdir($handle)) !== false) {
 					if (( $file != '.' ) && ( $file != '..' )) {
@@ -119,16 +122,23 @@ class Files
                                 self::copyDirs($source . $file.'/', $dest . $file.'/');
                             }
 						} else {
+							//copy($source. $file, $dest . $file);
+							
 						    //拷贝文件
-							copy($source. $file, $dest . $file);
+							try{
+								copy($source. $file, $dest . $file);
+							}
+							catch (\Exception $e) {
+								// 这是进行异常捕获
+								return json(['code'=>-1,'msg'=>$dest . $file . '无写入权限']);
+							}
 						}
 					}
 				}
 				closedir($handle);
-			} else {
-			return false;
+			}
 		}
-		return true;	
+		return json(['code'=>0,'msg'=>'复制完成']);	
 	}
 
     /**

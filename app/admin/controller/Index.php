@@ -15,17 +15,27 @@ use taoler\com\Api;
 
 class Index extends AdminController
 {
-	
+/*	
 	protected function initialize()
     {
         parent::initialize();
-		$this->domain = Request::scheme().'://www.'.Request::rootDomain();
-		$this->api = Db::name('system')->where('id',1)->value('api_url');
+    }
+*/	
+	public function __construct()
+	{
+		$this->sys_version = Config::get('taoler.version');
+		$this->sys = Db::name('system')->where('id',1)->find();
+		
+		$this->domain = Request::scheme().'://'.$this->sys['domain'];
+		$this->api = $this->sys['api_url'];
 		if(empty($this->api)){
-			$baseUrl = Db::name('system')->where('id',1)->value('base_url');
+			$baseUrl = $this->sys['base_url'];
 			$this->api = strstr($baseUrl,'/v',true);
 		}
-    }
+		// 控制器初始化显示左侧导航菜单
+        parent::initialize();
+	}
+    
 
     public function index()
 	{
@@ -43,14 +53,31 @@ class Index extends AdminController
         return view();
     }
 
-    public function home(){
-		$sys = Db::name('system')->find(1);
+    public function home()
+	{
+		//版本检测
+		$url = $this->sys['upcheck_url'].'?ver='.$this->sys_version;
+		$versions = Api::urlGet($url);
+		if($versions->code == 1){
+			if($versions->up_num > 0){
+				$versions = "当前有{$versions->up_num}个版本需更新,当前可更新至{$versions->version}";
+			}
+		} else {
+			$versions ='当前无可更新版本';
+		}
+		//运行时间
 		$now = time();
-		$count = $now-$sys['create_time'];
+		$count = $now-$this->sys['create_time'];
 		$days = floor($count/86400);
 		$hos = floor(($count%86400)/3600);
 		$mins = floor(($count%3600)/60);
-		View::assign(['sys'=>$sys,'day'=>$days,'hos'=>$hos,'mins'=>$mins]);
+		$years = floor($days/365);
+		if($years >= 1){
+			$days = floor($days%365);
+		}
+		$runTime = $years ? "{$years}年{$days}天{$hos}时{$mins}分" : "{$days}天{$hos}时{$mins}分";
+	
+		View::assign(['runTime'=>$runTime,'versions'=>$versions]);
         return View::fetch();
     }
 	

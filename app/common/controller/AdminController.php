@@ -107,9 +107,9 @@ abstract class AdminController
     }
 
 
-	protected function cyCheck($url)
+	protected function cyCheck($url,$d)
 	{
-		$url = $url.'?u='.Request::domain();
+		$url = $url.'?u='.$d;
 		$cy = Api::urlGet($url);
 		if($cy && $cy->code == 0){
             $cylevel = $cy->level;

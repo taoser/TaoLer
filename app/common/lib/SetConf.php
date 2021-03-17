@@ -10,12 +10,12 @@ namespace app\common\lib;
 class SetConf
 {
     /**
-     * 修改配置文件
-     * @param  string $file 配置文件名(不需要后辍)
-     * @param  array  $data 需要更新或添加的配置
-     * @return bool
+     * 修改配置
+     * @param string $file
+     * @param array $data
+     * @return \think\response\Json
      */
-    function setconfig($file,$data)
+    function setConfig(string $file,array $data=[])
     {
         if (is_array($data)){
             $fileurl = app()->getConfigPath() . $file.".php";
@@ -26,10 +26,19 @@ class SetConf
                 $reps = "'". $key. "'". "   => " . "'".$value ."',";
                 $string = preg_replace($pats, $reps, $string); // 正则查找然后替换
             }
-            file_put_contents($fileurl, $string); // 写入配置文件
-            return true;
+			
+			try {
+				file_put_contents($fileurl, $string); // 写入配置文件
+			}
+			catch (\Exception $e) {
+				// 这是进行异常捕获
+				//$e->getMessage();
+				return json(['code'=>-1,'msg'=>$fileurl . '无写入权限']);
+			}
+
+            return json(['code'=>0,'msg'=>'配置修改成功']);
         }else{
-            return false;
+           return json(['code'=>-1,'msg'=>'配置项错误！']);
         }
     }
 }

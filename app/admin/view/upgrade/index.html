@@ -160,6 +160,7 @@
 		elem: '#select-file'
 		,url: "{:url('admin/upgrade/uploadzip')}"
 		,accept: 'file'
+        ,acceptMime: 'application/zip'
 		,field: 'file'
 		,auto: false
 		,exts: 'zip|rar|7z'
@@ -171,7 +172,7 @@
 		}
 		,done: function(res){
 			layer.closeAll('loading'); //关闭loading
-			if(res.code == 1){
+			if(res.code == 0){
 				layer.msg(res.msg,{
 					icon:6,
 					tiye:2000
@@ -207,7 +208,7 @@
 				data:{"key":key},
 				daType:"json",
 				success:function (data){
-					if (data.code == 1) {
+					if (data.code == 0) {
 						layer.msg(data.msg,{
 							icon:6,
 							time:2000
@@ -254,7 +255,7 @@
 					data:{"key":field.key,"upcheck_url":field.upcheck_url,"upgrade_url":field.upgrade_url},
 					daType:"json",
 					success:function (data){
-						if (data.code == 1) {
+						if (data.code == 0) {
 							layer.msg(data.msg,{
 								icon:6,
 								time:2000

@@ -225,6 +225,7 @@ class Admin extends AdminController
 	//退出登陆
 	public function logout()
 	{
+		Cookie::delete('adminAuth');
 		Session::clear();
 		$res = ['code'=>0,'msg'=>'退出成功' ];
 		
