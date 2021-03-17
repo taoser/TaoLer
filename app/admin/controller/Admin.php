@@ -15,6 +15,7 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
+use think\facade\Cookie;
 use think\exception\ValidateException;
 use app\common\model\User as UserModel;
 use taoler\com\Files;
@@ -225,10 +226,10 @@ class Admin extends AdminController
 	//退出登陆
 	public function logout()
 	{
+		//清空缓存
 		Cookie::delete('adminAuth');
 		Session::clear();
-		$res = ['code'=>0,'msg'=>'退出成功' ];
 		
-		return json($res);
+		return json(['code'=>0,'msg'=>'退出成功' ]);
 	}
 }
