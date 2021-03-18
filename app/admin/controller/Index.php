@@ -23,17 +23,20 @@ class Index extends AdminController
 */	
 	public function __construct()
 	{
+        // 控制器初始化显示左侧导航菜单
+        parent::initialize();
+
 		$this->sys_version = Config::get('taoler.version');
 		$this->sys = Db::name('system')->where('id',1)->find();
-		
-		$this->domain = Request::scheme().'://'.$this->sys['domain'];
+        //域名转换为无http协议
+        $www = stripos($this->sys['domain'],'://') ? substr(stristr($this->sys['domain'],'://'),3) : $this->sys['domain'];
+		$this->domain = Request::scheme().'://'. $www;
 		$this->api = $this->sys['api_url'];
 		if(empty($this->api)){
 			$baseUrl = $this->sys['base_url'];
 			$this->api = strstr($baseUrl,'/v',true);
 		}
-		// 控制器初始化显示左侧导航菜单
-        parent::initialize();
+
 	}
     
 
@@ -99,7 +102,8 @@ class Index extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-				$res['data'][]= ['id'=>str_replace("admin","index",$this->domain.(string) url('article/detail',['id'=>$v['aid']])),'title'=>$v['title'],'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
+				    $url = (string) str_replace("admin","index",$this->domain.url('article/detail',['id'=>$v['aid']]));
+				$res['data'][]= ['id'=>$url,'title'=>$v['title'],'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没有发帖！'];
@@ -162,11 +166,13 @@ class Index extends AdminController
 		//$mail = Db::name('system')->where('id',1)->value('auth_mail');	//	bug邮件发送
 		if(Request::isAjax()){
 			$data = Request::only(['type','title','content']);
+
 			$data['poster'] = 3;	//公共id
 
 			$apiRes = Api::urlPost($url,$data);
 
 			if($apiRes){
+                //halt($data);
 				$res = Cunsult::create($data);
 				if($res->id){
 					//$result = mailto($mail,$data['title'],'我的问题类型是'.$data['type'].$data['content']);
