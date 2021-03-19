@@ -188,7 +188,7 @@ layui.define(function(exports){
     var $ = layui.$
     ,table = layui.table;
     
-	//动态
+	//动态news
     table.render({
       elem: '#LAY-index-topnews'
       ,url: indexNews //接口

@@ -67,6 +67,8 @@ abstract class AdminController
 		//权限auth检查
 		//$this->checkAuth();
 		$this->getMenu();
+		//系统配置
+		$this->getIndexUrl();
 	}
 
     /**
@@ -159,32 +161,6 @@ abstract class AdminController
         //return View::assign('menus', $menus);
     }
 	
-	/**创建目录
-	* This function creates recursive directories if it doesn't already exist
-	*
-	* @param String  The path that should be created
-	* 
-	* @return  void
-	*/
-	protected function create_dir($path)
-	{
-	  if (!is_dir($path))
-	  {
-		$directory_path = "";
-		$directories = explode("/",$path);
-		array_pop($directories);
-	   
-		foreach($directories as $directory)
-		{
-		  $directory_path .= $directory."/";
-		  if (!is_dir($directory_path))
-		  {
-			mkdir($directory_path);
-			chmod($directory_path, 0777);
-		  }
-		}
-	  }
-	}
 	//清除缓存Cache
 	public function clearData(){
         $dir = app()->getRootPath().'runtime/admin/temp';
@@ -196,5 +172,32 @@ abstract class AdminController
             return json(['code'=>0,'msg'=>'清除成功']);
         }
     }
+	
+	//显示网站设置
+    protected function getSystem()
+    {
+        //1.系统配置信息
+		return Db::name('system')->cache('system',3600)->find(1);
+       
+    }
+	
+	//域名协议转换 把数据库中的带HTTP或不带协议的域名转换为当前协议的域名前缀
+	protected function getHttpUrl($url)
+	{
+		//域名转换为无http协议
+        $www = stripos($url,'://') ? substr(stristr($url,'://'),3) : $url;
+		$htpw = Request::scheme().'://'. $www;
+		return  $htpw;
+	}
+	
+	//得到当前系统安装前台域名
+	
+	protected function getIndexUrl()
+	{
+		$sysUrl = $this->getSystem();
+		$domain = $this->getHttpUrl($sysUrl['domain']);
+		View::assign(['domain'=>$domain,'insurl'=>$sysUrl['domain']]);
+	}
+
 
 }

@@ -23,14 +23,12 @@ class Index extends AdminController
 */	
 	public function __construct()
 	{
-        // 控制器初始化显示左侧导航菜单
+        //控制器初始化显示左侧导航菜单
         parent::initialize();
 
 		$this->sys_version = Config::get('taoler.version');
-		$this->sys = Db::name('system')->where('id',1)->find();
-        //域名转换为无http协议
-        $www = stripos($this->sys['domain'],'://') ? substr(stristr($this->sys['domain'],'://'),3) : $this->sys['domain'];
-		$this->domain = Request::scheme().'://'. $www;
+		$this->sys = $this->getSystem();
+		$this->domain = $this->getHttpUrl($this->sys['domain']);
 		$this->api = $this->sys['api_url'];
 		if(empty($this->api)){
 			$baseUrl = $this->sys['base_url'];
@@ -162,17 +160,14 @@ class Index extends AdminController
 	public function cunsult()
 	{
 		$url = $this->api.'/v1/reply';
-		
 		//$mail = Db::name('system')->where('id',1)->value('auth_mail');	//	bug邮件发送
 		if(Request::isAjax()){
-			$data = Request::only(['type','title','content']);
-
-			$data['poster'] = 3;	//公共id
-
+			$data = Request::only(['type','title','content','post']);
+			//halt($data);
 			$apiRes = Api::urlPost($url,$data);
-
+			$data['poster'] = Session::get('admin_id');
+			unset($data['post']);
 			if($apiRes){
-                //halt($data);
 				$res = Cunsult::create($data);
 				if($res->id){
 					//$result = mailto($mail,$data['title'],'我的问题类型是'.$data['type'].$data['content']);

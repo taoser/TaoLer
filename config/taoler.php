@@ -5,6 +5,9 @@
 
 return [
     //版本配置
-    'version'	=> '1.6.7',
-	'salt'		=> 'taoler'
+    'version'	=> '1.6.10',
+	//加盐
+	'salt'		=> 'taoler',
+	//数据库备份目录
+	'databasebackdir' => app()->getRootPath() .'data/'
 ];

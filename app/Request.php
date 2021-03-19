@@ -5,5 +5,6 @@ namespace app;
 class Request extends \think\Request
 {
 	//过滤空格
-	protected $filter = ['trim'];
+	protected $filter = ['trim','htmlspecialchars','strip_tags'];
+	
 }

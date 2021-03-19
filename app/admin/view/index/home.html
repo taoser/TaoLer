@@ -172,7 +172,10 @@
 							<textarea id="L_content" name="content" required lay-verify="content" autocomplete="off"  class="layui-textarea"></textarea>
 							</div>
 						</div>
-						<div class="layui-form-item">						
+						<div class="layui-form-item layui-hide">
+							<input type="text" name="post" lay-verify="required" autocomplete="off" class="layui-input layui-hide" value="{$insurl}">
+						</div>
+						<div class="layui-form-item">
 							<button type="submit" class="layui-btn " lay-filter="cunsult-add" lay-submit id="cunsult-add">立即发布</button>	  
 						</div>
 					</div>

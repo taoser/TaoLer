@@ -19,12 +19,17 @@ class Database extends AdminController
 		$this->database = Config::get('database.connections.mysql.database');
 		$this->username = Config::get('database.connections.mysql.username');
 		$this->password = Config::get('database.connections.mysql.password');
+		$this->backdir = Config::get('taoler.databasebackdir');
 	}
 	
 	public function index()
 	{
 		if(Request::isAjax()){
-			$backName = Files::getDirName('../data');
+			$backName = Files::getDirName($this->backdir);
+
+			if(empty($backName)){
+                return json(['code'=>-1,'msg'=>'还没有数据']);
+            }
 			
 			$res['count'] = count($backName);
 			if($res['count']){
@@ -38,11 +43,8 @@ class Database extends AdminController
                     ];
 				}
 
-			} else {
-                return json(['code'=>-1,'msg'=>'还没有数据']);
-            }
+			}
 			return json($res);
-			
 		}
 		
 		return View::fetch();
@@ -50,14 +52,11 @@ class Database extends AdminController
 	
 	public function backup()
 	{
-		//halt(app()->getRootPath());
 		//自行判断文件夹
-		$backupdir = '../data';
 		if (isset($_POST['backdir']) && $_POST['backdir'] != '') {
 			$backupdir = $_POST['backdir'];
 		} else {
-			$backupdir = app()->getRootPath() .'data/'. date('Ymdhis');
-			//halt($backupdir);
+			$backupdir = $this->backdir . date('Ymdhis');
 		}
 
 		if (!is_dir($backupdir)) {
@@ -88,7 +87,7 @@ class Database extends AdminController
 	{
 		$name = input('name');
 		//var_dump($name);
-		$dir = app()->getRootPath() .'data/'.$name;
+		$dir = $this->backdir . $name;
 		
 		$res = Files::delDir($dir);
 		
