@@ -36,6 +36,7 @@ class Upgrade extends AdminController
 	public function __construct()
 	{
 		$this->sys_version = Config::get('taoler.version');
+		$this->pn = Config::get('taoler.appname');
 		$this->sys = Db::name('system')->where('id',1)->find();
 	}
     
@@ -94,7 +95,7 @@ class Upgrade extends AdminController
 	//升级前的版本检测
 	public function check()
 	{
-		$url = $this->sys['upcheck_url'].'?ver='.$this->sys_version;
+		$url = $this->sys['upcheck_url'].'?pn='.$this->pn.'&ver='.$this->sys_version;
 		$versions = Api::urlGet($url);
 
 		//判断服务器状态
@@ -136,7 +137,7 @@ class Upgrade extends AdminController
      */
     public function upload()
     {
-		$url = $this->sys['upgrade_url'].'?url='.$this->sys['domain'].'&key='.$this->sys['key'].'&ver='.$this->sys_version;
+		$url = $this->sys['upgrade_url'].'?url='.$this->sys['domain'].'&key='.$this->sys['key'].'&pn='.$this->pn.'&ver='.$this->sys_version;
 		$versions = Api::urlGet($url);
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'check','progress'=>'0%','msg'=>'===>升级检测开始===>']);
 		//判断服务器状态
