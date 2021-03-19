@@ -27,6 +27,7 @@ class Index extends AdminController
         parent::initialize();
 
 		$this->sys_version = Config::get('taoler.version');
+		$this->pn = Config::get('taoler.appname');
 		$this->sys = $this->getSystem();
 		$this->domain = $this->getHttpUrl($this->sys['domain']);
 		$this->api = $this->sys['api_url'];
@@ -57,7 +58,7 @@ class Index extends AdminController
     public function home()
 	{
 		//版本检测
-		$url = $this->sys['upcheck_url'].'?ver='.$this->sys_version;
+		$url = $this->sys['upcheck_url'].'?pn='.$this->pn.'&ver='.$this->sys_version;
 		$versions = Api::urlGet($url);
 		if($versions->code == 1){
 			if($versions->up_num > 0){
