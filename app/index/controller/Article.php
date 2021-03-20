@@ -20,7 +20,13 @@ class Article extends BaseController
     ];
 	
 	//文章分类
-    public function cate(){
+    public function cate()
+	{
+		//非法请求参数，抛出异常
+		if(count(Request::param()) >3){
+			// 抛出 HTTP 异常
+                throw new \think\exception\HttpException(404, '请求异常');
+		}
 
 		//获取分类ID
 		$ename = Request::param('ename');

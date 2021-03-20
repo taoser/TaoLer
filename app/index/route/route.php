@@ -14,7 +14,11 @@ Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 Route::rule('/', 'index'); // 首页访问路由
 Route::group(function () {
 	Route::get('jie/:id', 'article/detail'); 
-	Route::get('column/<ename?>/<type?>/<page?>','article/cate');
+	Route::get('column/<ename?>/<type?>/<page?>','article/cate')
+		->pattern([
+				'ename' => '\w+',
+				'page'   => '\d+',
+			]);
 	Route::rule('add','article/add');
 	Route::rule('edit/[:id]','article/edit');
 	//Route::rule('del/:id','article/delete');
