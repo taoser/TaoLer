@@ -1,9 +1,13 @@
 # TaoLer
+> TaoLer是一个简单迅捷的轻论坛系统，适用于个人或组织区域型信息交流发布平台。
 
-	版本：TaoLer 1.6.7
-	日期：2021.2.1
-	官网：http://www.aieok.com
-	测试：http://adm.aieok.com 账号test 密码test123
+ * 官网：https://www.aieok.com
+ * 前台：http://bbs.aieok.com
+ * 后台：http://adm.aieok.com
+ * 账号：test
+ * 密码：test123
+ * 版本：TaoLer 1.7.2
+ * 日期：2021.4.23
 
 #### 项目地址
 

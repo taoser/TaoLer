@@ -34,7 +34,7 @@
           <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
         </script>
 		<script type="text/html" id="title">
-		<a href="/index/jie/{{d.cid}}.html" target="_blank">{{d.cardid}}</a>
+		<a href="{$domain}/jie/{{d.cid}}.html" target="_blank">{{d.cardid}}</a>
 		</script>
 		<script type="text/html" id="buttonCheck">
             {if condition="checkRuleButton('admin/forum/recheck')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="recheck" lay-text="通过|禁止" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
