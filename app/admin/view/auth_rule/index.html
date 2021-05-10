@@ -1,269 +1,319 @@
+
 {extend name="public:base" /}
-
+{block name="css"}<link rel="stylesheet" href="/static/admin/tree/css/treeTable.css">{/block}
 {block name="body"}
-  <div class="layui-fluid">   
-    <div class="layui-card">
-   <div class="layui-card-header">权限菜单</div>
-      
-      <div class="layui-card-body">
-        <div style="padding-bottom: 10px;">
-          <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
-        </div>
-        <table id="LAY-user-auth-rule" lay-filter="LAY-user-auth-rule"></table>  
 
-		<script type="text/html" id="rules-title">
-		<span >{{# if(d.level !==1){ }}|{{#  } }} {{d.title}}</span>
-        </script>
-		
-		<script type="text/html" id="buttonAuth">
-		{if condition="checkRuleButton('admin/authrule/check')"}<input type="checkbox" name="status" lay-skin="switch" lay-filter="authcheck" lay-text="开启|关闭" {{#  if(d.status == 1){ }} checked {{#  } }} id="{{d.id}}" >
-		{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
-        </script>
-		
-		<script type="text/html" id="menu">
-		 {{#  if(d.id == '1' | d.id == '2' | d.id == '9' | d.id == '10' ){ }}
-			<input type="checkbox" name="ishidden" lay-skin="primary"  checked disabled >
-		 {{#  } else { }}
-			{if condition="checkRuleButton('admin/authrule/menushow')"}<input type="checkbox" name="ishidden" lay-skin="primary" lay-filter="menu-show" {{# if(d.ishidden ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >
-			{else /}<input type="checkbox" title="禁用" disabled> {/if}
-		 {{#  } }}
-        </script>
-		
-        <script type="text/html" id="table-authrule-edit">
-		{if condition="checkRuleButton('admin/authrule/edit')"}
-          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-		{else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
-          {{#  if(d.id == '1' | d.id == '2' | d.id == '9' | d.id == '10' ){ }}
-            <a class="layui-btn layui-btn-disabled layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
-          {{#  } else { }}
-		  {if condition="checkRuleButton('admin/authrule/delete')"}
-            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-          {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
-		  {{#  } }}
-        </script>
-      </div>
+
+<body class="layui-hide">
+
+<div class="page-wrapper">
+
+    <div class="demo-side">
+        <table id="LAY-user-auth-rule"></table>
     </div>
-  </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="tbBar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <!--a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a-->
+	{{#  if(d.id == '1' | d.id == '2' | d.id == '9' | d.id == '10' ){ }}<a class="layui-btn layui-btn-disabled layui-btn-xs">删除</a>
+    {{#  } else { }}
+		{if condition="checkRuleButton('admin/authrule/delete')"}<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		{else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled">删除</a>{/if}
+	{{#  } }}
+</script>
 
 {/block}
+
 {block name="js"}
 <script>
-    var userList = "{:url('User/list')}";
-    var userDelete = "{:url('User/delete')}";
-    var userEdit = "{:url('User/userEdit')}";
-    var adminIndex = "{:url('Admin/index')}";
-    var adminDelete = "{:url('Admin/delete')}";
-    var adminEdit = "{:url('Admin/edit')}";
-    var authGroupList = "{:url('AuthGroup/list')}";
-    var authGroupRoledel = "{:url('AuthGroup/roleDel')}";
-    var authGroupRoleEdit = "{:url('AuthGroup/roleEdit')}";
-    var authAccessIndex = "{:url('AuthAccess/index')}";
-    var authAccessDelete = "{:url('AuthAccess/delete')}";
-    var authAccessEdit = "{:url('AuthAccess/edit')}";
-    var authRuleIndex = "{:url('AuthRule/index')}";
-    var authRuleDelete = "{:url('AuthRule/delete')}";
-    var authRuleEdit = "{:url('AuthRule/edit')}";
+    layui.config({
+        base: '/static/admin/modules/'
+    }).use(['layer', 'util', 'treeTable'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var util = layui.util;
+        var treeTable = layui.treeTable;
+        $('body').removeClass('layui-hide');
 
-</script>
-  <script>
-  layui.config({
-    base: '/static/admin/' //静态资源所在路径
-  }).extend({
-    index: 'lib/index' //主入口模块
-  }).use(['index', 'useradmin', 'table', 'form'], function(){
-    var $ = layui.$
-    ,form = layui.form
-    ,table = layui.table;
-    
-    //监听搜索
-    form.on('submit(LAY-user-back-search)', function(data){
-      var field = data.field;
-      
-      //执行重载
-      table.reload('LAY-user-auth-rule', {
-        where: field
-      });
-    });
-	//排序
-	table.on('edit(LAY-user-auth-rule)',function(obj){
-		var data = obj.data; //得到所在行所有键值
-		$.ajax({
-				type:'post',
-				url:"{:url('admin/AuthRule/sort')}",
-				data:{id:data.id,sort:data.sort},
-				dataType:'json',
-				success:function(data){
-					if(data.code == 0){
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						}
-						)
-					} else {
-						layer.open({
-							title:'排序失败',
-							content:data.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			});
-	});
-
-	//菜单控制
-	form.on('checkbox(menu-show)', function(data){
-	var data = data.elem;
-	if(data.checked == true){
-			data.value = 1;
-		}else{
-			data.value = 0;
+        // 渲染表格
+        var insTb = treeTable.render({
+            elem: '#LAY-user-auth-rule',
+            url: "{:url('AuthRule/index')}",
+            toolbar: 'default',
+            //height: 'full-200',
+            tree: {
+                iconIndex: 2,
+                isPidData: true,
+                idName: 'id',
+                pidName: 'pid'
+            },
+            defaultToolbar: ['filter', 'print', 'exports'],
+            cols: [
+                [
+                    {type: 'numbers'},
+                    {type: 'checkbox'},
+                    {field: 'title', title: '菜单名称', minWidth: 165},
+					{field: 'url', title: '菜单地址', rowspan: 2},
+                    {
+                        title: '菜单图标', align: 'center', 
+                        templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'
+                    },
+                    {field: 'authority', title: '权限标识'},
+					{field: 'isMenu', title: '类型', templet: type, align: 'center', width: 60},
+                    //{title: '类型', templet: '<p>{{d.isMenu ? "菜单" : "按钮"}}</p>', align: 'center', width: 60},
+					{field: 'sort', title: '排序', align: 'center', width: 60},
+                    {field: 'ctime',title: '创建时间'},
+                    {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
+                ]
+            ],
+            style: 'margin-top:0;'
+        });
+		
+		//自定义“状态”列
+		function type(data) {
+			var isMenu = data.isMenu;
+			var btns = "";
+			if (isMenu == -1) {
+				return "目录";
+			}
+			if (isMenu == 1) {
+			btns += '<span class="layui-btn layui-btn-sm">菜单</span>';
+				//return "菜单";
+			}
+			if (isMenu == 0) {
+			btns += '<span class="layui-btn layui-btn-normal layui-btn-sm">按钮</span>';
+				//return "按钮";
+			}
+			return btns;
 		}
-	$.ajax({
-			type:'post',
-			url:"{:url('admin/AuthRule/menushow')}",
-			data:{"id":data.id,"ishidden":data.value,},
-			dataType:'json',
-			success:function(data){
-				if(data.code == 0){
-					layer.msg(data.msg,{
-						icon:6,
-						time:2000
-					}
-					//,function(){location.reload();}
-					);
-				} else {
-					layer.open({
-						title:'修改失败',
-						content:data.msg,
-						icon:5,
-						adim:6
-					})
-				}
-			}
-		});
-	return false;
-	});
 
-	//权限开关
-	form.on('switch(authcheck)', function(data){
-	var data= data.elem;
-	if(data.checked == true){
-		data.value = 1;
-	}else{
-		data.value = 0;
-	}
-		$.ajax({
-			type:'post',
-			url:"{:url('admin/AuthRule/check')}",
-			data:{id:data.id,status:data.value,},
-			dataType:'json',
-			success:function(data){
-				if(data.code == 0){
-					layer.msg(data.msg,{
-						icon:6,
-						time:2000
-					}
-					//,function(){location.reload();}
-					);
-				} else {
-					layer.open({
-						title:'审核失败',
-						content:data.msg,
-						icon:5,
-						adim:6
-					})
-				}
-			}
-		});
-	return false;
-	}); 
-	
-	
-    //事件
-    var active = {
-      batchdel: function(){
-        var checkStatus = table.checkStatus('LAY-user-auth-rule')
-        ,checkData = checkStatus.data; //得到选中的数据
 
-        if(checkData.length === 0){
-          return layer.msg('请选择数据');
-        }
-        
-        layer.prompt({
-          formType: 1
-          ,title: '敏感操作，请验证口令'
-        }, function(value, index){
-          layer.close(index);
-          
-          layer.confirm('确定删除吗？', function(index) {
-            
-            //执行 Ajax 后重载
-            /*
-            admin.req({
-              url: 'xxx'
-              //,……
-            });
-            */
-            table.reload('LAY-user-auth-rule');
-            layer.msg('已删除');
-          });
-        }); 
-      }
-      ,add: function(){
-        layer.open({
-          type: 2
-          ,title: '添加权限'
-          ,content: 'add.html'
-          ,area: ['420px', '420px']
-          ,btn: ['确定', '取消']
-          ,yes: function(index, layero){
-            var iframeWindow = window['layui-layer-iframe'+ index]
-            ,submitID = 'LAY-user-rule-submit'
-            ,submit = layero.find('iframe').contents().find('#'+ submitID);
-
-            //监听提交
-            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
-              var field = data.field; //获取提交的字段
-              
-              //提交 Ajax 成功后，静态更新表格中的数据
-			  $.ajax({
-				type:"post",
-				url:"{:url('admin/AuthRule/add')}",
-				data:{"pid":field.pid,"title":field.title,"name":field.name,"icon":field.icon,"sort":field.sort,"ishidden":field.ishidden},
-				daType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						}, function(){
-							location.reload();
+        // 工具列点击事件
+        treeTable.on('tool(LAY-user-auth-rule)', function (obj) {
+            var event = obj.event;
+			var data = obj.data;
+            if (event === 'del') {
+			
+				layer.prompt({
+					formType: 1
+					,title: '敏感操作，请验证口令'
+				  }, function(value, index){
+					layer.close(index);
+					layer.confirm('确定删除此权限？', function(index){
+					 $.ajax({
+							type:'post',
+							url:"{:url('AuthRule/delete')}",
+							data:{id:data.id},
+							dataType:'json',
+							success:function(data){
+								if(data.code == 0){
+									layer.msg(data.msg,{
+										icon:6,
+										time:2000
+									},function(){
+										location.reload();
+									});
+								} else {
+									layer.open({
+										title:'删除失败',
+										content:data.msg,
+										icon:5,
+										adim:6
+									})
+								}
+							}
 						});
-					} else {
-						layer.open({
-							title:'添加失败',
-							content:data.msg,
-							icon:5,
-							anim:6
+					  layer.close(index);
+					});
+				  });
+			
+            } else if (event === 'edit') {
+
+				layer.open({
+					type: 2
+					,title: '编辑权限'
+					,content: "{:url('AuthRule/edit')}" +'?id='+ data.id
+					,area: ['420px', '550px']
+					,btn: ['确定', '取消']
+					,yes: function(index, layero){
+					  var iframeWindow = window['layui-layer-iframe'+ index]
+					  ,submitID = 'LAY-user-rule-submit'
+					  ,submit = layero.find('iframe').contents().find('#'+ submitID);
+					  
+					  //监听提交
+					  iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+						var field = data.field; //获取提交的字段
+						
+						//提交 Ajax 成功后，静态更新表格中的数据
+						$.ajax({
+							type:"post",
+							url:"{:url('AuthRule/edit')}",
+							data:{"id":field.id,"pid":field.pid,"title":field.title,"name":field.name,"icon":field.icon,"sort":field.sort,"ishidden":field.ishidden},
+							daType:"json",
+							success:function (res){
+								if (res.code == 0) {
+									layer.msg(res.msg,{
+										icon:6,
+										time:2000
+									}, function(){
+										location.reload();
+									});
+								} else {
+									layer.open({
+										tiele:'修改失败',
+										content:res.msg,
+										icon:5,
+										anim:6
+									});
+								}
+							}
 						});
+						
+						//treeTable.reload('LAY-user-auth-rule'); //数据刷新
+						layer.close(index); //关闭弹层
+					  }); 
+					  
+					  submit.trigger('click');
 					}
-				}
-			}); 
-              table.reload('LAY-user-front-submit'); //数据刷新
-              layer.close(index); //关闭弹层
-            });  
-            
-            submit.trigger('click');
-          }
-        }); 
-      }
-    }  
-    $('.layui-btn.layuiadmin-btn-admin').on('click', function(){
-      var type = $(this).data('type');
-      active[type] ? active[type].call(this) : '';
+					,success: function(layero, index){
+					
+					}
+				  });
+            }
+        });
+
+        // 头部工具栏点击事件
+        treeTable.on('toolbar(LAY-user-auth-rule)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    layer.msg('添加');
+					layer.open({
+					  type: 2
+					  ,title: '添加权限'
+					  ,content: 'add.html'
+					  ,area: ['420px', '550px']
+					  ,btn: ['确定', '取消']
+					  ,yes: function(index, layero){
+						var iframeWindow = window['layui-layer-iframe'+ index]
+						,submitID = 'LAY-user-rule-submit'
+						,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+						//监听提交
+						iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+						  var field = data.field; //获取提交的字段
+						  
+						  //提交 Ajax 成功后，静态更新表格中的数据
+						  $.ajax({
+							type:"post",
+							url:"{:url('AuthRule/add')}",
+							data:{"pid":field.pid,"title":field.title,"name":field.name,"icon":field.icon,"sort":field.sort,"ishidden":field.ishidden},
+							daType:"json",
+							success:function (data){
+								if (data.code == 0) {
+									layer.msg(data.msg,{
+										icon:6,
+										time:2000
+									}, function(){
+										location.reload();
+									});
+								} else {
+									layer.open({
+										title:'添加失败',
+										content:data.msg,
+										icon:5,
+										anim:6
+									});
+								}
+							}
+						}); 
+						  treeTable.reload('LAY-user-auth-rule'); //数据刷新
+						  layer.close(index); //关闭弹层
+						});  
+						
+						submit.trigger('click');
+					  }
+					}); 
+				
+                    break;
+                case 'delete':
+                    layer.msg('删除');
+                    break;
+                case 'update':
+                    layer.msg('编辑');
+                    break;
+                case 'LAYTABLE_TIPS':
+                    layer.msg('提示');
+                    break;
+            }
+        });
+
+        // 全部展开
+        $('#btnExpandAll').click(function () {
+            insTb.expandAll();
+        });
+
+        // 全部折叠
+        $('#btnFoldAll').click(function () {
+            insTb.foldAll();
+        });
+
+        // 展开指定
+        $('#btnExpand').click(function () {
+            insTb.expand(2);
+        });
+
+        // 折叠指定
+        $('#btnFold').click(function () {
+            insTb.fold(2);
+        });
+
+        // 设置选中
+        $('#btnChecked').click(function () {
+            insTb.expand(4);
+            insTb.setChecked([4]);
+        });
+
+        // 搜索
+        $('#btnSearch').click(function () {
+            var keywords = $('#edtSearch').val();
+            if (keywords) {
+                insTb.filterData(keywords);
+            } else {
+                insTb.clearFilter();
+            }
+        });
+
+        // 清除搜索
+        $('#btnClearSearch').click(function () {
+            insTb.clearFilter();
+        });
+
+        // 重载
+        $('#btnReload').click(function () {
+            insTb.reload();
+        });
+        $('#btnRefresh').click(function () {
+            insTb.refresh();
+        });
+
+        // 获取选中
+        $('#btnGetChecked').click(function () {
+            layer.alert('<pre>' + JSON.stringify(insTb.checkStatus().map(function (d) {
+                return {
+                    authorityName: d.authorityName,
+                    authorityId: d.authorityId,
+                    LAY_INDETERMINATE: d.LAY_INDETERMINATE
+                };
+            }), null, 3) + '</pre>');
+        });
+
+        // 演示侧边栏
+        $('#btnToggleSide').click(function () {
+            $('.demo-side').toggleClass('show');
+        });
+
     });
-	
-  });
-  </script>
+</script>
 {/block}

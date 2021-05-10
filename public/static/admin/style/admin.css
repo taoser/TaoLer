@@ -524,4 +524,20 @@ html{background-color: #f2f2f2; color: #666;}
 }
 
 
+/* xmSelect */
+.xm-body .xm-option .xm-option-icon {
+    border-color: #1890ff !important;
+}
+
+.xm-body .xm-option.selected .xm-option-icon,
+.xm-body .xm-toolbar .toolbar-tag:hover,
+ .ew-xmselect-tree xm-select .xm-body .xm-option.selected .xm-option-content {
+    color: #1890ff !important;
+}
+
+.xm-label .xm-label-block,
+.xm-body .xm-option.hide-icon.selected {
+    background-color: #1890ff !important;
+}
+
 

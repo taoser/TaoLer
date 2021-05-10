@@ -20,11 +20,11 @@ class AuthRule extends AdminController
 			$count = count($auth_rules);
 			$res = [];
 			if($auth_rules){
-				$res = ['code'=>0,'msg'=>'','count'=>$count];
+				$res = ['code'=>0,'msg'=>'ok','count'=>$count];
 				
 				foreach($auth_rules as $k => $v){
 					//$data = $v->getData();
-					$data = ['id'=>$v['id'],'sort'=>$v['sort'],'title'=>str_repeat('---',$v['level']*2).$v['title'],'name'=>$v['name'],'icon'=>$v['icon'],'status'=>$v['status'],'level'=>$v['level']+1,'ishidden'=>$v['ishidden']];
+					$data = ['id'=>$v['id'],'pid'=>$v['pid'],'title'=>$v['title'],'url'=>$v['name'],'icon'=>$v['icon'],'status'=>$v['status'],'isMenu'=>$v['ishidden'],'sort'=>$v['sort'],'ctime'=>$v['create_time']];
 					$res['data'][] = $data; 
 				}
 			}			
@@ -33,6 +33,58 @@ class AuthRule extends AdminController
 		return View::fetch();	
 		
 	}
+	
+	//权限树
+	public function tree()
+	{
+		
+		//$res = $this->treeTr($this->getMenus());
+		//var_dump($res);
+		/*
+		支持获取三级菜单
+		*/	
+		$result = $this->getMenus();
+
+			$count = count($result);
+			$tree = [];			
+			if($result){
+				$tree = ['code'=>0,'msg'=>'','count'=>$count];
+				
+				$res = [];	//auth_rule储存数据表中的表结构
+				foreach($result as $k => $v){
+					//第一层子权限
+					$children = [];
+					if(isset($v['children'])){
+						
+						foreach($v['children'] as $m => $j){
+							//第二层子权限
+							$chichi = [];
+							if(isset($j['children'])){
+								//第三层子权限
+								foreach($j as $s){
+									if(isset($s['children'])){
+										$chichi[] = ['id'=>$s['id'],'title'=>$s['title'],'pid'=>$s['pid']];	//子数据的子数据
+									}
+								}
+							}
+							
+						//if($j['level']  < 3){}
+						$children[] = ['id'=>$j['id'],'title'=>$j['title'],'pid'=>$j['pid'],'children'=>$chichi];		//子数据
+						}
+					}
+					
+				
+				$data[] = ['id'=>$v['id'],'title'=>$v['title'],'pid'=>$v['pid'],'children'=>$children];
+				
+				}
+				
+			//构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
+			$tree['data'][] = ['id'=>0,'title'=>'顶级','pid'=>0,'children'=>$data];
+			}
+
+		return json($tree);
+	}
+	
 	//添加权限
 	public function add()
 	{
@@ -66,7 +118,7 @@ class AuthRule extends AdminController
 		$rule = new AuthRuleModel();
 		
 		if(Request::isAjax()){
-			$data = Request::param();
+			$data = Request::param(['id','pid','title','name','icon','sort','ishidden']);
 			$ruId = $rule->find($data['pid']); //查询出上级ID
 			if($ruId){
 				$plevel = $ruId->level; //上级level等级

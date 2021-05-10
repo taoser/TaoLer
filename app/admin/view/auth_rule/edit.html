@@ -10,16 +10,11 @@
     <div class="layui-form-item">
       <label class="layui-form-label">上级菜单</label>
       <div class="layui-input-block">
-        <select name="pid" lay-verify="required">
-        <option value="0">顶级菜单</option>
-		{volist name="AuthRule" id="vo"}
-		<option {if condition="$rules['pid'] eq $vo.id"} selected {/if} value="{$vo.id}"><?php echo str_repeat('--',$vo['level']*2) ?>{$vo.title}</option>
-		{/volist}
-		</select>
+	  <div id="menuSelectBox" class="ew-xmselect-tree"></div>
       </div>
     </div>
     <div class="layui-form-item">
-      <label class="layui-form-label">权限名</label>
+      <label class="layui-form-label">菜单名称</label>
       <div class="layui-input-inline">
         <input type="text" name="title" lay-verify="required" placeholder="请输入权限名" autocomplete="off" class="layui-input" value="{$rules.title}">
       </div>
@@ -27,25 +22,27 @@
     <div class="layui-form-item">
       <label class="layui-form-label">权限地址</label>
       <div class="layui-input-inline">
-        <input type="text" name="name" lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input" value="{$rules.name}">
+        <input type="text" name="name" lay-verify="required" placeholder="请输入权限地址" autocomplete="off" class="layui-input" value="{$rules.name}">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">图标</label>
       <div class="layui-input-inline">
-        <input type="text" name="icon" lay-verify="" placeholder="请输入角色类型" autocomplete="off" class="layui-input" value="{$rules.icon}">
+		<input type="text" name="icon" id="iconPicker" lay-filter="iconPicker" value="{$rules.icon}" style="display:none;">
       </div>
     </div>
 	<div class="layui-form-item">
       <label class="layui-form-label">排序</label>
       <div class="layui-input-inline">
-        <input type="text" name="sort" lay-verify="required" placeholder="请输入角色类型" autocomplete="off" class="layui-input" value="{$rules.sort}">
+        <input type="text" name="sort" lay-verify="required" placeholder="排序序号" autocomplete="off" class="layui-input" value="{$rules.sort}">
       </div>
     </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">显示</label>
+	<div class="layui-form-item">
+      <label class="layui-form-label">类型</label>
       <div class="layui-input-block">
-        <input type="checkbox" name="ishidden" lay-skin="primary" title="隐藏" {if condition="$rules.ishidden == 0"}checked{/if}>
+        <input type="radio" name="ishidden" lay-skin="primary" title="目录" value="-1" {if condition="$rules.ishidden == -1"}checked{/if}>
+		<input type="radio" name="ishidden" lay-skin="primary" title="菜单" value="1" {if condition="$rules.ishidden == 1"}checked{/if}>
+		<input type="radio" name="ishidden" lay-skin="primary" title="按钮" value="0" {if condition="$rules.ishidden == 0"}checked{/if}>
       </div>
     </div>
     <div class="layui-form-item layui-hide">
@@ -60,9 +57,66 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form'], function(){
+  }).use(['index', 'form','admin', 'xmSelect', 'iconPicker'], function(){
     var $ = layui.$
     ,form = layui.form ;
+	
+	var admin = layui.admin;
+	var xmSelect = layui.xmSelect;
+	var iconPicker = layui.iconPicker;
+	
+	
+	//初始化图标选择
+        iconPicker.render({
+            elem: '#iconPicker',
+            type: 'fontClass',
+            search: false,
+            page: true,
+            limit: 12,
+            click: function (data) {
+				//console.log(data);
+            }
+        });
+		
+	//权限菜单结构
+	admin.req({
+	type: "post",
+	url: "{:url('AuthRule/tree')}", 
+	data:{},
+	done:function(res){
+		var data = res.data;
+		
+            // 渲染下拉树
+            xmSelect.render({
+                el: '#menuSelectBox',
+                name: 'pid',
+                height: '250px',
+                layVerify: 'required',
+                layVerType: 'tips',
+                data: data,
+                initValue:  [{$rules['pid']}],
+                model: {label: {type: 'text'}},
+                prop: {
+                    name: 'title',
+                    value: 'id'
+                },
+                radio: true,
+                clickClose: true,
+                tree: {
+                    show: true,
+                    indent: 15,
+                    strict: false,
+                    expandedKeys: true
+                },
+                tips: '请选择上级菜单'
+            });
+        }
+		
+	});
+
+	
+	
+	
   })
   </script>
 {/block}
