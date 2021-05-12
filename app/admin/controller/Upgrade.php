@@ -171,10 +171,10 @@ class Upgrade extends AdminController
             return json(['code'=>-1,'msg'=>'下载升级文件失败']);  
         }
         //记录下日志
-        Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'20%','msg'=>'上传升级包成功！']);
+        Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'20%','msg'=>'上传升级包'.$version_num.'成功！']);
 
         //升级前备份代码
-		$ex = array('.git','.idea','runtime','data','addons','config','extend');  //  排除备份文件夹
+		$ex = array('.git','.idea','runtime','data','addons','config','extend','mysql','public','vendor','view');  //  排除备份文件夹
         $this->backFile($this->root_dir,$this->backup_dir,$ex);
 
         //执行升级
@@ -200,7 +200,7 @@ class Upgrade extends AdminController
 		
     }
 
-    /**
+    /**升级执行
      * @param string $package_file
      * @return \think\response\Json
      */
@@ -221,19 +221,18 @@ class Upgrade extends AdminController
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'50%','msg'=>'升级文件解压成功！']);
 
-        /*
-                //升级mysql
-                if(file_exists($this->upload_dir.'/'.$package_file.'/mysql/mysql_update.sql'))
-                {
-                    $result = $this->database_operation($this->upload_dir.'/'.$package_file.'/mysql/mysql_update.sql');
-                    if(!$result['code'])
-                    {
-                        echo json($result);die;
-                    }
-                }
-        */
-        Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'70%','msg'=>'升级文件解压成功！']);
-
+        
+		//升级执行mysql操作
+		if(file_exists($zipPath.'mysql/mysql_update.sql'))
+		{
+			$result = $this->db_update($zipPath.'mysql/mysql_update.sql');
+			if(!$result && $result < 0)
+			{
+				return json(['code'=>-1,'msg'=>'数据库升级失败']);
+			}
+		}
+        
+        
         if(is_dir($zipPath))
         {
             //升级PHP
@@ -255,11 +254,12 @@ class Upgrade extends AdminController
 				return json(['code'=>-1,'msg'=>$cpData['msg']]);
             }
         }
-
+		Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'70%','msg'=>'升级文件执行成功！']);
         //把解压的升级包清除
         //$del_zip = unlink($package_file);
         Files::delDirAndFile($this->upload_dir);
         Files::delDirAndFile($this->backup_dir);
+		Files::delDirAndFile("../mysql/");
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'100%','msg'=>'升级成功！']);
         //更新系统的版本号了
@@ -337,5 +337,16 @@ class Upgrade extends AdminController
         $a = $mysqli->multi_query($sql);
         return ['code'=>1,'msg'=>'数据库操作OK'];
     }
+	
+	/**
+     * 执行数据库操作
+     */
+    public function db_update($file)
+    {
+		$sql = file_get_contents($file);
+        $sqlRes = Db::execute($sql);
+		return $sqlRes;
+    }
+
 
 }

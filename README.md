@@ -1,4 +1,5 @@
 # TaoLer
+
 > TaoLer是一个简单迅捷的轻论坛系统，适用于个人或组织区域型信息交流发布平台。
 
  * 官网：https://www.aieok.com
@@ -6,8 +7,8 @@
  * 后台：http://adm.aieok.com
  * 账号：test
  * 密码：test123
- * 版本：TaoLer 1.7.3
- * 日期：2021.5.10
+ * 版本：TaoLer 1.7.4
+ * 日期：2021.5.12
 
 #### 项目地址
 
@@ -26,10 +27,13 @@
 7.	项目会长期维护，优化更新。
 
 
-#### 软件架构
-
-	thinkphp6+layui+fly
-	ThinkPHP6核心框架
+#### 构架组成
+- 1.x版本构架：
+	- 构架：Tinkphp6 + layui2.6
+	- 环境：php7 + mysql
+	- 前端：Fly template V3.0
+	
+#### 构架介绍
 	快速、简单的面向对象的轻量级PHP开发框架，出色的性能和至简代码的，更注重易用性。代码维护方便。
 	layui前端
 	极简、丰盈，简单高效，模块化UI框架，体积轻盈，组件丰盈。
@@ -52,8 +56,9 @@
 
 #### 文档
 
-参考官网分享文章
-
+ 参考官网分享文章
+ 
+ aieok.com (http://wiki.aieok.com)
 
 #### 参与贡献
 
@@ -68,6 +73,6 @@
 
 本项目包含的第三方源码和二进制文件之版权信息另行标注。
 
-版权所有Copyright © 2020 by aieok.com (https://www.aieok.com)
+版权所有Copyright © 2020-2021 by aieok.com (https://www.aieok.com)
 
 All rights reserved。
