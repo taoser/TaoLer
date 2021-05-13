@@ -50,31 +50,41 @@ function write_config($config)
 function create_tables($db, $prefix = '') 
 {
 	// 导入sql数据表
-    $sql = file_get_contents('../app/install/data/taoler.sql');
-	if ($sql) {
-		//sql表前缀
-		$orginal = 'tao_';
-		($orginal==$prefix) ? true : $sql = str_replace(" `{$orginal}", " `{$prefix}", $sql);
-		$sql_array = preg_split("/;[\r\n]+/", $sql);
-		//var_dump($sql_array);
+    //$sql = file_get_contents('../app/install/data/taoler.sql');
+	$sql_array = load_sql_file('../app/install/data/taoler.sql');	//sql文件中sql语句转换为数组
+	if ($sql_array) {
+		$orginal = 'tao_';	//sql表前缀
+		($orginal==$prefix) ? true : $sql_array = str_replace(" `{$orginal}", " `{$prefix}", $sql_array);	//替换数组中表前缀
+		//$sql_array = preg_split("/;[\r\n]+/", $sql);
 	
-	//开始写入表
+		//开始写入表
         foreach ($sql_array as $k => $v) {
+			//halt($v);
             if (!empty($v)) {
 	            //$v=$v.';';
+				//执行创建表
 	           if (substr($v, 0, 12) == 'CREATE TABLE') {
+				   $res = $db->exec($v);	//？执行成功也返回0，这里有疑问
+				   //halt($res);
+				   
 		            $name = preg_replace("/^CREATE TABLE `(\w+)` .*/s", "\\1", $v);
 		            $msg = "创建数据表{$name}";
-					$res = $db->query($v);
-		            if ($res == false) {
-		                echo $msg.'失败';
+					
+			
+		            if ($res === false) {
+		                echo "{$msg}失败\r\n";
+		            }
+				} elseif(substr($v, 0, 11) == 'INSERT INTO') {
+					//执行插入数据
+					$name = preg_replace("/^CREATE TABLE `(\w+)` .*/s", "\\1", $v);
+		            $msg = "插入表{$name}数据";
+					$res = $db->exec($v);
+					if ($res === false) {
+		                echo "{$msg}失败\r\n";
 		            }
 				} else {
-					//执行插入数据
-					$res = $db->query($v);
-					if ($res == false) {
-		                echo '数据插入失败';
-		            }
+					//执行其它sql语句
+					$res = $db->exec($v);
 				}
             }
         }
@@ -155,4 +165,98 @@ function show_msg($msg, $class = '',$jump='') {
     echo "<script type=\"text/javascript\">showmsg(\"{$msg}\", \"{$class}\",\"{$jump}\")</script>";
     flush();
     ob_flush();
+}
+
+/**
+ * 加载sql文件为分号分割的数组
+ * <br />支持存储过程和函数提取，自动过滤注释
+ * <br />例如: var_export(load_sql_file('mysql_routing_example/fn_cdr_parse_accountcode.sql'));
+ * @param string $path 文件路径
+ * @return boolean|array
+ * @since 1.0 <2015-5-27> SoChishun Added.
+ */
+function load_sql_file($path, $fn_splitor = ';;') {
+    if (!file_exists($path)) {
+        return false;
+    }
+    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $aout = false;
+    $str = '';
+    $skip = false;
+    $fn = false;
+    foreach ($lines as $line) {
+        $line = trim($line);
+        // 过滤注释
+        if (!$line || 0 === strpos($line, '--') || 0 === strpos($line, '*') || 0 === strpos($line, '/*') || (false !== strpos($line, '*/') && strlen($line) == (strpos($line, '*/') + 2))) {
+            if (!$skip && 0 === strpos($line, '/*')) {
+                $skip = true;
+            }
+            if ($skip && false !== strpos($line, '*/') && strlen($line) == (strpos($line, '*/') + 2)) {
+                $skip = false;
+            }
+            continue;
+        }
+        if ($skip) {
+            continue;
+        }
+        // 提取存储过程和函数
+        if (0 === strpos($line, 'DELIMITER ' . $fn_splitor)) {
+            $fn = true;
+            continue;
+        }
+        if (0 === strpos($line, 'DELIMITER ;')) {
+            $fn = false;
+            $aout[] = $str;
+            $str = '';
+            continue;
+        }
+        if ($fn) {
+            $str .= $line . ' ';
+            continue;
+        }
+        // 提取普通语句
+        $str .= $line;
+        if (false !== strpos($line, ';') && strlen($line) == (strpos($line, ';') + 1)) {
+            $aout[] = $str;
+            $str = '';
+        }
+    }
+    return $aout;
+}
+
+
+/**php多维数组或字符串值字符替换
+
+* strReplace 多维数组或字符串值字符替换
+
+* @param  String $find    查找的字符
+
+* @param  String $replace 替换的字符
+
+* @param  String $array   数组或者字符串
+
+* @return array/String $array 数组或者字符串
+
+*/
+
+function strReplace($find,$replace,$array){
+
+   if(is_array($array)){
+
+       $array=str_replace($find,$replace,$array);
+
+       foreach ($array as $key => $val) {
+
+           if (is_array($val)) $array[$key]=$this->strReplace($find,$replace,$array[$key]);
+
+       }
+
+   }else{
+
+       $array=str_replace($find,$replace,$array);
+
+   }
+
+   return $array;
+
 }

@@ -210,7 +210,7 @@ php;
 		file_put_contents('../install.lock', 'lock');
 		Session::clear();
 
-		return json(['code' => 0,'msg'=>'安装成功','url'=>'/install/success/complete']);
+		return json(['code' => 0,'msg'=>'安装成功','url'=>(string) url('success/complete')]);
     } else {
 		return '请求失败！';
 		} 
