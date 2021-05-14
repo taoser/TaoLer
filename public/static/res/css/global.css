@@ -13,6 +13,33 @@ html body{margin-top: 61px;}
 html{background-color: #F2F2F2;}
 i{font-style: normal;}
 
+/* 布局 */
+.layui-mm{position: fixed; top: 100px; bottom: 0;}
+.site-menu,
+.site-menu{box-shadow: none; border-left: none;}
+
+/* 文档 */
+.site-fix{position: fixed; top: 0; bottom: 0; z-index: 666; min-height: 0; overflow: hidden;  background-color: #fff;}
+.site-fix:hover{overflow-y: auto; overflow-x: hidden;}
+.site-menu .layui-menu-body-title .layui-font-gray{padding-left: 10px;}
+.site-menu .layui-menu-body-title .layui-badge-dot{left: 10px;}
+
+@media screen and (max-width: 992px) {
+
+  .site-menu{position: fixed; top: 50px; bottom: 0; min-height: 0; overflow-y: auto; overflow-x: hidden; z-index: 1000; left: -300px; background-color: #fff;  transition: all .3s;}
+
+  .site-tree-mobile{display: block!important; position: fixed; z-index: 16666669; bottom: 15px; left: 15px; width: 50px; height: 50px; line-height: 50px; border-radius: 2px; text-align: center; background-color: #009688; color: #fff;}
+  .site-home .site-tree-mobile{display: none!important;}
+  .site-mobile .site-tree-mobile{display: none !important;}
+  .site-mobile .site-menu{left: 0;}
+  .site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.8); z-index: 999;}
+  .site-tree-mobile i{font-size: 20px;}
+  
+  .site-mobile .layui-side{left: 0;}
+  .site-mobile .layui-side-child{top: 50%; left: 200px; height: 300px; margin-top: -100px;}
+  
+}
+
 /* 图标 */
 
 @font-face {font-family: "iconfont";
@@ -696,7 +723,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
   .site-tree-mobile{display: block!important; position: fixed; z-index: 100000; bottom: 20px; left: 10px; width: 50px; height: 50px; line-height: 50px; border-radius: 2px; text-align: center; background-color: rgba(0,0,0,.7); color: #fff;}
   .site-mobile .site-tree-mobile{display: none !important;}
   .site-mobile .fly-user-main>.layui-nav{left: 0;}
-  .site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.9); z-index: 999;}
+  /*.site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.9); z-index: 999;}*/
 }
 
 /*前台公用样式*/

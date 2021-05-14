@@ -874,6 +874,33 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       }
     }
   });
+  
+  //窗口scroll
+  ;!function(){
+    var main = $('.site-menu'), scroll = function(){
+      var stop = $(window).scrollTop();
+
+      if($(window).width() <= 992) return;
+      var bottom = $('.fly-footer').offset().top - $(window).height();
+
+      if(stop > 60){ //211
+        if(!main.hasClass('site-fix')){
+          main.addClass('site-fix').css({
+            width: main.parent().width()
+          });
+        }
+      }else {     
+        if(main.hasClass('site-fix')){
+          main.removeClass('site-fix').css({
+            width: 'auto'
+          });
+        }
+      }
+      stop = null;
+    };
+    scroll();
+    $(window).on('scroll', scroll);
+  }();
 
   exports('fly', fly);
 

@@ -7,6 +7,10 @@
 {block name="content"}
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
+	<div class="">
+	{include file="public/menu" /}
+	</div>
+  
     <div class="layui-col-md8">
       <div class="fly-panel" style="margin-bottom: 0;">
 	  
@@ -49,6 +53,7 @@
 		    {/volist}	
         </ul>
         <div style="text-align: center" id="page">{$artList|raw}</div>
+		<!--div style="text-align: center" id="pages"></div-->
 
       </div>
 	  
@@ -105,6 +110,27 @@
         ,base: '/static/res/mods/'
     }).extend({
         fly: 'index'
-    }).use('fly');
+    }).use(['fly','laypage'], function(){
+	  var laypage = layui.laypage;
+	  
+	  //执行一个laypage实例
+	  laypage.render({
+		elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+		,count: 50 //数据总数，从服务端得到
+		,limit: 15
+		,curr :{$Request.param.page ?: 1} //获取起始页
+		,jump: function(obj, first){
+		//obj包含了当前分页的所有参数，比如：
+		//console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+		//console.log(obj.limit); //得到每页显示的条数
+		
+		//首次不执行
+		if(!first){
+		  //do something
+		  //window.location.href= url+obj.curr+'&limit='+obj.limit+'#collection'; //跳转
+		}
+	  }
+	  });
+	});
 </script>
 {/block}

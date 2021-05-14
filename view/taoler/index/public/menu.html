@@ -1,0 +1,70 @@
+<div class=" layui-hide-md">
+  <div class="layui-panel site-menu" style="width: auto;">
+    <ul class="layui-menu layui-menu-lg">
+      <li class="layui-menu-item-group" lay-options="{type: 'group', isAllowSpread: true}">
+        <div class="layui-menu-body-title">
+          社区分类
+        </div>
+        <hr>
+        <ul>
+		
+		{volist name="cateList" id="cate"}
+		<li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if}>
+		<div class="layui-menu-body-title">
+		<a href="{:url('article/cate',['ename' => $cate.ename])}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}
+		<span class="layui-font-12 layui-font-gray"> >></span>
+		{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}
+		</a>
+		</div>
+		</li> 
+		{/volist}
+
+        </ul>
+      </li>
+      
+      <li class="layui-menu-item-group" lay-options="{type: 'group', isAllowSpread: true}">
+        <div class="layui-menu-body-title">
+          框架
+        </div>
+        <hr>
+        <ul>
+          <li class="">
+            <div class="layui-menu-body-title">
+              <a href="http://wiki.aieok.com/">
+                <span>Wiki </span>
+                <span class="layui-font-12 layui-font-gray">框架文档</span>
+              </a>
+            </div>
+          </li>
+          <li class="">
+            <div class="layui-menu-body-title">
+              <a href="http://bbs.aieok.com/doc/timeline.html">
+                <span>日志 </span>
+                <span class="layui-font-12 layui-font-gray">更新日志</span>
+              </a>
+            </div>
+          </li>
+		  <li class="">
+            <div class="layui-menu-body-title">
+              <a href="/">
+                <span>回首页 </span> 
+                <span class="layui-font-12 layui-font-gray">index</span>
+              </a>
+              
+            </div>
+          </li> 
+        </ul>
+      </li>
+    </ul>
+  </div>
+  
+</div>
+
+<div class="site-tree-mobile layui-hide">
+  <i class="layui-icon layui-icon-spread-left"></i>
+</div>
+<div class="site-mobile-shade"></div>
+
+
+
+
