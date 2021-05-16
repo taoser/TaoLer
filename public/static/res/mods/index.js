@@ -804,6 +804,33 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   shadeMobile.on('click', function(){
     $('body').removeClass('site-mobile');
   });
+  
+  //导航窗口scroll
+  ;!function(){
+    var main = $('.site-menu'), scroll = function(){
+      var stop = $(window).scrollTop();
+
+      if($(window).width() <= 992) return;
+      var bottom = $('.fly-footer').offset().top - $(window).height();
+
+      if(stop > 60){ //211
+        if(!main.hasClass('site-fix')){
+          main.addClass('site-fix').css({
+            width: main.parent().width()
+          });
+        }
+      }else {     
+        if(main.hasClass('site-fix')){
+          main.removeClass('site-fix').css({
+            width: 'auto'
+          });
+        }
+      }
+      stop = null;
+    };
+    scroll();
+    $(window).on('scroll', scroll);
+  }();
 
   //获取统计数据
   $('.fly-handles').each(function(){
@@ -851,7 +878,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         });
     });
 	
-  //监听语音选择提交
+  //监听多语言切换
 	$('#language').on('change',function(){
 	  var data = $(this).val();
 		$.post(langUrl,{language:data},function(res){
@@ -874,33 +901,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       }
     }
   });
-  
-  //窗口scroll
-  ;!function(){
-    var main = $('.site-menu'), scroll = function(){
-      var stop = $(window).scrollTop();
-
-      if($(window).width() <= 992) return;
-      var bottom = $('.fly-footer').offset().top - $(window).height();
-
-      if(stop > 60){ //211
-        if(!main.hasClass('site-fix')){
-          main.addClass('site-fix').css({
-            width: main.parent().width()
-          });
-        }
-      }else {     
-        if(main.hasClass('site-fix')){
-          main.removeClass('site-fix').css({
-            width: 'auto'
-          });
-        }
-      }
-      stop = null;
-    };
-    scroll();
-    $(window).on('scroll', scroll);
-  }();
 
   exports('fly', fly);
 

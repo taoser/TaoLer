@@ -296,6 +296,18 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   });
 
 
+//手机设备的简单适配
+  var treeMobile = $('.site-tree-mobile-user')
+  ,shadeMobile = $('.site-mobile-shade-user')
+
+  treeMobile.on('click', function(){
+    $('body').addClass('site-mobile');
+  });
+
+  shadeMobile.on('click', function(){
+    $('body').removeClass('site-mobile');
+  });
+
 //我的消息
     gather.minemsg = function(){
         var delAll = $('#LAY_delallmsg')
