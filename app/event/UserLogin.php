@@ -6,11 +6,9 @@ namespace app\event;
 
 class UserLogin
 {
-    public $name;
-    public $ip;
-    public function __construct($name,$ip)
+    public $user;
+    public function __construct($user)
     {
-        $this->name = $name;
-        $this->ip = $ip;
+        $this->user = $user;
     }
 }

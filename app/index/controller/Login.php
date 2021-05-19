@@ -12,7 +12,7 @@ use think\facade\Cookie;
 use think\facade\Cache;
 use think\facade\View;
 use app\common\model\User;
-use app\event\UserLogin;
+
 
 class Login extends BaseController
 {
@@ -69,13 +69,7 @@ class Login extends BaseController
 			//登陆请求
 			$user = new User();
 			$res = $user->login($data);
-            if ($res == 1) {
-                //登陆成功
-                $ip = request()->ip();
-                $name = $data['name'];
-                //时间更新ip和日志
-                event(new UserLogin($name,$ip));
-
+            if ($res == 1) {	//登陆成功
                 return Msgres::success('login_success',Cookie::get('url'));
             } else {
 				return Msgres::error($res);

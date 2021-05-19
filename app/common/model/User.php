@@ -7,6 +7,7 @@ use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Config;
 use think\facade\Lang;
+use app\event\UserLogin;
 
 class User extends Model
 {
@@ -44,12 +45,18 @@ class User extends Model
     {	
         //查询使用邮箱或者用户名登陆
         $user = $this::whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
-        if(!$user->isEmpty()){
-            //对输入的密码字段进行MD5加密，再进行数据库的查询
+
+        if(!($user->isEmpty())){
+			//错误登陆连续3次且小于10分钟
+			if((time() - $user->login_error_time < 60) && is_int($user->login_error_num/3)){	
+				return Lang::get('Please log in 10 minutes later');
+			}
+			
+			//对输入的密码字段进行MD5加密，再进行数据库的查询
             $salt = substr(md5($user['create_time']),-6);
             $pwd = substr_replace(md5($data['password']),$salt,0,6);
             $data['password'] = md5($pwd);
-
+			
             if($user['password'] == $data['password']){
                 //将用户数据写入Session
                 Session::set('user_id',$user['id']);
@@ -62,12 +69,24 @@ class User extends Model
                     //Cookie::set('user_id', $user['id'], 604800);
                     //Cookie::set('user_name', $user['name'], 604800);
                 }
+				
+				$userInfo = ['type'=>'log','id'=>$user->id];
+                event(new UserLogin($userInfo));
 
                 //查询结果1表示有用户，用户名密码正确
                 return 1;
-            }
+            } else {//密码错误登陆错误次数加1
+				$userInfo = ['type'=>'logError','id'=>$user->id];
+				event(new UserLogin($userInfo));
+				//echo $user->login_error_num;
+				//连续3次错误
+				if(is_int(($user->login_error_num+1)/3) && $user->login_error_num >0 ){
+					return Lang::get('Login error 3, Please log in 10 minutes later');
+				}
+				
+			}
         }
-        return Lang::get('username or password error');
+		return Lang::get('username or password error');
     }
 
     //更新数据

@@ -123,6 +123,8 @@ return [
 	 'in' 				=> '在',
 	 'accumulate points'	=> '积分',
 	 'my post'			=> '我的帖子',
-
+	 'my auth'			=> '我的授权',
+	 'Please log in 10 minutes later' => '请10分钟后再登陆',
+	 'Login error 3, Please log in 10 minutes later'	=> '连续登陆错误3次,请10分钟后登录',
 
 ];

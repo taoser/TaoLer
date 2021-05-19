@@ -135,14 +135,14 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
       page();
     }
   };
-*/
+
   if(elemUC[0]){
     layui.each(dom.mine.children(), function(index, item){
       var othis = $(item)
       gather.mine(index, othis.data('type'), othis.data('url'));
     });
   }
-
+*/
   //显示当前tab
   if(location.hash){
     element.tabChange('user', location.hash.replace(/^#/, ''));

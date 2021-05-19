@@ -77,22 +77,8 @@
 
 {block name="script"}
 <script>
-    layui.cache.page = 'jie';
-    layui.cache.user = {
-        username: '{$user.name??'游客'}'
-        ,uid: '{$user.id ?? -1}'
-        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
-        ,experience: '{$user.point ?? ''}'
-        ,sex: '{$user.sex ? '女':'男'}'
-    };
-    layui.config({
-        version: "3.0.0"
-        ,base: '/static/res/mods/'
-    }).extend({
-        fly: 'index'
-    }).use(['fly', 'face'], function(){
-  var $ = layui.$
-  ,fly = layui.fly;
+  layui.use('face', function(){
+  var $ = layui.$;
   
   //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
   $('.detail-body').each(function(){
