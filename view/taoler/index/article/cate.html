@@ -97,20 +97,7 @@
 {/block}
 {block name="script"}
 <script>
-    layui.cache.page = 'jie';
-    layui.cache.user = {
-        username: '{$user.name??'游客'}'
-        ,uid: '{$user.id ?? -1}'
-        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
-        ,experience: '{$user.point ?? ''}'
-        ,sex: '{$user.sex ? '女':'男'}'
-    };
-    layui.config({
-        version: "3.0.0"
-        ,base: '/static/res/mods/'
-    }).extend({
-        fly: 'index'
-    }).use(['fly','laypage'], function(){
+    layui.use(['laypage'], function(){
 	  var laypage = layui.laypage;
 	  
 	  //执行一个laypage实例

@@ -1,4 +1,5 @@
 {extend name="public/base" /}
+
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.title},{$article.tags}{/block}
 {block name="description"}{$article.title},{:getArtContent($article.content)}{/block}
@@ -216,31 +217,18 @@
 {/block}
 {block name="script"}
 <script>
-var collectionFind = "{:url('index/Collection/find')}",
-    articleJieset = "{:url('index/Article/jieset')}",
-    articleDelete = "{:url('index/Article/delete')}",
-    collection = "{:url('index/Collection/')}",
-    commentJiedaZan = "{:url('index/Comment/jiedaZan')}",
-    commentJiedaCai = "{:url('index/Comment/jiedaCai')}",
-    commentGetDa = "{:url('index/Comment/getDa')}",
-    commentUpdateDa = "{:url('index/Comment/updateDa')}",
-    commentJiedaDelete = "{:url('index/Comment/jiedaDelete')}",
+var collectionFind = "{:url('Collection/find')}",
+    articleJieset = "{:url('Article/jieset')}",
+    articleDelete = "{:url('Article/delete')}",
+    collection = "{:url('Collection/')}",
+    commentJiedaZan = "{:url('Comment/jiedaZan')}",
+    commentJiedaCai = "{:url('Comment/jiedaCai')}",
+    commentGetDa = "{:url('Comment/getDa')}",
+    commentUpdateDa = "{:url('Comment/updateDa')}",
+    commentJiedaDelete = "{:url('Comment/jiedaDelete')}",
 	langCollection = "{:lang('collection')}",
 	langCancelCollection = "{:lang('cancel collection')}";
-layui.cache.page = 'jie';
-layui.cache.user = {
-        username: '{$user.name??'游客'}'
-        ,uid: '{$user.id ?? -1}'
-        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
-        ,experience: '{$user.point ?? ''}'
-        ,sex: '{$user.sex ? '女':'男'}'
-    };
-layui.config({
-  version: "3.0.0"
-  ,base: '/static/res/mods/'
-}).extend({
-  fly: 'index'
-}).use(['fly', 'face','colorpicker'], function(){
+layui.use(['fly', 'face','colorpicker'], function(){
   var $ = layui.$
   ,fly = layui.fly
   ,colorpicker = layui.colorpicker;

@@ -63,49 +63,32 @@
 $(function() {
 	$('#login').click(function() {
         
-			$.ajax({
-				type:"post",
-				url:"{:url('login/index')}",
-				data:$('form').serialize(),
-				daType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						}, function(){
-							location.href = data.url;
-						});
-					} else {
-						layer.open({
-							title:'登陆失败',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-						layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-					}
+		$.ajax({
+			type:"post",
+			url:"{:url('login/index')}",
+			data:$('form').serialize(),
+			daType:"json",
+			success:function (data){
+				if (data.code == 0) {
+					layer.msg(data.msg,{
+						icon:6,
+						time:2000
+					}, function(){
+						location.href = data.url;
+					});
+				} else {
+					layer.open({
+						title:'登陆失败',
+						content:data.msg,
+						icon:5,
+						anim:6
+					});
+					layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 				}
-			});
+			}
+		});
 	return false;	
 	});
 });
-</script>
-
-<script>
-    layui.cache.page = 'user';
-    layui.cache.user = {
-        username: '{$user.name??'游客'}'
-        ,uid: '{$user.id ?? -1}'
-        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
-        ,experience: '{$user.point ?? ''}'
-        ,sex: '{$user.sex ? '女':'男'}'
-    };
-    layui.config({
-        version: "3.0.0"
-        ,base: '/static/res/mods/'
-    }).extend({
-        fly: 'index'
-    }).use('fly');
 </script>
 {/block}

@@ -1,4 +1,5 @@
 {extend name="public/base" /}
+
 {block name="title"}编辑帖子{/block}
 {block name="column"}{/block}
 {block name="content"}
@@ -138,20 +139,7 @@
 
 {block name="script"}
 <script>
-	layui.cache.page = 'jie';
-	layui.cache.user = {
-        username: '{$user.name??'游客'}'
-        ,uid: '{$user.id ?? -1}'
-        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
-        ,experience: '{$user.point ?? ''}'
-        ,sex: '{$user.sex ? '女':'男'}'
-    };
-	layui.config({
-		version: "3.0.0"
-		,base: '/static/res/mods/'
-	}).extend({
-		fly: 'index'
-	}).use(['fly','colorpicker','form','upload'], function(){
+	layui.use(['fly','colorpicker','form','upload'], function(){
       var $ = layui.$
           ,colorpicker = layui.colorpicker
           ,form = layui.form
@@ -188,84 +176,84 @@
 			}
 		  });
 
-//编辑文章
-form.on('submit(article-edit)', function(data){
-    var field = data.field;
-    var numArr = new Array();
-    $('.layui-btn-container').children('button').each(function(){
-        numArr.push($(this).val());//添加至数组
-    });
-    tags = numArr.join(',');
-    $.ajax({
-        type:"post",
-        url:"{:url('article/edit')}",
-        data:{"id":field.id,"cate_id":field.cate_id,"title":field.title,"title_color":field.title_color,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha},
-        daType:"json",
-        success:function (data){
-            if (data.code == 0) {
-                layer.msg(data.msg,{
-                    icon:6,
-                    time:2000
-                }, function(){
-                    location.href = data.url;
-                });
-            } else {
-                layer.open({
-                    title:'编辑失败',
-                    content:data.msg,
-                    icon:5,
-                    anim:6
-                });
-                layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-            };
-        }
-    });
-    return false;
-});
+	//编辑文章
+	form.on('submit(article-edit)', function(data){
+		var field = data.field;
+		var numArr = new Array();
+		$('.layui-btn-container').children('button').each(function(){
+			numArr.push($(this).val());//添加至数组
+		});
+		tags = numArr.join(',');
+		$.ajax({
+			type:"post",
+			url:"{:url('article/edit')}",
+			data:{"id":field.id,"cate_id":field.cate_id,"title":field.title,"title_color":field.title_color,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha},
+			daType:"json",
+			success:function (data){
+				if (data.code == 0) {
+					layer.msg(data.msg,{
+						icon:6,
+						time:2000
+					}, function(){
+						location.href = data.url;
+					});
+				} else {
+					layer.open({
+						title:'编辑失败',
+						content:data.msg,
+						icon:5,
+						anim:6
+					});
+					layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+				};
+			}
+		});
+		return false;
+	});
 
-//添加tags
-$('#article-tags-button').on('click',function(){
-    var tags = $("input[name='tags']").val();
+	//添加tags
+	$('#article-tags-button').on('click',function(){
+		var tags = $("input[name='tags']").val();
 
-    if(tags == ''){
-        layer.msg('不能为空');
-        return false;
-    }
+		if(tags == ''){
+			layer.msg('不能为空');
+			return false;
+		}
 
-    var numArr = new Array();
-    $('.layui-btn-container').children('button').each(function(){
-        numArr.push($(this).val());//添加至数组
-    });
-    for(var i=0; i<numArr.length; i++){
-        if(tags.indexOf(numArr[i])>=0){
-            layer.msg('不能重复添加'+numArr[i]);
-            return false;
-        }
-    }
-  //保存tags
-    $.ajax({
-        type:"post",
-        url:"{:url('article/tags')}",
-        data:{"tags":tags},
-        daType:"json",
-        success:function (data){
-            if (data.code == 0) {
-                for(var i=0; i<data.data.length; i++){
-                    $('.layui-btn-container').append('<button type="button" class="layui-btn" value='+data.data[i]+'>'+data.data[i]+'</button>');
-                }
-                $("input[name='tags']").val("");
-            } else {
-                layer.open({
-                    title:'添加失败',
-                    content:data.msg,
-                    icon:5,
-                    anim:6
-                });
-            };
-        }
-    });
-    return false;
-});
+		var numArr = new Array();
+		$('.layui-btn-container').children('button').each(function(){
+			numArr.push($(this).val());//添加至数组
+		});
+		for(var i=0; i<numArr.length; i++){
+			if(tags.indexOf(numArr[i])>=0){
+				layer.msg('不能重复添加'+numArr[i]);
+				return false;
+			}
+		}
+	  //保存tags
+		$.ajax({
+			type:"post",
+			url:"{:url('article/tags')}",
+			data:{"tags":tags},
+			daType:"json",
+			success:function (data){
+				if (data.code == 0) {
+					for(var i=0; i<data.data.length; i++){
+						$('.layui-btn-container').append('<button type="button" class="layui-btn" value='+data.data[i]+'>'+data.data[i]+'</button>');
+					}
+					$("input[name='tags']").val("");
+				} else {
+					layer.open({
+						title:'添加失败',
+						content:data.msg,
+						icon:5,
+						anim:6
+					});
+				};
+			}
+		});
+		return false;
+	});
 
   //删除tag
   $(document).ready(function(){

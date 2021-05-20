@@ -69,7 +69,7 @@ class Article extends BaseController
 		//通用右栏
 		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
 		
-		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cate'=>$ad_cate,'ad_comm'=>$ad_comm]);
+		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cate'=>$ad_cate,'ad_comm'=>$ad_comm,'jspage'=>'jie']);
 		return View::fetch();
     }
 
@@ -112,7 +112,7 @@ class Article extends BaseController
 		//通用右栏
 		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
 
-		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm,$download]);
+		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm,$download,'jspage'=>'jie']);
 		return View::fetch();
     }
 	
@@ -178,6 +178,7 @@ class Article extends BaseController
             }
             return $res;
         }
+		View::assign(['jspage'=>'jie']);
         return View::fetch();
     }
 
@@ -223,7 +224,7 @@ class Article extends BaseController
 				}
 			}
 			
-        View::assign(['article'=>$article,'tags'=>$tags]);
+        View::assign(['article'=>$article,'tags'=>$tags,'jspage'=>'jie']);
 		return View::fetch();
     }
 	

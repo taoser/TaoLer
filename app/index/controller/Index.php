@@ -64,6 +64,7 @@ class Index extends BaseController
 			'ad_index'	=>	$ad_index,
 			'ad_comm'	=>	$ad_comm,
 			'flinks'	=>	$friend_links,
+			'jspage'	=>	'',
 		];
 		View::assign($vs);
 
@@ -98,7 +99,7 @@ class Index extends BaseController
 		$artHot = Article::getArtHot(10);
 
         View::assign($searchs);
-		View::assign(['flinks'=>$friend_links,'artHot'=>$artHot]);
+		View::assign(['flinks'=>$friend_links,'artHot'=>$artHot,'jspage'=>'']);
 		return View::fetch('search');
 	}
 

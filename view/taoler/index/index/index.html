@@ -101,6 +101,7 @@
 
 {block name="script"}
 <script>
+	var replyUrl = "{:url('index/reply')}";
     layui.use(['form', 'layer'], function() {
 		var form = layui.form;
         var layer = layui.layer;
@@ -225,22 +226,5 @@
 		return false;
 	});
 	
-</script>
-<script>
-	var replyUrl = "{:url('index/reply')}";
-    layui.cache.page = 'index';
-    layui.cache.user = {
-        username: '{$user.name??'游客'}'
-        ,uid: '{$user.id ?? -1}'
-        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
-        ,experience: '{$user.point ?? ''}'
-        ,sex: '{$user.sex ? '女':'男'}'
-    };
-    layui.config({
-        version: "3.0.0"
-        ,base: '/static/res/mods/'
-    }).extend({
-        fly: 'index'
-    }).use('fly');
 </script>
 {/block}

@@ -13,13 +13,19 @@ use think\facade\Cache;
 use think\facade\View;
 use app\common\model\User;
 
-
 class Login extends BaseController
 {
-	//已登陆检测
+	//已登陆中间件检测
 	protected $middleware = [
 	    'logedcheck' => ['except' 	=> ['index'] ]
     ];
+	
+	//给模板中JScace文件赋值
+    protected function initialize()
+    {
+		parent::initialize();
+		View::assign(['jspage'=>'user']);
+	}
 
     //用户登陆
 	public function index()
@@ -75,6 +81,7 @@ class Login extends BaseController
 				return Msgres::error($res);
             }
         }
+		
         return View::fetch('login');
 	}
 
@@ -103,7 +110,6 @@ class Login extends BaseController
            }
 		   return json($res);
         }
-        //加载注册模板
         return View::fetch();
     }
 	
