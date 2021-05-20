@@ -154,7 +154,7 @@ class User extends BaseController
 		//用户回答
         $reys = Db::name('comment')->alias('c')->join('article a','c.article_id = a.id')->field('a.id,a.title,c.content,c.create_time,c.delete_time')->where(['a.delete_time'=>0,'c.delete_time'=>0])->where('c.user_id',$id)->order(['c.create_time'=>'desc'])->cache(3600)->select();
 		
-		View::assign(['u'=>$u,'arts'=>$arts,'reys'=>$reys]);
+		View::assign(['u'=>$u,'arts'=>$arts,'reys'=>$reys,'jspage'=>'']);
         return View::fetch();
     }
 	
