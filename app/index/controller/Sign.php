@@ -12,32 +12,70 @@ use taoler\com\Level;
 
 class Sign extends BaseController
 {
-
-    protected $uid;
-
-    protected function _initialize()
-    {
-        parent::_initialize();
-        $this->uid = session('user_id');
-    }
-
-    public function lists()
-    {
-        //总榜
-        $totallist = Db::name('user_sign')->alias('s')->leftJoin('user u', 's.uid=u.id')->field('uid,s.id as id,max(days) as days,name,user_img')->group('uid')->order('days desc')->limit(20)->select();
-        $time = time();
+	//签到最新，最快，活跃榜JSON数据
+	public function signJson()
+	{
+		$time = time();
         $start_stime = strtotime(date('Y-m-d 0:0:0', $time)) - 1;
         $end_stime = strtotime(date('Y-m-d 23:59:59', $time)) + 1;
-        //今日最快
-        $fastlist = Db::name('user_sign')->alias('s')->join('user u', 's.uid=u.id')->field('s.*,u.name as name,u.user_img as user_img')->where("s.stime > $start_stime and s.stime < $end_stime")->order('s.id asc')->limit(20)->select();
-        //最新
+		
+		$res = [];
+		$res['status'] = 0;
+		
+		//最新
         $newlist = Db::name('user_sign')->alias('s')->join('user u', 's.uid=u.id')->field('s.*,u.name as name,u.user_img as user_img')->order('id desc')->limit(20)->select();
-
-        View::assign('totallist', $totallist);
-        View::assign('fastlist', $fastlist);
-        View::assign('newlist', $newlist);
-        return View::fetch();
-    }
+		
+		if(count($newlist)){
+			foreach($newlist as $n){
+				$new = ['uid'=>$n['uid'],'time'=>date('Y-m-d H:i:s',$n['stime']),'user'=>['username'=>$n['name'],'avatar'=>$n['user_img']]];
+				$res['data'][0][] = $new;
+			}
+		} else {
+			$res['data'][0] = [];
+		}
+		
+		//今日最快
+        $fastlist = Db::name('user_sign')->alias('s')->join('user u', 's.uid=u.id')->field('s.*,u.name as name,u.user_img as user_img')->where("s.stime > $start_stime and s.stime < $end_stime")->order('s.id asc')->limit(20)->select();
+		if(count($fastlist)){
+			foreach($fastlist as $f){
+				$fast = ['uid'=>$f['uid'],'days'=>$f['days'],'time'=>date('Y-m-d H:i:s',$f['stime']),'user'=>['username'=>$f['name'],'avatar'=>$f['user_img']]];
+			$res['data'][1][] = $fast;
+			}
+		} else {
+			$res['data'][1] = [];
+		}
+		
+		//总榜
+        $totallist = Db::name('user_sign')->alias('s')->leftJoin('user u', 's.uid=u.id')->field('uid,s.id as id,max(days) as days,name,user_img')->group('uid')->order('days desc')->limit(20)->select();
+		if(count($totallist)){
+			foreach($totallist as $t){
+				$total = ['uid'=>$t['uid'],'days'=>$f['days'],'user'=>['username'=>$t['name'],'avatar'=>$t['user_img']]];
+			$res['data'][2][] = $total;
+			}
+		} else {
+			$res['data'][2] = [];
+		}
+		
+		return json($res);
+	}
+	
+	//签到状态
+	public function status()
+	{
+		if(session('user_id')){
+			$res = $this->todayData()->getData();
+			if($res['is_sign'] == 1){
+				return json(['status'=>0,'msg'=>'已签到','data'=>['signed'=>$res['is_sign'],'token'=>'1111','experience'=>$res['score'],'days'=>$res['days']]]);
+			} else {
+				return json(['status'=>0,'msg'=>'未签到','data'=>['signed'=>0,'token'=>'1111','experience'=>$res['will_getscore'],'days'=>$res['days']]]);
+			}
+		} else {
+			return json(['status'=>0,'msg'=>'未登陆']);
+		}
+		
+	}
+	
+	//执行签到
 
     /**
      * 执行当天签到
@@ -46,15 +84,15 @@ class Sign extends BaseController
     public function sign()
     {
         if (!Session::has('user_id') || !Session::has('user_name')) {
-            return json(array('code' => 0, 'msg' => '亲，登陆后才能签到哦','url' => url('Login/index')));
+            return json(['status'=>1,'code' => -1, 'msg' => '亲，登陆后才能签到哦','url' => url('Login/index')]);
         } else {
-            $uid = session('user_id');
+            $uid = $this->uid;
 			$todayData = $this->todayData()->getData();    
 			//var_dump($todayData);
 
             if ($todayData['is_sign'] == 1) { //数组中是返回的是一个对象，不能直接用[]来显示，正确的输出方法是：$pic[0]->title问题解决！
                 //exit('{"code":-1,"msg":"你今天已经签过到了"}');
-				return json(['code'=>-1,'msg'=>'你今天已签过到!']);
+				return json(['status'=>1,'code'=>-1,'msg'=>'你今天已签过到!']);
             } else {
                 $data = $this->getInsertData($uid);
 								
@@ -69,7 +107,7 @@ class Sign extends BaseController
                     //$score = $this->getTodayScores($days);
                     $score = $todayData['will_getscore'];
                     $date=date('Ymd');
-                    $msg='';
+                    $msg='签到成功';
                     $teshudate=['20200214','20200501','20201001'];
                     //签到奖励
                     if(in_array($date,$teshudate)){
@@ -90,9 +128,9 @@ class Sign extends BaseController
 						//到达积分值升级Vip等级
 						$viplv = Level::writeLv($uid);
                     }
-                    return json(['code'=>200,'score'=>$score,'days'=>$days,'msg'=>$msg]);
+                    return json(['status'=>0,'code'=>200,'msg'=>$msg,'data'=>['signed'=>1,'experience'=>$score,'days'=>$days]]);
                 } else {
-					return json(['code'=>-1,'msg'=>'签到失败，请刷新后重试！']);
+					return json(['status'=>1,'code'=>-1,'msg'=>'签到失败，请刷新后重试！']);
                 }
             }
         }
@@ -141,7 +179,7 @@ class Sign extends BaseController
         $time = time();
         $start_stime = strtotime(date('Y-m-d 0:0:0', $time)) - 1;
         $end_stime = strtotime(date('Y-m-d 23:59:59', $time)) + 1;
-        $res = Db::name('user_sign')->where('uid',session('user_id'))->where('stime', '>', $start_stime)->where('stime', '<', $end_stime)->find();
+        $res = Db::name('user_sign')->where('uid',session('user_id'))->where('stime', '>', $start_stime and 'stime', '<', $end_stime)->find();
         $score = 0;
         if ($res) {
             $is_sign = 1;

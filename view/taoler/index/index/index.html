@@ -50,7 +50,10 @@
 		<h3 class="fly-panel-title">{:lang('links list')}</h3>
 		{include file="public/index-static" /}
 		</div>
+		
+		<!--签到-->
 		{include file="public/sign" /}
+		
 		<!--广告赞助-->
 		<div class="fly-panel"> 
 			<div class="fly-panel-title">{:lang('sponsor')}<span class="fly-mid"></span> 
@@ -91,8 +94,8 @@
 		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}
         </div>
-	<!--友情链接-->  
-	{include file="public/flink" /}
+		<!--友情链接-->  
+		{include file="public/flink" /}
     </div>
 	
   </div>
@@ -101,130 +104,18 @@
 
 {block name="script"}
 <script>
-	var replyUrl = "{:url('index/reply')}";
-    layui.use(['form', 'layer'], function() {
-		var form = layui.form;
-        var layer = layui.layer;
-        var $ = layui.jquery;
-        var jifenname = "金币";
-        var uid = "{:session('user_id')}";
-		
-        if (uid != '') {
-            $.get("{:url('sign/todayData')}", function(data) {
+var replyUrl = "{:url('index/reply')}";
 
-                $('.fly-signin-days').html('已连续签到<cite>' + data.days + '</cite>天');
-
-                if (data.is_sign == 1) {
-
-                    $('.fly-signin-main').html('<button class="layui-btn layui-btn-disabled">今日已签到</button><span>获得了<cite>' + data.score + '</cite>' + jifenname + '</span>');
-
-                } else {
-                    $('.fly-signin-main').html('<button id="LAY_signin" class="layui-btn layui-btn-danger">今日签到</button><span>可获得<cite>' + data.will_getscore + '</cite>' + jifenname + '</span>');
-
-                    $("#LAY_signin").on("click", function() {
-
-                        $.getJSON("{:url('sign/sign')}", function(data) {
-
-                            if (data.code == 200) {
-                                $('.fly-signin-days').html('已连续签到<cite>' + data.days + '</cite>天');
-                                $('.fly-signin-main').html('<button class="layui-btn layui-btn-disabled">今日已签到</button><span>获得了<cite>' + data.score + '</cite>' + jifenname + '</span>');
-                                if (data.msg != '') {
-                                    layer.msg(data.msg, {
-                                        icon: 6,
-                                        time: 5000
-                                    });
-                                }
-                            } else {
-                                layer.msg(data.msg);
-                            }
-                        });
-                    });
-                }
-            });
-        } else {
-            $('.fly-signin-main').html('<button class="layui-btn layui-btn-danger" id="LAY_signin">签到得' + jifenname + '</button>');
-            $("#LAY_signin").on("click", function() {
-                layer.msg('请先登录',{
-						icon:5,
-						anim:6,
-						time: 2000
-					},function(){
-						location.href = "{:url('login/index')}";
-					});
-            });
-        }
-
-        //查看签到积分规则
-        $("#LAY_signinHelp").on("click", function() {
-            loading = layer.load(2, {
-                shade: [0.2, '#000']
-            });
-            var url = "{:url('sign/getsignrule')}";
-
-
-            $.getJSON(url, function(data) {
-                $str = '';
-                $.each(data.msg, function(k, v) {
-                    $str += '<tr><td>≥' + v.days + '</td><td>' + v.score + '</td></tr>';
-                });
-                var content = '<div class="layui-text" style="padding: 20px;">' +
-                    '<blockquote class="layui-elem-quote">“签到”可获得社区' + jifenname + '，规则如下</blockquote>' +
-                    '<table class="layui-table">' +
-                    '<thead>' +
-                    '<tr><th>连续签到天数</th><th>每天可获' + jifenname + '</th></tr>' +
-                    '</thead>' +
-                    '<tbody>' +
-                    $str +
-                    '</tbody>' +
-                    '</table>' +
-                    '<ul>' +
-                    '<li style="color: #FF5722;">新年期间签到额外赠送最高99金币</li>' +
-                    '<li>中间若有间隔，则连续天数重新计算</li>' +
-                    // '<li style="color: #FF5722;">不可利用程序自动签到，否则' + jifenname + '清零</li>' +
-                    '</ul></div>'
-                layer.open({
-                    type: 1,
-                    title: '签到说明',
-                    area: '300px',
-                    shade: 0.8,
-                    shadeClose: true,
-                    content: content,
-                    success: function(index, layero) {
-                        //do something
-                        layer.close(loading); //如果设定了yes回调，需进行手工关闭
-                    }
-                });
-            });
-        });
-
-        //查看积分榜单
-        $("#LAY_signinTop").on("click", function() {
-
-            var signlisturl = "{:url('sign/lists')}";
-
-            layer.open({
-                type: 2,
-                title: '签到活跃榜 - TOP 20',
-                shade: 0.8,
-                area: ['300px', '430px'], //宽高
-                scrollbar: false,
-                shadeClose: true,
-                content: signlisturl,
-            });
-        });
-		
-    });
-	
-	$('#friend-link').on('click', function(){
-		layer.open({
-		  title: '申请友链',
-		  content: '发送邮件至：changlin_zhao@qq.com ',
-		  yes: function(index, layero){
-				layer.close(index);
-			}
-		});
-		return false;
+$('#friend-link').on('click', function(){
+	layer.open({
+	  title: '申请友链',
+	  content: '发送邮件至：changlin_zhao@qq.com ',
+	  yes: function(index, layero){
+			layer.close(index);
+		}
 	});
+	return false;
+});
 	
 </script>
 {/block}

@@ -1,7 +1,7 @@
 ﻿/**
-
+ TaoLer社区修改 www.aieok.com
  @Name: Fly社区主入口
-
+ 2021-5.21
  */
  
 
@@ -515,14 +515,15 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     });
   }
 
-/*
+
   //签到
+  var jName = "金币";
   var tplSignin = ['{{# if(d.signed){ }}'
     ,'<button class="layui-btn layui-btn-disabled">今日已签到</button>'
-    ,'<span>获得了<cite>{{ d.experience }}</cite>飞吻</span>'
+    ,'<span>获得了<cite>{{ d.experience }}</cite>' + jName + '</span>'
   ,'{{# } else { }}'
     ,'<button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>'
-    ,'<span>可获得<cite>{{ d.experience }}</cite>飞吻</span>'
+    ,'<span>可获得<cite>{{ d.experience }}</cite>' + jName + '</span>'
   ,'{{# } }}'].join('')
   ,tplSigninDay = '已连续签到<cite>{{ d.days }}</cite>天'
 
@@ -541,7 +542,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   ,elemSigninDays = $('.fly-signin-days');
   
   if(elemSigninMain[0]){
-    
+
     fly.json('/sign/status', function(res){
       if(!res.data) return;
       signRender.token = res.data.token;
@@ -552,8 +553,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   $('body').on('click', '#LAY_signin', function(){
     var othis = $(this);
     if(othis.hasClass(DISABLED)) return;
-
-    fly.json('/sign/in/', {
+	
+    fly.json('/sign/sign/', {
       token: signRender.token || 1
     }, function(res){
       signRender(res.data);
@@ -568,31 +569,39 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 
   //签到说明
   elemSigninHelp.on('click', function(){
-    layer.open({
-      type: 1
-      ,title: '签到说明'
-      ,area: '300px'
-      ,shade: 0.8
-      ,shadeClose: true
-      ,content: ['<div class="layui-text" style="padding: 20px;">'
-        ,'<blockquote class="layui-elem-quote">“签到”可获得社区飞吻，规则如下</blockquote>'
-        ,'<table class="layui-table">'
-          ,'<thead>'
-            ,'<tr><th>连续签到天数</th><th>每天可获飞吻</th></tr>'
-          ,'</thead>'
-          ,'<tbody>'
-            ,'<tr><td>＜5</td><td>5</td></tr>'
-            ,'<tr><td>≥5</td><td>10</td></tr>'
-            ,'<tr><td>≥15</td><td>15</td></tr>'
-            ,'<tr><td>≥30</td><td>20</td></tr>'
-          ,'</tbody>'
-        ,'</table>'
-        ,'<ul>'
-          ,'<li>中间若有间隔，则连续天数重新计算</li>'
-          ,'<li style="color: #FF5722;">不可利用程序自动签到，否则飞吻清零</li>'
-        ,'</ul>'
-      ,'</div>'].join('')
-    });
+	  
+	$.getJSON('/sign/getsignrule', function(data) {
+		
+		//拼接表格字符串
+		var $str = '';
+		$.each(data.msg, function(k, v) {
+			$str += '<tr><td>≥' + v.days + '</td><td>' + v.score + '</td></tr>';
+		 });
+		 
+		layer.open({
+		  type: 1
+		  ,title: '签到说明'
+		  ,area: '300px'
+		  ,shade: 0.8
+		  ,shadeClose: true
+		  ,content: ['<div class="layui-text" style="padding: 20px;">'
+			,'<blockquote class="layui-elem-quote">“签到”可获得社区' + jName + '，规则如下</blockquote>'
+			,'<table class="layui-table">'
+			  ,'<thead>'
+				,'<tr><th>连续签到天数</th><th>每天可获' + jName + '</th></tr>'
+			  ,'</thead>'
+			  ,'<tbody>'
+			   ,$str
+			  ,'</tbody>'
+			,'</table>'
+			,'<ul>'
+			  ,'<li>中间若有间隔，则连续天数重新计算</li>'
+			  ,'<li style="color: #FF5722;">不可利用程序自动签到，否则' + jName + '清零</li>'
+			,'</ul>'
+		  ,'</div>'].join('')
+		});
+	});
+	
   });
 
   //签到活跃榜
@@ -619,7 +628,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 
   elemSigninTop.on('click', function(){
     var loadIndex = layer.load(1, {shade: 0.8});
-    fly.json('../json/signin.js', function(res){ //实际使用，请将 url 改为真实接口
+    fly.json('/sign/signJson', function(res){ //实际使用，请将 url 改为真实接口
       var tpl = $(['<div class="layui-tab layui-tab-brief" style="margin: 5px 0 0;">'
         ,'<ul class="layui-tab-title">'
           ,'<li class="layui-this">最新签到</li>'
@@ -656,7 +665,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 
     }, {type: 'get'});
   });
-*/
+
 
   //回帖榜
   var tplReply = ['{{# layui.each(d.data, function(index, item){ }}'
