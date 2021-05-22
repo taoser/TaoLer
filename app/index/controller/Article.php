@@ -290,6 +290,28 @@ class Article extends BaseController
         return json($res);
     }
 
+    //上传附件
+    public function upVideo()
+    {
+        $file = request()->file('file');
+        try {
+            validate(['file'=>'fileSize:10240000|fileExt:mp4,jpg,png,jpeg'])
+                ->check(['file'=>$file]);
+            $savename = \think\facade\Filesystem::disk('public')->putFile('video',$file);
+        } catch (ValidateException $e) {
+            return json(['status'=>-1,'msg'=>$e->getMessage()]);
+        }
+        $upload = Config::get('filesystem.disks.public.url');
+
+        if($savename){
+            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
+            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
+        }else{
+            $res = ['status'=>-1,'msg'=>'上传错误'];
+        }
+        return json($res);
+    }
+
     //附件下载
     public function download($id)
     {

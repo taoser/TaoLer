@@ -123,7 +123,7 @@ class Article extends Model
 			'user' => function($query){
                 $query->field('id,name,nickname,user_img,area_id,vip');
 			} ])
-            ->withCount(['comments'])->where(['status'=>1,'delete_time'=>0])->order('create_time','desc')->limit($num)->select();
+            ->withCount(['comments'])->where(['status'=>1,'is_top'=>0])->order('create_time','desc')->limit($num)->select();
 			Cache::tag('tagArt')->set('artlist',$artList,60);
 		}
 		return $artList;

@@ -3,7 +3,6 @@
  @Name: Fly社区主入口
  2021-5.21
  */
- 
 
 layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(exports){
   
@@ -36,7 +35,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       obj.value = result.join('');
     }
   };
-
 
   //数字前置补零
   layui.laytpl.digit = function(num, length, end){
@@ -102,6 +100,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
               ,'<span type="quote" title="引用"><i class="iconfont icon-yinyong" style="top: 1px;"></i></span>'
               ,'<span type="code" title="插入代码" class="layui-hide-xs"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
               ,'<span type="hr" title="水平线">hr</span>'
+              ,'<span type="video" title="视频"><i class="layui-icon layui-icon-video"></i></span>'
+              ,'<span type="audio" title="音频"><i class="layui-icon layui-icon-headset"></i></span>'
               ,'<span type="preview" title="预览"><i class="iconfont icon-yulan1"></i></span>'
               ,'</div>'].join('');
 
@@ -243,6 +243,105 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
               ,hr: function(editor){ //插入水平分割线
                   layui.focusInsert(editor[0], '[hr]\n');
                   editor.trigger('keyup');
+              }
+              ,video: function(editor){ //插入视频
+                  layer.open({
+                      type: 1
+                      ,id: 'fly-jie-video-upload'
+                      ,title: '插入视频'
+                      ,shade: false
+                      ,area: '465px'
+                      ,skin: 'layui-layer-border'
+                      ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
+                          ,'<li class="layui-form-item">'
+                          ,'<label class="layui-form-label">封面</label>'
+                          ,'<div class="layui-input-inline">'
+                          ,'<input type="text" required name="cover" placeholder="支持直接粘贴远程图片地址" value="" class="layui-input">'
+                          ,'</div>'
+                          ,'<input required type="file" name="file" lay-type="image" class="layui-upload-file" value="">'
+                          ,'</li>'
+                          ,'<li class="layui-form-item">'
+                          ,'<label class="layui-form-label">URL</label>'
+                          ,'<div class="layui-input-inline">'
+                          ,'<input type="text" required name="video" placeholder="支持直接粘贴远程视频地址" value="" class="layui-input">'
+                          ,'</div>'
+                          ,'<input required type="file" name="file" lay-type="video" class="layui-upload-file" value="上传文件">'
+                          ,'</li>'
+                          ,'<li class="layui-form-item" style="text-align: center;">'
+                          ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
+                          ,'</li>'
+                          ,'</ul>'].join('')
+                      ,success: function(layero, index){
+                          var loding, video =  layero.find('input[name="video"]'), cover =  layero.find('input[name="cover"]');
+                          upload.render({
+                              url: '/article/upVideo/'
+                              ,before: function(input){   loding = layer.msg('文件上传中,请稍等哦', { icon: 16 ,shade:0.3,time:0 });   }
+                              ,elem: '#fly-jie-video-upload .layui-upload-file'
+                              ,success: function(res,input){
+                                  layer.close(loding);
+                                  if(res.status == 0){
+                                      if($(input).attr('lay-type') == 'image'){
+                                          cover.val(res.data);
+                                      }else{
+                                          video.val(res.data);
+                                      }
+                                  } else {
+                                      layer.msg(res.msg, {icon: 5});
+                                  }
+                              }
+                          });
+                          form.on('submit(uploadImages)', function(data){
+                              var field = data.field;
+                              if(!field.video) return video.focus();
+                              layui.focusInsert(editor[0], 'video('+field.cover+')['+ field.video + '] ');
+                              layer.close(index);
+                          });
+                      }
+                  });
+              }
+              ,audio: function(editor){ //插入音频
+                  layer.open({
+                      type: 1
+                      ,id: 'fly-jie-audio-upload'
+                      ,title: '插入音频'
+                      ,shade: false
+                      ,area: '465px'
+                      ,skin: 'layui-layer-border'
+                      ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
+                          ,'<li class="layui-form-item">'
+                          ,'<label class="layui-form-label">URL</label>'
+                          ,'<div class="layui-input-inline">'
+                          ,'<input required name="audio" placeholder="支持直接粘贴远程音频地址" value="" class="layui-input">'
+                          ,'</div>'
+                          ,'<input required type="file" name="file" lay-type="audio" class="layui-upload-file" value="">'
+                          ,'</li>'
+                          ,'<li class="layui-form-item" style="text-align: center;">'
+                          ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
+                          ,'</li>'
+                          ,'</ul>'].join('')
+                      ,success: function(layero, index){
+                          var loding,image =  layero.find('input[name="audio"]');
+
+                          upload.render({
+                              url: '/Ajax/ThreadUpload/',elem: '#fly-jie-audio-upload .layui-upload-file'
+                              ,before: function(input){   loding = layer.msg('文件上传中,请稍等哦', { icon: 16 ,shade:0.3,time:0 });   }
+                              ,success: function(res){
+                                  layer.close(loding);
+                                  if(res.status == 1){
+                                      image.val(res.data);
+                                  } else {
+                                      layer.msg(res.msg, {icon: 5});
+                                  }
+                              }
+                          });
+                          form.on('submit(uploadImages)', function(data){
+                              var field = data.field;
+                              if(!field.audio) return image.focus();
+                              layui.focusInsert(editor[0], 'audio['+ field.audio + '] ');
+                              layer.close(index);
+                          });
+                      }
+                  });
               }
               ,preview: function(editor, span){ //预览
                   var othis = $(span), getContent = function(){
@@ -388,6 +487,18 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
               //转义换行
               .replace(/\n/g, '<br>')
 
+              //转义视频
+              .replace(/video\(.*?\)\[([^\s]+?)\]/g, function(str){
+                  var cover = (str.match(/video\(([\s\S]+?)\)\[/)||[])[1];
+                  var video = (str.match(/\)\[([^\s]+?)\]/)||[])[1];
+                  cover = cover ? cover : '/Public/Topic/images/video_cover.jpg';
+                  return  '<video poster="'+ cover + '" controls crossorigin><source src="'+ video + '" type="video/mp4"></video>';
+              })
+              //转义音频
+              .replace(/audio\[([^\s]+?)\]/g, function(audio){
+                  return  '<audio controls><source src="'+ audio.replace(/(^audio\[)|(\]$)/g, '')+ '" type="audio/mp3"></audio>';
+              })
+
           return content;
       }
     
@@ -475,8 +586,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   }
 
   //刷新图形验证码
-  $('body').on('click', '.fly-imagecode', function(){
-    this.src = '/index/captcha?id='+ new Date().getTime();
+  $('body').on('click', '#captcha111', function(){
+      var othis = $(this);
+      othis.attr('src', othis.attr('src')+'?'+ new Date().getTime());
+      //console.log(othis.attr('src'));
   });
 
   //头条轮播
@@ -543,7 +656,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   
   if(elemSigninMain[0]){
 
-    fly.json('/sign/status', function(res){
+    fly.json(signStatusUrl, function(res){
       if(!res.data) return;
       signRender.token = res.data.token;
       signRender(res.data);
@@ -551,10 +664,20 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     
   }
   $('body').on('click', '#LAY_signin', function(){
+  	//登录判断
+  	var uid = layui.cache.user.uid;
+  	if(uid == -1){
+  		console.log(uid);
+  		layer.msg('请登录再评论', {icon: 6}, function(){
+  			location.href = login;
+  		})
+    	return false;
+    }
+    		
     var othis = $(this);
     if(othis.hasClass(DISABLED)) return;
 	
-    fly.json('/sign/sign/', {
+    fly.json(signInUrl, {
       token: signRender.token || 1
     }, function(res){
       signRender(res.data);
@@ -570,7 +693,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   //签到说明
   elemSigninHelp.on('click', function(){
 	  
-	$.getJSON('/sign/getsignrule', function(data) {
+	$.getJSON(signRuleUrl, function(data) {
 		
 		//拼接表格字符串
 		var $str = '';
@@ -611,10 +734,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         ,'<img src="{{item.user.avatar}}">'
         ,'<cite class="fly-link">{{item.user.username}}</cite>'
       ,'</a>'
-      ,'{{# var date = new Date(item.time); if(d.index < 2){ }}'
-        ,'<span class="fly-grey">签到于 {{ layui.laytpl.digit(date.getHours()) + ":" + layui.laytpl.digit(date.getMinutes()) + ":" + layui.laytpl.digit(date.getSeconds()) }}</span>'
+      ,'{{# var date = new Date(item.time); if(d.index === 0) { }}'
+        ,'<span class="fly-grey"> {{ layui.laytpl.digit(date.getFullYear()) + "-" + layui.laytpl.digit(date.getMonth()+1) + "-" + layui.laytpl.digit(date.getDate())}} 签到 <i class="layui-icon layui-icon-ok"></i></span>'
+      ,'{{# } else if(d.index == 1) { }}' 
+        ,'<span class="fly-grey">签到于 {{ layui.laytpl.digit(date.getHours()) + ":" + layui.laytpl.digit(date.getMinutes()) + ":" + layui.laytpl.digit(date.getSeconds()) }} <i class="layui-icon layui-icon-flag"></i></span>'
       ,'{{# } else { }}'
-        ,'<span class="fly-grey">已连续签到 <i>{{ item.days }}</i> 天</span>'
+        ,'<span class="fly-grey">已连续签到 <i>{{ item.days }}</i> 天 <i class="layui-icon layui-icon-face-smile"></i></span>'
       ,'{{# } }}'
     ,'</li>'
   ,'{{# }); }}'
@@ -628,7 +753,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 
   elemSigninTop.on('click', function(){
     var loadIndex = layer.load(1, {shade: 0.8});
-    fly.json('/sign/signJson', function(res){ //实际使用，请将 url 改为真实接口
+    fly.json(signJsonUrl, function(res){ //实际使用，请将 url 改为真实接口
       var tpl = $(['<div class="layui-tab layui-tab-brief" style="margin: 5px 0 0;">'
         ,'<ul class="layui-tab-title">'
           ,'<li class="layui-this">最新签到</li>'
@@ -800,6 +925,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   //加载编辑器
   fly.layEditor({
     elem: '.fly-editor'
+  });
+  //加载播放器
+  layui.use('plyr', function(plyr){
+      plyr.setup();
   });
 
   //手机设备的简单适配

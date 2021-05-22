@@ -5,9 +5,6 @@ use app\common\controller\BaseController;
 use app\common\model\User;
 use think\facade\Session;
 use think\facade\Db;
-use think\facade\View;
-use think\Collection;
-use think\Response;
 use taoler\com\Level;
 
 class Sign extends BaseController
@@ -22,7 +19,7 @@ class Sign extends BaseController
 		$res = [];
 		$res['status'] = 0;
 		
-		//最新
+		//最新签到
         $newlist = Db::name('user_sign')->alias('s')->join('user u', 's.uid=u.id')->field('s.*,u.name as name,u.user_img as user_img')->order('id desc')->limit(20)->select();
 		
 		if(count($newlist)){
@@ -45,11 +42,11 @@ class Sign extends BaseController
 			$res['data'][1] = [];
 		}
 		
-		//总榜
+		//签到排行榜
         $totallist = Db::name('user_sign')->alias('s')->leftJoin('user u', 's.uid=u.id')->field('uid,s.id as id,max(days) as days,name,user_img')->group('uid')->order('days desc')->limit(20)->select();
 		if(count($totallist)){
 			foreach($totallist as $t){
-				$total = ['uid'=>$t['uid'],'days'=>$f['days'],'user'=>['username'=>$t['name'],'avatar'=>$t['user_img']]];
+				$total = ['uid'=>$t['uid'],'days'=>$t['days'],'user'=>['username'=>$t['name'],'avatar'=>$t['user_img']]];
 			$res['data'][2][] = $total;
 			}
 		} else {
@@ -58,44 +55,48 @@ class Sign extends BaseController
 		
 		return json($res);
 	}
-	
-	//签到状态
+
+    /**
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
 	public function status()
 	{
 		if(session('user_id')){
 			$res = $this->todayData()->getData();
+
 			if($res['is_sign'] == 1){
 				return json(['status'=>0,'msg'=>'已签到','data'=>['signed'=>$res['is_sign'],'token'=>'1111','experience'=>$res['score'],'days'=>$res['days']]]);
 			} else {
-				return json(['status'=>0,'msg'=>'未签到','data'=>['signed'=>0,'token'=>'1111','experience'=>$res['will_getscore'],'days'=>$res['days']]]);
+				return json(['status'=>0,'msg'=>'未签到','data'=>['signed'=>0,'experience'=>$res['will_getscore'],'days'=>$res['days']]]);
 			}
 		} else {
 			return json(['status'=>0,'msg'=>'未登陆']);
 		}
 		
 	}
-	
-	//执行签到
 
     /**
-     * 执行当天签到
-     * @return json 签到成功返回 {status:1,info:'已签到'}
+     * 执行签到，返回json status 0成功
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function sign()
     {
         if (!Session::has('user_id') || !Session::has('user_name')) {
-            return json(['status'=>1,'code' => -1, 'msg' => '亲，登陆后才能签到哦','url' => url('Login/index')]);
+            return json(['status'=>1,'code' => -1, 'msg' => '亲，登陆后才能签到哦']);
         } else {
             $uid = $this->uid;
 			$todayData = $this->todayData()->getData();    
-			//var_dump($todayData);
 
-            if ($todayData['is_sign'] == 1) { //数组中是返回的是一个对象，不能直接用[]来显示，正确的输出方法是：$pic[0]->title问题解决！
-                //exit('{"code":-1,"msg":"你今天已经签过到了"}');
-				return json(['status'=>1,'code'=>-1,'msg'=>'你今天已签过到!']);
+            if ($todayData['is_sign'] == 1) {
+				return json(['status'=>1,'code'=>1,'msg'=>'你今天已签过到!']);
             } else {
                 $data = $this->getInsertData($uid);
-								
                 $days = $data['days'];
                 // 无今天数据
                 $data['uid'] = $uid;
@@ -126,15 +127,16 @@ class Sign extends BaseController
                         //point_note($score, $uid,  $id);
 						
 						//到达积分值升级Vip等级
-						$viplv = Level::writeLv($uid);
+						Level::writeLv($uid);
                     }
                     return json(['status'=>0,'code'=>200,'msg'=>$msg,'data'=>['signed'=>1,'experience'=>$score,'days'=>$days]]);
                 } else {
-					return json(['status'=>1,'code'=>-1,'msg'=>'签到失败，请刷新后重试！']);
+					return json(['status'=>1,'code'=>1,'msg'=>'签到失败，请刷新后重试！']);
                 }
             }
         }
     }
+
     /**
      * 返回每次签到要插入的数据
      *
@@ -150,7 +152,7 @@ class Sign extends BaseController
         // 昨天的连续签到天数
         $start_time = strtotime(date('Y-m-d 0:0:0', time() - 86400)) - 1;
         $end_time = strtotime(date('Y-m-d 23:59:59', time() - 86400)) + 1;
-        $days = Db::name('user_sign')->where("uid = $uid and stime > $start_time and stime < $end_time")->value('days');
+        $days = Db::name('user_sign')->where('uid', $uid)->whereBetweenTime('stime', $start_time, $end_time)->value('days');
         if ($days) {
             $days++;
             $is_sign = 1;
@@ -170,16 +172,20 @@ class Sign extends BaseController
             'stime' => $time,
         ];
     }
+
     /**
-     * 用户当天签到的数据
-     * @return array 签到信息 is_sign,stime 等
+     * 用户当天签到的数据 返回Array
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function todayData()
     {
         $time = time();
         $start_stime = strtotime(date('Y-m-d 0:0:0', $time)) - 1;
         $end_stime = strtotime(date('Y-m-d 23:59:59', $time)) + 1;
-        $res = Db::name('user_sign')->where('uid',session('user_id'))->where('stime', '>', $start_stime and 'stime', '<', $end_stime)->find();
+        $res = Db::name('user_sign')->where('uid',session('user_id'))->whereTime('stime', 'between', [$start_stime,$end_stime])->find();
         $score = 0;
         if ($res) {
             $is_sign = 1;
@@ -295,12 +301,11 @@ class Sign extends BaseController
         $start_stime = strtotime("$year-$month-1 0:0:0") - 1;
         $end_stime = strtotime("$year-$month-$day 23:59:59") + 1;
         $list = Db::name('user_sign')->where("uid = {$this->uid} and stime > $start_stime and stime < $end_stime")->order('stime asc')->column('stime');
-        //if(is_array($list)){
+
         foreach ($list as $key => $value) {
             $list[$key] = date('j', $value);
         }
-        //}
-        //return $list;
+
         return json_encode($list);
     }
 
