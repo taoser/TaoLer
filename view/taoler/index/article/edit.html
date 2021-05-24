@@ -1,6 +1,7 @@
 {extend name="public/base" /}
 
 {block name="title"}编辑帖子{/block}
+{block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}{/block}
 {block name="content"}
 <div class="layui-container fly-marginTop">
@@ -139,11 +140,13 @@
 
 {block name="script"}
 <script>
-	layui.use(['fly','colorpicker','form','upload'], function(){
+	layui.use(['fly','colorpicker','form','upload','plyr'], function(){
       var $ = layui.$
+		  ,fly = layui.fly
           ,colorpicker = layui.colorpicker
           ,form = layui.form
-		  ,upload = layui.upload;
+		  ,upload = layui.upload
+		  ,plyr = layui.plyr;
 		  
 
 		//预定义颜色项
@@ -261,6 +264,14 @@
           $(this).remove();
       });
   });
+  
+  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+  $('.layui-textarea').each(function(){
+    var othis = $(this), html = othis.html();
+    othis.attr(fly.content(html));
+  })
+  //加载播放器
+  plyr.setup();
 
 });
 </script>

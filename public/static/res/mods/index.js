@@ -926,11 +926,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   fly.layEditor({
     elem: '.fly-editor'
   });
-  //加载播放器
-  layui.use('plyr', function(plyr){
-      plyr.setup();
-  });
-
+  
   //手机设备的简单适配
   var treeMobile = $('.site-tree-mobile')
   ,shadeMobile = $('.site-mobile-shade')

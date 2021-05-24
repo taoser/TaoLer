@@ -37,6 +37,12 @@ class Article extends Model
 		return $this->hasMany(Comment::class);
 	}
 	
+	//文章关联收藏
+	public function collection()
+	{
+		return $this->hasMany(Collection::class);
+	}
+	
 	//文章关联用户
 	public function user()
 	{

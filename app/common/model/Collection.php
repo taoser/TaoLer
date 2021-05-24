@@ -19,7 +19,7 @@ class Collection extends Model
     //收藏关联文章
 	public function article()
 	{
-		return $this->belongsTo('Article','article_id','id');
+		return $this->belongsTo(Article::class);
 	}
 
 }

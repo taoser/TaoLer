@@ -25,47 +25,85 @@ class User extends BaseController
 	//用户中心
 	public function index()
 	{
-		$user['user_id'] = Session::get('user_id');
-		$username = session::get('user_name');
-		
         return view();
     }
+	
+	
+	//发帖list
+	public function artList()
+	{
+		$article = Article::withCount('comments')->where('user_id',$this->uid)->order('update_time','desc')->paginate(10);
+		//var_dump($article);
+		$count = $article->total();
+		$res = [];
+		if($count){
+			$res['code'] = 0;
+			$res['count'] = $count;
+			foreach($article as $v){
+				$res['data'][] = ['id'=>$v['id'],
+				'title'	=> $v['title'],
+				'url'	=> (string) url('article/detail',['id'=>$v['id']]),
+				'status'	=> $v['status'] ? '正常':'待审核',
+				'ctime'		=> $v['create_time'],
+				'datas'		=> $v['pv'].'阅/'.$v['comments_count'].'答'
+				];
+			} 
+			
+		} else {
+			return json(['code'=>-1,'msg'=>'无数据']);
+		}
+		return json($res);	
+	}
+	
+	//收藏list
+	public function collList(){
+		//收藏的帖子
+		$collect = Collection::with(['article'=>function($query){
+			$query->withCount('comments')->where('status',1);
+		}])->where('user_id',$this->uid)->order('create_time','desc')->paginate(10);
+		$count =$collect->total();
+		$res = [];
+		if($count){
+			$res['code'] = 0;
+			$res['count'] = $count ;
+			foreach($collect as $v){
+				
+				$res['data'][] = [
+					'id' 	=>$v['id'],
+					'title'	=> isset($v->article->title) ? '已失效' : $v->article->title,
+					'url'	=> (string) url('article/detail',['id'=>$v['article_id']]),
+					'auther' => $v->article->user->name,
+					'ctime'=>	$v['create_time'],
+					'comment' =>$v->article->comments_count,
+				]; 
+			}
+			
+		} else {
+			return json(['code'=>-1,'msg'=>'无数据']);
+		}
+		return json($res);
+	}
+	
+	
+	
 	//文章管理
 	public function post()
 	{
-		//发表的帖子
-		$user['user_id'] = session::get('user_id');
-		$username = session::get('user_name');
-		
-		$article = Article::withCount('comments')->where('user_id',$user['user_id'])->order('update_time','desc')->paginate([
-		'list_rows'=>10,
-		'page',
-		'path' => 'post',
-		'fragment' => 'index',
-		'var_page' => 'page',
-		]);
-		$page = $article->render();
-        View::assign(['article'=>$article,'page'=>$page]);
-		
-		
-		//收藏的帖子
-		$collect = Collection::with('article')->where('user_id',$user['user_id'])->order('create_time','desc')->paginate(10);
-
-		$count =$collect->total();
-		View::assign(['collect'=>$collect,'count'=>$count]);
-		
         return View::fetch();
     }
 	
 	//取消文章收藏
 	public function colltDel()
 	{
-		$collt = Collection::where('article_id',input('id'))->where('user_id',session::get('user_id'))->find();
-		$result = $collt->delete();
-		if($result){
-			$this->success('取消成功');
-		} else {
-			$this->error('取消失败了');
+		if(Request::isAjax()){
+			$collt = Collection::where('user_id',$this->uid)->find(input('id'));
+			$result = $collt->delete();
+			if($result){
+				$res = ['code'=>0,'msg'=>'取消成功'];
+			} else {
+				$res = ['code'=>0,'msg'=>'取消失败'];
+			}
+			return json($res);
 		}
 	}
 

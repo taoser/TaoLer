@@ -3,6 +3,7 @@
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.title},{$article.tags}{/block}
 {block name="description"}{$article.title},{:getArtContent($article.content)}{/block}
+{block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
 <div class="layui-container">
@@ -228,10 +229,12 @@ var collectionFind = "{:url('Collection/find')}",
     commentJiedaDelete = "{:url('Comment/jiedaDelete')}",
 	langCollection = "{:lang('collection')}",
 	langCancelCollection = "{:lang('cancel collection')}";
-layui.use(['fly', 'face','colorpicker'], function(){
+	  
+layui.use(['fly', 'face','colorpicker','plyr'], function(){
   var $ = layui.$
   ,fly = layui.fly
-  ,colorpicker = layui.colorpicker;
+  ,colorpicker = layui.colorpicker
+  ,plyr = layui.plyr;
   
 	//预定义颜色项
 	colorpicker.render({
@@ -322,6 +325,8 @@ layui.use(['fly', 'face','colorpicker'], function(){
     var othis = $(this), html = othis.html();
     othis.html(fly.content(html));
   })
+  //加载播放器
+  plyr.setup();
 
 });
 

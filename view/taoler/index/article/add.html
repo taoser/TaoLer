@@ -1,6 +1,7 @@
 {extend name="public/base" /}
 
 {block name="title"}发表帖子{/block}
+{block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}{/block}
 {block name="content"}
 <div class="layui-container fly-marginTop">
@@ -142,12 +143,13 @@
 	});
 </script>
 <script>
-	layui.use(['fly','form','colorpicker','upload'], function(){
+	layui.use(['fly','form','colorpicker','upload','plyr'], function(){
 		  var $ = layui.$
 		  ,fly = layui.fly
 		  ,form = layui.form
 		  ,colorpicker = layui.colorpicker
-		  ,upload = layui.upload;
+		  ,upload = layui.upload
+		  ,plyr = layui.plyr;
 		  
 		//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
 		  $('.layui-textarea').each(function(){
@@ -255,6 +257,9 @@
             });
         return false;
     });
+	
+  //加载播放器
+  plyr.setup();
 
 });
 </script>
