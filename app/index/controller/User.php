@@ -70,7 +70,7 @@ class User extends BaseController
 				
 				$res['data'][] = [
 					'id' 	=>$v['id'],
-					'title'	=> isset($v->article->title) ? '已失效' : $v->article->title,
+					'title'	=> $v->article->title,
 					'url'	=> (string) url('article/detail',['id'=>$v['article_id']]),
 					'auther' => $v->article->user->name,
 					'ctime'=>	$v['create_time'],
