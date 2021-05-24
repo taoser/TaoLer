@@ -28,15 +28,15 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
 
   //我的相关数据
   
-    	//发贴list
+    //发贴list
     var post = table.render({
         elem: '#art-post'
-        ,url: artListUrl	//进列表接口
+        ,url: artListUrl
 		,title: ''
         ,cols: [[
             {type: 'numbers', fixed: 'left'}
-            ,{field: 'title', title: '标题',minWidth: 250 ,templet: '<div><a href="{{d.url}}">{{d.title}}</a></div>'}
-			,{field: 'status', title: '状态', Width: 80}
+            ,{field: 'title', title: '标题',minWidth: 250 ,templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
+			,{field: 'status', title: '状态', width: 80}
 			,{field: 'ctime', title: '时间', width: 120}
             ,{field: 'datas', title: '数据', width: 120}
             ,{title: '操作', width: 150, align: 'center', toolbar: '#artTool'}
@@ -48,11 +48,11 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   //收藏list
     table.render({
         elem: '#coll-post'
-        ,url: collListUrl	//进列表接口
+        ,url: collListUrl
 		,title: ''
         ,cols: [[
             {type: 'numbers', fixed: 'left'}
-            ,{field: 'title', title: '标题',minWidth: 250,templet: '<div><a href="{{d.url}}">{{d.title}}</a></div>'}
+            ,{field: 'title', title: '标题',minWidth: 250,templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
 			,{field: 'auther', title: '作者', width: 120}
 			,{field: 'ctime', title: '时间', width: 120}
             ,{title: '取消', width: 80, align: 'center', toolbar: '#collTool'}
@@ -127,16 +127,6 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
 		});
      }
   });
-  
-  var elemUC = $('#LAY_uc'), elemUCM = $('#LAY_ucm');
-  gather.minelog = {};
-
-  if(elemUC[0]){
-    layui.each(dom.mine.children(), function(index, item){
-      var othis = $(item)
-      gather.mine(index, othis.data('type'), othis.data('url'));
-    });
-  }
 
   //显示当前tab
   if(location.hash){

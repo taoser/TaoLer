@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,9 +19,16 @@
 	{block name="content"}
 	{/block}	
   </div>
-  {include file="public/footer" /}
-</div>                                              
+</div> 
+{include file="public/footer" /}
 <script>
+	var articleUrl = "{:url('user/article')}";
+	var artListUrl = "{:url('User/artList')}";
+	var collListUrl = "{:url('User/collList')}";
+	var atrDelUrl = "{:url('article/delete')}";
+	var artEditUrl = "{:url('article/edit')}";
+	var collDelUrl = "{:url('user/colltDel')}";
+
     layui.cache.page = 'user';
     layui.cache.user = {
         username: '{$user.name??'游客'}'
@@ -39,7 +45,8 @@
     }).use('fly');
 </script>
 {block name="script"}
-js脚本
+<script>
+</script>
 {/block}
 </body>
 </html>

@@ -7,7 +7,7 @@
  * 后台：http://adm.aieok.com
  * 账号：test
  * 密码：test123
- * 版本：TaoLer 1.7.5
+ * 版本：TaoLer 1.7.6
  * 日期：2021.5.25
 
 #### 项目地址

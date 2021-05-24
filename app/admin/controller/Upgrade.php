@@ -221,11 +221,11 @@ class Upgrade extends AdminController
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'50%','msg'=>'升级文件解压成功！']);
 
-        
+        $upSql = $zipPath.'runtime/mysql_update.sql';
 		//升级执行mysql操作
-		if(file_exists($zipPath.'mysql/mysql_update.sql'))
+		if(file_exists($upSql))
 		{
-			$result = $this->db_update($zipPath.'mysql/mysql_update.sql');
+			$result = $this->db_update($upSql);
 			if(!$result && $result < 0)
 			{
 				return json(['code'=>-1,'msg'=>'数据库升级失败']);
@@ -256,10 +256,9 @@ class Upgrade extends AdminController
         }
 		Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'70%','msg'=>'升级文件执行成功！']);
         //把解压的升级包清除
-        //$del_zip = unlink($package_file);
         Files::delDirAndFile($this->upload_dir);
         Files::delDirAndFile($this->backup_dir);
-		Files::delDirAndFile("../mysql/");
+		unlink('../runtime/mysql_update.sql');
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'100%','msg'=>'升级成功！']);
         //更新系统的版本号了
