@@ -54,6 +54,7 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
             {type: 'numbers', fixed: 'left'}
             ,{field: 'title', title: '标题',minWidth: 250,templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
 			,{field: 'auther', title: '作者', width: 120}
+			,{field: 'status', title: '状态', width: 80}
 			,{field: 'ctime', title: '时间', width: 120}
             ,{title: '取消', width: 80, align: 'center', toolbar: '#collTool'}
         ]]

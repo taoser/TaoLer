@@ -70,11 +70,11 @@ class User extends BaseController
 				
 				$res['data'][] = [
 					'id' 	=>$v['id'],
-					'title'	=> $v->article->title,
+					'title'	=> $v['collect_title'],
 					'url'	=> (string) url('article/detail',['id'=>$v['article_id']]),
-					'auther' => $v->article->user->name,
-					'ctime'=>	$v['create_time'],
-					'comment' =>$v->article->comments_count,
+					'auther' => $v['auther'],
+					'status' => is_null(Db::name('article')->field('id')->where('delete_time',0)->find($v['article_id'])) ? '已失效' : '正常',
+					'ctime' =>	$v['create_time']
 				]; 
 			}
 			

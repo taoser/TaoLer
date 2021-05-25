@@ -246,12 +246,13 @@ class Article extends BaseController
     {
         $file = request()->file('file');
 		try {
-			validate(['file'=>'fileSize:1024000|fileExt:jpg,png,gif'])
+			validate(['file'=>['fileExt'=>['jpg','jpeg','png']]])
             ->check(['file'=>$file]);
 			$savename = \think\facade\Filesystem::disk('public')->putFile('article_pic',$file);
 		} catch (ValidateException $e) {
 			return json(['status'=>-1,'msg'=>$e->getMessage()]);
 		}
+		
 		$upload = Config::get('filesystem.disks.public.url');
 
 		if($savename){

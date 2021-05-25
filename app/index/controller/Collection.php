@@ -18,7 +18,10 @@ class Collection extends BaseController
 	public function add(){
 		//$data = Request::param();
 		$data['article_id'] = intval(input('cid'));
-		$data['user_id'] = session::get('user_id');
+		$data['user_id'] = $this->uid;
+		$arts = Article::with(['user'])->field('id,title,user_id')->find($data['article_id']);
+		$data['collect_title'] = $arts['title'];
+		$data['auther'] = $arts->user->name;
 		$result = CollectionModel::create($data);
         if($result){
             $res['status'] = 0;
@@ -32,9 +35,8 @@ class Collection extends BaseController
 		
 		$cid = input('cid');
         $aid = intval($cid);
-		$user['user_id'] = session::get('user_id');
         //$result = CollectionModel::where('cid',$arid)->select();
-        $result =  Db::name('collection')->where(['article_id' => $aid,'user_id' => $user['user_id']])->delete();
+        $result =  Db::name('collection')->where(['article_id' => $aid,'user_id' => $this->uid])->delete();
         if($result){
 			$res['status'] = 0;
             //$res=['type' => 'add','type' => 'remove', 'msg' => '收藏成功'];  
@@ -47,9 +49,7 @@ class Collection extends BaseController
 		//$cid = Request::param();
 		$cid = input('cid');
 		$aid = intval($cid);
-		$user['user_id'] = session::get('user_id');
-		//halt($artid);
-        $collectData =  Db::name('collection')->where(['article_id' => $aid,'user_id' => $user['user_id']])->find();
+        $collectData =  Db::name('collection')->where(['article_id' => $aid,'user_id' => $this->uid])->find();
 		if($collectData){
 			$res['status'] = 0;
 			$res['data']['collection'] = $collectData['article_id'];

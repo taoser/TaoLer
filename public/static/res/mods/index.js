@@ -4,7 +4,7 @@
  2021-5.21
  */
 
-layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(exports){
+layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'], function(exports){
   
   var $ = layui.jquery
   ,layer = layui.layer
@@ -13,8 +13,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   ,element = layui.element
   ,upload = layui.upload
   ,util = layui.util
+  ,imgcom = layui.imgcom
   ,device = layui.device()
-
   ,DISABLED = 'layui-btn-disabled';
   
   //阻止IE7以下访问
@@ -165,10 +165,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                           //执行上传实例
                           upload.render({
                               elem: '#uploadImg'
+							  ,accept: 'images'
 							  ,acceptMime: 'image/*'
 							  ,exts: 'jpg|png|gif|bmp|jpeg'
                               ,url: textImgUpload
-                              ,size: 2048
+							  ,auto: false
+                              ,size: 10240
                               ,done: function(res){
                                   if(res.status == 0){
                                       image.val(res.url);
@@ -176,6 +178,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                                       layer.msg(res.msg, {icon: 5});
                                   }
                               }
+							  ,error: function(){
+									layer.msg('系统错误，请联系管理员');
+								}
                           });
 
                           form.on('submit(uploadImages)', function(data){
