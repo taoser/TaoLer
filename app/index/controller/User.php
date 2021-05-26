@@ -137,7 +137,7 @@ class User extends BaseController
     {
         $file = request()->file('file');
 		try {
-			validate(['file'=>'fileSize:204800|fileExt:jpg,png,gif'])
+			validate(['file'=>'fileSize:204800|fileExt:jpg,png,gif,jpeg'])
             ->check(['file'=>$file]);
 			$savename = \think\facade\Filesystem::disk('public')->putFile('head_pic',$file);
 		} catch (think\exception\ValidateException $e) {
@@ -150,10 +150,11 @@ class User extends BaseController
 			//$image = \think\Image::open("uploads/$name_path");
 			//$image->thumb(168, 168)->save("uploads/$name_path");
 
-            //查出当前用户并把得到的用户头像更新
-            $userId = Session::get('user_id');
+            //查出当前用户头像删除原头像并更新
+			$imgPath = Db::name('user')->where('id',$this->uid)->value('user_img');
+			unlink('.'.$imgPath);
             $result = Db::name('user')
-                ->where('id',$userId)
+                ->where('id',$this->uid)
                 ->update(['user_img'=>$name_path]);
 			Cache::tag(['user','tagArtDetail','tagArt'])->clear();
             if($result) {

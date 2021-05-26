@@ -4,7 +4,7 @@
 
  */
  
-layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
+layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
 
   var $ = layui.jquery;
   var layer = layui.layer;
@@ -16,6 +16,7 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   var flow = layui.flow;
   var element = layui.element;
   var upload = layui.upload;
+  var imgcom = layui.imgcom;
   var table = layui.table;
 
   var gather = {}, dom = {
@@ -155,8 +156,15 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
 
       upload.render({
         elem: '.upload-img'
+		,accept: 'images'
+		,acceptMime: 'image/*'
+		,exts: 'jpg|png|gif|bmp|jpeg'
         ,url: uploadHeadImg
-        ,size: 300
+        ,size: 10240
+		,auto: false
+		,choose: function (obj) { //选择文件后的回调
+				imgcom.uploads(obj);
+			}
         ,before: function(){
           avatarAdd.find('.loading').show();
         }

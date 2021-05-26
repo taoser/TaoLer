@@ -156,7 +156,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                           ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>上传图片</button>'
                           ,'</li>'
                           ,'<li class="layui-form-item" style="text-align: center;">'
-                          ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
+                          ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn" id="img-button">确认</button>'
                           ,'</li>'
                           ,'</ul>'].join('')
                       ,success: function(layero, index){
@@ -170,9 +170,16 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 							  ,exts: 'jpg|png|gif|bmp|jpeg'
                               ,url: textImgUpload
 							  ,auto: false
+							  //,bindAction: '#img-button' //指向一个按钮触发上传
+							  //,field: 'image'
                               ,size: 10240
+							  ,choose: function (obj) { //选择文件后的回调
+								imgcom.uploads(obj);
+							  }
+      
                               ,done: function(res){
                                   if(res.status == 0){
+									  //console.log(res.url);
                                       image.val(res.url);
                                   } else {
                                       layer.msg(res.msg, {icon: 5});
@@ -184,7 +191,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                           });
 
                           form.on('submit(uploadImages)', function(data){
-                              var field = data.field;
+                              var field = data.field;							  
                               if(!field.image) return image.focus();
                               layui.focusInsert(editor[0], 'img['+ field.image + '] ');
                               layer.close(index);

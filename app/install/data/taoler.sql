@@ -299,10 +299,12 @@ CREATE TABLE `tao_collection` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `article_id` int(11) NOT NULL COMMENT '文章id',
   `user_id` int(11) NOT NULL COMMENT '用户id',
+  `auther` varchar(20) NOT NULL COMMENT '作者',
+  `collect_title` varchar(80) NOT NULL COMMENT '收藏帖子标题',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文章收藏表';
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='文章收藏表';
 
 -- ----------------------------
 -- Records of tao_collection
