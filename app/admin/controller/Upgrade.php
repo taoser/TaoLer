@@ -351,7 +351,7 @@ class Upgrade extends AdminController
 		        return json(['code'=>-1,'msg'=>'数据库升级失败']);
 		    }
 		}
-        
+        return json(['code'=>0,'msg'=>'数据库升级成功']);
     }
 
 
