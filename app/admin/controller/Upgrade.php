@@ -226,8 +226,11 @@ class Upgrade extends AdminController
 		//升级执行mysql操作
 		if(file_exists($upSql))
 		{
-			$result = $this->db_update($upSql);
-			return $result;
+			$sqlRes = $this->db_update($upSql);
+			$upDate = $sqlRes->getData();
+			if($upDate['code'] == -1){
+				return json(['code'=>-1,'msg'=>$upDate['msg']]);
+			}
 		}
         
         
