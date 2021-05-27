@@ -165,6 +165,11 @@ class Article extends BaseController
             if (true !== $result) {
                 return Msgres::error($validate->getError());
             }
+			//判断是否插入图片
+			$isHasImg = strpos($data['content'],'img[');
+			if(is_int($isHasImg)){
+				$data['has_img'] = 1;
+			};
             $article = new ArticleModel();
             $result = $article->add($data);
             if ($result == 1) {
@@ -199,9 +204,14 @@ class Article extends BaseController
 			$validate = new \app\common\validate\Article(); //调用验证器
 			$res = $validate->scene('Artadd')->check($data); //进行数据验证
 			
-			if(true !==$res){
+			if(true !== $res){
                 return Msgres::error($validate->getError());
 			} else {
+				//判断是否插入图片
+				$isHasImg = strpos($data['content'],'img[');
+				if(is_int($isHasImg)){
+					$data['has_img'] = 1;
+				};
 				$result = $article->edit($data);
 				if($result == 1) {
                     //删除原有缓存显示编辑后内容

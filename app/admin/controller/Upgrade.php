@@ -25,6 +25,7 @@ use think\facade\Config;
 use think\facade\Log;
 use app\common\lib\ZipFile;
 use app\common\lib\SetConf;
+use app\common\lib\SqlFile;
 
 class Upgrade extends AdminController
 {
@@ -226,10 +227,7 @@ class Upgrade extends AdminController
 		if(file_exists($upSql))
 		{
 			$result = $this->db_update($upSql);
-			if(!$result && $result < 0)
-			{
-				return json(['code'=>-1,'msg'=>'数据库升级失败']);
-			}
+			return $result;
 		}
         
         
@@ -342,9 +340,15 @@ class Upgrade extends AdminController
      */
     public function db_update($file)
     {
-		$sql = file_get_contents($file);
-        $sqlRes = Db::execute($sql);
-		return $sqlRes;
+		$sqlf = new SqlFile();
+		$sql_array = $sqlf->load_sql_file($file);
+		foreach($sql_array as $v){
+			$sqlRes = Db::execute($v);
+			if ($sqlRes === false) {
+		        return json(['code'=>-1,'msg'=>'数据库升级失败']);
+		    }
+		}
+        
     }
 
 

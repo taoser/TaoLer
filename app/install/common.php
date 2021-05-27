@@ -64,19 +64,15 @@ function create_tables($db, $prefix = '')
 	            //$v=$v.';';
 				//执行创建表
 	           if (substr($v, 0, 12) == 'CREATE TABLE') {
-				   $res = $db->exec($v);	//？执行成功也返回0，这里有疑问
-				   //halt($res);
-				   
 		            $name = preg_replace("/^CREATE TABLE `(\w+)` .*/s", "\\1", $v);
 		            $msg = "创建数据表{$name}";
-					
-			
+					$res = $db->exec($v);	//？执行成功也返回0，这里有疑问
 		            if ($res === false) {
 		                echo "{$msg}失败\r\n";
 		            }
 				} elseif(substr($v, 0, 11) == 'INSERT INTO') {
 					//执行插入数据
-					$name = preg_replace("/^CREATE TABLE `(\w+)` .*/s", "\\1", $v);
+					$name = preg_replace("/^INSERT INTO `(\w+)` .*/s", "\\1", $v);
 		            $msg = "插入表{$name}数据";
 					$res = $db->exec($v);
 					if ($res === false) {

@@ -152,7 +152,9 @@ class User extends BaseController
 
             //查出当前用户头像删除原头像并更新
 			$imgPath = Db::name('user')->where('id',$this->uid)->value('user_img');
-			unlink('.'.$imgPath);
+			if(file_exists($imgPath)){
+				unlink('.'.$imgPath);
+			}  
             $result = Db::name('user')
                 ->where('id',$this->uid)
                 ->update(['user_img'=>$name_path]);

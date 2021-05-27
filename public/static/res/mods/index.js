@@ -680,7 +680,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   	var uid = layui.cache.user.uid;
   	if(uid == -1){
   		console.log(uid);
-  		layer.msg('请登录再评论', {icon: 6}, function(){
+  		layer.msg('请登录再签到', {icon: 6}, function(){
   			location.href = login;
   		})
     	return false;

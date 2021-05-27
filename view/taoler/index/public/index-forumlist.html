@@ -17,17 +17,19 @@
 		<i class="layui-badge fly-badge-vip">vip{$art.user.vip}</i>
 		{/if}
 	  </a>
-	  <span>{$art.create_time|date='Y-m-d'}</span>
+	  <span>
+	  {$art.create_time|date='Y-m-d'}
+	  {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i>'}
+	  {$art.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
+	  </span>
 	  <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
 	  {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/if}
 	  
 	  <span class="fly-list-nums">
-		{notempty name="$art.upzip"}<i class="layui-icon layui-icon-file" style="font-size: 15px; color: #393D49;" title="附件"></i>{/notempty}	  
 		<i class="iconfont icon-pinglun1" title="回答"></i>{$art.comments_count}
 	  </span> 
 	</div>
 	<div class="fly-list-badge">
-	  {if ($art.is_top == 1)} <span class="layui-badge layui-bg-black" >{:lang('top')}</span> {/if}	
 	  {if ($art.is_hot == 1)} <span class="layui-badge layui-bg-red">{:lang('hot')}</span> {/if}
 	</div>
 </li>

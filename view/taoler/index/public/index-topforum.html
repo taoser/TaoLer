@@ -15,16 +15,18 @@
 		<i class="layui-badge fly-badge-vip">vip{$top.user.vip}</i>
 		{/if}
 	  </a>
-	  <span>{$top.create_time|date='Y-m-d'}</span>
+	  <span>
+	  {$top.create_time|date='Y-m-d'}
+	  {$top.has_img ?= ' <i class="layui-icon layui-icon-picture" style=" color: #5FB878;"></i>'}
+	  {$top.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
+	  </span>
 	  <span class=" layui-hide-xs" title="浏览"> <i class="iconfont" title="浏览">&#xe60b;</i> {$top.pv} </span>
 	  {if ($top.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/if}
-	  <span class="fly-list-nums">
-		{notempty name="$top.upzip"}<i class="layui-icon layui-icon-file" style="font-size: 15px; color: #393D49;" title="附件"></i>{/notempty}	  
+	  <span class="fly-list-nums">	  
 		<i class="iconfont icon-pinglun1" title="回答"></i> {$top.comments_count}
 	  </span>
 	</div>
 	<div class="fly-list-badge">
 	{if ($top.is_top == 1)} <span class="layui-badge layui-bg-black" >{:lang('top')}</span> {/if}			 
-	{if ($top.is_hot == 1)} <span class="layui-badge layui-bg-red">{:lang('hot')}</span> {/if}
 	</div>
 </li>
