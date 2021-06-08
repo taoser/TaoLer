@@ -10,14 +10,18 @@
 	  <a href="{:url('user/home',['id'=>$top.user_id])}" link>
 		<i class="layui-badge layui-bg-green" title="来自哪简称">{:getAsing($top.user.area_id) ?: '无'}</i>
 		<cite>{$top.user.nickname ?: $top.user.name}</cite>
-		<!--i class="iconfont icon-renzheng" title="认证信息：XXX"></i-->
+		<i>{$top.create_time|date='Y-m-d'}</i>
+		<!--
+		<i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
 		{if($top.user.vip > 0)}
 		<i class="layui-badge fly-badge-vip">vip{$top.user.vip}</i>
 		{/if}
+		-->
 	  </a>
 	  <span>
-	  {$top.create_time|date='Y-m-d'}
-	  {$top.has_img ?= ' <i class="layui-icon layui-icon-picture" style=" color: #5FB878;"></i>'}
+	  {$top.has_img ?= ' <i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i>'}
+	  {$top.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
+	  {$top.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
 	  {$top.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
 	  </span>
 	  <span class=" layui-hide-xs" title="浏览"> <i class="iconfont" title="浏览">&#xe60b;</i> {$top.pv} </span>

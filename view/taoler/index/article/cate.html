@@ -29,16 +29,18 @@
               <a href="{:url('user/home',['id'=>$art.user.id])}" link>
 			      <span class="layui-badge layui-bg-green " title="哪个小区">{:getAsing($art.user.area_id) ?: '无'}</span>
                 <cite>{$art.user.nickname ?: $art.user.name}</cite>
+				<i>{$art.create_time|date='Y-m-d'}</i>
                 <!--
                 <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
-                -->
 				{if($art.user.vip > 0)}
                 <i class="layui-badge fly-badge-vip">vip{$art.user.vip}</i>
 				{/if}
+				-->
               </a>
               <span>
-			  {$art.create_time|date='Y-m-d'}
 			  {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style=" color: #5FB878;"></i>'}
+			  {$art.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
+			  {$art.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
 			  {$art.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
 			  </span>
               <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>

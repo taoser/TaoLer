@@ -125,7 +125,8 @@ class Article extends BaseController
 			$sendId = $data['user_id'];
 			if(empty($data['content'])){
 						return json(['code'=>0, 'msg'=>'评论不能为空！']);
-				}
+			}
+				
 			//用户留言存入数据库
 			if (Comment::create($data)) {
 				//站内信
@@ -165,11 +166,11 @@ class Article extends BaseController
             if (true !== $result) {
                 return Msgres::error($validate->getError());
             }
-			//判断是否插入图片
-			$isHasImg = strpos($data['content'],'img[');
-			if(is_int($isHasImg)){
-				$data['has_img'] = 1;
-			};
+			
+			//获取内容图片音视频标识
+			$iva= $this->hasIva($data['content']);
+			$data = array_merge($data,$iva);
+		
             $article = new ArticleModel();
             $result = $article->add($data);
             if ($result == 1) {
@@ -207,11 +208,10 @@ class Article extends BaseController
 			if(true !== $res){
                 return Msgres::error($validate->getError());
 			} else {
-				//判断是否插入图片
-				$isHasImg = strpos($data['content'],'img[');
-				if(is_int($isHasImg)){
-					$data['has_img'] = 1;
-				};
+				//获取内容图片音视频标识
+				$iva= $this->hasIva($data['content']);
+				$data = array_merge($data,$iva);
+				
 				$result = $article->edit($data);
 				if($result == 1) {
                     //删除原有缓存显示编辑后内容
@@ -251,12 +251,12 @@ class Article extends BaseController
 		return $res;
 	}
 	
-	//文本编辑器图片上传
+	//文本编辑器上传图片
 	public function textImgUpload()
     {
         $file = request()->file('file');
 		try {
-			validate(['file'=>['fileSize'=>'102400','fileExt'=>['jpg','jpeg','png']]])
+			validate(['file'=>['fileSize'=>'1024000','fileExt'=>['jpg','jpeg','png']]])
             ->check(['file'=>$file]);
 			
 		} catch (ValidateException $e) {
@@ -302,12 +302,12 @@ class Article extends BaseController
         return json($res);
     }
 
-    //上传附件
+    //上传视频
     public function upVideo()
     {
         $file = request()->file('file');
         try {
-            validate(['file'=>'fileSize:10240000|fileExt:mp4,jpg,png,jpeg'])
+            validate(['file'=>'fileSize:102400000|fileExt:mp4,mp3'])
                 ->check(['file'=>$file]);
             $savename = \think\facade\Filesystem::disk('public')->putFile('video',$file);
         } catch (ValidateException $e) {
@@ -391,6 +391,22 @@ class Article extends BaseController
 			$res = ['code'=> -1, 'msg'=>'标题颜色设置失败'];
 		}
 		return json($res);
+	}
+	
+	//内容中是否有图片视频音频插入
+	public function hasIva($content)
+	{
+		//判断是否插入图片
+		$isHasImg = strpos($content,'img[');
+		$data['has_img'] = is_int($isHasImg) ? 1 : 0;
+		//判断是否插入视频
+		$isHasVideo = strpos($content,'video(');
+		$data['has_video'] = is_int($isHasVideo) ? 1 : 0;
+		//判断是否插入音频
+		$isHasAudio = strpos($content,'audio[');
+		$data['has_audio'] = is_int($isHasAudio) ? 1 : 0;
+		
+		return $data;
 	}
 	
 }

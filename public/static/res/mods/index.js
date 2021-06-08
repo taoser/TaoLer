@@ -16,7 +16,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   ,imgcom = layui.imgcom
   ,device = layui.device()
   ,DISABLED = 'layui-btn-disabled';
-  
+  var uid = layui.cache.user.uid;
   //阻止IE7以下访问
   if(device.ie && device.ie < 8){
     layer.alert('如果您非得使用 IE 浏览器访问Fly社区，那么请使用 IE8+');
@@ -96,12 +96,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
           var html = ['<div class="layui-unselect fly-edit">'
               ,'<span type="face" title="表情"><i class="iconfont icon-yxj-expression" style="top: 1px;"></i></span>'
               ,'<span type="picture" title="图片：img[src]"><i class="iconfont icon-tupian"></i></span>'
+			  ,'<span type="video" title="视频"><i class="layui-icon layui-icon-video"></i></span>'
+              ,'<span type="audio" title="音频"><i class="layui-icon layui-icon-headset"></i></span>'
               ,'<span type="href" title="超链接格式：a(href)[text]"><i class="iconfont icon-lianjie"></i></span>'
               ,'<span type="quote" title="引用"><i class="iconfont icon-yinyong" style="top: 1px;"></i></span>'
               ,'<span type="code" title="插入代码" class="layui-hide-xs"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
               ,'<span type="hr" title="水平线">hr</span>'
-              ,'<span type="video" title="视频"><i class="layui-icon layui-icon-video"></i></span>'
-              ,'<span type="audio" title="音频"><i class="layui-icon layui-icon-headset"></i></span>'
               ,'<span type="preview" title="预览"><i class="iconfont icon-yulan1"></i></span>'
               ,'</div>'].join('');
 
@@ -134,13 +134,21 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                   });
               }
               ,picture: function(editor){ //插入图片
+				//判断登陆
+				if(uid == -1){
+					layer.msg('请登录再发图', {icon: 6}, function(){
+						location.href = login;
+					})
+					return false;
+				}
+			  
                   layer.open({
                       type: 1
                       ,id: 'fly-jie-upload'
                       ,title: '插入图片'
                       ,area: 'auto'
                       ,shade: false
-                      ,area: '465px'
+                      //,area: '465px'
                       ,fixed: false
                       ,offset: [
                           editor.offset().top - $(window).scrollTop() + 'px'
@@ -151,7 +159,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                           ,'<li class="layui-form-item">'
                           ,'<label class="layui-form-label">URL</label>'
                           ,'<div class="layui-input-inline">'
-                          ,'<input required name="image" placeholder="支持直接粘贴远程图片地址" value="" class="layui-input">'
+                          ,'<input required name="image" placeholder="支持粘贴远程图片地址" value="" class="layui-input">'
                           ,'</div>'
                           ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>上传图片</button>'
                           ,'</li>'
@@ -257,50 +265,91 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                   editor.trigger('keyup');
               }
               ,video: function(editor){ //插入视频
+			  //判断登陆
+				if(uid == -1){
+					layer.msg('请登录再发视频', {icon: 6}, function(){
+						location.href = login;
+					})
+					return false;
+				}
                   layer.open({
                       type: 1
                       ,id: 'fly-jie-video-upload'
                       ,title: '插入视频'
+                      ,area: 'auto'
                       ,shade: false
-                      ,area: '465px'
+                      //,area: '465px'
+					  ,fixed: false
+					  ,offset: [
+                          editor.offset().top - $(window).scrollTop() + 'px'
+                          ,editor.offset().left + 'px'
+                      ]
                       ,skin: 'layui-layer-border'
                       ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
                           ,'<li class="layui-form-item">'
                           ,'<label class="layui-form-label">封面</label>'
                           ,'<div class="layui-input-inline">'
-                          ,'<input type="text" required name="cover" placeholder="支持直接粘贴远程图片地址" value="" class="layui-input">'
+                          ,'<input type="text" required name="cover" placeholder="支持粘贴远程图片地址" value="" class="layui-input">'
                           ,'</div>'
-                          ,'<input required type="file" name="file" lay-type="image" class="layui-upload-file" value="">'
+                          ,'<button type="button" lay-type="image" class="layui-btn" id="video-img"><i class="layui-icon">&#xe67c;</i>上传封图</button>'
                           ,'</li>'
                           ,'<li class="layui-form-item">'
                           ,'<label class="layui-form-label">URL</label>'
                           ,'<div class="layui-input-inline">'
-                          ,'<input type="text" required name="video" placeholder="支持直接粘贴远程视频地址" value="" class="layui-input">'
+                          ,'<input type="text" required name="video" placeholder="支持粘贴远程视频地址" value="" class="layui-input">'
                           ,'</div>'
-                          ,'<input required type="file" name="file" lay-type="video" class="layui-upload-file" value="上传文件">'
+                          ,'<button type="button" lay-type="video" class="layui-btn" id="layedit-video"><i class="layui-icon layui-icon-video"></i>上传视频</button>'
                           ,'</li>'
                           ,'<li class="layui-form-item" style="text-align: center;">'
                           ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
                           ,'</li>'
                           ,'</ul>'].join('')
                       ,success: function(layero, index){
-                          var loding, video =  layero.find('input[name="video"]'), cover =  layero.find('input[name="cover"]');
-                          upload.render({
-                              url: '/article/upVideo/'
-                              ,before: function(input){   loding = layer.msg('文件上传中,请稍等哦', { icon: 16 ,shade:0.3,time:0 });   }
-                              ,elem: '#fly-jie-video-upload .layui-upload-file'
-                              ,success: function(res,input){
-                                  layer.close(loding);
+                          var video =  layero.find('input[name="video"]'), cover =  layero.find('input[name="cover"]');
+
+						//上传视频
+						  upload.render({
+                              url: videoUrl
+							  ,accept: 'video'
+							  ,acceptMime: 'video/mp4'
+							  ,exts: 'mp4'
+                              ,elem: '#layedit-video'
+							  ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+								layer.load(2); //上传loading
+							  }
+                              ,done: function(res){
                                   if(res.status == 0){
-                                      if($(input).attr('lay-type') == 'image'){
-                                          cover.val(res.data);
-                                      }else{
-                                          video.val(res.data);
-                                      }
+                                      video.val(res.url); 
+                                  } else {
+                                      layer.msg(res.msg, {icon: 5});
+                                  }
+								  layer.closeAll('loading');
+                              }
+                          });
+						  //上传图片
+						  upload.render({
+                              elem: '#video-img'
+							  ,accept: 'images'
+							  ,acceptMime: 'image/*'
+							  ,exts: 'jpg|png|gif|bmp|jpeg'
+                              ,url: textImgUpload
+							  ,auto: false
+							  //,bindAction: '#img-button' //指向一个按钮触发上传
+							  //,field: 'image'
+                              ,size: 10240
+							  ,choose: function (obj) { //选择文件后的回调
+								imgcom.uploads(obj);
+							  }
+                              ,done: function(res){
+                                  if(res.status == 0){
+                                      cover.val(res.url);
                                   } else {
                                       layer.msg(res.msg, {icon: 5});
                                   }
                               }
+							  ,error: function(){
+									layer.msg('系统错误，请联系管理员');
+								}
                           });
                           form.on('submit(uploadImages)', function(data){
                               var field = data.field;
@@ -312,12 +361,25 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                   });
               }
               ,audio: function(editor){ //插入音频
+			  //判断登陆
+				if(uid == -1){
+					layer.msg('请登录再发布', {icon: 6}, function(){
+						location.href = login;
+					})
+					return false;
+				}
                   layer.open({
                       type: 1
                       ,id: 'fly-jie-audio-upload'
                       ,title: '插入音频'
+					  ,area: 'auto'
                       ,shade: false
-                      ,area: '465px'
+                      //,area: '465px'
+					  ,fixed: false
+					  ,offset: [
+                          editor.offset().top - $(window).scrollTop() + 'px'
+                          ,editor.offset().left + 'px'
+                      ]
                       ,skin: 'layui-layer-border'
                       ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
                           ,'<li class="layui-form-item">'
@@ -325,30 +387,38 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                           ,'<div class="layui-input-inline">'
                           ,'<input required name="audio" placeholder="支持直接粘贴远程音频地址" value="" class="layui-input">'
                           ,'</div>'
-                          ,'<input required type="file" name="file" lay-type="audio" class="layui-upload-file" value="">'
+                          ,'<button required type="button" name="file" lay-type="audio" class="layui-btn upload-audio"><i class="layui-icon layui-icon-headset"></i>上传音频</button>'
                           ,'</li>'
                           ,'<li class="layui-form-item" style="text-align: center;">'
                           ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
                           ,'</li>'
                           ,'</ul>'].join('')
                       ,success: function(layero, index){
-                          var loding,image =  layero.find('input[name="audio"]');
+                          var loding,audio =  layero.find('input[name="audio"]');
 
                           upload.render({
-                              url: '/Ajax/ThreadUpload/',elem: '#fly-jie-audio-upload .layui-upload-file'
-                              ,before: function(input){   loding = layer.msg('文件上传中,请稍等哦', { icon: 16 ,shade:0.3,time:0 });   }
-                              ,success: function(res){
-                                  layer.close(loding);
-                                  if(res.status == 1){
-                                      image.val(res.data);
+                              url: videoUrl
+							  ,elem: '#fly-jie-audio-upload .upload-audio'
+							  ,accept: 'audio'
+							  ,acceptMime: 'audio/mp3'
+							  ,exts: 'mp3'
+                              ,before: function(obj){   
+								//loding = layer.msg('文件上传中,请稍等哦', { icon: 16 ,shade:0.3,time:0 });
+								layer.load(2); //上传loading
+							  }
+                              ,done: function(res){
+								  
+                                  if(res.status == 0){
+                                      audio.val(res.url);
                                   } else {
                                       layer.msg(res.msg, {icon: 5});
                                   }
+								  layer.closeAll('loading');
                               }
                           });
                           form.on('submit(uploadImages)', function(data){
                               var field = data.field;
-                              if(!field.audio) return image.focus();
+                              if(!field.audio) return audio.focus();
                               layui.focusInsert(editor[0], 'audio['+ field.audio + '] ');
                               layer.close(index);
                           });
@@ -503,7 +573,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
               .replace(/video\(.*?\)\[([^\s]+?)\]/g, function(str){
                   var cover = (str.match(/video\(([\s\S]+?)\)\[/)||[])[1];
                   var video = (str.match(/\)\[([^\s]+?)\]/)||[])[1];
-                  cover = cover ? cover : '/Public/Topic/images/video_cover.jpg';
+                  cover = cover ? cover : '/static/res/images/video_cover.jpg';
                   return  '<video poster="'+ cover + '" controls crossorigin><source src="'+ video + '" type="video/mp4"></video>';
               })
               //转义音频
@@ -677,9 +747,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   }
   $('body').on('click', '#LAY_signin', function(){
   	//登录判断
-  	var uid = layui.cache.user.uid;
   	if(uid == -1){
-  		console.log(uid);
   		layer.msg('请登录再签到', {icon: 6}, function(){
   			location.href = login;
   		})

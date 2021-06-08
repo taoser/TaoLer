@@ -24,7 +24,7 @@ class Login extends BaseController
     protected function initialize()
     {
 		parent::initialize();
-		View::assign(['jspage'=>'user']);
+		View::assign(['jspage'=>'']);
 	}
 
     //用户登陆
