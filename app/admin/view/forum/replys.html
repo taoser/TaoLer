@@ -1,7 +1,6 @@
 {extend name="public:base" /}
 
 {block name="body"}
-
   <div class="layui-fluid">
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
@@ -13,9 +12,20 @@
             </div>
           </div>
           <div class="layui-inline">
-            <label class="layui-form-label">回帖内容</label>
+            <label class="layui-form-label">内容</label>
             <div class="layui-input-block">
               <input type="text" name="content" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+		  <div class="layui-inline">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+             <select name="status" lay-filter="fourm-check">
+				<option value="">全部</option>
+				<option value="0">待审</option>
+                <option value="-1">禁止</option>
+				<option value="1">通过</option>
+              </select>
             </div>
           </div>
           <div class="layui-inline">
@@ -37,7 +47,7 @@
 		<a href="{$domain}/jie/{{d.cid}}.html" target="_blank">{{d.cardid}}</a>
 		</script>
 		<script type="text/html" id="buttonCheck">
-            {if condition="checkRuleButton('admin/forum/recheck')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="recheck" lay-text="通过|禁止" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
+            {if condition="checkRuleButton('admin/forum/recheck')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="recheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
 			{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>		
         <script type="text/html" id="table-forum-replys">
@@ -75,29 +85,23 @@ var forumList = "{:url('Forum/list')}",
     //监听搜索
     form.on('submit(LAY-app-forumreply-search)', function(data){
       var field = data.field;
-	  $.ajax({
-		type:"post",
-		url:"{:url('admin/Forum/replys')}",
-		data:{field},
-		daType:"json",
-		success:function (data){
-			if (data.code == 0) {
-				
-			} else {
-				layer.open({
-					content:data.msg,
-					icon:5,
-					anim:6
-				});
-			}
-		}
-	});
-      
+	  $.post("{:url('admin/Forum/replys')}",field);
       //执行重载
       table.reload('LAY-app-forumreply-list', {
         where: field
       });
     });
+	
+	//状态选择
+      form.on('select(fourm-check)',function(data){
+          $.post("{:url('admin/Forum/replys')}",{"status":data.value});
+          //执行重载
+          table.reload('LAY-app-forumreply-list', {
+              where: {
+                  status: data.value
+              }
+          });
+      });
     
     var active = {
       batchdel: function(){
@@ -126,26 +130,19 @@ var forumList = "{:url('Forum/list')}",
 	//监听回贴审核
 	form.on('switch(recheck)', function(data){
 	var data= data.elem;
-	
-	if(data.checked == true){
-		data.value = 1;
-	}else{
-		data.value = 0;
-	}
+	status = data.checked ? 1 : -1;
 	//执行回帖审核
 		$.ajax({
 			type:'post',
 			url:"{:url('admin/Forum/recheck')}",
-			data:{id:data.id,status:data.value,},
+			data:{id:data.id,status:status},
 			dataType:'json',
 			success:function(res){
 				if(res.code == 0){
 					layer.msg(res.msg,{
 						icon:res.icon,
 						time:2000
-					}
-					//,function(){location.reload();}
-					);
+					});
 				} else {
 					layer.open({
 						title:'审核失败',
@@ -154,6 +151,8 @@ var forumList = "{:url('Forum/list')}",
 						adim:6
 					})
 				}
+				
+			table.reload('LAY-app-forumreply-list');
 			}
 		});
 		return false;

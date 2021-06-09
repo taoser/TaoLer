@@ -18,17 +18,17 @@ layui.define(['table', 'form'], function(exports){
     elem: '#LAY-app-forum-list'
     ,url: forumList //帖子数据接口
     ,cols: [[
-      {type: 'checkbox', fixed: 'left'}
-      ,{field: 'id', width: 55, title: 'ID', sort: true}
-      ,{field: 'poster', title: '贴主'}
-      ,{field: 'avatar', title: '头像', width: 100, templet: '#imgTpl', align: 'center'}
+      {type: 'checkbox'}
+      ,{field: 'id', width: 60, title: 'ID', sort: true}
+      ,{field: 'poster', title: '贴主',width: 80}
+      ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
       ,{field: 'content', title: '标题', width: 200,templet: '#title'}
-      ,{field: 'posttime', title: '时间', sort: true}
-      ,{field: 'top', title: '置顶', templet: '#buttonTpl', minWidth: 80, align: 'center'}
-	  ,{field: 'hot', title: '精贴', templet: '#buttonHot', minWidth: 80, align: 'center'}
-	  ,{field: 'reply', title: '评论状态', templet: '#buttonReply', minWidth: 80, align: 'center'}
-	  ,{field: 'check', title: '审帖', templet: '#buttonCheck', minWidth: 80, align: 'center'}
-      ,{title: '操作', width: 80, align: 'center', fixed: 'right', toolbar: '#table-forum-list'}
+      ,{field: 'posttime', title: '时间',width: 120, sort: true}
+      ,{field: 'top', title: '置顶', templet: '#buttonTpl', width: 80, align: 'center'}
+	  ,{field: 'hot', title: '精贴', templet: '#buttonHot', width: 80, align: 'center'}
+	  ,{field: 'reply', title: '评论状态', templet: '#buttonReply', width: 80, align: 'center'}
+	  ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
+      ,{title: '操作', width: 85, align: 'center', toolbar: '#table-forum-list'}
     ]]
     ,page: true
     ,limit: 15
@@ -134,15 +134,15 @@ layui.define(['table', 'form'], function(exports){
     elem: '#LAY-app-forumreply-list'
     ,url: forumReplys
     ,cols: [[
-      {type: 'checkbox', fixed: 'left'}
-      ,{field: 'id', width: 100, title: 'ID', sort: true}
-      ,{field: 'replyer', title: '回帖人'}
-      ,{field: 'cardid', title: '回帖ID',templet: '#title'}
-      ,{field: 'avatar', title: '头像', width: 100, templet: '#imgTpl'}
-      ,{field: 'content', title: '回帖内容', width: 200}
-      ,{field: 'replytime', title: '回帖时间', sort: true}
-	  ,{field: 'check', title: '审核', templet: '#buttonCheck'}
-      ,{title: '操作', width: 80, align: 'center', fixed: 'right', toolbar: '#table-forum-replys'}
+      {type: 'checkbox'}
+      ,{field: 'id', width: 80, title: 'ID', sort: true}
+      ,{field: 'replyer', title: '回帖人', width: 80}
+      ,{field: 'cardid', title: '帖ID',templet: '#title'}
+      ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
+      ,{field: 'content', title: '评论', minWidth: 200}
+      ,{field: 'replytime', title: '回复时间', width: 120, sort: true}
+	  ,{field: 'check', title: '审核', templet: '#buttonCheck', width: 100}
+      ,{title: '操作', width: 85, align: 'center', toolbar: '#table-forum-replys'}
     ]]
     ,page: true
     ,limit: 15

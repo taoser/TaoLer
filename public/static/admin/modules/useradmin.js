@@ -18,20 +18,21 @@ layui.define(['table', 'form'], function(exports){
     elem: '#LAY-user-manage'
     ,url: userList //模拟接口
     ,cols: [[
-      {type: 'checkbox', fixed: 'left'}
-      ,{field: 'id', width: 50, title: 'ID', sort: true}
-      ,{field: 'username', title: '用户名', minWidth: 80}
-      ,{field: 'avatar', title: '头像', width: 100, templet: '#imgTpl'}
-      ,{field: 'phone', title: '手机',width: 150}
+      {type: 'checkbox'}
+      ,{field: 'id', width: 60, title: 'ID', sort: true}
+      ,{field: 'username', title: '用户名', minWidth: 100}
+	  ,{field: 'nick', title: '昵称',minWidth: 100}
+      ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
+      //,{field: 'phone', title: '手机',width: 80}
       ,{field: 'email', title: '邮箱'}
       ,{field: 'sex', width: 60, title: '性别',templet: '#sex'}
       ,{field: 'ip', title: '登录IP'}
 	  ,{field: 'city', title: '城市'}
-	  ,{field: 'logintime', title: '最后登录', sort: true}
-      ,{field: 'jointime', title: '注册时间', sort: true}
+	  ,{field: 'logintime', title: '最后登录',minWidth: 150, sort: true}
+      ,{field: 'jointime', title: '注册时间',minWidth: 120, sort: true}
 	  ,{field: 'check', title: '状态', templet: '#buttonCheck', minWidth: 80, align: 'center'}
-	  ,{field: 'auth', title: '超级管理员', templet: '#buttonAuth', minWidth: 80, align: 'center'}
-      ,{title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#table-useradmin-webuser'}
+	  ,{field: 'auth', title: '超级管理员', templet: '#buttonAuth', width: 60, align: 'center'}
+      ,{title: '操作', width: 150, align:'center', toolbar: '#table-useradmin-webuser'}
     ]]
     ,page: true
     ,limit: 30

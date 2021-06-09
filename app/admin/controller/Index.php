@@ -67,6 +67,11 @@ class Index extends AdminController
 		} else {
 			$versions ='当前无可更新版本';
 		}
+		//评论、帖子状态
+		$comm = Db::name('comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+		$forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+		$comms = count($comm);
+		$forums = count($forum);
 		//运行时间
 		$now = time();
 		$count = $now-$this->sys['create_time'];
@@ -79,7 +84,7 @@ class Index extends AdminController
 		}
 		$runTime = $years ? "{$years}年{$days}天{$hos}时{$mins}分" : "{$days}天{$hos}时{$mins}分";
 	
-		View::assign(['runTime'=>$runTime,'versions'=>$versions]);
+		View::assign(['runTime'=>$runTime,'versions'=>$versions,'comms'=>$comms,'forums'=>$forums]);
         return View::fetch();
     }
 	

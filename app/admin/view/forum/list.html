@@ -6,7 +6,7 @@
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
         <div class="layui-form-item">
           <div class="layui-inline">
-            <label class="layui-form-label">ID</label>
+            <label class="layui-form-label">帖子ID</label>
             <div class="layui-input-block">
               <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
@@ -18,21 +18,22 @@
             </div>
           </div>
           <div class="layui-inline">
-            <label class="layui-form-label">发帖名称</label>
+            <label class="layui-form-label">标题</label>
             <div class="layui-input-block">
               <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
-            <label class="layui-form-label">帖子状态</label>
+            <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
               <select name="sec">
 			  <option value="">选择状态</option>
                 <option value="1">正常</option>
+				<option value="5">禁止</option>
+				<option value="6">待审</option>
                 <option value="2">置顶</option>
-				<option value="3">热门</option>
+				<option value="3">加精</option>
 				<option value="4">禁评</option>
-				<option value="5">封禁</option>
               </select>
             </div>
           </div>
@@ -64,7 +65,7 @@
         </script> 
 		<script type="text/html" id="buttonHot">
             {{#  if(d.hot == 1){ }}
-            <button class="layui-btn layui-btn-xs">精贴</button>
+            <button class="layui-btn layui-btn-xs">加精</button>
           {{#  } else { }}
             <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
           {{#  } }}
@@ -78,7 +79,7 @@
         </script>
 		<script type="text/html" id="buttonCheck">
             {if condition="checkRuleButton('admin/forum/check')"}
-			<input type="checkbox" name="check" lay-skin="switch" lay-filter="forumcheck" lay-text="通过|禁止" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
+			<input type="checkbox" name="check" lay-skin="switch" lay-filter="forumcheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
 			{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>
         <script type="text/html" id="table-forum-list">
@@ -116,24 +117,7 @@ var forumList = "{:url('Forum/list')}",
     //监听搜索
     form.on('submit(LAY-app-forumlist-search)', function(data){
       var field = data.field;
-	  	$.ajax({
-		type:"post",
-		url:"{:url('admin/Forum/list')}",
-		data:{field},
-		daType:"json",
-		success:function (data){
-			if (data.code == 0) {
-				
-			} else {
-				layer.open({
-					content:data.msg,
-					icon:5,
-					anim:6
-				});
-			}
-		}
-	});
-      
+	  	$.post("{:url('admin/Forum/list')}",field);
       //执行重载
       table.reload('LAY-app-forum-list', {
         where: field
@@ -168,26 +152,19 @@ var forumList = "{:url('Forum/list')}",
 	//监听帖子审核
 	form.on('switch(forumcheck)', function(data){
 	var data= data.elem;
-
-	if(data.checked == true){
-		data.value = 1;
-	}else{
-		data.value = 0;
-	}
+	status = data.checked ? 1 : -1;
 	//执行帖子审核
 		$.ajax({
 			type:'post',
 			url:"{:url('admin/Forum/check')}",
-			data:{id:data.id,status:data.value,},
+			data:{id:data.id,status:status},
 			dataType:'json',
 			success:function(res){
 				if(res.code == 0){
 					layer.msg(res.msg,{
 						icon:res.icon,
 						time:2000
-					}
-					//,function(){location.reload();}
-					);
+					});
 				} else {
 					layer.open({
 						title:'审核失败',
@@ -196,6 +173,7 @@ var forumList = "{:url('Forum/list')}",
 						adim:6
 					})
 				}
+			table.reload('LAY-app-forum-list');
 			}
 		});
 		return false;

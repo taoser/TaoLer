@@ -37,6 +37,9 @@ class Forum extends AdminController
 			$data['is_reply'] = 0;
 			break;
 			case '5':
+			$data['a.status'] = -1;
+			break;
+			case '6':
 			$data['a.status'] = 0;
 			break;
 			}
@@ -120,7 +123,7 @@ class Forum extends AdminController
 	//审核帖子
 	public function check()
 	{
-		$data = Request::param();
+		$data = Request::only(['id','status']);
 
 		//获取状态
 		$res = Db::name('article')->where('id',$data['id'])->save(['status' => $data['status']]);
@@ -211,12 +214,16 @@ class Forum extends AdminController
 	public function replys()
 	{
 		if(Request::isAjax()) {
-			$data = Request::only(['name','content']);
+			$data = Request::only(['name','content','status']);
 			$map = array_filter($data);
 			$where = array();
 			if(!empty($map['content'])){
 				$where[] = ['a.content','like','%'.$map['content'].'%'];
 				unset($map['content']);
+			}
+			if(isset($data['status'])){
+				$where[] = ['a.status','=',(int)$data['status']];
+				unset($map['status']);
 			}
 
 /*			
@@ -252,7 +259,7 @@ class Forum extends AdminController
 				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
 			}
 			return json($res);
-			}
+		}
 		
 		return View::fetch();
 	}

@@ -52,7 +52,7 @@ CREATE TABLE `tao_article` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `title` varchar(50) NOT NULL COMMENT '标题',
   `content` text NOT NULL COMMENT '内容',
-  `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '状态1显示0隐藏',
+  `status` enum('0','-1','1') NOT NULL DEFAULT '1' COMMENT '状态1显示0待审-1禁止',
   `cate_id` int(11) NOT NULL COMMENT '分类id',
   `user_id` int(11) NOT NULL COMMENT '用户id',
   `is_top` enum('0','1') NOT NULL DEFAULT '0' COMMENT '置顶1否0',
@@ -323,7 +323,7 @@ CREATE TABLE `tao_comment` (
   `user_id` int(11) NOT NULL COMMENT '评论用户',
   `zan` tinyint(4) NOT NULL DEFAULT '0' COMMENT '赞',
   `cai` enum('1','0') NOT NULL DEFAULT '0' COMMENT '0求解1采纳',
-  `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '1通过0禁止',
+  `status` enum('0','-1','1') NOT NULL DEFAULT '1' COMMENT '1通过0待审-1禁止',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
@@ -503,7 +503,7 @@ CREATE TABLE `tao_system` (
 -- ----------------------------
 -- Records of tao_system
 -- ----------------------------
-INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href=\"http://www.aieok.com\" target=\"_blank\">aieok.com 版权所有</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
+INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href="https://www.aieok.com" target="_blank">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
 
 -- ----------------------------
 -- Table structure for tao_user

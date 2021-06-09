@@ -83,19 +83,19 @@
                   <div carousel-item>
                     <ul class="layui-row layui-col-space10">
                       <li class="layui-col-xs6">
-                        <a lay-href="app/content/comment.html" class="layadmin-backlog-body">
+                        <a lay-href="{:url('admin/Forum/replys')}" class="layadmin-backlog-body">
                           <h3>待审评论</h3>
-                          <p><cite>66</cite></p>
+                          <p><cite>{$comms}</cite></p>
                         </a>
                       </li>
                       <li class="layui-col-xs6">
-                        <a lay-href="app/forum/list.html" class="layadmin-backlog-body">
+                        <a lay-href="{:url('admin/Forum/list')}" class="layadmin-backlog-body">
                           <h3>待审帖子</h3>
-                          <p><cite>12</cite></p>
+                          <p><cite>{$forums}</cite></p>
                         </a>
                       </li>
                       <li class="layui-col-xs6">
-                        <a lay-href="template/goodslist.html" class="layadmin-backlog-body">
+                        <a lay-href="javascript:;" class="layadmin-backlog-body">
                           <h3>待审商品</h3>
                           <p><cite>99</cite></p>
                         </a>
