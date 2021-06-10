@@ -38,9 +38,9 @@ class Slider extends AdminController
 			$data['slid_over'] =  strtotime($data['slid_over']);
 			$result = Db::name('slider')->save($data);
 			if($result){
-				$res = ['code'=>1,'msg'=>'添加成功'];
+				$res = ['code'=>0,'msg'=>'添加成功'];
 			}else{
-				$res = ['code'=>0,'msg'=>'添加失败'];
+				$res = ['code'=>-1,'msg'=>'添加失败'];
 			}
 		return json($res);
 		}
@@ -66,9 +66,9 @@ class Slider extends AdminController
 			$data['slid_over'] =  strtotime($data['slid_over']);
 			$result = Db::name('slider')->where('id',$id)->save($data);
 			if($result){
-				$res = ['code'=>1,'msg'=>'编辑成功'];
+				$res = ['code'=>0,'msg'=>'编辑成功'];
 			}else{
-				$res = ['code'=>0,'msg'=>'编辑失败'];
+				$res = ['code'=>-1,'msg'=>'编辑失败'];
 			}
 			return json($res);
 		}
@@ -118,9 +118,9 @@ class Slider extends AdminController
 		$slider = SliderModel::find($id);
 		$res = $slider->delete();
 		if($res){
-			return json(['code'=>1,'msg'=>'删除成功']);
+			return json(['code'=>0,'msg'=>'删除成功']);
 		} else {
-			return json(['code'=>0,'msg'=>'删除失败']);
+			return json(['code'=>-1,'msg'=>'删除失败']);
 		}
     }
 }

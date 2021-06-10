@@ -55,6 +55,48 @@
                         <?php endif ?>
                     </td>
                 </tr>
+				<tr>
+                    <td>./config</td>
+                    <td>可写</td>
+                    <td>
+                        <?php if (is_writable('../config')): ?> 可写
+                        <?php else: ?> 不可写
+                        <?php endif ?>
+                    </td>
+                    <td class="<?php if(is_writable('../config'))echo 'yes'; ?>">
+                        <?php if (is_writable('../config')): ?> √
+                        <?php else: ?> ×
+                        <?php endif ?>
+                    </td>
+                </tr>
+				<tr>
+                    <td>./app</td>
+                    <td>可写</td>
+                    <td>
+                        <?php if (is_writable('../app')): ?> 可写
+                        <?php else: ?> 不可写
+                        <?php endif ?>
+                    </td>
+                    <td class="<?php if(is_writable('../app'))echo 'yes'; ?>">
+                        <?php if (is_writable('../app')): ?> √
+                        <?php else: ?> ×
+                        <?php endif ?>
+                    </td>
+                </tr>
+				<tr>
+                    <td>./view</td>
+                    <td>可写</td>
+                    <td>
+                        <?php if (is_writable('../view')): ?> 可写
+                        <?php else: ?> 不可写
+                        <?php endif ?>
+                    </td>
+                    <td class="<?php if(is_writable('../view'))echo 'yes'; ?>">
+                        <?php if (is_writable('../view')): ?> √
+                        <?php else: ?> ×
+                        <?php endif ?>
+                    </td>
+                </tr>
                 <tr>
                     <td>./install</td>
                     <td>可写</td>
@@ -94,7 +136,7 @@
     </div>
 	<script>
         function testClick() {
-            if ($('.yes').length != 5) {
+            if ($('.yes').length != 8) {
                 alert('您的配置或权限不符合要求');
             } else {
                 location.href = '{:url('index/create')}';

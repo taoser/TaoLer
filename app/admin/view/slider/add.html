@@ -2,7 +2,7 @@
 
 {block name="body"}
 
-  <div class="layui-form" lay-filter="layuiadmin-form-slider" id="layuiadmin-form-slider" style="padding: 20px 30px 0 0;">
+  <div class="layui-form" lay-filter="layuiadmin-form-slider" id="layuiadmin-form-slider" style="padding: 20px 20px 0 0;">
   
 	<div class="layui-form-item">
       <label class="layui-form-label">位置</label>
@@ -25,9 +25,12 @@
       </div>
     </div>
 	<div class="layui-form-item">
-      <label class="layui-form-label">广告块底色</label>
+      <label class="layui-form-label">背景</label>
       <div class="layui-input-inline">
-        <input type="text" name="slid_color" lay-verify="" placeholder="位置3,4,5可选底色" autocomplete="off" class="layui-input">
+        <input type="text" name="slid_color" lay-verify="" placeholder="选位置3,4,5请选背景色" autocomplete="off" class="layui-input" id="color-select">
+      </div>
+	  <div class="layui-inline" style="left: -11px;">
+        <div id="coloer-form"></div>
       </div>
     </div>
     <div class="layui-form-item">
@@ -53,7 +56,7 @@
       <div class="layui-input-inline">
         <input type="text" name="slid_img" lay-verify="" placeholder="位置1,2需上传图片" autocomplete="off" class="layui-input" >
       </div>
-      <button style="float: left;" type="button" class="layui-btn" id="layuiadmin-upload-slid-img">上传图片</button> 
+      <button style="float: left;" type="button" class="layui-btn" id="layuiadmin-upload-slid-img">选图</button> 
     </div>
 	
     <div class="layui-form-item layui-hide">
@@ -68,13 +71,21 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form', 'upload','laydate','table'], function(){
+  }).use(['index', 'form', 'upload','laydate','colorpicker'], function(){
     var $ = layui.$
-	,table = layui.table
     ,form = layui.form
 	,laydate = layui.laydate
     ,upload = layui.upload ;
+	var colorpicker = layui.colorpicker;
     
+	//颜色表单赋值
+	  colorpicker.render({
+		elem: '#coloer-form'
+		,color: '#1c97f5'
+		,done: function(color){
+		  $('#color-select').val(color);
+		}
+	  });
 	
 	//开始时间
 	  laydate.render({

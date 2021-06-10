@@ -33,11 +33,8 @@ class Set extends AdminController
     //网站设置
     public function website()
     {
-		if(Request::isAjax()){
-			$data = Request::param();
-			unset($data['file']);
-			//$system = System::find(1);
-			//$result = $system->allowField(['webname','webtitle','domain','keywords','descript','copyright','blackname'])->save($data);
+		if(Request::isPost()){
+			$data = Request::only(['webname','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','copyright']);
 			$result = Db::name('system')->cache('system')->where('id', 1)->update($data);
 			if($result){
 				return json(['code'=>0,'msg'=>'更新成功']);

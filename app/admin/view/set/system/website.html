@@ -174,10 +174,8 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'set', 'element', 'upload'], function(){
+  }).use(['index', 'set', 'upload'], function(){
     var $ = layui.$
-    ,element = layui.element
-	,table = layui.table
 	,form = layui.form
 	,upload = layui.upload;
 		

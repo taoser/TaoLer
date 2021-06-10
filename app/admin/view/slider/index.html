@@ -70,17 +70,11 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'set']);
-  </script>
-  
-  <script>
-layui.use(['layer','table','form','upload','laydate'], function(){
+  }).use(['index','layer','table','form'], function(){
   var $ = layui.jquery
   ,layer = layui.layer
   ,table = layui.table
-  ,form = layui.form
-  ,laydate = layui.laydate
-  ,upload = layui.upload;
+  ,form = layui.form;
   //添加幻灯
   $('#slid-add').on('click', function(){
       layer.open({
@@ -88,7 +82,7 @@ layui.use(['layer','table','form','upload','laydate'], function(){
 		  title: '添加广告',
 		  content: 'add.html',
 		  maxmin: true,
-		  area : ['500px' , '450px'],
+		  area : ['460px' , '490px'],
 		  btn: ['确定', '取消'],
           yes: function(index, layero){
 		  var iframeWindow = window['layui-layer-iframe'+ index]
@@ -107,7 +101,7 @@ layui.use(['layer','table','form','upload','laydate'], function(){
 				data:{"slid_type":field.slid_type,"slid_name":field.slid_name,"slid_color":field.slid_color,"slid_start":field.slid_start,"slid_over":field.slid_over,"slid_href":field.slid_href,"slid_img":field.slid_img},
 				daType:"json",
 				success:function (data){
-					if (data.code == 1) {
+					if (data.code == 0) {
 						layer.msg(data.msg,{
 							icon:6,
 							time:2000
@@ -138,7 +132,7 @@ layui.use(['layer','table','form','upload','laydate'], function(){
 		  title: '编辑幻灯',
 		  content: 'edit.html?id='+ id,
 		  maxmin: true,
-		  area : ['500px' , '450px'],
+		  area : ['460px' , '490px'],
 		  btn: ['确定', '取消'],
           yes: function(index, layero){
 		  var iframeWindow = window['layui-layer-iframe'+ index]
@@ -157,7 +151,7 @@ layui.use(['layer','table','form','upload','laydate'], function(){
 				data:{"id":id,"slid_type":field.slid_type,"slid_name":field.slid_name,"slid_color":field.slid_color,"slid_start":field.slid_start,"slid_over":field.slid_over,"slid_href":field.slid_href,"slid_img":field.slid_img},
 				daType:"json",
 				success:function (data){
-					if (data.code == 1) {
+					if (data.code == 0) {
 						layer.msg(data.msg,{
 							icon:6,
 							time:2000
@@ -192,7 +186,7 @@ layui.use(['layer','table','form','upload','laydate'], function(){
 					data:{"id":id},
 					daType:"json",
 					success:function (data){
-						if (data.code == 1) {
+						if (data.code == 0) {
 							layer.msg(data.msg,{
 								icon:6,
 								time:2000

@@ -58,15 +58,15 @@ class Upgrade extends AdminController
 	//设置key
 	public function key()
 	{
-		$data = Request::param();
-		if($data['key']== ''){
+		$data = Request::only(['key']);
+		if(empty($data['key'])){
 			return json(['code'=>0,'msg'=>'请填写正确的key']);
 		}
 		$res = Db::name('system')->update(['key'=>$data['key'],'id'=>1]);
 		if($res){
-			$res = ['code'=>1,'msg'=>'保存成功'];
+			$res = ['code'=>0,'msg'=>'保存成功'];
 		} else {
-			$res = ['code'=>0,'msg'=>'保存失败'];
+			$res = ['code'=>-1,'msg'=>'保存失败'];
 		}
 		return json($res);
 	}
@@ -77,15 +77,15 @@ class Upgrade extends AdminController
 		$key = Db::name('system')->field('key,upcheck_url,upgrade_url')->find(1);
 		
 		if(Request::isAjax()){
-			$data = Request::param();
-			if($data['key']== ''){
-				return json(['code'=>0,'msg'=>'请正确填写申请到的key']);
+			$data = Request::only(['key','upcheck_url','upgrade_url']);
+			if(empty($data['key'])){
+				return json(['code'=>-1,'msg'=>'请正确填写申请到的key']);
 			}
 			$res = Db::name('system')->update(['key'=>$data['key'],'upcheck_url'=>$data['upcheck_url'],'upgrade_url'=>$data['upgrade_url'],'id'=>1]);
 			if($res){
-				$res = ['code'=>1,'msg'=>'修改成功'];
+				$res = ['code'=>0,'msg'=>'修改成功'];
 			} else {
-				$res = ['code'=>0,'msg'=>'修改失败'];
+				$res = ['code'=>-1,'msg'=>'修改失败'];
 			}
 			return json($res);
 		}
@@ -109,7 +109,6 @@ class Upgrade extends AdminController
 		}
 		if($version_code == 0){
             $res = json(['code'=>$versions->code,'msg'=>$versions->msg]);
-
 		}
 
         return $res;

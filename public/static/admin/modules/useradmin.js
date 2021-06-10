@@ -24,14 +24,14 @@ layui.define(['table', 'form'], function(exports){
 	  ,{field: 'nick', title: '昵称',minWidth: 100}
       ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
       //,{field: 'phone', title: '手机',width: 80}
-      ,{field: 'email', title: '邮箱'}
+      ,{field: 'email', title: '邮箱', width: 120}
       ,{field: 'sex', width: 60, title: '性别',templet: '#sex'}
-      ,{field: 'ip', title: '登录IP'}
-	  ,{field: 'city', title: '城市'}
-	  ,{field: 'logintime', title: '最后登录',minWidth: 150, sort: true}
-      ,{field: 'jointime', title: '注册时间',minWidth: 120, sort: true}
-	  ,{field: 'check', title: '状态', templet: '#buttonCheck', minWidth: 80, align: 'center'}
-	  ,{field: 'auth', title: '超级管理员', templet: '#buttonAuth', width: 60, align: 'center'}
+      ,{field: 'ip', title: '登录IP', width: 100}
+	  ,{field: 'city', title: '城市', width: 80}
+	  ,{field: 'logintime', title: '最后登录',width: 150, sort: true}
+      ,{field: 'jointime', title: '注册时间',width: 110, sort: true}
+	  ,{field: 'check', title: '状态', templet: '#buttonCheck', width: 95, align: 'center'}
+	  ,{field: 'auth', title: '超级管理员', templet: '#buttonAuth', width: 80, align: 'center'}
       ,{title: '操作', width: 150, align:'center', toolbar: '#table-useradmin-webuser'}
     ]]
     ,page: true
@@ -142,15 +142,15 @@ layui.define(['table', 'form'], function(exports){
     elem: '#LAY-user-back-manage'
     ,url: adminIndex //模拟接口
     ,cols: [[
-      {type: 'checkbox', fixed: 'left'}
-      ,{field: 'id', width: 80, title: 'ID', sort: true}
-      ,{field: 'loginname', title: '登录名'}
-      ,{field: 'telphone', title: '手机'}
-      ,{field: 'email', title: '邮箱'}
-      ,{field: 'check', title:'审核状态', templet: '#buttonTpl', minWidth: 80, align: 'center'}
-      ,{field: 'ip', title: 'IP'}
-	  ,{field: 'logintime', title: '最后登陆'}
-      ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-useradmin-admin'}
+      {type: 'checkbox'}
+      ,{field: 'id', width: 60, title: 'ID', sort: true}
+      ,{field: 'loginname', title: '登录名', width: 100}
+      ,{field: 'telphone', title: '手机', width: 120}
+      ,{field: 'email', title: '邮箱', minWidth: 150}
+      ,{field: 'check', title:'审核状态', templet: '#buttonTpl', width: 100, align: 'center'}
+      ,{field: 'ip', title: 'IP', width: 100}
+	  ,{field: 'logintime', title: '最后登陆', width: 150}
+      ,{title: '操作', width: 150, align: 'center', toolbar: '#table-useradmin-admin'}
     ]]
     ,text: '对不起，加载出现异常！'
   });
@@ -253,13 +253,12 @@ layui.define(['table', 'form'], function(exports){
     elem: '#LAY-user-back-role'
     ,url: authGroupList //role接口
     ,cols: [[
-      {type: 'checkbox', fixed: 'left'}
-      ,{field: 'id', width: 80, title: 'ID', sort: true}
-      ,{field: 'rolename', title: '角色名'}
-      ,{field: 'limits', title: '拥有权限'}
-      ,{field: 'descr', title: '具体描述'}
-	  ,{field: 'check', title: '角色审核', toolbar: '#buttonCheck'}
-      ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-useradmin-admin'}
+	{field: 'id', width: 60, title: 'ID', sort: true}
+      ,{field: 'rolename', title: '角色名', width: 120}
+      ,{field: 'limits', title: '拥有权限', minWidth: 150}
+      ,{field: 'descr', title: '具体描述', width: 120}
+	  ,{field: 'check', title: '角色审核', toolbar: '#buttonCheck', width: 95}
+      ,{title: '操作', width: 150, align: 'center', toolbar: '#table-useradmin-admin'}
     ]]
     ,text: '对不起，加载出现异常！'
   });
@@ -373,12 +372,11 @@ layui.define(['table', 'form'], function(exports){
     elem: '#LAY-user-back-group'
     ,url: authAccessIndex //用户组access接口
     ,cols: [[
-      {type: 'checkbox', fixed: 'left'}
-      ,{field: 'id', width: 80, title: 'ID', sort: true}
+      {field: 'id', width: 60, title: 'ID', sort: true}
       ,{field: 'username', title: '管理员'}
       ,{field: 'title', title: '权限'}
-	  ,{field: 'check', title: '状态', toolbar: '#buttonCheck'}
-      ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-useradmin-admin'}
+	  ,{field: 'check', title: '状态', toolbar: '#buttonCheck', width: 95}
+      ,{title: '操作', width: 150, align: 'center', toolbar: '#table-useradmin-admin'}
     ]]
     ,text: '对不起，加载出现异常！'
   });
