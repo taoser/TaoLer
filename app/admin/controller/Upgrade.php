@@ -221,8 +221,8 @@ class Upgrade extends AdminController
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'50%','msg'=>'升级文件解压成功！']);
 
+		//升级sql操作
         $upSql = $zipPath.'runtime/mysql_update.sql';
-		//升级执行mysql操作
 		if(file_exists($upSql))
 		{
 			$sqlRes = $this->db_update($upSql);
@@ -230,12 +230,13 @@ class Upgrade extends AdminController
 			if($upDate['code'] == -1){
 				return json(['code'=>-1,'msg'=>$upDate['msg']]);
 			}
+			//删除sql语句
+			unlink($upSql);
 		}
         
-        
+        //升级PHP
         if(is_dir($zipPath))
         {
-            //升级PHP
             $cpRes = Files::copyDirs($zipPath,$this->root_dir);
 			$cpData = $cpRes->getData();
             //更新失败
@@ -253,12 +254,12 @@ class Upgrade extends AdminController
                 
 				return json(['code'=>-1,'msg'=>$cpData['msg']]);
             }
+			
+			Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'70%','msg'=>'升级文件执行成功！']);
+			//清除
+			Files::delDirAndFile($this->upload_dir);
+			Files::delDirAndFile($this->backup_dir);
         }
-		Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'70%','msg'=>'升级文件执行成功！']);
-        //把解压的升级包清除
-        Files::delDirAndFile($this->upload_dir);
-        Files::delDirAndFile($this->backup_dir);
-		unlink('../runtime/mysql_update.sql');
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'100%','msg'=>'升级成功！']);
         //更新系统的版本号了
