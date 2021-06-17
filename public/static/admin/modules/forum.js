@@ -20,15 +20,15 @@ layui.define(['table', 'form'], function(exports){
     ,cols: [[
       {type: 'checkbox'}
       ,{field: 'id', width: 60, title: 'ID', sort: true}
-      ,{field: 'poster', title: '贴主',width: 80}
+      ,{field: 'poster', title: '贴主',width: 100}
       ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
-      ,{field: 'content', title: '标题', width: 200,templet: '#title'}
+      ,{field: 'content', title: '标题', mWidth: 200,templet: '#title'}
       ,{field: 'posttime', title: '时间',width: 120, sort: true}
       ,{field: 'top', title: '置顶', templet: '#buttonTpl', width: 80, align: 'center'}
 	  ,{field: 'hot', title: '精贴', templet: '#buttonHot', width: 80, align: 'center'}
 	  ,{field: 'reply', title: '评论状态', templet: '#buttonReply', width: 80, align: 'center'}
 	  ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
-      ,{title: '操作', width: 85, align: 'center', toolbar: '#table-forum-list'}
+      ,{title: '操作', width: 60, align: 'center', toolbar: '#table-forum-list'}
     ]]
     ,page: true
     ,limit: 15

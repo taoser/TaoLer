@@ -962,7 +962,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
     }
     text = text.replace(/^@|（[\s\S]+?）/g, '');
     othis.attr({
-      href: '/index/jump/index?name='+ text
+      href: jumpUrl + '?name=' + text
       ,target: '_blank'
     });
   });
