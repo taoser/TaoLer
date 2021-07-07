@@ -141,12 +141,8 @@
 					});
 				} else {
 					layer.close(load);
-					layer.open({
-						title:'升级失败',
-						content:data.msg,
-						icon:5,
-						anim:6
-					});
+					layer.alert(data.msg,{icon:5,title:'更新失败', area:['50%', '70%']});
+					return false;
 				}
 			}
 		);

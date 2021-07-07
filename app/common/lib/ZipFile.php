@@ -43,7 +43,7 @@ class ZipFile
 						
 						if(file_exists($save_path)) {
 							if($overwrite === true){
-								echo $file_name . '<pre />';	
+								//echo $file_name . '<pre />';	
 								$file_size = zip_entry_filesize($zip);
 								$file = zip_entry_read($zip, $file_size);
 								$fpc = file_put_contents($save_path, $file);

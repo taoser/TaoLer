@@ -233,10 +233,28 @@ class Upgrade extends AdminController
 			//删除sql语句
 			unlink($upSql);
 		}
-        
-        //升级PHP
+		
+		//升级PHP
         if(is_dir($zipPath))
         {
+			//升级前的写入文件权限检查
+			$allUpdateFiles = Files::getAllFile($zipPath);
+			
+			if (empty($allUpdateFiles)) return json(['code' => -1, 'msg' => '无可更新文件。']);
+			$checkString    = '';
+			foreach ($allUpdateFiles as $updateFile) {
+				$coverFile  = ltrim(str_replace($zipPath, '', $updateFile), DIRECTORY_SEPARATOR);
+				$dirPath    = dirname('../'.$coverFile);
+				if (file_exists('../'.$coverFile)) {
+					if (!is_writable('../'.$coverFile)) $checkString .= $coverFile . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
+				} else {
+					if (!is_dir($dirPath)) @mkdir($dirPath, 0777, true);
+					if (!is_writable($dirPath)) $checkString .= $dirPath . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
+				}
+			}
+
+			if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
+
             $cpRes = Files::copyDirs($zipPath,$this->root_dir);
 			$cpData = $cpRes->getData();
             //更新失败

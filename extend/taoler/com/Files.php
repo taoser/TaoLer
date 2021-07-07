@@ -34,6 +34,28 @@ class Files
 			 return $arr;
 		}
 	}
+	
+	/**
+     * 列出目录下的所有文件，包括子目录文件,不包含sql目录
+     * @param $dirName
+     * @return array
+     */
+    public static function getAllFile($dirName)
+    {
+        //$dirName    = str_replace('..', '', rtrim($dirName, '/\\'));
+        $fileArray  = [];
+        if (is_dir($dirName)) {
+            $dh = scandir($dirName);
+            foreach ($dh as $file) {
+                if (!in_array($file, ['.', '..', 'runtime', '.DS_Store'])) {
+                    $path = $dirName . DIRECTORY_SEPARATOR . $file;
+                    if (!is_dir($path)) $fileArray[] = $path;
+                    $fileArray = array_merge($fileArray, self::getAllFile($path));
+                }
+            }
+        }
+        return $fileArray;
+    }
 
     /**
      * 创建文件夹及子文件夹
