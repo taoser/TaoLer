@@ -34,7 +34,7 @@ class Set extends AdminController
     public function website()
     {
 		if(Request::isPost()){
-			$data = Request::only(['webname','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','copyright']);
+			$data = Request::only(['webname','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','icp','copyright']);
 			$result = Db::name('system')->cache('system')->where('id', 1)->update($data);
 			if($result){
 				return json(['code'=>0,'msg'=>'更新成功']);

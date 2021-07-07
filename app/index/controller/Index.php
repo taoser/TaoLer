@@ -55,6 +55,16 @@ class Index extends BaseController
 			Cache::set('flinks',$friend_links,3600);
 		}
 		
+		//温馨通道
+		$fast_links = Cache::get('fastlinks');
+		if(!$fast_links){
+			$fast_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>7])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
+			Cache::set('fastlinks',$fast_links,3600);
+		}
+		
+		//友情链接申请
+		$adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
+		
 		$vs = [
 			'slider'	=>	$sliders,
 			'artTop'	=>	$artTop,
@@ -63,7 +73,9 @@ class Index extends BaseController
 			'type'		=>	$types,
 			'ad_index'	=>	$ad_index,
 			'ad_comm'	=>	$ad_comm,
+			'fastlinks' =>	$fast_links,
 			'flinks'	=>	$friend_links,
+			'adminEmail' => $adminEmail,
 			'jspage'	=>	'',
 		];
 		View::assign($vs);
@@ -92,14 +104,25 @@ class Index extends BaseController
             'counts' => $counts
         ];
 
-		//友情链接
-		$friend_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>6])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
+		//首页右栏
+		$ad_comm = Cache::get('adcomm');
+		if(!$ad_comm){
+			$ad_comm = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>2])->whereTime('slid_over','>=',time())->select();
+			Cache::set('adcomm',$ad_comm,3600);
+		}
+		
+		//温馨通道
+		$fast_links = Cache::get('fastlinks');
+		if(!$fast_links){
+			$fast_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>7])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
+			Cache::set('fastlinks',$fast_links,3600);
+		}
         //	查询热议
 		//$article = new Article()1;
 		$artHot = Article::getArtHot(10);
 
         View::assign($searchs);
-		View::assign(['flinks'=>$friend_links,'artHot'=>$artHot,'jspage'=>'']);
+		View::assign(['fastlinks'=>$fast_links,'ad_comm'=>$ad_comm,'artHot'=>$artHot,'jspage'=>'']);
 		return View::fetch('search');
 	}
 

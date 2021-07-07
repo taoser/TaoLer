@@ -1,23 +1,10 @@
-
 	<div class="layui-row fly-panel-main" style="padding: 15px;">
 	  <div class="layui-clear fly-list-quick">
+		{volist name="fastlinks" id="vo"}
 		<div class="layui-col-xs6">
-		  <div><a href="https://gitee.com/toogee/TaoLer/repository/archive/master.zip" target="_blank"> 程序下载 </a></div>
+		  <div><a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a></div>
 		</div>
-		<div class="layui-col-xs6">
-		  <div><a href="{:url('article/detail',['id'=>25])}" target="_blank"> 应用说明 </a></div>
-		</div>
-		<div class="layui-col-xs6">
-		  <div><a href="#" target="_blank"> 申请Key </a></div>
-		</div>
-		<div class="layui-col-xs6">
-		  <div><a href="https://gitee.com/toogee/TaoLer" target="_blank"> Git 仓库 </a></div>
-		</div>
-		<div class="layui-col-xs6">
-		  <div><a href="{:url('doc/timeline')}" target="_blank">版本更新日志</a></div>
-		</div>
-		<div class="layui-col-xs6">
-		  <div><a href="#" target="_blank"> 关于积分 </a></div>
-		</div>
-		<a name="signin"> </a></div>
+		{/volist}
+		<a name="signin"> </a>
+	  </div>
 	</div>

@@ -4,15 +4,11 @@
       <img src="{$sysInfo.logo}" alt="layui" width="135" height="37">
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
-      <li class="layui-nav-item layui-this">
-        <a href="/"><i class="iconfont icon-jiaoliu"></i>{:lang('discuss')}</a>
-      </li>
-      <li class="layui-nav-item">
-        <a href="case/case.html"><i class="iconfont icon-iconmingxinganli"></i>{:lang('case')}</a>
-      </li>
-      <li class="layui-nav-item">
-        <a href="{:url('doc/timeline')}" target="_blank"><i class="iconfont icon-ui"></i>{:lang('timeline')}</a>
-      </li>
+	{volist name="headlinks" id="vo"}
+	<li class="layui-nav-item">
+        <a href="{$vo.slid_href}"><i class="layui-icon {$vo.slid_img}"></i>{$vo.slid_name}</a>
+    </li>
+	{/volist}
     </ul>
     
     <ul class="layui-nav fly-nav-user">     
@@ -52,10 +48,10 @@
       <li class="layui-nav-item">
         <a href="{:url('login/reg')}">{:lang('register')}</a>
       </li>
-	  <li class="layui-nav-item">
-		<select name="language" lay-filter="language" lay-verify="" id="language">
-		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >中文简体</option>
-		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >中文繁体</option>
+	  <li class="layui-nav-item" >
+		<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
+		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >简体</option>
+		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >繁体</option>
 		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >English</option>
 		</select>
 	  </li>	

@@ -53,12 +53,11 @@
     </div>
 	
     <div class="layui-col-md4">
-		<!--温馨通道-->
+	<!--温馨通道-->
 		<div class="fly-panel">
-		<h3 class="fly-panel-title">温馨通道</h3>
+		<h3 class="fly-panel-title">{:lang('links list')}</h3>
 		{include file="public/index-static" /}
 		</div>
-
 		<dl class="fly-panel fly-list-one">
 			<dt class="fly-panel-title">本周热议</dt>
 			{volist name="artHot" id="vo"  empty="还没有帖子"}
@@ -68,16 +67,12 @@
 			</dd>
 			{/volist}
 		</dl>
-
-      <div class="fly-panel">
-        <div class="fly-panel-title">
-          这里可作为广告区域
+		<!--自定义-->
+		<div class="fly-panel" style="padding: 20px 0; text-align: center;">
+		{volist name="ad_comm" id="vo"}		
+		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+		{/volist}
         </div>
-        <div class="fly-panel-main">
-          <a href="#" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">TaoLer旗舰之作</a>
-        </div>
-      </div>
-      {include file="public/flink" /}
     </div>
 	
   </div>

@@ -33,7 +33,7 @@
 					  <tr>
 						<th>{$vo.id}</th>
 						<th>{$vo.slid_name}</th>
-						<th>{if condition="$vo.slid_img != ''"}<img src="{$vo.slid_img}" height="40" width="80" />{/if}</th>
+						<th>{notempty name="$vo.slid_img"}{if $vo.slid_type == '头部菜单'}<div><i class="layui-icon {$vo.slid_img}"></i></div>{else /}<img src="{$vo.slid_img}" height="40" width="80" />{/if}{/notempty}</th>
 						<th>{$vo.slid_type}</th>
 						<th><a href="{$vo.slid_href}" target="_blank">{$vo.slid_href}</a></th>
 						<th>{$vo.slid_color}</th>
@@ -82,7 +82,7 @@
 		  title: '添加广告',
 		  content: 'add.html',
 		  maxmin: true,
-		  area : ['460px' , '490px'],
+		  area : ['460px' , '530px'],
 		  btn: ['确定', '取消'],
           yes: function(index, layero){
 		  var iframeWindow = window['layui-layer-iframe'+ index]

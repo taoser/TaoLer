@@ -135,7 +135,7 @@
 				{if (session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2) OR ($user.auth  ?? '')}
 					<span type="edit">{:lang('edit')}</span>
 					<span type="del">{:lang('delete')}</span>
-					{if $vo.cai == 0 && session('user_id') == $article.user_id /}
+					{if $vo.cai == 0 && (session('user_id') == $article.user_id) OR ($user.auth  ?? '') /}
 					<span class="jieda-accept" type="accept">{:lang('accept')}</span>
 					{/if}				
 				{/if}
@@ -356,7 +356,7 @@ $("#rdown").hover(function(){
 	},function(){
 		 $("#phonedl").hide().stop();
 	});
-	
+
 	function PhoneDown(){
 		layer.open({                         
 			title: "扫码查阅",

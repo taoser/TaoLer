@@ -13,7 +13,7 @@ class Slider extends Model
 	
 	public function getSlidTypeAttr($value)
 	{
-		$slid_type = [1=>'首页幻灯',2=>'通用右底',3=>'首页赞助',4=>'文章赞助',5=>'分类赞助',6=>'友情链接'];
+		$slid_type = [1=>'首页幻灯',2=>'通用右底',3=>'首页赞助',4=>'文章赞助',5=>'分类赞助',6=>'友情链接',7=>'温馨通道',8=>'头部菜单',9=>'页脚链接'];
         return $slid_type[$value];
 	}
 	

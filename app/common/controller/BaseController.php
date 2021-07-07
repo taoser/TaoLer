@@ -260,8 +260,36 @@ abstract class BaseController
     {
         //1.查询分类表获取所有分类
 		$sysInfo = Db::name('system')->cache('system',3600)->find(1);
-        View::assign('sysInfo',$sysInfo);
+		//头部链接
+		$head_links = Cache::get('headlinks');
+		if(!$head_links){
+			$head_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>8])->whereTime('slid_over','>=',time())->field('slid_name,slid_img,slid_href')->select();
+			Cache::set('headlinks',$head_links,3600);
+		}
+		//页脚链接
+		$foot_links = Cache::get('footlinks');
+		if(!$foot_links){
+			$foot_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>9])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
+			Cache::set('footlinks',$foot_links,3600);
+		}
+        View::assign(['sysInfo'=>$sysInfo,'headlinks'=>$head_links,'footlinks'=>$foot_links]);
     }
+	
+	//返回上传文件配置类型
+	protected function getExtType($ext)
+	{
+		$extType = Db::name('system')->where('id',1)->value('uptype');
+		$extArr = explode(',',$extType);
+		foreach ($extArr as $v){
+			$fileMime = stristr($v,':',true);//返回字符:前字符串
+			if($ext == $fileMime){
+				$arr = explode('|',stristr($v,':')); //返回:后字符串
+				//var_dump($arr);
+				return $arr;
+			} 
+			return [];
+		}
+	}
 	
 
 }

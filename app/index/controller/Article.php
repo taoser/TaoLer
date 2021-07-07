@@ -256,7 +256,7 @@ class Article extends BaseController
     {
         $file = request()->file('file');
 		try {
-			validate(['file'=>['fileSize'=>'1024000','fileExt'=>['jpg','jpeg','png']]])
+			validate(['file'=>['fileSize'=>'1024000','fileExt'=>$this->getExtType('image')]])
             ->check(['file'=>$file]);
 			
 		} catch (ValidateException $e) {
@@ -285,7 +285,7 @@ class Article extends BaseController
     {
         $file = request()->file('file');
         try {
-            validate(['file'=>'fileSize:1024000|fileExt:jpg,zip'])
+            validate(['file'=>['fileSize'=>'1024000','fileExt'=>$this->getExtType('file')]])
                 ->check(['file'=>$file]);
             $savename = \think\facade\Filesystem::disk('public')->putFile('article_zip',$file);
         } catch (ValidateException $e) {
@@ -307,7 +307,7 @@ class Article extends BaseController
     {
         $file = request()->file('file');
         try {
-            validate(['file'=>'fileSize:102400000|fileExt:mp4,mp3'])
+            validate(['file'=>['fileSize'=>'102400000','fileExt'=>$this->getExtType('mp4')]])
                 ->check(['file'=>$file]);
             $savename = \think\facade\Filesystem::disk('public')->putFile('video',$file);
         } catch (ValidateException $e) {
@@ -323,6 +323,29 @@ class Article extends BaseController
         }
         return json($res);
     }
+	
+	//上传音频
+    public function upAudio()
+    {
+        $file = request()->file('file');
+        try {
+            validate(['file'=>['fileSize'=>'10240000','fileExt'=>$this->getExtType('mp3')]])
+                ->check(['file'=>$file]);
+            $savename = \think\facade\Filesystem::disk('public')->putFile('audio',$file);
+        } catch (ValidateException $e) {
+            return json(['status'=>-1,'msg'=>$e->getMessage()]);
+        }
+        $upload = Config::get('filesystem.disks.public.url');
+
+        if($savename){
+            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
+            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
+        }else{
+            $res = ['status'=>-1,'msg'=>'上传错误'];
+        }
+        return json($res);
+    }
+
 
     //附件下载
     public function download($id)

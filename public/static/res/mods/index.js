@@ -397,7 +397,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                           var loding,audio =  layero.find('input[name="audio"]');
 
                           upload.render({
-                              url: videoUrl
+                              url: audioUrl
 							  ,elem: '#fly-jie-audio-upload .upload-audio'
 							  ,accept: 'audio'
 							  ,acceptMime: 'audio/mp3'

@@ -67,7 +67,7 @@
 					  <div class="layui-form-item">
 						<label class="layui-form-label">上传文件类型</label>
 						<div class="layui-input-block">
-						  <input type="text" name="uptype" value="{$sysInfo.uptype}r" class="layui-input">
+						  <input type="text" name="uptype" value="{$sysInfo.uptype}" placeholder="请依照格式image:jgp|png,多个组合用,分开" class="layui-input">
 						</div>
 					  </div>
 					  
@@ -94,6 +94,12 @@
 						<label class="layui-form-label">META描述</label>
 						<div class="layui-input-block">
 						  <textarea name="descript" class="layui-textarea">{$sysInfo.descript}</textarea>
+						</div>
+					  </div>
+					  <div class="layui-form-item">
+						<label class="layui-form-label">备案号</label>
+						<div class="layui-input-inline">
+						  <input type="text" name="icp" value="{$sysInfo.icp}" class="layui-input">
 						</div>
 					  </div>
 					  <div class="layui-form-item">

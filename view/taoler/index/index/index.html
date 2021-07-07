@@ -107,7 +107,7 @@ var signJsonUrl = "{:url('sign/signJson')}";
 $('#friend-link').on('click', function(){
 	layer.open({
 	  title: '申请友链',
-	  content: '发送邮件至：changlin_zhao@qq.com ',
+	  content: '发送邮件至：{$adminEmail} ',
 	  yes: function(index, layero){
 			layer.close(index);
 		}
