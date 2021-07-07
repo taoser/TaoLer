@@ -129,5 +129,9 @@ return [
 	 'Login error 3, Please log in 10 minutes later'	=> '连续登陆错误3次,请10分钟后登录',
 	 'Account disabled'	=> '账号被禁用，请联系管理员',
 	 'Pending approval'	=> '待审核，请联系管理员',
+	 
+	 'Authorized'	=> '已授权',
+	 'Unauthorized'	=> '未授权',
+	 'Free version'=> '免费版',
 
 ];

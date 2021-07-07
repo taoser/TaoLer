@@ -24,7 +24,7 @@
 					  <div class="layui-form-item">
 						<label class="layui-form-label">网站域名</label>
 						<div class="layui-input-block">
-						  <input type="text" value="{$sysInfo.domain}" readonly class="layui-input layui-disabled">
+						  <input type="text" name="domain" value="{$sysInfo.domain}" class="layui-input">
 						</div>
 					  </div>
 					  <div class="layui-form-item">
@@ -104,8 +104,8 @@
 					  </div>
 					  <div class="layui-form-item">
 						<label class="layui-form-label">版权信息</label>
-						<div class="layui-input-inline" style="width: 500px;">
-						  <input type="text" name="copyright" {if condition="$syscy == '0'"}disabled{/if} value="{$sysInfo.copyright}" class="layui-input {if condition="$syscy == '0'"}layui-disabled{/if}">
+						<div class="layui-input-inline" style="width: 400px;">
+						  <input type="text" name="copyright" value="{$sysInfo.copyright}" class="layui-input">
 						</div>
 						<div class="layui-input-inline layui-input-company">提示：</div>
 						<div class="layui-form-mid layui-word-aux">未经授权用户，可不限制功能使用，但严禁私自改写版权脚本。一旦发现，永远禁止升级并追诉相关责任。</div>
@@ -185,7 +185,7 @@
 	,form = layui.form
 	,upload = layui.upload;
 		
-	//选完文件后不自动上传
+	//LOGO选完文件后不自动上传
 	  upload.render({
 		elem: '#logo-img'
 		,url: '{:url('admin/set/upload')}'

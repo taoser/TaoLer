@@ -7,6 +7,7 @@ use think\facade\Db;
 use think\facade\Session;
 use think\facade\Request;
 use think\facade\Cache;
+use think\facade\Lang;
 use app\admin\model\Admin;
 use app\admin\model\Article;
 use app\admin\model\Cunsult;
@@ -83,8 +84,9 @@ class Index extends AdminController
 			$days = floor($days%365);
 		}
 		$runTime = $years ? "{$years}年{$days}天{$hos}时{$mins}分" : "{$days}天{$hos}时{$mins}分";
+		$cpy = ($this->getCyl() > 1) ? Lang::get('Authorized') : Lang::get('Free version');
 	
-		View::assign(['runTime'=>$runTime,'versions'=>$versions,'comms'=>$comms,'forums'=>$forums]);
+		View::assign(['runTime'=>$runTime,'versions'=>$versions,'comms'=>$comms,'forums'=>$forums,'cpy'=>$cpy]);
         return View::fetch();
     }
 	

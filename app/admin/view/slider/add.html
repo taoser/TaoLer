@@ -74,11 +74,12 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form', 'upload','laydate','colorpicker'], function(){
+  }).use(['index', 'form', 'upload','laydate','colorpicker', 'imgcom'], function(){
     var $ = layui.$
     ,form = layui.form
 	,laydate = layui.laydate
-    ,upload = layui.upload ;
+    ,upload = layui.upload 
+	,imgcom = layui.imgcom;
 	var colorpicker = layui.colorpicker;
     
 	//颜色表单赋值
@@ -108,8 +109,12 @@
       elem: '#layuiadmin-upload-slid-img'
       ,url: 'uploadImg'
       ,accept: 'images'
-      ,method: 'get'
       ,acceptMime: 'image/*'
+	  ,auto: false
+	  ,choose: function (obj) { //选择文件后的回调
+			imgcom.uploads(obj);
+		  }
+	  
       ,done: function(res){
         //console.log(res)
 		$(this.item).prev("div").children("input").val(res.src)

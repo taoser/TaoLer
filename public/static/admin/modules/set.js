@@ -152,6 +152,12 @@ layui.define(['form', 'upload'], function(exports){
     return false;
   });
 
+  var  othis = $("input[name='copyright']");
+  if(sysCy == 0){
+	  othis.addClass('layui-disabled');
+	  othis.attr("disabled");
+  }
+
   //上传头像
   var avatarSrc = $('#LAY_avatarSrc');
   upload.render({

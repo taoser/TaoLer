@@ -108,17 +108,19 @@ abstract class AdminController
         return $v->failException(true)->check($data);
     }
 
-
-	protected function cyCheck($url,$d)
+	//获取层级
+	protected function getCyl()
 	{
-		$url = $url.'?u='.$d;
+		$sys = $this->getSystem();
+		$url = $sys['base_url'].'?u='.$sys['domain'];
 		$cy = Api::urlGet($url);
 		if($cy && $cy->code == 0){
             $cylevel = $cy->level;
-            return $cylevel;
         } else {
-			return 0;
+			$cylevel = 0;
 		}
+		Cache::set('cylevel',$cylevel,3600);
+		return Cache::get('cylevel');
 	}
 
     /**
@@ -191,12 +193,12 @@ abstract class AdminController
 	}
 	
 	//得到当前系统安装前台域名
-	
 	protected function getIndexUrl()
 	{
 		$sysUrl = $this->getSystem();
 		$domain = $this->getHttpUrl($sysUrl['domain']);
-		View::assign(['domain'=>$domain,'insurl'=>$sysUrl['domain']]);
+		$syscy = $this->getCyl();
+		View::assign(['domain'=>$domain,'insurl'=>$sysUrl['domain'],'syscy'=>$syscy]);
 	}
 
 

@@ -36,6 +36,7 @@ class Upgrade extends AdminController
 	
 	public function __construct()
 	{
+		parent::initialize();
 		$this->sys_version = Config::get('taoler.version');
 		$this->pn = Config::get('taoler.appname');
 		$this->sys = Db::name('system')->where('id',1)->find();

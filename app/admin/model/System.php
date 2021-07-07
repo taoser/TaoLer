@@ -3,19 +3,25 @@
 namespace app\admin\model;
 
 use think\Model;
-//use think\model\concern\SoftDelete;
+use think\facade\Cache;
+
 
 class System extends Model
 {
-    //软删除
-    //use SoftDelete;
-    //protected $deleteTime = 'delete_time';
-    //protected $defaultSoftDelete = 0;
 	
 	//登陆校验
-    public function website()
+    public function sets($data,$cy)
     {	
-		
-		
+		$sys = $this::find(1);
+		if($cy == 0){
+			unset($data['copyright']);
+		}
+		$res = $sys->save($data);
+		if($res){
+			Cache::delete('system'); 
+			return 1;
+		} else {
+			return Lang::get('edit error');
+		}
     }
 }

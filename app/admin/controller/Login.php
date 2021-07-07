@@ -6,18 +6,14 @@ use think\facade\Request;
 use think\facade\Session;
 use app\admin\validate\Admin;
 use think\exception\ValidateException;
+use app\common\controller\AdminController;
 
 
-class Login
+class Login extends AdminController
 {
 	//登录
 	public function index()
-	{
-		
-		if(Session::has('admin_id')){
-			return redirect((string) url('index/index'));
-		}
-			
+	{	
 		if(Request::isAjax()){
 			$data = Request::param();
 

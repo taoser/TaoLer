@@ -47,6 +47,13 @@ class User extends Model
         $user = $this::whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
 
         if(!($user->isEmpty())){
+			//被禁用和待审核
+			if($user['status'] == -1){
+				return Lang::get('Account disabled');
+			}
+			if($user['status'] == 0){
+				return Lang::get('Pending approval');
+			}
 			//错误登陆连续3次且小于10分钟
 			if((time() - $user->login_error_time < 60) && is_int($user->login_error_num/3)){	
 				return Lang::get('Please log in 10 minutes later');

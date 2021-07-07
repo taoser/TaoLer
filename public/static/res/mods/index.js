@@ -400,8 +400,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                               url: audioUrl
 							  ,elem: '#fly-jie-audio-upload .upload-audio'
 							  ,accept: 'audio'
-							  ,acceptMime: 'audio/mp3'
-							  ,exts: 'mp3'
+							  ,acceptMime: 'audio/*'
+							  ,exts: 'mp3|m4a'
                               ,before: function(obj){   
 								//loding = layer.msg('文件上传中,请稍等哦', { icon: 16 ,shade:0.3,time:0 });
 								layer.load(2); //上传loading

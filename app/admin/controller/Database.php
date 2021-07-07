@@ -14,6 +14,7 @@ class Database extends AdminController
 	
 	public function __construct()
 	{
+		parent::initialize();
 		$this->hostname = Config::get('database.connections.mysql.hostname');
 		$this->hostport = Config::get('database.connections.mysql.hostport');
 		$this->database = Config::get('database.connections.mysql.database');

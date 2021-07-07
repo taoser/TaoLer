@@ -17,16 +17,16 @@ class Set extends AdminController
 	protected function initialize()
     {
         parent::initialize();
-      
+		
+		$this->sysInfo = $this->getSystem();
+		$this->syscy = $this->getCyl();
     }
 	//网站设置显示
 	public function index()
     {
 		$mailserver = MailServer::find(1);
-		$sysInfo = Db::name('system')->find(1);
-		$syscy = $this->cyCheck($sysInfo['base_url'],$sysInfo['domain']);
 		$template = Files::getDirName('../view');
-        View::assign(['sysInfo'=>$sysInfo,'syscy'=>$syscy,'mailserver'=>$mailserver,'template'=>$template]);
+        View::assign(['sysInfo'=>$this->sysInfo,'syscy'=>$this->syscy,'mailserver'=>$mailserver,'template'=>$template]);
 		return View::fetch('set/system/website');
     }
 	
@@ -34,12 +34,13 @@ class Set extends AdminController
     public function website()
     {
 		if(Request::isPost()){
-			$data = Request::only(['webname','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','icp','copyright']);
-			$result = Db::name('system')->cache('system')->where('id', 1)->update($data);
-			if($result){
+			$data = Request::only(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','icp','copyright']);
+			$system = new System();
+			$result = $system->sets($data,$this->syscy);
+			if($result == 1){
 				return json(['code'=>0,'msg'=>'更新成功']);
 			} else {
-				return json(['code'=>-1,'msg'=>'更新失败']);
+				return json(['code'=>-1,'msg'=>$result]);
 			}
 		}
     }
