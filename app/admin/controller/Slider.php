@@ -12,9 +12,10 @@ use app\admin\model\Slider as SliderModel;
 class Slider extends AdminController
 {
     /**
-     * 显示资源列表
-     *
-     * @return \think\Response
+     * @return string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function index()
     {
@@ -50,10 +51,11 @@ class Slider extends AdminController
 
 
     /**
-     * 编辑幻灯
-     *
-     * @param  int  $id
-     * @return \think\Response
+     * @param $id
+     * @return string|\think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function edit($id)
     {
@@ -78,27 +80,16 @@ class Slider extends AdminController
     }
 
     /**
-     * 保存更新的资源
-     *
-     * @param
-     * @param  int  $id
-     * @return \think\Response
+     * @return \think\response\Json
      */
     public function uploadImg()
     {
-		$id = Request::param();
-        $file = request()->file('file');
-		try {
-			validate(['image'=>'filesize:2048|fileExt:jpg,png,gif|image:200,200,jpg'])
-            ->check(array($file));
-			$savename = \think\facade\Filesystem::disk('public')->putFile('slider',$file);
-		} catch (think\exception\ValidateException $e) {
-			echo $e->getMessage();
-		}
-		$upload = Config::get('filesystem.disks.public.url');
-		
-		if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
+        $uploads = new \app\common\lib\Uploads();
+        $upRes = $uploads->put('file','slider',1024,'image');
+        $slires = $upRes->getData();
+
+		if($slires['status'] == 0){
+            $name_path = $slires['url'];
 				$res = ['code'=>0,'msg'=>'上传flash成功','src'=>$name_path];
 			} else {
 				$res = ['code'=>1,'msg'=>'上传错误'];
@@ -107,10 +98,11 @@ class Slider extends AdminController
     }
 
     /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
+     * @param $id
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function delete($id)
     {

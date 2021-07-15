@@ -77,7 +77,7 @@
                 <div class="layui-inline">
                   <label class="layui-form-label">{:lang('enclosure')}</label>
                   <div class="layui-input-inline" style="width: 190px;">
-                   <input type="text" class="layui-input" name="upzip" value="" placeholder="zip,jpg格式" title="上传附件"/>
+                   <input type="text" class="layui-input" name="upzip" value="" placeholder="zip,image文件" title="上传附件"/>
                   </div>
 				  <button type="button" class="layui-btn" id="zip-button"><i class="layui-icon"></i>{:lang('uploads')}</button>
                 </div>
@@ -170,10 +170,11 @@
           }
         });
 		
-		//指定允许上传的文件类型
+		//上传附件
 		  upload.render({
 			elem: '#zip-button'
-			,url: '{:url('article/upzip')}' //改成您自己的上传接口
+			,url: "{:url('article/Uploads')}" //改成您自己的上传接口
+            ,data: {type:'zip'}
 			,accept: 'file' //普通文件
 			,done: function(res){
 				if(res.status == 0){
@@ -182,7 +183,6 @@
 				} else {
 					layer.msg(res.msg);
 				}
-				
 			}
 		  });
 

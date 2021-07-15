@@ -294,13 +294,17 @@ class Upgrade extends AdminController
     public function uploadZip()
     {
 		$files = request()->file('file');
+		$mime = $files->getMime();
+		if($mime !== 'application/zip'){
+            return json(['code'=>-1,'msg'=>'文件类型不对']);
+        }
 		$name = $files->getOriginalName();
 
         //校验后缀
         $ext = pathinfo($name,PATHINFO_EXTENSION);  //文件后缀
         if($ext != 'zip')
         {
-            return json(['code'=>0,'msg'=>'请上传文件格式不对']);
+            return json(['code'=>-1,'msg'=>'上传文件格式不对']);
         }
         //对比版本号
         $fname = pathinfo($name,PATHINFO_FILENAME);   //无后缀文件名

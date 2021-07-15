@@ -176,7 +176,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 							  ,accept: 'images'
 							  ,acceptMime: 'image/*'
 							  ,exts: 'jpg|png|gif|bmp|jpeg'
-                              ,url: textImgUpload
+                              ,url: uploads
+                              ,data: {type:'image'}
 							  ,auto: false
 							  //,bindAction: '#img-button' //指向一个按钮触发上传
 							  //,field: 'image'
@@ -309,7 +310,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 
 						//上传视频
 						  upload.render({
-                              url: videoUrl
+                              url: uploads
+                              ,data: {type:'video'}
 							  ,accept: 'video'
 							  ,acceptMime: 'video/mp4'
 							  ,exts: 'mp4'
@@ -332,7 +334,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 							  ,accept: 'images'
 							  ,acceptMime: 'image/*'
 							  ,exts: 'jpg|png|gif|bmp|jpeg'
-                              ,url: textImgUpload
+                              ,url: uploads
+                              ,data: {type:'image'}
 							  ,auto: false
 							  //,bindAction: '#img-button' //指向一个按钮触发上传
 							  //,field: 'image'
@@ -397,7 +400,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                           var loding,audio =  layero.find('input[name="audio"]');
 
                           upload.render({
-                              url: audioUrl
+                              url: uploads
+                              ,data: {type:'audio'}
 							  ,elem: '#fly-jie-audio-upload .upload-audio'
 							  ,accept: 'audio'
 							  ,acceptMime: 'audio/*'

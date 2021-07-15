@@ -41,6 +41,7 @@ class Api
 		curl_close($ch);
 		if($httpCode == '200'){
 			return json_decode($data);
+            //return $data;
 		} else {
 			//$status ='{"code":-1,"msg":"远程服务器失败"}';	//字符串
 			return json_decode('{"code":-1,"msg":"远程服务器失败,稍后重试"}');	//转换为对象

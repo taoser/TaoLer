@@ -34,6 +34,17 @@
               </select>
             </div>
           </div>
+		  <div class="layui-inline">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+              <select name="status">
+			  <option value="">选择状态</option>
+                <option value="1">正常</option>
+				<option value="-1">禁止</option>
+				<option value="0">待审</option>
+              </select>
+            </div>
+          </div>
           <div class="layui-inline">
             <button class="layui-btn layuiadmin-btn-useradmin" lay-submit lay-filter="LAY-user-front-search">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
@@ -63,7 +74,7 @@
 		{{#  if(d.id == '1'){ }}
 		<input type="checkbox" name="check" lay-skin="switch" disabled lay-text="通过|禁用" value="1" checked id="{{d.id}}">
 		{{#  } else { }}
-		{if condition="checkRuleButton('admin/user/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="usercheck" lay-text="通过|禁用" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
+		{if condition="checkRuleButton('admin/user/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="usercheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
 		{{#  } }}
         </script>
 		<script type="text/html" id="buttonAuth">
@@ -115,26 +126,7 @@
     //监听搜索
     form.on('submit(LAY-user-front-search)', function(data){
       var field = data.field;
-	  //提交 Ajax 成功后，静态更新表格中的数据
-	  $.ajax({
-		type:"post",
-		url:"{:url('admin/User/list')}",
-		data:{"id":field.id,"name":field.name,"email":field.email,"sex":field.sex},
-		daType:"json",
-		success:function (data){
-			if (data.code == 0) {
-				
-			} else {
-				layer.open({
-					tiele:'搜索失败',
-					content:data.msg,
-					icon:5,
-					anim:6
-				});
-			}
-		}
-	});
-      
+	  $.post("{:url('admin/User/list')}",field);
       //执行重载
       table.reload('LAY-user-manage', {
         where: field
@@ -223,17 +215,12 @@
 	//监听用户审核
 	form.on('switch(usercheck)', function(data){
 	var data= data.elem;
-	
-	if(data.checked == true){
-		data.value = 1;
-	}else{
-		data.value = 0;
-	}
+	var status = data.checked ? 1 : -1;
 	//执行用户审核
 		$.ajax({
 			type:'post',
 			url:"{:url('admin/User/check')}",
-			data:{"id":data.id,"status":data.value,},
+			data:{"id":data.id,"status":status},
 			dataType:'json',
 			success:function(res){
 				if(res.code == 0){
@@ -259,15 +246,11 @@
 	//超级管理auth控制
 	form.on('checkbox(auth)', function(data){
 	var data = data.elem;
-	if(data.checked == true){
-			data.value = 1;
-		}else{
-			data.value = 0;
-		}
+	var auth = data.checked ? 1 : 0;
 	$.ajax({
 			type:'post',
 			url:"{:url('admin/User/auth')}",
-			data:{"id":data.id,"auth":data.value,},
+			data:{"id":data.id,"auth":auth},
 			dataType:'json',
 			success:function(data){
 				if(data.code == 0){

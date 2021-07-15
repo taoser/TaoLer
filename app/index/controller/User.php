@@ -112,14 +112,14 @@ class User extends BaseController
 	{
 		if(Request::isAjax()){
 			$data = Request::only(['user_id','email','nickname','sex','city','area_id','sign']);
-			$validate = new \app\common\validate\User;
+			$validate = new userValidate;
 			$result = $validate->scene('Set')->check($data);
 			if(!$result){
 				$this->error($validate->getError());
 			} else {
-                $user = new \app\common\model\User;
+                $user = new userModel;
                 $result = $user->setNew($data);
-				if($result==1){
+				if($result == 1){
 					Cache::tag('user')->clear();
 				    return ['code'=>0,'msg'=>'资料更新成功'];
 				} else {
@@ -135,25 +135,22 @@ class User extends BaseController
 	//更换头像
 	public function uploadHeadImg()
     {
-        $file = request()->file('file');
-		try {
-			validate(['file'=>'fileSize:204800|fileExt:jpg,png,gif,jpeg'])
-            ->check(['file'=>$file]);
-			$savename = \think\facade\Filesystem::disk('public')->putFile('head_pic',$file);
-		} catch (think\exception\ValidateException $e) {
-			return json(['status'=>-1,'msg'=>$e->getMessage()]);
-		}
-		$upload = Config::get('filesystem.disks.public.url');
-        if($savename){
+        $uploads = new \app\common\lib\Uploads();
+        $upRes = $uploads->put('file','head_img',1024,'image','uniqid');
+        $upHeadRes = $upRes->getData();
+        if($upHeadRes['status'] == 0){
+            $name_path = $upHeadRes['url'];
             //$name = $file->hashName();
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);	
 			//$image = \think\Image::open("uploads/$name_path");
 			//$image->thumb(168, 168)->save("uploads/$name_path");
 
             //查出当前用户头像删除原头像并更新
 			$imgPath = Db::name('user')->where('id',$this->uid)->value('user_img');
-			if(file_exists($imgPath)){
-				unlink('.'.$imgPath);
+			if(file_exists('.'.$imgPath)){
+				$dirPath    = dirname('.'.$imgPath);
+				if($dirPath !== './static/res/images/avatar'){ //防止删除默认头像
+					unlink('.'.$imgPath);
+				}
 			}  
             $result = Db::name('user')
                 ->where('id',$this->uid)
@@ -164,7 +161,7 @@ class User extends BaseController
             } else {
                 $res = ['status'=>1,'msg'=>'头像更新失败'];
             }
-        }else{
+        } else {
             $res = ['status'=>1,'msg'=>'上传错误'];
         }
 	return json($res);
@@ -210,8 +207,7 @@ class User extends BaseController
 	public function activate()
 	{
 		$this->isLogin();
-		$user['user_id'] = session::get('user_id');
-		$user = UserModel::find($user['user_id']);
+		$user = UserModel::find($this->uid);
 		$this->assign('user',$user);
 		return view();
 	}
@@ -221,12 +217,12 @@ class User extends BaseController
 	{
 		if(Request::isAjax()){
 			$data = Request::param();
-			$validate = new \app\common\validate\User();
+			$validate = new userValidate;
 			$res = $validate->scene('setPass')->check($data);
 			if(!$res){
 				return $this->error($validate->getError());
 			}
-		$user = new \app\common\model\User;
+		$user = new userModel;
 		$result = $user->setpass($data);
 			if($result == 1) {
 				Session::clear();

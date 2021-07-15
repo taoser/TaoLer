@@ -152,6 +152,7 @@
 	upload.render({
 		elem: '#select-file'
 		,url: "{:url('admin/upgrade/uploadzip')}"
+        ,data: {type:'zip'}
 		,accept: 'file'
         ,acceptMime: 'application/zip'
 		,field: 'file'

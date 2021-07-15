@@ -104,21 +104,20 @@
 		,btns: ['clear', 'now']
 		,trigger: 'click'
 	  });
-	
+	//上传图片
     upload.render({
       elem: '#layuiadmin-upload-slid-img'
       ,url: 'uploadImg'
+      ,data:{type:'image'}
       ,accept: 'images'
       ,acceptMime: 'image/*'
 	  ,auto: false
 	  ,choose: function (obj) { //选择文件后的回调
 			imgcom.uploads(obj);
 		  }
-	  
       ,done: function(res){
         //console.log(res)
 		$(this.item).prev("div").children("input").val(res.src)
-		
 			if(res.code == 0){
 				layer.msg(res.msg,{
 					icon:6,

@@ -188,7 +188,8 @@
 	//LOGO选完文件后不自动上传
 	  upload.render({
 		elem: '#logo-img'
-		,url: '{:url('admin/set/upload')}'
+		,url: "{:url('admin/set/upload')}"
+        ,data: {type:'image'}
 		,auto: false
 		,exts: 'jpg|png|gif|bmp|jpeg'
 		,size: 1000

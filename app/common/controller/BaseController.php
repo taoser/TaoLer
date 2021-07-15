@@ -274,22 +274,5 @@ abstract class BaseController
 		}
         View::assign(['sysInfo'=>$sysInfo,'headlinks'=>$head_links,'footlinks'=>$foot_links]);
     }
-	
-	//返回上传文件配置类型
-	protected function getExtType($ext)
-	{
-		$extType = Db::name('system')->where('id',1)->value('uptype');
-		$extArr = explode(',',$extType);
-		foreach ($extArr as $v){
-			$fileMime = stristr($v,':',true);//返回字符:前字符串
-			if($ext == $fileMime){
-				$arr = explode('|',stristr($v,':')); //返回:后字符串
-				//var_dump($arr);
-				return $arr;
-			} 
-			return [];
-		}
-	}
-	
 
 }

@@ -4,14 +4,11 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 use app\admin\validate\Admin;
-use app\admin\model\Admin as adminModel;
 use think\facade\View;
 use think\facade\Request;
-use think\facade\Config;
 use think\facade\Db;
-use think\facade\Session;
-use think\exception\ValidateException;
 use app\common\model\User as UserModel;
+use app\common\lib\Uploads;
 
 class User extends AdminController
 {
@@ -26,7 +23,7 @@ class User extends AdminController
 	public function list()
 	{
 		if(Request::isAjax()){
-			$datas = Request::only(['id','name','email','sex']);
+			$datas = Request::only(['id','name','email','sex','status']);
 			$map = array_filter($datas,[$this,'filtrArr']);
 			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->paginate(30);
 			$count = $user->total();
@@ -100,31 +97,22 @@ class User extends AdminController
 	//上传头像
 	 public function uploadImg()
     {
-        $file = request()->file('file');
-		try {
-			validate(['file'=>'fileSize:204800|fileExt:jpg,png,gif'])
-            ->check(['file'=>$file]);
-			$savename = \think\facade\Filesystem::disk('public')->putFile('head_pic',$file);
-		} catch (think\exception\ValidateException $e) {
-			echo $e->getMessage();
-		}
-		$upload = Config::get('filesystem.disks.public.url');
-		
-		if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-				$res = ['code'=>0,'msg'=>'上传头像成功','src'=>$name_path];
-			} else {
-				$res = ['code'=>-1,'msg'=>'上传错误'];
-			}
-		return json($res);
+		$uploads = new Uploads();
+		$upRes = $uploads->put('file','head_pic',2000,'image');
+        $userJson = $upRes->getData();
+        if($userJson['status'] == 0){
+            $res = ['code'=>0,'msg'=>'上传头像成功','src'=>$userJson['url']];
+        } else {
+            $res = ['code'=>1,'msg'=>'上传错误'];
+        }
+        return json($res);
     }
 	
 	
 	//审核用户
 	public function check()
 	{
-		$data = Request::param();
-
+		$data = Request::only(['id','status']);
 		//获取状态
 		$res = Db::name('user')->where('id',$data['id'])->save(['status' => $data['status']]);
 		if($res){

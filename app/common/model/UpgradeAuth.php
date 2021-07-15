@@ -16,6 +16,10 @@ class UpgradeAuth extends Model
 	protected $deleteTime = 'delete_time';
 	protected $defaultSoftDelete = 0;
 	
-   
+   public function getAuthLevelAttr($value)
+    {
+        $level = [0=>'免费版',1=>'初级版',2=>'高级版'];
+        return $level[$value];
+    }
 
 }

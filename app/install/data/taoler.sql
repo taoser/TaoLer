@@ -27,7 +27,7 @@ CREATE TABLE `tao_admin` (
   `email` varchar(30) NOT NULL DEFAULT '' COMMENT '邮箱',
   `mobile` varchar(11) NOT NULL DEFAULT '' COMMENT '手机号',
   `sex` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0女1男',
-  `status` enum('1','0') NOT NULL DEFAULT '0' COMMENT '1启用0禁用',
+  `status` enum('1','0','-1') NOT NULL DEFAULT '0' COMMENT '1启用0待审-1禁用',
   `auth_group_id` smallint(1) NOT NULL DEFAULT '0' COMMENT '1超级管理员0是普通管理员',
   `remarks` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
   `last_login_ip` varchar(70) NOT NULL DEFAULT '' COMMENT '最后登录IP',
@@ -41,8 +41,7 @@ CREATE TABLE `tao_admin` (
 -- ----------------------------
 -- Records of tao_admin
 -- ----------------------------
-INSERT INTO `tao_admin` VALUES ('1', 'admin', '管理员', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'taoler@qq.com', '13812345678', '1', '1', '1', '2019.1.1 新年发布新版本！', '127.0.0.1', '1612162986', '1579053025', '1578986600', '0');
-INSERT INTO `tao_admin` VALUES ('2', 'test', '', '3dbfa76bd34a2a0274f5d52f5529ccb3', 'test@qq.com', '13567891236', '0', '0', '2', '', '127.0.0.1', '1578643147', '1555892325', '1576554415', '0');
+INSERT INTO `tao_admin` VALUES ('1', 'admin', '管理员', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'taoler@qq.com', '13812345678', '1', '1', '1', '2021 TaoLer！', '127.0.0.1', '1612162986', '1579053025', '1578986600', '0');
 
 -- ----------------------------
 -- Table structure for tao_article
@@ -480,7 +479,7 @@ CREATE TABLE `tao_system` (
   `logo` varchar(70) NOT NULL DEFAULT '' COMMENT '网站logo',
   `cache` tinyint(5) NOT NULL DEFAULT '0' COMMENT '缓存时间分钟',
   `upsize` int(5) NOT NULL DEFAULT '0' COMMENT '上传文件大小KB',
-  `uptype` varchar(100) NOT NULL DEFAULT '' COMMENT '上传文件类型',
+  `uptype` varchar(50) NOT NULL DEFAULT '' COMMENT '上传文件类型',
   `copyright` varchar(80) NOT NULL DEFAULT '' COMMENT '版权',
   `keywords` tinytext NOT NULL COMMENT '网站关键字',
   `descript` tinytext NOT NULL COMMENT '网站描述',
@@ -503,7 +502,7 @@ CREATE TABLE `tao_system` (
 -- ----------------------------
 -- Records of tao_system
 -- ----------------------------
-INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'image:png|gif|jpg|jpeg,file:zip|rar,video:mp4,audio:mp3|m4a', '<a href="https://www.aieok.com" target="_blank">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
+INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href="https://www.aieok.com" target="_blank">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
 
 -- ----------------------------
 -- Table structure for tao_user
@@ -523,7 +522,7 @@ CREATE TABLE `tao_user` (
   `auth` enum('1','0') NOT NULL DEFAULT '0' COMMENT '管理员权限0普通1超级',
   `point` int(11) NOT NULL DEFAULT '0' COMMENT '积分',
   `area_id` int(11) DEFAULT NULL COMMENT '用户所属区域ID',
-  `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '1启用0禁用',
+  `status` enum('0','1','-1') NOT NULL DEFAULT '1' COMMENT '1启用0待审-1禁用',
   `vip` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'vip',
   `last_login_ip` varchar(70) NOT NULL DEFAULT '0' COMMENT '最后登陆ip',
   `last_login_time` int(11) NOT NULL DEFAULT '0' COMMENT '最后登陆时间',
@@ -541,7 +540,7 @@ CREATE TABLE `tao_user` (
 -- ----------------------------
 -- Records of tao_user
 -- ----------------------------
-INSERT INTO `tao_user` VALUES ('1', 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', '管理员', '北京市', '1', '这是我的第一个TP5系统，2019北京。OK! OK!ok@', '/static/res/images/avatar/00.jpg', '1', '0', '1', '1', '0', '127.0.0.1', '0', '0', '0', '0', '1579053025', '1578469091', '0');
+INSERT INTO `tao_user` VALUES ('1', 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', '管理员', '北京市', '1', '这是一个社区系统', '/static/res/images/avatar/00.jpg', '1', '0', '1', '1', '0', '127.0.0.1', '0', '0', '0', '0', '1579053025', '1578469091', '0');
 
 -- ----------------------------
 -- Table structure for tao_user_area

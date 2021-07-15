@@ -221,7 +221,7 @@ class Forum extends AdminController
 				$where[] = ['a.content','like','%'.$map['content'].'%'];
 				unset($map['content']);
 			}
-			if(isset($data['status'])){
+			if(isset($data['status']) && $data['status'] !== '' ){
 				$where[] = ['a.status','=',(int)$data['status']];
 				unset($map['status']);
 			}

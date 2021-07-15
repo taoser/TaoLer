@@ -106,26 +106,16 @@ class Set extends AdminController
 	//上传logo
 	public function upload()
 	{
-		$file = request()->file('file');
-
-		try {
-			validate(['image'=>'filesize:2048|fileExt:jpg,png,gif|image:200,200,jpg'])
-            ->check(array($file));
-			$savename = \think\facade\Filesystem::disk('public')->putFile('logo',$file);
-		} catch (think\exception\ValidateException $e) {
-			echo $e->getMessage();
-		}
-		$upload = Config::get('filesystem.disks.public.url');
-		
-		if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-			$result = Db::name('system')->where('id', 1)->update(['logo'=>$name_path]);
+        $uploads = new \app\common\lib\Uploads();
+        $upRes = $uploads->put('file','logo',2000,'image','uniqid');
+        $logoJson = $upRes->getData();
+		if($logoJson['status'] == 0){
+			$result = Db::name('system')->where('id', 1)->update(['logo'=>$logoJson['url']]);
 			if($result){
 				$res = ['code'=>0,'msg'=>'上传logo成功'];
 			} else {
 				$res = ['code'=>1,'msg'=>'上传错误'];
 			}
-            
         }
 	return json($res);
 	}

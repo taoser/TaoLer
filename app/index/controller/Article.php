@@ -12,6 +12,7 @@ use app\common\model\Article as ArticleModel;
 use think\exception\ValidateException;
 use taoler\com\Message;
 use app\common\lib\Msgres;
+use app\common\lib\Uploads;
 
 class Article extends BaseController
 {
@@ -250,102 +251,31 @@ class Article extends BaseController
 		}
 		return $res;
 	}
-	
-	//文本编辑器上传图片
-	public function textImgUpload()
+
+	public function uploads()
     {
-        $file = request()->file('file');
-		try {
-			validate(['file'=>['fileSize'=>'1024000','fileExt'=>$this->getExtType('image')]])
-            ->check(['file'=>$file]);
-			
-		} catch (ValidateException $e) {
-			return json(['status'=>-1,'msg'=>$e->getMessage()]);
-		}
-		
-		$savename = \think\facade\Filesystem::disk('public')->putFile('article_pic',$file);
-		$upload = Config::get('filesystem.disks.public.url');
-
-		if($savename){
-            //$name = $file->hashName();
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-			//halt($name_path);
-			//$image = \think\Image::open("uploads/$name_path");
-			//$image->thumb(168, 168)->save("uploads/$name_path");
-
-            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
-        }else{
-            $res = ['status'=>-1,'msg'=>'上传错误'];
+        $type = Request::param('type');
+		//halt($type);
+        $uploads = new Uploads();
+        switch ($type){
+            case 'image':
+                $upRes = $uploads->put('file','article_pic',1024,'image');
+                break;
+            case 'zip':
+                $upRes = $uploads->put('file','article_zip',1024,'application|image');
+                break;
+            case 'video':
+                $upRes = $uploads->put('file','article_video',102400,'video|audio');
+                break;
+            case 'audio':
+                $upRes = $uploads->put('file','article_audio',102400,'audio');
+                break;
+            default:
+                $upRes = $uploads->put('file','article_file',1024,'image');
+                break;
         }
-	return json($res);
+        return $upRes;
     }
-
-    //上传附件
-    public function upzip()
-    {
-        $file = request()->file('file');
-        try {
-            validate(['file'=>['fileSize'=>'1024000','fileExt'=>$this->getExtType('file')]])
-                ->check(['file'=>$file]);
-            $savename = \think\facade\Filesystem::disk('public')->putFile('article_zip',$file);
-        } catch (ValidateException $e) {
-            return json(['status'=>-1,'msg'=>$e->getMessage()]);
-        }
-        $upload = Config::get('filesystem.disks.public.url');
-
-        if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
-        }else{
-            $res = ['status'=>-1,'msg'=>'上传错误'];
-        }
-        return json($res);
-    }
-
-    //上传视频
-    public function upVideo()
-    {
-        $file = request()->file('file');
-        try {
-            validate(['file'=>['fileSize'=>'102400000','fileExt'=>$this->getExtType('mp4')]])
-                ->check(['file'=>$file]);
-            $savename = \think\facade\Filesystem::disk('public')->putFile('video',$file);
-        } catch (ValidateException $e) {
-            return json(['status'=>-1,'msg'=>$e->getMessage()]);
-        }
-        $upload = Config::get('filesystem.disks.public.url');
-
-        if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
-        }else{
-            $res = ['status'=>-1,'msg'=>'上传错误'];
-        }
-        return json($res);
-    }
-	
-	//上传音频
-    public function upAudio()
-    {
-        $file = request()->file('file');
-        try {
-            validate(['file'=>['fileSize'=>'10240000','fileExt'=>$this->getExtType('mp3')]])
-                ->check(['file'=>$file]);
-            $savename = \think\facade\Filesystem::disk('public')->putFile('audio',$file);
-        } catch (ValidateException $e) {
-            return json(['status'=>-1,'msg'=>$e->getMessage()]);
-        }
-        $upload = Config::get('filesystem.disks.public.url');
-
-        if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-            $res = ['status'=>0,'msg'=>'上传成功','url'=> $name_path];
-        }else{
-            $res = ['status'=>-1,'msg'=>'上传错误'];
-        }
-        return json($res);
-    }
-
 
     //附件下载
     public function download($id)

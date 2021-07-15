@@ -111,16 +111,22 @@ abstract class AdminController
 	//获取层级
 	protected function getCyl()
 	{
-		$sys = $this->getSystem();
-		$url = $sys['base_url'].'?u='.$sys['domain'];
-		$cy = Api::urlGet($url);
-		if($cy && $cy->code == 0){
-            $cylevel = $cy->level;
-        } else {
-			$cylevel = 0;
+	    /*
+		$cylevel = Cache::get('cylevel');
+		if(!$cylevel){
+			$sys = $this->getSystem();
+			$url = $sys['base_url'].'?u='.$sys['domain'];
+			$cy = Api::urlGet($url);
+			halt($cy);
+			if($cy && $cy->code == 0){
+				$cylevel = $cy->level;
+			} else {
+				$cylevel = 0;
+			}
+			Cache::set('cylevel',$cylevel,3600);
 		}
-		Cache::set('cylevel',$cylevel,3600);
-		return Cache::get('cylevel');
+	    */
+		return 0;
 	}
 
     /**
