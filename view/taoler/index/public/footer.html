@@ -1,5 +1,5 @@
 <div class="fly-footer html5plus-hide">
-  <p> Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}v{:config('taoler.version')}</p>
+  <p> Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}v{:config('taoler.version')} {$sysInfo.showlist}</p>
   <p>
 	{volist name="footlinks" id="vo"}
 	<a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a>

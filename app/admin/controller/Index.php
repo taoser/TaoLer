@@ -59,34 +59,16 @@ class Index extends AdminController
     public function home()
 	{
 		//版本检测
-		$url = $this->sys['upcheck_url'].'?pn='.$this->pn.'&ver='.$this->sys_version;
-		$versions = Api::urlGet($url);
-		if($versions->code == 1){
-			if($versions->up_num > 0){
-				$versions = "当前有{$versions->up_num}个版本需更新,当前可更新至{$versions->version}";
-			}
-		} else {
-			$versions ='当前无可更新版本';
-		}
+		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
+        $versions = $verCheck->code ? "有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}" : $verCheck->msg;
+
 		//评论、帖子状态
 		$comm = Db::name('comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
 		$forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
 		$comms = count($comm);
 		$forums = count($forum);
-		//运行时间
-		$now = time();
-		$count = $now-$this->sys['create_time'];
-		$days = floor($count/86400);
-		$hos = floor(($count%86400)/3600);
-		$mins = floor(($count%3600)/60);
-		$years = floor($days/365);
-		if($years >= 1){
-			$days = floor($days%365);
-		}
-		$runTime = $years ? "{$years}年{$days}天{$hos}时{$mins}分" : "{$days}天{$hos}时{$mins}分";
-		$cpy = ($this->getCyl() > 1) ? Lang::get('Authorized') : Lang::get('Free version');
-	
-		View::assign(['runTime'=>$runTime,'versions'=>$versions,'comms'=>$comms,'forums'=>$forums,'cpy'=>$cpy]);
+
+		View::assign(['versions'=>$versions,'comms'=>$comms,'forums'=>$forums]);
         return View::fetch();
     }
 	

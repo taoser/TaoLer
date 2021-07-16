@@ -39,7 +39,7 @@ class Upgrade extends AdminController
 		parent::initialize();
 		$this->sys_version = Config::get('taoler.version');
 		$this->pn = Config::get('taoler.appname');
-		$this->sys = Db::name('system')->where('id',1)->find();
+		$this->sys = $this->getSystem();
 	}
     
 	
@@ -63,7 +63,7 @@ class Upgrade extends AdminController
 		if(empty($data['key'])){
 			return json(['code'=>0,'msg'=>'请填写正确的key']);
 		}
-		$res = Db::name('system')->update(['key'=>$data['key'],'id'=>1]);
+		$res = Db::name('system')->cache('system')->update(['key'=>$data['key'],'id'=>1]);
 		if($res){
 			$res = ['code'=>0,'msg'=>'保存成功'];
 		} else {
@@ -97,9 +97,11 @@ class Upgrade extends AdminController
 	//升级前的版本检测
 	public function check()
 	{
-		$url = $this->sys['upcheck_url'].'?pn='.$this->pn.'&ver='.$this->sys_version;
-		$versions = Api::urlGet($url);
-
+        $cy = Api::urlPost($this->sys['base_url'],['u'=>$this->sys['domain']]);
+        if($cy->code == 0 && $cy->level !== $this->sys['clevel']){
+            Db::name('system')->cache('system')->update(['clevel'=>$cy->level,'id'=>1]);
+        }
+        $versions = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
 		//判断服务器状态
 		$version_code = $versions->code;
 		if($version_code == -1){
@@ -138,8 +140,7 @@ class Upgrade extends AdminController
      */
     public function upload()
     {
-		$url = $this->sys['upgrade_url'].'?url='.$this->sys['domain'].'&key='.$this->sys['key'].'&pn='.$this->pn.'&ver='.$this->sys_version;
-		$versions = Api::urlGet($url);
+		$versions = Api::urlPost($this->sys['upgrade_url'],['url'=>$this->sys['domain'],'key'=>$this->sys['key'],'pn'=>$this->pn,'ver'=>$this->sys_version]);
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'check','progress'=>'0%','msg'=>'===>升级检测开始===>']);
 		//判断服务器状态
 		$version_code = $versions->code;

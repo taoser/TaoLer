@@ -17,16 +17,14 @@ class Set extends AdminController
 	protected function initialize()
     {
         parent::initialize();
-		
 		$this->sysInfo = $this->getSystem();
-		$this->syscy = $this->getCyl();
     }
 	//网站设置显示
 	public function index()
     {
 		$mailserver = MailServer::find(1);
 		$template = Files::getDirName('../view');
-        View::assign(['sysInfo'=>$this->sysInfo,'syscy'=>$this->syscy,'mailserver'=>$mailserver,'template'=>$template]);
+        View::assign(['sysInfo'=>$this->sysInfo,'mailserver'=>$mailserver,'template'=>$template]);
 		return View::fetch('set/system/website');
     }
 	
@@ -34,9 +32,9 @@ class Set extends AdminController
     public function website()
     {
 		if(Request::isPost()){
-			$data = Request::only(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','icp','copyright']);
+			$data = Request::only(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','icp','showlist','copyright']);
 			$system = new System();
-			$result = $system->sets($data,$this->syscy);
+			$result = $system->sets($data,$this->sysInfo['clevel']);
 			if($result == 1){
 				return json(['code'=>0,'msg'=>'更新成功']);
 			} else {
@@ -69,40 +67,6 @@ class Set extends AdminController
 		}
     }
 
-    /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete($id)
-    {
-        //
-    }
-	
 	//上传logo
 	public function upload()
 	{

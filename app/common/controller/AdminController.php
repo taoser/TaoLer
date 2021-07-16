@@ -5,62 +5,19 @@ namespace app\common\controller;
 
 use think\Controller;
 use think\App;
-use think\Response;
-use think\exception\ValidateException;
-use think\Validate;
-use think\exception\HttpResponseException;
 use think\facade\Session;
-use think\facade\Cache;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Request;
 use taoser\think\Auth;
 use taoler\com\Files;
-use taoler\com\Api;
+use think\facade\Lang;
 
 /**
  * 控制器基础类
  */
-abstract class AdminController
+class AdminController extends \app\BaseController
 {
-    /**
-     * Request实例
-     * @var \think\Request
-     */
-    protected $request;
-
-    /**
-     * 应用实例
-     * @var \think\App
-     */
-    protected $app;
-
-    /**
-     * 是否批量验证
-     * @var bool
-     */
-    protected $batchValidate = false;
-
-    /**
-     * 控制器中间件
-     * @var array
-     */
-    protected $middleware = [];
-
-    /**
-     * 构造方法
-     * @access public
-     * @param  App  $app  应用对象
-     */
-    public function __construct(App $app)
-    {
-        $this->app     = $app;
-        $this->request = $this->app->request;
-
-        // 控制器初始化
-        $this->initialize();
-    }
-
     // 初始化
     protected function initialize()
     {
@@ -69,64 +26,6 @@ abstract class AdminController
 		$this->getMenu();
 		//系统配置
 		$this->getIndexUrl();
-	}
-
-    /**
-     * 验证数据
-     * @access protected
-     * @param  array        $data     数据
-     * @param  string|array $validate 验证器名或者验证规则数组
-     * @param  array        $message  提示信息
-     * @param  bool         $batch    是否批量验证
-     * @return array|string|true
-     * @throws ValidateException
-     */
-    protected function validate(array $data, $validate, array $message = [], bool $batch = false)
-    {
-        if (is_array($validate)) {
-            $v = new Validate();
-            $v->rule($validate);
-        } else {
-            if (strpos($validate, '.')) {
-                // 支持场景
-                list($validate, $scene) = explode('.', $validate);
-            }
-            $class = false !== strpos($validate, '\\') ? $validate : $this->app->parseClass('validate', $validate);
-            $v     = new $class();
-            if (!empty($scene)) {
-                $v->scene($scene);
-            }
-        }
-
-        $v->message($message);
-
-        // 是否批量验证
-        if ($batch || $this->batchValidate) {
-            $v->batch(true);
-        }
-
-        return $v->failException(true)->check($data);
-    }
-
-	//获取层级
-	protected function getCyl()
-	{
-	    /*
-		$cylevel = Cache::get('cylevel');
-		if(!$cylevel){
-			$sys = $this->getSystem();
-			$url = $sys['base_url'].'?u='.$sys['domain'];
-			$cy = Api::urlGet($url);
-			halt($cy);
-			if($cy && $cy->code == 0){
-				$cylevel = $cy->level;
-			} else {
-				$cylevel = 0;
-			}
-			Cache::set('cylevel',$cylevel,3600);
-		}
-	    */
-		return 0;
 	}
 
     /**
@@ -170,7 +69,8 @@ abstract class AdminController
     }
 	
 	//清除缓存Cache
-	public function clearData(){
+	public function clearData()
+    {
         $dir = app()->getRootPath().'runtime/admin/temp';
         $cache = app()->getRootPath().'runtime/cache';
         if(is_dir($cache)){
@@ -201,11 +101,29 @@ abstract class AdminController
 	//得到当前系统安装前台域名
 	protected function getIndexUrl()
 	{
-		$sysUrl = $this->getSystem();
-		$domain = $this->getHttpUrl($sysUrl['domain']);
-		$syscy = $this->getCyl();
-		View::assign(['domain'=>$domain,'insurl'=>$sysUrl['domain'],'syscy'=>$syscy]);
+		$sys = $this->getSystem();
+		$domain = $this->getHttpUrl($sys['domain']);
+		$syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
+        $runTime = $this->getRunTime();
+		View::assign(['domain'=>$domain,'insurl'=>$sys['domain'],'syscy'=>$syscy,'runTime'=>$runTime]);
 	}
+
+	protected function getRunTime()
+    {
+        //运行时间
+        $now = time();
+        $sys = $this->getSystem();
+        $count = $now-$sys['create_time'];
+        $days = floor($count/86400);
+        $hos = floor(($count%86400)/3600);
+        $mins = floor(($count%3600)/60);
+        $years = floor($days/365);
+        if($years >= 1){
+            $days = floor($days%365);
+        }
+        $runTime = $years ? "{$years}年{$days}天{$hos}时{$mins}分" : "{$days}天{$hos}时{$mins}分";
+        return $runTime;
+    }
 
 
 }

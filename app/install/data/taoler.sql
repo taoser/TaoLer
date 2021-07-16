@@ -124,9 +124,6 @@ CREATE TABLE `tao_auth_group_access` (
   KEY `uid_group_id` (`uid`,`group_id`) USING BTREE
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of tao_auth_group_access
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for tao_auth_group_copy
@@ -308,10 +305,6 @@ CREATE TABLE `tao_collection` (
 ) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='文章收藏表';
 
 -- ----------------------------
--- Records of tao_collection
--- ----------------------------
-
--- ----------------------------
 -- Table structure for tao_comment
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_comment`;
@@ -350,11 +343,6 @@ CREATE TABLE `tao_cunsult` (
   `delete_time` int(10) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of tao_cunsult
--- ----------------------------
-INSERT INTO `tao_cunsult` VALUES ('2', '2', '的', '的', '3', '1612162069', '0');
 
 -- ----------------------------
 -- Table structure for tao_friend_link
@@ -487,9 +475,11 @@ CREATE TABLE `tao_system` (
   `is_comment` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开启评论1开启0关闭',
   `is_reg` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开放注册1开启0禁止',
   `icp` varchar(50) NOT NULL DEFAULT '' COMMENT '备案',
+  `showlist` varchar(255) NOT NULL COMMENT '统计代码',
   `blackname` varchar(255) NOT NULL COMMENT '注册黑名单',
   `sys_version_num` varchar(5) NOT NULL COMMENT '系统版本',
   `key` varchar(60) DEFAULT NULL COMMENT 'key',
+  `clevel` tinyint(1) NOT NULL DEFAULT '0',
   `api_url` varchar(80) NOT NULL COMMENT 'api',
   `base_url` varchar(50) NOT NULL DEFAULT '',
   `upcheck_url` varchar(255) NOT NULL COMMENT '版本检测',
@@ -502,7 +492,7 @@ CREATE TABLE `tao_system` (
 -- ----------------------------
 -- Records of tao_system
 -- ----------------------------
-INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'png|gif|jpg|jpeg|zip|rarr', '<a href="https://www.aieok.com" target="_blank">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
+INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'image:png|gif|jpg|jpeg,application:zip|rar,video:mp4,audio:mp3|m4a|mp4', '<a href="https://www.aieok.com" target="_blank">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0-1', '', '管理员|admin|审核员|超级|垃圾', '1.6.3', '','0', 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
 
 -- ----------------------------
 -- Table structure for tao_user
