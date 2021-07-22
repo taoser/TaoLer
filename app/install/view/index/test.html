@@ -70,20 +70,6 @@
                     </td>
                 </tr>
 				<tr>
-                    <td>data</td>
-                    <td>可写</td>
-                    <td>
-                        <?php if (is_writable('../data')): ?> 可写
-                        <?php else: ?> 不可写
-                        <?php endif ?>
-                    </td>
-                    <td class="<?php if(is_writable('../data'))echo 'yes'; ?>">
-                        <?php if (is_writable('../data')): ?> √
-                        <?php else: ?> ×
-                        <?php endif ?>
-                    </td>
-                </tr>
-				<tr>
                     <td>public</td>
                     <td>可写</td>
                     <td>
@@ -136,7 +122,7 @@
     </div>
 	<script>
         function testClick() {
-            if ($('.yes').length != 8) {
+            if ($('.yes').length != 7) {
                 alert('您的配置或权限不符合要求');
             } else {
                 location.href = '{:url('index/create')}';
