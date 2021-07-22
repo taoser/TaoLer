@@ -1,8 +1,7 @@
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
-    <a class="fly-logo" href="/">
-      <img src="{$sysInfo.logo}" alt="layui" width="135" height="37">
-    </a>
+    <a class="fly-logo layui-hide-xs" href="/"><img src="{$sysInfo.logo}" alt="layui" width="135" height="37"></a>
+	<a class="fly-logo layui-hide-md" href="/" style="padding-left:35%;"><img src="{$sysInfo.logo}" alt="layui" width="135" height="37"></a>
     <ul class="layui-nav fly-nav layui-hide-xs">
 	{volist name="headlinks" id="vo"}
 	<li class="layui-nav-item">
@@ -40,16 +39,16 @@
 	  
 	   <!-- 未登入的状态 -->
       <li class="layui-nav-item">
-        <a class="iconfont icon-touxiang layui-hide-xs" href="{:url('login/index')}"></a>
+        <a class="iconfont icon-touxiang" href="{:url('login/index')}"></a>
       </li>
-      <li class="layui-nav-item">
+      <li class="layui-nav-item layui-hide-xs">
         <a href="{:url('login/index')}">{:lang('login')}</a>
       </li>
-      <li class="layui-nav-item">
+      <li class="layui-nav-item layui-hide-xs">
         <a href="{:url('login/reg')}">{:lang('register')}</a>
       </li>
-	  <li class="layui-nav-item" >
-		<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
+	  <li class="layui-nav-item layui-hide-xs" >
+		<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language1">
 		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >简体</option>
 		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >繁体</option>
 		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >English</option>

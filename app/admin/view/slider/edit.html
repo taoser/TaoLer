@@ -1,7 +1,6 @@
 {extend name="public/base" /}
 
 {block name="body"}
-
   <div class="layui-form" lay-filter="layuiadmin-form-slider" id="layuiadmin-form-slider" style="padding: 20px 0 0 0;">
   
 	<div class="layui-form-item">
@@ -9,14 +8,16 @@
       <div class="layui-input-inline">
         <select name="slid_type" lay-verify="required">
 		  <option {if condition="$slider.slid_type eq 1"} selected {/if} value="1">1首页幻灯</option>
-		  <option {if condition="$slider.slid_type eq 2"} selected {/if} value="2">2通用右底</option>
-		  <option {if condition="$slider.slid_type eq 3"} selected {/if} value="3">3首页赞助</option>
-		  <option {if condition="$slider.slid_type eq 4"} selected {/if} value="4">4文章赞助</option>
-		  <option {if condition="$slider.slid_type eq 5"} selected {/if} value="5">5分类赞助</option>
-		  <option {if condition="$slider.slid_type eq 6"} selected {/if} value="6">6友情链接</option>
-		  <option {if condition="$slider.slid_type eq 7"} selected {/if} value="7">7温馨通道</option>
-		  <option {if condition="$slider.slid_type eq 8"} selected {/if} value="8">8头部菜单</option>
-		  <option {if condition="$slider.slid_type eq 9"} selected {/if} value="9">9页脚链接</option>
+		  <option {if condition="$slider.slid_type eq 2"} selected {/if} value="2">2首页图片</option>
+		  <option {if condition="$slider.slid_type eq 3"} selected {/if} value="3">3分类图片</option>
+		  <option {if condition="$slider.slid_type eq 4"} selected {/if} value="4">4详情图片</option>
+		  <option {if condition="$slider.slid_type eq 5"} selected {/if} value="5">5首页赞助</option>
+		  <option {if condition="$slider.slid_type eq 6"} selected {/if} value="6">6分类赞助</option>
+		  <option {if condition="$slider.slid_type eq 7"} selected {/if} value="7">7详情赞助</option>
+		  <option {if condition="$slider.slid_type eq 8"} selected {/if} value="8">8温馨通道</option>
+		  <option {if condition="$slider.slid_type eq 9"} selected {/if} value="9">9友情链接</option>
+          <option {if condition="$slider.slid_type eq 9"} selected {/if} value="10">10头部菜单</option>
+          <option {if condition="$slider.slid_type eq 9"} selected {/if} value="11">11页脚链接</option>
 		</select>
       </div>
     </div>
@@ -26,6 +27,13 @@
         <input type="text" name="slid_name" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input" value="{$slider.slid_name}">
       </div>
     </div>
+      <div class="layui-form-item">
+          <label class="layui-form-label">图片</label>
+          <div class="layui-input-inline">
+              <input type="text" name="slid_img" lay-verify="" placeholder="位置1,2需上传;位8需贴icon图标" autocomplete="off" class="layui-input" value="{$slider.slid_img}">
+          </div>
+          <button style="float: left;" type="button" class="layui-btn" dataid="{$slider.id}" id="layuiadmin-upload-slid-img">选图</button>
+      </div>
 	<div class="layui-form-item">
       <label class="layui-form-label">背景</label>
       <div class="layui-input-inline">
@@ -36,31 +44,23 @@
       </div>
     </div>
     <div class="layui-form-item">
-      <label class="layui-form-label">开始</label>
-      <div class="layui-input-inline">
-        <input type="text" name="slid_start" id="start-time" lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$slider.slid_start|date='Y-m-d'}">
-      </div>
-    </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">结束</label>
-      <div class="layui-input-inline">
-        <input type="text" name="slid_over" id="over-time"  lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$slider.slid_over|date='Y-m-d'}" >
-      </div>
-    </div>
-    <div class="layui-form-item">
       <label class="layui-form-label">链接</label>
       <div class="layui-input-inline">
         <input type="text" name="slid_href"  lay-verify="required" placeholder="输入连接" autocomplete="off" class="layui-input" value="{$slider.slid_href}" >
       </div>
     </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">图片</label>
-      <div class="layui-input-inline">
-        <input type="text" name="slid_img" lay-verify="" placeholder="位置1,2需上传;位8需贴icon图标" autocomplete="off" class="layui-input" value="{$slider.slid_img}">
+      <div class="layui-form-item">
+          <label class="layui-form-label">开始</label>
+          <div class="layui-input-inline">
+              <input type="text" name="slid_start" id="start-time" lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$slider.slid_start|date='Y-m-d'}">
+          </div>
       </div>
-      <button style="float: left;" type="button" class="layui-btn" dataid="{$slider.id}" id="layuiadmin-upload-slid-img">选图</button> 
-    </div>
-	
+      <div class="layui-form-item">
+          <label class="layui-form-label">结束</label>
+          <div class="layui-input-inline">
+              <input type="text" name="slid_over" id="over-time"  lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$slider.slid_over|date='Y-m-d'}" >
+          </div>
+      </div>
     <div class="layui-form-item layui-hide">
       <input type="button" lay-submit lay-filter="LAY-slider-submit" id="LAY-slider-submit" value="确认">
     </div>

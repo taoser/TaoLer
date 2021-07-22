@@ -85,13 +85,13 @@ class BaseController extends BaseCtrl
 		//头部链接
 		$head_links = Cache::get('headlinks');
 		if(!$head_links){
-			$head_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>8])->whereTime('slid_over','>=',time())->field('slid_name,slid_img,slid_href')->select();
+			$head_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>10])->whereTime('slid_over','>=',time())->field('slid_name,slid_img,slid_href')->select();
 			Cache::set('headlinks',$head_links,3600);
 		}
 		//页脚链接
 		$foot_links = Cache::get('footlinks');
 		if(!$foot_links){
-			$foot_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>9])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
+			$foot_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>11])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
 			Cache::set('footlinks',$foot_links,3600);
 		}
         View::assign(['sysInfo'=>$sysInfo,'headlinks'=>$head_links,'footlinks'=>$foot_links]);

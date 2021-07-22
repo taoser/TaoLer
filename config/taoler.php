@@ -7,7 +7,7 @@ return [
 	//应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     //版本配置
-    'version'   => '1.7.18',
+    'version'   => '1.7.19',
 	//加盐
 	'salt'		=> 'taoler',
 	//数据库备份目录

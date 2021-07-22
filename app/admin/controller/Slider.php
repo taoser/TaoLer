@@ -7,7 +7,7 @@ use think\facade\Db;
 use think\facade\Request;
 use think\facade\Config;
 use think\exception\ValidateException;
-use app\admin\model\Slider as SliderModel;
+use app\common\model\Slider as SliderModel;
 
 class Slider extends AdminController
 {

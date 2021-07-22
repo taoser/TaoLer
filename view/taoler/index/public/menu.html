@@ -1,6 +1,33 @@
 <div class="layui-hide-md">
   <div class="layui-panel site-menu" style="width: auto;">
+    
+
     <ul class="layui-menu layui-menu-lg">
+	
+	<li class="search" style="padding-left:5px;padding-top:2px;">
+	<input  type="search" value="" aria-label="Search text" placeholder="搜索" class="layui-input">
+    </li>
+	{if session('?user_id')}
+	<li class="layui-nav-item">
+	<a class="fly-nav-avatar" href="javascript:;">
+	<img src="{$user['user_img']}" >
+	</a>
+	</li>
+	{else /}
+	<li class="layui-nav-item">
+        <a class="iconfont icon-touxiang" href="{:url('login/index')}"></a>
+		<a href="{:url('login/index')}">{:lang('login')}</a>
+		<a href="{:url('login/reg')}">{:lang('register')}</a>
+      </li>
+	   <li class="layui-nav-item" >
+		<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
+		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >简体</option>
+		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >繁体</option>
+		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >English</option>
+		</select>
+	  </li>
+	{/if}
+	
       <li class="layui-menu-item-group" lay-options="{type: 'group', isAllowSpread: true}">
         <div class="layui-menu-body-title">
           社区分类

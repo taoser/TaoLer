@@ -23,18 +23,19 @@ class Slider extends Model
 	protected $defaultSoftDelete = 0;
 
     /**
-     * 首页幻灯
+     * 链接投放获取
+     * @param $type 链接类型
      * @return mixed|\think\Collection
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getSliderList()
+    public function getSliderList($type)
     {
-        $sliders = Cache::get('slider');
+        $sliders = Cache::get('slider'.$type);
         if(!$sliders){
-            $sliders = $this::where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>1])->whereTime('slid_over','>=',time())->select();
-            Cache::set('slider',$sliders,3600);
+            $sliders = $this::where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>$type])->whereTime('slid_over','>=',time())->select();
+            Cache::set('slider'.$type,$sliders,3600);
         }
         return $sliders;
     }
@@ -62,6 +63,13 @@ class Slider extends Model
 			return 'edit_error';
 		}
 	}
+
+	//获取器
+    public function getSlidTypeAttr($value)
+    {
+        $slid_type = [1=>'首页幻灯',2=>'首页图片',3=>'分类图片',4=>'详情图片',5=>'首页赞助',6=>'分类赞助',7=>'详情赞助',8=>'温馨通道',9=>'友情链接',10=>'头部菜单',11=>'页脚链接'];
+        return $slid_type[$value];
+    }
 	
 
 

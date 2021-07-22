@@ -53,11 +53,6 @@
     </div>
 	
     <div class="layui-col-md4">
-	<!--温馨通道-->
-		<div class="fly-panel">
-		<h3 class="fly-panel-title">{:lang('links list')}</h3>
-		{include file="public/index-static" /}
-		</div>
 		<dl class="fly-panel fly-list-one">
 			<dt class="fly-panel-title">本周热议</dt>
 			{volist name="artHot" id="vo"  empty="还没有帖子"}
@@ -68,7 +63,7 @@
 			{/volist}
 		</dl>
 		<!--自定义-->
-		<div class="fly-panel" style="padding: 20px 0; text-align: center;">
+		<div class="fly-panel" style="padding: 5px 0; text-align: center;">
 		{volist name="ad_comm" id="vo"}		
 		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}

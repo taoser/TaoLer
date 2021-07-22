@@ -62,7 +62,14 @@
 	  
     </div>
     <div class="layui-col-md4">
-      <dl class="fly-panel fly-list-one">
+        <div class="fly-panel">
+            <div class="fly-panel" style="padding: 5px 0; text-align: center;">
+                {volist name="ad_cateImg" id="vo"}
+                <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+                {/volist}
+            </div>
+        </div>
+        <dl class="fly-panel fly-list-one layui-hide-xs">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
 		<dd>
@@ -77,22 +84,13 @@
 		<a href="" class="fly-link fly-joinad    ">{:lang('i want to join')}</a>
 		</div>  
 		<div class="fly-panel-main">
-		{volist name="ad_cate" id="vo"}
+		{volist name="ad_comm" id="vo"}
 			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
 		{/volist}
 		</div>
 		</div>
 
-      <div class="fly-panel">
-        <div class="fly-panel-title">
-          {:lang('ads area')}
-        </div>
-        <div class="fly-panel" style="padding: 20px 0; text-align: center;">
-		{volist name="ad_comm" id="vo"}		
-		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
-		{/volist}
-        </div>
-      </div>      
+
     </div>
   </div>
 </div>

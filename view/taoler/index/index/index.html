@@ -45,14 +45,14 @@
 		  </div>
     </div>
     <div class="layui-col-md4">
+		<!--签到-->
+		<a name="signin"> </a>
+		{include file="public/sign" /}
 		<!--温馨通道-->
 		<div class="fly-panel layui-hide-xs">
 		<h3 class="fly-panel-title">{:lang('links list')}</h3>
 		{include file="public/index-static" /}
 		</div>
-		
-		<!--签到-->
-		{include file="public/sign" /}
 		
 		<!--广告赞助-->
 		<div class="fly-panel"> 
@@ -73,7 +73,7 @@
 			</dl>
 		</div>
 		<!--热帖榜-->
-		<dl class="fly-panel fly-list-one">
+		<dl class="fly-panel fly-list-one layui-hide-xs">
 			<dt class="fly-panel-title">{:lang('hot post list')}</dt>
 			{volist name="artHot" id="vo"}
 			<dd>
@@ -82,8 +82,8 @@
 			</dd>
 			{/volist}
 		</dl>
-		<!--自定义-->
-		<div class="fly-panel" style="padding: 20px 0; text-align: center;">
+		<!--首页图片广告-->
+		<div class="fly-panel" style="padding: 5px 0; text-align: center;">
 		{volist name="ad_comm" id="vo"}		
 		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}

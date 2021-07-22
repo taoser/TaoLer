@@ -6,8 +6,8 @@ use think\App;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use think\facade\Cache;
 use app\facade\Article;
+use app\common\model\Slider;
 use app\common\lib\Msgres;
 
 class Index extends BaseController
@@ -24,44 +24,23 @@ class Index extends BaseController
 		$types = input('type');
 
 		//幻灯
-        $slider = new \app\common\model\Slider();
-        $sliders = $slider->getSliderList();
-
+        $slider = new Slider();
+        $sliders = $slider->getSliderList(1);
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示20个
         $artList = Article::getArtList(20);
         //热议文章
         $artHot = Article::getArtHot(10);
-
+        //温馨通道
+        $fast_links = $slider->getSliderList(8);
 		//首页赞助
-		$ad_index = Cache::get('adindex');
-		if(!$ad_index){
-			$ad_index = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>3])->whereTime('slid_over','>=',time())->select();
-			Cache::set('adindex',$ad_index,3600);
-		}
-		
-		//首页右栏
-		$ad_comm = Cache::get('adcomm');
-		if(!$ad_comm){
-			$ad_comm = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>2])->whereTime('slid_over','>=',time())->select();
-			Cache::set('adcomm',$ad_comm,3600);
-		}
-		
+		$ad_index =  $slider->getSliderList(5);
+		//首页右栏图片
+		$ad_comm = $slider->getSliderList(2);
 		//友情链接
-		$friend_links = Cache::get('flinks');
-		if(!$friend_links){
-			$friend_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>6])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
-			Cache::set('flinks',$friend_links,3600);
-		}
-		
-		//温馨通道
-		$fast_links = Cache::get('fastlinks');
-		if(!$fast_links){
-			$fast_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>7])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
-			Cache::set('fastlinks',$fast_links,3600);
-		}
-		
+		$friend_links = $slider->getSliderList(9);
+
 		//友情链接申请
 		$adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
 		
@@ -98,31 +77,21 @@ class Index extends BaseController
 	    $search = new \app\index\controller\Search();
 	    $artList = $search->getSearch($ser['keywords']);
         $counts = $artList->count();
+        $slider = new Slider();
+        //首页右栏
+        $ad_comm = $slider->getSliderList(2);
+        //	查询热议
+        $artHot = Article::getArtHot(10);
+
         $searchs = [
             'artList' => $artList,
             'keywords' => $ser['keywords'],
-            'counts' => $counts
+            'counts' => $counts,
+            'ad_comm'=>$ad_comm,
+            'artHot'=>$artHot,
+            'jspage'=>''
         ];
-
-		//首页右栏
-		$ad_comm = Cache::get('adcomm');
-		if(!$ad_comm){
-			$ad_comm = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>2])->whereTime('slid_over','>=',time())->select();
-			Cache::set('adcomm',$ad_comm,3600);
-		}
-		
-		//温馨通道
-		$fast_links = Cache::get('fastlinks');
-		if(!$fast_links){
-			$fast_links = Db::name('slider')->where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>7])->whereTime('slid_over','>=',time())->field('slid_name,slid_href')->select();
-			Cache::set('fastlinks',$fast_links,3600);
-		}
-        //	查询热议
-		//$article = new Article()1;
-		$artHot = Article::getArtHot(10);
-
         View::assign($searchs);
-		View::assign(['fastlinks'=>$fast_links,'ad_comm'=>$ad_comm,'artHot'=>$artHot,'jspage'=>'']);
 		return View::fetch('search');
 	}
 

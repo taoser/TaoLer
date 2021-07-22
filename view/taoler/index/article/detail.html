@@ -171,45 +171,30 @@
       </div>
     </div>
     <div class="layui-col-md4">
-      <dl class="fly-panel fly-list-one">
+        <div class="fly-panel">
+            <div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
+                <a href="" class="fly-link fly-joinad">{:lang('i want to join')}</a>
+            </div>
+            <div class="fly-panel-main">
+                {volist name="ad_comm" id="vo"}
+                <a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+                {/volist}
+            </div>
+        </div>
+        <dl class="fly-panel fly-list-one">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
-		<dd>
+        <dd>
           <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
           <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
         </dd>
-		{/volist}
-
-        <!-- 无数据时 -->
-        <!--
-        <div class="fly-none">没有相关数据</div>
-        -->
-      </dl>
-
-		<div class="fly-panel">
-		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
-		<a href="" class="fly-link fly-joinad    ">{:lang('i want to join')}</a>
-		</div>  
-		<div class="fly-panel-main">
-		{volist name="ad_art" id="vo"}
-			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a> 
-		{/volist}
-		</div>
-		</div>
-
-      <div class="fly-panel">
-        <div class="fly-panel-title">{:lang('ads area')}</div>
-				
-        <div class="fly-panel-main">
-          <a href="" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">TaoLer 社区快速轻论坛</a>
+        {/volist}
+        </dl>
+        <div class="fly-panel" style="padding: 5px 0; text-align: center;">
+        {volist name="ad_art" id="vo"}
+          <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+        {/volist}
         </div>
-      </div>
-
-      <div class="fly-panel" style="padding: 20px 0; text-align: center;">
-        {volist name="ad_comm" id="vo"}		
-		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
-		{/volist}
-      </div>
 
     </div>
   </div>

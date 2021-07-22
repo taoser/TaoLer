@@ -5,7 +5,6 @@
     <div class="layui-row layui-col-space15">
       <div class="layui-col-md12">
         <div class="layui-card">
-          <div class="layui-card-header">首页幻灯</div>
           <div class="layui-card-body">
             
             <div class="layui-form" wid100 lay-filter="">
@@ -18,7 +17,7 @@
 						<tr>
 						<th>ID</th>
 						<th>名称</th>
-						<th>图片</th>
+						<th>图片/icon</th>
 						<th>位置</th>
 						<th>路径</th>
 						<th>颜色</th>
@@ -79,7 +78,7 @@
   $('#slid-add').on('click', function(){
       layer.open({
 		  type: 2,
-		  title: '添加广告',
+		  title: '添加链接',
 		  content: 'add.html',
 		  maxmin: true,
 		  area : ['460px' , '530px'],
@@ -92,7 +91,6 @@
             //监听提交
             iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
               var field = data.field; //获取提交的字段
-			  //console.log(field);
               
               //提交 Ajax 成功后，静态更新表格中的数据
               $.ajax({
@@ -129,10 +127,10 @@
   var id = $(this).attr('id-data');
       layer.open({
 		  type: 2,
-		  title: '编辑幻灯',
+		  title: '编辑链接',
 		  content: 'edit.html?id='+ id,
 		  maxmin: true,
-		  area : ['460px' , '490px'],
+		  area : ['460px' , '530px'],
 		  btn: ['确定', '取消'],
           yes: function(index, layero){
 		  var iframeWindow = window['layui-layer-iframe'+ index]

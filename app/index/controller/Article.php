@@ -9,6 +9,7 @@ use think\facade\Cache;
 use think\facade\Config;
 use app\common\model\Comment;
 use app\common\model\Article as ArticleModel;
+use app\common\model\Slider;
 use think\exception\ValidateException;
 use taoler\com\Message;
 use app\common\lib\Msgres;
@@ -61,16 +62,18 @@ class Article extends BaseController
         //分类列表
         $article = new ArticleModel();
 		$artList = $article->getCateList($ename,$type,$page,$url,$suffix);
-		
-		
+
 		//	热议文章
 		$artHot = $article->getArtHot(10);
-		//分类右栏广告
-		$ad_cate = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',5)->whereTime('slid_over','>=',time())->select();
-		//通用右栏
-		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
+
+		//广告
+        $ad = new Slider();
+        //分类图片
+        $ad_cateImg = $ad->getSliderList(3);
+        //分类钻展赞助
+        $ad_comm = $ad->getSliderList(6);
 		
-		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cate'=>$ad_cate,'ad_comm'=>$ad_comm,'jspage'=>'jie']);
+		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie']);
 		return View::fetch();
     }
 
@@ -108,12 +111,14 @@ class Article extends BaseController
 		
 		//	热议文章
 		$artHot = $article->getArtHot(10);
-		//文章广告
-		$ad_article = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',4)->whereTime('slid_over','>=',time())->select();
-		//通用右栏
-		$ad_comm = Db::name('slider')->where('slid_status',1)->where('delete_time',0)->where('slid_type',2)->whereTime('slid_over','>=',time())->select();
+        //广告
+        $ad = new Slider();
+        //分类图片
+        $ad_artImg = $ad->getSliderList(4);
+        //分类钻展赞助
+        $ad_comm = $ad->getSliderList(7);
 
-		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_article,'ad_comm'=>$ad_comm,$download,'jspage'=>'jie']);
+		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'jspage'=>'jie']);
 		return View::fetch();
     }
 	
