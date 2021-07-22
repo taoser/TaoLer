@@ -1,11 +1,11 @@
 <div class="layui-hide-md">
-  <div class="layui-panel site-menu" style="width: auto;">
-    
+  <div class="layui-panel site-menu" style="width: auto;"> 
 
     <ul class="layui-menu layui-menu-lg">
-	
 	<li class="search" style="padding-left:5px;padding-top:2px;">
-	<input  type="search" value="" aria-label="Search text" placeholder="搜索" class="layui-input">
+	<form action="{:url('index/search',['keywords'=>$Request.param.keywords])}">
+	<input  type="search" name="keywords" value="" aria-label="Search text" placeholder="搜索" class="layui-input">
+	</form>
     </li>
 	{if session('?user_id')}
 	<li class="layui-nav-item">
@@ -20,7 +20,7 @@
 		<a href="{:url('login/reg')}">{:lang('register')}</a>
       </li>
 	   <li class="layui-nav-item" >
-		<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
+		<select name="language" style="width:50px;" lay-filter="language1" lay-verify="" id="language1">
 		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >简体</option>
 		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >繁体</option>
 		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >English</option>
@@ -82,12 +82,12 @@
     </ul>
   </div>
 </div>
-
+<!--
 <div class="site-tree-mobile layui-hide">
   <i class="layui-icon layui-icon-spread-left"></i>
 </div>
 <div class="site-mobile-shade"></div>
-
+-->
 
 
 

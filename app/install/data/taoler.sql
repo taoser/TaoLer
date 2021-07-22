@@ -193,7 +193,7 @@ INSERT INTO `tao_auth_rule` VALUES ('13', 'admin/Admin/repass', '修改密码', 
 INSERT INTO `tao_auth_rule` VALUES ('15', 'admin/Forum/list', '帖子管理', '', '1', '1', '5', '1', '', '1', '1', '', '0', '1578902605', '0');
 INSERT INTO `tao_auth_rule` VALUES ('16', 'admin/Forum/tags', '分类管理', '', '1', '1', '5', '1', '', '1', '11', '', '0', '1578904950', '0');
 INSERT INTO `tao_auth_rule` VALUES ('17', 'admin/Forum/replys', '评论管理', '', '1', '1', '5', '1', '', '1', '7', '', '0', '1578904590', '0');
-INSERT INTO `tao_auth_rule` VALUES ('18', 'admin/Slider/index', '广告投放', '', '1', '1', '93', '1', '', '1', '4', '', '0', '1611999603', '0');
+INSERT INTO `tao_auth_rule` VALUES ('18', 'admin/Slider/index', '链接投放', '', '1', '1', '93', '1', '', '1', '4', '', '0', '1611999603', '0');
 INSERT INTO `tao_auth_rule` VALUES ('19', 'admin/Upgrade/index', '系统升级', '', '1', '1', '2', '1', '', '1', '8', '', '0', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('21', 'admin/Forum/listform', '编辑帖子', '', '1', '1', '15', '2', '', '0', '2', '', '0', '1611997428', '0');
 INSERT INTO `tao_auth_rule` VALUES ('22', 'admin/Forum/listdel', '删除帖子', '', '1', '1', '15', '2', '', '0', '3', '', '0', '1611997448', '0');
@@ -220,10 +220,10 @@ INSERT INTO `tao_auth_rule` VALUES ('48', 'admin/AuthRule/delete', '删除权限
 INSERT INTO `tao_auth_rule` VALUES ('49', 'admin/AuthRule/check', '审核权限', '', '1', '1', '9', '2', '', '0', '19', '', '0', '1611997884', '0');
 INSERT INTO `tao_auth_rule` VALUES ('50', 'admin/AuthRule/menushow', '菜单权限', '', '1', '1', '9', '2', '', '0', '20', '', '0', '1611997929', '0');
 INSERT INTO `tao_auth_rule` VALUES ('51', 'admin/Set/upload', '上传logo', '', '1', '1', '10', '2', '', '0', '2', '', '0', '1611998097', '0');
-INSERT INTO `tao_auth_rule` VALUES ('52', 'admin/Slider/add', '添加广告', '', '1', '1', '18', '2', '', '0', '5', '', '0', '1611998128', '0');
-INSERT INTO `tao_auth_rule` VALUES ('53', 'admin/Slider/edit', '编辑广告', '', '1', '1', '18', '2', '', '0', '14', '', '0', '1611998263', '0');
-INSERT INTO `tao_auth_rule` VALUES ('54', 'admin/Slider/delete', '删除广告', '', '1', '1', '18', '2', '', '0', '6', '', '0', '1611998141', '0');
-INSERT INTO `tao_auth_rule` VALUES ('55', 'admin/Slider/uploadimg', '上传广告图片', '', '1', '1', '18', '2', '', '0', '7', '', '0', '1611998156', '0');
+INSERT INTO `tao_auth_rule` VALUES ('52', 'admin/Slider/add', '添加链接', '', '1', '1', '18', '2', '', '0', '5', '', '0', '1611998128', '0');
+INSERT INTO `tao_auth_rule` VALUES ('53', 'admin/Slider/edit', '编辑链接', '', '1', '1', '18', '2', '', '0', '14', '', '0', '1611998263', '0');
+INSERT INTO `tao_auth_rule` VALUES ('54', 'admin/Slider/delete', '删除链接', '', '1', '1', '18', '2', '', '0', '6', '', '0', '1611998141', '0');
+INSERT INTO `tao_auth_rule` VALUES ('55', 'admin/Slider/uploadimg', '上传链接图片', '', '1', '1', '18', '2', '', '0', '7', '', '0', '1611998156', '0');
 INSERT INTO `tao_auth_rule` VALUES ('56', 'admin/Upgrade/key', '设置key', '', '1', '1', '19', '2', '', '0', '9', '', '0', '1611998178', '0');
 INSERT INTO `tao_auth_rule` VALUES ('57', 'admin/Upgrade/keyedit', '修改key', '', '1', '1', '19', '2', '', '0', '10', '', '0', '1611998192', '0');
 INSERT INTO `tao_auth_rule` VALUES ('58', 'admin/Upgrade/check', '升级检测', '', '1', '1', '19', '2', '', '0', '11', '', '0', '1611998214', '0');

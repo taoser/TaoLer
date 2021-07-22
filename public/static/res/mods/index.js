@@ -940,6 +940,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
       }
     })
   });
+  
+  //移动端搜索
+  
 
   //新消息通知
   fly.newmsg();
@@ -1011,7 +1014,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
     elem: '.fly-editor'
   });
   
-  //手机设备的简单适配
+  //手机设备的简单适配 底部左侧栏导航
   var treeMobile = $('.site-tree-mobile')
   ,shadeMobile = $('.site-mobile-shade')
 
@@ -1020,6 +1023,18 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   });
 
   shadeMobile.on('click', function(){
+    $('body').removeClass('site-mobile');
+  });
+  
+  //手机设备的简单适配 头部左侧栏导航
+  var treeMobileTop = $('.site-tree-mobile-top')
+  ,shadeMobileTop = $('.site-mobile-shade-top')
+
+  treeMobileTop.on('click', function(){
+    $('body').addClass('site-mobile');
+  });
+
+  shadeMobileTop.on('click', function(){
     $('body').removeClass('site-mobile');
   });
   
@@ -1096,8 +1111,18 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
         });
     });
 	
-  //监听多语言切换
+  //pc端监听多语言切换
 	$('#language').on('change',function(){
+	  var data = $(this).val();
+		$.post(langUrl,{language:data},function(res){
+			if(res.code == 0){
+				location.reload();
+			}
+		});
+		return false;
+	});
+	//移动端左侧栏监听多语言切换
+	$('#language1').on('change',function(){
 	  var data = $(this).val();
 		$.post(langUrl,{language:data},function(res){
 			if(res.code == 0){

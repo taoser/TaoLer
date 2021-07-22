@@ -72,6 +72,8 @@ class Index extends BaseController
 	//搜索功能
 	public function search()
 	{
+		//$t = input('keywords');
+		//halt($t);
         $ser = Request::only(['keywords']);
 
 	    $search = new \app\index\controller\Search();

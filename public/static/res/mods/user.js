@@ -291,14 +291,14 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
 
 
 //手机设备的简单适配
-  var treeMobile = $('.site-tree-mobile-user')
-  ,shadeMobile = $('.site-mobile-shade-user')
+  var treeMobileUser = $('.site-tree-mobile-user')
+  ,shadeMobileUser = $('.site-mobile-shade-user')
 
-  treeMobile.on('click', function(){
+  treeMobileUser.on('click', function(){
     $('body').addClass('site-mobile');
   });
 
-  shadeMobile.on('click', function(){
+  shadeMobileUser.on('click', function(){
     $('body').removeClass('site-mobile');
   });
 

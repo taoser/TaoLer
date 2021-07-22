@@ -27,14 +27,21 @@ i{font-style: normal;}
 @media screen and (max-width: 992px) {
 
   .site-menu{position: fixed; top: 0px; bottom: 0; min-height: 0; overflow-y: auto; overflow-x: hidden; z-index: 10001; left: -300px; background-color: #fff;  transition: all .3s;}
-
+  /* 头部伸缩菜单栏 */
+  .site-tree-mobile-top{display: block!important; position: fixed; z-index: 16666668; top: 2px; left: 20px; width: 57px; height: 57px; line-height: 57px; border-radius: 2px; text-align: center;  color: #fff;}
+  .site-home .site-tree-mobile-top{display: none!important;}
+  .site-mobile .site-tree-mobile-top{display: none !important;}
+  .site-mobile .site-menu{left: 0;}
+  .site-mobile .site-mobile-shade-top{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 999;}
+  .site-tree-mobile-top i{font-size: 30px;}
+  
+  /* 底部伸缩菜单栏 */
   .site-tree-mobile{display: block!important; position: fixed; z-index: 16666669; bottom: 15px; left: 15px; width: 30px; height: 30px; line-height: 30px; border-radius: 2px; text-align: center; background-color: #009688; color: #fff;}
   .site-home .site-tree-mobile{display: none!important;}
   .site-mobile .site-tree-mobile{display: none !important;}
-  .site-mobile .site-menu{left: 0;}
   .site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.8); z-index: 999;}
   .site-tree-mobile i{font-size: 20px;}
-  
+
   .site-mobile .layui-side{left: 0;}
   .site-mobile .layui-side-child{top: 50%; left: 200px; height: 300px; margin-top: -100px;}
   
@@ -550,7 +557,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 /* 用户中心 */
 body .fly-user-main{position: relative; min-height: 600px;}
-.fly-user-main>.layui-nav{position: absolute; left: 0; top: 0; z-index: 1000; height: 100%; padding: 10px 0;}
+.fly-user-main>.layui-nav{position: absolute; left: 0; top: 0; z-index: 10000; height: 100%; padding: 2px 0;}
 .fly-user-main>.layui-nav .layui-icon{position: relative; top: 2px; font-size: 20px; margin-right: 10px;}
 .fly-user-main>.fly-panel{min-height: 575px; margin: 0 0 10px 215px;}
 .fly-user-main .fly-none{min-height: 0;}
