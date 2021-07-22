@@ -14,7 +14,7 @@ layui.define(['table', 'form'], function(exports){
 				{field: 'days',title: '天数'},
 				{field: 'score',title: '积分'},
 				{field: 'ctime',title: '时间'},
-				{title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#sign-rule-button'}
+				{title: '操作', width: 150, align:'center', toolbar: '#sign-rule-button'}
 				
 			]]
 			,page: true
@@ -128,7 +128,7 @@ layui.define(['table', 'form'], function(exports){
 				{field: 'nick',title: '认证'},
 				{field: 'rules',title: '权限'},
 				{field: 'ctime',title: '时间'},
-				{title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#vip-rule-button'}
+				{title: '操作', width: 150, align:'center', toolbar: '#vip-rule-button'}
 				
 			]]
 			,page: true

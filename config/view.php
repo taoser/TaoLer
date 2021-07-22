@@ -4,7 +4,7 @@
 // +----------------------------------------------------------------------
 use think\facade\Db;
 	//如果网站安装从数据库查询选择的模板
-	if(file_exists('../install.lock')){
+	if(file_exists('./install.lock')){
 			$template = Db::name('system')->where('id',1)->value('template');
 	} else {
 		$template = '';
@@ -29,4 +29,9 @@ return [
     'taglib_begin'  => '{',
     // 标签库标签结束标记
     'taglib_end'    => '}',
+	//模板输出替换
+	'tpl_replace_string'  =>  [
+    '__STATIC__'=>'/static/layui',
+	'__JS__' => '/static/res/',
+	]
 ];

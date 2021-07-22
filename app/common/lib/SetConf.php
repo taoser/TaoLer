@@ -54,7 +54,7 @@ class SetConf
 			catch (\Exception $e) {
 				// 这是进行异常捕获
 				//$e->getMessage();
-				return json(['code'=>-1,'msg'=>$fileurl . '无写入权限']);
+				return json(['code'=>-1,'msg'=> $file . '无写入权限']);
 			}
 
             return json(['code'=>0,'msg'=>'配置修改成功']);

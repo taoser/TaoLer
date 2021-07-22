@@ -21,8 +21,8 @@
 		  </div>
 		</script>
         <script type="text/html" id="tao-database">
-		  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="down"><i class="layui-icon layui-icon-edit"></i>下载</a>
-		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-edit"></i>删除</a>
+		  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="down"><i class="layui-icon layui-icon-download-circle"></i></a>
+		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
         </script>
       </div>
     </div>
@@ -82,7 +82,7 @@
 	
 	
 	
-	//总帐信息
+	//信息
     table.render({
         elem: '#LAY-app-content-database'
         ,url: "{:url('admin/Database/index')}"	//进列表接口
@@ -92,7 +92,7 @@
 			,{field:'id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true}
             ,{field: 'time', title: '备份时间',width: 180}
 			,{field: 'name', title: '备份名', minWidth: 200}
-            ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#tao-database'}
+            ,{title: '操作', width: 100, align: 'center', toolbar: '#tao-database'}
         ]]
 		,page: true
 		,limit: 15
@@ -135,7 +135,7 @@
             var tr = $(obj.tr);
             layer.open({
                 type: 2
-                ,title: '编辑支出'
+                ,title: '下载'
                 ,content: "{:url('Database/down')}" + '?id='+ data.id
                 ,area: ['420px', '460px']
                 ,btn: ['确定', '取消']

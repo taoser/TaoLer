@@ -199,7 +199,7 @@ class Upgrade extends AdminController
 		$upRes = $setConf->setConfig('taoler',$value);
 		$result = $upRes->getData();
 		if($result['code'] == -1){
-			return json(['code'=>-1,'msg'=>$result['msg']]);
+			return json(['code'=>-1,'msg'=>'代码写入成功,但'.$result['msg']]);
 		}
 		return json(['code'=>0,'msg'=>'升级成功']);
 		

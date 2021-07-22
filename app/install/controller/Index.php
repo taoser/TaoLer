@@ -11,7 +11,7 @@ class Index extends BaseController
 {
 	// 检测是否安装过
 	protected function initialize(){
-        if(file_exists('../install.lock')){
+        if(file_exists('./install.lock')){
            echo "<script>alert('已经成功安装了TaoLer社区系统，安装系统已锁定。如需重新安装，请删除根目录下的install.lock文件')</script>";
 		   die();
         }
@@ -197,23 +197,30 @@ return [
 ];
 php;
         // 创建数据库链接配置文件
-        $fp = fopen("../config/database.php","w");
-        $res = fwrite($fp, $db_str);
-        fclose($fp);
-		if(!$res){
-			echo '数据库配置文件创建失败！';
-		}
+			$database = '../config/database.php';
+			if (file_exists($database)) {
+				if(is_writable($database)){
+					$fp = fopen($database,"w");
+					$resf = fwrite($fp, $db_str);
+					fclose($fp);
+					if(!$resf){
+						$res = json(['code' => -1,'msg'=>'数据库配置文件创建失败！']);
+					}
+				} else {
+					$res = json(['code' => -1,'msg'=>'config/database.php 无写入权限']);
+				}
+			}
 
         }
 
 		//安装上锁
-		file_put_contents('../install.lock', 'lock');
+		file_put_contents('./install.lock', 'lock');
 		Session::clear();
 
-		return json(['code' => 0,'msg'=>'安装成功','url'=>(string) url('success/complete')]);
-    } else {
-		return '请求失败！';
+		$res = json(['code' => 0,'msg'=>'安装成功','url'=>(string) url('success/complete')]);
+		} else {
+			$res = json(['code' => -1,'msg'=>'请求失败']);
 		} 
-
+	return $res;
 	} 
 }

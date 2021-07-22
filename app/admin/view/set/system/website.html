@@ -246,11 +246,24 @@
 	  });
 	  
 	form.on('submit(set_system_config)', function(data){
-    console.log(data);
 	var field = data.field;
-	$.post("{:url('admin/set/config')}",field);
-	
-	layer.msg(JSON.stringify(data.field));
+	$.post("{:url('admin/set/config')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{
+					icon:6,
+					tiye:2000
+				},function(){
+					location.reload();
+				});
+			} else {
+				layer.open({
+					title:"设置失败",
+					content:res.msg,
+					icon:5,
+					anim:6
+				});
+			}
+    });
     return false;
   });
 	

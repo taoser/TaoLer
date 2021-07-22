@@ -7,7 +7,7 @@ class Install
 {
     public function handle($request, \Closure $next)
     {
-		if(!file_exists('../install.lock')){
+		if(!file_exists('./install.lock')){
 			return redirect('/install/index');
 			//header('Location:'.Request::domain().'/install.php');
 		}
