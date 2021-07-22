@@ -4,6 +4,7 @@ return [
 	//語言
 	'language'			=> 'language',
 	'chinese'			=> '中文簡體',
+	'tChinese'			=> '中文繁體',
 	'english'			=> 'english',
 
 	//彈窗提示消息

@@ -220,9 +220,13 @@ layui.define(['table', 'form'], function(exports){
             ,{field: 'id', title: 'ID',width: 60}
             ,{field: 'tags', title: '分类名', minWidth: 100}
             ,{field: 'ename', title: 'EN别名', minWidth: 100}
+			,{
+				title: '图标', align: 'center', 
+				templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'
+            }
             ,{field: 'is_hot', title: '热门', templet: '#buttonHot'}
             ,{field: 'desc', title: '描述', minWidth: 100}
-            ,{title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#layuiadmin-app-cont-tagsbar'}
+            ,{title: '操作', width: 100, align: 'center', toolbar: '#layuiadmin-app-cont-tagsbar'}
         ]]
         ,text: '对不起，加载出现异常！'
     });
@@ -264,7 +268,7 @@ layui.define(['table', 'form'], function(exports){
                 type: 2
                 ,title: '编辑分类'
                 ,content: forumTagsForm + '?id='+ data.id
-                ,area: ['450px', '300px']
+                ,area: ['400px', '450px']
                 ,btn: ['确定', '取消']
                 ,yes: function(index, layero){
                     //获取iframe元素的值
@@ -272,6 +276,7 @@ layui.define(['table', 'form'], function(exports){
                         ,sort = othis.find('input[name="sort"]').val()
                         ,tags = othis.find('input[name="tags"]').val()
                         ,ename = othis.find('input[name="ename"]').val()
+						,icon = othis.find('input[name="icon"]').val()
                         ,desc = othis.find('input[name="desc"]').val();
 
                     if(!tags.replace(/\s/g, '')) return;
@@ -279,7 +284,7 @@ layui.define(['table', 'form'], function(exports){
                     $.ajax({
                         type:"post",
                         url:forumTagsForm,
-                        data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"desc":desc},
+                        data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"icon":icon,"desc":desc},
                         daType:"json",
                         success:function (data){
                             if (data.code == 0) {
@@ -314,6 +319,7 @@ layui.define(['table', 'form'], function(exports){
                     othis.find('input[name="sort"]').val(data.sort)
                         ,othis.find('input[name="tags"]').val(data.tags)
                         ,othis.find('input[name="ename"]').val(data.ename)
+						,othis.find('input[name="icon"]').val(data.icon)
                         ,othis.find('input[name="desc"]').val(data.desc);
                 }
             });

@@ -20,10 +20,10 @@
 		<a href="{:url('login/reg')}">{:lang('register')}</a>
       </li>
 	   <li class="layui-nav-item" >
-		<select name="language" style="width:50px;" lay-filter="language1" lay-verify="" id="language1">
-		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >简体</option>
-		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >繁体</option>
-		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >English</option>
+		<select name="language" style="width:100px;" lay-filter="language1" lay-verify="" id="language1">
+		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >{:lang('chinese')}</option>
+		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >{:lang('tChinese')}</option>
+		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >{:lang('english')}</option>
 		</select>
 	  </li>
 	{/if}
@@ -34,11 +34,11 @@
         </div>
         <hr>
         <ul>
-		{volist name="cateList" id="cate"}
-		<li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if}>
+		{volist name="cateList" id="cate"} 
+		<li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if}> 
 		<div class="layui-menu-body-title">
-		<a href="{:url('article/cate',['ename' => $cate.ename])}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}
-		<span class="layui-font-12 layui-font-gray"> >> {$cate.ename}</span>
+		<a href="{:url('article/cate',['ename' => $cate.ename])}"><i class="layui-icon {$cate.icon}"></i>  {:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}
+		<span class="layui-font-12 layui-font-gray">>> {$cate.ename}</span>
 		{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}
 		</a>
 		</div>

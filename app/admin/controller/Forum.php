@@ -150,7 +150,7 @@ class Forum extends AdminController
 				$res['count']= count($list);
 				$res['data'] = [];
 				foreach($list as $k=>$v){
-				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'tags'=>$v['catename'],'ename'=>$v['ename'],'is_hot'=>$v['is_hot'],'desc'=>$v['desc']];
+				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'tags'=>$v['catename'],'ename'=>$v['ename'],'icon'=>$v['icon'],'is_hot'=>$v['is_hot'],'desc'=>$v['desc']];
 				}
 			}
 			return json($res);

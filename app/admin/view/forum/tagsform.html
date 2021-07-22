@@ -12,6 +12,10 @@
       <div class="layui-input-inline">
         <input type="text" name="ename" lay-verify="required" placeholder="英文名*" autocomplete="off" class="layui-input">
       </div>
+	  <label class="layui-form-label">图标</label>
+      <div class="layui-input-inline">
+        <input type="text" name="icon" placeholder="图标*" id="iconPicker" lay-filter="iconPicker" style="display:none;" class="layui-input">
+      </div>
 	  <label class="layui-form-label">描述</label>
       <div class="layui-input-inline">
         <input type="text" name="desc" lay-verify="required" placeholder="描述*" autocomplete="off" class="layui-input">
@@ -31,9 +35,22 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form'], function(){
+  }).use(['index', 'form', 'iconPicker'], function(){
     var $ = layui.$ 
     ,form = layui.form ;
+	var iconPicker = layui.iconPicker;
+	
+	//初始化图标选择
+	iconPicker.render({
+		elem: '#iconPicker',
+		type: 'fontClass',
+		search: false,
+		page: true,
+		limit: 12,
+		click: function (data) {
+			//console.log(data);
+		}
+	});
   })
   </script>
 {/block}
