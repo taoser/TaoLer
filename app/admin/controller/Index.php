@@ -60,7 +60,12 @@ class Index extends AdminController
 	{
 		//版本检测
 		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
-        $versions = $verCheck->code ? "有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}" : $verCheck->msg;
+		if($verCheck->code !== -1){
+			$versions = $verCheck->code ? "有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}" : $verCheck->msg;
+			View::assign('versions',$versions);
+		}else{
+			View::assign('versions','版本检测暂时不可服务');
+		}
 
 		//评论、帖子状态
 		$comm = Db::name('comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
@@ -92,7 +97,7 @@ class Index extends AdminController
 		}
 		
 
-		View::assign(['versions'=>$versions,'comms'=>$comms,'forums'=>$forums,'monthTime'=>$monthTime,'monthUserCount'=>Cache::get('monthUserCount')]);
+		View::assign(['comms'=>$comms,'forums'=>$forums,'monthTime'=>$monthTime,'monthUserCount'=>Cache::get('monthUserCount')]);
         return View::fetch();
     }
 	

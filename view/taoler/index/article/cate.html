@@ -24,7 +24,7 @@
             </h2>
             <div class="fly-list-info">
               <a href="{:url('user/home',['id'=>$art.user.id])}" link>
-			      <span class="layui-badge layui-bg-green " title="哪个小区">{:getAsing($art.user.area_id) ?: '无'}</span>
+			    {if config('taoler.config.area_show') == 1}<span class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</span>{/if}
                 <cite>{$art.user.nickname ?: $art.user.name}</cite>
 				<i>{$art.create_time|date='Y-m-d'}</i>
                 <!--

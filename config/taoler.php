@@ -7,9 +7,16 @@ return [
 	//应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     //版本配置
-    'version'   => '1.7.21',
+    'version'   => '1.7.22',
 	//加盐
 	'salt'		=> 'taoler',
 	//数据库备份目录
-	'databasebackdir' => app()->getRootPath() .'data/'
+	'databasebackdir' => app()->getRootPath() .'data/',
+	//配置
+	'config'	=>[
+		'area_show'	=> 1,
+		'email_notice'	=> 1,
+	]
+	
+	
 ];

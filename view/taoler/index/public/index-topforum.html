@@ -8,7 +8,7 @@
 	</h2>
 	<div class="fly-list-info">
 	  <a href="{:url('user/home',['id'=>$top.user_id])}" link>
-		<i class="layui-badge layui-bg-green" title="来自哪简称">{:getAsing($top.user.area_id) ?: '无'}</i>
+		{if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green" title="来自哪简称">{:getAsing($top.user.area_id) ?: '无'}</i>{/if}
 		<cite>{$top.user.nickname ?: $top.user.name}</cite>
 		<i>{$top.create_time|date='Y-m-d'}</i>
 		<!--

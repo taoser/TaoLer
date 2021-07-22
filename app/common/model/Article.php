@@ -96,7 +96,7 @@ class Article extends Model
     {
         $artTop = Cache::get('arttop');
         if (!$artTop) {
-            $artTop = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,jie,upzip,has_img,has_video,has_audio')->where(['is_top' => 1, 'status' => 1, 'delete_time' => 0])->with([
+            $artTop = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,jie,upzip,has_img,has_video,has_audio')->where(['is_top' => 1, 'status' => 1])->with([
                 'cate' => function ($query) {
                     $query->where('delete_time', 0)->field('id,catename,ename');
                 },

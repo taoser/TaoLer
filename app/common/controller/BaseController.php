@@ -23,7 +23,7 @@ class BaseController extends BaseCtrl
 		$this->showSystem();
         //显示分类导航
         $this->showNav();
-		$this->showUser();
+		$this->showUser($this->uid);
 
 	}
 
@@ -63,9 +63,8 @@ class BaseController extends BaseCtrl
     }
 	
 	//显示当前登录用户
-    protected function showUser()
+    protected function showUser($id)
     {
-		$id = $this->uid;
 		$user = Cache::get('user'.$id);
 		if(!$user){
 			//1.查询用户
@@ -75,6 +74,7 @@ class BaseController extends BaseCtrl
         
 		//2.将User变量赋给模板 公共模板nav.html
 		View::assign('user',$user);
+		return $user;
     }
 	
 	 //显示网站设置

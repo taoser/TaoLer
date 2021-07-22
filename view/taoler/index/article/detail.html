@@ -58,12 +58,10 @@
           </a>
           <div class="fly-detail-user">
             <a href="{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
-			<i class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($article.user.area_id) ?: '无'}</i>
-              <cite>{$article.user.nickname ?: $article.user.name}</cite>
-              <i class="iconfont icon-renzheng" title="认证信息：{{ rows.user.approve }}"></i>
-              {if($article.user.vip > 0)}
-                <i class="layui-badge fly-badge-vip">vip{$article.user.vip}</i>
-				{/if}
+			{if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($article.user.area_id) ?: '无'}</i>{/if}
+            <cite>{$article.user.nickname ?: $article.user.name}</cite>
+            <i class="iconfont icon-renzheng" title="认证信息：{{ rows.user.approve }}"></i>
+            {if($article.user.vip > 0)}<i class="layui-badge fly-badge-vip">vip{$article.user.vip}</i>{/if}
             </a>
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" data-id="{$article['id']}">

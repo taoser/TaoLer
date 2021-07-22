@@ -11,6 +11,7 @@
               <ul class="layui-tab-title">
                 <li class="layui-this" lay-id="website">网站设置</li>
                 <li lay-id="email">邮箱服务</li>
+				<li lay-id="email">服务配置</li>
               </ul>
               <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
@@ -169,6 +170,30 @@
 					  </div>
 					</div>
                 </div>
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="config">
+					  <div class="layui-form-item">
+						<label class="layui-form-label">区域简称：</label>
+						<div class="layui-input-inline" style="width: 30px;">
+						  <input type="checkbox" name="area_show" lay-skin="primary" value=1 {if config('taoler.config.area_show') == 1} checked {/if}>
+						</div>
+						<div class="layui-form-mid layui-word-aux">发件人所在地区简称</div>
+					  </div>
+					  <div class="layui-form-item">
+						<label class="layui-form-label">邮件通知：</label>
+						<div class="layui-input-inline" style="width: 30px;">
+						  <input type="checkbox" name="email_notice" lay-skin="primary" value=1 {if config('taoler.config.email_notice') == 1} checked {/if}>
+						</div>
+						<div class="layui-form-mid layui-word-aux">发帖，评论等邮件提醒</div>
+					  </div>
+					
+					  <div class="layui-form-item">
+						<div class="layui-input-block">
+						  <button class="layui-btn" lay-submit lay-filter="set_system_config">确认保存</button>
+						</div>
+					  </div>
+					</div>
+                </div>
 			  </div>
             </div>
 			
@@ -219,6 +244,15 @@
 			}
 		}
 	  });
+	  
+	form.on('submit(set_system_config)', function(data){
+    console.log(data);
+	var field = data.field;
+	$.post("{:url('admin/set/config')}",field);
+	
+	layer.msg(JSON.stringify(data.field));
+    return false;
+  });
 	
 	
   });

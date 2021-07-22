@@ -16,7 +16,7 @@ class Api
 		curl_setopt($ch,CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);           // 显示返回的Header区域内容
 		curl_setopt($ch, CURLOPT_POSTFIELDS,$data);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);         // 设置超时限制 防止死循环
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);         // 设置超时限制 防止死循环
         
         //curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);   // 获取的信息以文件流的形式返回
 		$res = curl_exec($ch);

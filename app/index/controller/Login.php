@@ -11,6 +11,7 @@ use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Cache;
 use think\facade\View;
+use think\facade\Config;
 use app\common\model\User;
 
 class Login extends BaseController
@@ -105,6 +106,7 @@ class Login extends BaseController
 		
            if ($result == 1) {
 			   $res = ['code'=>0,'msg'=>'注册成功','url'=>(string) url('login/index')];
+			   if(Config::get('taoler.config.email_notice')) mailto($this->showUser(1)['email'],'注册新用户通知','Hi亲爱的管理员:</br>新用户 <b>'.$data['name'].'</b> 刚刚注册了新的账号，请尽快处理。');
            }else {
 			   $res = ['code'=>-1,'msg'=>$result];
            }

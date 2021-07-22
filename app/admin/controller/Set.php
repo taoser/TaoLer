@@ -11,6 +11,7 @@ use think\facade\Config;
 use think\exception\ValidateException;
 use taoler\com\Files;
 use taoler\com\Api;
+use app\common\lib\SetConf;
 
 class Set extends AdminController
 {
@@ -64,6 +65,31 @@ class Set extends AdminController
 			} else {
 				return json(['code'=>-1,'msg'=>'更新失败']);
 			}
+		}
+    }
+	/**配置设置
+     * parem $id
+     */
+    public function config()
+    {
+		$conf = Config::get('taoler.config');
+		if(Request::isPost()){
+			$data = Request::param();
+			foreach($conf as $c=>$f){
+
+				if(array_key_exists($c,$data)){
+					$conf[$c] = (int) $data[$c];
+				}else{
+					$conf[$c] = 0;
+				}
+			}
+
+			$setConf = new SetConf;
+			$value = [
+				'config'=>$conf
+			];
+			$upRes = $setConf->setConfig('taoler',$value);
+			return $upRes;
 		}
     }
 
