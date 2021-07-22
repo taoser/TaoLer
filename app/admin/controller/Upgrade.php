@@ -186,6 +186,9 @@ class Upgrade extends AdminController
 			return json(['code'=>-1,'msg'=>$upDate['msg']]);
 		}
 		
+		//清理缓存
+		$this->clearSysCache();
+		
 		//更新版本
 		//Db::name('system')->update(['sys_version_num'=>$version_num,'id'=>1]);
         $setConf = new SetConf;

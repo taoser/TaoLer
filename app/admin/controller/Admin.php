@@ -207,16 +207,8 @@ class Admin extends AdminController
 	
 	//清除缓存Cache
 	public function clearCache(){
-        //$atemp = app()->getRootPath().'runtime/admin/temp/';
-		//$itemp = app()->getRootPath().'runtime/index/temp/';
-		//$cache = app()->getRootPath().'runtime/cache/';
-		
-		$atemp = str_replace('\\',"/",app()->getRootPath().'runtime/admin/temp/');
-		$itemp = str_replace('\\',"/",app()->getRootPath().'runtime/index/temp/');
-		$cache = str_replace('\\',"/",app()->getRootPath().'runtime/cache/');
-		Files::delDirAndFile($atemp);
-		Files::delDirAndFile($itemp);
-        if(is_dir($cache) && Files::delDirAndFile($cache)){
+        $res = $this->clearSysCache();
+        if($res){
            return json(['code'=>0,'msg'=>'清除缓存成功']);
         } else {
 			return json(['code'=>-1,'msg'=>'清除缓存失败']);

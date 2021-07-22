@@ -48,8 +48,38 @@ layui.define(function(exports){
     ,carousel = layui.carousel
     ,echarts = layui.echarts;
     
+	//字符串转化为数组
+    var monthTimes  = monthTime.split(',');
+	var monthUserCounts  = monthUserCount.split(',');
+	
     var echartsApp = [], options = [
-      //今日流量趋势
+      //新增的用户量
+      {
+        title: {
+          text: '最近一周新增的用户量',
+          x: 'center',
+          textStyle: {
+            fontSize: 14
+          }
+        },
+        tooltip : { //提示框
+          trigger: 'axis',
+          formatter: "{b}<br>新增用户：{c}"
+        },
+        xAxis : [{ //X轴
+          type : 'category',
+          data : monthTimes
+        }],
+        yAxis : [{  //Y轴
+          type : 'value'
+        }],
+        series : [{ //内容
+          type: 'line',
+          data: monthUserCounts
+        }]
+      },
+	  
+	  //今日流量趋势
       {
         title: {
           text: '今日流量趋势',
@@ -117,32 +147,6 @@ layui.define(function(exports){
             {value:535, name:'Safari'},
             {value:1700, name:'其它浏览器'}
           ]
-        }]
-      },
-      
-      //新增的用户量
-      {
-        title: {
-          text: '最近一周新增的用户量',
-          x: 'center',
-          textStyle: {
-            fontSize: 14
-          }
-        },
-        tooltip : { //提示框
-          trigger: 'axis',
-          formatter: "{b}<br>新增用户：{c}"
-        },
-        xAxis : [{ //X轴
-          type : 'category',
-          data : ['11-07', '11-08', '11-09', '11-10', '11-11', '11-12', '11-13']
-        }],
-        yAxis : [{  //Y轴
-          type : 'value'
-        }],
-        series : [{ //内容
-          type: 'line',
-          data:[200, 300, 400, 610, 150, 270, 380],
         }]
       }
     ]

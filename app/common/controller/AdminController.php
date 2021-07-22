@@ -69,16 +69,16 @@ class AdminController extends \app\BaseController
     }
 	
 	//清除缓存Cache
-	public function clearData()
+	public function clearSysCache()
     {
-        $dir = app()->getRootPath().'runtime/admin/temp';
-        $cache = app()->getRootPath().'runtime/cache';
-        if(is_dir($cache)){
-            Files::delDirs($cache);
-        }
-        if(Files::delDirs($dir) ){
-            return json(['code'=>0,'msg'=>'清除成功']);
-        }
+        //清理缓存
+		$atemp = str_replace('\\',"/",app()->getRootPath().'runtime/admin/temp/');
+		$itemp = str_replace('\\',"/",app()->getRootPath().'runtime/index/temp/');
+		$cache = str_replace('\\',"/",app()->getRootPath().'runtime/cache/');
+		Files::delDirAndFile($atemp);
+		Files::delDirAndFile($itemp);
+        Files::delDirAndFile($cache);
+		return true;
     }
 	
 	//显示网站设置
@@ -105,7 +105,7 @@ class AdminController extends \app\BaseController
 		$domain = $this->getHttpUrl($sys['domain']);
 		$syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
         $runTime = $this->getRunTime();
-		View::assign(['domain'=>$domain,'insurl'=>$sys['domain'],'syscy'=>$syscy,'runTime'=>$runTime]);
+		View::assign(['domain'=>$domain,'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime]);
 	}
 
 	protected function getRunTime()

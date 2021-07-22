@@ -67,8 +67,32 @@ class Index extends AdminController
 		$forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
 		$comms = count($comm);
 		$forums = count($forum);
+		
+		//用户注册数据
+		$monthTime = Cache::get('monthTime');
+		if(!$monthTime){
+			$time = Db::name('user')->where('delete_time',0)->whereMonth('create_time')->order('create_time','asc')->column('create_time');
+			$monthTime = [];//当月有注册的日期
+			foreach($time as $v){//
+				$data = date('m-d',$v);
+				if(!in_array($data,$monthTime)){
+					$monthTime[] = $data;
+				};
+			}
+			$userDayCount = [];//每天注册用户数
+			foreach($monthTime as $d){
+				$userArr = Db::name('user')->whereDay('create_time',date("Y").'-'.$d)->select();
+				$userDayCount[] = count($userArr);
+			}
+		
+			$monthTime = implode(',',$monthTime);	//数组转字符串
+			$monthUserCount = implode(',',$userDayCount);
+			Cache::set('monthTime',$monthTime,3600);
+			Cache::set('monthUserCount',$monthUserCount,3600);
+		}
+		
 
-		View::assign(['versions'=>$versions,'comms'=>$comms,'forums'=>$forums]);
+		View::assign(['versions'=>$versions,'comms'=>$comms,'forums'=>$forums,'monthTime'=>$monthTime,'monthUserCount'=>Cache::get('monthUserCount')]);
         return View::fetch();
     }
 	
