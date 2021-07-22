@@ -46,7 +46,9 @@ class Admin extends Model
     {
         //查询用户
         $admin = Db::name('admin')->where('username',$data['username'])->where('delete_time',0)->find();
-		
+		if(is_null($admin)){
+			return '用户名或密码错误';
+		}
 		if($admin['status'] !=1){
 			return '用户被禁用或未审核,请联系管理员';
 		}
@@ -76,8 +78,6 @@ class Admin extends Model
 					
             //用户名密码正确返回1
             return 1;
-        }else{
-            return '用户名或密码错误';
         }
     }
 }
