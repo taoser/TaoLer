@@ -29,10 +29,10 @@ use app\common\lib\SqlFile;
 
 class Upgrade extends AdminController
 {
-    public $root_dir = "../";	//站点代码的根目录
-    public $backup_dir = "../runtime/update/backup_dir/";	//备份目录
-    public $upload_dir = "../runtime/update/upload_dir/";	//升级包目录
-    public $sys_version_num;	//当前系统的版本
+    protected $root_dir = "../";	//站点代码的根目录
+    protected $backup_dir = "../runtime/update/backup_dir/";	//备份目录
+    protected $upload_dir = "../runtime/update/upload_dir/";	//升级包目录
+    protected $sys_version_num;	//当前系统的版本
 	
 	public function __construct()
 	{
@@ -142,6 +142,7 @@ class Upgrade extends AdminController
     {
 		$versions = Api::urlPost($this->sys['upgrade_url'],['url'=>$this->sys['domain'],'key'=>$this->sys['key'],'pn'=>$this->pn,'ver'=>$this->sys_version]);
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'check','progress'=>'0%','msg'=>'===>升级检测开始===>']);
+
 		//判断服务器状态
 		$version_code = $versions->code;
 		if($version_code == -1){
@@ -151,7 +152,7 @@ class Upgrade extends AdminController
 
 		$version_num = $versions->version;
 		$file_url = $versions->src;
-   
+
 		//判断远程文件是否可用存在
 		$header = get_headers($file_url, true);
 		if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
