@@ -261,7 +261,6 @@ class Article extends BaseController
 	public function uploads()
     {
         $type = Request::param('type');
-		//halt($type);
         $uploads = new Uploads();
         switch ($type){
             case 'image':
@@ -311,25 +310,35 @@ class Article extends BaseController
 	//文章置顶，状态
 	public function jieset(){
 		$data = Request::param();
-		$article = ArticleModel::field('id,is_top,is_hot')->find($data['id']);
-		if($data['field'] === 'top') {
-			if($data['rank']==1){
-				$article->save(['is_top' => 1]);
-				$res = ['status'=>0,'msg'=>'置顶成功'];
-			} else {
-				$article->save(['is_top' => 0]);
-				$res = ['status'=>0,'msg'=>'已取消置顶'];
-			}
-		} else {
-			if($data['rank']==1){
-				$article->save(['is_hot' => 1]);
-				$res = ['status'=>0,'msg'=>'已设精贴'];
-			} else {
-				$article->save(['is_hot' => 0]);
-				$res = ['status'=>0,'msg'=>'精贴已取消'];
-			}
-		}
-
+		$article = ArticleModel::field('id,is_top,is_hot,is_reply')->find($data['id']);
+		switch ($data['field']){
+            case  'top':
+                if($data['rank']==1){
+                    $article->save(['is_top' => 1]);
+                    $res = ['status'=>0,'msg'=>'置顶成功'];
+                } else {
+                    $article->save(['is_top' => 0]);
+                    $res = ['status'=>0,'msg'=>'已取消置顶'];
+                }
+            break;
+            case 'hot':
+                if($data['rank']==1){
+                    $article->save(['is_hot' => 1]);
+                    $res = ['status'=>0,'msg'=>'已设精贴'];
+                } else {
+                    $article->save(['is_hot' => 0]);
+                    $res = ['status'=>0,'msg'=>'精贴已取消'];
+                }
+            break;
+            case 'reply':
+                if($data['rank']==1){
+                    $article->save(['is_reply' => 1]);
+                    $res = ['status'=>0,'msg'=>'本帖禁评'];
+                } else {
+                    $article->save(['is_reply' => 0]);
+                    $res = ['status'=>0,'msg'=>'禁评已取消'];
+                }
+        }
         //删除本贴设置缓存显示编辑后内容
         Cache::delete('article_'.$data['id']);
 		//清除文章tag缓存

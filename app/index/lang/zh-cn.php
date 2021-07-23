@@ -62,6 +62,8 @@ return [
     'top'				=> '置顶',
     'cancel hoting'	    => '精-',
     'cancel topping'	=> '顶-',
+    'enable reply'      => '开评',
+    'disable reply'     => '禁评',
     'go sign'			=> '去签到',
     'more post'		    => '更多帖子',
     'friendly link'	    => '友情链接',

@@ -102,7 +102,7 @@ layui.define('fly', function(exports){
 		});
     }
     
-    //设置置顶、状态
+    //设置置顶、加精、禁评、状态
     ,set: function(div){
       var othis = $(this);
       fly.json(articleJieset, {

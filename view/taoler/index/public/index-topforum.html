@@ -3,7 +3,7 @@
 	  <img src="{$top.user.user_img}" alt="{$top.user.name}">
 	</a>
 	<h2>
-	  <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $top.cate.ename : $top.cate.catename}</a>
+		{if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $top.cate.ename : $top.cate.catename}</a>{/if}
 	  <a href="{:url('article/detail',['id' => $top.id])}" style="color:{$top.title_color};">{$top.title}</a>
 	</h2>
 	<div class="fly-list-info">

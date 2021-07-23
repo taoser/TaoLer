@@ -68,7 +68,7 @@
         $.ajax({
 				type:"post",
 				url:"{:url('admin/Forum/addtags')}",
-				data:{"sort":sort,"catename":tags,"ename":ename,"icon":cion,"desc":desc},
+				data:{"sort":sort,"catename":tags,"ename":ename,"icon":icon,"desc":desc},
 				daType:"json",
 				success:function (data){
 					if (data.code == 0) {
@@ -96,11 +96,7 @@
 //分类热点控制
 	form.on('checkbox(menu-show)', function(data){
 	var data = data.elem;
-	if(data.checked == true){
-			data.value = 1;
-		}else{
-			data.value = 0;
-		}
+	data.value = data.checked ? 1 : 0;
 	$.ajax({
 			type:'post',
 			url:"{:url('admin/Forum/tagshot')}",
@@ -111,9 +107,7 @@
 					layer.msg(data.msg,{
 						icon:6,
 						time:2000
-					}
-					//,function(){location.reload();}
-					);
+					});
 				} else {
 					layer.open({
 						title:'修改失败',

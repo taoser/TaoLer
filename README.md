@@ -7,8 +7,8 @@
  * 后台：http://adm.aieok.com:888
  * 账号：test
  * 密码：test123
- * 版本：TaoLer 1.7.24
- * 日期：2021.7.22
+ * 版本：TaoLer 1.7.25
+ * 日期：2021.7.23
 
 #### 项目地址
 
@@ -41,12 +41,20 @@
 	一款至简的社区模板，适合政府机构、教育机构、事业单位、商业企业、个人站长等众多行业领域。
 
 #### 安装教程
-
-1.	git下载：https://gitee.com/toogee/TaoLer
-2.	官网下载：https://www.aieok.com
-3.	解压后，项目绑定域名为public目录对外访问，首次安装，访问域名http://www.youdomain.com可自动跳转到/install/index进行引导安装，重新安装需删除根目录下install.lock。
-4.	安装前需要先创建mysql数据库(准备：数据库连接地址，数据库用户名，数据库密码，数据库端口，建好在数据库名)
-5.	请牢记安装设置的管理员用户名和密码，默认admin/123456。前后台的管理员密码一致。前后端管理员账户是独立的，前端主要对文章内容的审查管理等操作。
+1.	首选确保满目使用环境要求，php > 7.2, mysql > 5.7.3
+2.	git下载：https://gitee.com/toogee/TaoLer
+	官网下载：https://www.aieok.com
+3.	解压后，项目绑定域名为public目录对外访问，如果使用nginx服务器，首先设置伪静态Nginx.conf。
+	```html
+	location / { // …..省略部分代码
+	if (!-e $request_filename) {
+	  rewrite  ^(.*)$  /index.php?s=/$1  last;
+	}
+	}
+	```
+4.	首次安装，访问域名http://www.youdomain.com可自动跳转到/install/index进行引导安装，重新安装需删除public目录下install.lock。
+5.	安装前需要先创建mysql数据库(准备：数据库连接地址，数据库用户名，数据库密码，数据库端口，建好在数据库名)
+6.	请牢记安装设置的管理员用户名和密码，默认admin/123456。前后台的管理员密码一致。前后端管理员账户是独立的，前端主要对文章内容的审查管理等操作。
 
 #### 使用说明
 

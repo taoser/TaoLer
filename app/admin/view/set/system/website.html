@@ -172,20 +172,28 @@
                 </div>
 				<div class="layui-tab-item">
 					<div class="layui-form" wid100 lay-filter="config">
-					  <div class="layui-form-item">
-						<label class="layui-form-label">区域简称：</label>
-						<div class="layui-input-inline" style="width: 30px;">
-						  <input type="checkbox" name="area_show" lay-skin="primary" value=1 {if config('taoler.config.area_show') == 1} checked {/if}>
+						<div class="layui-form-item">
+							<label class="layui-form-label">邮件通知：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="email_notice" lay-skin="primary" value=1 {if config('taoler.config.email_notice') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">是否显示发帖及评论等邮件提醒（需先配置邮箱服务）</div>
 						</div>
-						<div class="layui-form-mid layui-word-aux">发件人所在地区简称</div>
-					  </div>
 					  <div class="layui-form-item">
-						<label class="layui-form-label">邮件通知：</label>
+						<label class="layui-form-label">分类显示：</label>
 						<div class="layui-input-inline" style="width: 30px;">
-						  <input type="checkbox" name="email_notice" lay-skin="primary" value=1 {if config('taoler.config.email_notice') == 1} checked {/if}>
+						  <input type="checkbox" name="cate_show" lay-skin="primary" value=1 {if config('taoler.config.cate_show') == 1} checked {/if}>
 						</div>
-						<div class="layui-form-mid layui-word-aux">发帖，评论等邮件提醒</div>
+						<div class="layui-form-mid layui-word-aux">是否显示列表及详情所属分类</div>
 					  </div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">区域简称：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="area_show" lay-skin="primary" value=1 {if config('taoler.config.area_show') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">是否显示发件人所在地区简称</div>
+						</div>
+
 					
 					  <div class="layui-form-item">
 						<div class="layui-input-block">

@@ -3,9 +3,7 @@
  @Name: Fly社区
  @Author: 贤心
  @Site: fly.layui.com
- 
  */
-
 
 /* 全局 */
 html,body{overflow-x: hidden;}
@@ -26,7 +24,7 @@ i{font-style: normal;}
 
 @media screen and (max-width: 992px) {
 
-  .site-menu{position: fixed; top: 0px; bottom: 0; min-height: 0; overflow-y: auto; overflow-x: hidden; z-index: 10001; left: -300px; background-color: #fff;  transition: all .3s;}
+  .site-menu{position: fixed; top: 0; bottom: 0; min-height: 0; overflow-y: auto; overflow-x: hidden; z-index: 10001; left: -300px; background-color: #fff;  transition: all .3s;}
   /* 头部伸缩菜单栏 */
   .site-tree-mobile-top{display: block!important; position: fixed; z-index: 16666668; top: 2px; left: 10px; width: 57px; height: 57px; line-height: 57px; border-radius: 2px; text-align: center; color: #e2e2e2;}
   .site-home .site-tree-mobile-top{display: none!important;}
@@ -41,7 +39,6 @@ i{font-style: normal;}
   .site-mobile .site-tree-mobile{display: none !important;}
   .site-mobile .site-mobile-shade{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.8); z-index: 999;}
   .site-tree-mobile i{font-size: 20px;}
-
   .site-mobile .layui-side{left: 0;}
   .site-mobile .layui-side-child{top: 50%; left: 200px; height: 300px; margin-top: -100px;}
   
@@ -210,12 +207,7 @@ i{font-style: normal;}
 
 /* 辅助 */
 a:hover{color: #009688; transition: all .3s;}
-pre{padding: 10px 15px; margin: 10px 0; font-size: 12px; border-left: 6px solid #009688;  background-color: #f8f8f8; font-family: Courier New; overflow: auto;}
-a:hover{color: #009688; transition: all .3s;}
-pre{padding: 10px 15px; margin: 10px 0; font-size: 12px; border-left: 6px solid #009688;  background-color: #f8f8f8; font-family: Courier New; overflow: auto;}
-
 pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border: 1px solid #ddd; border-left-width: 6px; background-color: #F2F2F2; color: #333; font-family: Courier New; font-size: 12px;}
-pre{border: none; border-left: 5px solid #ddd;}
 
 .layui-container{padding: 0;}
 .fly-main{width: 1079px; min-height: 600px; margin: 0 auto 15px;}
@@ -238,8 +230,9 @@ pre{border: none; border-left: 5px solid #ddd;}
 .fly-loading{position: absolute; top: 50%; left: 50%; margin: -12px 0 0 -15px; font-size: 30px; color: #c2c2c2;}
 
 /* 头像 */
-.fly-avatar{position: absolute; left: 15px; top: 15px;}
-.fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 2px;}
+.fly-avatar{position: absolute; left: 15px; top: 10px;}
+.fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 100%;}
+.fly-avatar i{position: absolute; left: 35px; top: 25px;  }
 
 /* 徽章 */
 .fly-badge-vip{height: 16px; line-height: 16px; padding: 0 3px; background-color: #FF5722; color: #fff; border-radius: 2px;}
@@ -285,7 +278,7 @@ pre{border: none; border-left: 5px solid #ddd;}
 .fly-header .layui-nav .layui-nav-bar,
 .fly-header .fly-nav-user .layui-nav-more{display: none !important;}
 .fly-header .fly-nav-user .layui-nav-child{left: auto; right: 0; width: 120px; min-width: 0;}
-
+/*
 .fly-html-layui .fly-nav-avatar .layui-nav-more{display: none !important;}
 .fly-header .fly-nav-user .layui-nav-child{left: auto; right: 0; width: 120px; min-width: 0;}
 .fly-html-layui .fly-nav-msg{left: -30px;}
@@ -294,7 +287,7 @@ pre{border: none; border-left: 5px solid #ddd;}
 .fly-html-layui .layui-header .layui-nav .fly-layui-user{margin: 0; margin-left: 40px;}
 .fly-html-layui .layui-header .layui-nav .fly-layui-user a{padding: 0;}
 .fly-layui-user .layui-nav-child{left: auto; right: 0; min-width: 0; width: 120px;}
-
+*/
 
 
 /* 底部 */
@@ -444,7 +437,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .fly-rank{padding-bottom: 10px;}
 .fly-rank dl{position: relative; overflow: hidden; margin-left: 20px; text-align: center; font-size: 0;}
 .fly-rank dd{position: relative; width: 65px; height: 85px; margin: 10px 25px 5px 0; display:inline-block; *display:inline; *zoom:1; vertical-align:top; font-size:12px;}
-.fly-rank dd a img{width: 65px; height: 65px; border-radius: 2px;}
+.fly-rank dd a img{width: 65px; height: 65px; border-radius: 10px;}
 .fly-rank dd a cite{ position:absolute; bottom: 20px; left: 0; width: 100%; height:20px; line-height:20px; text-align:center; background-color:rgba(0,0,0,.2); color:#fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .fly-rank dd a:hover cite{display: block;}
 .fly-rank dd a i{position:absolute; bottom: 0; left: 0; width: 100%; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal;}
@@ -478,19 +471,20 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .jie-row li .jie-user img{position:relative; top: 16px; width: 35px; height: 35px;}
 
 /* Detail页 */
-.detail-box{padding: 20px;}
-.detail h1{font-size: 24px; line-height: 36px;}
-.fly-detail-info{position: relative; margin: 10px 0 15px;}
-.fly-detail-info .layui-btn{height: 20px; line-height: 20px; vertical-align: top; border-radius: 0;}
-.fly-detail-info .layui-btn+.layui-btn{margin-left: 0;}
-.fly-admin-box{position: relative; display: inline-block; vertical-align: top; margin-left: 20px;}
-.fly-detail-info .fly-list-nums{top: -3px; font-size: 16px;}
-.fly-detail-info .fly-list-nums i{padding: 0 3px 0 15px; font-size: 22px; color: #999;}
+.detail-box{padding-left: 20px; padding-top: 15px; padding-right: 20px; padding-bottom: 20px;}
+.detail-box .fly-list-nums{margin-top: 20px; margin-right: 15px; padding-top: 5px; font-size: 16px;}
+.detail-box .fly-list-nums i{padding: 0 3px 0 15px; font-size: 22px; color: #999;}
+.detail h1{font-size: 22px; line-height: 36px; padding-bottom:10px;}
+.fly-admin-box{position: relative; display: inline-block; vertical-align: top; margin-right: 20px;}
 
-.detail-about{position: relative; line-height: 20px; padding: 15px 15px 15px 75px; font-size: 13px; background-color: #f8f8f8; color: #999;}
+
+.detail-about{position: relative; line-height: 15px; padding: 15px 15px 15px 75px; font-size: 13px; background-color: #f8f8f8; color: #999;border-radius:5px;}
 .detail-about .jie-status, .detail-about .jie-status-ok{color:#fff;}
 .detail-about .fly-jing{padding:0 6px; background-color:#c00; color:#fff;}
 .detail-about .detail-hits{position: relative; top: 5px; line-height: 20px;}
+.detail-about .fly-detail-info{position:absolute; right:0px;top:10px;}
+.detail-about .fly-detail-info .layui-btn{height: 20px; line-height: 20px; vertical-align: top; border-radius: 0;}
+.detail-about .fly-detail-info .layui-btn+.layui-btn{margin-left: 0;}
 .fly-detail-user{white-space: nowrap; overflow: hidden;}
 .fly-detail-user a{padding-right: 10px; font-size: 14px;}
 .fly-detail-user .icon-renzheng{top: 1px;}
@@ -499,7 +493,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-hits .layui-btn{border-radius: 0;}
 .detail-hits .layui-btn+.layui-btn{margin-left: 5px;}
 .detail-hits .jie-admin{margin-right: 1px;}
-.detail-body{margin: 20px 0 0; min-height: 306px; line-height: 26px; font-size: 16px; color: #333; word-wrap: break-word;}
+.detail-body{margin: 10px 0 0; min-height: 306px; line-height: 26px; font-size: 16px; color: #333; word-wrap: break-word;}
 .detail-body p{margin-bottom:15px;}
 .detail-body img{max-width: 100%; cursor: pointer;}
 /*
@@ -514,12 +508,20 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-body ul>li{margin-top: 0;}
 .detail-body .layui-elem-quote{margin: 10px 0; font-size: 14px; line-height: 26px;}
 
+/* 详情页的底部操作条 */
+  .site-tree-mobile-detail-bottom{display: block!important; position: fixed; z-index: 1666666; bottom: 0px; left: 0px; width: 100%; height: 30px; line-height: 30px; border-radius: 2px; text-align: center; color: #e2e2e2;background:#eeeeee}
+  .site-home .site-tree-mobile-detail-bottom{display: none!important;}
+  .site-mobile .site-tree-mobile-detail-bottom{display: none !important;}
+  .site-mobile .site-menu{left: 0;}
+  .site-mobile .site-tree-mobile-detail-bottom{content: ''; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,.8); z-index: 999;}
+  .site-tree-mobile-detail-bottom i{font-size: 30px;}
+
 /*标题颜色展示方式*/
 .layui-colorpicker.layui-colorpicker-xs {width: 30px;height: 20px;line-height: 16px;border: 0px solid #e6e6e6;padding: 0;vertical-align: top;border-radius: 0;}
 .layui-colorpicker-trigger-span {display: block;height: 100%;box-sizing: border-box;border: 1px solid rgba(2, 0, 0, 0.24);border-radius: 2px;text-align: center;}
 .layui-icon-down:before {font-size: 12px;content: "高亮";}
 /*扫码阅读*/
-.detail_qrcode{position: absolute;top: 7px;right: 7px;width: 30px;height: 30px;background: url(/static/res/images/detail_qrcode.png) no-repeat;background-size: 30px 30px;}
+.detail_qrcode{position: absolute;top: 7px;right: 7px;width: 30px;height: 30px;background: url("/static/res/images/detail_qrcode.png") no-repeat;background-size: 30px 30px;}
 
 /* 发帖 */
 .layui-form-item.layui-col-space15{margin-bottom: 7.5px;}
@@ -668,7 +670,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
 
 /* 广告 */
 .fly-ad{position: relative; background-color: #f2f2f2; overflow:hidden;}
-.fly-ad:before{content: '广告位'; position: absolute; z-index: 0; top: 50%; left: 50%; left: 50%; margin: -10px 0 0 -25px; color: #aaa; font-size: 18px; font-weight: 300;}
+.fly-ad:before{content: '广告位'; position: absolute; z-index: 0; top: 50%; left: 50%; margin: -10px 0 0 -25px; color: #aaa; font-size: 18px; font-weight: 300;}
 .fly-ad div{position: relative; z-index: 1;}
 
 /* 友链 */
@@ -712,11 +714,11 @@ body .fly-user-main{position: relative; min-height: 600px;}
   /* 列表 */
   .fly-list li h2 a{max-width: 72%;}
 
-  /* Detail 页 */
+  /* Detail 页 
 	.fly-admin-box{display: block; margin: 0; margin-top: 10px;}
 	.fly-detail-info .fly-list-nums{top: -2px;}
 	.fly-edit span{border-right: none;}
-
+*/
   /* 案例 */
   .fly-case-list,
   .fly-case-list li{width: 100%;  -webkit-box-sizing: border-box !important; -moz-box-sizing: border-box !important; box-sizing: border-box !important;}
@@ -767,7 +769,6 @@ color: #fff;
 }
 .pagination .disabled{
 display: none;
-
 @media screen and (max-width: 992px) {
   body .header .layui-nav .layui-nav-item{margin: 0 5px;}
 }

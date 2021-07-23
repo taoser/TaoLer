@@ -19,7 +19,7 @@
               <img src="{$art.user.user_img}" alt="{$art.user.name}">
             </a>
             <h2>
-              <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
+              {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
               <a href="{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
             </h2>
             <div class="fly-list-info">
