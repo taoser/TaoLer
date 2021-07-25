@@ -6,6 +6,8 @@ namespace app;
 use think\App;
 use think\exception\ValidateException;
 use think\Validate;
+use think\Response;
+use think\exception\HttpResponseException;
 
 /**
  * 控制器基础类

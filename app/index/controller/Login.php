@@ -137,7 +137,7 @@ class Login extends BaseController
 
                 $result = mailto($data['email'],'重置密码','Hi亲爱的'.$user['name'].':</br>您正在维护您的信息，请在10分钟内验证，您的验证码为:'.$code);
                 if($result){
-                    Cache::set('repass',1,60);	//设置repass标志为1存入Cache
+                    Cache::set('repass','postcode',60);	//设置repass标志为1存入Cache
 					$res = ['code'=>0,'msg'=>'验证码已发送成功，请去邮箱查看！','url'=>(string) url('login/postcode')]; 
                 } else {
                     $res = ['code'=>-1,'msg'=>'验证码发送失败!'];
@@ -153,7 +153,7 @@ class Login extends BaseController
 	//接收验证码
 	public function postcode()
 	{
-        if(Cache::get('repass') != 1){
+        if(Cache::get('repass') !== 'postcode'){
 			return redirect((string) url('login/forget'));
         }
         if(Request::isAjax()){
@@ -168,7 +168,7 @@ class Login extends BaseController
 
 		    if(Cache::get('code')==$code['code']) { //无任何输入情况下需排除code为0和Cache为0的情况
                 //Cache::delete('repass');
-                Cache::set('repass',2,60);
+                Cache::set('repass','resetpass',60);
 				$res = ['code'=>0,'msg'=>'验证成功','url'=>(string) url('login/respass')];
 		    } else {
 			    $res = ['code'=>-1,'msg'=>'验证码错误或已过期！'];
@@ -181,7 +181,7 @@ class Login extends BaseController
 	//忘记密码找回重置
 	public function respass()
 	{
-        if(Cache::get('repass') != 2){
+        if(Cache::get('repass') !== 'resetpass'){
             return redirect((string) url('login/forget'));
         }
         if(Request::isAjax()){

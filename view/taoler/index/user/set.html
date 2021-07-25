@@ -10,7 +10,6 @@
       </ul>
       <div class="layui-tab-content" style="padding: 20px 0;">
         <div class="layui-form layui-form-pane layui-tab-item layui-show">
-          <form method="post" id="zl">
             <div class="layui-form-item">
               <label for="L_email" class="layui-form-label">邮箱</label>
 			  <input type="hidden" name="user_id" value="{:session('user_id')}">
@@ -55,10 +54,9 @@
               </div>
             </div>
             <div class="layui-form-item">
-              <button type="submit" name="submit" class="layui-btn" key="set-mine" lay-filter="user" lay-submit id="ziliao">确认修改</button>
+              <button type="submit" name="submit" class="layui-btn" lay-filter="user-set-info" lay-submit>确认修改</button>
             </div>
-			</form>
-          </div>
+        </div>
         
         <div class="layui-form layui-form-pane layui-tab-item">
             <div class="layui-form-item">
@@ -71,10 +69,9 @@
                 <span class="loading"></span>
               </div>
             </div>
-          </div>
+        </div>
           
-          <div class="layui-form layui-form-pane layui-tab-item">
-            <form method="post" id="newpass">
+        <div class="layui-form layui-form-pane layui-tab-item">
 			<input type="hidden" name="user_id" value="{:session('user_id')}">
               <div class="layui-form-item">
                 <label for="L_nowpass" class="layui-form-label">当前密码</label>
@@ -96,10 +93,9 @@
                 </div>
               </div>
               <div class="layui-form-item">
-                <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit id="setpass">确认修改</button>
+                <button class="layui-btn" lay-filter="user-set-pass" lay-submit >确认修改</button>
               </div>
-            </form>
-          </div>
+        </div>
           
           <div class="layui-form layui-form-pane layui-tab-item">
             <ul class="app-bind">
@@ -127,66 +123,49 @@
 
 {block name="script"}
 <script>
-var uploadHeadImg = "{:url('User/uploadHeadImg')}",
-    userSet = "{:url('User/set')}";
-$(function(){
-	$('#ziliao').click(function(){
+layui.use(function(){
+var $ = layui.jquery;
+var form = layui.form;
+	//设置资料
+	form.on('submit(user-set-info)', function(data){
+		var field = data.field;
 		$.ajax({
 		type:'post',
 		url:"{:url('User/set')}",
-		data:$('#zl').serialize(),
+		data:field,
 		dataType:"json",
 		success:function(data){
 			if(data.code == 0){
-				layer.msg(data.msg,{
-					icon:6,
-					tiye:2000
-				},function(){
+				layer.msg(data.msg,{icon:6,tiye:2000},function(){
 					location.reload();
 				});
 			} else {
-				layer.open({
-					title:"更新失败",
-					content:data.msg,
-					icon:5,
-					anim:6
-				});
-			}
-		}
+				layer.open({title:"更新失败",content:data.msg,icon:5,anim:6});
+			}}
 		});
 	return false;
 	});
+	//设置密码
+	form.on('submit(user-set-pass)', function(data){
+		var field = data.field;
+		$.ajax({
+		type:'post',
+		url:"{:url('User/setPass')}",
+		data:field,
+		dataType:"json",
+		success:function(data){
+			if(data.code == 1){
+				layer.msg(data.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
+			} else {
+				layer.open({title:"密码设置失败",content:data.msg,icon:5,anim:6});
+			}}
+		});
+	return false;
+	});
+
 });
+
 </script>	
-<script>
-$(function(){
-    $('#setpass').click(function(){
-        $.ajax({
-            type:"post",
-            url:"{:url('User/setpass')}",
-            data:$('#newpass').serialize(),
-            dataType:"json",
-            success:function(data){
-                if(data.code == 1){
-                    layer.msg(data.msg,{
-                        icon:6,
-                        tiye:2000
-                    },function(){
-                        location.href = data.url;
-                    });
-                } else{
-                    layer.open({
-                        title:"密码设置失败",
-                        content:data.msg,
-                        icon:5,
-                        anim:6
-                    });
-                }
-            }
-        });
-        return false;
-    });
-	
-});
-</script>
 {/block}

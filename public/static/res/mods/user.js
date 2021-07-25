@@ -141,14 +141,14 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
       location.hash = layid;
     }
   });
-
+/*
   //根据ip获取城市
   if($('#L_city').val() === ''){
     $.getScript('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js', function(){
       $('#L_city').val(remote_ip_info.city||'');
     });
   }
-
+*/
   //上传图片
   if($('.upload-img')[0]){
     layui.use('upload', function(upload){
@@ -170,11 +170,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
         }
         ,done: function(res){
           if(res.status == 0){
-            $.post(userSet, {
-              avatar: res.url
-            }, function(res){
-              location.reload();
-            });
+            location.reload();
           } else {
             layer.msg(res.msg, {icon: 5});
           }

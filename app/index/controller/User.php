@@ -151,7 +151,7 @@ class User extends BaseController
 				if($dirPath !== './static/res/images/avatar'){ //防止删除默认头像
 					unlink('.'.$imgPath);
 				}
-			}  
+			}
             $result = Db::name('user')
                 ->where('id',$this->uid)
                 ->update(['user_img'=>$name_path]);
@@ -213,7 +213,7 @@ class User extends BaseController
 	}
 	
 	//修改密码
-	public function setpass()
+	public function setPass()
 	{
 		if(Request::isAjax()){
 			$data = Request::param();
@@ -226,7 +226,8 @@ class User extends BaseController
 		$result = $user->setpass($data);
 			if($result == 1) {
 				Session::clear();
-				return $this->success('密码修改成功 请登录', '/login');
+				Cookie::delete('auth');
+				return $this->success('密码修改成功 请登录', (string) url('login/index'));
 			} else {
 				return $this->error($result);
 			}

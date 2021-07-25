@@ -142,7 +142,7 @@
 {block name="script"}
 <script>
 	layui.use(['fly','colorpicker','form','upload','plyr'], function(){
-      var $ = layui.$
+      var $ = layui.jquery
 		  ,fly = layui.fly
           ,colorpicker = layui.colorpicker
           ,form = layui.form
@@ -186,7 +186,7 @@
 		$('.layui-btn-container').children('button').each(function(){
 			numArr.push($(this).val());//添加至数组
 		});
-		tags = numArr.join(',');
+		tags = numArr.lenth ? '' : numArr.join(',');
 		$.ajax({
 			type:"post",
 			url:"{:url('article/edit')}",
@@ -194,19 +194,11 @@
 			daType:"json",
 			success:function (data){
 				if (data.code == 0) {
-					layer.msg(data.msg,{
-						icon:6,
-						time:2000
-					}, function(){
+					layer.msg(data.msg,{icon:6,time:2000}, function(){
 						location.href = data.url;
 					});
 				} else {
-					layer.open({
-						title:'编辑失败',
-						content:data.msg,
-						icon:5,
-						anim:6
-					});
+					layer.open({title:'编辑失败',content:data.msg,icon:5,anim:6});
 					layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 				};
 			}

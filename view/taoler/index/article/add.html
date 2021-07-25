@@ -123,6 +123,7 @@
                 </div>
               </div>
               <div class="layui-form-item">
+				<input type="hidden" class="layui-hide" name="__token__" value="{:token()}" />
                 <button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="add">{:lang('post now')}</button>
               </div>
 
@@ -145,7 +146,7 @@
 </script>
 <script>
 	layui.use(['fly','form','colorpicker','upload','plyr'], function(){
-		  var $ = layui.$
+		  var $ = layui.jquery
 		  ,fly = layui.fly
 		  ,form = layui.form
 		  ,colorpicker = layui.colorpicker
@@ -187,40 +188,32 @@
 			}
 		  });
 
-      //发布文章
-       form.on('submit(article-add)', function(data){
-          var field = data.field;
-          var numArr = new Array();
-          $('.layui-btn-container').children('button').each(function(){
-              numArr.push($(this).val());//添加至数组
-          });
-          tags = numArr.join(',');
-              $.ajax({
-                  type:"post",
-                  url:"{:url('article/add')}",
-                  data:{"cate_id":field.cate_id,"title":field.title,"title_color":field.title_color,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha},
-                  dataType:"json",
-                  success:function (data){
-                      if (data.code == 0) {
-                          layer.msg(data.msg,{
-                              icon:6,
-                              time:2000
-                          }, function(){
-                              location.href = data.url;
-                          });
-                      } else {
-                          layer.open({
-                              title:'发布失败',
-                              content:data.msg,
-                              icon:5,
-                              anim:6
-                          });
-                          layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-                      }
-                  }
-              });
-      return false;
-      });
+	//发布文章
+	form.on('submit(article-add)', function(data){
+		var field = data.field;
+		var numArr = new Array();
+		$('.layui-btn-container').children('button').each(function(){
+		  numArr.push($(this).val());//添加至数组
+		});
+		tags = numArr.lenth ? '' : numArr.join(',');
+		$.ajax({
+			type:"post",
+			url:"{:url('article/add')}",
+			data:{"cate_id":field.cate_id,"title":field.title,"title_color":field.title_color,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"captcha":field.captcha,"__token__":field.__token__},
+			dataType:"json",
+			success:function (data){
+				if (data.code == 0) {
+					layer.msg(data.msg,{icon:6,time:2000}, function(){
+					  location.href = data.url;
+					});
+				} else {
+					layer.open({title:'发布失败',content:data.msg,icon:5,anim:6});
+					layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+				}
+		  }
+	  });
+	return false;
+	});
 		
       //添加tags
       $('#article-tags-button').on('click',function(){

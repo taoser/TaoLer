@@ -167,7 +167,7 @@ class Article extends BaseController
     {
         if (Request::isAjax()) {
             $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'captcha']);
-            $validate = new \app\common\validate\Article; //调用验证器
+			$validate = new \app\common\validate\Article; //调用验证器
             $result = $validate->scene('Artadd')->check($data); //进行数据验证
             if (true !== $result) {
                 return Msgres::error($validate->getError());

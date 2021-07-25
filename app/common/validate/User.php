@@ -22,7 +22,7 @@ class User extends Validate
 	//邮件邮件码验证
 	 public function sceneCode()
     {
-        return $this->only(['code',]);
+        return $this->only(['code']);
     }
 
     //name登陆验证场景

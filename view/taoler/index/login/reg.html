@@ -14,7 +14,6 @@
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
         <div class="layui-tab-item layui-show">
           <div class="layui-form layui-form-pane">
-            <form method="post" >
               <div class="layui-form-item">
                 <label for="L_username" class="layui-form-label">{:lang('username')}</label>
                 <div class="layui-input-inline">
@@ -55,14 +54,13 @@
                 </div>
               </div>			  
               <div class="layui-form-item">
-				<button type="submit" class="layui-btn" lay-filter="*" lay-submit id="reg">{:lang('register now')}</button>
+				<button type="submit" class="layui-btn" lay-filter="user-register" lay-submit>{:lang('register now')}</button>
               </div>
               <!--div class="layui-form-item fly-form-app">
                 <span>或者直接使用社交账号快捷注册</span>
                 <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" title="QQ登入"></a>
                 <a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-weibo" title="微博登入"></a>
               </div-->
-            </form>
           </div>
         </div>
       </div>
@@ -73,38 +71,34 @@
 
 {block name="script"}
 <script>
-$(function() {
-	$('#reg').click(function() {
-		loading = layer.load(2, {
+layui.use(['form','layer'],function(){
+var $ = layui.jquery;
+var form = layui.form;
+var layer = layui.layer;
+	//注册
+	form.on('submit(user-register)', function(data){
+		var field = data.field;
+		var loading = layer.load(2, {
                 shade: [0.2, '#000']
             });
 		$.ajax({
-			type:"post",
-			url:"{:url('login/reg')}",
-			data:$('form').serialize(),
-			daType:"json",
-			success:function (data){
-				if (data.code == 0) {
-					layer.close(loading);
-					layer.msg(data.msg,{
-						icon:6,
-						time:2000
-					},function(){
+		type:'post',
+		url:"{:url('Login/reg')}",
+		data:field,
+		dataType:"json",
+		success:function(data){
+			if(data.code == 0){
+			layer.close(loading);
+				layer.msg(data.msg,{icon:6,tiye:2000},function(){
 						location.href = data.url;
-					});
-				} else {
-					layer.close(loading);
-					layer.open({
-						title:'注册失败',
-						content:data.msg,
-						icon:5,
-						anim:6
-					});
-					layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-				}
-			}
+				});
+			} else {
+			layer.close(loading);
+				layer.open({title:"更新失败",content:data.msg,icon:5,anim:6});
+				layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+			}}
 		});
-	return false;	
+	return false;
 	});
 });
 </script>

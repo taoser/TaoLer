@@ -104,9 +104,7 @@
               <div class="detail-hits">
                 <span class="post-time" data="{$vo.create_time}"></span>
               </div>
-			{if $vo.cai == 1}
-              <i class="iconfont icon-caina" title="最佳答案"></i>
-			{/if}
+			{if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
 			
             <div class="detail-body jieda-body photos">{$vo.content|raw}</div>
@@ -133,7 +131,6 @@
 		<div style="text-align: center">{$comments|raw}</div>
         {if condition="$article.is_reply == 1"}
 		<div class="layui-form layui-form-pane">
-          <form  >
             <div class="layui-form-item layui-form-text">
               <a name="comment"></a>
               <div class="layui-input-block">
@@ -143,9 +140,8 @@
             <div class="layui-form-item">
               <input type="hidden" name="article_id" value="{$article.id}">
 			  <input type="hidden" name="user_id" value="{:session('user_id')}">
-              <button type="button" class="layui-btn" lay-filter="*" lay-submit id="recomment">{:lang('submit comments')}</button>
+              <button class="layui-btn" lay-filter="user-comment" lay-submit>{:lang('submit comments')}</button>
             </div>
-          </form>
         </div>
 		{else /}
 		<blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">本帖已设置禁止回复</blockquote>
@@ -203,11 +199,13 @@ var collectionFind = "{:url('Collection/find')}",
 var	collection = "{:url('collection/')}";
 	  
 layui.use(['fly', 'face','colorpicker','plyr'], function(){
-  var $ = layui.$
+  var $ = layui.jquery
+  ,form = layui.form
   ,fly = layui.fly
   ,colorpicker = layui.colorpicker
   ,plyr = layui.plyr;
   var laytpl = layui.laytpl;
+  var uid = layui.cache.user.uid;
   
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){
@@ -251,14 +249,18 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
 	});
   
     //评论需要登陆
-    $('#recomment').click(function (){
-        var uid = "{:session('user_id')}";
-        if (uid != '') {
+    form.on('submit(user-comment)',function (data){
+	var filed = data.field;
+        if (uid == -1) {
+			layer.msg('请先登陆',{icon:5,time:2000},function(){
+                location.href = "{:url('login/index')}";
+            });
+        } else {
             $.ajax({
-                type:"post",
-                url:"{:url('article/comment')}",
-                data:$('form').serialize(),
-                dataType:"json",
+                type: "post",
+                url: "{:url('article/comment')}",
+                data: filed,
+                dataType: "json",
                 success:function (data) {
                     if (data.code == 0) {
                         layer.msg(data.msg,{icon:6,time:2000},function () {
@@ -268,10 +270,6 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
                         layer.open({title:'评论失败',content:data.msg,icon:5,anim:6});
                     }
                 }
-            });
-        } else {
-            layer.msg('请先登陆',{icon:5,time:2000},function(){
-                location.href = "{:url('login/index')}";
             });
         }
         return false;
