@@ -6,9 +6,6 @@
 {block name="content"}
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
-	<div class="">
-	{include file="public/menu" /}
-	</div>
     <div class="layui-col-md8">
       <div class="fly-panel" style="margin-bottom: 0;">
         <div class="fly-panel-title fly-filter">
@@ -18,25 +15,18 @@
 		{volist name="artList" id="art"}
           <li>
             <a href="{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
-              <img src="{$art.user.user_img}" alt="{$art.user_id|getUserName}">  
+              <img src="{$art.user.user_img}" alt="{$art.user_id|getUserName}"><i class="iconfont icon-renzheng" title="认证信息"></i>  
             </a>
             <h2>
-              <a class="layui-badge">{$art.cate.catename}</a>
+              {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{$art.cate.catename}</a>{/if}
               <a href="{:url('article/detail',['id' => $art.id])}">{$art.title}</a>
             </h2>
             <div class="fly-list-info">
               <a href="{:url('user/home',['id'=>$art.user_id])}" link>
                 <cite>{$art.user.name}</cite>
-                <!--
-                <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
-                <i class="layui-badge fly-badge-vip">VIP3</i>
-                -->
               </a>
               <span>{$art.create_time|date='Y-m-d'}</span>
-              
               <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i>{$art.pv}</span>
-              <!--<span class="layui-badge fly-badge-accept layui-hide-xs">已结</span>-->
-			  
               <span class="fly-list-nums"> 			
                 <i class="iconfont icon-pinglun1" title="回答"></i>{$art.comments_count}
               </span> 
@@ -49,7 +39,6 @@
         </ul>
       </div>
     </div>
-	
     <div class="layui-col-md4">
 		<dl class="fly-panel fly-list-one">
 			<dt class="fly-panel-title">本周热议</dt>
@@ -70,7 +59,7 @@
 	
   </div>
 </div>
+{include file="public/menu" /}
 {/block}
-
 {block name="script"}
 {/block}

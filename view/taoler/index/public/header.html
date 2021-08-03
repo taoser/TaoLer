@@ -6,7 +6,7 @@
 	  <i class="layui-icon layui-icon-spread-left"></i>
 	</div>
 	<div class="site-mobile-shade-top"></div>
-	
+	{//移动端LOGO}
 	<a class="fly-logo layui-hide-md" href="/" style="padding-left:32%;"><img src="{$sysInfo.logo}" alt="layui" width="135" height="37"></a>
     <ul class="layui-nav fly-nav layui-hide-xs">
 	{volist name="headlinks" id="vo"}
@@ -25,12 +25,8 @@
 		{/if}
 		  <li class="layui-nav-item">
 			<a class="fly-nav-avatar" href="javascript:;">
-			  <cite class="layui-hide-xs">{:session('user_name')}</cite>
-			  <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
-			  <i class="layui-badge fly-badge-vip layui-hide-xs">VIP{$user.vip}</i>
-			  <img src="{$user.user_img}">
+			  <cite class="layui-hide-xs">{$user.name}</cite><img src="{$user.user_img}">
 			</a>
-			
 			<dl class="layui-nav-child">
 			  <dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
 			  <dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>

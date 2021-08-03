@@ -10,34 +10,58 @@
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md8 content detail">
       <div class="fly-panel detail-box">
+		{//标题}
         <h1 style="color:{$article.title_color};">{$article.title}
 		<span class="layui-hide-xs"><div onclick="PhoneDown();" style="" class="detail_qrcode" id="mobile"></div></span>
 		</h1>
-		<span class="fly-list-nums"> 
-        <a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i> {$comments->count()} </a>
-        <i class="iconfont" title="浏览">&#xe60b;</i> {$pv}
-        </span>
-        
+		{//图标}
+        <div class="fly-detail-info">
+		 <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.cate.ename : $article.cate.catename}</span>
+          {if ($article.jie == 0)}
+          <span class="layui-badge" style="background-color: #999;">{:lang('no finished')}</span>
+		  {else /}
+          <span class="layui-badge" style="background-color: #5FB878;">{:lang('finished')}</span>
+		  {/if}
+          {if ($article.is_top == 1)}<span class="layui-badge layui-bg-black">{:lang('top')}</span>{/if}
+		  {if ($article.is_hot == 1)}<span class="layui-badge layui-bg-red">{:lang('hot')}</span>{/if}
+		  
+		  <span id="LAY_jieAdmin" data-id="{$article['id']}"></span>
+		  
+		  <span class="fly-list-nums"> 
+			<a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$comments->count()}</a><i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
+		  </span>
+        </div>
+		{//作者}
         <div class="detail-about">
-          <a class="fly-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
-            <img src="{$article.user.user_img}" alt="{$article.user.name}">
-              <i class="iconfont icon-renzheng" title="认证信息"></i>
-          </a>
-          <div class="fly-detail-user">
-            <a href="{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
+			<a class="fly-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
+			<img src="{$article.user.user_img}" alt="{$article.user.name}">
+			<i class="iconfont icon-renzheng" title="认证信息"></i>
+			</a>
+			<div class="fly-detail-user">
+			<a href="{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
 			{if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="">{:getAsing($article.user.area_id) ?: '无'}</i>{/if}
-            <cite>{$article.user.nickname ?: $article.user.name}</cite>
-            </a>
-          </div>
-		<div class="fly-detail-info">
-          <div class="fly-admin-box" data-id="{$article.id}">
+			<cite>{$article.user.nickname ?: $article.user.name}</cite>
+			</a>
+			<span class="layui-btn layui-btn-xs guanzhu" >关注</span>
+			</div>
+			<div class="detail-hits">
+			<!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
+			<span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
+			</div>
+			
+        </div>
+        <div class="detail-body photos">{$article.content|raw}</div>
+		{//管理}
+		{if (($article.upzip !== '') || session('?user_name'))}
+		<div class="detail-assist">
+		{notempty name="$article.upzip"}
+		 <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
+		{/notempty}
+		  <div class="fly-admin-box" data-id="{$article.id}">
 		  {if ($user.auth ?? '')}
             <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
-            {if($article.is_top == 0)}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
-			{else /}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>
-            {/if}
+            {if($article.is_top == 0)}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
+			{else /}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>{/if}
 			{if($article.is_hot == 0)}
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
 			{else /}
@@ -53,76 +77,44 @@
 		   {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
 			<span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
 		  {/if}
-		  <div id="LAY_jieAdmin" data-id="{$article['id']}"></div>
           </div>
-		 
-        </div>
-		  
-		<div class="detail-hits">
-		<!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
-		<span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
 		</div>
-		  
-		  
-        </div>
-        <div class="detail-body photos">{$article.content|raw}</div>
-		{notempty name="$article.upzip"}
-			<div class="layui-inline">
-			  <label ">{:lang('enclosure')}：</label>
-			 <button type="button" class="layui-btn" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-			</div>
-		{/notempty}
+		{/if}
       </div>
-<!--评论-->
+	{//评论}
       <div class="fly-panel detail-box" id="flyReply">
-          <span style="font-size:18px;">评论 {$comments->count()}</span>
+        <span style="font-size:18px;">评论 {$comments->count()}</span>
         <ul class="jieda" id="jieda">
 		{volist name="comments" id="vo" empty= ""}
           <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
               <a class="fly-avatar" href="{:url('user/home',['id'=>$vo.user.id])}">
-                <img src="{$vo.user.user_img}" alt=" ">
+                <img src="{$vo.user.user_img}" alt=" "><i class="iconfont icon-renzheng" title="认证信息"></i>
               </a>
               <div class="fly-detail-user">
                 <a href="{:url('user/home',['id'=>$vo.user.id])}" class="fly-link">
 				{if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="">{:getAsing($vo.user.area_id) ?: '无'}</i>{/if}
-                  <cite>{$vo.user.nickname ?: $vo.user.name}</cite>
-                  <!--i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
-                  <i class="layui-badge fly-badge-vip">VIP3</i-->              
+                  <cite>{$vo.user.nickname ?: $vo.user.name}</cite>     
                 </a>
-                {if condition="$article.user.id eq $vo.user.id"}
-                <span>({:lang('poster')})</span>
-				{/if}
-                <!--
-                <span style="color:#5FB878">(管理员)</span>
-                <span style="color:#FF9E3F">（社区之光）</span>
-                <span style="color:#999">（该号已被封）</span>
-                -->
+                {if condition="$article.user.id eq $vo.user.id"}<span>({:lang('poster')})</span>{/if}
               </div>
-
-              <div class="detail-hits">
-                <span class="post-time" data="{$vo.create_time}"></span>
-              </div>
+              <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span></div>
 			{if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
-			
             <div class="detail-body jieda-body photos">{$vo.content|raw}</div>
-			
             <div class="jieda-reply">
               <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
                 <i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
               </span>
               <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
-
+			{//评论编辑删除采纳权限}
               <div class="jieda-admin">
-				{if (session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2) OR ($user.auth  ?? '')}
+				{if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
 					<span type="edit">{:lang('edit')}</span>
-					<span type="del">{:lang('delete')}</span>
-					{if $vo.cai == 0 && (session('user_id') == $article.user_id) OR ($user.auth  ?? '') /}
-					<span class="jieda-accept" type="accept">{:lang('accept')}</span>
-					{/if}				
+					<span type="del">{:lang('delete')}</span>				
 				{/if}
+				{if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth  ?? '')) /}<span class="jieda-accept" type="accept">{:lang('accept')}</span>{/if}
               </div>
             </div>
           </li>
@@ -173,16 +165,14 @@
           <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
         {/volist}
         </div>
-
     </div>
   </div>
-{include file="public/menu" /}
 <!--底部栏-->
 	<div class="site-tree-mobile-detail-bottom layui-hide-md">
-	<div id="LAY_jieAdmin" data-id="{$article['id']}"></div>
-    </div>
-	  
+	<div id="LAY_jieAdmin1" data-id="{$article['id']}"></div>
+    </div> 
 </div>
+{include file="public/menu" /}
 {/block}
 {block name="script"}
 <script>

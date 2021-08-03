@@ -5,9 +5,6 @@
 {block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}{/block}
 {block name="content"}
-<div class="">
-{include file="public/menu" /}
-</div>
 <div class="fly-home fly-panel" style="background-image: url();">
   <img src="{$u.user_img}" alt="{$u.name}">
   <i class="iconfont icon-renzheng" title="Fly社区认证"></i>
@@ -78,6 +75,7 @@
     </div>
   </div>
 </div>
+{include file="public/menu" /}
 {/block}
 
 {block name="script"}

@@ -472,22 +472,29 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 /* Detail页 */
 .detail-box{padding-left: 20px; padding-top: 15px; padding-right: 20px; padding-bottom: 20px;}
-.detail-box .fly-list-nums{margin-top: 20px; margin-right: 15px; padding-top: 5px; font-size: 16px;}
-.detail-box .fly-list-nums i{padding: 0 3px 0 15px; font-size: 22px; color: #999;}
 .detail h1{font-size: 22px; line-height: 36px; padding-bottom:10px;}
-.fly-admin-box{position: relative; display: inline-block; vertical-align: top; margin-right: 20px;}
-
+.fly-detail-info{position: relative; margin: 10px 0 15px;}
+.fly-detail-info .layui-btn{height: 20px; line-height: 20px; vertical-align: top; border-radius: 0;}
+.fly-detail-info .layui-btn+.layui-btn{margin-left: 0;}
+.fly-detail-info .fly-list-nums{top: -3px; font-size: 16px;}
+.fly-detail-info .fly-list-nums i{padding: 0 3px 0 15px; font-size: 22px; color: #999;}
 
 .detail-about{position: relative; line-height: 15px; padding: 15px 15px 15px 75px; font-size: 13px; background-color: #f8f8f8; color: #999;border-radius:5px;}
 .detail-about .jie-status, .detail-about .jie-status-ok{color:#fff;}
 .detail-about .fly-jing{padding:0 6px; background-color:#c00; color:#fff;}
 .detail-about .detail-hits{position: relative; top: 5px; line-height: 20px;}
-.detail-about .fly-detail-info{position:absolute; right:0px;top:10px;}
-.detail-about .fly-detail-info .layui-btn{height: 20px; line-height: 20px; vertical-align: top; border-radius: 0;}
-.detail-about .fly-detail-info .layui-btn+.layui-btn{margin-left: 0;}
 .fly-detail-user{white-space: nowrap; overflow: hidden;}
 .fly-detail-user a{padding-right: 10px; font-size: 14px;}
 .fly-detail-user .icon-renzheng{top: 1px;}
+.fly-detail-user .guanzhu{position: absolute;  right:10px; }
+
+.detail-assist{position: relative; height:22px; margin-top: 10px; line-height: 15px; padding: 5px 10px 5px 10px; font-size: 13px; background-color: #f8f8f8; color: #999;border-radius:5px;}
+.detail-assist .fly-admin-box{position: absolute; top: 6px;right:10px;}
+.detail-assist span{height: 20px; line-height: 20px;}
+.detail-assist .layui-btn{border-radius: 0;}
+.detail-assist .layui-btn+.layui-btn{margin-left: 1px;}
+.detail-assist .jie-admin{margin-right: 1px;}
+
 
 .detail-hits span{height: 20px; line-height: 20px;}
 .detail-hits .layui-btn{border-radius: 0;}
@@ -509,7 +516,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-body .layui-elem-quote{margin: 10px 0; font-size: 14px; line-height: 26px;}
 
 /* 详情页的底部操作条 */
-  .site-tree-mobile-detail-bottom{display: block!important; position: fixed; z-index: 1666666; bottom: 0px; left: 0px; width: 100%; height: 30px; line-height: 30px; border-radius: 2px; text-align: center; color: #e2e2e2;background:#eeeeee}
+  .site-tree-mobile-detail-bottom{display: block!important; position: fixed; z-index: 1000; bottom: 0px; left: 0px; width: 100%; height: 30px; line-height: 30px; border-radius: 2px; text-align: center; color: #e2e2e2;background:#eeeeee}
   .site-home .site-tree-mobile-detail-bottom{display: none!important;}
   .site-mobile .site-tree-mobile-detail-bottom{display: none !important;}
   .site-mobile .site-menu{left: 0;}

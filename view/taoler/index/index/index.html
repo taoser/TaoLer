@@ -8,7 +8,7 @@
 {block name="content"}
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
-	<div class="">{include file="public/menu" /}</div>
+	
     <div class="layui-col-md8">
 		<!--首页幻灯-->
 		<div class="fly-panel"> 
@@ -44,7 +44,9 @@
     <div class="layui-col-md4">
 		<!--签到-->
 		<a name="signin"> </a>
+		<div class="fly-panel fly-signin layui-hide-xs">
 		{include file="public/sign" /}
+		</div>
 		<!--温馨通道-->
 		<div class="fly-panel layui-hide-xs">
 		<h3 class="fly-panel-title">{:lang('links list')}</h3>
@@ -85,12 +87,15 @@
 		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}
         </div>
-		<!--友情链接-->  
+		<!--友情链接-->
+		<div class="fly-panel fly-link html5plus-hide layui-hide-xs">		
 		{include file="public/flink" /}
+		</div>
     </div>
 	
   </div>
 </div>
+{include file="public/menu" /}
 {/block}
 
 {block name="script"}

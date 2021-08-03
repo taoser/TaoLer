@@ -4,7 +4,6 @@
 {block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}{/block}
 {block name="content"}
-<div class="">{include file="public/menu" /}</div>
 <div class="layui-container fly-marginTop">
   <div class="fly-panel" pad20 style="padding-top: 5px;">
     <!--<div class="fly-none">没有权限</div>-->
@@ -137,6 +136,7 @@
     </div>
   </div>
 </div>
+{include file="public/menu" /}
 {/block}
 
 {block name="script"}
@@ -167,7 +167,7 @@
 		//指定允许上传的文件类型
 		  upload.render({
 			elem: '#zip-button'
-			,url: '{:url('article/upzip')}' //改成您自己的上传接口
+			,url: '{:url('article/uploads')}' //改成您自己的上传接口
 			,accept: 'file' //普通文件
 			,done: function(res){
 				if(res.status == 0){

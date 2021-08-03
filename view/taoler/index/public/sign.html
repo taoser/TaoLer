@@ -1,18 +1,17 @@
-<div class="fly-panel fly-signin">
-	<div class="fly-panel-title">
-	  {:lang('Sign in')}
-	  <i class="fly-mid"></i> 
-	  <a href="javascript:;" class="fly-link" id="LAY_signinHelp">{:lang('statement')}</a>
-	  <i class="fly-mid"></i> 
-	  <a href="javascript:;" class="fly-link" id="LAY_signinTop">{:lang('trends')}<span class="layui-badge-dot"></span></a>
-	  <span class="fly-signin-days"></span>
-	</div>
-	<div class="fly-panel-main fly-signin-main">
-	  {if session('?user_id')}
-	  <i class="layui-icon fly-loading layui-icon-loading"></i>
-	  {else /}
-	  <button class="layui-btn layui-btn-danger" id="LAY_signin">{:lang('今日签到')}</button>
-	  {/if}  
-	</div>
+<div class="fly-panel-title">
+  {:lang('Sign in')}
+  <i class="fly-mid"></i> 
+  <a href="javascript:;" class="fly-link" id="LAY_signinHelp">{:lang('statement')}</a>
+  <i class="fly-mid"></i> 
+  <a href="javascript:;" class="fly-link" id="LAY_signinTop">{:lang('trends')}<span class="layui-badge-dot"></span></a>
+  <span class="fly-signin-days"></span>
 </div>
+<div class="fly-panel-main fly-signin-main">
+  {if session('?user_id')}
+  <i class="layui-icon fly-loading layui-icon-loading"></i>
+  {else /}
+  <button class="layui-btn layui-btn-danger" id="LAY_signin">{:lang('今日签到')}</button>
+  {/if}  
+</div>
+
 

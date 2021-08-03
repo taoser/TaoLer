@@ -1,6 +1,6 @@
 <li>
 	<a href="{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
-	  <img src="{$art.user.user_img}" alt="{$art.user.name}">  
+	  <img src="{$art.user.user_img}" alt="{$art.user.name}">
 	</a>
 	<h2>
 		{if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
@@ -11,12 +11,6 @@
 	  {if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green" title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</i>{/if}
 		<cite>{$art.user.nickname ?: $art.user.name}</cite>
 		<i>{$art.create_time|date='Y-m-d'}</i>
-		<!--
-		<i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
-		{if($art.user.vip > 0)}
-		<i class="layui-badge fly-badge-vip">vip{$art.user.vip}</i>
-		{/if}
-		-->
 	  </a>
 	  <span>
 	  {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i>'}
