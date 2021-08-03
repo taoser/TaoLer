@@ -124,7 +124,7 @@ class Article extends Model
 			$artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio')
             ->with([
             'cate' => function($query){
-                $query->where('delete_time',0)->field('id,catename,ename');
+                $query->where('delete_time',0)->field('id,catename,ename,detpl');
             },
 			'user' => function($query){
                 $query->field('id,name,nickname,user_img,area_id,vip');
@@ -209,7 +209,7 @@ class Article extends Model
             switch ($type) {
                 //查询文章,15个分1页
                 case 'jie':
-                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
+                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
                         'cate' => function($query){
                             $query->where('delete_time',0)->field('id,catename,ename');
                         },
@@ -225,7 +225,7 @@ class Article extends Model
                     break;
 
                 case 'hot':
-                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
+                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
                         'cate' => function($query){
                             $query->where('delete_time',0)->field('id,catename,ename');
                         },
@@ -241,7 +241,7 @@ class Article extends Model
                     break;
 
                 case 'top':
-                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
+                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
                         'cate' => function($query){
                             $query->where('delete_time',0)->field('id,catename,ename');
                         },
@@ -255,9 +255,25 @@ class Article extends Model
                             'path' =>$url.'[PAGE]'.$suffix
                         ]);
                     break;
+					
+				case 'wait':
+                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
+                        'cate' => function($query){
+                            $query->where('delete_time',0)->field('id,catename,ename');
+                        },
+                        'user' => function($query){
+                            $query->field('id,name,nickname,user_img,area_id,vip');
+                        }
+                    ])->withCount(['comments'])->where('status',1)->where($where)->where('jie',0)->order(['is_top'=>'desc','create_time'=>'desc'])
+                        ->paginate([
+                            'list_rows' => 15,
+                            'page' => $page,
+                            'path' =>$url.'[PAGE]'.$suffix
+                        ]);
+                    break;
 
                 default:
-                    $artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
+                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
                         'cate' => function($query){
                             $query->where('delete_time',0)->field('id,catename,ename');
                         },

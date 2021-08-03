@@ -1,13 +1,13 @@
 <?php
 namespace app\admin\controller;
 
-use app\common\controller\BaseController;
+use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\common\model\UserViprule;
 
-class Vip extends BaseController
+class Vip extends AdminController
 {
 	//添加VIP积分规则
 	public function add()

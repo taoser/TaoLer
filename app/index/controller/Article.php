@@ -33,7 +33,7 @@ class Article extends BaseController
 		//获取分类ID
 		$ename = Request::param('ename');
 		$type = Request::param('type') ?? 'all';
-
+		$tpl = Db::name('cate')->where('ename',$ename)->value('detpl');
 		//分页伪静态
 		$str = Request::baseUrl();	//不带参数在url
 		$patterns = "/\d+/"; //数字正则
@@ -74,7 +74,7 @@ class Article extends BaseController
         $ad_comm = $ad->getSliderList(6);
 		
 		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie']);
-		return View::fetch();
+		return View::fetch('article/'.$tpl.'/cate');
     }
 
 	//文章详情页
@@ -82,6 +82,8 @@ class Article extends BaseController
     {
         $article = new ArticleModel();
         $artDetail = $article->getArtDetail($id);
+		$arId = $artDetail->cate->id;
+		$tpl = Db::name('cate')->where('id',$arId)->value('detpl');
 		if(!$artDetail){
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '异常消息');
@@ -92,22 +94,7 @@ class Article extends BaseController
 		//dump($comments);
         $artDetail->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
-		$download = $artDetail->upzip ? download($artDetail->upzip,'file') : '';
-
-/*		
-		$nt = time();
-		$ft = $article->comments;
-		$ct[] = [];
-		foreach($ft as $c){
-			$t = $c->create_time;
-			$ct[] = intval(($nt - strtotime($t))/86400);
-		}
-		dump($nt);
-		dump($ct);
-		$this->assign('ct',$ct);
-		$article->append(['comment.ct'])->toArray();
-		//halt($article);
-*/		
+		$download = $artDetail->upzip ? download($artDetail->upzip,'file') : '';	
 		
 		//	热议文章
 		$artHot = $article->getArtHot(10);
@@ -117,9 +104,9 @@ class Article extends BaseController
         $ad_artImg = $ad->getSliderList(4);
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(7);
-
+		
 		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'jspage'=>'jie']);
-		return View::fetch();
+		return View::fetch('article/'.$tpl.'/detail');
     }
 	
 	//文章评论

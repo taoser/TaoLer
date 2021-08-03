@@ -36,6 +36,29 @@ class Files
 	}
 	
 	/**
+     * 获取目录下文件
+     * @param $path string 目录
+     * @return array
+     */
+	public static function getDirFiles($path,$type)
+	{
+		if (is_dir($path)) {
+			$arr = array();
+			$data = scandir($path);
+			foreach ($data as $value){
+				if($value !='.' && $value != '..'){
+					if($type == 1){//获取文件夹下文件名 index.html
+						$arr[] = $value;
+					}else{//获取无后缀名称 index
+						$arr[] = basename($value,".html");
+					}
+				}
+			  }
+			 return $arr;
+		}
+	}
+	
+	/**
      * 列出目录下的所有文件，包括子目录文件,不包含sql目录
      * @param $dirName
      * @return array

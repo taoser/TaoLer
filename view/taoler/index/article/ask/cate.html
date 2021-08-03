@@ -1,0 +1,118 @@
+{extend name="public/base" /}
+{block name="title"}{$Request.param.ename|getCateName}-{$sysInfo.webname}{/block}
+{block name="keywords"}{$Request.param.ename|getCateName},{$sysInfo.webname}{/block}
+{block name="description"}{$Request.param.ename|getCateDesc}{/block}
+{block name="column"}{include file="/public/column" /}{/block}
+
+{block name="content"}
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md8">
+      <div class="fly-panel" style="margin-bottom: 0;">
+		<div class="layui-tab-card">
+		  <ul class="layui-tab-title">
+			<li {if condition="$type eq 'all'" } class="layui-this" {/if}><a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all','type' => 'all'])} "  >{:lang('all')}</a></li>
+			<li {if condition="$type eq 'jie'" } class="layui-this" {/if}><a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all','type' => 'jie'])} ">{:lang('end')}</a></li>
+			<li {if condition="$type eq 'wait'" } class="layui-this" {/if}><a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all' ,'type' => 'wait'])}">{:lang('未解决')}</a>	</li>
+		  </ul>
+		</div>
+		<ul class="question-list">
+		  {volist name="artList" id="art"}
+		  <li>
+			{if ($art.jie == 1)}
+			<div class="que-sta-jie">
+			<span  >已解</span>
+			<span  >&radic;</span>
+			</div>
+			{else /}
+			<div class="que-sta-ask">
+			<span>未解</span>
+			<span >？</span>
+			</div>
+			{/if}
+			<div class="que-body">
+			  <h2>
+				  <a href="{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
+			  </h2>
+			  <div class="que-user-info">
+				  <a href="{:url('user/home',['id'=>$art.user.id])}" class="que-avatar">
+					  <img src="{$art.user.user_img}" alt="{$art.user.name}">
+					  <cite>{$art.user.nickname ?: $art.user.name}</cite>
+				  </a>
+				  {$art.create_time|date='Y-m-d'}
+				  <span  title="浏览">浏览{$art.pv}</span>
+				  <span >
+					<i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}
+				  </span>
+			  </div>
+			</div>
+			<div class="que-content">{:getArtContent($art.content)}</div>
+		  </li>
+		  {/volist}
+		</ul>
+
+        <div style="text-align: center" id="page">{$artList|raw}</div>
+		<!--div style="text-align: center" id="pages"></div-->
+
+      </div>
+	  
+    </div>
+    <div class="layui-col-md4">
+        <div class="fly-panel">
+            <div class="fly-panel" style="padding: 5px 0; text-align: center;">
+                {volist name="ad_cateImg" id="vo"}
+                <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+                {/volist}
+            </div>
+        </div>
+        <dl class="fly-panel fly-list-one layui-hide-xs">
+        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
+        {volist name="artHot" id="vo"}
+		<dd>
+          <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+        </dd>
+		{/volist} 
+      </dl>
+
+		<div class="fly-panel">
+		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
+		<a href="" class="fly-link fly-joinad    ">{:lang('i want to join')}</a>
+		</div>  
+		<div class="fly-panel-main">
+		{volist name="ad_comm" id="vo"}
+			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+		{/volist}
+		</div>
+		</div>
+    </div>
+  </div>
+</div>
+{include file="public/menu" /}
+{/block}
+{block name="script"}
+<script>
+    layui.use(['laypage'], function(){
+	  var laypage = layui.laypage;
+	  
+	  //执行一个laypage实例
+	  laypage.render({
+		elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+		,count: 50 //数据总数，从服务端得到
+		,limit: 15
+		,curr :{$Request.param.page ?: 1} //获取起始页
+		,jump: function(obj, first){
+		//obj包含了当前分页的所有参数，比如：
+		//console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+		//console.log(obj.limit); //得到每页显示的条数
+		
+		//首次不执行
+		if(!first){
+		  //do something
+		  //window.location.href= url+obj.curr+'&limit='+obj.limit+'#collection'; //跳转
+		}
+	  }
+	  });
+	});
+</script>
+{/block}

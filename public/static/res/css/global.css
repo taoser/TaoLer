@@ -63,146 +63,75 @@ i{font-style: normal;}
 }
 
 .icon-zan:before { content: "\e612"; }
-
 .icon-jiazaizhong:before { content: "\e60e"; }
-
 .icon-sousuo:before { content: "\e621"; }
-
 .icon-quanpingpad:before { content: "\e61d"; }
-
 .icon-shezhi:before { content: "\e607"; }
-
 .icon-renzhengv:before { content: "\e62b"; }
-
 .icon-shijian:before { content: "\e60a"; }
-
 .icon-guanbi:before { content: "\e614"; }
-
 .icon-tianjia:before { content: "\e616"; }
-
 .icon-tuichu:before { content: "\e601"; }
-
 .icon-shui:before { content: "\e602"; }
-
 .icon-qq:before { content: "\e618"; }
-
 .icon-weibo:before { content: "\e617"; }
-
 .icon-tupian:before { content: "\e608"; }
-
 .icon-logo:before { content: "\e603"; }
-
 .icon-daima:before { content: "\e609"; }
-
 .icon-biaoqing:before { content: "\e60f"; }
-
 .icon-nan:before { content: "\e619"; }
-
 .icon-nv:before { content: "\e61a"; }
-
 .icon-quitquanping:before { content: "\e61e"; }
-
 .icon-zuichun:before { content: "\e61c"; }
-
 .icon-charushuipingxian:before { content: "\e622"; }
-
 .icon-yulan:before { content: "\e60d"; }
-
 .icon-liulanyanjing:before { content: "\e60b"; }
-
 .icon-touxiang:before { content: "\e604"; }
-
 .icon-caina:before { content: "\e613"; }
-
 .icon-room:before { content: "\e615"; }
-
 .icon-svgmoban53:before { content: "\e610"; }
-
 .icon-shichang:before { content: "\e600"; }
-
 .icon-shouye:before { content: "\e605"; }
-
 .icon-tishilian:before { content: "\e629"; }
-
 .icon-fabu:before { content: "\e606"; }
-
 .icon-pinglun:before { content: "\e60c"; }
-
 .icon-zan1:before { content: "\e611"; }
-
 .icon-chengshi:before { content: "\e61b"; }
-
 .icon-lianjie:before { content: "\e620"; }
-
 .icon-yulan1:before { content: "\e785"; }
-
 .icon-renshu:before { content: "\e61f"; }
-
 .icon-huizongzuoyoutuodong:before { content: "\e623"; }
-
 .icon-404:before { content: "\e627"; }
-
 .icon-iconmingxinganli:before { content: "\e652"; }
-
 .icon-wenda:before { content: "\e626"; }
-
 .icon-top:before { content: "\e624"; }
-
 .icon-ui:before { content: "\e625"; }
-
 .icon-fengexian:before { content: "\e63a"; }
-
 .icon-jiacu:before { content: "\e62f"; }
-
 .icon-kiss:before { content: "\e6cd"; }
-
 .icon-biaoqing1:before { content: "\e63b"; }
-
 .icon-liwu:before { content: "\e9c5"; }
-
 .icon-emwdaima:before { content: "\e62a"; }
-
 .icon-quanzi:before { content: "\e7bb"; }
-
 .icon-wendang:before { content: "\e722"; }
-
 .icon-jifen:before { content: "\e632"; }
-
 .icon-aqrenzheng:before { content: "\e62d"; }
-
 .icon-pinglun1:before { content: "\e631"; }
-
 .icon-web:before { content: "\e6e9"; }
-
 .icon-yxj-expression:before { content: "\e628"; }
-
 .icon-tongzhi:before { content: "\e647"; }
-
 .icon-kaifashili:before { content: "\e638"; }
-
 .icon-huiyuan:before { content: "\e637"; }
-
 .icon-pinglun2:before { content: "\e62c"; }
-
 .icon-alipay:before { content: "\e630"; }
-
 .icon-jiaoliu:before { content: "\e6b7"; }
-
 .icon-chanpin:before { content: "\e634"; }
-
 .icon-renzheng:before { content: "\e62e"; }
-
 .icon-tiezi:before { content: "\e635"; }
-
 .icon-rizhi:before { content: "\e69d"; }
-
 .icon-weixinzhifu:before { content: "\e633"; }
-
 .icon-yinyong:before { content: "\e636"; }
-
 .icon-xiazai:before { content: "\e78e"; }
-
-
 
 
 /* 辅助 */
@@ -378,6 +307,17 @@ pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border
 .layui-textarea:hover,
 .layui-textarea:focus{border-color: #e6e6e6 !important;}
 
+/* 主页置顶列表 */
+.fly-panel-top{margin-bottom: 15px; padding: 5px 5px 10px 0px;border-radius: 2px; background-color: #fff; box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);}
+.fly-panel-top[pad20]{padding: 20px;}
+.fly-list-top li{position: relative; height: 20px; line-height: 20px; padding: 8px 15px 10px 20px; border-bottom: 1px dotted #e2e2e2;}
+.fly-list-top li:last-child{border-bottom: none;}
+.fly-list-top .top-list-tag{float:left;}
+.fly-list-info-top{position: relative;white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.fly-list-info-top span{font-size: 10px; color: #cccccc;}
+.fly-list-top li h2{position: relative; left:15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.fly-list-top li h2 a{display: inline-block;  padding-right: 10px; font-size: 16px;}
+
 /* 列表 */
 .fly-list li{position: relative; height: 45px; line-height: 22px; padding: 15px 15px 15px 75px; border-bottom: 1px dotted #e2e2e2;}
 .fly-list li:last-child{border-bottom: none;}
@@ -417,7 +357,26 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .layui-edit-face ul li{cursor: pointer; float: left; border: 1px solid #e8e8e8; height: 22px; width: 26px; overflow: hidden; margin: -1px 0 0 -1px; padding: 4px 2px; text-align: center;}
 .layui-edit-face ul li:hover{position: relative; z-index: 2; border: 1px solid #eb7350; background: #fff9ec;}
 
-/* 签到 */
+/*问题列表*/
+.question-list{width: 100%;}
+.question-list li{line-height: 30px; padding: 10px 15px 15px 20px; border-bottom: 1px dotted #e2e2e2; }
+.que-sta-jie,
+.que-sta-ask{float: left; margin-top:5px; margin-right:10px; text-align:center; padding:2px; width:38px; height:38px; line-height: 20px; border-radius: 10%; color: #fff;}
+.que-sta-jie{background: #5FB878;}
+.que-sta-ask{background: #FF5722;}
+.que-body{width:100%; padding: 0px; }
+.que-body h2{margin-right:10px; line-height: 26px;  font-size: 16px; overflow: hidden; white-space: nowrap;text-overflow: ellipsis;}
+.que-body h2 a{display: inline-block; max-width: 95%; height: 20px; font-size: 16px;}
+.que-body .que-user-info{display: block;  text-overflow: ellipsis;}
+.que-body .que-user-info a{margin-right: 10px;}
+.que-body .que-user-info .que-avatar{top: 20px;}
+.que-body .que-user-info .que-avatar img{width: 25px; height: 25px; margin-top: 10; border-radius: 100%;}
+.que-body .que-user-info .que-avatar i{position: absolute; left: 35px; top: 15px;  }
+.que-body .que-user-info span{display: inline-block; font-size: 12px; padding-left: 5px;}
+.que-content{font-size: 14px; color:#999;}
+
+
+  /* 签到 */
 .fly-signin cite{padding: 0 5px; color: #FF5722; font-style: normal;}
 .fly-signin .layui-badge-dot{top: -7px; margin-left: 0px;}
 .fly-signin-list{padding: 0; line-height: 30px;}
@@ -471,8 +430,12 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .jie-row li .jie-user img{position:relative; top: 16px; width: 35px; height: 35px;}
 
 /* Detail页 */
-.detail-box{padding-left: 20px; padding-top: 15px; padding-right: 20px; padding-bottom: 20px;}
+.detail-box{position: relative;padding-left: 20px; padding-top: 15px; padding-right: 20px; padding-bottom: 20px;}
 .detail h1{font-size: 22px; line-height: 36px; padding-bottom:10px;}
+.detail .fly-avatar{position: absolute; left: 15px; top: 10px;}
+.detail .fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 100%;}
+.detail .fly-avatar .icon-renzheng{display: inline-block; width: 15px; height: 15px; line-height: 15px; top: 25px; left: 32px; background-color: #FFB800; color: #fff; border-radius: 50%; font-size: 14px;}
+
 .fly-detail-info{position: relative; margin: 10px 0 15px;}
 .fly-detail-info .layui-btn{height: 20px; line-height: 20px; vertical-align: top; border-radius: 0;}
 .fly-detail-info .layui-btn+.layui-btn{margin-left: 0;}
@@ -483,9 +446,9 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-about .jie-status, .detail-about .jie-status-ok{color:#fff;}
 .detail-about .fly-jing{padding:0 6px; background-color:#c00; color:#fff;}
 .detail-about .detail-hits{position: relative; top: 5px; line-height: 20px;}
+.detail-about .icon-renzheng{display: inline-block; width: 15px; height: 15px; line-height: 15px; top: 25px; left: 35px; background-color: #FFB800; color: #fff; border-radius: 50%; font-size: 10px;}
 .fly-detail-user{white-space: nowrap; overflow: hidden;}
 .fly-detail-user a{padding-right: 10px; font-size: 14px;}
-.fly-detail-user .icon-renzheng{top: 1px;}
 .fly-detail-user .guanzhu{position: absolute;  right:10px; }
 
 .detail-assist{position: relative; height:22px; margin-top: 10px; line-height: 15px; padding: 5px 10px 5px 10px; font-size: 13px; background-color: #f8f8f8; color: #999;border-radius:5px;}
@@ -514,6 +477,30 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-body .layui-btn a{color: #fff;}
 .detail-body ul>li{margin-top: 0;}
 .detail-body .layui-elem-quote{margin: 10px 0; font-size: 14px; line-height: 26px;}
+
+/*详情页-问答*/
+.user-questions{position:relative; margin: 5px 0 15px;}
+.user-questions .user-avatar img{width: 25px; height: 25px; margin-top: 10; border-radius: 100%;}
+.user-questions .user-questions-right{position:absolute; right:0px; display: inline-block; font-size: 14px; padding-left: 5px;}
+.user-questions .user-questions-right i{padding: 0 3px 0 15px; font-size: 22px; color: #999;}
+
+.detail-body-wenda{margin: 10px 0 5px; line-height: 26px; font-size: 16px; color: #999; word-wrap: break-word;}
+.detail-body-wenda p{margin-bottom:15px;}
+.detail-body-wenda img{max-width: 100%; cursor: pointer;}
+.detail-body-wenda .layui-btn{margin: 0 10px 10px 0;}
+.detail-body-wenda .layui-btn a{color: #fff;}
+.detail-body-wenda ul>li{margin-top: 0;}
+.detail-body-wenda .layui-elem-quote{margin: 10px 0; font-size: 14px; line-height: 26px;}
+.layui-form-pane{position:relative; width:100%;}
+.que-comments{position:absolute;right:20px;bottom:5px;}
+
+.wenda-user{height:200px; margin: 0,auto; text-align: center; pardding-top:20px;}
+.wenda-user .user-img{posation:relative; width:100%;}
+.wenda-user .user-img img{width:150px;height:150px; border-radius: 100%;}
+.wenda-user .user-img i{posation:absolute;right:20px;top:30px;width: 25px; height:25px; color:#fff; font-site:18px; border-radius: 100%;background-color:#FFB800;}
+.wenda-user .questions{height:30px;margin:20px 20px;}
+
+
 
 /* 详情页的底部操作条 */
   .site-tree-mobile-detail-bottom{display: block!important; position: fixed; z-index: 1000; bottom: 0px; left: 0px; width: 100%; height: 30px; line-height: 30px; border-radius: 2px; text-align: center; color: #e2e2e2;background:#eeeeee}

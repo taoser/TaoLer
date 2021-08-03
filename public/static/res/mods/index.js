@@ -1097,12 +1097,11 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
             shade: [0.2, '#000']
         });
         var url = $(this).data('url');
-        var locationurl = $(this).attr('location-url');
         $.getJSON(url, function(data) {
             if (data.code == 200) {
                 layer.close(loading);
                 layer.msg(data.msg, { icon: 1, time: 1000 }, function() {
-                    location.href = locationurl;
+                    location.href = data.url;
                 });
             } else {
                 layer.close(loading);

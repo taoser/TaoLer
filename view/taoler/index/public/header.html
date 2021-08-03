@@ -7,7 +7,7 @@
 	</div>
 	<div class="site-mobile-shade-top"></div>
 	{//移动端LOGO}
-	<a class="fly-logo layui-hide-md" href="/" style="padding-left:32%;"><img src="{$sysInfo.logo}" alt="layui" width="135" height="37"></a>
+	<a class="fly-logo layui-hide-md" href="/" style="padding-left:30%;"><img src="{$sysInfo.logo}" alt="layui" width="135" height="37"></a>
     <ul class="layui-nav fly-nav layui-hide-xs">
 	{volist name="headlinks" id="vo"}
 		<li class="layui-nav-item">
@@ -34,7 +34,7 @@
 			  <dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
 			  <dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
 			  <hr style="margin: 5px 0;">
-			  <dd><a data-url="{:url('user/logout')}" location-url="{:url('index/index')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
+			  <dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
 			</dl>
 		  </li>
 	  {else /}

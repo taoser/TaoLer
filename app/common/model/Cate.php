@@ -11,15 +11,15 @@ class Cate extends Model
 	protected $deleteTime = 'delete_time';
 	protected $defaultSoftDelete = 0;
 	
-	public function del($data)
+	public function del($id)
 	{
-		$cates = $this->find($data['id']);
+		$cates = $this->find($id);
 		
 		$res = $cates->delete();
 		if($res){
 			return 1;
 		}else{
-			return -1;
+			return '删除分类失败';
 		}
 		
 	}

@@ -270,6 +270,7 @@ CREATE TABLE `tao_cate` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `catename` varchar(20) NOT NULL COMMENT '导航名称',
   `ename` varchar(20) NOT NULL DEFAULT '' COMMENT '分类别名',
+  `detpl` varchar(20) NOT NULL COMMENT '详情模板',
   `icon` varchar(50) DEFAULT NULL COMMENT '图标',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '状态1启用0禁用',
@@ -286,9 +287,9 @@ CREATE TABLE `tao_cate` (
 -- ----------------------------
 -- Records of tao_cate
 -- ----------------------------
-INSERT INTO `tao_cate` VALUES ('1', '提问', 'ask', 'layui-icon-help', '1', '1', '0', 'TaoLer社区提问专栏1', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('2', '分享', 'share', 'layui-icon-share', '2', '1', '0', '', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('3', '讨论', 'talk', 'layui-icon-dialogue', '3', '1', '0', '', '1', '0', '0', '0');
+INSERT INTO `tao_cate` VALUES ('1', '提问', 'ask', 'ask', 'layui-icon-help', '1', '1', '0', 'TaoLer社区提问专栏1', '0', '0', '0', '0');
+INSERT INTO `tao_cate` VALUES ('2', '分享', 'share', 'posts', 'layui-icon-share', '2', '1', '0', '', '0', '0', '0', '0');
+INSERT INTO `tao_cate` VALUES ('3', '讨论', 'talk', 'posts', 'layui-icon-dialogue', '3', '1', '0', '', '1', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for tao_collection

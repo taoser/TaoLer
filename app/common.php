@@ -91,7 +91,7 @@ function getCateDesc($ename)
 //过滤文章摘要
 function getArtContent($content)
 {
-    return mb_substr(strip_tags($content),0,100).'...';
+    return mb_substr(strip_tags($content),0,50).'...';
 }
 
 

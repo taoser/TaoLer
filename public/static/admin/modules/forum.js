@@ -220,11 +220,9 @@ layui.define(['table', 'form'], function(exports){
             ,{field: 'id', title: 'ID',width: 60}
             ,{field: 'tags', title: '分类名', minWidth: 100}
             ,{field: 'ename', title: 'EN别名', minWidth: 100}
-			,{
-				title: '图标', align: 'center', 
-				templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'
-            }
-            ,{field: 'is_hot', title: '热门', templet: '#buttonHot'}
+			,{field: 'detpl',title: '模板', align: 'center',width: 100,templet: '#inputSel'}
+			,{title: '图标', align: 'center',width: 50,templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
+            ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#buttonHot'}
             ,{field: 'desc', title: '描述', minWidth: 100}
             ,{title: '操作', width: 100, align: 'center', toolbar: '#layuiadmin-app-cont-tagsbar'}
         ]]
@@ -276,6 +274,7 @@ layui.define(['table', 'form'], function(exports){
                         ,sort = othis.find('input[name="sort"]').val()
                         ,tags = othis.find('input[name="tags"]').val()
                         ,ename = othis.find('input[name="ename"]').val()
+						,detpl = othis.find('select[name="detpl"]').val()
 						,icon = othis.find('input[name="icon"]').val()
                         ,desc = othis.find('input[name="desc"]').val();
 
@@ -284,7 +283,7 @@ layui.define(['table', 'form'], function(exports){
                     $.ajax({
                         type:"post",
                         url:forumTagsForm,
-                        data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"icon":icon,"desc":desc},
+                        data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
                         daType:"json",
                         success:function (data){
                             if (data.code == 0) {

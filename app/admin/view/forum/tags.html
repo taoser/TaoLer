@@ -1,5 +1,19 @@
 {extend name="public:base" /}
+{block name="css"}
+<style type="text/css">
+.layui-table-body, .layui-table-box, .layui-table-cell{
+overflow: visible;
+}
+ 
+/* 设置下拉框的高度与表格单元相同 */
+ td .layui-table-cell .layui-form-select {
+	margin-top: -10px;
+	margin-left: -15px;
+	margin-right: -15px;
+}
 
+</style>
+{/block}
 {block name="body"}
   <div class="layui-fluid">
     <div class="layui-card">
@@ -10,6 +24,13 @@
       </div>
       <div class="layui-card-body">    
         <table id="LAY-app-content-tags" lay-filter="LAY-app-content-tags"></table>
+		<script type="text/html" id="inputSel">
+			<select name="detpl"  lay-filter="detpl" id="{{d.id}}" >
+			{volist name="template" id="vo"}
+				<option value="{$vo}" {{# if (d.detpl == "{$vo}"){ }} selected {{# } }}>{$vo}</option>
+			{/volist}
+			</select>
+		</script>
 		<script type="text/html" id="buttonHot">
 		{if condition="checkRuleButton('admin/Forum/tagshot')"}<input type="checkbox" name="is_hot" lay-skin="primary" lay-filter="menu-show" {{# if(d.is_hot ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >
 		{else /}<input type="checkbox" title="禁用" disabled> {/if}
@@ -60,6 +81,7 @@
             ,sort = othis.find('input[name="sort"]').val()
             ,tags = othis.find('input[name="tags"]').val()
             ,ename = othis.find('input[name="ename"]').val()
+			,detpl = othis.find('select[name="detpl"]').val()
 			,icon = othis.find('input[name="icon"]').val()
             ,desc = othis.find('input[name="desc"]').val();
             
@@ -67,22 +89,14 @@
 			
         $.ajax({
 				type:"post",
-				url:"{:url('admin/Forum/addtags')}",
-				data:{"sort":sort,"catename":tags,"ename":ename,"icon":icon,"desc":desc},
+				url:"{:url('admin/Forum/tagsform')}",
+				data:{"sort":sort,"catename":tags,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
 				daType:"json",
 				success:function (data){
 					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						});
+						layer.msg(data.msg,{icon:6,time:2000});
 					} else {
-						layer.open({
-							title:'添加失败',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
+						layer.open({title:'添加失败',content:data.msg,icon:5,anim:6});
 					}
 				}
 			});
@@ -92,6 +106,17 @@
         }); 
       }
     }
+	
+	//详情页模板选择控制
+	form.on('select(detpl)', function(data){
+	var detpl = data.value;
+	$.post("{:url('admin/Forum/tplSet')}",{"id":data.elem.id,"detpl":detpl});
+	//执行重载
+      table.reload('LAY-app-content-tags', {
+        where: detpl
+      });
+	});
+
 
 //分类热点控制
 	form.on('checkbox(menu-show)', function(data){
@@ -104,17 +129,9 @@
 			dataType:'json',
 			success:function(data){
 				if(data.code == 0){
-					layer.msg(data.msg,{
-						icon:6,
-						time:2000
-					});
+					layer.msg(data.msg,{icon:6,time:2000});
 				} else {
-					layer.open({
-						title:'修改失败',
-						content:data.msg,
-						icon:5,
-						adim:6
-					})
+					layer.open({title:'修改失败',content:data.msg,icon:5,adim:6});
 				}
 			}
 		});

@@ -7,7 +7,7 @@
 {block name="content"}
 <div class="fly-home fly-panel" style="background-image: url();">
   <img src="{$u.user_img}" alt="{$u.name}">
-  <i class="iconfont icon-renzheng" title="Fly社区认证"></i>
+  {if($u.vip > 0)}<i class="iconfont icon-renzheng" title="Fly社区认证"></i>{/if}
   <h1>
     {$u.nickname ?: $u.name}
     {if($u.sex==0)}<i class="iconfont icon-nan"></i>

@@ -59,6 +59,7 @@ class BaseController extends BaseCtrl
 		
         //2.将catelist变量赋给模板 公共模板nav.html
         View::assign('cateList',$cateList);
+		return $cateList;
 
     }
 	
@@ -95,6 +96,7 @@ class BaseController extends BaseCtrl
 			Cache::set('footlinks',$foot_links,3600);
 		}
         View::assign(['sysInfo'=>$sysInfo,'headlinks'=>$head_links,'footlinks'=>$foot_links]);
+		return $sysInfo;
     }
 
 }

@@ -12,7 +12,9 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
+use think\facade\Cache;
 use think\exception\ValidateException;
+use taoler\com\Files;
 
 class Forum extends AdminController
 {
@@ -150,63 +152,66 @@ class Forum extends AdminController
 				$res['count']= count($list);
 				$res['data'] = [];
 				foreach($list as $k=>$v){
-				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'tags'=>$v['catename'],'ename'=>$v['ename'],'icon'=>$v['icon'],'is_hot'=>$v['is_hot'],'desc'=>$v['desc']];
+				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'tags'=>$v['catename'],'ename'=>$v['ename'],'detpl'=>$v['detpl'],'icon'=>$v['icon'],'is_hot'=>$v['is_hot'],'desc'=>$v['desc']];
 				}
 			}
 			return json($res);
 		}
+		//详情模板
+		$sys = $this->getSystem();
+		$template = Files::getDirName('../view/'.$sys['template'].'/index/article/');
+		View::assign(['template'=>$template]);
 		return View::fetch();
 	}
 	
-	//添加帖子分类
-	public function addtags()
+	//添加和编辑帖子分类
+	public function tagsform()
 	{
+		$addOrEdit = !is_null(input('id'));//true是编辑false新增
+		$msg = $addOrEdit ? lang('edit') : lang('add');
 		if(Request::isAjax()){
 		$data = Request::param();
 		$list = Db::name('cate')->cache('catename')->save($data);
 		
 			if($list){
-				return json(['code'=>0,'msg'=>'添加分类成功']);
+				return json(['code'=>0,'msg'=> $msg.'分类成功']);
 			}else{
-				return json(['code'=>-1,'msg'=>'添加分类失败']);
+				return json(['code'=>-1,'msg'=> $msg.'分类失败']);
 			}
 		}
-		return view('tagsform');
-		
+		$tplname = $addOrEdit ? Db::name('cate')->where('id',input('id'))->value('detpl') : '';
+		//详情模板
+		$sys = $this->getSystem();
+		$template = Files::getDirName('../view/'.$sys['template'].'/index/article/');
+		View::assign(['template'=>$template,'tplname'=>$tplname]);
+		return View::fetch();
 	}
 	
-	//编辑帖子分类
-	public function tagsform()
+	//详情页模板设置
+	public function tplSet()
 	{
-		if(Request::isAjax()){
-		$data = Request::param();
-		$list = Db::name('cate')->cache('catename')->update($data);
-		
-			if($list){
-				return json(['code'=>0,'msg'=>'修改分类成功']);
-			}else{
-				return json(['code'=>-1,'msg'=>'修改分类失败']);
-			}
+		if(Request::isPost()){
+			$data = Request::only(['id','detpl']);
+			Db::name('cate')->cache('catename')->update($data);
 		}
-		return View::fetch();
+		
 	}
 	
 	//删除帖子分类
 	public function tagsdelete()
 	{
 		if(Request::isAjax()){
-		$data = Request::param();
+		$id = Request::param('id');
 
 		$cate = new Cate;
-		$result = $cate->del($data);
+		$result = $cate->del($id);
 		
-		
-			if($result == 1){
-				Cache::tag('catename')->clear();
-				return json(['code'=>0,'msg'=>'删除分类成功']);
-			}else{
-				return json(['code'=>-1,'msg'=>'删除分类失败']);
-			}
+		if($result == 1){
+			Cache::tag('catename')->clear();
+			return json(['code'=>0,'msg'=>'删除分类成功']);
+		}else{
+			return json(['code'=>-1,'msg'=>$result]);
+		}
 		}
 	}
 	
