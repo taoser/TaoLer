@@ -92,20 +92,20 @@ class Login extends BaseController
         if(Request::isAjax()){
 			$data = Request::only(['name','email','password','repassword','captcha']);
 		
-        //校验场景中reg的方法数据
-		try{
-            validate(userValidate::class)
-                ->scene('Reg')
-                ->check($data);
-        } catch (ValidateException $e) {
+			//校验场景中reg的方法数据
+			try{
+				validate(userValidate::class)
+					->scene('Reg')
+					->check($data);
+			} catch (ValidateException $e) {
 				return json(['code'=>-1,'msg'=>$e->getError()]);
-        }
+			}
+
+			$user = new User();
+			$result = $user->reg($data);
 		
-		$user = new User();
-		$result = $user->reg($data);
-		
-           if ($result == 1) {
-			   $res = ['code'=>0,'msg'=>'注册成功','url'=>(string) url('login/index')];
+           if ($result['code'] == 1) {
+			   $res = ['code'=>0,'msg'=>$result['msg'],'url'=>(string) url('login/index')];
 			   if(Config::get('taoler.config.email_notice')) mailto($this->showUser(1)['email'],'注册新用户通知','Hi亲爱的管理员:</br>新用户 <b>'.$data['name'].'</b> 刚刚注册了新的账号，请尽快处理。');
            }else {
 			   $res = ['code'=>-1,'msg'=>$result];

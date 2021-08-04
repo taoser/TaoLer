@@ -169,23 +169,65 @@
 						</div>
 					  </div>
 					</div>
+					{//邮箱发送测试}
+					<div class="layui-form" wid100 >
+					  <div class="layui-form-item">
+						<label class="layui-form-label">测试邮箱</label>
+						<div class="layui-input-inline">
+						  <input type="text" name="email" value="{$email}" lay-verify="email" class="layui-input">
+						</div>
+						<button class="layui-btn" lay-submit lay-filter="test_system_email">发送测试码</button>
+					  </div>
+					</div>
+					<div class="layui-form" wid100>
+					  <div class="layui-form-item">
+						<label class="layui-form-label">输入测试码</label>
+						<div class="layui-input-inline">
+						  <input type="text" name="code" value="" autocomplete="off" class="layui-input">
+						</div>
+						<button class="layui-btn" lay-submit lay-filter="active_system_email">确认激活</button>
+					  </div>
+					</div>
                 </div>
 				<div class="layui-tab-item">
 					<div class="layui-form" wid100 lay-filter="config">
+						{if($mailserver.active == 1)}
 						<div class="layui-form-item">
 							<label class="layui-form-label">邮件通知：</label>
 							<div class="layui-input-inline" style="width: 30px;">
 								<input type="checkbox" name="email_notice" lay-skin="primary" value=1 {if config('taoler.config.email_notice') == 1} checked {/if}>
 							</div>
-							<div class="layui-form-mid layui-word-aux">是否显示发帖及评论等邮件提醒（需先配置邮箱服务）</div>
+							<div class="layui-form-mid layui-word-aux">发帖及评论等邮件提醒（邮箱服务未激活无法设置）</div>
 						</div>
-					  <div class="layui-form-item">
+						{/if}
+						<div class="layui-form-item">
+							<label class="layui-form-label">注册审核：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="regist_check" lay-skin="primary" value=0 {if config('taoler.config.regist_check') == 0} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">注册是否需要审核</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">发帖审核：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="posts_check" lay-skin="primary" value=0 {if config('taoler.config.posts_check') == 0} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">发帖是否需要审核</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">评论审核：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="commnets_check" lay-skin="primary" value=0 {if config('taoler.config.commnets_check') == 0} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">评论是否需要审核</div>
+						</div>
+						<div class="layui-form-item">
 						<label class="layui-form-label">分类显示：</label>
 						<div class="layui-input-inline" style="width: 30px;">
 						  <input type="checkbox" name="cate_show" lay-skin="primary" value=1 {if config('taoler.config.cate_show') == 1} checked {/if}>
 						</div>
 						<div class="layui-form-mid layui-word-aux">是否显示列表及详情所属分类</div>
-					  </div>
+						</div>
 						<div class="layui-form-item">
 							<label class="layui-form-label">区域简称：</label>
 							<div class="layui-input-inline" style="width: 30px;">
@@ -252,24 +294,48 @@
 			}
 		}
 	  });
-	  
+	//网站配置
 	form.on('submit(set_system_config)', function(data){
 	var field = data.field;
 	$.post("{:url('admin/set/config')}",field,function(res){
         if(res.code == 0){
-				layer.msg(res.msg,{
-					icon:6,
-					tiye:2000
+				layer.msg(res.msg,{icon:6,tiye:2000
 				},function(){
 					location.reload();
 				});
 			} else {
-				layer.open({
-					title:"设置失败",
-					content:res.msg,
-					icon:5,
-					anim:6
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+  //邮箱发送测试码
+  form.on('submit(test_system_email)', function(data){
+	var field = data.field;
+	$.post("{:url('admin/set/sendMailCode')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000
+				},function(){
+					location.reload();
 				});
+			} else {
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+  
+  //邮箱激活
+  form.on('submit(active_system_email)', function(data){
+	var field = data.field;
+	$.post("{:url('admin/set/activeMailServer')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000
+				},function(){
+					location.reload();
+				});
+			} else {
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
 			}
     });
     return false;

@@ -26,21 +26,21 @@ private static $installed = array (
   array (
     'firebase/php-jwt' => 
     array (
-      'pretty_version' => 'v5.3.0',
-      'version' => '5.3.0.0',
+      'pretty_version' => 'v5.4.0',
+      'version' => '5.4.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '3c2d70f2e64e2922345e89f2ceae47d2463faae1',
+      'reference' => 'd2113d9b2e0e349796e72d2a63cf9319100382d2',
     ),
     'league/flysystem' => 
     array (
-      'pretty_version' => '1.1.3',
-      'version' => '1.1.3.0',
+      'pretty_version' => '1.1.4',
+      'version' => '1.1.4.0',
       'aliases' => 
       array (
       ),
-      'reference' => '9be3b16c877d477357c015cec057548cf9b2a14a',
+      'reference' => 'f3ad69181b8afed2c9edf7be5a2918144ff4ea32',
     ),
     'league/flysystem-cached-adapter' => 
     array (
@@ -71,12 +71,12 @@ private static $installed = array (
     ),
     'phpmailer/phpmailer' => 
     array (
-      'pretty_version' => 'v6.4.1',
-      'version' => '6.4.1.0',
+      'pretty_version' => 'v6.5.0',
+      'version' => '6.5.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '9256f12d8fb0cd0500f93b19e18c356906cbed3d',
+      'reference' => 'a5b5c43e50b7fba655f793ad27303cd74c57363c',
     ),
     'psr/cache' => 
     array (
@@ -116,12 +116,12 @@ private static $installed = array (
     ),
     'symfony/polyfill-mbstring' => 
     array (
-      'pretty_version' => 'v1.23.0',
-      'version' => '1.23.0.0',
+      'pretty_version' => 'v1.23.1',
+      'version' => '1.23.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => '2df51500adbaebdc4c38dea4c89a2e131c45c8a1',
+      'reference' => '9174a3d80210dca8daa7f31fec659150bbeabfc6',
     ),
     'symfony/polyfill-php72' => 
     array (
@@ -134,21 +134,21 @@ private static $installed = array (
     ),
     'symfony/polyfill-php80' => 
     array (
-      'pretty_version' => 'v1.23.0',
-      'version' => '1.23.0.0',
+      'pretty_version' => 'v1.23.1',
+      'version' => '1.23.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'eca0bf41ed421bed1b57c4958bab16aa86b757d0',
+      'reference' => '1100343ed1a92e3a38f9ae122fc0eb21602547be',
     ),
     'symfony/var-dumper' => 
     array (
-      'pretty_version' => 'v4.4.25',
-      'version' => '4.4.25.0',
+      'pretty_version' => 'v4.4.27',
+      'version' => '4.4.27.0',
       'aliases' => 
       array (
       ),
-      'reference' => '31ea689a8e7d2410016b0d25fc15a1ba05a6e2e0',
+      'reference' => '391d6d0e7a06ab54eb7c38fab29b8d174471b3ba',
     ),
     'taoser/taoler' => 
     array (
@@ -170,12 +170,12 @@ private static $installed = array (
     ),
     'topthink/framework' => 
     array (
-      'pretty_version' => 'v6.0.8',
-      'version' => '6.0.8.0',
+      'pretty_version' => 'v6.0.9',
+      'version' => '6.0.9.0',
       'aliases' => 
       array (
       ),
-      'reference' => '4789343672aef06d571d556da369c0e156609bce',
+      'reference' => '0b5fb453f0e533de3af3a1ab6a202510b61be617',
     ),
     'topthink/think-captcha' => 
     array (
@@ -188,12 +188,12 @@ private static $installed = array (
     ),
     'topthink/think-helper' => 
     array (
-      'pretty_version' => 'v3.1.4',
-      'version' => '3.1.4.0',
+      'pretty_version' => 'v3.1.5',
+      'version' => '3.1.5.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'c28d37743bda4a0455286ca85b17b5791d626e10',
+      'reference' => 'f98e3ad44acd27ae85a4d923b1bdfd16c6d8d905',
     ),
     'topthink/think-multi-app' => 
     array (
@@ -206,12 +206,12 @@ private static $installed = array (
     ),
     'topthink/think-orm' => 
     array (
-      'pretty_version' => 'v2.0.40',
-      'version' => '2.0.40.0',
+      'pretty_version' => 'v2.0.44',
+      'version' => '2.0.44.0',
       'aliases' => 
       array (
       ),
-      'reference' => '1119d979b850849f3725856460cf108eec1c3eb8',
+      'reference' => '5d3d5c1ebf8bfccf34bacd90edb42989b16ea409',
     ),
     'topthink/think-template' => 
     array (
