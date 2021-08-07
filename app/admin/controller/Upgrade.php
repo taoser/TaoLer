@@ -3,11 +3,11 @@
  *  升级包规定的目录结构
  *  xxx_版本号.zip(如：xxx_1.0.0.zip)
  *   |
- *   |————mysql
+ *   |————runtime
  *   |    |
- *   |    |___mysql_update.sql(更新脚本) //create table test(id init(11)); create table test2(id init(11));
+ *   |    |___update.sql(更新脚本) //create table test(id init(11)); create table test2(id init(11));
  *
- *   |    |___mysql_rockback.sql（回滚脚本） //drop table test; //drop table test2;
+ *   |    |___rockback.sql（回滚脚本） //drop table test; //drop table test2;
  *   |    
  *   |____php
  * 
@@ -273,7 +273,7 @@ class Upgrade extends AdminController
         }
 		
 		//升级sql操作
-        $upSql = $zipPath.'runtime/mysql_update.sql';
+        $upSql = $zipPath.'runtime/update.sql';
 		if(file_exists($upSql))
 		{
 			$sqlRes = $this->db_update($upSql);

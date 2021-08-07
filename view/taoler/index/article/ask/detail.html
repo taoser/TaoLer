@@ -37,11 +37,11 @@
 		<div class="detail-body-wenda photos">问题描述：{$article.content|raw}</div>
 
 		{//管理}
-		{if (($article.upzip !== '') || session('?user_name'))}
+		{if (($article.upzip !== '') || (session('user_id')==$article.user_id) OR ($user.auth  ?? ''))}
 		<div class="detail-assist">
-		{notempty name="$article.upzip"}
-		 <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-		{/notempty}
+			{notempty name="$article.upzip"}
+			 <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
+			{/notempty}
 		  <div class="fly-admin-box" data-id="{$article.id}">
 		  {if ($user.auth ?? '')}
             <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>

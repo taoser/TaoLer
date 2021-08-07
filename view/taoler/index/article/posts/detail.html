@@ -44,7 +44,7 @@
         </div>
         <div class="detail-body photos">{$article.content|raw}</div>
 		{//管理}
-		{if (($article.upzip !== '') || session('?user_name'))}
+		{if (($article.upzip !== '') || (session('user_id')==$article.user_id) OR ($user.auth  ?? ''))}
 		<div class="detail-assist">
 		{notempty name="$article.upzip"}
 		 <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>

@@ -19,8 +19,8 @@ Route::group(function () {
 				'ename' => '\w+',
 				'page'   => '\d+',
 			]);
-	Route::rule('add','article/add')->token();
-	Route::rule('edit/[:id]','article/edit');
+	Route::rule('add','Article/add');
+	Route::rule('edit/[:id]','Article/edit');
 	//Route::rule('del/:id','article/delete');
 });
 Route::group(function () {
