@@ -117,6 +117,10 @@ class User extends BaseController
 			if(!$result){
 				$this->error($validate->getError());
 			} else {
+				$mail = Db::name('user')->where('id',$this->uid)->value('email');
+				if($data['email'] !== $mail){
+					$data['active'] = 0;
+				}
                 $user = new userModel;
                 $result = $user->setNew($data);
 				if($result == 1){
@@ -202,14 +206,30 @@ class User extends BaseController
         return View::fetch();
     }
 
-	
 	//邮箱激活
 	public function activate()
 	{
-		$this->isLogin();
-		$user = UserModel::find($this->uid);
-		$this->assign('user',$user);
-		return view();
+		//管理员邮箱
+		$adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
+		View::assign('adminEmail',$adminEmail);
+		 return View::fetch();
+	}
+	
+	//邮箱激活
+	public function active()
+	{
+
+		if(Request::isPost()){
+			$email = Request::param('email');
+			$url = Request::domain().Request::root().'/active/index?url='.time().md5($email).$this->uid;
+			$content = "Hi亲爱的{$this->showUser($this->uid)['name']}:</br>您正在进行邮箱激活，请在10分钟内完成激活。 <a href='{$url}' target='_blank' >请点击进行激活</a> </br>若无法跳转请复制链接激活：{$url}";
+			$res = mailto($email,'邮箱激活',$content);
+			if($res){
+				return json(['status'=>0]);
+			}else{
+				return json(['status'=>-1,'发送邮件出错！']);
+			}
+		}
 	}
 	
 	//修改密码

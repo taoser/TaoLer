@@ -141,7 +141,7 @@ class Set extends AdminController
         $upRes = $uploads->put('file','logo',2000,'image','uniqid');
         $logoJson = $upRes->getData();
 		if($logoJson['status'] == 0){
-			$result = Db::name('system')->where('id', 1)->update(['logo'=>$logoJson['url']]);
+			$result = Db::name('system')->where('id', 1)->cache('system')->update(['logo'=>$logoJson['url']]);
 			if($result){
 				$res = ['code'=>0,'msg'=>'上传logo成功'];
 			} else {

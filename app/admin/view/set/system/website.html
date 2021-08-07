@@ -7,11 +7,11 @@
         <div class="layui-card">
           <div class="layui-card-body">
 		  
-            <div class="layui-tab layui-tab-brief" lay-filter="component-tabs-brief">
+            <div class="layui-tab layui-tab-brief" lay-filter="website-tabs-brief">
               <ul class="layui-tab-title">
                 <li class="layui-this" lay-id="website">网站设置</li>
                 <li lay-id="email">邮箱服务</li>
-				<li lay-id="email">服务配置</li>
+				<li lay-id="config">服务配置</li>
               </ul>
               <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
@@ -265,6 +265,7 @@
     var $ = layui.$
 	,form = layui.form
 	,upload = layui.upload;
+	var element  =layui.element ;
 		
 	//LOGO选完文件后不自动上传
 	  upload.render({
@@ -278,19 +279,12 @@
 		,bindAction: '#logo-upload-button'
 		,done: function(res){
 		  if(res.code == 0){
-				layer.msg(res.msg,{
-					icon:6,
-					tiye:2000
+				layer.msg(res.msg,{icon:6,tiye:2000
 				},function(){
 					location.reload();
 				});
 			} else {
-				layer.open({
-					title:"上传失败",
-					content:res.msg,
-					icon:5,
-					anim:6
-				});
+				layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
 			}
 		}
 	  });
@@ -300,8 +294,6 @@
 	$.post("{:url('admin/set/config')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000
-				},function(){
-					location.reload();
 				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
@@ -315,8 +307,6 @@
 	$.post("{:url('admin/set/sendMailCode')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000
-				},function(){
-					location.reload();
 				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
@@ -331,14 +321,24 @@
 	$.post("{:url('admin/set/activeMailServer')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000
-				},function(){
-					location.reload();
 				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
 			}
     });
     return false;
+  });
+  
+   //显示当前tab
+  if(location.hash){
+    element.tabChange('website-tabs-brief', location.hash.replace(/^#/, ''));
+  }
+
+  element.on('tab(website-tabs-brief)', function(){
+    var othis = $(this), layid = othis.attr('lay-id');
+    if(layid){
+      location.hash = layid;
+    }
   });
 	
 	

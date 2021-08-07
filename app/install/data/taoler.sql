@@ -379,7 +379,6 @@ CREATE TABLE `tao_mail_server` (
   `port` tinyint(2) NOT NULL COMMENT '邮箱端口',
   `nickname` varchar(20) NOT NULL DEFAULT '' COMMENT '昵称',
   `password` varchar(16) NOT NULL COMMENT '邮箱密码',
-  `active` tinyint(1) NOT NULL DEFAULT '0' COMMENT '邮箱服务1激活0未激活',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -387,7 +386,7 @@ CREATE TABLE `tao_mail_server` (
 -- ----------------------------
 -- Records of tao_mail_server
 -- ----------------------------
-INSERT INTO `tao_mail_server` VALUES ('1', 'xxxx@aliyun.com', 'smtp.aliyun.com', '25', 'user', '123456', '0', '0');
+INSERT INTO `tao_mail_server` VALUES ('1', 'xxxx@aliyun.com', 'smtp.aliyun.com', '25', 'user', '123456', '0');
 
 -- ----------------------------
 -- Table structure for tao_message
@@ -507,6 +506,7 @@ CREATE TABLE `tao_user` (
   `password` varchar(32) NOT NULL COMMENT '密码',
   `phone` varchar(11) NOT NULL DEFAULT '' COMMENT '手机',
   `email` varchar(50) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `active` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1激活账户0未激活',
   `nickname` varchar(16) NOT NULL DEFAULT '' COMMENT '昵称',
   `city` varchar(50) NOT NULL DEFAULT '' COMMENT '归属地',
   `sex` enum('0','1') NOT NULL DEFAULT '0' COMMENT '性别0男1女',
@@ -533,7 +533,7 @@ CREATE TABLE `tao_user` (
 -- ----------------------------
 -- Records of tao_user
 -- ----------------------------
-INSERT INTO `tao_user` VALUES ('1', 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', '管理员', '北京市', '1', '这是一个社区系统', '/static/res/images/avatar/00.jpg', '1', '0', '1', '1', '0', '127.0.0.1', '0', '0', '0', '0', '1579053025', '1578469091', '0');
+INSERT INTO `tao_user` VALUES ('1', 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', '0', '管理员', '北京市', '1', '这是一个社区系统', '/static/res/images/avatar/00.jpg', '1', '0', '1', '1', '0', '127.0.0.1', '0', '0', '0', '0', '1579053025', '1578469091', '0');
 
 -- ----------------------------
 -- Table structure for tao_user_area

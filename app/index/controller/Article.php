@@ -62,6 +62,7 @@ class Article extends BaseController
         //分类列表
         $article = new ArticleModel();
 		$artList = $article->getCateList($ename,$type,$page,$url,$suffix);
+		$count = $artList->total();
 
 		//	热议文章
 		$artHot = $article->getArtHot(10);
@@ -73,7 +74,7 @@ class Article extends BaseController
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(6);
 		
-		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie']);
+		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie','count'=>$count,'page'=>$page,'url'=>$url]);
 		return View::fetch('article/'.$tpl.'/cate');
     }
 

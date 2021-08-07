@@ -140,7 +140,7 @@ class User extends Model
     {
         $userId = $data['user_id'];
         $user = User::where('id',$userId)->find();
-        $result = $user->allowField(['email','nickname','sex','city','area_id','sign'])->save($data);
+        $result = $user->allowField(['email','active','nickname','sex','city','area_id','sign'])->save($data);
         if($result){
             return 1;
         }else{

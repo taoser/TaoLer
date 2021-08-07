@@ -949,7 +949,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 
   //发送激活邮件
   fly.activate = function(email){
-    fly.json('/api/activate/', {}, function(res){
+    fly.json(actvateEmaiUrl, {"email":email}, function(res){
       if(res.status === 0){
         layer.alert('已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收。', {
           icon: 1

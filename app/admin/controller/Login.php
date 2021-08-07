@@ -26,13 +26,13 @@ class Login extends AdminController
 			}
 
 			$user = new \app\admin\model\Admin();
-			$res = $user->login($data);
+			$result = $user->login($data);
 
-			if ($res == 1) {
+			if ($result == 1) {
 				$res = ['code'=>0,'msg'=>'登陆成功', 'url'=>(string) url('index/index')];
 				//$res['data']['access_token'] = $data['__token__'];
 			} else {
-				$res = ['code'=>-1,'msg'=>$res,'url'=>'admin/login'];
+				$res = ['code'=>-1,'msg'=>$result,'url'=>(string) url('admin/login')];
 			}
 			return json($res);
 		}
