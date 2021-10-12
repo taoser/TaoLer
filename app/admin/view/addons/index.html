@@ -2,51 +2,62 @@
 
 {block name="body"}
   <div class="layui-fluid">
-        <div class="layui-card">
+        
           <div class="layui-form layui-card-header  layuiadmin-card-header-auto">
-			 <div class="layui-form-item">
-          <div class="layui-inline">
-            插件分类
-          </div>
-          <div class="layui-inline">
-            <select name="id" lay-filter="LAY-user-adminrole-type">
-              <option value="">全部插件</option>
-			  <option value="">支付</option>
-			  <option value="">第三方登陆</option>
-			  
-            </select>
-          </div>
-        </div>
+			<div class="layui-form-item">
+			  <div class="layui-inline">
+				插件分类
+			  </div>
+			  <div class="layui-inline">
+				<select name="id" lay-filter="LAY-user-adminrole-type">
+				  <option value="">全部插件</option>
+				  <option value="">支付</option>
+				  <option value="">第三方登陆</option>
+				  
+				</select>
+			  </div>
+			</div>
 		  </div>
-          <div class="layui-card-body">
+		  <table id="addons-list" lay-filter="addons-list"></table>
+		   
+			<script type="text/html" id="toolbar">
 				<div class="layui-btn-group" style="padding-bottom: 10px;">
 				  <button class="layui-btn layuiadmin-btn-admin" data-type="batchdel">刷新</button>
-				  <button class="layui-btn layuiadmin-btn-admin" data-type="add">离线安装</button>
+				  <button class="layui-btn layuiadmin-btn-admin" data-type="add1">离线安装</button>
 				</div>  
 				<div class="layui-btn-group" style="padding-bottom: 10px;">
-				  <button type="button" class="layui-btn">全部</button>
-				  <button type="button" class="layui-btn">免费</button>
-				  <button type="button" class="layui-btn">付费</button>
-				  <button type="button" class="layui-btn">已安装</button>
+				  <button type="button" class="layui-btn layui-btn-sm" lay-event="installed">已安装</button>
+				  <button type="button" class="layui-btn layui-btn-sm" lay-event="onlineAddons">在线</button>
+				  <button type="button" class="layui-btn layui-btn-sm" lay-event="freeAddons">免费</button>
+				  <button type="button" class="layui-btn layui-btn-sm" lay-event="payAddons">付费</button>
+				  
 				</div>            
-            <table id="addons-list" lay-filter="addons-list"></table>
-			<script type="text/html" id="addons-tool">
-			
-			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="install"><i class="layui-icon layui-icon-edit"></i>安装</a>
-			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>卸载</a>
-			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-			
 			</script>
-          </div>
-        </div>
+			<script type="text/html" id="addons-installed-tool">
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="install"><i class="layui-icon layui-icon-edit"></i>安装</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="set"><i class="layui-icon layui-icon-edit"></i>设置</a>
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>卸载</a>
+			</script>
+			<script type="text/html" id="addons-tool">
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="install"><i class="layui-icon layui-icon-edit"></i>安装</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="set"><i class="layui-icon layui-icon-edit"></i>设置</a>
+			</script>
+          
   </div>
   
 {/block}
 {block name="js"}
 <script>
+	var filter = "{:url('Addons')}";
+	//console.log(filter);
 	var addonsIndex = "{:url('Addons/index')}",
+		addonsList = "{:url('Addons/addonsList')}",
+		pluginsList = "{:url('Addons/pluginsList')}",
         addonsDelete = "{:url('Addons/delete')}",
         addonsEdit = "{:url('Addons/edit')}";
+	var col = new Array();
+	col = {:json_encode($col)};
+	
   layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({
@@ -56,38 +67,11 @@
   ,table = layui.table
   ,form = layui.form
   ,upload = layui.upload;
+  
 
   //事件
     var active = {
-      batchdel: function(){
-        var checkStatus = table.checkStatus('addons-list')
-        ,checkData = checkStatus.data; //得到选中的数据
-
-        if(checkData.length === 0){
-          return layer.msg('请选择数据');
-        }
-        
-        layer.prompt({
-          formType: 1
-          ,title: '敏感操作，请验证口令'
-        }, function(value, index){
-          layer.close(index);
-          
-          layer.confirm('确定删除吗？', function(index) {
-            
-            //执行 Ajax 后重载
-            /*
-            admin.req({
-              url: 'xxx'
-              //,……
-            });
-            */
-            table.reload('addons-list');
-            layer.msg('已删除');
-          });
-        }); 
-      }
-      ,add: function(){
+      add: function(){
         layer.open({
           type: 2
           ,title: '添加插件'

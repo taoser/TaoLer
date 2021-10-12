@@ -1,32 +1,57 @@
 //网站app版本发布
 
 layui.define(['table', 'form','upload'], function(exports){
-  var $ = layui.$
+  var $ = layui.jquery
   ,table = layui.table
   ,form = layui.form
   ,upload = layui.upload;
 
-  //版本推送
+  //安装插件
 	table.render({
 		elem: '#addons-list',
-		url: addonsIndex,
-		limit: 5,
-		cols:[[
-			{type: 'numbers', fixed: 'left'},
-			{field: 'addons_name',title: '插件', width: 150},
-			{field: 'addons_version',title: '版本', width: 100},
-			{field: 'addons_auther',title: '作者', width: 100},
-			{field: 'addons_resume',title: '简介', minWidth: 200},
-			{field: 'addons_price',title: '价格(元)'},
-			{field: 'addons_status',title: '状态', width: 100},
-			{field: 'ctime',title: '时间', width: 150},
-			{title: '操作', width: 250, align:'center', fixed: 'right', toolbar: '#addons-tool'}
-		]]
+        toolbar: '#toolbar',
+		url: addonsList,
+		cols:[
+			col
+		]
 		,page: true
 		,limit: 10
 		,height: 'full-220'
 		,text: '对不起，加载出现异常！'
 	});
+
+    //头工具栏事件
+    table.on('toolbar(addons-list)', function(obj){
+        var checkStatus = table.checkStatus(obj.config.id);
+        switch(obj.event){
+            case 'installed':
+				$.post(addonsIndex + '?type=installed',function(){
+					location.href = addonsIndex + '?type=installed';
+				});
+                $.post(addonsList + '?type=installed',{"type":"installed"});
+                table.reload('addons-list', {
+                    where: {"type":"installed"}
+                }); //数据刷新
+                break;
+            case 'onlineAddons':
+				$.post(addonsIndex + '?type=onlineAddons',function(){
+					location.href = addonsIndex + '?type=onlineAddons';
+				});
+                $.post(addonsList + '?type=onlineAddons',{"type":"onlineAddons"});
+                table.reload('addons-list', {
+                    where: {"type":"onlineAddons"}
+                }); //数据刷新
+                break;
+            case 'isAll':
+                layer.msg(checkStatus.isAll ? '全选': '未全选');
+                break;
+
+            //自定义头工具栏右侧图标 - 提示
+            case 'LAYTABLE_TIPS':
+                layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                break;
+        };
+    });
 	
 //监听工具条
   table.on('tool(addons-list)', function(obj){

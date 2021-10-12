@@ -49,12 +49,12 @@
         <div style="padding-bottom: 10px;">
           <button class="layui-btn layuiadmin-btn-forum-list" data-type="batchdel">删除</button>
         </div>
-        <table id="LAY-app-forum-list" lay-filter="LAY-app-forum-list"></table> 
+        <table id="LAY-app-forum-list" lay-filter="LAY-app-forum-list" ></table> 
         <script type="text/html" id="imgTpl">
           <img style="display: inline-block; width: 50%; height: 100%;" src= "{{ d.avatar }}">
         </script> 
 		<script type="text/html" id="title">
-		<a href="{$domain}/jie/{{d.id}}.html" target="_blank">{{d.content}}</a>
+		<a href="{$domain}/jie/{{d.id}}.html" target="_blank">{{d.title}}</a>
 		</script>
         <script type="text/html" id="buttonTpl">
           {{#  if(d.top == 1){ }}
@@ -135,14 +135,29 @@ var forumList = "{:url('Forum/list')}",
         }
       
         layer.confirm('确定删除吗？', function(index) {
+		
+			//获取所选id
+			var idsArray = [];
+            for (var i = 0; i < checkData.length; i++) {
+                idsArray.push(checkData[i].id);
+            }
+			
+            var ids = idsArray.toString();
+             //console.log(ids);
           
           //执行 Ajax 后重载
-          /*
-          admin.req({
-            url: 'xxx'
+         
+          $.post("{:url('admin/Forum/listdel')}",{"id": ids},function(res){
+			  if(res.code == 0){
+				layer.msg('删除成功', {
+				  icon: 1
+				  ,shade: 0
+				});
+			  }
+          }
             //,……
-          });
-          */
+          );
+          
           table.reload('LAY-app-forum-list');
           layer.msg('已删除');
         });

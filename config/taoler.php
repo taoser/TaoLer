@@ -7,7 +7,7 @@ return [
 	//应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     //版本配置
-    'version'   => '1.8.3',
+    'version'   => '1.8.4',
 	//加盐
 	'salt'		=> 'taoler',
 	//数据库备份目录
@@ -17,9 +17,9 @@ return [
         'email_notice'	=> 0,
         'cate_show'	=> 0,
         'area_show'	=> 0,
-		'regist_check'	=> 1,
-		'posts_check'	=> 1,
-		'commnets_check'	=> 1,
+		'regist_check'	=> 0,
+		'posts_check'	=> 0,
+		'commnets_check'	=> 0,
 
 	]
 	

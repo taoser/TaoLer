@@ -120,7 +120,8 @@ class Article extends BaseController
 			if(empty($data['content'])){
 				return json(['code'=>0, 'msg'=>'评论不能为空！']);
 			}
-			$data['status'] = Config::get('taoler.config.commnets_check');
+			$superAdmin = Db::name('user')->where('id',$sendId)->value('auth');
+			$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.commnets_check');
 			$msg = $data['status'] ? '留言成功' : '留言成功，请等待审核';
 				
 			//用户留言存入数据库

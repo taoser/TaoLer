@@ -6,9 +6,9 @@ use think\facade\View;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\Config;
-use think\exception\ValidateException;
 use app\admin\model\Addons as AddonsModel;
 use taoler\com\Files;
+use taoler\com\Api;
 
 class Addons extends AdminController
 {
@@ -19,60 +19,123 @@ class Addons extends AdminController
      */
     public function index()
     {
-        if(Request::isAjax()){
-			
-			var_dump(Files::getDirName('../addons/'));
-
+		$type = input('type');
+		//$filter = input('filter') ? input('filter') : 'public-list';
+		//动态field
+		switch($type){
+			//已安装
+			case 'installed':
+				$col = [
+					['type' => 'numbers', 'fixed'=> 'left'],
+					['field' => 'name','title'=> '插件', 'width'=> 150],
+					['field'=> 'title','title'=> '标题', 'width'=> 100],
+					['field'=> 'version','title'=> '版本', 'width'=> 100],
+					['field' => 'author','title'=> '作者', 'width'=> 100],
+					['field' => 'description','title'=> '简介', 'minWidth'=> 200],
+					['field' => 'status','title'=> '状态', 'width'=> 100],
+					['field' => 'install','title'=> '安装', 'width'=> 100],
+					['field' => 'ctime','title'=> '到期时间', 'width'=> 150],
+					['title' => '操作', 'width'=> 220, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
+				];
+				break;
+			//在线
+			case 'onlineAddons':
+				$col = [
+					['type' => 'numbers', 'fixed'=> 'left'],
+					['field' => 'name','title'=> '插件', 'width'=> 150],
+					['field'=> 'title','title'=> '标题', 'width'=> 100],
+					['field'=> 'version','title'=> '版本', 'width'=> 100],
+					['field' => 'author','title'=> '作者', 'width'=> 100],
+					['field' => 'description','title'=> '简介', 'minWidth'=> 200],
+					['field' => 'price','title'=> '价格(元)'],
+					['field' => 'status','title'=> '状态', 'width'=> 100],
+					['field' => 'install','title'=> '安装', 'width'=> 100],
+					['field' => 'ctime','title'=> '时间', 'width'=> 150],
+					['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
+				];
+				break;
+			default:
+				$col = [
+					['type' => 'numbers', 'fixed'=> 'left'],
+					['field' => 'name','title'=> '插件', 'width'=> 150],
+					['field'=> 'title','title'=> '标题', 'width'=> 100],
+					['field'=> 'version','title'=> '版本', 'width'=> 100],
+					['field' => 'author','title'=> '作者', 'width'=> 100],
+					['field' => 'description','title'=> '简介', 'minWidth'=> 200],
+					['field' => 'status','title'=> '状态', 'width'=> 100],
+					['field' => 'install','title'=> '安装', 'width'=> 100],
+					['field' => 'ctime','title'=> '到期时间', 'width'=> 150],
+					['title' => '操作', 'width'=> 220, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
+				];
 		}
+
+		View::assign('col',$col);
 		return View::fetch();
     }
+	
+	 public function addonsList()
+    {
+       
+		$type = input('type') ? input('type') : 'installed';
+		$res = [];
+
+			switch($type){
+				
+				//已安装
+				case 'installed':
+					$addons = Files::getDirName('../addons/');
+					if($addons){
+						$res = ['code'=>0,'msg'=>'','count'=>5];
+						foreach($addons as $v){
+							$info_file = '../addons/'.$v.'/info.ini';
+							$info = parse_ini_file($info_file);
+							$res['data'][] = $info;
+						}
+					}
+
+					break;
+				//在线	
+				case 'onlineAddons':
+					$url = $this->getSystem()['api_url'].'/v1/addons';
+					$addons = Api::urlPost($url,[]);
+					if( $addons->code !== -1){
+						$res['code'] = 0;
+						$res['msg'] = '';
+						$res['data'] = $addons->data;
+					}
+					
+					break;
+				//已安装
+				default:
+					$addons = Files::getDirName('../addons/');
+					if($addons){
+						$res = ['code'=>0,'msg'=>'','count'=>5];
+						foreach($addons as $v){
+							$info_file = '../addons/'.$v.'/info.ini';
+							$info = parse_ini_file($info_file);
+							$res['data'][] = $info;
+						}
+					}
+				break;	
+			}
+			return json($res);
+		
+		
+    }
+	
 
     /**
      * 显示创建资源表单页.
      *
      * @return \think\Response
      */
-    public function add()
+    public function install()
     {
-        //添加版本
-		if(Request::isAjax()){
-			$data = Request::param();
-			$result = AddonsModel::create($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'添加成功'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'添加失败'];
-			}
-		return json($res);
-		}
-		
-		return View::fetch();
+       //
     }
 
 
-    /**
-     * 编辑版本
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-		$addons = AddonsModel::find($id);
 
-		if(Request::isAjax()){
-			$data = Request::only(['id','addons_name','addons_version','addons_auther','addons_resume','addons_price','addons_src']);
-			$result = $addons->where('id',$id)->save($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'编辑成功'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'编辑失败'];
-			}
-			return json($res);
-		}
-		View::assign('addons',$addons);
-		return View::fetch();
-    }
 
     /**
      * 上传版本的zip资源
@@ -83,24 +146,7 @@ class Addons extends AdminController
      */
     public function uploadZip()
     {
-		$id = Request::param();
-        $file = request()->file('file');
-		try {
-			validate(['file'=>'filesize:2048|fileExt:zip,rar,7z'])
-            ->check(array($file));
-			$savename = \think\facade\Filesystem::disk('public')->putFile('addons',$file);
-		} catch (think\exception\ValidateException $e) {
-			echo $e->getMessage();
-		}
-		$upload = Config::get('filesystem.disks.public.url');
-		
-		if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-				$res = ['code'=>0,'msg'=>'插件上传成功','src'=>$name_path];
-			} else {
-				$res = ['code'=>-1,'msg'=>'上传错误'];
-			}
-		return json($res);
+		//
     }
 
     /**

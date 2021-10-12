@@ -64,7 +64,7 @@ class Forum extends AdminController
 			$forumList = Db::name('article')
 			->alias('a')
 			->join('user u','a.user_id = u.id')
-			->field('a.id as aid,name,user_img,title,a.update_time as update_time,is_top,is_hot,is_reply,a.status as status')
+			->field('a.id as aid,name,user_img,title,content,a.update_time as update_time,is_top,is_hot,is_reply,a.status as status')
 			->where('a.delete_time',0)
 			->where($map)
 			->where($where)
@@ -77,7 +77,7 @@ class Forum extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'content'=>$v['title'],'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
+				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'title'=>$v['title'],'content'=>$v['content'],'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
@@ -102,16 +102,20 @@ class Forum extends AdminController
 	public function listdel($id)
 	{
 		if(Request::isAjax()){
-			$article =Article::find($id);
-			$result = $article->together(['comments'])->delete();
-			
-				if($result){
-					return json(['code'=>0,'msg'=>'删除成功']);
-				}else{
-					return json(['code'=>-1,'msg'=>'删除失败']);
-				}
+			$arr = explode(",",$id);
+			foreach($arr as $v){
+				$article =Article::find($v);
+				$result = $article->together(['comments'])->delete();
 			}
+			
+			if($result){
+				return json(['code'=>0,'msg'=>'删除成功']);
+			}else{
+				return json(['code'=>-1,'msg'=>'删除失败']);
+			}
+		}
 	}
+
 	//置顶帖子
 	public function top()
 	{

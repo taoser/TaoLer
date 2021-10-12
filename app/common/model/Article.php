@@ -7,6 +7,7 @@ use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Cache;
 use think\facade\Config;
+use think\facade\Db;
 
 class Article extends Model
 {
@@ -57,7 +58,8 @@ class Article extends Model
      */
 	public function add(array $data)
 	{
-		$data['status'] = Config::get('taoler.config.posts_check');
+		$superAdmin = Db::name('user')->where('id',$data['user_id'])->value('auth');
+		$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
 		$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
 		$result = $this->save($data);
 		if($result) {

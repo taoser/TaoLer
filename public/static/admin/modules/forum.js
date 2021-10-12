@@ -22,7 +22,8 @@ layui.define(['table', 'form'], function(exports){
       ,{field: 'id', width: 60, title: 'ID', sort: true}
       ,{field: 'poster', title: '贴主',width: 100}
       ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
-      ,{field: 'content', title: '标题', mWidth: 200,templet: '#title'}
+      ,{field: 'title', title: '标题', mWidth: 200,templet: '#title'}
+	  ,{field: 'content', title: '内容', mWidth: 200}
       ,{field: 'posttime', title: '时间',width: 120, sort: true}
       ,{field: 'top', title: '置顶', templet: '#buttonTpl', width: 80, align: 'center'}
 	  ,{field: 'hot', title: '精贴', templet: '#buttonHot', width: 80, align: 'center'}

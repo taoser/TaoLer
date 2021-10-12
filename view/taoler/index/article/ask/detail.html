@@ -34,7 +34,8 @@
 		</div>
 		
 		{//问题内容}
-		<div class="detail-body-wenda photos">问题描述：{$article.content|raw}</div>
+		<div>问题描述：</div>
+		<div class="detail-body-wenda photos">{$article.content|raw}</div>
 
 		{//管理}
 		{if (($article.upzip !== '') || (session('user_id')==$article.user_id) OR ($user.auth  ?? ''))}
