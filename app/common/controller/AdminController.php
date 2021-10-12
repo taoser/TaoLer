@@ -53,10 +53,10 @@ class AdminController extends \app\BaseController
 	/**
      * 获取角色菜单
      */
-    protected function getMenus()
+    protected function getMenus($type)
     {
         $menu     = [];
-        $auth_rule_list = Db::name('auth_rule')->where(['status'=> 1])->order(['sort' => 'ASC', 'id' => 'ASC'])->select();
+        $auth_rule_list = Db::name('auth_rule')->where(['status'=> 1])->where('type',$type)->order(['sort' => 'ASC', 'id' => 'ASC'])->select();
         //var_export($auth_rule_list);
 
         foreach ($auth_rule_list as $value) {

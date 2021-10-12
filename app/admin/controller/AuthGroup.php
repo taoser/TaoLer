@@ -60,7 +60,7 @@ class AuthGroup extends AdminController
 			return json($res);
 		}
 		
-		$menus = $this->getMenus();
+		$menus = $this->getMenus(1);
 		View::assign('menus',$menus);
 		
 		return View::fetch('roleadd');
@@ -88,14 +88,15 @@ class AuthGroup extends AdminController
 			return json($res);
 		}
 		
-		$menus = $this->getMenus();
+		$menus = $this->getMenus(1);
 		View::assign('menus',$menus);
 		
 		$authGroup = AuthGroupModel::select();
 		$auth = AuthGroupModel::find(input('id'));
 		$ru = $auth->rules;
+		$rus = explode(',',$ru);
 			
-		View::assign(['authGroup'=>$authGroup,'auth'=>$auth,'ru'=>$ru]);
+		View::assign(['authGroup'=>$authGroup,'auth'=>$auth,'ru'=>$ru,'rus'=>$rus]);
 		return View::fetch('roleedit');
 	}
 

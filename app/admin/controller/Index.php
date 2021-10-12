@@ -109,6 +109,7 @@ class Index extends AdminController
 			->join('user u','a.user_id = u.id')
 			->join('cate c','a.cate_id = c.id')
 			->field('a.id as aid,title,name,catename,pv')
+			->where('a.delete_time',0)
 			->whereWeek('a.create_time')
 			->order('a.create_time', 'desc')
 			->paginate(10);
@@ -138,6 +139,7 @@ class Index extends AdminController
 				->join('user u','a.user_id = u.id')
 				->join('article c','a.article_id = c.id')
 				->field('a.content as content,title,c.id as cid,name')
+				->where('c.delete_time',0)
 				->whereWeek('a.create_time')
 				->order('a.create_time', 'desc')
 				->paginate(10);
