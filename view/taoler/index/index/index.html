@@ -21,7 +21,7 @@
 			  <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">{:lang('go sign')}</a>
 			</div>
 			<ul class="fly-list">
-			{volist name="artTop" id="top"  empty="还没有推荐"}
+			{volist name="artTop" id="top"}
 			  {include file="public/index-topforum" /}
 			{/volist}
 			</ul>
@@ -29,7 +29,7 @@
 		<!--文章列表-->
 		  <div class="fly-panel" style="margin-bottom: 0;">
 			<ul class="fly-list">   
-			{volist name="artList" id="art" empty="还没有帖子"}
+			{volist name="artList" id="art"}
 			  {include file="public/index-forumlist" /}
 			{/volist}  
 			</ul>

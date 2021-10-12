@@ -116,7 +116,8 @@ class Files
      * @return bool
      */
 	public static function delDirAndFile(string $dirPath, $nowDir=false )
-	{ 
+	{
+		if(!is_dir($dirPath)) return 'dir not exist';
 		if ( $handle = opendir($dirPath) ) { 
 
 			while ( false !== ( $item = readdir( $handle ) ) ) { 

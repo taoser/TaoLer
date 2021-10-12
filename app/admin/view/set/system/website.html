@@ -134,7 +134,7 @@
 						<div class="layui-input-inline">
 						  <input type="text" name="host" value="{$mailserver.host}" class="layui-input">
 						</div>
-						<div class="layui-form-mid layui-word-aux">如：smtp.163.com</div>
+						<div class="layui-form-mid layui-word-aux">如：smtp.aliyun.com</div>
 					  </div>
 					  <div class="layui-form-item">
 						<label class="layui-form-label">SMTP端口号</label>
@@ -170,11 +170,12 @@
 					  </div>
 					</div>
 					{//邮箱发送测试}
+					{if $mailserver.active !== 1}
 					<div class="layui-form" wid100 >
 					  <div class="layui-form-item">
 						<label class="layui-form-label">测试邮箱</label>
 						<div class="layui-input-inline">
-						  <input type="text" name="email" value="{$email}" lay-verify="email" class="layui-input">
+						  <input type="text" name="email" value="{$email}" placeholder="推荐阿里云mail" lay-verify="email" class="layui-input">
 						</div>
 						<button class="layui-btn" lay-submit lay-filter="test_system_email">发送测试码</button>
 					  </div>
@@ -188,6 +189,7 @@
 						<button class="layui-btn" lay-submit lay-filter="active_system_email">确认激活</button>
 					  </div>
 					</div>
+					{/if}
                 </div>
 				<div class="layui-tab-item">
 					<div class="layui-form" wid100 lay-filter="config">
