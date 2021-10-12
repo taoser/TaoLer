@@ -117,6 +117,12 @@ class User extends BaseController
 			if(!$result){
 				$this->error($validate->getError());
 			} else {
+				//防止重复的email
+				$resEmail = Db::name('user')->where('email',$data['email'])->where('id','<>',$this->uid)->find();
+				if(!is_null($resEmail)){
+					return ['code'=>-1,'msg'=>'email已存在,请更换！'];
+				}
+				//若更换email，需重新激活
 				$mail = Db::name('user')->where('id',$this->uid)->value('email');
 				if($data['email'] !== $mail){
 					$data['active'] = 0;

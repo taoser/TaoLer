@@ -12,20 +12,22 @@ class Sign extends AdminController
 	//添加签到积分规则
 	public function add()
 	{
-		$data = Request::only(['days','score']);
-		$day = UserSignrule::where('days',$data['days'])->find();
-		//$day = Db::name('user_signrule')->where('days',$data['days'])->find();
-		if($day){
-			$res = ['code'=>-1,'msg'=>'不能重复设置'];
-		} else {
-			$result = UserSignrule::create($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'设置积分成功'];
+		if(Request::isPost()){
+			$data = Request::only(['days','score']);
+			$day = UserSignrule::where('days',(int)$data['days'])->find();
+			//$day = Db::name('user_signrule')->where('days',$data['days'])->find();
+			if(!is_null($day)){
+				$res = ['code'=>-1,'msg'=>'不能重复设置'];
 			} else {
-				$res = ['code'=>-1,'msg'=>'保存失败'];
+				$result = UserSignrule::create($data);
+				if($result){
+					$res = ['code'=>0,'msg'=>'设置积分成功'];
+				} else {
+					$res = ['code'=>-1,'msg'=>'保存失败'];
+				}
 			}
+			return json($res);
 		}
-		return json($res);
 	}
 	
 	//删除签到积分规则
