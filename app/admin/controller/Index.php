@@ -120,7 +120,7 @@ class Index extends AdminController
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
 				    $url = (string) str_replace("admin","index",$this->domain.url('article/detail',['id'=>$v['aid']]));
-				$res['data'][]= ['id'=>$url,'title'=>$v['title'],'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
+				$res['data'][]= ['id'=>$url,'title'=>htmlspecialchars($v['title']),'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没有发帖！'];
@@ -147,7 +147,7 @@ class Index extends AdminController
 			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
-					$res['data'][] = ['content'=>$v['content'],'title'=>$v['title'],'cid'=>str_replace("admin","index",$this->domain.(string) url('article/detail',['id'=>$v['cid']])),'name'=>$v['name']];
+					$res['data'][] = ['content'=>htmlspecialchars($v['content']),'title'=>htmlspecialchars($v['title']),'cid'=>str_replace("admin","index",$this->domain.(string) url('article/detail',['id'=>$v['cid']])),'name'=>$v['name']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没评论'];

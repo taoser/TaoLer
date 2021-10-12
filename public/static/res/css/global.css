@@ -26,7 +26,7 @@ i{font-style: normal;}
 
   .site-menu{position: fixed; top: 0; bottom: 0; min-height: 0; overflow-y: auto; overflow-x: hidden; z-index: 10001; left: -300px; background-color: #fff;  transition: all .3s;}
   /* 头部伸缩菜单栏 */
-  .site-tree-mobile-top{display: block!important; position: fixed; z-index: 16666668; top: 2px; left: 10px; width: 57px; height: 57px; line-height: 57px; border-radius: 2px; text-align: center; color: #e2e2e2;}
+  .site-tree-mobile-top{display: block!important; position: fixed; z-index: 16666668; top: 2px; left: 50%; width: 57px; height: 57px; line-height: 57px; border-radius: 2px; text-align: center; color: #e2e2e2;}
   .site-home .site-tree-mobile-top{display: none!important;}
   .site-mobile .site-tree-mobile-top{display: none !important;}
   .site-mobile .site-menu{left: 0;}
@@ -430,8 +430,9 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .jie-row li .jie-user img{position:relative; top: 16px; width: 35px; height: 35px;}
 
 /* Detail页 */
-.detail-box{position: relative;padding-left: 20px; padding-top: 15px; padding-right: 20px; padding-bottom: 20px;}
-.detail h1{font-size: 22px; line-height: 36px; padding-bottom:10px;}
+.detail-box{position: relative; padding-left: 20px; padding-top: 15px; padding-right: 20px; padding-bottom: 20px;}
+.detail h1{float: left; font-size: 22px; line-height: 36px; padding-bottom:10px;}
+.detail-box .title span {float: right; padding-right: 5px;}
 .detail .fly-avatar{position: absolute; left: 15px; top: 10px;}
 .detail .fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 100%;}
 .detail .fly-avatar .icon-renzheng{display: inline-block; width: 15px; height: 15px; line-height: 15px; top: 25px; left: 32px; background-color: #FFB800; color: #fff; border-radius: 50%; font-size: 14px;}
