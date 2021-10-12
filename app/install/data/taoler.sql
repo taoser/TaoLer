@@ -376,9 +376,10 @@ CREATE TABLE `tao_mail_server` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `mail` varchar(50) NOT NULL COMMENT '邮箱设置',
   `host` varchar(50) NOT NULL COMMENT '邮箱服务地址',
-  `port` tinyint(2) NOT NULL COMMENT '邮箱端口',
+  `port` smallint(3) NOT NULL COMMENT '邮箱端口',
   `nickname` varchar(20) NOT NULL DEFAULT '' COMMENT '昵称',
   `password` varchar(16) NOT NULL COMMENT '邮箱密码',
+  `active` tinyint(1) NOT NULL DEFAULT '0' COMMENT '邮箱服务1激活0未激活',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -386,7 +387,7 @@ CREATE TABLE `tao_mail_server` (
 -- ----------------------------
 -- Records of tao_mail_server
 -- ----------------------------
-INSERT INTO `tao_mail_server` VALUES ('1', 'xxxx@aliyun.com', 'smtp.aliyun.com', '25', 'user', '123456', '0');
+INSERT INTO `tao_mail_server` VALUES ('1', 'xxxx@aliyun.com', 'smtp.aliyun.com', '25', 'user', '123456', '0', '0');
 
 -- ----------------------------
 -- Table structure for tao_message
