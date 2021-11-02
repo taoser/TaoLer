@@ -11,9 +11,8 @@
     <div class="layui-col-md8 content detail">
       <div class="fly-panel detail-box">
 		{//标题}
-        <h1 style="color:{$article.title_color};">{$article.title}
-		<span class="layui-hide-xs"><div onclick="PhoneDown();" style="" class="detail_qrcode" id="mobile"></div></span>
-		</h1>
+        <h1 style="color:{$article.title_color};">{$article.title}</h1>
+		<div class="detail_qrcode layui-hide-xs" onclick="PhoneDown();" id="mobile"></div>
 		{//图标}
         <div class="fly-detail-info">
 		 <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.cate.ename : $article.cate.catename}</span>
@@ -43,7 +42,7 @@
 			</div>
 			
         </div>
-        <div class="detail-body photos">{$article.content}</div>
+        <div class="detail-body photos" id="content">{$article.content}</div>
 		{//管理}
 		{if (($article.upzip !== '') || session('?user_name'))}
 		<div class="detail-assist">
@@ -280,7 +279,11 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
   plyr.setup();
 
 });
+</script>
 
+{:hook('markdownhook')}
+
+<script>
 //扫码阅读
 $("#rdown").hover(function(){
 		 $("#phonedl").show().stop();
@@ -315,4 +318,5 @@ $("#rdown").hover(function(){
     s.parentNode.insertBefore(bp, s);
 })();
 </script>
+
 {/block}

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace think\addons;
+namespace taoser\addons;
 
 use think\Route;
 use think\helper\Str;
@@ -9,7 +9,7 @@ use think\facade\Config;
 use think\facade\Lang;
 use think\facade\Cache;
 use think\facade\Event;
-use think\addons\middleware\Addons;
+use taoser\addons\middleware\Addons;
 
 /**
  * 插件服务
@@ -25,7 +25,7 @@ class Service extends \think\Service
         $this->addons_path = $this->getAddonsPath();
         // 加载系统语言包
         Lang::load([
-            $this->app->getRootPath() . '/vendor/zzstudio/think-addons/src/lang/zh-cn.php'
+            $this->app->getRootPath() . '/vendor/taoser/think-addons/src/lang/zh-cn.php'
         ]);
         // 自动载入插件
         $this->autoload();
@@ -41,7 +41,7 @@ class Service extends \think\Service
     {
         $this->registerRoutes(function (Route $route) {
             // 路由脚本
-            $execute = '\\think\\addons\\Route::execute';
+            $execute = '\\taoser\\addons\\Route::execute';
 
             // 注册插件公共中间件
             if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
@@ -167,7 +167,7 @@ class Service extends \think\Service
         }
         $config = Config::get('addons');
         // 读取插件目录及钩子列表
-        $base = get_class_methods("\\think\\Addons");
+        $base = get_class_methods("\\taoser\\Addons");
         // 读取插件目录中的php文件
         foreach (glob($this->getAddonsPath() . '*/*.php') as $addons_file) {
             // 格式化路径信息

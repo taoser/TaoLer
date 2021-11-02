@@ -73,7 +73,7 @@
               </div>
               <div class="layui-form-item layui-form-text">
                 <div class="layui-input-block">
-                  <textarea id="L_content" name="content" required lay-verify="required" placeholder="详细描述"  class="layui-textarea fly-editor" style="height: 260px;">{$article.content}</textarea>
+                  <textarea id="L_content" name="content" required lay-verify="required" placeholder="详细描述"  class="layui-textarea fly-editor" style="height: 260px;">{$article.content|raw|htmlspecialchars_decode}</textarea>
                 </div>
               </div>
               <div class="layui-form-item">

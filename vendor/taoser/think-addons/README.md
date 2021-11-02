@@ -2,7 +2,7 @@
 The ThinkPHP 6 Addons Package
 
 ## 安装
-> composer require zzstudio/think-addons
+> composer require taoser/think-addons
 
 ## 配置
 
@@ -272,3 +272,8 @@ www  WEB部署目录（或者子目录）
 ├─README.md             README 文件
 ├─think                 命令行入口文件
 ```
+
+
+基于zzstudio修改版think-addons
+The ThinkPHP 6 Addons Package
+感谢 zzstudio/think-addons 

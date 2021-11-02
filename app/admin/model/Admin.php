@@ -78,6 +78,8 @@ class Admin extends Model
 					
             //用户名密码正确返回1
             return 1;
-        }
+        } else {
+			return "用户名或密码错误！";
+		}
     }
 }

@@ -41,11 +41,8 @@
 		  </div>
     </div>
     <div class="layui-col-md4">
-		<!--签到-->
-		<a name="signin"> </a>
-		<div class="fly-panel fly-signin layui-hide-xs">
-		{include file="public/sign" /}
-		</div>
+		{:hook('signhook', ['id'=>1])}
+		
 		<!--温馨通道-->
 		<div class="fly-panel layui-hide-xs">
 		<h3 class="fly-panel-title">{:lang('links list')}</h3>

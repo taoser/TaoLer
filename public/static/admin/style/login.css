@@ -6,14 +6,14 @@
  @License：GPL-2
  
  */
- 
+
 html,body,#LAY_app{height:100%;}
 .layui-layout-body{overflow: auto;}
  
 #LAY-user-login,
 .layadmin-user-display-show{display: block !important;} 
 .layadmin-user-login{position: relative; left: 0; top: 0; padding: 110px 0; min-height: 100%; box-sizing: border-box;}
-.layadmin-user-login-main{width: 375px; margin: 0 auto; box-sizing: border-box;}
+.layadmin-user-login-main{width: 375px; margin-top: 0px; margin-left: 5%; box-sizing: border-box; background-color:rgba(0,0,0,.3); border:1px solid; border-radius:15px}
 .layadmin-user-login-box{padding: 20px;}
 .layadmin-user-login-header{text-align: center;}
 .layadmin-user-login-header h2{margin-bottom: 10px; font-weight: 300; font-size: 30px; color: #000;}

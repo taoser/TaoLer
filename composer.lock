@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4ac487289cab0dba8660f5759f64a21",
+    "content-hash": "3ef61427e5d1c98f5ca1e197d25ef688",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -71,16 +71,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.1.4",
+            "version": "1.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "f3ad69181b8afed2c9edf7be5a2918144ff4ea32"
+                "reference": "18634df356bfd4119fe3d6156bdb990c414c14ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f3ad69181b8afed2c9edf7be5a2918144ff4ea32",
-                "reference": "f3ad69181b8afed2c9edf7be5a2918144ff4ea32",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/18634df356bfd4119fe3d6156bdb990c414c14ea",
+                "reference": "18634df356bfd4119fe3d6156bdb990c414c14ea",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -159,7 +159,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/1.1.4"
+                "source": "https://github.com/thephpleague/flysystem/tree/1.1.5"
             },
             "funding": [
                 {
@@ -167,7 +167,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-06-23T21:56:05+00:00"
+            "time": "2021-08-17T13:49:42+00:00"
         },
         {
             "name": "league/flysystem-cached-adapter",
@@ -228,16 +228,16 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.7.0",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3"
+                "reference": "b38b25d7b372e9fddb00335400467b223349fd7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3",
-                "reference": "3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3",
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/b38b25d7b372e9fddb00335400467b223349fd7e",
+                "reference": "b38b25d7b372e9fddb00335400467b223349fd7e",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -274,7 +274,7 @@
             "description": "Mime-type detection for Flysystem",
             "support": {
                 "issues": "https://github.com/thephpleague/mime-type-detection/issues",
-                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.7.0"
+                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.8.0"
             },
             "funding": [
                 {
@@ -286,7 +286,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-18T20:58:21+00:00"
+            "time": "2021-09-25T08:23:19+00:00"
         },
         {
             "name": "lotofbadcode/phpspirit_databackup",
@@ -340,16 +340,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v6.5.0",
+            "version": "v6.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "a5b5c43e50b7fba655f793ad27303cd74c57363c"
+                "reference": "dd803df5ad7492e1b40637f7ebd258fee5ca7355"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/a5b5c43e50b7fba655f793ad27303cd74c57363c",
-                "reference": "a5b5c43e50b7fba655f793ad27303cd74c57363c",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/dd803df5ad7492e1b40637f7ebd258fee5ca7355",
+                "reference": "dd803df5ad7492e1b40637f7ebd258fee5ca7355",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -367,10 +367,12 @@
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
                 "doctrine/annotations": "^1.2",
+                "php-parallel-lint/php-console-highlighter": "^0.5.0",
+                "php-parallel-lint/php-parallel-lint": "^1.3",
                 "phpcompatibility/php-compatibility": "^9.3.5",
                 "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.5.6",
-                "yoast/phpunit-polyfills": "^0.2.0"
+                "squizlabs/php_codesniffer": "^3.6.0",
+                "yoast/phpunit-polyfills": "^1.0.0"
             },
             "suggest": {
                 "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
@@ -410,7 +412,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.5.0"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.5.1"
             },
             "funding": [
                 {
@@ -418,7 +420,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-06-16T14:33:43+00:00"
+            "time": "2021-08-18T09:14:16+00:00"
         },
         {
             "name": "psr/cache",
@@ -641,6 +643,68 @@
                 "source": "https://github.com/php-fig/simple-cache/tree/master"
             },
             "time": "2017-10-23T01:57:42+00:00"
+        },
+        {
+            "name": "taoser/think-addons",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/taoser/think-addons.git",
+                "reference": "bd8b0bfa4543fe8d2da65355c134250f78c0d457"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/taoser/think-addons/zipball/bd8b0bfa4543fe8d2da65355c134250f78c0d457",
+                "reference": "bd8b0bfa4543fe8d2da65355c134250f78c0d457",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=7.1.0",
+                "topthink/framework": "^6.0",
+                "topthink/think-helper": "^3.0.0",
+                "topthink/think-view": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "think": {
+                    "services": [
+                        "taoser\\addons\\Service"
+                    ],
+                    "config": {
+                        "addons": "src/config.php"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "taoser\\": "src/"
+                },
+                "files": [
+                    "src/helper.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "mit"
+            ],
+            "authors": [
+                {
+                    "name": "taoler",
+                    "email": "changlin_zhao@qq.com"
+                }
+            ],
+            "description": "The ThinkPHP6 Addons Package",
+            "support": {
+                "issues": "https://github.com/taoser/think-addons/issues",
+                "source": "https://github.com/taoser/think-addons/tree/v1.0.1"
+            },
+            "time": "2021-09-18T08:41:10+00:00"
         },
         {
             "name": "taoser/think-auth",
@@ -1090,17 +1154,17 @@
             "time": "2019-11-06T11:40:13+00:00"
         },
         {
-            "name": "zzstudio/think-addons",
-            "version": "2.0.5",
+            "name": "wamkj/thinkphp6.0-databackup",
+            "version": "v1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zz-studio/think-addons.git",
-                "reference": "7eb740cb219a111d593a05ad88248a74f640fe5c"
+                "url": "https://github.com/wamkj/thinkphp6.0-databackup.git",
+                "reference": "28a0e406d827132942723a3c9f69bb20c98e652f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zz-studio/think-addons/zipball/7eb740cb219a111d593a05ad88248a74f640fe5c",
-                "reference": "7eb740cb219a111d593a05ad88248a74f640fe5c",
+                "url": "https://api.github.com/repos/wamkj/thinkphp6.0-databackup/zipball/28a0e406d827132942723a3c9f69bb20c98e652f",
+                "reference": "28a0e406d827132942723a3c9f69bb20c98e652f",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1111,28 +1175,13 @@
             },
             "require": {
                 "php": ">=7.1.0",
-                "topthink/framework": "^6.0",
-                "topthink/think-helper": "^3.0.0",
-                "topthink/think-view": "^1.0"
+                "topthink/framework": "^6.0"
             },
             "type": "library",
-            "extra": {
-                "think": {
-                    "services": [
-                        "think\\addons\\Service"
-                    ],
-                    "config": {
-                        "addons": "src/config.php"
-                    }
-                }
-            },
             "autoload": {
                 "psr-4": {
-                    "think\\": "src/"
-                },
-                "files": [
-                    "src/helper.php"
-                ]
+                    "wamkj\\thinkphp\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1140,16 +1189,20 @@
             ],
             "authors": [
                 {
-                    "name": "byron",
-                    "email": "xiaobo.sun@qq.com"
+                    "name": "wamkj",
+                    "email": "1149183529@qq.com"
                 }
             ],
-            "description": "The ThinkPHP6 Addons Package",
+            "description": "thinkphp6.0的数据库自动备份扩展",
+            "keywords": [
+                "think-databackup",
+                "thinkphp"
+            ],
             "support": {
-                "issues": "https://github.com/zz-studio/think-addons/issues",
-                "source": "https://github.com/zz-studio/think-addons/tree/2.0.5"
+                "issues": "https://github.com/wamkj/thinkphp6.0-databackup/issues",
+                "source": "https://github.com/wamkj/thinkphp6.0-databackup/tree/v1.0"
             },
-            "time": "2020-01-06T06:42:39+00:00"
+            "time": "2020-02-15T13:04:16+00:00"
         }
     ],
     "packages-dev": [
@@ -1412,16 +1465,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v4.4.27",
+            "version": "v4.4.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "391d6d0e7a06ab54eb7c38fab29b8d174471b3ba"
+                "reference": "50286e2b7189bfb4f419c0731e86632cddf7c5ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/391d6d0e7a06ab54eb7c38fab29b8d174471b3ba",
-                "reference": "391d6d0e7a06ab54eb7c38fab29b8d174471b3ba",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/50286e2b7189bfb4f419c0731e86632cddf7c5ee",
+                "reference": "50286e2b7189bfb4f419c0731e86632cddf7c5ee",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1487,7 +1540,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v4.4.27"
+                "source": "https://github.com/symfony/var-dumper/tree/v4.4.33"
             },
             "funding": [
                 {
@@ -1503,7 +1556,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-23T15:41:52+00:00"
+            "time": "2021-10-25T20:24:58+00:00"
         },
         {
             "name": "topthink/think-trace",

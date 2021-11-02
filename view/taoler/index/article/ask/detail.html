@@ -20,7 +20,7 @@
 		  {/if}
 		  <span id="LAY_jieAdmin" data-id="{$article['id']}"></span> 
 		</div>
-		<div onclick="PhoneDown();" style="" class="detail_qrcode" id="mobile"></div>
+		<div class="detail_qrcode layui-hide-xs" onclick="PhoneDown();" id="mobile"></div>
 		
 		{//图标}
 		<div class="user-questions">
@@ -294,10 +294,10 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
     });
 	
 	//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-//  $('.detail-body-wenda').each(function(){
-//    var othis = $(this), html = othis.html();
-//	othis.html(fly.content(html));
-//  });
+  $('.detail-body-wenda').each(function(){
+    var othis = $(this), html = othis.html();
+	othis.html(fly.content(html));
+  });
   
   $('.detail-body').each(function(){
     var othis = $(this), html = othis.html();

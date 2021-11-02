@@ -24,9 +24,10 @@
         "topthink/think-view": "^1.0",
         "topthink/think-captcha": "^3.0",
         "phpmailer/phpmailer": "^6.1",
-        "zzstudio/think-addons": "^2.0",
         "firebase/php-jwt": "^5.2",
-        "lotofbadcode/phpspirit_databackup": "^1.1"
+        "lotofbadcode/phpspirit_databackup": "^1.1",
+        "wamkj/thinkphp6.0-databackup": "^1.0",
+        "taoser/think-addons": "^1.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
@@ -38,7 +39,10 @@
         },
         "psr-0": {
             "": "extend/"
-        }
+        },
+		"files": [
+			"extend/taoler/com/form.php"
+		]
     },
     "config": {
         "preferred-install": "dist"

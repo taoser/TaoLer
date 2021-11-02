@@ -6,86 +6,66 @@ layui.define(['table', 'form','upload'], function(exports){
   ,form = layui.form
   ,upload = layui.upload;
 
-  //安装插件
-	table.render({
-		elem: '#addons-list',
-        toolbar: '#toolbar',
-		url: addonsList,
-		cols:[
-			col
-		]
-		,page: true
-		,limit: 10
-		,height: 'full-220'
-		,text: '对不起，加载出现异常！'
-	});
+function addList(type)
+  {
+      $.ajax({
+          type: 'post',
+          url: addonsList ,
+          data: {type:type},
+          dataType: 'json',
+          success: function (res) {
+          	//渲染表格
+              table.render({
+                  elem: '#addons-list',
+                  toolbar: '#toolbar',
+                  defaultToolbar: [],
+                  url: addonsList + '?type='+ type,
+                  cols: [
+                      res['col']
+                  ]
+                  , page: true
+                  , limit: 10
+                  , height: 'full-220'
+                  , text: '对不起，加载出现异常！'
+              });
+          }
+      });
+}
+
+addList('installed');
 
     //头工具栏事件
     table.on('toolbar(addons-list)', function(obj){
         var checkStatus = table.checkStatus(obj.config.id);
         switch(obj.event){
             case 'installed':
-				$.post(addonsIndex + '?type=installed',function(){
-					location.href = addonsIndex + '?type=installed';
-				});
-                $.post(addonsList + '?type=installed',{"type":"installed"});
-                table.reload('addons-list', {
-                    where: {"type":"installed"}
-                }); //数据刷新
+                addList("installed");
                 break;
             case 'onlineAddons':
-				$.post(addonsIndex + '?type=onlineAddons',function(){
-					location.href = addonsIndex + '?type=onlineAddons';
-				});
-                $.post(addonsList + '?type=onlineAddons',{"type":"onlineAddons"});
-                table.reload('addons-list', {
-                    where: {"type":"onlineAddons"}
-                }); //数据刷新
+                addList("onlineAddons");
                 break;
-            case 'isAll':
-                layer.msg(checkStatus.isAll ? '全选': '未全选');
-                break;
-
-            //自定义头工具栏右侧图标 - 提示
-            case 'LAYTABLE_TIPS':
-                layer.alert('这是工具栏右侧自定义的一个图标按钮');
-                break;
-        };
+        }
     });
 	
 //监听工具条
   table.on('tool(addons-list)', function(obj){
     var data = obj.data;
+
     if(obj.event === 'del'){
       layer.prompt({
         formType: 1
         ,title: '敏感操作，请验证口令'
       }, function(value, index){
         layer.close(index);
-        
         layer.confirm('真的删除行么', function(index){
-          //obj.del();
-		  $.ajax({
-				type:'post',
-				url:addonsDelete,
-				data:{id:data.id},
-				dataType:'json',
-				success:function(data){
-					if(data.code == 0){
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						});
-					} else {
-						layer.open({
-							title:'删除失败',
-							content:data.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			});
+          $.post(addonsDelete,{name:data.name},function (res) {
+              if (res.code == 0) {
+                  layer.msg(res.msg,{icon:6,time:2000});
+              } else {
+                  layer.open({tiele:'修改失败',content:res.msg,icon:5,anim:6});
+              }
+          });
+
 		  table.reload('addons-list');
           layer.close(index);
         });
@@ -100,7 +80,6 @@ layui.define(['table', 'form','upload'], function(exports){
         ,area: ['400px', '620px']
         ,btn: ['确定', '取消']
         ,yes: function(index, layero){
-			
           var iframeWindow = window['layui-layer-iframe'+ index]
           ,submitID = 'LAY-addons-submit'
           ,submit = layero.find('iframe').contents().find('#'+ submitID);
@@ -117,17 +96,9 @@ layui.define(['table', 'form','upload'], function(exports){
 				daType:"json",
 				success:function (res){
 					if (res.code == 0) {
-						layer.msg(res.msg,{
-							icon:6,
-							time:2000
-						});
+						layer.msg(res.msg,{icon:6,time:2000});
 					} else {
-						layer.open({
-							tiele:'修改失败',
-							content:res.msg,
-							icon:5,
-							anim:6
-						});
+						layer.open({tiele:'修改失败',content:res.msg,icon:5,anim:6});
 					}
 				}
 			});
@@ -142,7 +113,106 @@ layui.define(['table', 'form','upload'], function(exports){
           
         }
       });
-    }
+    } else if (obj.event === 'start'){
+		//提交 Ajax 成功后，静态更新表格中的数据
+		$.ajax({
+			type:"post",
+			url:addonsStart,
+			data:{name:data.name},
+			daType:"json",
+			success:function (res){
+				if (res.code == 0) {
+					layer.msg(res.msg,{icon:6,time:2000});
+				} else {
+					layer.open({tiele:'修改失败',content:res.msg,icon:5,anim:6});
+				}
+			}
+		});
+    } else if(obj.event === 'shutdown'){
+		//提交 Ajax 成功后，静态更新表格中的数据
+		$.ajax({
+			type:"post",
+			url:addonsShut,
+			data:{name:data.name},
+			daType:"json",
+			success:function (res){
+                if (res.code == 0) {
+                    layer.msg(res.msg,{icon:6,time:2000});
+                } else {
+                    layer.open({tiele:'修改失败',content:res.msg,icon:5,anim:6});
+                }
+			}
+		});
+    } else if(obj.event === 'install'){
+			//安装插件
+			$.post(addonsInstall,{name:data.name,version:data.version},function (res) {
+				if (res.code == 0) {
+					layer.msg(res.msg,{icon:6,time:2000});
+				} else {
+					layer.open({tiele:'修改失败',content:res.msg,icon:5,anim:6});
+				}
+			});
+	} else if(obj.event === 'config'){
+		layer.open({
+        type: 2
+        ,title: '配置插件'
+        ,content: addonsConfig + '?name='+ data.name
+        ,maxmin: true
+        ,area: ['780px', '90%']
+        ,btn: ['确定', '取消']
+        ,yes: function(index, layero){
+          var iframeWindow = window['layui-layer-iframe'+ index]
+          ,submitID = 'LAY-addons-config-submit'
+          ,submit = layero.find('iframe').contents().find('#'+ submitID);
+          //监听提交
+          iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+            var field = data.field; //获取提交的字段
+            $.ajax({
+				type:"post",
+				url:addonsConfig,
+				data:field,
+				daType:"json",
+				success:function (res){
+					if (res.code == 0) {
+						layer.msg(res.msg,{icon:6,time:2000});
+					} else {
+						layer.open({tiele:'修改失败',content:res.msg,icon:5,anim:6});
+					}
+				}
+			});
+            layer.close(index); //关闭弹层
+          });
+          submit.trigger('click');
+        }
+        ,success: function(layero, index){
+			var forms = layero.find('iframe').contents().find('.layui-form');
+                var button = forms.find('button');
+				//事件委托
+                forms.on('click','button',function (data) {
+                    var even = this.getAttribute('lay-event');
+                    var names = this.dataset.name;
+                    if(even == 'addInput'){
+                        var html = '<div class="layui-form-item"><label class="layui-form-label"></label><div class="layui-input-inline">\n' +
+                            '                <input type="text" name="'+ names +'[key][]" value="" placeholder="key" autocomplete="off" class="layui-input input-double-width">\n' +
+                            '                </div><div class="layui-input-inline">\n' +
+                            '                <input type="text" name="'+ names +'[value][]" value="" placeholder="value" autocomplete="off" class="layui-input input-double-width">\n' +
+                            '            </div>\n' +
+                            '                <button data-name="'+ names +'" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">\n' +
+                            '                    <i class="layui-icon"></i>\n' +
+                            '                </button>\n' +
+                            '            </div>';
+
+                        $(this).parent().parent().append(html);
+                    } else {
+                        $(this).parent().remove();
+                    }
+                });
+
+        }
+      });
+
+	}
+      table.reload('addons-list'); //数据刷新
   });
 
   exports('addons', {})

@@ -2,13 +2,13 @@
 
 > TaoLer是一个简单迅捷的轻论坛系统，适用于个人或组织区域型信息交流发布平台。
 
- * 官网：https://www.aieok.com
+ * 官网：https://www.aieok.com:8443
  * 前台：http://bbs.aieok.com:888
  * 后台：http://adm.aieok.com:888
  * 账号：test
  * 密码：test123
- * 版本：TaoLer 1.8.8
- * 日期：2021.10.12
+ * 版本：TaoLer 1.8.10
+ * 日期：2021.11.2
 
 #### 项目地址
 
@@ -97,6 +97,15 @@
 #### 前后台独立域名的绑定
 
 1. 手动修改`config/app.php`文件内的`'domain_bind'`对应的应用。
+	```html
+	// 域名绑定（自动多应用模式有效）
+		'domain_bind'      => [
+			'bbs' => 'index',	//bbs.xxx.com 访问的是Index应用
+			'adm' => 'admin',	//adm.xxx.com 访问的是Admin应用
+			'api' => 'api'		//api.xxx.com 访问的是Admin应用
+			'www.test.com' => 'test'	//www.test.com 访问的是Test应用
+		],
+	```
 
 2. 后面会针对动态的设置绑定域名功能开发...此处待完成
 

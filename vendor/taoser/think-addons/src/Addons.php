@@ -1,26 +1,8 @@
 <?php
-/**
- * +----------------------------------------------------------------------
- * | think-addons [thinkphp6]
- * +----------------------------------------------------------------------
- *  .--,       .--,             | FILE: Addons.php
- * ( (  \.---./  ) )            | AUTHOR: byron
- *  '.__/o   o\__.'             | EMAIL: xiaobo.sun@qq.com
- *     {=  ^  =}                | QQ: 150093589
- *     /       \                | DATETIME: 2019/11/5 14:47
- *    //       \\               |
- *   //|   .   |\\              |
- *   "'\       /'"_.-~^`'-.     |
- *      \  _  /--'         `    |
- *    ___)( )(___               |-----------------------------------------
- *   (((__) (__)))              | 高山仰止,景行行止.虽不能至,心向往之。
- * +----------------------------------------------------------------------
- * | Copyright (c) 2019 http://www.zzstudio.net All rights reserved.
- * +----------------------------------------------------------------------
- */
+
 declare(strict_types=1);
 
-namespace think;
+namespace taoser;
 
 use think\App;
 use think\helper\Str;
@@ -184,6 +166,23 @@ abstract class Addons
         Config::set($config, $this->addon_config);
 
         return $config;
+    }
+	
+	   /**
+     * 设置插件信息数据
+     * @param $name
+     * @param array $value
+     * @return array
+     */
+    final public function setInfo($name = '', $value = [])
+    {
+        if (empty($name)) {
+            $name = $this->getName();
+        }
+        $info = $this->getInfo($name);
+        $info = array_merge($info, $value);
+        Config::set($info,$name);
+        return $info;
     }
 
     //必须实现安装

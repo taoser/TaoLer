@@ -1,11 +1,11 @@
 {
-    "name": "zz-studio/think-addons",
+    "name": "taoser/think-addons",
     "description": "The ThinkPHP6 Addons Package",
-    "license": "Apache-2.0",
+    "license": "mit",
     "authors": [
         {
-            "name": "byron",
-            "email": "xiaobo.sun@qq.com"
+            "name": "taoler",
+            "email": "changlin_zhao@qq.com"
         }
     ],
     "require": {
@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "think\\": "src/"
+            "taoser\\": "src/"
         },
         "files": [
             "src/helper.php"
@@ -25,7 +25,7 @@
     "extra": {
         "think": {
             "services": [
-                "think\\addons\\Service"
+                "taoser\\addons\\Service"
             ],
             "config":{
                 "addons": "src/config.php"

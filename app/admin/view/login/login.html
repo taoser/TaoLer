@@ -39,14 +39,14 @@
 			<input type="hidden" class="layui-hide" name="__token__" value="{:token()}" />
 			<button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit" id="LAY-user-login-submit">登 入</button>
         </div>
-        <div class="layui-trans layui-form-item layadmin-user-login-other">
+        <!--div class="layui-trans layui-form-item layadmin-user-login-other">
           <label>社交账号登入</label>
           <a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
           <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
           <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
-          
           <a href="{:url('admin/login/reg')}" class="layadmin-user-jump-change layadmin-link">注册帐号</a>
-        </div>
+        </div-->
+		{:hook('socialhook')}
       </div>
     </div>
     
@@ -77,6 +77,7 @@
 {/block}
 
 {block name="js"}
+{:hook('bacimghook')}
   <script>
   layui.config({
     base: '/static/admin/' //静态资源所在路径
@@ -89,8 +90,10 @@
     ,form = layui.form
     ,router = layui.router()
     ,search = router.search;
-
+	
     form.render();
+	
+	
 	
 	//回车登陆
 	$(document).keydown(function(e){
@@ -141,5 +144,6 @@
 	
   });
   </script>
+  
   
 {/block}

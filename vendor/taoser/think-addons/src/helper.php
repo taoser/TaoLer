@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 use think\facade\Event;
 use think\facade\Route;
+use taoser\addons\Service;
+use think\facade\App;
+use think\facade\Config;
+use think\facade\Cache;
 use think\helper\{
     Str, Arr
 };
 
 \think\Console::starting(function (\think\Console $console) {
     $console->addCommands([
-        'addons:config' => '\\think\\addons\\command\\SendConfig'
+        'addons:config' => '\\taoser\\addons\\command\\SendConfig'
     ]);
 });
 
@@ -76,6 +80,50 @@ if (!function_exists('get_addons_info')) {
     }
 }
 
+/**
+ * 设置基础配置信息
+ * @param string $name 插件名
+ * @param array $array 配置数据
+ * @return boolean
+ * @throws Exception
+ */
+if (!function_exists('set_addons_info')) {
+
+    function set_addons_info($name, $array)
+    {
+        $service = new Service(App::instance()); // 获取service 服务
+        $addons_path = $service->getAddonsPath();
+        // 插件列表
+        $file = $addons_path . $name . DIRECTORY_SEPARATOR . 'info.ini';
+        $addon = get_addons_instance($name);
+        $array = $addon->setInfo($name, $array);
+        $array['status'] ? $addon->enabled() : $addon->disabled();
+        if (!isset($array['name']) || !isset($array['title']) || !isset($array['version'])) {
+            throw new Exception("Failed to write plugin config");
+        }
+        $res = array();
+        foreach ($array as $key => $val) {
+            if (is_array($val)) {
+                $res[] = "[$key]";
+                foreach ($val as $k => $v)
+                    $res[] = "$k = " . (is_numeric($v) ? $v : $v);
+            } else
+                $res[] = "$key = " . (is_numeric($val) ? $val : $val);
+        }
+
+        if ($handle = fopen($file, 'w')) {
+            fwrite($handle, implode("\n", $res) . "\n");
+            fclose($handle);
+            //清空当前配置缓存
+            Config::set($array, "addon_{$name}_info");
+            Cache::delete('addonslist');
+        } else {
+            throw new Exception("File does not have write permission");
+        }
+        return true;
+    }
+}
+
 if (!function_exists('get_addons_instance')) {
     /**
      * 获取插件的单例
@@ -130,6 +178,45 @@ if (!function_exists('get_addons_class')) {
         return class_exists($namespace) ? $namespace : '';
     }
 }
+
+if (!function_exists('get_addons_config')) {
+    /**
+     * 获取插件的配置
+     * @param string $name 插件名
+     * @return mixed|null
+     */
+    function get_addons_config($name)
+    {
+        $addon = get_addons_instance($name);
+        if (!$addon) {
+            return [];
+        }
+
+        return $addon->getConfig($name);
+    }
+}
+
+if (!function_exists('set_addons_config')) {
+
+    function set_addons_config($name, $array)
+    {
+        $service = new Service(App::instance()); // 获取service 服务
+        $addons_path = $service->getAddonsPath();
+        // 插件列表
+        $file = $addons_path . $name . DIRECTORY_SEPARATOR . 'config.php';
+        if (!is_writable($file)) {
+            throw new \Exception(lang("addons.php File does not have write permission"));
+        }
+        if ($handle = fopen($file, 'w')) {
+            fwrite($handle, "<?php\n\n" . "return " . var_export($array, TRUE) . ";");
+            fclose($handle);
+        } else {
+            throw new Exception(lang("File does not have write permission"));
+        }
+        return true;
+    }
+}
+
 
 if (!function_exists('addons_url')) {
     /**

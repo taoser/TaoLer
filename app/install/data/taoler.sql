@@ -164,7 +164,7 @@ CREATE TABLE `tao_auth_rule` (
   `pid` smallint(5) NOT NULL DEFAULT '0' COMMENT '父级ID',
   `level` tinyint(1) NOT NULL DEFAULT '1' COMMENT '菜单层级',
   `icon` varchar(50) NOT NULL DEFAULT '' COMMENT '图标',
-  `ishidden` enum('1','0') NOT NULL DEFAULT '1' COMMENT '0隐藏,1显示',
+  `ishidden` enum('1','0','-1') NOT NULL DEFAULT '1' COMMENT '0隐藏,1显示-1其它',
   `sort` tinyint(4) NOT NULL DEFAULT '50' COMMENT '排序',
   `condition` char(100) NOT NULL DEFAULT '',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
@@ -177,11 +177,11 @@ CREATE TABLE `tao_auth_rule` (
 -- ----------------------------
 -- Records of tao_auth_rule
 -- ----------------------------
-INSERT INTO `tao_auth_rule` VALUES ('1', 'admin', '管理', '', '1', '1', '0', '0', 'layui-icon-user', '1', '3', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('2', 'set', '设置', '', '1', '1', '0', '0', 'layui-icon-set', '1', '4', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('3', 'administrator', '账户', '', '1', '1', '0', '0', 'layui-icon-username', '1', '5', '', '0', '1578980034', '0');
-INSERT INTO `tao_auth_rule` VALUES ('4', 'app', '应用', '', '1', '1', '0', '0', 'layui-icon-app', '1', '2', '', '0', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('5', 'article', '内容', '', '1', '1', '0', '0', 'layui-icon-read', '1', '0', '', '0', '1578902321', '0');
+INSERT INTO `tao_auth_rule` VALUES ('1', 'admin', '管理', '', '1', '1', '0', '0', 'layui-icon-user', '1', '5', '', '0', '1635757559', '0');
+INSERT INTO `tao_auth_rule` VALUES ('2', 'set', '设置', '', '1', '1', '0', '0', 'layui-icon-set', '1', '6', '', '0', '1635757571', '0');
+INSERT INTO `tao_auth_rule` VALUES ('3', 'administrator', '账户', '', '1', '1', '0', '0', 'layui-icon-username', '1', '7', '', '0', '1635757594', '0');
+INSERT INTO `tao_auth_rule` VALUES ('4', 'app', '应用', '', '1', '1', '0', '0', 'layui-icon-app', '1', '4', '', '0', '1635757536', '0');
+INSERT INTO `tao_auth_rule` VALUES ('5', 'article', '内容', '', '1', '1', '0', '0', 'layui-icon-read', '1', '1', '', '0', '1635757294', '0');
 INSERT INTO `tao_auth_rule` VALUES ('6', 'admin/User/list', '用户管理', '', '1', '1', '1', '1', '', '1', '1', '', '0', '1578901015', '0');
 INSERT INTO `tao_auth_rule` VALUES ('7', 'admin/Admin/index', '管理员', '', '1', '1', '1', '1', '', '1', '6', '', '0', '1578901133', '0');
 INSERT INTO `tao_auth_rule` VALUES ('8', 'admin/AuthGroup/list', '角色管理', '', '1', '1', '1', '1', '', '1', '11', '', '0', '1578901282', '0');
@@ -257,10 +257,13 @@ INSERT INTO `tao_auth_rule` VALUES ('89', 'admin/User/auth', '设置超级用户
 INSERT INTO `tao_auth_rule` VALUES ('90', 'admin/Forum/tagshot', '开启热点', '', '1', '1', '16', '2', '', '0', '15', '', '1585841826', '1611997546', '0');
 INSERT INTO `tao_auth_rule` VALUES ('91', 'admin/Admin/infoSet', '资料设置', '', '1', '1', '12', '2', '', '0', '62', '', '1586245669', '1611998517', '0');
 INSERT INTO `tao_auth_rule` VALUES ('92', 'admin/Admin/repassSet', '密码设置', '', '1', '1', '13', '2', '', '0', '64', '', '1586245727', '1611998534', '0');
-INSERT INTO `tao_auth_rule` VALUES ('93', 'servers', '服务', '', '1', '1', '0', '0', 'layui-icon-cols', '1', '2', '', '1611286515', '1611997619', '0');
+INSERT INTO `tao_auth_rule` VALUES ('93', 'servers', '服务', '', '1', '1', '0', '0', 'layui-icon-cols', '1', '3', '', '1611286515', '1635757525', '0');
 INSERT INTO `tao_auth_rule` VALUES ('94', 'admin/Database/index', '数据备份', '', '1', '1', '93', '1', '', '1', '9', '', '1611897141', '1611902589', '0');
 INSERT INTO `tao_auth_rule` VALUES ('95', 'admin/Database/backup', '进行备份', '', '1', '1', '94', '2', '', '0', '10', '', '1611897285', '1611902610', '0');
 INSERT INTO `tao_auth_rule` VALUES ('96', 'admin/Database/delete', '备份删除', '', '1', '1', '94', '2', '', '0', '0', '', '1611902429', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('97', 'addons', '插件', '', '1', '1', '0', '0', 'layui-icon-flag', '1', '2', '', '1635757328', '1635757632', '0');
+INSERT INTO `tao_auth_rule` VALUES ('98', 'admin/Addons/index', '插件市场', '', '1', '1', '97', '1', '', '1', '0', '', '1635757426', '0', '0');
+INSERT INTO `tao_auth_rule` VALUES ('99', 'admin/Addons/addonsList', '插件列表', '', '1', '1', '98', '2', '', '', '0', '', '1635758251', '0', '0');
 
 -- ----------------------------
 -- Table structure for tao_cate
@@ -471,7 +474,7 @@ CREATE TABLE `tao_system` (
   `cache` tinyint(5) NOT NULL DEFAULT '0' COMMENT '缓存时间分钟',
   `upsize` int(5) NOT NULL DEFAULT '0' COMMENT '上传文件大小KB',
   `uptype` varchar(255) NOT NULL DEFAULT '0' COMMENT '上传文件类型',
-  `copyright` varchar(80) NOT NULL DEFAULT '' COMMENT '版权',
+  `copyright` varchar(100) NOT NULL DEFAULT '' COMMENT '版权',
   `keywords` tinytext NOT NULL COMMENT '网站关键字',
   `descript` tinytext NOT NULL COMMENT '网站描述',
   `is_open` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开启站点1开启0关闭',

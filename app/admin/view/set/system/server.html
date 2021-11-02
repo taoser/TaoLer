@@ -9,14 +9,15 @@
 		  
             <div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief">
               <ul class="layui-tab-title">
-                <li class="layui-this" lay-id="score">积分设置</li>
-                <li lay-id="vip">用户等级</li>
+				{if hook('signstatushook') == 1}
+				<li class="layui-this" lay-id="score">签到规则</li>
+				{/if}
+                <li lay-id="vip" {if hook('signstatushook') == 0}class="layui-this"{/if}>用户等级</li>
               </ul>
               <div class="layui-tab-content">
-                <div class="layui-tab-item  layui-show">
+			  {:hook('signadminhook')}
+                <!--div class="layui-tab-item  layui-show">
 					<div class="layui-tab-content" style="padding: 20px 0;">
-						<div class="layui-form layui-card-header layuiadmin-card-header-auto">
-
 							<div class="layui-form-item">
 								<div class="layui-inline">
 								  <label class="layui-form-label">连续签到</label>
@@ -54,13 +55,11 @@
 							 {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
 							 </script>
 							</div>	
-						</div>	 
 					</div>
-				</div>
-                <div class="layui-tab-item">
+				</div-->
+                <div class="layui-tab-item {if hook('signstatushook') == 0}layui-show{/if}">
 					<div class="layui-tab-content" style="padding: 20px 0;">
-						<div class="layui-form layui-card-header layuiadmin-card-header-auto">
-
+					<div class="layui-form">
 							<div class="layui-form-item">
 								<div class="layui-inline">
 								  <label class="layui-form-label">用户积分</label>
@@ -85,18 +84,18 @@
 									</div>
 								</div>	
 							</div>
+						</div>	
 							<div class="layui-form-item">
 							 <table id="vip-rule" lay-filter="vip-rule"></table>
 							 <script type="text/html" id="vip-rule-button">
 							 {if condition="checkRuleButton('admin/Vip/vipEdit')"}
-							 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-							 {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
+							 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></a>
+							 {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i></a>{/if}
 							 {if condition="checkRuleButton('admin/Vip/delete')"}
-							 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-							 {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
+							 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
+							 {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i></a>{/if}
 							 </script>
 							</div>	
-						</div>	 
 					</div>
 				</div>
               </div>
@@ -132,7 +131,7 @@
 			var field = data.field;
 				$.ajax({
 					type:"post",
-					url:"{:url('admin/Sign/add')}",
+					url: signAddAddons,
 					data:field,
 					daType:"json",
 					success:function (data){
@@ -154,7 +153,7 @@
 						}
 				});
 			return false;
-		});
+		});		
 	
 	//添加VIP规则
 	form.on('submit(vip-rule-submit)',function(data){

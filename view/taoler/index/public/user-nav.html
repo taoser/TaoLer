@@ -23,6 +23,12 @@
             {:lang('my message')}
         </a>
     </li>
+	<li class="layui-nav-item {if($Request.action=='key')}layui-this{/if}" >
+        <a href="{:url('Api/key')}">
+            <i class="layui-icon layui-icon-vercode"></i>
+            {:lang('my auth')}
+        </a>
+    </li>
 	<li class="layui-nav-item " >
         <a href="{:url('user/home',['id'=>session('user_id')])}">
             <i class="layui-icon layui-icon-home"></i>

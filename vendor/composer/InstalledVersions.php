@@ -35,12 +35,12 @@ private static $installed = array (
     ),
     'league/flysystem' => 
     array (
-      'pretty_version' => '1.1.4',
-      'version' => '1.1.4.0',
+      'pretty_version' => '1.1.5',
+      'version' => '1.1.5.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'f3ad69181b8afed2c9edf7be5a2918144ff4ea32',
+      'reference' => '18634df356bfd4119fe3d6156bdb990c414c14ea',
     ),
     'league/flysystem-cached-adapter' => 
     array (
@@ -53,12 +53,12 @@ private static $installed = array (
     ),
     'league/mime-type-detection' => 
     array (
-      'pretty_version' => '1.7.0',
-      'version' => '1.7.0.0',
+      'pretty_version' => '1.8.0',
+      'version' => '1.8.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '3b9dff8aaf7323590c1d2e443db701eb1f9aa0d3',
+      'reference' => 'b38b25d7b372e9fddb00335400467b223349fd7e',
     ),
     'lotofbadcode/phpspirit_databackup' => 
     array (
@@ -71,12 +71,12 @@ private static $installed = array (
     ),
     'phpmailer/phpmailer' => 
     array (
-      'pretty_version' => 'v6.5.0',
-      'version' => '6.5.0.0',
+      'pretty_version' => 'v6.5.1',
+      'version' => '6.5.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'a5b5c43e50b7fba655f793ad27303cd74c57363c',
+      'reference' => 'dd803df5ad7492e1b40637f7ebd258fee5ca7355',
     ),
     'psr/cache' => 
     array (
@@ -143,12 +143,12 @@ private static $installed = array (
     ),
     'symfony/var-dumper' => 
     array (
-      'pretty_version' => 'v4.4.27',
-      'version' => '4.4.27.0',
+      'pretty_version' => 'v4.4.33',
+      'version' => '4.4.33.0',
       'aliases' => 
       array (
       ),
-      'reference' => '391d6d0e7a06ab54eb7c38fab29b8d174471b3ba',
+      'reference' => '50286e2b7189bfb4f419c0731e86632cddf7c5ee',
     ),
     'taoser/taoler' => 
     array (
@@ -158,6 +158,15 @@ private static $installed = array (
       array (
       ),
       'reference' => NULL,
+    ),
+    'taoser/think-addons' => 
+    array (
+      'pretty_version' => 'v1.0.1',
+      'version' => '1.0.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'bd8b0bfa4543fe8d2da65355c134250f78c0d457',
     ),
     'taoser/think-auth' => 
     array (
@@ -240,14 +249,14 @@ private static $installed = array (
       ),
       'reference' => 'edce0ae2c9551ab65f9e94a222604b0dead3576d',
     ),
-    'zzstudio/think-addons' => 
+    'wamkj/thinkphp6.0-databackup' => 
     array (
-      'pretty_version' => '2.0.5',
-      'version' => '2.0.5.0',
+      'pretty_version' => 'v1.0',
+      'version' => '1.0.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '7eb740cb219a111d593a05ad88248a74f640fe5c',
+      'reference' => '28a0e406d827132942723a3c9f69bb20c98e652f',
     ),
   ),
 );

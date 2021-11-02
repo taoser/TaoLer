@@ -18,7 +18,7 @@ class Auth
     public function handle($request, \Closure $next)
     {
 		$path = app('http')->getName().'/'.stristr($request->pathinfo(),".html",true);
-
+//var_dump($path);
 		//没有登录及当前非登录页重定向登录页
 		if(!Session::has('admin_id') && $path !== 'admin/login/index' && !stristr($request->pathinfo(),"captcha.html") )
 		{
@@ -31,14 +31,16 @@ class Auth
 		}
 		
 		// 排除公共权限
-		$not_check = ['admin/','admin/login/index','admin/index/index','admin/index/home','admin/Admin/info','admin/Admin/repass','admin/Admin/logout','admin/Index/news','admin/Index/cunsult','admin/Index/replys','admin/Index/reply','admin/captcha'];
+		$not_check = ['admin/','admin/login/index','admin/index/index','admin/index/home','admin/Admin/info','admin/Admin/repass','admin/Admin/logout','admin/Index/news','admin/Index/cunsult','admin/Index/replys','admin/Index/reply','admin/captcha','addons/socail/'];
 
 		if (!in_array($path, $not_check)) {
 			$auth     = new UserAuth();
 			$admin_id = Session::get('admin_id');	//登录用户的id
 
 			if (!$auth->check($path, $admin_id) && $admin_id != 1) {
-				return view('public/auth');
+				//return view('public/auth');
+				//return response("<script>alert('没有操作权限')</script>");
+				return json(['code'=>-1,'msg'=>'无权限']);
 			}
 		}
 	return $next($request);	

@@ -6,12 +6,14 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'wamkj\\thinkphp\\' => array($vendorDir . '/wamkj/thinkphp6.0-databackup/src'),
     'think\\view\\driver\\' => array($vendorDir . '/topthink/think-view/src'),
     'think\\trace\\' => array($vendorDir . '/topthink/think-trace/src'),
     'think\\captcha\\' => array($vendorDir . '/topthink/think-captcha/src'),
     'think\\app\\' => array($vendorDir . '/topthink/think-multi-app/src'),
-    'think\\' => array($vendorDir . '/topthink/framework/src/think', $vendorDir . '/topthink/think-helper/src', $vendorDir . '/topthink/think-orm/src', $vendorDir . '/topthink/think-template/src', $vendorDir . '/zzstudio/think-addons/src'),
+    'think\\' => array($vendorDir . '/topthink/framework/src/think', $vendorDir . '/topthink/think-helper/src', $vendorDir . '/topthink/think-orm/src', $vendorDir . '/topthink/think-template/src'),
     'taoser\\think\\' => array($vendorDir . '/taoser/think-auth/src'),
+    'taoser\\' => array($vendorDir . '/taoser/think-addons/src'),
     'phpspirit\\databackup\\' => array($vendorDir . '/lotofbadcode/phpspirit_databackup/src'),
     'app\\' => array($baseDir . '/app'),
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),

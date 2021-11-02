@@ -12,12 +12,17 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+        '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
-        '39594db8502267d6df2fe2dca5f3914d' => __DIR__ . '/..' . '/zzstudio/think-addons/src/helper.php',
+        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+        'd421242fd42b2ea6cd13f802bcf18a6e' => __DIR__ . '/../..' . '/extend/taoler/com/form.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'w' => 
+        array (
+            'wamkj\\thinkphp\\' => 15,
+        ),
         't' => 
         array (
             'think\\view\\driver\\' => 18,
@@ -26,6 +31,7 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'think\\app\\' => 10,
             'think\\' => 6,
             'taoser\\think\\' => 13,
+            'taoser\\' => 7,
         ),
         'p' => 
         array (
@@ -63,6 +69,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
     );
 
     public static $prefixDirsPsr4 = array (
+        'wamkj\\thinkphp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wamkj/thinkphp6.0-databackup/src',
+        ),
         'think\\view\\driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-view/src',
@@ -85,11 +95,14 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             1 => __DIR__ . '/..' . '/topthink/think-helper/src',
             2 => __DIR__ . '/..' . '/topthink/think-orm/src',
             3 => __DIR__ . '/..' . '/topthink/think-template/src',
-            4 => __DIR__ . '/..' . '/zzstudio/think-addons/src',
         ),
         'taoser\\think\\' => 
         array (
             0 => __DIR__ . '/..' . '/taoser/think-auth/src',
+        ),
+        'taoser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/taoser/think-addons/src',
         ),
         'phpspirit\\databackup\\' => 
         array (
