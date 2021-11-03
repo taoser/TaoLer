@@ -43,7 +43,7 @@ class AuthRule extends AdminController
 		/*
 		支持获取三级菜单
 		*/	
-		$result = $this->getMenus();
+		$result = $this->getMenus(1);
 
 			$count = count($result);
 			$tree = [];			

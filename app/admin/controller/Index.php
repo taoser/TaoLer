@@ -58,22 +58,13 @@ class Index extends AdminController
 
     public function home()
 	{
-		//版本检测
-		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
-		if($verCheck->code !== -1){
-			$versions = $verCheck->code ? "有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}" : $verCheck->msg;
-			View::assign('versions',$versions);
-		}else{
-			View::assign('versions','版本检测暂时不可服务');
-		}
-
-		//评论、帖子状态
+		// 评论、帖子状态
 		$comm = Db::name('comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
 		$forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
 		$comms = count($comm);
 		$forums = count($forum);
 		
-		//用户注册数据
+		// 用户注册数据
 		$monthTime = Cache::get('monthTime');
 		if(!$monthTime){
 			$time = Db::name('user')->where('delete_time',0)->whereMonth('create_time')->order('create_time','asc')->column('create_time');
@@ -100,6 +91,18 @@ class Index extends AdminController
 		View::assign(['comms'=>$comms,'forums'=>$forums,'monthTime'=>$monthTime,'monthUserCount'=>Cache::get('monthUserCount')]);
         return View::fetch();
     }
+	
+	//版本检测
+	public function getVersion(){
+		
+		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
+		if($verCheck->code !== -1){
+			$versions = $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
+			return $versions;
+		} else {
+			return lang('No new messages');
+		}
+	}
 	
 	//本周发帖
 	public function forums()
@@ -132,7 +135,7 @@ class Index extends AdminController
 	//本周评论
 	public function replys()
 	{
-		if(Request::isAjax()) {
+		if(Request::isAjax()){
 		
 			$replys = Db::name('comment')
 				->alias('a')
@@ -155,7 +158,7 @@ class Index extends AdminController
 				$res = ['code'=>-1,'msg'=>'本周还没评论'];
 			}
 			return json($res);
-			}
+		}
 	}
 	
 	//动态信息
@@ -245,8 +248,7 @@ class Index extends AdminController
 	
 	
 	
-	  public function layout(){
-		
+	public function layout(){
         return view();
     }
 }

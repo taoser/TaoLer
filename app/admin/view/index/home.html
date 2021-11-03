@@ -7,7 +7,7 @@
         <div class="layui-row layui-col-space15">
 		  <div class="layui-col-md12">
 			<div class="layui-card">
-				<div class="layui-card-header"><span style="color:red">{$versions}</span></div>
+				<div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a id="up_version" lay-href="{:url('Upgrade/index')}"></a></div>
 			</div>
 		  </div>
           <div class="layui-col-md6">
@@ -430,6 +430,14 @@
             });
         }
 	});
+	
+	//加载版本检测
+	(function(){
+		$.get("{:url('Index/getVersion')}",function(data){
+			$('#up_version').html(data);
+		})
+	
+	})();
 		
 		
 	$('.layui-btn.layuiadmin-btn-oiltank').on('click', function(){

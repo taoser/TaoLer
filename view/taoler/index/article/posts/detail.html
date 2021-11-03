@@ -232,6 +232,7 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
   
     //评论需要登陆
     form.on('submit(user-comment)',function (data){
+	var index = layer.load(1);
 	var filed = data.field;
         if (uid == -1) {
 			layer.msg('请先登陆',{icon:5,time:2000},function(){

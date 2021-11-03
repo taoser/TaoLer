@@ -82,7 +82,7 @@ class Upgrade extends AdminController
 			if(empty($data['key'])){
 				return json(['code'=>-1,'msg'=>'请正确填写申请到的key']);
 			}
-			$res = Db::name('system')->update(['key'=>$data['key'],'upcheck_url'=>$data['upcheck_url'],'upgrade_url'=>$data['upgrade_url'],'id'=>1]);
+			$res = Db::name('system')->cache('system')->update(['key'=>$data['key'],'upcheck_url'=>$data['upcheck_url'],'upgrade_url'=>$data['upgrade_url'],'id'=>1]);
 			if($res){
 				$res = ['code'=>0,'msg'=>'修改成功'];
 			} else {
@@ -187,6 +187,30 @@ class Upgrade extends AdminController
 			return json(['code'=>-1,'msg'=>$upDate['msg']]);
 		}
 		
+		//清除
+		Files::delDirAndFile($this->upload_dir);
+		Files::delDirAndFile($this->backup_dir);
+		
+		//清除无用目录和文件
+		$delFiles = '../runtime/remove.txt';
+		if(file_exists($delFiles)){
+			$str = file_get_contents($delFiles); //将整个文件内容读入到一个字符串中
+			$str = str_replace("\r\n",",",$str);
+			$delArr = explode(',',$str);
+			foreach($delArr as $v){
+				if(is_dir($v)){
+					//删除文件夹
+					Files::delDirAndFile($v.'/');
+				} else {
+					//删除文件
+					if(file_exists($v)){
+						unlink($v);
+					}
+				}
+			}
+			unlink($delFiles);
+		}
+		
 		//清理缓存
 		$this->clearSysCache();
 		
@@ -267,9 +291,7 @@ class Upgrade extends AdminController
             }
 			
 			Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'70%','msg'=>'升级文件执行成功！']);
-			//清除
-			Files::delDirAndFile($this->upload_dir);
-			Files::delDirAndFile($this->backup_dir);
+			
         }
 		
 		//升级sql操作
