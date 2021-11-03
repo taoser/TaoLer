@@ -200,7 +200,7 @@ class Upgrade extends AdminController
 			foreach($delArr as $v){
 				if(is_dir($v)){
 					//删除文件夹
-					Files::delDirAndFile($v.'/');
+					Files::delDirAndFile($v.'/',true);
 				} else {
 					//删除文件
 					if(file_exists($v)){
