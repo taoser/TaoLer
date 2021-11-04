@@ -41,6 +41,8 @@ class Addons extends AdminController
                         foreach($addons as $v){
                             $info_file = '../addons/'.$v.'/info.ini';
                             $info = parse_ini_file($info_file);
+							$info['show'] = $info['status'] ? '启用' : '禁用';
+							$info['install'] = $info['status'] ? '是' : '否';
                             $res['data'][] = $info;
                         }
                     $res['col'] = [
@@ -50,7 +52,7 @@ class Addons extends AdminController
                         ['field'=> 'version','title'=> '版本', 'width'=> 100],
                         ['field' => 'author','title'=> '作者', 'width'=> 100],
                         ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
-                        ['field' => 'status','title'=> '状态', 'width'=> 100],
+                        ['field' => 'show','title'=> '状态', 'width'=> 100],
                         ['field' => 'install','title'=> '安装', 'width'=> 100],
                         ['field' => 'ctime','title'=> '到期时间', 'width'=> 150],
                         ['title' => '操作', 'width'=> 220, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
