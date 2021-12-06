@@ -241,7 +241,7 @@ pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border
 /* 专栏 */
 .fly-column{height: 50px; line-height: 50px;}
 .fly-column ul li{position: relative; display: inline-block; height: 50px;}
-.fly-column ul li a{padding: 0 20px;}
+.fly-column ul li a{padding: 0 20px;  font-size: 14px;}
 .fly-column ul li.layui-this:after{ position: absolute; bottom: 13px; left: 8px; z-index: 0; width: 50px; height: 22px; border: 1px solid #5FB878; border-radius: 2px;}
 .fly-column ul li.layui-this a{color: #5FB878;}
 .fly-column ul li .fly-mid{margin: 0 20px;}
@@ -394,9 +394,9 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 /* 榜单 */
 .fly-rank{padding-bottom: 10px;}
-.fly-rank dl{position: relative; overflow: hidden; margin-left: 20px; text-align: center; font-size: 0;}
-.fly-rank dd{position: relative; width: 65px; height: 85px; margin: 10px 25px 5px 0; display:inline-block; *display:inline; *zoom:1; vertical-align:top; font-size:12px;}
-.fly-rank dd a img{width: 65px; height: 65px; border-radius: 10px;}
+.fly-rank dl{position: relative; overflow: hidden; margin-left: 10px; text-align: center; font-size: 0;}
+.fly-rank dd{position: relative; width: 55px; height: 75px; margin: 10px 15px 5px 0; display:inline-block; *display:inline; *zoom:1; vertical-align:top; font-size:12px;}
+.fly-rank dd a img{width: 55px; height: 55px; border-radius: 10px;}
 .fly-rank dd a cite{ position:absolute; bottom: 20px; left: 0; width: 100%; height:20px; line-height:20px; text-align:center; background-color:rgba(0,0,0,.2); color:#fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .fly-rank dd a:hover cite{display: block;}
 .fly-rank dd a i{position:absolute; bottom: 0; left: 0; width: 100%; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal;}
@@ -431,14 +431,14 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 /* Detail页 */
 .detail-box{position: relative; padding-left: 20px; padding-top: 15px; padding-right: 20px; padding-bottom: 20px;}
-.detail h1{float: left; font-size: 22px; line-height: 36px; padding-bottom:10px;}
+.detail .title>h1{float: left; font-size: 22px; line-height: 36px; padding-bottom:10px;}
 .detail-box .title span {float: right; padding-right: 5px;}
 .detail .fly-avatar{position: absolute; left: 15px; top: 10px;}
 .detail .fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 100%;}
 .detail .fly-avatar .icon-renzheng{display: inline-block; width: 15px; height: 15px; line-height: 15px; top: 25px; left: 32px; background-color: #FFB800; color: #fff; border-radius: 50%; font-size: 14px;}
 
 .fly-detail-info{position: relative; margin: 10px 0 15px;}
-.fly-detail-info .layui-btn{height: 20px; line-height: 20px; vertical-align: top; border-radius: 0;}
+.fly-detail-info .layui-btn{height: 20px; line-height: 20px; border-radius: 0;}
 .fly-detail-info .layui-btn+.layui-btn{margin-left: 0;}
 .fly-detail-info .fly-list-nums{top: -3px; font-size: 16px;}
 .fly-detail-info .fly-list-nums i{padding: 0 3px 0 15px; font-size: 22px; color: #999;}
@@ -541,7 +541,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .jieda-body{margin: 25px 0 20px; min-height: 0; line-height: 24px; font-size:14px;}
 .jieda-body p{margin-bottom: 10px;}
 .jieda-body a{color:#4f99cf}
-.jieda-reply{position:relative;}
+.jieda-reply{position:relative; font-size: 14px}
 .jieda-reply span{padding-right:20px; color:#999; cursor:pointer;}
 .jieda-reply span:hover{color:#666;}
 .jieda-reply span i{margin-right:5px; font-size:16px;}

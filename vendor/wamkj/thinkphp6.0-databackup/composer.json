@@ -1,0 +1,21 @@
+{
+    "name": "wamkj/thinkphp6.0-databackup",
+    "description": "thinkphp6.0的数据库自动备份扩展",
+    "keywords": ["think-databackup", "thinkphp"],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "wamkj",
+            "email": "1149183529@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "topthink/framework": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "wamkj\\thinkphp\\": "src/"
+        }
+    }
+}
