@@ -1,11 +1,11 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
+        'reference' => '9229009e84756e9b2bb6009122294b59f5fe94da',
         'name' => 'taoser/taoler',
         'dev' => true,
     ),
@@ -137,12 +137,12 @@
             'dev_requirement' => true,
         ),
         'taoser/taoler' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => NULL,
+            'reference' => '9229009e84756e9b2bb6009122294b59f5fe94da',
             'dev_requirement' => false,
         ),
         'taoser/think-addons' => array(
