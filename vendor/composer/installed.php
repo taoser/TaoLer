@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '9229009e84756e9b2bb6009122294b59f5fe94da',
+        'reference' => 'b17128d940ef63302e34b52d0a7dee1bac65416a',
         'name' => 'taoser/taoler',
         'dev' => true,
     ),
@@ -20,12 +20,12 @@
             'dev_requirement' => false,
         ),
         'league/flysystem' => array(
-            'pretty_version' => '1.1.8',
-            'version' => '1.1.8.0',
+            'pretty_version' => '1.1.9',
+            'version' => '1.1.9.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../league/flysystem',
             'aliases' => array(),
-            'reference' => 'c995bb0c23c58c9813d081f9523c9b7bb496698e',
+            'reference' => '094defdb4a7001845300334e7c1ee2335925ef99',
             'dev_requirement' => false,
         ),
         'league/flysystem-cached-adapter' => array(
@@ -142,7 +142,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '9229009e84756e9b2bb6009122294b59f5fe94da',
+            'reference' => 'b17128d940ef63302e34b52d0a7dee1bac65416a',
             'dev_requirement' => false,
         ),
         'taoser/think-addons' => array(
