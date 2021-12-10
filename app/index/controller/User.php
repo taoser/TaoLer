@@ -41,7 +41,7 @@ class User extends BaseController
 			$res['count'] = $count;
 			foreach($article as $v){
 				$res['data'][] = ['id'=>$v['id'],
-				'title'	=> $v['title'],
+				'title'	=> htmlspecialchars($v['title']),
 				'url'	=> (string) url('article/detail',['id'=>$v['id']]),
 				'status'	=> $v['status'] ? '正常':'待审核',
 				'ctime'		=> $v['create_time'],
@@ -70,7 +70,7 @@ class User extends BaseController
 				
 				$res['data'][] = [
 					'id' 	=>$v['id'],
-					'title'	=> $v['collect_title'],
+					'title'	=> htmlspecialchars($v['collect_title']),
 					'url'	=> (string) url('article/detail',['id'=>$v['article_id']]),
 					'auther' => $v['auther'],
 					'status' => is_null(Db::name('article')->field('id')->where('delete_time',0)->find($v['article_id'])) ? '已失效' : '正常',

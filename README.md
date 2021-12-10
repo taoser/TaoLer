@@ -7,8 +7,8 @@
  * 后台：http://adm.aieok.com:888
  * 账号：test
  * 密码：test123
- * 版本：TaoLer 1.8.12
- * 日期：2021.11.4
+ * 版本：TaoLer 1.8.14
+ * 日期：2021.12.6
 
 #### 项目地址
 
@@ -32,7 +32,7 @@
 #### 构架组成
 - 1.x版本构架：
 	- 构架：Tinkphp6 + layui2.6
-	- 环境：php7 + mysql
+	- 环境：php7/php8.0 + mysql
 	- 前端：Fly template V3.0
 	
 #### 构架介绍
@@ -83,12 +83,16 @@
 	* nginx 
 	> 在`Nginx`低版本中，是不支持`PATHINFO`的，但是可以通过在`Nginx.conf`中配置转发规则实现：遇到`404`错误一般是nginx的伪静态错误
 	```bash
-	location / { // …..省略部分代码
+	location / {
 	   if (!-e $request_filename) {
-			rewrite  ^(.*)$  /index.php?s=/$1  last;
+			rewrite  ^(.*)$  /index.php?s=/$1  last;   break;
 		}
 	}
 	```
+	
+>如果是宝塔集成环境，网站目录部署如下示例：
+网站目录：D:/www/TaoLer
+运行目录：/public	
 	
 3.	首次安装，访问域名http://www.youdomain.com可自动跳转到/install/index进行引导安装，重新安装需删除public目录下install.lock。
 4.	安装前需要先创建mysql数据库(准备：数据库连接地址，数据库用户名，密码，端口)
