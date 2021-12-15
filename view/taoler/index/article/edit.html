@@ -15,17 +15,16 @@
         <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
           <div class="layui-tab-item layui-show">
            
-			<input type="hidden" name="id" value="{$article.id}">
+			    <input type="hidden" name="id" value="{$article.id}">
               <div class="layui-row layui-col-space15 layui-form-item">
                 <div class="layui-col-md3">
                   <label class="layui-form-label">{:lang('special column')}</label>
                   <div class="layui-input-block">
                     <select lay-verify="required" name="cate_id" lay-filter="column"> 
                       <option></option>
-					
-					  {volist name="cateList" id="cate"}
+					            {volist name="cateList" id="cate"}
                       <option value="{$cate.id}" {if $article.cate_id == $cate.id}selected{/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
-					  {/volist}
+					            {/volist}
                     </select>
                   </div>
                 </div>
@@ -34,15 +33,15 @@
                   <div class="layui-input-block">
                     <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$article.title}">
                     <input type="hidden" id="L_title_color"  name="title_color" autocomplete="off" class="layui-input" value="{$article.title_color}">
-					<input type="hidden" name="user_id" value="{$article.user_id}">
+					          <input type="hidden" name="user_id" value="{$article.user_id}">
                   </div>
                 </div>
-				{if ($user.auth == 1)}
-				<div class="layui-col-md1">
-				<div id="color"></div>
-				<div id="test9" style="margin-left: 30px;"></div>
-				</div>
-				{/if}
+              {if ($user.auth == 1)}
+              <div class="layui-col-md1">
+              <div id="color"></div>
+              <div id="test9" style="margin-left: 30px;"></div>
+              </div>
+              {/if}
               </div>
               <div class="layui-row layui-col-space15 layui-form-item layui-hide" id="LAY_quiz">
                 <div class="layui-col-md3">
@@ -91,7 +90,7 @@
                   <div class="layui-form-mid layui-word-aux">发表后无法更改飞吻</div>
                 </div>
               </div>
-			  <div class="layui-form-item">
+			        <div class="layui-form-item">
                 <div class="layui-inline">
                   <label class="layui-form-label">{:lang('enclosure')}</label>
                   <div class="layui-input-inline" style="width: 190px;">
@@ -101,7 +100,7 @@
                 </div>
               </div>
 			  
-			  <div class="layui-form-item">
+			        <div class="layui-form-item">
                 <div class="layui-inline">
                   <label class="layui-form-label">{:lang('add tags')}</label>
                   <div class="layui-input-inline" style="width: 190px;">
@@ -110,12 +109,12 @@
                  <button type="button" class="layui-btn" id="article-tags-button">{:lang('add')}</button>
                 </div>
               </div>
-			  <div class="layui-form-item">
-                <div class="layui-btn-container">
-				{volist name="tags" id="vo" }
-				<button type="button" class="layui-btn" value="{$vo}">{$vo}</button>
-				{/volist}
-				</div>
+			        <div class="layui-form-item">
+              <div class="layui-btn-container">
+                {volist name="tags" id="vo" }
+                <button type="button" class="layui-btn" value="{$vo}">{$vo}</button>
+                {/volist}
+              </div>
               </div>
               <div class="layui-form-item">
                 <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
@@ -167,7 +166,7 @@
 		//指定允许上传的文件类型
 		  upload.render({
 			elem: '#zip-button'
-			,url: '{:url('article/uploads')}' //改成您自己的上传接口
+			,url: "{:url('article/uploads')}" //改成您自己的上传接口
 			,accept: 'file' //普通文件
 			,done: function(res){
 				if(res.status == 0){

@@ -5,11 +5,12 @@
     <div class="layui-row layui-col-space15">
       <div class="layui-col-md8">
         <div class="layui-row layui-col-space15">
-		  <div class="layui-col-md12">
-			<div class="layui-card">
-				<div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a id="up_version" lay-href="{:url('Upgrade/index')}"></a></div>
-			</div>
-		  </div>
+          <div class="layui-col-md12">
+            <div class="layui-card">
+              <div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a id="up_version" lay-href="{:url('Upgrade/index')}"></a></div>
+            </div>
+          </div>
+
           <div class="layui-col-md6">
             <div class="layui-card">
               <div class="layui-card-header">快捷方式</div>
@@ -74,6 +75,7 @@
               </div>
             </div>
           </div>
+
           <div class="layui-col-md6">
             <div class="layui-card">
               <div class="layui-card-header">待办事项</div>
@@ -120,6 +122,7 @@
               </div>
             </div>
           </div>
+
           <div class="layui-col-md12">
             <div class="layui-card">
               <div class="layui-card-header">数据概览</div>
@@ -138,55 +141,55 @@
             <div class="layui-card">
               <div class="layui-tab layui-tab-brief layadmin-latestData">
                 <ul class="layui-tab-title">
-				<li class="layui-this">官方动态</li>
+				        <li class="layui-this">官方动态</li>
                   <li>发送反馈</li>
                   <li>今周发帖</li>
                   <li>今周评论</li>
                 </ul>
                 <div class="layui-tab-content">
-					
-					<div class="layui-tab-item layui-show">
+            
+                  <div class="layui-tab-item layui-show">
                     <table id="LAY-index-topnews"></table>
                   </div>
                   <div class="layui-tab-item  layui-form-text">
-					<div class="layui-form  layui-form-pane">    
-						<div class="layui-row layui-col-space12 layui-form-item" >
-							<div class="layui-col-md5">
-							  <label class="layui-form-label">发送类型</label>
-							  <div class="layui-input-block">
-								<select name="type" lay-verify="required" lay-filter="type"> 
-								  <option value="1">问题资讯</option>
-								  <option value="2">提交BUG</option>
-								</select>
-							  </div>
-							</div>
-							<div class="layui-col-md7">
-							   <label for="L_title" class="layui-form-label">标题</label>
-							   <div class="layui-input-block">
-									<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" >
-							   </div>
-							</div>
-						</div>
-						<div class="layui-form-item layui-form-text">
-							<div class="layui-input-block">		
-							<textarea id="L_content" name="content" required lay-verify="content" autocomplete="off"  class="layui-textarea"></textarea>
-							</div>
-						</div>
-						<div class="layui-form-item layui-hide">
-							<input type="text" name="post" lay-verify="required" autocomplete="off" class="layui-input layui-hide" value="{$insurl}">
-						</div>
-						<div class="layui-form-item">
-							<button type="submit" class="layui-btn " lay-filter="cunsult-add" lay-submit id="cunsult-add">立即发布</button>	  
-						</div>
-					</div>
-					<div class="layui-form-item">
-					<table id="LAY-index-topreply" lay-filter="LAY-index-topreply"></table>
-					<script type="text/html" id="tao-reply">
-					<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-					</script>
-					</div>
+                    <div class="layui-form  layui-form-pane">    
+                      <div class="layui-row layui-col-space12 layui-form-item" >
+                        <div class="layui-col-md5">
+                          <label class="layui-form-label">发送类型</label>
+                          <div class="layui-input-block">
+                          <select name="type" lay-verify="required" lay-filter="type"> 
+                            <option value="1">问题资讯</option>
+                            <option value="2">提交BUG</option>
+                          </select>
+                          </div>
+                        </div>
+                        <div class="layui-col-md7">
+                          <label for="L_title" class="layui-form-label">标题</label>
+                          <div class="layui-input-block">
+                            <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" >
+                          </div>
+                        </div>
+                      </div>
+                      <div class="layui-form-item layui-form-text">
+                        <div class="layui-input-block">		
+                        <textarea id="L_content" name="content" required lay-verify="content" autocomplete="off"  class="layui-textarea"></textarea>
+                        </div>
+                      </div>
+                      <div class="layui-form-item layui-hide">
+                        <input type="text" name="post" lay-verify="required" autocomplete="off" class="layui-input layui-hide" value="{$insurl}">
+                      </div>
+                      <div class="layui-form-item">
+                        <button type="submit" class="layui-btn " lay-filter="cunsult-add" lay-submit id="cunsult-add">立即发布</button>	  
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                    <table id="LAY-index-topreply" lay-filter="LAY-index-topreply"></table>
+                      <script type="text/html" id="tao-reply">
+                      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                      </script>
+                    </div>
                   </div>
-				
+          
                   <div class="layui-tab-item">
                     <table id="LAY-index-topSearch"></table>
                   </div>
@@ -210,7 +213,7 @@
                 <col>
               </colgroup>
               <tbody>
-			  <tr>
+                <tr>
                   <td>当前系统</td>
                   <td>
                     <script type="text/html" template>
@@ -227,7 +230,7 @@
                     </script>
                   </td>
                 </tr>
-				<tr>
+                <tr>
                   <td>核心框架</td>
                   <td>
                     <script type="text/html" template>
@@ -235,7 +238,7 @@
                     </script>
                  </td>
                 </tr>
-				<tr>
+                <tr>
                   <td>PHP版本</td>
                   <td>
                     <script type="text/html" template>
@@ -251,7 +254,7 @@
                     </script>
                  </td>
                 </tr>
-				<tr>
+				        <tr>
                   <td>运行时间</td>
                   <td>
                     <script type="text/html" template>
@@ -259,7 +262,7 @@
                     </script>
                  </td>
                 </tr>
-				<tr>
+				        <tr>
                   <td>当前授权</td>
                   <td>
                     <script type="text/html" template>
@@ -267,7 +270,6 @@
                     </script>
                  </td>
                 </tr>
-               
               </tbody>
             </table>
           </div>

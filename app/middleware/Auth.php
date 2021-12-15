@@ -5,6 +5,9 @@ namespace app\middleware;
 
 use taoser\think\Auth as UserAuth;
 use think\facade\Session;
+use think\facade\Cookie;
+use think\facade\Db;
+use think\facade\Config;
 
 class Auth
 {
@@ -17,8 +20,28 @@ class Auth
      */
     public function handle($request, \Closure $next)
     {
+		//访问路径
 		$path = app('http')->getName().'/'.stristr($request->pathinfo(),".html",true);
-//var_dump($path);
+		//登陆前获取加密的Cookie
+		$cooAuth = Cookie::get('adminAuth');
+
+		if(!empty($cooAuth)){
+			$resArr = explode(':',$cooAuth);
+			$userId = end($resArr);
+			//检验用户
+			$user = Db::name('admin')->where('id',$userId)->find();
+			if(!empty($user)){
+				//验证cookie
+				$salt = Config::get('taoler.salt');
+				$auth = md5($user['username'].$salt).":".$userId;
+				if($auth==$cooAuth){
+					Session::set('admin_name',$user['username']);
+					Session::set('admin_id',$userId);
+				}
+			}
+			
+		}
+
 		//没有登录及当前非登录页重定向登录页
 		if(!Session::has('admin_id') && $path !== 'admin/login/index' && !stristr($request->pathinfo(),"captcha.html") )
 		{
@@ -43,6 +66,6 @@ class Auth
 				return json(['code'=>-1,'msg'=>'无权限']);
 			}
 		}
-	return $next($request);	
+		return $next($request);	
     }
 }

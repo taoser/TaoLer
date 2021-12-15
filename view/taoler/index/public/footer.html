@@ -1,24 +1,27 @@
 <div class="fly-footer html5plus-hide">
-  <p> Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}v{:config('taoler.version')}</p>
   <p>
-  {$sysInfo.showlist|raw}
-	{volist name="footlinks" id="vo"}
-	<a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a>
-	{/volist}
-	<a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">{$sysInfo.icp}</a>
+    Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}v{:config('taoler.version')}
+  </p>
+  <p>
+    {$sysInfo.showlist|raw} {volist name="footlinks" id="vo"}
+    <a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a>
+    {/volist}
+    <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank"
+      >{$sysInfo.icp}</a
+    >
   </p>
 </div>
 <script src="/static/layui/jquery.min.js" charset="utf-8"></script>
 <script src="/static/layui/layui.js" charset="utf-8"></script>
 <script>
-var messageNums = "{:url('message/nums')}",
-	messageRead = "{:url('Message/read')}",
-	userMessage = "{:url('User/message')}",
+  var messageNums = "{:url('message/nums')}",
+    messageRead = "{:url('Message/read')}",
+    userMessage = "{:url('User/message')}",
     login = "{:url('Login/index')}",
     articleAdd = "{:url('Article/add')}",
-	uploads = "{:url('article/uploads')}",
-	searchUrl = "{:url('index/search')}",
-	langUrl = "{:url('index/language')}",
-	replyNum = "{:lang('replies')}";
-var jumpUrl = "{:url('/jump/index/')}";
+    uploads = "{:url('article/uploads')}",
+    searchUrl = "{:url('index/search')}",
+    langUrl = "{:url('index/language')}",
+    replyNum = "{:lang('replies')}";
+  var jumpUrl = "{:url('/jump/index/')}";
 </script>

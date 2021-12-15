@@ -11,7 +11,7 @@
     <div class="layui-col-md9 content detail">
       <div class="fly-panel detail-box">
 		{//标题}
-        <h1 style="color:{$article.title_color};">{$article.title}</h1>
+        <h1 style="color:'{$article.title_color}';">{$article.title}</h1>
 		<div class="detail_qrcode layui-hide-xs" onclick="PhoneDown();" id="mobile"></div>
 		{//图标}
         <div class="fly-detail-info">
@@ -139,7 +139,7 @@
             </div>
             <div class="fly-panel-main">
                 {volist name="ad_comm" id="vo"}
-                <a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+                <a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color}';">{$vo.slid_name}</a>
                 {/volist}
             </div>
         </div>
@@ -169,6 +169,7 @@
 {block name="script"}
 <script>
 var collectionFind = "{:url('Collection/find')}",
+    collection = "{:url('collection/')}",
     articleJieset = "{:url('Article/jieset')}",
     articleDelete = "{:url('Article/delete')}",
     commentJiedaZan = "{:url('Comment/jiedaZan')}",
@@ -178,7 +179,6 @@ var collectionFind = "{:url('Collection/find')}",
     commentJiedaDelete = "{:url('Comment/jiedaDelete')}",
 	langCollection = "{:lang('collection')}",
 	langCancelCollection = "{:lang('cancel collection')}";
-var	collection = "{:url('collection/')}";
 	  
 layui.use(['fly', 'face','colorpicker','plyr'], function(){
   var $ = layui.jquery
@@ -212,7 +212,7 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
 		,done: function(color){
 			  //改变标题颜色
 			  $('h1').css("color", color);
-			  var id = {$article.id};
+			  var id = "{$article.id}";
 			  $.ajax({
 				type:'post',
 				url:"{:url('Article/titleColor')}",
@@ -230,45 +230,45 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
 		}
 	});
   
-    //评论需要登陆
-    form.on('submit(user-comment)',function (data){
+  //评论需要登陆
+  form.on('submit(user-comment)',function (data){
 	var index = layer.load(1);
 	var filed = data.field;
-        if (uid == -1) {
+    if (uid == -1) {
 			layer.msg('请先登陆',{icon:5,time:2000},function(){
                 location.href = "{:url('login/index')}";
             });
         } else {
-            $.ajax({
-                type: "post",
-                url: "{:url('article/comment')}",
-                data: filed,
-                dataType: "json",
-                success:function (data) {
-                    if (data.code == 0) {
-                        layer.msg(data.msg,{icon:6,time:2000},function () {
-                            location.reload(true);
-                        });
-                    }else {
-                        layer.open({title:'评论失败',content:data.msg,icon:5,anim:6});
-                    }
-                }
-            });
+          $.ajax({
+            type: "post",
+            url: "{:url('article/comment')}",
+            data: filed,
+            dataType: "json",
+            success:function (data) {
+              if (data.code == 0) {
+                layer.msg(data.msg,{icon:6,time:2000},function () {
+                    location.reload(true);
+                });
+              }else {
+                layer.open({title:'评论失败',content:data.msg,icon:5,anim:6});
+              }
+            }
+          });
         }
         return false;
     });
 	
 	//下载
     $('#zip-download').click(function (){
-	var id = "{$article.id}";
-        $.ajax({
-                type:"post",
-                url:"{:url('article/download')}",
-                data:{id:id},
-                success:function (data) {
-                      location.href = "{:url('article/download',['id'=>$article.id])}"; 
-                }
-            });
+	  var id = "{$article.id}";
+      $.ajax({
+        type:"post",
+        url:"{:url('article/download')}",
+        data:{id:id},
+        success:function (data) {
+          location.href = "{:url('article/download',['id'=>$article.id])}"; 
+        }
+      });
     });
 	
 	//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
@@ -285,18 +285,18 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
 {:hook('markdownhook')}
 
 <script>
-//扫码阅读
-$("#rdown").hover(function(){
-		 $("#phonedl").show().stop();
-	},function(){
-		 $("#phonedl").hide().stop();
-	});
-	
-	$("#phonedl").hover(function(){
-		 $("#phonedl").show().stop();
-	},function(){
-		 $("#phonedl").hide().stop();
-	});
+  //扫码阅读
+  $("#rdown").hover(function(){
+      $("#phonedl").show().stop();
+    },function(){
+      $("#phonedl").hide().stop();
+    });
+    
+    $("#phonedl").hover(function(){
+      $("#phonedl").show().stop();
+    },function(){
+      $("#phonedl").hide().stop();
+  });
 
 	function PhoneDown(){
 		layer.open({                         
@@ -305,19 +305,19 @@ $("#rdown").hover(function(){
 			content: "<img src='/qrcode/?text={$Request.domain}{:url('article/detail',['id' => $article.id])}&size=230'>"
 		});
 	}
-//推送百度收录服务
-(function(){
-    var bp = document.createElement('script');
-    var curProtocol = window.location.protocol.split(':')[0];
-    if (curProtocol === 'https') {
-        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-    }
-    else {
-        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-    }
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(bp, s);
-})();
+  //推送百度收录服务
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
 </script>
 
 {/block}

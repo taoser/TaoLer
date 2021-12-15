@@ -16,13 +16,20 @@ class AuthRule extends Model
     {
         $query->where('id', $value );      
     }
-	//登陆校验
+	/**
+	 * 权限树
+	 */
     public function authRuleTree()
     {
 		$authRules = $this->order('sort asc')->select();
-		return $this->sort($authRules);
+		//return $this->sort($authRules);
+		return $authRules;
 	}
-	
+	/**
+	 * id，pid,菜单排序
+	 * @var $data 数据
+	 * @var $pid 父级id
+	 */
 	public function sort($data,$pid=0)
 	{
 		static $arr = array();

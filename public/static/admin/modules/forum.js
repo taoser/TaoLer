@@ -1,12 +1,3 @@
-/**
-
- @Name：layuiAdmin 社区系统
- @Author：star1029
- @Site：http://www.layui.com/admin/
- @License：LPPL
-    
- */
-
 
 layui.define(['table', 'form'], function(exports){
   var $ = layui.$
@@ -23,12 +14,12 @@ layui.define(['table', 'form'], function(exports){
       ,{field: 'poster', title: '贴主',width: 100}
       ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
       ,{field: 'title', title: '标题', mWidth: 200,templet: '#title'}
-	  ,{field: 'content', title: '内容', mWidth: 200}
+      ,{field: 'content', title: '内容', mWidth: 200}
       ,{field: 'posttime', title: '时间',width: 120, sort: true}
       ,{field: 'top', title: '置顶', templet: '#buttonTpl', width: 80, align: 'center'}
-	  ,{field: 'hot', title: '精贴', templet: '#buttonHot', width: 80, align: 'center'}
-	  ,{field: 'reply', title: '评论状态', templet: '#buttonReply', width: 80, align: 'center'}
-	  ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
+      ,{field: 'hot', title: '加精', templet: '#buttonHot', width: 80, align: 'center'}
+      ,{field: 'reply', title: '禁评', templet: '#buttonReply', width: 80, align: 'center'}
+      ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
       ,{title: '操作', width: 60, align: 'center', toolbar: '#table-forum-list'}
     ]]
     ,page: true
@@ -92,31 +83,30 @@ layui.define(['table', 'form'], function(exports){
             
             //提交 Ajax 成功后，静态更新表格中的数据
             //$.ajax({});
-			$.ajax({
-				type:"post",
-				url:"/admin/Forum/listform",
-				data:{"id":data.id,"poster":name,"sort":sort,"ename":ename},
-				daType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						}, function(){
-							location.reload();
-						});
-					} else {
-						layer.open({
-							tiele:'修改失败',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-					}
-				}
-			});
-			
-			
+            $.ajax({
+              type:"post",
+              url:"/admin/Forum/listform",
+              data:{"id":data.id,"poster":name,"sort":sort,"ename":ename},
+              daType:"json",
+              success:function (data){
+                if (data.code == 0) {
+                  layer.msg(data.msg,{
+                    icon:6,
+                    time:2000
+                  }, function(){
+                    location.reload();
+                  });
+                } else {
+                  layer.open({
+                    tiele:'修改失败',
+                    content:data.msg,
+                    icon:5,
+                    anim:6
+                  });
+                }
+              }
+            });
+
             table.reload('LAY-app-forum-list'); //数据刷新
             layer.close(index); //关闭弹层
           });  
@@ -143,7 +133,7 @@ layui.define(['table', 'form'], function(exports){
       ,{field: 'content', title: '评论', minWidth: 200}
       ,{field: 'replytime', title: '回复时间', width: 120, sort: true}
 	  ,{field: 'check', title: '审核', templet: '#buttonCheck', width: 100}
-      ,{title: '操作', width: 85, align: 'center', toolbar: '#table-forum-replys'}
+      ,{title: '操作', width: 60, align: 'center', toolbar: '#table-forum-replys'}
     ]]
     ,page: true
     ,limit: 15
@@ -216,16 +206,15 @@ layui.define(['table', 'form'], function(exports){
         elem: '#LAY-app-content-tags'
         ,url: forumTags //帖子分类接口
         ,cols: [[
-            {type: 'numbers', fixed: 'left'}
-            ,{field: 'sort', title: '排序', width: 80, sort: true}
-            ,{field: 'id', title: 'ID',width: 60}
-            ,{field: 'tags', title: '分类名', minWidth: 100}
-            ,{field: 'ename', title: 'EN别名', minWidth: 100}
-			,{field: 'detpl',title: '模板', align: 'center',width: 100,templet: '#inputSel'}
-			,{title: '图标', align: 'center',width: 50,templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
-            ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#buttonHot'}
-            ,{field: 'desc', title: '描述', minWidth: 100}
-            ,{title: '操作', width: 100, align: 'center', toolbar: '#layuiadmin-app-cont-tagsbar'}
+          {field: 'sort', title: '排序', width: 80, sort: true}
+          ,{field: 'id', title: 'ID',width: 60}
+          ,{field: 'tags', title: '分类名', width: 100}
+          ,{field: 'ename', title: 'EN别名', width: 100}
+          ,{field: 'detpl',title: '模板', align: 'center',width: 100,templet: '#inputSel'}
+          ,{title: '图标', align: 'center',width: 50,templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
+          ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#buttonHot'}
+          ,{field: 'desc', title: '描述', minWidth: 200}
+          ,{title: '操作', width: 100, align: 'center', toolbar: '#layuiadmin-app-cont-tagsbar'}
         ]]
         ,text: '对不起，加载出现异常！'
     });

@@ -41,17 +41,17 @@
       <div class="fly-panel">
         <h3 class="fly-panel-title">{:lang('recent statements')}</h3>
         <ul class="jie-row">
-		{volist name="$arts" id="vo"}
+		    {volist name="$arts" id="vo"}
           <li>
             {if condition="$vo.is_hot==1"}<span class="fly-jing">{:lang('hot')}</span>{/if}
             <a href="{:url('article/detail',['id'=>$vo.id])}" class="jie-title"> {$vo.title}</a>
             <i>{$vo.create_time|date='Y-m-d'}</i>
             <em class="layui-hide-xs">{$vo.pv} {:lang('browses')}</em>
           </li>
-		  {/volist}
-		  {if condition="$arts eq ''"}
+		    {/volist}
+		    {if condition="$arts eq ''"}
           <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><i style="font-size:14px;">没有发表任何求解</i></div>
-		 {/if}
+		    {/if}
         </ul>
       </div>
     </div>
@@ -60,7 +60,7 @@
       <div class="fly-panel">
         <h3 class="fly-panel-title">{:lang('recent answers')}</h3>
         <ul class="home-jieda">
-		{volist name="$reys" id="vo" empty="没有回答任何问题"}
+		    {volist name="$reys" id="vo" empty="没有回答任何问题"}
           <li>
           <p>
           <span>{$vo.create_time|date='Y-m-d H-m'}</span>
@@ -68,7 +68,7 @@
           </p>
           <div class="home-dacontent detail-body jieda-body photos" >{$vo.content}</div>
         </li>
-		{/volist}
+		    {/volist}
           <!-- <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>没有回答任何问题</span></div> -->
         </ul>
       </div>

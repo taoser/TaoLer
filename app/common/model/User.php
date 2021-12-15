@@ -68,6 +68,7 @@ class User extends Model
                 //将用户数据写入Session
                 Session::set('user_id',$user['id']);
                 Session::set('user_name',$user['name']);
+				//记住密码
                 if(isset($data['remember'])){
                     $salt = Config::get('taoler.salt');
                     //加密auth存入cookie

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <title>{block name="title"}标题{/block}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="{block name="keywords"}关键词{/block}">
-  <meta name="description" content="{block name="description"}描述{/block}">
+  <meta name="keywords" content="{block name='keywords'}关键词{/block}">
+  <meta name="description" content="{block name='description'}描述{/block}">
   <link rel="stylesheet" href="/static/layui/css/layui.css"  charset="utf-8">
   <link rel="stylesheet" href="/static/res/css/global.css" charset="utf-8">
   {block name="link"}{/block}
@@ -15,7 +15,7 @@
 		display: none  
 	}
 	{if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") !== false}
-	html body{margin-top: 1px;}
+  html body{margin-top: 1px;}
 	{/if}	
   </style>
   <script src="/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
@@ -35,11 +35,11 @@
 <script>
     layui.cache.page = '{$jspage}';
     layui.cache.user = {
-        username: '{$user.name??'游客'}'
-        ,uid: '{$user.id ?? -1}'
-        ,avatar: '{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}'
-        ,experience: '{$user.point ?? ''}'
-        ,sex: '{$user.sex ? '女':'男'}'
+        username: "{$user.name??'游客'}"
+        ,uid: "{$user.id ?? -1}"
+        ,avatar: "{$user['user_img'] ?? '/static/res/images/avatar/00.jpg'}"
+        ,experience: "{$user.point ?? ''}"
+        ,sex: "{$user.sex ? '女':'男'}"
     };
     layui.config({
         version: "3.0.0"

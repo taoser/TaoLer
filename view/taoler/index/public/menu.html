@@ -1,29 +1,29 @@
 <div class="layui-panel site-menu layui-hide-md">
     <ul class="layui-menu layui-menu-lg">
-	<li class="search" style="padding-left:5px;padding-top:2px;padding-right:5px;">
-	<form action="{:url('index/search',['keywords'=>$Request.param.keywords])}">
-	<input  type="search" name="keywords" value="" aria-label="Search text" placeholder="搜索" class="layui-input">
-	</form>
-    </li>
+		<li class="search" style="padding-left:5px;padding-top:2px;padding-right:5px;">
+		<form action="{:url('index/search',['keywords'=>$Request.param.keywords])}">
+		<input  type="search" name="keywords" value="" aria-label="Search text" placeholder="搜索" class="layui-input">
+		</form>
+		</li>
 	{if session('?user_id')}
-	<li class="layui-nav-item" style="padding-left:25px;">
-	<a class="fly-nav-avatar" href="javascript:;">
-	<img src="{$user['user_img']}" >
-	</a>
-	</li>
+		<li class="layui-nav-item" style="padding-left:25px;">
+		<a class="fly-nav-avatar" href="javascript:;">
+		<img src="{$user['user_img']}" >
+		</a>
+		</li>
 	{else /}
-	<li class="layui-nav-item" style="padding-left:25px;">
-        <a class="iconfont icon-touxiang" href="{:url('login/index')}"></a>
-		<a href="{:url('login/index')}"> {:lang('login')} </a>
-		<a href="{:url('login/reg')}"> {:lang('register')} </a>
-    </li>
-	<li class="layui-nav-item" style="padding-left:25px;">
-		<select name="language" style="width:100px;" lay-filter="language1" lay-verify="" id="language1">
-		<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >{:lang('chinese')}</option>
-		<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >{:lang('tChinese')}</option>
-		<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >{:lang('english')}</option>
-		</select>
-	</li>
+		<li class="layui-nav-item" style="padding-left:25px;">
+			<a class="iconfont icon-touxiang" href="{:url('login/index')}"></a>
+			<a href="{:url('login/index')}"> {:lang('login')} </a>
+			<a href="{:url('login/reg')}"> {:lang('register')} </a>
+		</li>
+		<li class="layui-nav-item" style="padding-left:25px;">
+			<select name="language" style="width:100px;" lay-filter="language1" lay-verify="" id="language1">
+			<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >{:lang('chinese')}</option>
+			<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >{:lang('tChinese')}</option>
+			<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >{:lang('english')}</option>
+			</select>
+		</li>
 	{/if}
 	
       <li class="layui-menu-item-group" lay-options="{type: 'group', isAllowSpread: true}">
@@ -49,13 +49,13 @@
         <div class="layui-menu-body-title">菜单</div>
         <hr>
         <ul>
-		   {volist name="headlinks" id="vo"}
+			{volist name="headlinks" id="vo"}
 			<li class="">
 				<div class="layui-menu-body-title">
 					<a href="{$vo.slid_href}"><i class="layui-icon {$vo.slid_img}"></i><span> {$vo.slid_name} </span></a>
 				</div>
 			</li>
-		  {/volist}
+			{/volist}
 		  <li class="">
             <div class="layui-menu-body-title">
               <a href="/">

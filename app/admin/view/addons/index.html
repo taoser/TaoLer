@@ -22,14 +22,14 @@
 
 			<script type="text/html" id="toolbar">
 				<div class="layui-btn-group" style="padding-bottom: 10px;">
-				  <button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="add">离线安装</button>
-				</div>  
+					<button type="button" class="layui-btn layui-btn-sm" lay-event="onlineAddons">在线</button>
+					<button type="button" class="layui-btn layui-btn-sm" lay-event="installed">已安装</button>
+					<button type="button" class="layui-btn layui-btn-sm" lay-event="freeAddons">免费</button>
+					<button type="button" class="layui-btn layui-btn-sm" lay-event="payAddons">付费</button>
+				</div>
 				<div class="layui-btn-group" style="padding-bottom: 10px;">
-				  <button type="button" class="layui-btn layui-btn-sm" lay-event="installed">已安装</button>
-				  <button type="button" class="layui-btn layui-btn-sm" lay-event="onlineAddons">在线</button>
-				  <button type="button" class="layui-btn layui-btn-sm" lay-event="freeAddons">免费</button>
-				  <button type="button" class="layui-btn layui-btn-sm" lay-event="payAddons">付费</button>
-				</div>            
+					<button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="add">离线安装</button>
+				</div>
 			</script>
 
 			<script type="text/html" id="addons-installed-tool">

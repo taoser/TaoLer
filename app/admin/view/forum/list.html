@@ -27,13 +27,13 @@
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
               <select name="sec">
-			  <option value="">选择状态</option>
+			          <option value="">选择状态</option>
                 <option value="1">正常</option>
-				<option value="5">禁止</option>
-				<option value="6">待审</option>
+                <option value="5">禁止</option>
+                <option value="6">待审</option>
                 <option value="2">置顶</option>
-				<option value="3">加精</option>
-				<option value="4">禁评</option>
+                <option value="3">加精</option>
+                <option value="4">禁评</option>
               </select>
             </div>
           </div>
@@ -53,40 +53,40 @@
         <script type="text/html" id="imgTpl">
           <img style="display: inline-block; width: 50%; height: 100%;" src= "{{ d.avatar }}">
         </script> 
-		<script type="text/html" id="title">
-		<a href="{$domain}/jie/{{d.id}}.html" target="_blank">{{d.title}}</a>
-		</script>
+        <script type="text/html" id="title">
+        <a href="{$domain}/jie/{{d.id}}.html" target="_blank">{{d.title}}</a>
+        </script>
         <script type="text/html" id="buttonTpl">
           {{#  if(d.top == 1){ }}
-            <button class="layui-btn layui-btn-xs">置顶</button>
+            <button class="layui-btn layui-btn-xs">是</button>
           {{#  } else { }}
-            <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
+            <button class="layui-btn layui-btn-primary layui-btn-xs">否</button>
           {{#  } }}
         </script> 
-		<script type="text/html" id="buttonHot">
+		    <script type="text/html" id="buttonHot">
             {{#  if(d.hot == 1){ }}
-            <button class="layui-btn layui-btn-xs">加精</button>
+            <button class="layui-btn layui-btn-xs">是</button>
           {{#  } else { }}
-            <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
+            <button class="layui-btn layui-btn-primary layui-btn-xs">否</button>
           {{#  } }}
         </script>
-		<script type="text/html" id="buttonReply">
+		    <script type="text/html" id="buttonReply">
             {{#  if(d.reply == 1){ }}
-            <button class="layui-btn layui-btn-primary layui-btn-xs">正常</button>
+            <button class="layui-btn layui-btn-primary layui-btn-xs">否</button>
           {{#  } else { }}
-            <button class="layui-btn  layui-btn-xs">禁评</button>
+            <button class="layui-btn  layui-btn-xs">禁</button>
           {{#  } }}
         </script>
-		<script type="text/html" id="buttonCheck">
+		    <script type="text/html" id="buttonCheck">
             {if condition="checkRuleButton('admin/forum/check')"}
-			<input type="checkbox" name="check" lay-skin="switch" lay-filter="forumcheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
-			{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
+            <input type="checkbox" name="check" lay-skin="switch" lay-filter="forumcheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
+            {else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>
         <script type="text/html" id="table-forum-list">
-		{if condition="checkRuleButton('admin/forum/listdel')"}
+		      {if condition="checkRuleButton('admin/forum/listdel')"}
           <!--a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="edit" ><i class="layui-icon layui-icon-edit"></i>编辑</a-->
           <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
-		  {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i></a>{/if}
+		      {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i></a>{/if}
         </script>
       </div>
     </div>

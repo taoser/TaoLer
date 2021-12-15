@@ -18,10 +18,13 @@ use think\facade\Lang;
  */
 class AdminController extends \app\BaseController
 {
-    // 初始化
+    /**
+     * 初始化菜单
+     */
     protected function initialize()
     {
 		//权限auth检查
+        $this->aid = Session::get('admin_id');
 		//$this->checkAuth();
 		$this->getMenu();
 		//系统配置
@@ -47,7 +50,7 @@ class AdminController extends \app\BaseController
         }
 
         $menu = !empty($menu) ? array2tree($menu) : [];
-        return View::assign('menu', $menu);
+        View::assign('menu', $menu);
     }
 	
 	/**

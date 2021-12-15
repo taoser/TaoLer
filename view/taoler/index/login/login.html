@@ -31,11 +31,11 @@
                 <div class="layui-input-inline">
                   <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
                 </div>
-                <div >                 
-					<img src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();" style="float:left; cursor:pointer;" id="captcha" alt="captcha"  />
+                <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important;">                 
+					        <img src="{:captcha_src()}" style="float:left; cursor:pointer;" id="captcha" alt="captcha"  />
                 </div>
               </div>
-			  <div class="layui-form-item">
+			        <div class="layui-form-item">
                 <input type="checkbox" name="remember" title="{:lang('remember password')}" lay-skin="primary"  lay-filter="remember" value="1">
               </div>
               <div class="layui-form-item">
@@ -57,35 +57,26 @@
 
 {block name="script"}
 <script>
-$(function() {
-	$('#login').click(function() {
-        
-		$.ajax({
-			type:"post",
-			url:"{:url('login/index')}",
-			data:$('form').serialize(),
-			daType:"json",
-			success:function (data){
-				if (data.code == 0) {
-					layer.msg(data.msg,{
-						icon:6,
-						time:2000
-					}, function(){
-						location.href = data.url;
-					});
-				} else {
-					layer.open({
-						title:'登陆失败',
-						content:data.msg,
-						icon:5,
-						anim:6
-					});
-					layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-				}
-			}
-		});
-	return false;	
-	});
-});
+  $(function() {
+    $('#login').click(function() {
+      $.ajax({
+        type:"post",
+        url:"{:url('login/index')}",
+        data:$('form').serialize(),
+        daType:"json",
+        success:function (data){
+          if (data.code == 0) {
+            layer.msg(data.msg,{icon:6,time:2000}, function(){
+              location.href = data.url;
+            });
+          } else {
+            layer.open({title:'登陆失败',content:data.msg,icon:5,anim:6});
+            layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+          }
+        }
+      });
+    return false;	
+    });
+  });
 </script>
 {/block}

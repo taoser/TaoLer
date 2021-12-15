@@ -164,20 +164,16 @@ class Index extends AdminController
 	//动态信息
 	public function news()
 	{
-		$page = Request::param('page');
-		$url = $this->api.'/v1/news?'.Request::query();
-		$news = Cache::get('news'.$page);
-		if(is_null($news)){
+		$data = Request::only(['page', 'limit']);
+		$url = $this->api.'/v1/news?'.'page='.$data['page'].'&'.'limit='.$data['limit'];
+		$news = Cache::get('news'.$data['page'].'_'.$data['limit']);
+		if(empty($news)){
 			$news = Api::urlGet($url);
-			Cache::set('news'.$page,$news,600);
+			if($news->code == 0){
+				Cache::set('news'.$data['page'].'_'.$data['limit'],$news,600);
+			}
 		}
-		
-		if($news){
-			return $news;
-		}else{
-			return json(['code'=>-1,'msg'=>'稍后获取内容...']);
-		}
-		
+		return $news;
 	}
 	
 	//提交反馈

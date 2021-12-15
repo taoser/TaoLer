@@ -17,7 +17,7 @@
             </a>
             <h2>
               {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
-              <a href="{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
+              <a href="{:url('article/detail',['id' => $art.id])}"  style="color:'{$art.title_color}';">{$art.title}</a>
             </h2>
             <div class="fly-list-info">
               <a href="{:url('user/home',['id'=>$art.user.id])}" link>
@@ -69,7 +69,7 @@
 		</div>  
 		<div class="fly-panel-main">
 		{volist name="ad_comm" id="vo"}
-			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color}';">{$vo.slid_name}</a>
 		{/volist}
 		</div>
 		</div>

@@ -56,7 +56,7 @@
 			</div> 
 		<div class="fly-panel-main" style="padding: 13px 15px;"> 
 		{volist name="ad_index" id="vo"}
-			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color}';">{$vo.slid_name}</a>
 		{/volist}
 		</div>
 		</div>
@@ -104,9 +104,9 @@ var signJsonUrl = "{:url('sign/signJson')}";
 
 $('#friend-link').on('click', function(){
 	layer.open({
-	  title: '申请友链',
-	  content: '发送邮件至：{$adminEmail} ',
-	  yes: function(index, layero){
+		title: '申请友链',
+		content: '发送邮件至：{$adminEmail} ',
+		yes: function(index, layero){
 			layer.close(index);
 		}
 	});

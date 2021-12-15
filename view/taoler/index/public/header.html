@@ -9,11 +9,11 @@
 	{//移动端LOGO}
 	<a class="fly-logo layui-hide-md" href="/" style="padding-left:50%; margin-left:-60px;"><img src="/static/res/images/logo-m.png"></a>
     <ul class="layui-nav fly-nav layui-hide-xs">
-	{volist name="headlinks" id="vo"}
+		{volist name="headlinks" id="vo"}
 		<li class="layui-nav-item">
 			<a href="{$vo.slid_href}"><i class="layui-icon {$vo.slid_img}"></i>{$vo.slid_name}</a>
 		</li>
-	{/volist}
+		{/volist}
     </ul>
     
     <ul class="layui-nav fly-nav-user">     
@@ -23,20 +23,20 @@
 		  <a href="/">{:lang('home page')}</a>
 		  </li>
 		{/if}
-		  <li class="layui-nav-item">
-			<a class="fly-nav-avatar" href="javascript:;">
-			  <cite class="layui-hide-xs">{$user.name}</cite><img src="{$user.user_img}">
-			</a>
-			<dl class="layui-nav-child">
-			  <dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
-			  <dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>
-			  <hr>
-			  <dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
-			  <dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
-			  <hr style="margin: 5px 0;">
-			  <dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
-			</dl>
-		  </li>
+		<li class="layui-nav-item">
+		<a class="fly-nav-avatar" href="javascript:;">
+			<cite class="layui-hide-xs">{$user.name}</cite><img src="{$user.user_img}">
+		</a>
+		<dl class="layui-nav-child">
+			<dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
+			<dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>
+			<hr>
+			<dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
+			<dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
+			<hr style="margin: 5px 0;">
+			<dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
+		</dl>
+		</li>
 	  {else /}
 	   <!-- 未登入的状态 -->
 		  <li class="layui-nav-item">
@@ -62,7 +62,6 @@
 			<a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" title="微博登入" class="iconfont icon-weibo"></a>
 		  </li-->
 	  {/if}
-      
     </ul>
   </div>
 </div>

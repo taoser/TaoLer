@@ -289,7 +289,6 @@ class Addons extends AdminController
 		$name = input('name');
 		$arr = ['status' => 0];
 		$res = set_addons_info($name,$arr);
-		var_dump($res);
 		return json(['code'=>-1,'msg'=>$name.'插件已禁用']);
 		
 	}
@@ -298,7 +297,6 @@ class Addons extends AdminController
 	public function config($name)
 	{
 		$name = input('name');
-		//var_dump($name);
 		$config = get_addons_config($name);
 		if(empty($config)) return json(['code'=>-1,'msg'=>'无配置项！']);
 		if(Request::isAjax()){

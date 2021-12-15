@@ -12,7 +12,7 @@
           <a href="" class="layui-this">“{$keywords}” 共{$counts}条结果</a>
         </div>
         <ul class="fly-list">   
-		{volist name="artList" id="art"}
+		    {volist name="artList" id="art"}
           <li>
             <a href="{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
               <img src="{$art.user.user_img}" alt="{$art.user_id|getUserName}"><i class="iconfont icon-renzheng" title="认证信息"></i>  
@@ -35,7 +35,7 @@
               {if ($art.is_hot == 1)} <span class="layui-badge layui-bg-red">精帖</span> {/if}
             </div>
           </li>
-		{/volist}  
+		    {/volist}  
         </ul>
       </div>
     </div>

@@ -9,10 +9,11 @@ use app\admin\model\AuthRule as AuthRuleModel;
 
 class AuthRule extends AdminController
 {
-    //权限列表
+    /**
+	 * 菜单列表
+	 */
 	public function index()
 	{
-		//获取权限列表
 		if(Request::isAjax()){
 
 			$rule = new AuthRuleModel();
@@ -34,15 +35,15 @@ class AuthRule extends AdminController
 		
 	}
 	
-	//权限树
+	/**
+	 *权限树 
+	 * 支持获取三级菜单
+	 */
 	public function tree()
 	{
-		
 		//$res = $this->treeTr($this->getMenus());
 		//var_dump($res);
-		/*
-		支持获取三级菜单
-		*/	
+		
 		$result = $this->getMenus(1);
 
 			$count = count($result);
@@ -72,14 +73,11 @@ class AuthRule extends AdminController
 						$children[] = ['id'=>$j['id'],'title'=>$j['title'],'pid'=>$j['pid'],'children'=>$chichi];		//子数据
 						}
 					}
-					
-				
-				$data[] = ['id'=>$v['id'],'title'=>$v['title'],'pid'=>$v['pid'],'children'=>$children];
-				
+					$data[] = ['id'=>$v['id'],'title'=>$v['title'],'pid'=>$v['pid'],'children'=>$children];
 				}
 				
-			//构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
-			$tree['data'][] = ['id'=>0,'title'=>'顶级','pid'=>0,'children'=>$data];
+				//构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
+				$tree['data'][] = ['id'=>0,'title'=>'顶级','pid'=>0,'children'=>$data];
 			}
 
 		return json($tree);
@@ -88,7 +86,6 @@ class AuthRule extends AdminController
 	//添加权限
 	public function add()
 	{
-		//
 		if(Request::isAjax()){
 			$data = Request::param();
 			$plevel = Db::name('auth_rule')->field('level')->find($data['pid']);
@@ -106,6 +103,7 @@ class AuthRule extends AdminController
 				return json(['code'=>-1,'msg'=>'添加权限失败']);
 			}
 		}
+		
 		$rule = new AuthRuleModel();
 		$auth_rules = $rule->authRuleTree();
 		View::assign('AuthRule',$auth_rules);

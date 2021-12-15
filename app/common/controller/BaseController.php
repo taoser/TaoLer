@@ -15,7 +15,9 @@ use app\BaseController as BaseCtrl;
  */
 class BaseController extends BaseCtrl
 {
-    // 初始化
+    /**
+	 * 初始化系统，导航，用户
+	 */
     protected function initialize()
     {
         $this->uid = Session::get('user_id');
@@ -23,6 +25,7 @@ class BaseController extends BaseCtrl
 		$this->showSystem();
         //显示分类导航
         $this->showNav();
+		//用户
 		$this->showUser($this->uid);
 
 	}

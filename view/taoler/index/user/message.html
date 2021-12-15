@@ -1,58 +1,57 @@
-{extend name="public/user" /}
-
-{block name="content"}
-	<div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px;">
-	    <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">清空全部消息</button>
-	    <div id="LAY_minemsg" style="margin-top: 10px;"></div>		
-	</div>
-{/block}
-{block name="script"}
+{extend name="public/user" /} {block name="content"}
+<div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px">
+  <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">
+    清空全部消息
+  </button>
+  <div id="LAY_minemsg" style="margin-top: 10px"></div>
+</div>
+{/block} {block name="script"}
 <script>
-	var messageFind = "{:url('index/Message/find')}",
-		messageRemove = "{:url('index/Message/remove')}",
-		userNameJump = "{:url('index/Index/jump')}";
-	
-	//点开标题改变帖子已读状态
-	$('#LAY_minemsg').on('click','.art-title', function(){
-		var id = $(this).attr('id-data');
-		var othis = $(this);
-		$.ajax({
-			type:"post",
-			url:"{:url('message/read')}",
-			data:{"id":id},
-			daType:"json",
-			success:function (res){
-			if(res.status == 0){
-			othis.next().html('已读');
-				//location.reload();
-				//othis.append('<span class="float:right">已读</span>');
-				}
-			}
-		});
-	});
-	
-	//读消息
-	$('#LAY_minemsg').on('click','.sys-title', function(){
-		var id = $(this).attr('id-data');
-		var othis = $(this);
-		$.ajax({
-			type:"post",
-			url:"{:url('message/read')}",
-			data:{"id":id},
-			daType:"json",
-			success:function (res){
-				if(res.status == 0){
-					layer.open({
-					  type: 1,
-					  skin: 'layui-layer-rim', //加上边框
-					  area: ['400px', '350px'], //宽高
-					  content: '<div class="layui-form" style="padding: 10px 20px 0 20px;"> '+ res.content +'</div>'
-					}),
-					othis.next().html('已读');
-				}
-			}
-		});
-	});
+  var messageFind = "{:url('index/Message/find')}",
+    messageRemove = "{:url('index/Message/remove')}",
+    userNameJump = "{:url('index/Index/jump')}";
 
+  //点开标题改变帖子已读状态
+  $("#LAY_minemsg").on("click", ".art-title", function () {
+    var id = $(this).attr("id-data");
+    var othis = $(this);
+    $.ajax({
+      type: "post",
+      url: "{:url('message/read')}",
+      data: { id: id },
+      daType: "json",
+      success: function (res) {
+        if (res.status == 0) {
+          othis.next().html("已读");
+          //location.reload();
+          //othis.append('<span class="float:right">已读</span>');
+        }
+      },
+    });
+  });
+
+  //读消息
+  $("#LAY_minemsg").on("click", ".sys-title", function () {
+    var id = $(this).attr("id-data");
+    var othis = $(this);
+    $.ajax({
+      type: "post",
+      url: "{:url('message/read')}",
+      data: { id: id },
+      daType: "json",
+      success: function (res) {
+        if (res.status == 0) {
+          layer.open({
+            type: 1,
+            skin: "layui-layer-rim", //加上边框
+            area: ["400px", "350px"], //宽高
+            content:
+              '<div class="layui-form" style="padding: 10px 20px 0 20px;"> ' + res.content + "</div>",
+          }),
+            othis.next().html("已读");
+        }
+      },
+    });
+  });
 </script>
 {/block}
