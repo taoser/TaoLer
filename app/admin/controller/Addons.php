@@ -5,6 +5,7 @@ use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Request;
+use think\facade\Cache;
 use think\facade\Config;
 use app\admin\model\Addons as AddonsModel;
 use taoler\com\Files;
@@ -31,6 +32,7 @@ class Addons extends AdminController
     {
        
 		$type = input('type');
+		$data = Request::only(['page', 'limit']);
 		$res = [];
         switch($type){
             //已安装
@@ -64,27 +66,34 @@ class Addons extends AdminController
             //在线
             case 'onlineAddons':
                 $url = $this->getSystem()['api_url'].'/v1/addons';
-                $addons = Api::urlPost($url,[]);
-                if( $addons->code !== -1){
-                    $res['code'] = 0;
-                    $res['msg'] = '';
-                    $res['data'] = $addons->data;
-                    $res['col'] = [
-                        ['type' => 'numbers'],
-                        ['field' => 'name','title'=> '插件', 'width'=> 150],
-                        ['field'=> 'title','title'=> '标题', 'width'=> 100],
-                        ['field'=> 'version','title'=> '版本', 'width'=> 100],
-                        ['field' => 'author','title'=> '作者', 'width'=> 100],
-                        ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
-                        ['field' => 'price','title'=> '价格(元)'],
-                        ['field' => 'status','title'=> '状态', 'width'=> 100],
-                        ['field' => 'install','title'=> '安装', 'width'=> 100],
-                        ['field' => 'ctime','title'=> '时间', 'width'=> 150],
-                        ['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
-                    ];
-                } else {
-					$res = ['code'=>-1,'msg'=>''];
+				$res = Cache::get('addons');
+				if(empty($res)){
+					
+					$addons = Api::urlGet($url,[]);
+					if( $addons->code !== -1){
+						$res['code'] = 0;
+						$res['msg'] = '';
+						$res['data'] = $addons->data;
+						$res['col'] = [
+							['type' => 'numbers'],
+							['field' => 'name','title'=> '插件', 'width'=> 150],
+							['field'=> 'title','title'=> '标题', 'width'=> 100],
+							['field'=> 'version','title'=> '版本', 'width'=> 100],
+							['field' => 'author','title'=> '作者', 'width'=> 100],
+							['field' => 'description','title'=> '简介', 'minWidth'=> 200],
+							['field' => 'price','title'=> '价格(元)'],
+							['field' => 'status','title'=> '状态', 'width'=> 100],
+							['field' => 'install','title'=> '安装', 'width'=> 100],
+							['field' => 'ctime','title'=> '时间', 'width'=> 150],
+							['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
+						];
+						
+						Cache::set('addons', $res, 600);
+					} else {
+						$res = ['code'=>-1,'msg'=>'未获取到服务器信息'];
+					}
 				}
+                
                 break;
         }
 		return json($res);
