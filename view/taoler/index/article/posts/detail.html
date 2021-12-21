@@ -112,7 +112,7 @@
           </li>
         {/volist} 
         </ul>
-		<div style="text-align: center">{$comments|raw}</div>
+		<div style="text-align: center" id="pages"></div>
         {if condition="$article.is_reply == 1"}
 		<div class="layui-form layui-form-pane">
             <div class="layui-form-item layui-form-text">
@@ -180,14 +180,15 @@ var collectionFind = "{:url('Collection/find')}",
 	langCollection = "{:lang('collection')}",
 	langCancelCollection = "{:lang('cancel collection')}";
 	  
-layui.use(['fly', 'face','colorpicker','plyr'], function(){
-  var $ = layui.jquery
-  ,form = layui.form
-  ,fly = layui.fly
-  ,colorpicker = layui.colorpicker
-  ,plyr = layui.plyr;
-  var laytpl = layui.laytpl;
-  var uid = layui.cache.user.uid;
+layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
+	var $ = layui.jquery
+	,form = layui.form
+	,fly = layui.fly
+	,colorpicker = layui.colorpicker
+	,plyr = layui.plyr;
+	var laytpl = layui.laytpl;
+	var uid = layui.cache.user.uid;
+	var laypage = layui.laypage;
   
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){
@@ -257,6 +258,26 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
         }
         return false;
     });
+	
+	//执行一个laypage实例
+	laypage.render({
+      elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+      ,count: {$count} //数据总数，从服务端得到
+      ,limit: 10
+      ,curr : {$page}
+      
+      //获取起始页
+      ,jump: function(obj, first){
+        //首次不执行
+        if(!first){
+          var page = obj.curr;
+		  var url = "{:url('article/detail',['id'=>$article.id])}"
+          $.post(url,{"page":page},function(){
+            window.location.href = url + '?page=' + page + '#flyReply';
+          });
+        }
+      }
+	});
 	
 	//下载
     $('#zip-download').click(function (){

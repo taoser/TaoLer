@@ -81,6 +81,7 @@ class Article extends BaseController
 	//文章详情页
     public function detail($id)
     {
+		$page = input('page') ? input('page') : 1;
         $article = new ArticleModel();
         $artDetail = $article->getArtDetail($id);
 		$arId = $artDetail->cate->id;
@@ -89,10 +90,11 @@ class Article extends BaseController
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '异常消息');
 		}
-		$comments = $artDetail->comments()->where('status',1)->order(['cai'=>'asc','create_time'=>'asc'])->paginate(10);
+		$comments = $artDetail->comments()->where('status',1)->order(['cai'=>'asc','create_time'=>'asc'])->paginate(['list_rows'=>10, 'page'=>$page]);
         //$comment = new \app\common\model\Comment();
         //$comments = $comment->getComment($id);
 		//dump($comments);
+		$count = $comments->total();
         $artDetail->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
 		$download = $artDetail->upzip ? download($artDetail->upzip,'file') : '';	
@@ -106,7 +108,7 @@ class Article extends BaseController
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(7);
 		
-		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'jspage'=>'jie']);
+		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'count'=>$count,'page'=>$page,'jspage'=>'jie']);
 		return View::fetch('article/'.$tpl.'/detail');
     }
 	

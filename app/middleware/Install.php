@@ -7,10 +7,11 @@ class Install
 {
     public function handle($request, \Closure $next)
     {
-		if(!file_exists('./install.lock')){
+		$app = app('http')->getName();
+		if($app !== 'install' && !file_exists('./install.lock')){
 			return redirect('/install/index');
 			//header('Location:'.Request::domain().'/install.php');
 		}
-			return $next($request);
+		return $next($request);
 	}
 }

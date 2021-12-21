@@ -2,9 +2,9 @@
 
 > TaoLer是一个简单迅捷的轻论坛系统，适用于个人或组织区域型信息交流发布平台。
 
- * 官网：https://www.aieok.com:8443
- * 版本：TaoLer 1.8.15
- * 日期：2021.12.15
+ * 官网：https://www.aieok.com
+ * 版本：TaoLer 1.8.16
+ * 日期：2021.12.21
  
  webman版新架构已适配90%
 
@@ -44,7 +44,8 @@
 #### 安装教程
 
 1.	首选确保满目使用环境要求，php > 7.2, mysql > 5.7.3
-2.	git下载：https://gitee.com/toogee/TaoLer
+2.	git下载：https://gitee.com/toogee/TaoLer 
+	github	https://www.github.com/taoser/TaoLer
 	官网下载：https://www.aieok.com
 	
 #### 引导安装
