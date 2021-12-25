@@ -84,12 +84,12 @@ class Article extends BaseController
 		$page = input('page') ? input('page') : 1;
         $article = new ArticleModel();
         $artDetail = $article->getArtDetail($id);
-		$arId = $artDetail->cate->id;
-		$tpl = Db::name('cate')->where('id',$arId)->value('detpl');
-		if(!$artDetail){
+		if(is_null($artDetail)){
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '异常消息');
 		}
+		$arId = $artDetail->cate->id;
+		$tpl = Db::name('cate')->where('id',$arId)->value('detpl');
 		$comments = $artDetail->comments()->where('status',1)->order(['cai'=>'asc','create_time'=>'asc'])->paginate(['list_rows'=>10, 'page'=>$page]);
         //$comment = new \app\common\model\Comment();
         //$comments = $comment->getComment($id);
@@ -119,6 +119,10 @@ class Article extends BaseController
 			//获取评论
 			$data = Request::only(['content','article_id','user_id']);
 			$sendId = $data['user_id'];
+			$art = Db::name('article')->field('id,status,is_reply,delete_time')->find($data['article_id']);
+			if($art['delete_time'] != 0 || $art['status'] != 1 || $art['is_reply'] != 1){
+				return json(['code'=>-1, 'msg'=>'评论不可用状态']);
+			}
 			if(empty($data['content'])){
 				return json(['code'=>0, 'msg'=>'评论不能为空！']);
 			}

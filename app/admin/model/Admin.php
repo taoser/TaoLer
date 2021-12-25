@@ -16,6 +16,12 @@ class Admin extends Model
     use SoftDelete;
     protected $deleteTime = 'delete_time';
     protected $defaultSoftDelete = 0;
+	protected $createTime = 'false';
+	
+	//自动对password进行md5加密
+    protected function setPasswordAttr($value){
+        return md5($value);
+    }
 	
 	//管理员关联角色
 /*
@@ -45,17 +51,19 @@ class Admin extends Model
     public function login($data)
     {
         //查询用户
-        $admin = Db::name('admin')->where('username',$data['username'])->where('delete_time',0)->find();
+        $admin = $this->where('username',$data['username'])->where('delete_time',0)->find();
+
 		if(is_null($admin)){
-			return '用户名或密码错误';
+			return json(['code'=>-1,'msg'=>'用户名或密码错误']);
 		}
 		if($admin['status'] !=1){
-			return '用户被禁用或未审核,请联系管理员';
+			return json(['code' => -1,'msg'=> '用户被禁用或未审核,请联系管理员']);
 		}
 		//对输入的密码字段进行MD5加密，再进行数据库的查询
 		$salt = substr(md5($admin['create_time']),-6);
 		$pwd = substr_replace(md5($data['password']),$salt,0,6);
 		$data['password'] = md5($pwd);
+		
         if($admin['password'] == $data['password']){
 			
 			//将用户数据写入Session
@@ -77,9 +85,45 @@ class Admin extends Model
                 );
 					
             //用户名密码正确返回1
-            return 1;
+            $res = ['code'=>0,'msg'=>'登陆成功', 'url'=>(string) url('index/index')];
         } else {
-			return "用户名或密码错误！";
+			$res = ['code'=>-1,'msg'=>'用户名或密码错误','url'=>(string) url('admin/login')];
 		}
+		return json($res);
     }
+	
+	//修改密码
+	public function setpass($data)
+	{
+		$admin = $this->find($data['admin_id']);
+		$salt = substr(md5($admin['create_time']),-6);
+		$oldPassword = $this->pass($salt,$data['oldPassword']);
+		if($oldPassword != $admin['password']){
+			return json(['code'=>-1,'msg'=>'当前密码错误']);
+		}
+		
+		if($data['password'] != $data['repassword']){
+			return json(['code'=>-1,'msg'=>'两次密码不一致']);
+		}
+
+		$data['password'] = substr_replace(md5($data['password']),$salt,0,6); 
+		$admin->password = $data['password'];
+		$result = $admin->save();
+		
+		if($result){
+			$res = ['code'=>0,'msg'=>'修改密码成功'];
+		} else {
+			$res = ['code'=>-1,'msg'=>'修改密码失败'];
+		}
+		
+		return json($res);
+	}
+	
+	//加密规则 加密字符串，原始秘密
+	protected function pass($salt, $pass)
+	{
+		$pwd = substr_replace(md5($pass),$salt,0,6);
+		return md5($pwd);
+	}
+	
 }

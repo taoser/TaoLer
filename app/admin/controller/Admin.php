@@ -176,34 +176,18 @@ class Admin extends AdminController
 		return View::fetch('set/user/repass');
     }
 	
-	//密码重设
-    public function repassSet()
-    {
-		$admin = AdminModel::find(Session::get('admin_id'));
-        if(Request::isAjax()){
-			$data = Request::param();
-			$salt = substr(md5(strtotime($admin['create_time'])),-6);
-			$pwd = substr_replace(md5($data['oldPassword']),$salt,0,6);
-			$data['oldPassword'] = md5($pwd);
-			if($admin['password'] != $data['oldPassword']){
-				return json(['code'=>-1,'msg'=>'当前密码错误']);
-			} elseif($data['password'] != $data['repassword']){
-					 return json(['code'=>-1,'msg'=>'两次密码不一致']);
-			} else {
-				$password = md5(substr_replace(md5($data['password']),$salt,0,6));
-				$result = $admin->update([
-				'id'	=>	$admin['id'],
-				'password' =>	$password
-				]);
-				if($result){
-					$res = ['code'=>0,'msg'=>'更新成功'];
-				} else {
-					$res = ['code'=>-1,'msg'=>'更新失败'];
-				}
-				return json($res);
-			}
+    //修改密码
+	public function repassSet() 
+	{
+		if(Request::isAjax()){
+			$data = Request::only(['oldPassword','password','repassword']);
+			$data['admin_id'] = $this->aid;
+			
+			$admin = new AdminModel;
+			$res = $admin->setpass($data);
+			return $res;
 		}
-    }
+	}
 	
 	//清除缓存Cache
 	public function clearCache(){
