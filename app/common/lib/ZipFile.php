@@ -11,7 +11,7 @@ class ZipFile
      * @param bool $overwrite 是否覆盖文件 true false
      * @return bool
      */
-	public function unZip($filename, $dir ,$overwrite=true)
+	public function unZip($filename, $dir ,$overwrite = true)
 	{
 		if(!is_dir($dir)) {
 			//mkdir($dir, 0777, true);//创建目录保存解压内容
@@ -32,14 +32,13 @@ class ZipFile
 					$pos_last_slash = strrpos($file_content, "/"); 					 
 					$file_name = substr($file_content,  $pos_last_slash+1);
 					
-					if(empty($file_name)){
-						
-						$pt = $this->create_dirs($dir.$file_content);
+					$save_path = $dir.$file_content;
+					if(!is_dir($save_path));
+					{
+						$this->create_dirs($save_path);
 					}
 					
 					if($file_name) {
-						
-						$save_path = $dir.$file_content;
 						
 						if(file_exists($save_path)) {
 							if($overwrite === true){
@@ -53,7 +52,7 @@ class ZipFile
 								return json(['code'=>-1,'msg'=>'文件夹内已存在文件']);
 							}
 							
-						}else {
+						} else {
 							//echo $file_name . '<pre />';	
 							$file_size = zip_entry_filesize($zip);
 							$file = zip_entry_read($zip, $file_size);
