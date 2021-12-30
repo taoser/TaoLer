@@ -28,13 +28,7 @@ class Login extends AdminController
 			$user = new \app\admin\model\Admin();
 			$result = $user->login($data);
 
-			if ($result == 1) {
-				$res = ['code'=>0,'msg'=>'登陆成功', 'url'=>(string) url('index/index')];
-				//$res['data']['access_token'] = $data['__token__'];
-			} else {
-				$res = ['code'=>-1,'msg'=>$result,'url'=>(string) url('admin/login')];
-			}
-			return json($res);
+			return $result;
 		}
 		return View::fetch('login');
 	}

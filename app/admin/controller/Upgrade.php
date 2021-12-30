@@ -26,6 +26,7 @@ use think\facade\Log;
 use app\common\lib\ZipFile;
 use app\common\lib\SetConf;
 use app\common\lib\SqlFile;
+use app\common\lib\Zip;
 
 class Upgrade extends AdminController
 {
@@ -237,10 +238,12 @@ class Upgrade extends AdminController
     private function execute_update(string $package_file)
     {
         //解压 zip文件有密码的话需要解密
-        $uzip = new ZipFile();
+		//$uzip = new ZipFile();
+        $zip = new Zip;
         $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
         $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
-        $unzip_res = $uzip->unzip($package_file,$zipPath,true);
+        //$unzip_res = $uzip->unzip($package_file,$zipPath,true);
+		$unzip_res = $zip->unzip($package_file,$zipPath);
 
         if(!$unzip_res)
         {
