@@ -52,42 +52,6 @@ trait ModelRelationQuery
     }
 
     /**
-     * 设置需要隐藏的输出属性
-     * @access public
-     * @param array $hidden 需要隐藏的字段名
-     * @return $this
-     */
-    public function hidden(array $hidden)
-    {
-        $this->options['hidden'] = $hidden;
-        return $this;
-    }
-
-    /**
-     * 设置需要输出的属性
-     * @access public
-     * @param array $visible 需要输出的属性
-     * @return $this
-     */
-    public function visible(array $visible)
-    {
-        $this->options['visible'] = $visible;
-        return $this;
-    }
-
-    /**
-     * 设置需要追加输出的属性
-     * @access public
-     * @param array $append 需要追加的属性
-     * @return $this
-     */
-    public function append(array $append)
-    {
-        $this->options['append'] = $append;
-        return $this;
-    }
-
-    /**
      * 添加查询范围
      * @access public
      * @param array|string|Closure $scope 查询范围定义
@@ -187,7 +151,9 @@ trait ModelRelationQuery
             $this->options['with_attr'][$name] = $callback;
         }
 
-        return $this;
+        return $this->filter(function ($result) {
+            return $this->getResultAttr($result, $this->options['with_attr']);
+        }, 'with_attr');
     }
 
     /**
@@ -418,23 +384,10 @@ trait ModelRelationQuery
             return $this->model->toCollection();
         }
 
-        // 检查动态获取器
-        if (!empty($this->options['with_attr'])) {
-            foreach ($this->options['with_attr'] as $name => $val) {
-                if (strpos($name, '.')) {
-                    [$relation, $field] = explode('.', $name);
-
-                    $withRelationAttr[$relation][$field] = $val;
-                    unset($this->options['with_attr'][$name]);
-                }
-            }
-        }
-
-        $withRelationAttr = $withRelationAttr ?? [];
-
+        $withRelationAttr = $this->getWithRelationAttr();
         foreach ($resultSet as $key => &$result) {
             // 数据转换为模型对象
-            $this->resultToModel($result, $this->options, true, $withRelationAttr);
+            $this->resultToModel($result, $this->options, true);
         }
 
         if (!empty($this->options['with'])) {
@@ -452,73 +405,74 @@ trait ModelRelationQuery
     }
 
     /**
+     * 检查动态获取器
+     * @access protected
+     * @return array
+     */
+    protected function getWithRelationAttr(): array
+    {
+        if (isset($this->options['with_relation_attr'])) {
+            return $this->options['with_relation_attr'];
+        }
+
+        $withRelationAttr = [];
+        if (!empty($this->options['with_attr'])) {
+            foreach ($this->options['with_attr'] as $name => $val) {
+                if (strpos($name, '.')) {
+                    [$relation, $field] = explode('.', $name);
+
+                    $withRelationAttr[$relation][$field] = $val;
+                    unset($this->options['with_attr'][$name]);
+                }
+            }
+        }
+
+        $this->options['with_relation_attr'] = $withRelationAttr;
+        return $withRelationAttr;
+    }
+
+    /**
      * 查询数据转换为模型对象
      * @access protected
      * @param array $result           查询数据
      * @param array $options          查询参数
      * @param bool  $resultSet        是否为数据集查询
-     * @param array $withRelationAttr 关联字段获取器
      * @return void
      */
-    protected function resultToModel(array &$result, array $options = [], bool $resultSet = false, array $withRelationAttr = []): void
+    protected function resultToModel(array &$result, array $options = [], bool $resultSet = false): void
     {
-        // 动态获取器
-        if (!empty($options['with_attr']) && empty($withRelationAttr)) {
-            foreach ($options['with_attr'] as $name => $val) {
-                if (strpos($name, '.')) {
-                    [$relation, $field] = explode('.', $name);
-
-                    $withRelationAttr[$relation][$field] = $val;
-                    unset($options['with_attr'][$name]);
-                }
-            }
-        }
+        $options['with_relation_attr'] = $this->getWithRelationAttr();
+        $options['is_resultSet']       = $resultSet;
 
         // JSON 数据处理
         if (!empty($options['json'])) {
-            $this->jsonResult($result, $options['json'], $options['json_assoc'], $withRelationAttr);
+            $this->jsonResult($result, $options['json'], $options['json_assoc'], $options['with_relation_attr']);
         }
 
-        $result = $this->model
-            ->newInstance($result, $resultSet ? null : $this->getModelUpdateCondition($options));
-
-        // 动态获取器
-        if (!empty($options['with_attr'])) {
-            $result->withAttribute($options['with_attr']);
+        foreach ($this->options['filter'] as $filter) {
+            $result = call_user_func($filter, $result);
         }
 
-        // 输出属性控制
-        if (!empty($options['visible'])) {
-            $result->visible($options['visible']);
-        } elseif (!empty($options['hidden'])) {
-            $result->hidden($options['hidden']);
-        }
-
-        if (!empty($options['append'])) {
-            $result->append($options['append']);
-        }
-
-        // 关联查询
-        if (!empty($options['relation'])) {
-            $result->relationQuery($options['relation'], $withRelationAttr);
-        }
-
-        // 预载入查询
-        if (!$resultSet && !empty($options['with'])) {
-            $result->eagerlyResult($result, $options['with'], $withRelationAttr, false, $options['with_cache'] ?? false);
-        }
-
-        // JOIN预载入查询
-        if (!$resultSet && !empty($options['with_join'])) {
-            $result->eagerlyResult($result, $options['with_join'], $withRelationAttr, true, $options['with_cache'] ?? false);
-        }
-
-        // 关联统计
-        if (!empty($options['with_count'])) {
-            foreach ($options['with_count'] as $val) {
-                $result->relationCount($this, (array) $val[0], $val[1], $val[2], false);
-            }
-        }
+        $result = $this->model->newInstance($result, $resultSet ? null : $this->getModelUpdateCondition($options), $options);
     }
 
+    /**
+     * 查询软删除数据
+     * @access public
+     * @return Query
+     */
+    public function withTrashed()
+    {
+        return $this->model ? $this->model->queryWithTrashed() : $this;
+    }
+
+    /**
+     * 只查询软删除数据
+     * @access public
+     * @return Query
+     */
+    public function onlyTrashed()
+    {
+        return $this->model ? $this->model->queryOnlyTrashed() : $this;
+    }
 }

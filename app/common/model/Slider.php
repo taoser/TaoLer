@@ -34,7 +34,7 @@ class Slider extends Model
     {
         $sliders = Cache::get('slider'.$type);
         if(!$sliders){
-            $sliders = $this::where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>$type])->whereTime('slid_over','>=',time())->select();
+            $sliders = $this::where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>$type])->whereTime('slid_over','>=',time())->select()->toArray();
             Cache::set('slider'.$type,$sliders,3600);
         }
         return $sliders;

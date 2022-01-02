@@ -17,7 +17,7 @@
 		  </ul>
 		</div>
 		<ul class="question-list">
-		  {volist name="artList" id="art"}
+		  {volist name="artList['data']" id="art"}
 		  <li>
 			{if ($art.jie == 1)}
 			<div class="que-sta-jie">
@@ -32,7 +32,7 @@
 			{/if}
 			<div class="que-body">
 			  <h2>
-				  <a href="{:url('article/detail',['id' => $art.id])}"  style="color:'{$art.title_color}';">{$art.title}</a>
+				  <a href="{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
 			  </h2>
 			  <div class="que-user-info">
 				  <a href="{:url('user/home',['id'=>$art.user.id])}" class="que-avatar">
@@ -94,9 +94,9 @@
 	  //执行一个laypage实例
 	  laypage.render({
 		elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
-		,count: {$count} //数据总数，从服务端得到
-		,limit: 15
-		,curr : {$page}
+		,count: "{$artList['total']}" //数据总数，从服务端得到
+		,limit: "{$artList['per_page']}"
+		,curr : "{$artList['current_page']}"
 		
 		 //获取起始页
 		,jump: function(obj, first){

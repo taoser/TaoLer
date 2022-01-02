@@ -10,14 +10,14 @@
     <div class="layui-col-md9">
       <div class="fly-panel" style="margin-bottom: 0;">
         <ul class="fly-list">
-		    {volist name="artList" id="art"}
+		    {volist name="artList['data']" id="art"}
           <li>
             <a href="{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
               <img src="{$art.user.user_img}" alt="{$art.user.name}">
             </a>
             <h2>
               {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
-              <a href="{:url('article/detail',['id' => $art.id])}"  style="color:'{$art.title_color}';">{$art.title}</a>
+              <a href="{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
             </h2>
             <div class="fly-list-info">
               <a href="{:url('user/home',['id'=>$art.user.id])}" link>
@@ -86,9 +86,9 @@
 	  //执行一个laypage实例
 	  laypage.render({
 		elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
-		,count: {$count} //数据总数，从服务端得到
-		,limit: 15
-		,curr : {$page}
+		,count: "{$artList['total']}" //数据总数，从服务端得到
+		,limit: "{$artList['per_page']}"
+		,curr : "{$artList['current_page']}"
 		
 		 //获取起始页
 		,jump: function(obj, first){

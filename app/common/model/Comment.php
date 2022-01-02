@@ -29,9 +29,9 @@ class Comment extends Model
 	}
 
 	//获取评论
-    public function getComment($id)
+    public function getComment($id, $page)
     {
-	    $comments = $this::where(['article_id'=>$id,'status'=>1])->order(['cai'=>'asc','create_time'=>'asc'])->paginate(10);
+	    $comments = $this::with(['user'])->where(['article_id'=>$id,'status'=>1])->order(['cai'=>'asc','create_time'=>'asc'])->paginate(['list_rows'=>10, 'page'=>$page]);
 	    return $comments;
     }
 

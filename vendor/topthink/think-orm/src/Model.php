@@ -243,6 +243,29 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
             }
         }
 
+        $this->filter(function ($result, $options) {
+            // 关联查询
+            if (!empty($options['relation'])) {
+                $result->relationQuery($options['relation'], $options['with_relation_attr']);
+            }
+
+            // 预载入查询
+            if (empty($options['is_resultSet']) && !empty($options['with'])) {
+                $result->eagerlyResult($result, $options['with'], $options['with_relation_attr'], false, $options['with_cache'] ?? false);
+            }
+
+            // JOIN预载入查询
+            if (empty($options['is_resultSet']) && !empty($options['with_join'])) {
+                $result->eagerlyResult($result, $options['with_join'], $options['with_relation_attr'], true, $options['with_cache'] ?? false);
+            }
+
+            // 关联统计
+            if (!empty($options['with_count'])) {
+                foreach ($options['with_count'] as $val) {
+                    $result->relationCount($this, (array) $val[0], $val[1], $val[2], false);
+                }
+            }
+        });
         // 执行初始化操作
         $this->initialize();
     }
@@ -260,11 +283,12 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     /**
      * 创建新的模型实例
      * @access public
-     * @param array $data  数据
-     * @param mixed $where 更新条件
+     * @param array $data       数据
+     * @param mixed $where      更新条件
+     * @param array $options    参数
      * @return Model
      */
-    public function newInstance(array $data = [], $where = null): Model
+    public function newInstance(array $data = [], $where = null, array $options = []): Model
     {
         $model = new static($data);
 
@@ -283,6 +307,11 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         $model->exists(true);
 
         $model->setUpdateWhere($where);
+
+        // 查询数据处理
+        foreach ($this->filter as $filter) {
+            call_user_func_array($filter, [$model, $options]);
+        }
 
         $model->trigger('AfterRead');
 
@@ -970,21 +999,25 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     }
 
     // ArrayAccess
+    #[\ReturnTypeWillChange]
     public function offsetSet($name, $value)
     {
         $this->setAttr($name, $value);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($name): bool
     {
         return $this->__isset($name);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($name)
     {
         $this->__unset($name);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($name)
     {
         return $this->getAttr($name);
@@ -1035,10 +1068,6 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     {
         if (isset(static::$macro[static::class][$method])) {
             return call_user_func_array(static::$macro[static::class][$method]->bindTo($this, static::class), $args);
-        }
-
-        if ('withattr' == strtolower($method)) {
-            return call_user_func_array([$this, 'withAttribute'], $args);
         }
 
         return call_user_func_array([$this->db(), $method], $args);

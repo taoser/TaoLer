@@ -13,8 +13,10 @@ use think\facade\Route;
 Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 Route::rule('/', 'index'); // 首页访问路由
 Route::group(function () {
-	Route::get('jie/:id', 'article/detail'); 
-	Route::get('column/<ename?>/<type?>/<page?>','article/cate')
+	Route::get('jie/:id', 'article/detail');
+	//Route::get('column/<ename>','article/cate');
+	//Route::get('column/<ename>/<type>','article/cate');
+	Route::get('column/<ename>/[:type]/[:page]','article/cate')
 		->pattern([
 				'ename' => '\w+',
 				'page'   => '\d+',

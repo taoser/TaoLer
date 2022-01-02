@@ -11,7 +11,7 @@
     <div class="layui-col-md9 content detail">
       <div class="fly-panel detail-box">
 		{//标题}
-        <h1 style="color:'{$article.title_color}';">{$article.title}</h1>
+        <h1 style="color:{$article.title_color};">{$article.title}</h1>
 		<div class="detail_qrcode layui-hide-xs" onclick="PhoneDown();" id="mobile"></div>
 		{//图标}
         <div class="fly-detail-info">
@@ -20,7 +20,7 @@
 		  {if ($article.is_hot == 1)}<span class="layui-badge layui-bg-red">{:lang('hot')}</span>{/if}
 		  <span id="LAY_jieAdmin" data-id="{$article['id']}"></span>
 		  <span class="fly-list-nums"> 
-			<a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$comments->count()}</a><i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
+			<a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$article.comments_count}</a><i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
 		  </span>
         </div>
 		{//作者}
@@ -75,13 +75,13 @@
       </div>
 	{//评论}
       <div class="fly-panel detail-box" id="flyReply">
-        <span style="font-size:18px;">评论 {$comments->count()}</span>
+        <span style="font-size:18px;">评论 {$article.comments_count}</span>
         <ul class="jieda" id="jieda">
 		{volist name="comments" id="vo" empty= ""}
           <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" href="{:url('user/home',['id'=>$vo.user.id])}">
+              <a class="fly-avatar" href="{:url('user/home',['id'=>$vo.user_id])}">
                 <img src="{$vo.user.user_img}" alt=" "><i class="iconfont icon-renzheng" title="认证信息"></i>
               </a>
               <div class="fly-detail-user">
@@ -262,7 +262,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 	//执行一个laypage实例
 	laypage.render({
       elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
-      ,count: {$count} //数据总数，从服务端得到
+      ,count: "{$article.comments_count}" //数据总数，从服务端得到
       ,limit: 10
       ,curr : {$page}
       

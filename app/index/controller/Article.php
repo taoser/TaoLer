@@ -29,27 +29,35 @@ class Article extends BaseController
 			// 抛出 HTTP 异常
                 throw new \think\exception\HttpException(404, '请求异常');
 		}
+		$page = Request::param('page') ?  Request::param('page') : 1;
 
 		//获取分类ID
 		$ename = Request::param('ename');
 		$type = Request::param('type') ?? 'all';
 		$tpl = Db::name('cate')->where('ename',$ename)->value('detpl');
 		//分页伪静态
-		$str = Request::baseUrl();	//不带参数在url
+		//$str = Request::baseUrl();	//不带参数在url
+		$path = Request::pathinfo();
+		$str = '/'.app('http')->getName().'/'.$path;
+		//halt($str);
+
 		$patterns = "/\d+/"; //数字正则
-		preg_match($patterns,$str,$arr);	//正则查询页码出现在位置
+		$p = preg_match($patterns,$str,$arr);	//正则查询页码出现在位置
+		
 		//检测route配置中是否设置了伪静态后缀
 		$suffix = Config::get('route.url_html_suffix') ? '.'.Config::get('route.url_html_suffix') : '/';
 		if(Config::get('route.url_html_suffix')){
+
 			//伪静态有后缀
 			if(isset($arr[0])){
 				$page = $arr[0];
 				$url = strstr($str,$arr[0],true);
 			} else {
 				$page = 1;
-				$url = strstr($str,'.html',true).'/';
+				$url = strstr($str,'.html',true);
 			}
 		} else {
+
 			//伪静态后缀false
 			if(isset($arr[0])){
 				$page = $arr[0];
@@ -59,10 +67,12 @@ class Article extends BaseController
 				$url = $str.'/';
 			}
 		}
+
         //分类列表
         $article = new ArticleModel();
 		$artList = $article->getCateList($ename,$type,$page,$url,$suffix);
-		$count = $artList->total();
+
+		//$count = $artList->total();
 
 		//	热议文章
 		$artHot = $article->getArtHot(10);
@@ -74,30 +84,38 @@ class Article extends BaseController
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(6);
 		
-		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie','count'=>$count,'page'=>$page,'url'=>$url]);
+		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie','url'=>$url]);
 		return View::fetch('article/'.$tpl.'/cate');
     }
 
 	//文章详情页
     public function detail($id)
     {
-		$page = input('page') ? input('page') : 1;
-        $article = new ArticleModel();
-        $artDetail = $article->getArtDetail($id);
-		if(is_null($artDetail)){
+		$id = input('id');
+		$artStu = Db::name('article')->field('id')->where(['status'=>1,'delete_time'=>0])->find($id);
+		if(is_null($artStu)){
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '异常消息');
 		}
-		$arId = $artDetail->cate->id;
+
+		//输出内容
+		$page = input('page') ? input('page') : 1;
+        $article = new ArticleModel();
+        $artDetail = $article->getArtDetail($id,$page);
+		$arId = $artDetail['cate_id'];
 		$tpl = Db::name('cate')->where('id',$arId)->value('detpl');
-		$comments = $artDetail->comments()->where('status',1)->order(['cai'=>'asc','create_time'=>'asc'])->paginate(['list_rows'=>10, 'page'=>$page]);
-        //$comment = new \app\common\model\Comment();
-        //$comments = $comment->getComment($id);
-		//dump($comments);
-		$count = $comments->total();
-        $artDetail->inc('pv')->update();
+		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
+
+		//$count = $comments->total();
+        //$artDetail->inc('pv')->update();
+
+		//浏览pv
+		Db::name('article')->where('id',$id)->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
-		$download = $artDetail->upzip ? download($artDetail->upzip,'file') : '';	
+
+		//评论
+		$comment = new Comment;
+		$comments = $comment->getComment($id, $page);
 		
 		//	热议文章
 		$artHot = $article->getArtHot(10);
@@ -108,7 +126,7 @@ class Article extends BaseController
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(7);
 		
-		View::assign(['article'=>$artDetail,'pv'=>$pv,'comments'=>$comments,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'count'=>$count,'page'=>$page,'jspage'=>'jie']);
+		View::assign(['article'=>$artDetail,'pv'=>$pv,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'page'=>$page,'comments'=>$comments,'jspage'=>'jie']);
 		return View::fetch('article/'.$tpl.'/detail');
     }
 	

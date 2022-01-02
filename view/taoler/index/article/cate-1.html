@@ -1,0 +1,116 @@
+{extend name="public/base" /}
+{block name="title"}{$Request.param.ename|getCateName}-{$sysInfo.webname}{/block}
+{block name="keywords"}{$Request.param.ename|getCateName},{$sysInfo.webname}{/block}
+{block name="description"}{$Request.param.ename|getCateDesc}{/block}
+{block name="column"}{include file="/public/column" /}{/block}
+
+{block name="content"}
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md9">
+      <div class="fly-panel" style="margin-bottom: 0;">
+	  
+	  {include file="public/filter" /}
+        <ul class="fly-list">
+		    {volist name="artList" id="art"}
+          <li>
+            <a href="{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
+              <img src="{$art.user.user_img}" alt="{$art.user.name}">
+            </a>
+            <h2>
+              {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
+              <a href="{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
+            </h2>
+            <div class="fly-list-info">
+              <a href="{:url('user/home',['id'=>$art.user.id])}" link>
+			    {if config('taoler.config.area_show') == 1}<span class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</span>{/if}
+                <cite>{$art.user.nickname ?: $art.user.name}</cite>
+				<i>{$art.create_time|date='Y-m-d'}</i>
+                <!--
+                <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
+				{if($art.user.vip > 0)}
+                <i class="layui-badge fly-badge-vip">vip{$art.user.vip}</i>
+				{/if}
+				-->
+              </a>
+              <span>
+			  {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style=" color: #5FB878;"></i>'}
+			  {$art.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
+			  {$art.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
+			  {$art.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
+			  </span>
+              <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
+              {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/if}
+              <span class="fly-list-nums">
+                <i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}
+              </span>
+            </div>
+            <div class="fly-list-badge">
+            {if ($art.is_hot == 1)}<i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i><span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span> {/if}
+            </div>
+          </li>
+		    {/volist}	
+        </ul>
+		<div style="text-align: center" id="pages"></div>
+      </div>
+    </div>
+    <div class="layui-col-md3">
+        <div class="fly-panel">
+            <div class="fly-panel" style="padding: 5px 0; text-align: center;">
+                {volist name="ad_cateImg" id="vo"}
+                <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+                {/volist}
+            </div>
+        </div>
+        <dl class="fly-panel fly-list-one layui-hide-xs">
+        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
+        {volist name="artHot" id="vo"}
+		<dd>
+          <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+        </dd>
+		{/volist} 
+      </dl>
+
+		<div class="fly-panel">
+		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
+		<a href="" class="fly-link fly-joinad    ">{:lang('i want to join')}</a>
+		</div>  
+		<div class="fly-panel-main">
+		{volist name="ad_comm" id="vo"}
+			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+		{/volist}
+		</div>
+		</div>
+    </div>
+  </div>
+</div>
+{include file="public/menu" /}
+{/block}
+{block name="script"}
+<script>
+    layui.use(['laypage'], function(){
+	  var laypage = layui.laypage;
+	  
+	  //执行一个laypage实例
+	  laypage.render({
+		elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+		,count: {$count} //数据总数，从服务端得到
+		,limit: 15
+		,curr :{$page}
+		 //获取起始页
+		,jump: function(obj, first){
+		//obj包含了当前分页的所有参数，比如：
+		//console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+		//console.log(obj.limit); //得到每页显示的条数
+		//首次不执行
+		if(!first){
+		  //do something
+		  //window.location.href= url+obj.curr+'&limit='+obj.limit+'#collection'; //跳转
+		  window.location.href = '{$url}'+obj.curr+'.html'; //跳转
+		}
+	  }
+	  });
+	});
+</script>
+{/block}

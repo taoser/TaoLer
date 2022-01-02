@@ -12,8 +12,9 @@ class Index extends BaseController
 	// 检测是否安装过
 	protected function initialize(){
         if(file_exists('./install.lock')){
-           echo "<script>alert('已经成功安装了TaoLer社区系统，安装系统已锁定。如需重新安装，请删除根目录下的install.lock文件')</script>";
-		   die();
+           //echo "<script>alert('已经成功安装了TaoLer社区系统，安装系统已锁定。如需重新安装，请删除根目录下的install.lock文件')</script>";
+		   //die();
+		   return response("<script>alert('已经成功安装了TaoLer社区系统，安装系统已锁定。如需重新安装，请删除根目录下的install.lock文件')</script>");
         }
     }
 
@@ -144,7 +145,7 @@ class Index extends BaseController
 <?php
 return [
 	// 默认使用的数据库连接配置
-    'default'         => 'mysql',
+    'default'         => env('database.driver', 'mysql'),
     // 自定义时间查询规则
     'time_query_rule' => [],
     // 自动写入时间戳字段
@@ -156,43 +157,44 @@ return [
     // 数据库连接配置信息
     'connections'     => [
 	'mysql' => [
-	// 数据库类型
-	'type'              => 'mysql',
-	// 服务器地址
-	'hostname'          => '{$data['DB_HOST']}',
-	// 数据库名
-	'database'          => '{$data['DB_NAME']}',
-	// 用户名
-	'username'          => '{$data['DB_USER']}',
-	// 密码
-	'password'          => '{$data['DB_PWD']}',
-	// 端口
-	'hostport'          => '{$data['DB_PORT']}',
-	// 数据库连接参数
-	'params'            => [],
-	// 数据库编码默认采用utf8
-	'charset'           => 'utf8',
-	// 数据库表前缀
-	'prefix'            => '{$data['DB_PREFIX']}',
-	// 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
-	'deploy'            => 0,
-	// 数据库读写是否分离 主从式有效
-	'rw_separate'       => false,
-	// 读写分离后 主服务器数量
-	'master_num'        => 1,
-	// 指定从服务器序号
-	'slave_no'          => '',
-	// 是否严格检查字段是否存在
-	'fields_strict'     => true,
-	// 是否需要断线重连
-	'break_reconnect'   => false,
-	// 监听SQL
-	'trigger_sql'       => true,
-	// 开启字段缓存
-	'fields_cache'      => false,
-	// 字段缓存路径
-	'schema_cache_path' => app()->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR,
-	],
+		// 数据库类型
+		'type'              => env('database.type', 'mysql'),
+		// 服务器地址
+		'hostname'          => env('database.hostname', '{$data['DB_HOST']}'),
+		// 数据库名
+		'database'          => env('database.database', '{$data['DB_NAME']}'),
+		// 用户名
+		'username'          => env('database.username', '{$data['DB_USER']}'),
+		// 密码
+		'password'          => env('database.password', '{$data['DB_PWD']}'),
+		// 端口
+		'hostport'          => env('database.hostport', '{$data['DB_PORT']}'),
+		// 数据库连接参数
+		'params'            => [],
+		// 数据库编码默认采用utf8
+		'charset'           => 'utf8',
+		// 数据库表前缀
+		'prefix'            => env('database.prefix', '{$data['DB_PREFIX']}'),
+		// 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
+		'deploy'            => 0,
+		// 数据库读写是否分离 主从式有效
+		'rw_separate'       => false,
+		// 读写分离后 主服务器数量
+		'master_num'        => 1,
+		// 指定从服务器序号
+		'slave_no'          => '',
+		// 是否严格检查字段是否存在
+		'fields_strict'     => true,
+		// 是否需要断线重连
+		'break_reconnect'   => false,
+		// 监听SQL
+		'trigger_sql'       => env('app_debug', true),
+		// 开启字段缓存
+		'fields_cache'      => false,
+		// 字段缓存路径
+		//'schema_cache_path' => app()->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR,
+		],
+		// 更多的数据库配置信息
     ],
 ];
 php;

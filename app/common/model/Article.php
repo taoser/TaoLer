@@ -107,7 +107,8 @@ class Article extends Model
                 'user' => function ($query) {
                     $query->field('id,name,nickname,user_img,area_id,vip');
                 }
-            ])->withCount(['comments'])->order('create_time', 'desc')->limit($num)->select();
+            ])->withCount(['comments'])->order('create_time', 'desc')->limit($num)->select()->toArray();
+			
             Cache::tag('tagArtDetail')->set('arttop', $artTop, 60);
         }
         return $artTop;
@@ -133,7 +134,7 @@ class Article extends Model
 			'user' => function($query){
                 $query->field('id,name,nickname,user_img,area_id,vip');
 			} ])
-            ->withCount(['comments'])->where(['status'=>1,'is_top'=>0])->order('create_time','desc')->limit($num)->select();
+            ->withCount(['comments'])->where(['status'=>1,'is_top'=>0])->order('create_time','desc')->limit($num)->select()->toArray();
 			Cache::tag('tagArt')->set('artlist',$artList,60);
 		}
 		return $artList;
@@ -167,7 +168,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getArtDetail(int $id)
+    public function getArtDetail(int $id, int $page)
     {
         $article = Cache::get('article_'.$id);
         if(!$article){
@@ -179,8 +180,8 @@ class Article extends Model
                 'user' => function($query){
                     $query->field('id,name,nickname,user_img,area_id,vip');
                 }
-            ])->find($id);
-            Cache::tag('tagArtDetail')->set('article_'.$id,$article,3600);
+            ])->withCount(['comments'])->find($id)->toArray();
+            Cache::tag('tagArtDetail')->set('article_'.$id, $article, 3600);
         }
         return $article;
     }
@@ -225,7 +226,7 @@ class Article extends Model
                             'list_rows' => 15,
                             'page' => $page,
                             'path' =>$url.'[PAGE]'.$suffix
-                        ]);
+                        ])->toArray();
                     break;
 
                 case 'hot':
@@ -241,7 +242,7 @@ class Article extends Model
                             'list_rows' => 15,
                             'page' => $page,
                             'path' =>$url.'[PAGE]'.$suffix
-                        ]);
+                        ])->toArray();
                     break;
 
                 case 'top':
@@ -257,7 +258,7 @@ class Article extends Model
                             'list_rows' => 15,
                             'page' => $page,
                             'path' =>$url.'[PAGE]'.$suffix
-                        ]);
+                        ])->toArray();
                     break;
 					
 				case 'wait':
@@ -273,7 +274,7 @@ class Article extends Model
                             'list_rows' => 15,
                             'page' => $page,
                             'path' =>$url.'[PAGE]'.$suffix
-                        ]);
+                        ])->toArray();
                     break;
 
                 default:
@@ -289,7 +290,7 @@ class Article extends Model
                             'list_rows' => 15,
                             'page' => $page,
                             'path' =>$url.'[PAGE]'.$suffix
-                        ]);
+                        ])->toArray();
                     break;
             }
             Cache::tag('tagArtDetail')->set('arts'.$ename.$type.$page,$artList,600);
