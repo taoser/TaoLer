@@ -11,9 +11,9 @@
       <div class="fly-panel" style="margin-bottom: 0;">
 		<div class="layui-tab-card">
 		  <ul class="layui-tab-title">
-			<li {if condition="$type eq 'all'" } class="layui-this" {/if}><a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all','type' => 'all'])} "  >{:lang('all')}</a></li>
-			<li {if condition="$type eq 'jie'" } class="layui-this" {/if}><a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all','type' => 'jie'])} ">{:lang('end')}</a></li>
-			<li {if condition="$type eq 'wait'" } class="layui-this" {/if}><a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all' ,'type' => 'wait'])}">{:lang('未解决')}</a>	</li>
+			<li {if condition="$type eq 'all'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} "  >{:lang('all')}</a></li>
+			<li {if condition="$type eq 'jie'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} ">{:lang('end')}</a></li>
+			<li {if condition="$type eq 'wait'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'wait',])}">{:lang('未解决')}</a>	</li>
 		  </ul>
 		</div>
 		<ul class="question-list">
@@ -90,6 +90,7 @@
 <script>
     layui.use(['laypage'], function(){
 	  var laypage = layui.laypage;
+	  var $ = layui.jquery;
 	  
 	  //执行一个laypage实例
 	  laypage.render({
@@ -100,17 +101,13 @@
 		
 		 //获取起始页
 		,jump: function(obj, first){
-		//obj包含了当前分页的所有参数，比如：
-		//console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
-		//console.log(obj.limit); //得到每页显示的条数
 		
 		//首次不执行
 		if(!first){
-		  //do something
-		  //window.location.href= url+obj.curr+'&limit='+obj.limit+'#collection'; //跳转
-		  window.location.href = '{$url}'+obj.curr+'.html'; //跳转
-		}
-	  }
+		var page = obj.curr;
+		 location.href ="{$path}/"+page+'.html';
+		 }
+	  	}
 	  });
 	});
 </script>

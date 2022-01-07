@@ -40,7 +40,7 @@ class Comment extends Model
     {
         $res = Cache::get('reply');
         if(!$res){
-            $user = User::withCount('comments')->order(['comments_count'=>'desc','last_login_time'=>'desc'])->limit($num)->select();
+            $user = User::withCount('comments')->order(['comments_count'=>'desc','last_login_time'=>'desc'])->limit($num)->select()->toArray();
             if($user)
             {
                 $res['status'] = 0;

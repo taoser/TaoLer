@@ -106,12 +106,6 @@ abstract class BaseQuery
             $name = Str::snake(substr($method, 5));
             array_unshift($args, $name);
             return call_user_func_array([$this, 'where'], $args);
-        } elseif ($this->model && in_array($method, ['hidden', 'visible', 'append'])) {
-            // 调用模型类方法
-            $this->model->filter(function ($model, $options) use ($method, $args) {
-                call_user_func_array([$model, $method], $args);
-            });
-            return $this;
         } elseif ($this->model && method_exists($this->model, 'scope' . $method)) {
             // 动态调用命名范围
             $method = 'scope' . $method;
@@ -284,9 +278,11 @@ abstract class BaseQuery
     public function column($field, string $key = ''): array
     {
         $result = $this->connection->column($this, $field, $key);
+
         if (count($result) != count($result, 1)) {
             $this->resultSet($result, false);
         }
+
         return $result;
     }
 
@@ -1158,7 +1154,7 @@ abstract class BaseQuery
 
         if (!empty($this->model)) {
             // 返回模型对象
-            $this->resultToModel($result, $this->options);
+            $this->resultToModel($result);
         } else {
             $this->result($result);
         }
@@ -1187,7 +1183,7 @@ abstract class BaseQuery
             $this->parseView($options);
         }
 
-        foreach (['data', 'order', 'join', 'union', 'filter', 'json'] as $name) {
+        foreach (['data', 'order', 'join', 'union', 'filter', 'json', 'with_attr', 'with_relation_attr'] as $name) {
             if (!isset($options[$name])) {
                 $options[$name] = [];
             }
@@ -1197,7 +1193,7 @@ abstract class BaseQuery
             $options['strict'] = $this->connection->getConfig('fields_strict');
         }
 
-        foreach (['master', 'lock', 'fetch_sql', 'array', 'distinct', 'procedure'] as $name) {
+        foreach (['master', 'lock', 'fetch_sql', 'array', 'distinct', 'procedure', 'with_cache'] as $name) {
             if (!isset($options[$name])) {
                 $options[$name] = false;
             }

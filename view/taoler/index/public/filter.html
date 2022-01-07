@@ -1,11 +1,11 @@
 <div class="fly-panel-title fly-filter">
-	<a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all' ,'type' => 'all'])} " {if condition="$type eq 'all'" } class="layui-this" {/if} >{:lang('all')}</a>
+	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} " {if condition="$type eq 'all'" } class="layui-this" {/if} >{:lang('all')}</a>
 	<span class="fly-mid"></span>
-	<a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all','type' => 'jie'])} " {if condition="$type eq 'jie'" } class="layui-this" {/if} >{:lang('end')}</a>
+	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} " {if condition="$type eq 'jie'" } class="layui-this" {/if} >{:lang('end')}</a>
 	<span class="fly-mid"></span>
-	<a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all','type' => 'top'])} " {if condition="$type eq 'top'" } class="layui-this" {/if} >{:lang('top')}</a>
+	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'top'])} " {if condition="$type eq 'top'" } class="layui-this" {/if} >{:lang('top')}</a>
 	<span class="fly-mid"></span>
-	<a href="{:url('article/cate',['ename' => $Request.param.ename ?:'all','type' => 'hot'])} " {if condition="$type eq 'hot'" } class="layui-this" {/if} >{:lang('hot')}</a>
+	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'hot'])} " {if condition="$type eq 'hot'" } class="layui-this" {/if} >{:lang('hot')}</a>
 		  
   <!--span class="fly-filter-right layui-hide-xs"><a href="" class="layui-this">按最新</a>
   <span class="fly-mid"></span><a href="">按热议</a></span-->

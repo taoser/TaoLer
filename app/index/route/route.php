@@ -14,17 +14,19 @@ Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 Route::rule('/', 'index'); // 首页访问路由
 Route::group(function () {
 	Route::get('jie/:id', 'article/detail');
-	//Route::get('column/<ename>','article/cate');
-	//Route::get('column/<ename>/<type>','article/cate');
-	Route::get('column/<ename>/[:type]/[:page]','article/cate')
-		->pattern([
-				'ename' => '\w+',
-				'page'   => '\d+',
-			]);
+	Route::get('column/<ename>$','article/cate');
+	Route::get('column/<ename>/<type>$', 'article/cate')->name('cate_type');
+	Route::rule('column/<ename>/<type>/<page>', 'article/cate')->name('cate_page');
 	Route::rule('add','Article/add');
 	Route::rule('edit/[:id]','Article/edit');
 	//Route::rule('del/:id','article/delete');
-});
+})->pattern([
+				'ename' => '\w+',
+				'type' => '\w+',
+				'page'   => '\d+',
+				'id'   => '\d+',
+			]);
+			
 Route::group(function () {
 	Route::rule('u/:id', 'user/home'); 	
 });

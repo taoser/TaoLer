@@ -29,54 +29,22 @@ class Article extends BaseController
 			// 抛出 HTTP 异常
                 throw new \think\exception\HttpException(404, '请求异常');
 		}
-		$page = Request::param('page') ?  Request::param('page') : 1;
-
-		//获取分类ID
-		$ename = Request::param('ename');
+		//动态参数
+		$ename = Request::param('ename') ?? 'all';
 		$type = Request::param('type') ?? 'all';
+		$page = Request::param('page') ? Request::param('page') : 1;
 		$tpl = Db::name('cate')->where('ename',$ename)->value('detpl');
-		//分页伪静态
-		//$str = Request::baseUrl();	//不带参数在url
-		$path = Request::pathinfo();
-		$str = '/'.app('http')->getName().'/'.$path;
-		//halt($str);
-
-		$patterns = "/\d+/"; //数字正则
-		$p = preg_match($patterns,$str,$arr);	//正则查询页码出现在位置
+		//分页url
+		$url = url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
+		//返回最后/前面的字符串
+		$path = substr($url,0,strrpos($url,"/"));
 		
-		//检测route配置中是否设置了伪静态后缀
-		$suffix = Config::get('route.url_html_suffix') ? '.'.Config::get('route.url_html_suffix') : '/';
-		if(Config::get('route.url_html_suffix')){
-
-			//伪静态有后缀
-			if(isset($arr[0])){
-				$page = $arr[0];
-				$url = strstr($str,$arr[0],true);
-			} else {
-				$page = 1;
-				$url = strstr($str,'.html',true);
-			}
-		} else {
-
-			//伪静态后缀false
-			if(isset($arr[0])){
-				$page = $arr[0];
-				$url = strstr($str,$arr[0],true);
-			} else {
-				$page = 1;
-				$url = $str.'/';
-			}
-		}
-
         //分类列表
         $article = new ArticleModel();
-		$artList = $article->getCateList($ename,$type,$page,$url,$suffix);
-
-		//$count = $artList->total();
+		$artList = $article->getCateList($ename,$type,$page);
 
 		//	热议文章
 		$artHot = $article->getArtHot(10);
-
 		//广告
         $ad = new Slider();
         //分类图片
@@ -84,12 +52,12 @@ class Article extends BaseController
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(6);
 		
-		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie','url'=>$url]);
+		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie','ename'=>$ename,'path'=>$path]);
 		return View::fetch('article/'.$tpl.'/cate');
     }
 
 	//文章详情页
-    public function detail($id)
+    public function detail()
     {
 		$id = input('id');
 		$artStu = Db::name('article')->field('id')->where(['status'=>1,'delete_time'=>0])->find($id);
@@ -114,8 +82,7 @@ class Article extends BaseController
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
 
 		//评论
-		$comment = new Comment;
-		$comments = $comment->getComment($id, $page);
+		$comments = $this->getComments($id, $page);
 		
 		//	热议文章
 		$artHot = $article->getArtHot(10);
@@ -129,6 +96,13 @@ class Article extends BaseController
 		View::assign(['article'=>$artDetail,'pv'=>$pv,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'page'=>$page,'comments'=>$comments,'jspage'=>'jie']);
 		return View::fetch('article/'.$tpl.'/detail');
     }
+	
+	//评论内容
+	public function getComments($id, $page)
+	{
+		$comment = new Comment;
+		return $comment->getComment($id, $page);
+	}
 	
 	//文章评论
 	public function comment()

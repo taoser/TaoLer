@@ -243,29 +243,6 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
             }
         }
 
-        $this->filter(function ($result, $options) {
-            // 关联查询
-            if (!empty($options['relation'])) {
-                $result->relationQuery($options['relation'], $options['with_relation_attr']);
-            }
-
-            // 预载入查询
-            if (empty($options['is_resultSet']) && !empty($options['with'])) {
-                $result->eagerlyResult($result, $options['with'], $options['with_relation_attr'], false, $options['with_cache'] ?? false);
-            }
-
-            // JOIN预载入查询
-            if (empty($options['is_resultSet']) && !empty($options['with_join'])) {
-                $result->eagerlyResult($result, $options['with_join'], $options['with_relation_attr'], true, $options['with_cache'] ?? false);
-            }
-
-            // 关联统计
-            if (!empty($options['with_count'])) {
-                foreach ($options['with_count'] as $val) {
-                    $result->relationCount($this, (array) $val[0], $val[1], $val[2], false);
-                }
-            }
-        });
         // 执行初始化操作
         $this->initialize();
     }
@@ -307,11 +284,6 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         $model->exists(true);
 
         $model->setUpdateWhere($where);
-
-        // 查询数据处理
-        foreach ($this->filter as $filter) {
-            call_user_func_array($filter, [$model, $options]);
-        }
 
         $model->trigger('AfterRead');
 

@@ -191,12 +191,10 @@ class Article extends Model
      * @param string $ename 分类英文名
      * @param string $type  all\top\hot\jie 分类类型
      * @param int $page 页面
-     * @param string $url
-     * @param string $suffix
      * @return mixed|\think\Paginator
      * @throws \think\db\exception\DbException
      */
-    public function getCateList(string $ename, string $type, int $page, string $url, string $suffix)
+    public function getCateList(string $ename, string $type, int $page = 1)
     {
         $where = [];
         $cateId = Cate::where('ename',$ename)->value('id');
@@ -224,8 +222,7 @@ class Article extends Model
                     ])->withCount(['comments'])->where(['status'=>1,'jie'=>1])->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
                         ->paginate([
                             'list_rows' => 15,
-                            'page' => $page,
-                            'path' =>$url.'[PAGE]'.$suffix
+                            'page' => $page
                         ])->toArray();
                     break;
 
@@ -240,8 +237,7 @@ class Article extends Model
                     ])->withCount(['comments'])->where('status',1)->where($where)->where('is_hot',1)->order(['is_top'=>'desc','create_time'=>'desc'])
                         ->paginate([
                             'list_rows' => 15,
-                            'page' => $page,
-                            'path' =>$url.'[PAGE]'.$suffix
+                            'page' => $page
                         ])->toArray();
                     break;
 
@@ -256,8 +252,7 @@ class Article extends Model
                     ])->withCount(['comments'])->where('status',1)->where($where)->where('is_top',1)->order(['is_top'=>'desc','create_time'=>'desc'])
                         ->paginate([
                             'list_rows' => 15,
-                            'page' => $page,
-                            'path' =>$url.'[PAGE]'.$suffix
+                            'page' => $page
                         ])->toArray();
                     break;
 					
@@ -272,8 +267,7 @@ class Article extends Model
                     ])->withCount(['comments'])->where('status',1)->where($where)->where('jie',0)->order(['is_top'=>'desc','create_time'=>'desc'])
                         ->paginate([
                             'list_rows' => 15,
-                            'page' => $page,
-                            'path' =>$url.'[PAGE]'.$suffix
+                            'page' => $page
                         ])->toArray();
                     break;
 
@@ -288,8 +282,7 @@ class Article extends Model
                     ])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
                         ->paginate([
                             'list_rows' => 15,
-                            'page' => $page,
-                            'path' =>$url.'[PAGE]'.$suffix
+                            'page' => $page
                         ])->toArray();
                     break;
             }

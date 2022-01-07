@@ -27,7 +27,7 @@ use think\Model;
 trait ResultOperation
 {
     /**
-     * 设置数据处理
+     * 设置数据处理（支持模型）
      * @access public
      * @param callable $filter 数据处理Callable
      * @param string   $index  索引（唯一）
@@ -75,12 +75,19 @@ trait ResultOperation
      */
     protected function result(array &$result): void
     {
+        // JSON数据处理
         if (!empty($this->options['json'])) {
-            $this->jsonResult($result, $this->options['json'], true);
+            $this->jsonResult($result);
         }
 
+        // 查询数据处理
         foreach ($this->options['filter'] as $filter) {
-            $result = call_user_func($filter, $result);
+            $result = call_user_func_array($filter, [$result, $this->options]);
+        }
+
+        // 获取器
+        if (!empty($this->options['with_attr'])) {
+            $this->getResultAttr($result, $this->options['with_attr']);
         }
     }
 
@@ -108,9 +115,9 @@ trait ResultOperation
      * @access protected
      * @param array $result   查询数据
      * @param array $withAttr 字段获取器
-     * @return array
+     * @return void
      */
-    protected function getResultAttr(array $result, array $withAttr = []): array
+    protected function getResultAttr(array &$result, array $withAttr = []): void
     {
         foreach ($withAttr as $name => $closure) {
             $name = Str::snake($name);
@@ -126,8 +133,6 @@ trait ResultOperation
                 $result[$name] = $closure($result[$name] ?? null, $result);
             }
         }
-
-        return $result;
     }
 
     /**
@@ -161,30 +166,17 @@ trait ResultOperation
     /**
      * JSON字段数据转换
      * @access protected
-     * @param array $result           查询数据
-     * @param array $json             JSON字段
-     * @param bool  $assoc            是否转换为数组
-     * @param array $withRelationAttr 关联获取器
+     * @param array $result 查询数据
      * @return void
      */
-    protected function jsonResult(array &$result, array $json = [], bool $assoc = false, array $withRelationAttr = []): void
+    protected function jsonResult(array &$result): void
     {
-        foreach ($json as $name) {
+        foreach ($this->options['json'] as $name) {
             if (!isset($result[$name])) {
                 continue;
             }
 
             $result[$name] = json_decode($result[$name], true);
-
-            if (isset($withRelationAttr[$name])) {
-                foreach ($withRelationAttr[$name] as $key => $closure) {
-                    $result[$name][$key] = $closure($result[$name][$key] ?? null, $result[$name]);
-                }
-            }
-
-            if (!$assoc) {
-                $result[$name] = (object) $result[$name];
-            }
         }
     }
 
