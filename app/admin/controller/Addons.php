@@ -12,7 +12,7 @@ use taoler\com\Files;
 use taoler\com\Api;
 use app\common\lib\SetConf;
 use think\App;
-use app\common\lib\ZipFile;
+use app\common\lib\Zip;
 
 class Addons extends AdminController
 {
@@ -214,7 +214,7 @@ class Addons extends AdminController
             return json(['code'=>-1,'msg'=>'下载升级文件失败']);
         }
 
-        $uzip = new ZipFile();
+        $uzip = new Zip();
         $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
         $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
         $unzip_res = $uzip->unzip($package_file,$zipPath,true);

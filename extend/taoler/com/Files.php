@@ -26,7 +26,7 @@ class Files
 			$arr = array();
 			$data = scandir($path);
 			foreach ($data as $value){
-				if($value !='.' && $value != '..' && !stripos($value,".")){
+				if($value !='.' && $value != '..' && !stripos($value,".") && $value != '.gitignore'){
 				  $arr[] = strtolower($value);
 				}
 			  }

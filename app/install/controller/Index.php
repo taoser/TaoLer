@@ -12,9 +12,8 @@ class Index extends BaseController
 	// 检测是否安装过
 	protected function initialize(){
         if(file_exists('./install.lock')){
-           //echo "<script>alert('已经成功安装了TaoLer社区系统，安装系统已锁定。如需重新安装，请删除根目录下的install.lock文件')</script>";
-		   //die();
-		   return response("<script>alert('已经成功安装了TaoLer社区系统，安装系统已锁定。如需重新安装，请删除根目录下的install.lock文件')</script>");
+           echo "<script>alert('已经成功安装了TaoLer社区系统，安装系统已锁定。如需重新安装，请删除根目录下的install.lock文件')</script>";
+		   die();
         }
     }
 
