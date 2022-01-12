@@ -27,6 +27,7 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
+            'think\\composer\\' => 15,
             'think\\captcha\\' => 14,
             'think\\app\\' => 10,
             'think\\' => 6,
@@ -36,6 +37,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'p' => 
         array (
             'phpspirit\\databackup\\' => 21,
+        ),
+        'l' => 
+        array (
+            'liliuwei\\social\\' => 16,
         ),
         'a' => 
         array (
@@ -82,6 +87,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/topthink/think-trace/src',
         ),
+        'think\\composer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-installer/src',
+        ),
         'think\\captcha\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-captcha/src',
@@ -108,6 +117,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'phpspirit\\databackup\\' => 
         array (
             0 => __DIR__ . '/..' . '/lotofbadcode/phpspirit_databackup/src',
+        ),
+        'liliuwei\\social\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/liliuwei/thinkphp-social/src',
         ),
         'app\\' => 
         array (

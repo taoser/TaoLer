@@ -43,7 +43,7 @@ class Auth
 		}
 
 		//没有登录及当前非登录页重定向登录页
-		if(!Session::has('admin_id') && $path !== 'admin/login/index' && !stristr($request->pathinfo(),"captcha.html") )
+		if(!Session::has('admin_id') && $path !== 'admin/login/index' && !(stristr($request->pathinfo(),"captcha.html") || stristr($request->pathinfo(),"addons")) )
 		{
 			return redirect((string) url('admin/login/index'));
 		}

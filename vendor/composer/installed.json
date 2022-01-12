@@ -291,6 +291,90 @@
             "install-path": "../league/mime-type-detection"
         },
         {
+            "name": "liliuwei/thinkphp-social",
+            "version": "v1.3",
+            "version_normalized": "1.3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/liliuwei/thinkphp-social.git",
+                "reference": "2067fc2c2cc3b3d109602bc19c3e5a99c5f4c970"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/liliuwei/thinkphp-social/zipball/2067fc2c2cc3b3d109602bc19c3e5a99c5f4c970",
+                "reference": "2067fc2c2cc3b3d109602bc19c3e5a99c5f4c970",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=5.6.0",
+                "topthink/framework": "^5.1 || ^6.0",
+                "topthink/think-installer": "^2.0"
+            },
+            "time": "2021-01-13T05:11:12+00:00",
+            "type": "think-extend",
+            "extra": {
+                "think-config": {
+                    "social": "src/config/config.php"
+                },
+                "think": {
+                    "config": {
+                        "social": "src/config/config.php"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "liliuwei\\social\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "liliuwei",
+                    "email": "974829947@qq.com"
+                }
+            ],
+            "description": "适用于thinkphp5.1和6.0的社会化登录扩展",
+            "keywords": [
+                "Facebook登录",
+                "Gitee登录",
+                "Github登录",
+                "Google登录",
+                "Oschina登录",
+                "QQ登录",
+                "oauth",
+                "think-social",
+                "thinkphp",
+                "thinkphp-social",
+                "thinkphp5.1",
+                "thinkphp6.0",
+                "小米登录",
+                "微信登录",
+                "抖音登录",
+                "新浪登录",
+                "淘宝登录",
+                "百度登录",
+                "第三方授权登录",
+                "谷歌登录",
+                "钉钉登录"
+            ],
+            "support": {
+                "issues": "https://github.com/liliuwei/thinkphp-social/issues",
+                "source": "https://github.com/liliuwei/thinkphp-social/tree/v1.3"
+            },
+            "install-path": "../liliuwei/thinkphp-social"
+        },
+        {
             "name": "lotofbadcode/phpspirit_databackup",
             "version": "v1.1",
             "version_normalized": "1.1.0.0",
@@ -1398,6 +1482,60 @@
                 "source": "https://github.com/top-think/think-helper/tree/v3.1.6"
             },
             "install-path": "../topthink/think-helper"
+        },
+        {
+            "name": "topthink/think-installer",
+            "version": "v2.0.5",
+            "version_normalized": "2.0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-installer.git",
+                "reference": "38ba647706e35d6704b5d370c06f8a160b635f88"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/think-installer/zipball/38ba647706e35d6704b5d370c06f8a160b635f88",
+                "reference": "38ba647706e35d6704b5d370c06f8a160b635f88",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "composer-plugin-api": "^1.0||^2.0"
+            },
+            "require-dev": {
+                "composer/composer": "^1.0||^2.0"
+            },
+            "time": "2021-01-14T12:12:14+00:00",
+            "type": "composer-plugin",
+            "extra": {
+                "class": "think\\composer\\Plugin"
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "think\\composer\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "yunwuxin",
+                    "email": "448901948@qq.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/top-think/think-installer/issues",
+                "source": "https://github.com/top-think/think-installer/tree/v2.0.5"
+            },
+            "install-path": "../topthink/think-installer"
         },
         {
             "name": "topthink/think-multi-app",

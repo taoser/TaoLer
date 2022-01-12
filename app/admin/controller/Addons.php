@@ -207,57 +207,43 @@ class Addons extends AdminController
         Files::mkdirs($addons_dir);
 
         $package_file = $addons_dir . $data['name'] .'.zip';  //升级的压缩包文件
-//        halt($package_file);
         $cpfile = copy($file_url,$package_file);
-        if(!$cpfile)
-        {
-            return json(['code'=>-1,'msg'=>'下载升级文件失败']);
-        }
+        if(!$cpfile) return json(['code'=>-1,'msg'=>'下载升级文件失败']);
 
         $uzip = new Zip();
         $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
         $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
         $unzip_res = $uzip->unzip($package_file,$zipPath,true);
+        if(!$unzip_res) return json(['code'=>-1,'msg'=>'解压失败']);
 
-        if(!$unzip_res)
-        {
-            return json(['code'=>-1,'msg'=>'解压失败']);
-        }
 
         //升级插件
-        if(is_dir($zipPath))
-        {
-            //升级前的写入文件权限检查
-            $allUpdateFiles = Files::getAllFile($zipPath);
 
-            if (empty($allUpdateFiles)) return json(['code' => -1, 'msg' => '无可更新文件。']);
-            $checkString    = '';
-            foreach ($allUpdateFiles as $updateFile) {
-                $coverFile  = ltrim(str_replace($zipPath, '', $updateFile), DIRECTORY_SEPARATOR);
-                $dirPath    = dirname('../'.$coverFile);
-                if (file_exists('../'.$coverFile)) {
-                    if (!is_writable('../'.$coverFile)) $checkString .= $coverFile . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
-                } else {
-                    if (!is_dir($dirPath)) @mkdir($dirPath, 0777, true);
-                    if (!is_writable($dirPath)) $checkString .= $dirPath . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
-                }
-            }
+		//升级前的写入文件权限检查
+		$allUpdateFiles = Files::getAllFile($zipPath);
 
-            if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
-            $addonsPath = '../';
-            $cpRes = Files::copyDirs($zipPath,$addonsPath);
-            $cpData = $cpRes->getData();
-            //更新失败
-            if($cpData['code'] == -1)
-            {
-                return json(['code'=>-1,'msg'=>$cpData['msg']]);
-            }
+		if (empty($allUpdateFiles)) return json(['code' => -1, 'msg' => '无可更新文件。']);
+		$checkString    = '';
+		foreach ($allUpdateFiles as $updateFile) {
+			$coverFile  = ltrim(str_replace($zipPath, '', $updateFile), DIRECTORY_SEPARATOR);
+			$dirPath    = dirname('../'.$coverFile);
+			if (file_exists('../'.$coverFile)) {
+				if (!is_writable('../'.$coverFile)) $checkString .= $coverFile . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
+			} else {
+				if (!is_dir($dirPath)) @mkdir($dirPath, 0777, true);
+				if (!is_writable($dirPath)) $checkString .= $dirPath . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
+			}
+		}
 
-            //清除
-            Files::delDirAndFile('../runtime/addons/');
+		if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
+		$addonsPath = '../';
+		$cpRes = Files::copyDirs($zipPath,$addonsPath);
+		$cpData = $cpRes->getData();
+		//更新失败
+		if($cpData['code'] == -1) return json(['code'=>-1,'msg'=>$cpData['msg']]);
+		Files::delDirAndFile('../runtime/addons/');
 
-        }
-		 return json(['code'=>0,'msg'=>'插件安装成功！']);
+		return json(['code'=>0,'msg'=>'插件安装成功！']);
 
     }
     /**

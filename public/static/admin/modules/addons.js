@@ -168,6 +168,7 @@ layui.define(["table", "form", "upload"], function (exports) {
         },
       });
     } else if (obj.event === "install") {
+		var index = layer.load(1);
       //安装插件
       $.post(
         addonsInstall,
@@ -183,6 +184,7 @@ layui.define(["table", "form", "upload"], function (exports) {
               anim: 6,
             });
           }
+		  layer.close(index);
         }
       );
     } else if (obj.event === "config") {

@@ -167,6 +167,7 @@
 		  upload.render({
 			elem: '#zip-button'
 			,url: "{:url('article/uploads')}" //改成您自己的上传接口
+			,data: {type:'zip'}
 			,accept: 'file' //普通文件
 			,done: function(res){
 				if(res.status == 0){
