@@ -15,6 +15,6 @@ class Article extends Validate
 	
 	public function sceneArtadd()
 	{
-		return $this->only(['cate_id','title','content','captcha']);
+		return $this->only(['cate_id','title','content']);
 	}
 }

@@ -3,8 +3,8 @@
 > TaoLer是一个简单迅捷的轻论坛系统，适用于个人或组织区域型信息交流发布平台。
 
  * 官网：https://www.aieok.com
- * 版本：TaoLer 1.8.22
- * 日期：2022.1.12
+ * 版本：TaoLer 1.9.0
+ * 日期：2022.3.16
  
  webman版新架构已适配90%
 
@@ -140,6 +140,6 @@
 
 本项目包含的第三方源码和二进制文件之版权信息另行标注。
 
-版权所有Copyright © 2020-2021 by aieok.com (https://www.aieok.com)
+版权所有Copyright © 2020-2022 by aieok.com (https://www.aieok.com)
 
 All rights reserved。

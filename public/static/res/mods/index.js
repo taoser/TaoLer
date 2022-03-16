@@ -94,9 +94,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
       //简易编辑器
       ,layEditor: function(options){
           var html = ['<div class="layui-unselect fly-edit">'
+              ,'<span type="strong" title="加粗"><i class="layui-icon layedit-tool-b layedit-tool-active" title="加粗" lay-command="Bold" layedit-event="b" "=""></i></span>'
               ,'<span type="face" title="表情"><i class="iconfont icon-yxj-expression" style="top: 1px;"></i></span>'
               ,'<span type="picture" title="图片：img[src]"><i class="iconfont icon-tupian"></i></span>'
-			  ,'<span type="video" title="视频"><i class="layui-icon layui-icon-video"></i></span>'
+			        ,'<span type="video" title="视频"><i class="layui-icon layui-icon-video"></i></span>'
               ,'<span type="audio" title="音频"><i class="layui-icon layui-icon-headset"></i></span>'
               ,'<span type="href" title="超链接格式：a(href)[text]"><i class="iconfont icon-lianjie"></i></span>'
               ,'<span type="quote" title="引用"><i class="iconfont icon-yinyong" style="top: 1px;"></i></span>'
@@ -110,6 +111,16 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
           };
 
           var log = {}, mod = {
+            //加粗
+            strong: function(editor){
+              var str = window.getSelection().toString();
+              if(!str == ''){
+                //var strB = '<b>'+ str + '</b>';
+                layui.focusInsert(editor[0], '[strong]  '+ str + '[/strong]');
+                //console.log(str);
+                // console.log(strB);
+              }
+            },
               face: function(editor, self){ //插入表情
                   var str = '', ul, face = fly.faces;
                   for(var key in face){
@@ -280,8 +291,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                       ,area: 'auto'
                       ,shade: false
                       //,area: '465px'
-					  ,fixed: false
-					  ,offset: [
+                      ,fixed: false
+                      ,offset: [
                           editor.offset().top - $(window).scrollTop() + 'px'
                           ,editor.offset().left + 'px'
                       ]
@@ -341,45 +352,45 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 							  //,field: 'image'
                               ,size: 10240
 							  ,choose: function (obj) { //选择文件后的回调
-								imgcom.uploads(obj);
+								  imgcom.uploads(obj);
 							  }
-                              ,done: function(res){
-                                  if(res.status == 0){
-                                      cover.val(res.url);
-                                  } else {
-                                      layer.msg(res.msg, {icon: 5});
-                                  }
-                              }
+                ,done: function(res){
+                    if(res.status == 0){
+                        cover.val(res.url);
+                    } else {
+                        layer.msg(res.msg, {icon: 5});
+                    }
+                }
 							  ,error: function(){
 									layer.msg('系统错误，请联系管理员');
 								}
-                          });
-                          form.on('submit(uploadImages)', function(data){
-                              var field = data.field;
-                              if(!field.video) return video.focus();
-                              layui.focusInsert(editor[0], 'video('+field.cover+')['+ field.video + '] ');
-                              layer.close(index);
-                          });
-                      }
-                  });
+              });
+              form.on('submit(uploadImages)', function(data){
+                  var field = data.field;
+                  if(!field.video) return video.focus();
+                  layui.focusInsert(editor[0], 'video('+field.cover+')['+ field.video + '] ');
+                  layer.close(index);
+              });
+                  }
+              });
               }
               ,audio: function(editor){ //插入音频
-			  //判断登陆
-				if(uid == -1){
-					layer.msg('请登录再发布', {icon: 6}, function(){
-						location.href = login;
-					})
-					return false;
-				}
+              //判断登陆
+              if(uid == -1){
+                layer.msg('请登录再发布', {icon: 6}, function(){
+                  location.href = login;
+                })
+                return false;
+              }
                   layer.open({
                       type: 1
                       ,id: 'fly-jie-audio-upload'
                       ,title: '插入音频'
-					  ,area: 'auto'
+					            ,area: 'auto'
                       ,shade: false
                       //,area: '465px'
-					  ,fixed: false
-					  ,offset: [
+					            ,fixed: false
+					            ,offset: [
                           editor.offset().top - $(window).scrollTop() + 'px'
                           ,editor.offset().left + 'px'
                       ]
@@ -568,6 +579,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
               .replace(/\[quote\]([\s\S]*)\[\/quote\]\n*/g, function(str){
                   return str.replace(/\[quote\]\n*/g, '<div class="layui-elem-quote">')
                       .replace(/\n*\[\/quote\]\n*/g, '</div>');
+              })
+
+              //转义加粗
+              .replace(/\[strong\]([\s\S]*)\[\/strong\]\n*/g, function(str){
+                return str.replace(/\[strong\]\n*/g, '<b>')
+                    .replace(/\n*\[\/strong\]\n*/g, '</b>');
               })
 
               //转义换行

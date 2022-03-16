@@ -333,6 +333,64 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 });
 </script>
 
+// 点击图片放大
+<script type="text/javascript">
+  
+ $(function(){ 
+    $(".photos").on("click","img",function(){ 
+      var _this = $(this); 
+      console.log(_this);
+      imgShow("#outerdiv", "#innerdiv", "#bigimg", _this); 
+    }); 
+  }); 
+  function imgShow(outerdiv, innerdiv, bigimg, _this){ 
+    var src = _this.attr("src");
+    $(bigimg).attr("src", src); 
+     
+    $("<img/>").attr("src", src).on("load",function(){ 
+      var windowW = $(window).width();
+      var windowH = $(window).height();
+      var realWidth = this.width; 
+      var realHeight = this.height; 
+      var imgWidth, imgHeight; 
+      var scale = 0.8; 
+      if(realHeight>windowH*scale) {
+      	//判断图片高度 
+        imgHeight = windowH*scale;
+        imgWidth = imgHeight/realHeight*realWidth; 
+        if(imgWidth>windowW*scale) {
+        	//如宽度扔大于窗口宽度 
+          imgWidth = windowW*scale;
+        } 
+      } else if(realWidth>windowW*scale) {
+      	
+        imgWidth = windowW*scale;
+        imgHeight = imgWidth/realWidth*realHeight;
+      } else {
+      	//如果图片真实高度和宽度都符合要求，高宽不变 
+        imgWidth = realWidth; 
+        imgHeight = realHeight; 
+      } 
+          $(bigimg).css("width",imgWidth);
+      var w = (windowW-imgWidth)/2;
+      var h = (windowH-imgHeight)/2;
+      $(innerdiv).css({"top":h, "left":w}); 
+      $(outerdiv).fadeIn("fast"); 
+    }); 
+    $(outerdiv).click(function(){
+    	//再次点击淡出消失弹出层 
+      $(this).fadeOut("fast"); 
+    }); 
+  }
+  
+</script>
+
+<div id="outerdiv" style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:2;width:100%;height:100%;display:none;">
+  <div id="innerdiv" style="position:absolute;">
+    <img id="bigimg" style="border:5px solid #fff;" src="" />
+</div>
+
+
 {:hook('markdownhook')}
 
 <script>

@@ -237,6 +237,20 @@
 							</div>
 							<div class="layui-form-mid layui-word-aux">是否显示发件人所在地区简称</div>
 						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">登录验证码：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="login_captcha" lay-skin="primary" value=1 {if config('taoler.config.login_captcha') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选则验证</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">发帖验证码：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="post_captcha" lay-skin="primary" value=1 {if config('taoler.config.post_captcha') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选则验证</div>
+						</div>
 
 					
 					  <div class="layui-form-item">

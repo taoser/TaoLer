@@ -28,14 +28,14 @@ class User extends Validate
     //name登陆验证场景
     public function sceneLoginName()
     {
-        return $this->only(['name','password','captcha'])
+        return $this->only(['name','password'])
 			->remove('name', 'unique');
     }
 	
 	//emai登陆验证场景
     public function sceneLoginEmail()
     {
-        return $this->only(['email','password','captcha'])
+        return $this->only(['email','password'])
 			->remove('email', 'unique');
     }
 

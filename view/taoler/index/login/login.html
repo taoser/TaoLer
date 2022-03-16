@@ -26,6 +26,7 @@
                   <input type="password" id="L_pass" name="password" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('please input the password')}">
                 </div>
               </div>
+			  {if config('taoler.config.login_captcha') == 1}
               <div class="layui-form-item">
                 <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
                 <div class="layui-input-inline">
@@ -35,7 +36,8 @@
 					        <img src="{:captcha_src()}" style="float:left; cursor:pointer;" id="captcha" alt="captcha"  />
                 </div>
               </div>
-			        <div class="layui-form-item">
+			  {/if}
+			  <div class="layui-form-item">
                 <input type="checkbox" name="remember" title="{:lang('remember password')}" lay-skin="primary"  lay-filter="remember" value="1">
               </div>
               <div class="layui-form-item">

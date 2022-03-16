@@ -112,6 +112,7 @@
                   <div class="layui-form-mid layui-word-aux">发表后无法更改飞吻</div>
                 </div>
               </div-->
+			  {if config('taoler.config.post_captcha') == 1}
               <div class="layui-form-item">
                 <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
                 <div class="layui-input-inline">
@@ -121,6 +122,7 @@
                   <span style="color: #c00;"><img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();" style="float:left; cursor:pointer;"  alt="captcha" /></span>
                 </div>
               </div>
+			  {/if}
               <div class="layui-form-item">
                 <button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="add">{:lang('post now')}</button>
               </div>

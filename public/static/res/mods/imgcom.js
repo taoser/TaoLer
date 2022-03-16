@@ -54,7 +54,7 @@ var compressImage = {
 		reader.readAsDataURL(file)
 		reader.onload = function (e) {
 		  const img = new Image()
-		  const quality = 0.4 // 图像质量
+		  const quality = 0.8 // 图像质量
 		  const canvas = document.createElement('canvas')
 		  const drawer = canvas.getContext('2d')
 		  img.src = this.result
@@ -64,7 +64,7 @@ var compressImage = {
 		  originHeight = img.height; /* 图片的高度 */
 		  
 		  // 设置最大尺寸限制，将所有图片都压缩到小于1m
-			const maxWidth = 1024, maxHeight = 1024;
+			const maxWidth = 2560, maxHeight = 1600;
 			// 需要压缩的目标尺寸
 			let targetWidth = originWidth, targetHeight = originHeight;
 			// 等比例计算超过最大限制时缩放后的图片尺寸

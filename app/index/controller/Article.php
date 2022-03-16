@@ -156,6 +156,15 @@ class Article extends BaseController
     {
         if (Request::isAjax()) {
             $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'captcha']);
+			
+			// 验证码
+			if(Config::get('taoler.config.post_captcha') == 1)
+			{				
+				if(!captcha_check($data['captcha'])){			 // 验证失败
+				 return json(['code'=>-1,'msg'=> '验证码失败']);
+				};
+			}
+			
 			$validate = new \app\common\validate\Article; //调用验证器
             $result = $validate->scene('Artadd')->check($data); //进行数据验证
             if (true !== $result) {
@@ -202,6 +211,15 @@ class Article extends BaseController
 		//编辑
 		if(Request::isAjax()){
 			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','tags','captcha']);
+			
+			// 验证码
+			if(Config::get('taoler.config.post_captcha') == 1)
+			{				
+				if(!captcha_check($data['captcha'])){			 // 验证失败
+				 return json(['code'=>-1,'msg'=> '验证码失败']);
+				};
+			}
+			
 			$validate = new \app\common\validate\Article(); //调用验证器
 			$res = $validate->scene('Artadd')->check($data); //进行数据验证
 			

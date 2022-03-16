@@ -42,9 +42,18 @@ class Login extends BaseController
 		//$url = substr($refer,strlen($domain));
         Cookie::set('url',$refer);
         if(Request::isAjax()) {
+			
             //登陆前数据校验
 			$data = Request::param();
-
+			if(Config::get('taoler.config.login_captcha') == 1)
+			{				
+				//先校验验证码
+				if(!captcha_check($data['captcha'])){
+				 // 验证失败
+				 return json(['code'=>-1,'msg'=> '验证码失败']);
+				};
+			}
+			
 			//邮箱正则表达式
 			$pattern = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
 			//判断输入的是邮箱还是用户名
