@@ -77,7 +77,16 @@ class Forum extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'title'=>htmlspecialchars($v['title']),'content'=>htmlspecialchars($v['content']),'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
+					$indexUrl = $this->getIndexUrl();
+					$artUrl = (string) url('detail_id', ['id' => $v['aid']]);
+					if(empty(config('app.domain_bind'))) {
+						// 未绑定域名
+						$url =  $indexUrl . str_replace('admin','index',$artUrl);
+					} else {
+						// 单独绑定域名
+						$url =  $indexUrl . $artUrl;
+					}
+				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'title'=>htmlspecialchars($v['title']),'url'=>$url,'content'=>htmlspecialchars($v['content']),'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'没有查询结果！'];

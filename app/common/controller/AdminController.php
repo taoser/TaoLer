@@ -3,8 +3,6 @@ declare (strict_types = 1);
 
 namespace app\common\controller;
 
-use think\Controller;
-use think\App;
 use think\facade\Session;
 use think\facade\View;
 use think\facade\Db;
@@ -37,14 +35,24 @@ class AdminController extends \app\BaseController
     protected function getMenu()
     {
         $menu     = [];
-        $admin_id = Session::get('admin_id');
+        $admin_id = $this->aid;
         $auth     = new Auth();
 
-        $auth_rule_list = Db::name('auth_rule')->where(['status'=> 1,'ishidden'=>1])->order(['sort' => 'asc'])->select();
+        $auth_rule_list = Db::name('auth_rule')->where('delete_time',0)->where(['status'=> 1,'ishidden'=>1])->order(['sort' => 'asc'])->select();
         //var_export($auth_rule_list);
 
         foreach ($auth_rule_list as $value) {
             if ($auth->check($value['name'], $admin_id) || $admin_id == 1) {
+                // 查询是否设置映射
+                // $map = array_search('admin',config('app.app_map'));
+                // //dump($map,$value);
+                // //stripos($value);
+                // if($map){
+                //     $menu[] = strtr($value,'admin',$map);
+                // } else {
+                //     $menu[] = $value;
+                // }
+                //dump($menu);
                 $menu[] = $value;
             }
         }
@@ -59,7 +67,7 @@ class AdminController extends \app\BaseController
     protected function getMenus($type)
     {
         $menu     = [];
-        $auth_rule_list = Db::name('auth_rule')->where(['status'=> 1])->where('type',$type)->order(['sort' => 'ASC', 'id' => 'ASC'])->select();
+        $auth_rule_list = Db::name('auth_rule')->where('delete_time',0)->where(['status'=> 1])->where('type',$type)->order(['sort' => 'ASC', 'id' => 'ASC'])->select();
         //var_export($auth_rule_list);
 
         foreach ($auth_rule_list as $value) {
@@ -109,6 +117,7 @@ class AdminController extends \app\BaseController
 		$syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
         $runTime = $this->getRunTime();
 		View::assign(['domain'=>$domain,'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime]);
+        return $domain;
 	}
 
 	protected function getRunTime()

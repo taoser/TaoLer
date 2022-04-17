@@ -18,6 +18,7 @@ Route::group(function () {
 	Route::get('column/<ename>/<type>$', 'article/cate')->name('cate_type');
 	Route::rule('column/<ename>/<type>/<page>', 'article/cate')->name('cate_page');
 	Route::rule('add','Article/add');
+	Route::rule('tags','Article/tags')->allowCrossDomain();
 	Route::rule('edit/[:id]','Article/edit');
 	//Route::rule('del/:id','article/delete');
 })->pattern([

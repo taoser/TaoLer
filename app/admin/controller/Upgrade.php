@@ -25,6 +25,7 @@ use think\facade\Config;
 use think\facade\Log;
 use app\common\lib\ZipFile;
 use app\common\lib\SetConf;
+use app\common\lib\SetArr;
 use app\common\lib\SqlFile;
 use app\common\lib\Zip;
 

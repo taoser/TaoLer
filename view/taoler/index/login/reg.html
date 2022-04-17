@@ -13,53 +13,47 @@
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
         <div class="layui-tab-item layui-show">
           <div class="layui-form layui-form-pane">
-            <div class="layui-form-item">
-              <label for="L_username" class="layui-form-label">{:lang('username')}</label>
-              <div class="layui-input-inline">
-                <input type="text" id="L_username" name="name" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('it cannot be changed')}">
+              <div class="layui-form-item">
+                <label for="L_username" class="layui-form-label">{:lang('username')}</label>
+                <div class="layui-input-inline">
+                  <input type="text" id="L_username" name="name" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('it cannot be changed')}">
+                </div>
               </div>
-            </div>
-            <div class="layui-form-item">
-              <label for="L_email" class="layui-form-label">{:lang('email')}</label>
-              <div class="layui-input-inline">
-                <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" class="layui-input" placeholder="{:lang('email')}">
+              <div class="layui-form-item">
+                <label for="L_email" class="layui-form-label">{:lang('email')}</label>
+                <div class="layui-input-inline">
+                  <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" class="layui-input" placeholder="{:lang('the only way to get back your password')}">
+                </div>
               </div>
-              <div class="layui-form-mid layui-word-aux">{:lang('the only way to get back your password')}</div>
-            </div>
-            <div class="layui-form-item">
-              <label for="L_pass" class="layui-form-label">{:lang('password')}</label>
-              <div class="layui-input-inline">
-                <input type="password" id="L_pass" name="password" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('6-16 characters')}">
+              <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label">{:lang('password')}</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_pass" name="password" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('6-16 characters')}">
+                </div>
               </div>
-              <div class="layui-form-mid layui-word-aux">{:lang('strong type encryption')}</div>
-            </div>
-            <div class="layui-form-item">
-              <label for="L_repass" class="layui-form-label">{:lang('confirm password')}</label>
-              <div class="layui-input-inline">
-                <input type="password" id="L_repass" name="repassword" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('please confirm the password')}">
+              <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">{:lang('confirm password')}</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_repass" name="repassword" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('please confirm the password')}">
+                </div>
               </div>
-            </div>
-            <div class="layui-form-item">
-              <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
-              <div class="layui-input-inline">
-                <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
+              <div class="layui-form-item">
+                <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
+                <div class="layui-input-inline">
+                  <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important;">
+                    <img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();"  alt="captcha" />
+                </div>
+              </div>			  
+              <div class="layui-form-item">
+				      <button type="submit" class="layui-btn" lay-filter="user-register" lay-submit>{:lang('register now')}</button>
               </div>
-              <div >
-                <span style="color: #c00;">
-                  <div>
-                    <img id="captcha" src="{:captcha_src()}" style="float:left; cursor:pointer;"  alt="captcha" />
-                  </div>
-                </span>
-              </div>
-            </div>			  
-            <div class="layui-form-item">
-            <button type="submit" class="layui-btn" lay-filter="user-register" lay-submit>{:lang('register now')}</button>
-            </div>
-            <!--div class="layui-form-item fly-form-app">
-              <span>或者直接使用社交账号快捷注册</span>
-              <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" title="QQ登入"></a>
-              <a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-weibo" title="微博登入"></a>
-            </div-->
+              <!--div class="layui-form-item fly-form-app">
+                <span>或者直接使用社交账号快捷注册</span>
+                <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" title="QQ登入"></a>
+                <a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-weibo" title="微博登入"></a>
+              </div-->
           </div>
         </div>
       </div>
@@ -78,7 +72,9 @@ var layer = layui.layer;
 	//注册
 	form.on('submit(user-register)', function(data){
 		var field = data.field;
-		var loading = layer.load(2, {shade: [0.2, '#000']});
+		var loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
 		$.ajax({
 		type:'post',
 		url:"{:url('Login/reg')}",
@@ -96,9 +92,8 @@ var layer = layui.layer;
 				layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 			}}
 		});
-	  return false;
+	return false;
 	});
 });
 </script>
-
 {/block}

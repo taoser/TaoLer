@@ -23,13 +23,13 @@ class Index extends BaseController
     {
 		$types = input('type');
 
-		//幻灯
         $slider = new Slider();
+		//幻灯
         $sliders = $slider->getSliderList(1);
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示20个
-        $artList = Article::getArtList(20);
+        $artList = Article::getArtList(22);
         //热议文章
         $artHot = Article::getArtHot(10);
         //温馨通道

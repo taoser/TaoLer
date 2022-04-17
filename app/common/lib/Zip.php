@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-25 15:07:37
+ * @LastEditTime: 2022-04-16 09:43:05
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\app\common\lib\Zip.php
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+ */
 namespace app\common\lib;
 
 class Zip
@@ -17,7 +26,7 @@ class Zip
 
 		//压缩文件
 		$zip = new \ZipArchive();
-		$zip->open($filePath, ZipArchive::CREATE);
+		$zip->open($filePath, \ZipArchive::CREATE);
 		foreach ($files as $key => $file) {
 			//检查文件是否存在
 			if (!file_exists($file)) {

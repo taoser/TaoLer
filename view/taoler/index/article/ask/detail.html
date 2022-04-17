@@ -1,8 +1,8 @@
 {extend name="public/base" /}
 
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
-{block name="keywords"}{$article.title},{$article.tags}{/block}
-{block name="description"}{$article.title},{:getArtContent($article.content)}{/block}
+{block name="keywords"}{$article.tags}{/block}
+{block name="description"}{$article.title},{$article.description}{/block}
 {block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
@@ -10,87 +10,90 @@
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md9 content detail">
       <div class="fly-panel detail-box">
-		{//标题}
-        <div class="title layui-clear">
-        <h1 style="color:{$article.title_color};">{$article.title}</h1>
-		  {if ($article.jie == 0)}
+        {//标题}
+        <div class="title layui-clear"><h1 style="color:{$article.title_color};">{$article.title}</h1></div>
+        <div class="detail_qrcode layui-hide-xs" onclick="PhoneDown();" id="mobile"></div>
+      
+        {//图标}
+        <div class="user-questions">
+          <a class="user-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
+          <img src="{$article.user.user_img}" alt="{$article.user.name}">
+          <cite>{$article.user.nickname ?: $article.user.name} / </cite>
+          </a>
+          <span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
+          / <i class="iconfont" title="{:lang('reply')}">&#xe60c;</i> {$article.comments_count} / <i class="iconfont" title="浏览">&#xe60b;</i> {$pv}
+          {if ($article.jie == 0)}
           <span class="layui-btn layui-btn-xs" style="background-color: #FF5722;">{:lang('no finished')}</span>
-		  {else /}
+          {else /}
           <span class="layui-btn layui-btn-xs" style="background-color: #009688;">{:lang('finished')}</span>
-		  {/if}
-		  <span id="LAY_jieAdmin" data-id="{$article['id']}"></span> 
-		</div>
-		<div class="detail_qrcode layui-hide-xs" onclick="PhoneDown();" id="mobile"></div>
-		
-		{//图标}
-		<div class="user-questions">
-			<a class="user-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
-			<img src="{$article.user.user_img}" alt="{$article.user.name}">
-			<cite>{$article.user.nickname ?: $article.user.name}</cite>
-			</a>
-			<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px;">2019-12-01</span>
-			<span class="user-questions-right"> 
-			<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$article.comments_count}<i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
-			</span>
-		</div>
-		
-		{//问题内容}
-		<div>问题描述：</div>
-		<div class="detail-body-wenda photos" id="content">{$article.content}</div>
-
-		{//管理}
-		{if (($article.upzip !== '') || (session('user_id')==$article.user_id) OR ($user.auth  ?? ''))}
-		<div class="detail-assist">
-			{notempty name="$article.upzip"}
-			 <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-			{/notempty}
-		  <div class="fly-admin-box" data-id="{$article.id}">
-		  {if ($user.auth ?? '')}
-            <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
-            {if($article.is_top == 0)}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
-			{else /}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>{/if}
-			{if($article.is_hot == 0)}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
-			{else /}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">{:lang('cancel hoting')}</span>
-			{/if}
-            {if($article.is_reply == 1)}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0"><i class="layui-icon layui-icon-face-cry"></i></span>
-            {else /}
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;">{:lang('enable reply')}</span>
-            {/if}
-			<span id="color">{:lang('title color')}</span>
-		  {/if}
-		   {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-			<span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
-		  {/if}
-          </div>
-		</div>
-		{/if}
-      </div>
-	  {//评论区}
-	  {if condition="$article.is_reply == 1"}
-		<div class="layui-form layui-form-pane">
-            <div class="layui-form-item layui-form-text">
-              <a name="comment"></a>
-              <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
-              </div>
-            </div>
-            <div class="layui-form-item que-comments">
-              <input type="hidden" name="article_id" value="{$article.id}">
-			  <input type="hidden" name="user_id" value="{:session('user_id')}">
-              <button class="layui-btn layui-btn-danger" lay-filter="user-comment" lay-submit>{:lang('submit comments')}</button>
-            </div>
+          {/if}
+          <span id="LAY_jieAdmin" data-id="{$article['id']}"></span> 
         </div>
-		{else /}
-		<blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">本帖已设置禁止回复</blockquote>
-		{/if}
-	{//评论内容}
+
+        {//管理}
+        {if (($article.upzip !== '') || (session('user_id')==$article.user_id) OR ($user.auth  ?? ''))}
+        <div class="detail-assist">
+          {notempty name="$article.upzip"}
+          <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
+          {/notempty}
+          <div class="fly-admin-box" data-id="{$article.id}">
+            {if ($user.auth ?? '')}
+                <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
+                {if($article.is_top == 0)}
+                  <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
+                {else /}
+                  <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>
+                {/if}
+                {if($article.is_hot == 0)}
+                  <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
+                {else /}
+                  <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">{:lang('cancel hoting')}</span>
+                {/if}
+                {if($article.is_reply == 1)}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0"><i class="layui-icon layui-icon-face-cry"></i></span>
+                {else /}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;">{:lang('enable reply')}</span>
+                {/if}
+                <span id="color">{:lang('title color')}</span>
+            {/if}
+            {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
+            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
+            {/if}
+          </div>
+        </div>
+        {/if}
+
+        <hr class="layui-border-green">
+
+        {//问题内容}
+        <div style="margin-top: 15px; font-size: 18px; font-weight:bold; color: rgb(130, 125, 125);">问题描述：</div>
+        <hr>
+        <div class="detail-body-wenda photos" id="content">{$article.content}</div>
+      </div>
+
+      {//评论区}
+      {if condition="$article.is_reply == 1"}
+      <div class="layui-form layui-form-pane">
+        <div class="layui-form-item layui-form-text">
+          <a name="comment"></a>
+          <div class="layui-input-block">
+            <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item que-comments">
+          <input type="hidden" name="article_id" value="{$article.id}">
+          <input type="hidden" name="user_id" value="{:session('user_id')}">
+          <button class="layui-btn layui-btn-danger" lay-filter="user-comment" lay-submit>{:lang('submit comments')}</button>
+        </div>
+      </div>
+      {else /}
+      <blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">本帖已设置禁止回复</blockquote>
+      {/if}
+      {//评论内容}
       <div class="fly-panel detail-box" id="flyReply">
         <span style="font-size:18px;">评论 {$article.comments_count}</span>
         <ul class="jieda" id="jieda">
-		    {volist name="comments" id="vo" empty= ""}
+		      {volist name="comments" id="vo" empty= ""}
           <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
@@ -104,7 +107,7 @@
                 {if condition="$article.user.id eq $vo.user.id"}<span>({:lang('poster')})</span>{/if}
               </div>
               <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span></div>
-			    {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
+			        {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
             <div class="detail-body jieda-body photos">{$vo.content}</div>
             <div class="jieda-reply">
@@ -112,72 +115,75 @@
                 <i class="iconfont icon-zan"></i><em>{$vo.zan}</em>赞
               </span>
               <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
-			    {//评论编辑删除采纳权限}
+			        {//评论编辑删除采纳权限}
               <div class="jieda-admin">
-				  {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
-					<span type="edit">{:lang('edit')}</span>
-					<span type="del">{:lang('delete')}</span>				
-				  {/if}
-				  {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth  ?? '')) /}<span class="jieda-accept" type="accept">{:lang('accept')}</span>{/if}
+                {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
+                <span type="edit">{:lang('edit')}</span>
+                <span type="del">{:lang('delete')}</span>				
+                {/if}
+                {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth  ?? '')) /}
+                <span class="jieda-accept" type="accept">{:lang('accept')}</span>
+                {/if}
               </div>
             </div>
           </li>
-        {/volist} 
+          {/volist} 
         </ul>
         <div style="text-align: center" id="pages"></div>
-        
       </div>
     </div>
+
+    {// 右栏}
     <div class="layui-col-md3">
 	
-		<div class="fly-panel">
-            <div class="fly-panel-main wenda-user">
-				<div class="user-img">
-					<a href="{:url('user/home',['id'=>$article.user.id])}">
-					<img class="" src="{$article.user.user_img}" alt="{$article.user.name}">
-					{if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
-					</a>
-				</div>
-				<div class="questions">
-					<span  class="layui-badge layui-bg-green">回答 100</span> <span  class="layui-badge layui-bg-green">提问 100</span> <span  class="layui-badge layui-bg-green">+ 关注</span>
-				</div>
-            </div>
+		  <div class="fly-panel">
+        <div class="fly-panel-main wenda-user">
+          <div class="user-img">
+            <a href="{:url('user/home',['id'=>$article.user.id])}">
+            <img class="" src="{$article.user.user_img}" alt="{$article.user.name}">
+            {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
+            </a>
+          </div>
+          <div class="questions">
+            <span  class="layui-badge layui-bg-green">回答 100</span> <span  class="layui-badge layui-bg-green">提问 100</span> <span  class="layui-badge layui-bg-green">+ 关注</span>
+          </div>
         </div>
-        <div class="fly-panel">
-            <div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
-                <a href="" class="fly-link fly-joinad">{:lang('i want to join')}</a>
-            </div>
-            <div class="fly-panel-main">
-                {volist name="ad_comm" id="vo"}
-                <a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color}';">{$vo.slid_name}</a>
-                {/volist}
-            </div>
+      </div>
+      <div class="fly-panel">
+        <div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
+          <a href="" class="fly-link fly-joinad">{:lang('i want to join')}</a>
         </div>
-        <dl class="fly-panel fly-list-one">
-			<dt class="fly-panel-title">{:lang('hot post list')}</dt>
-			{volist name="artHot" id="vo"}
-			<dd>
-			  <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
-			  <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-			</dd>
-			{/volist}
-        </dl>
-        <div class="fly-panel" style="padding: 5px 0; text-align: center;">
+        <div class="fly-panel-main">
+          {volist name="ad_comm" id="vo"}
+          <a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color:{$vo.slid_color};">{$vo.slid_name}</a>
+          {/volist}
+        </div>
+      </div>
+      <dl class="fly-panel fly-list-one">
+			  <dt class="fly-panel-title">{:lang('hot post list')}</dt>
+			    {volist name="artHot" id="vo"}
+			    <dd>
+            <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+            <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+          </dd>
+			    {/volist}
+      </dl>
+      <div class="fly-panel" style="padding: 5px 0; text-align: center;">
         {volist name="ad_art" id="vo"}
           <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
         {/volist}
-        </div>
+      </div>
     </div>
+
   </div>
-<!--底部栏-->
+  <!--底部栏-->
 	<div class="site-tree-mobile-detail-bottom layui-hide-md">
-	<div id="LAY_jieAdmin1" data-id="{$article['id']}"></div>
-    </div> 
+	  <div id="LAY_jieAdmin1" data-id="{$article['id']}"></div>
+  </div> 
 </div>
 {include file="public/menu" /}
 {/block}
 {block name="script"}
-
 <script>
 var collectionFind = "{:url('Collection/find')}",
     collection = "{:url('collection/')}",
@@ -204,7 +210,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
     //tpl模板给发布时间赋值
   $('div.user-questions').children('span.user-post-time').each(function(){
     var othis = $(this), html = othis.html();
-	var string =  laytpl('{{ d.time }}').render({
+	  var string =  laytpl('{{ d.time }}').render({
 		//time: html
 		time: othis.attr('data')
 	});
@@ -216,7 +222,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){
     var othis = $(this), html = othis.html();
-	var string =  laytpl('{{ d.time }}').render({
+	  var string =  laytpl('{{ d.time }}').render({
 		//time: html
 		time: othis.attr('data')
 	});
@@ -259,9 +265,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 	var index = layer.load(1);
 	var filed = data.field;
     if (uid == -1) {
-			layer.msg('请先登陆',{icon:5,time:2000},function(){
-                location.href = "{:url('login/index')}";
-        });
+			layer.msg('请先登陆',{icon:5,time:2000},function(){location.href = "{:url('login/index')}"});
     } else {
       $.ajax({
         type: "post",
@@ -270,9 +274,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
         dataType: "json",
         success:function (data) {
           if (data.code == 0) {
-            layer.msg(data.msg,{icon:6,time:2000},function () {
-                location.reload(true);
-            });
+            layer.msg(data.msg,{icon:6,time:2000},function () {location.reload(true)});
           } else {
             layer.open({title:'评论失败',content:data.msg,icon:5,anim:6});
           }
@@ -294,7 +296,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
         //首次不执行
         if(!first){
           var page = obj.curr;
-		  var url = "{:url('article/detail',['id'=>$article.id])}";
+		      var url = "{:url('article/detail',['id'=>$article.id])}";
           var id = "{$article.id}";
           $.post("{:url('article/detail')}",{"id":id,"page":page},function(){
             window.location.href = url + '?page=' + page + '#flyReply';
@@ -333,9 +335,9 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 });
 </script>
 
-// 点击图片放大
+
 <script type="text/javascript">
-  
+  // 点击图片放大
  $(function(){ 
     $(".photos").on("click","img",function(){ 
       var _this = $(this); 

@@ -54,7 +54,7 @@ class BaseController extends BaseCtrl
         }
     }*/
 
-//    显示导航
+	// 显示导航
     protected function showNav()
     {
         //1.查询分类表获取所有分类

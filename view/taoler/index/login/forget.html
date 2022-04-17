@@ -78,10 +78,8 @@
 				<div class="layui-input-inline">
 				  <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
 				</div>
-				<div class="layui-form-mid">
-				  <span style="color: #c00;">
-				  <div ><img id="captcha" src="{:captcha_src()}?id=1" onclick="this.src='{:captcha_src()}?id=1'+Math.random();"  style="float:left; cursor:pointer;"  alt="captcha" /></div>
-				  </span>
+				  <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important;">
+					  <img id="captcha" src="{:captcha_src()}?id=1" onclick="this.src='{:captcha_src()}?id=1'+Math.random();"  style="float:left; cursor:pointer;"  alt="captcha" />
 				</div>
 			</div>
 			<div class="layui-form-item">

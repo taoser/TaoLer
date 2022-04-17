@@ -4,7 +4,7 @@
 	</a>
 	<h2>
 		{if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $top.cate.ename : $top.cate.catename}</a>{/if}
-	  <a href="{:url('article/detail',['id' => $top.id])}" style="color:'{$top.title_color}';">{$top.title}</a>
+	  <a href="{:url('article/detail',['id' => $top.id])}" style="color:{$top.title_color};">{$top.title}</a>
 	</h2>
 	<div class="fly-list-info">
 	  <a href="{:url('user/home',['id'=>$top.user_id])}" link>

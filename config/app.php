@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-04-17 16:49:19
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\config\app.php
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+ */
 // +----------------------------------------------------------------------
 // | 应用设置
 // +----------------------------------------------------------------------
@@ -18,15 +27,19 @@ return [
     'default_timezone' => 'Asia/Shanghai',
 
     // 应用映射（自动多应用模式有效）
-    'app_map'          => [],
+    'app_map' => [  
+        //'bbs'  =>  'index',  
+        //'*'     =>  'home',
+        //'admin' =>  'admin', 
+    ],
     // 域名绑定（自动多应用模式有效）
     'domain_bind'      => [
 		//'bbs' => 'index',
 		//'adm' => 'admin',
+        //'www'=>'home',
 		//'api' => 'api'
 	],
     // 禁止URL访问的应用列表（自动多应用模式有效）
-    'deny_app_list'    => [],
 
     // 异常页面的模板文件
     'exception_tmpl'   =>  app()->getThinkPath() . 'tpl/think_exception.tpl',
@@ -40,5 +53,5 @@ return [
 	'http_exception_template' => [
 		404 => \think\facade\App::getAppPath() . '404.html',
 		500 => \think\facade\App::getAppPath() . '404.html',
-	]
+    ],
 ];

@@ -227,24 +227,18 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.9.0",
-            "version_normalized": "1.9.0.0",
+            "version": "1.10.0",
+            "version_normalized": "1.10.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "aa70e813a6ad3d1558fc927863d47309b4c23e69"
+                "reference": "3e4a35d756eedc67096f30240a68a3149120dae7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/aa70e813a6ad3d1558fc927863d47309b4c23e69",
-                "reference": "aa70e813a6ad3d1558fc927863d47309b4c23e69",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/3e4a35d756eedc67096f30240a68a3149120dae7",
+                "reference": "3e4a35d756eedc67096f30240a68a3149120dae7",
+                "shasum": ""
             },
             "require": {
                 "ext-fileinfo": "*",
@@ -255,7 +249,7 @@
                 "phpstan/phpstan": "^0.12.68",
                 "phpunit/phpunit": "^8.5.8 || ^9.3"
             },
-            "time": "2021-11-21T11:48:40+00:00",
+            "time": "2022-04-11T12:49:04+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -276,7 +270,7 @@
             "description": "Mime-type detection for Flysystem",
             "support": {
                 "issues": "https://github.com/thephpleague/mime-type-detection/issues",
-                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.9.0"
+                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.10.0"
             },
             "funding": [
                 {
@@ -1265,6 +1259,49 @@
             "install-path": "../taoser/think-auth"
         },
         {
+            "name": "taoser/think-setarr",
+            "version": "v0.0.3",
+            "version_normalized": "0.0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/taoser/think-setarr.git",
+                "reference": "6651c31ef42417a6294ef08e6fb970917b7e7f86"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/taoser/think-setarr/zipball/6651c31ef42417a6294ef08e6fb970917b7e7f86",
+                "reference": "6651c31ef42417a6294ef08e6fb970917b7e7f86",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "time": "2022-04-16T23:08:43+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "taoser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "mit"
+            ],
+            "authors": [
+                {
+                    "name": "Taoser",
+                    "email": "changlin_zhao@qq.com"
+                }
+            ],
+            "description": "php confing",
+            "support": {
+                "issues": "https://github.com/taoser/think-setarr/issues",
+                "source": "https://github.com/taoser/think-setarr/tree/v0.0.3"
+            },
+            "install-path": "../taoser/think-setarr"
+        },
+        {
             "name": "topthink/framework",
             "version": "v6.0.12",
             "version_normalized": "6.0.12.0",
@@ -1342,29 +1379,23 @@
         },
         {
             "name": "topthink/think-captcha",
-            "version": "v3.0.4",
-            "version_normalized": "3.0.4.0",
+            "version": "v3.0.6",
+            "version_normalized": "3.0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-captcha.git",
-                "reference": "db5be361d3cd664d236fb95d5dffe93a117283ad"
+                "reference": "3b60feb4d484381ff7ddda4af7582a6b9be5dacf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/db5be361d3cd664d236fb95d5dffe93a117283ad",
-                "reference": "db5be361d3cd664d236fb95d5dffe93a117283ad",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/3b60feb4d484381ff7ddda4af7582a6b9be5dacf",
+                "reference": "3b60feb4d484381ff7ddda4af7582a6b9be5dacf",
+                "shasum": ""
             },
             "require": {
                 "topthink/framework": "^6.0.0"
             },
-            "time": "2022-01-07T06:34:19+00:00",
+            "time": "2022-03-18T09:11:51+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -1378,12 +1409,12 @@
             },
             "installation-source": "dist",
             "autoload": {
-                "psr-4": {
-                    "think\\captcha\\": "src/"
-                },
                 "files": [
                     "src/helper.php"
-                ]
+                ],
+                "psr-4": {
+                    "think\\captcha\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1398,7 +1429,7 @@
             "description": "captcha package for thinkphp",
             "support": {
                 "issues": "https://github.com/top-think/think-captcha/issues",
-                "source": "https://github.com/top-think/think-captcha/tree/v3.0.4"
+                "source": "https://github.com/top-think/think-captcha/tree/v3.0.6"
             },
             "install-path": "../topthink/think-captcha"
         },

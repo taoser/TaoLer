@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a2defc1ce427f4ab5f63c13400425c3",
+    "content-hash": "52d2121e202720cc23a0528605fafe09",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -210,16 +210,16 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.9.0",
+            "version": "1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "aa70e813a6ad3d1558fc927863d47309b4c23e69"
+                "reference": "3e4a35d756eedc67096f30240a68a3149120dae7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/aa70e813a6ad3d1558fc927863d47309b4c23e69",
-                "reference": "aa70e813a6ad3d1558fc927863d47309b4c23e69",
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/3e4a35d756eedc67096f30240a68a3149120dae7",
+                "reference": "3e4a35d756eedc67096f30240a68a3149120dae7",
                 "shasum": ""
             },
             "require": {
@@ -250,7 +250,7 @@
             "description": "Mime-type detection for Flysystem",
             "support": {
                 "issues": "https://github.com/thephpleague/mime-type-detection/issues",
-                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.9.0"
+                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.10.0"
             },
             "funding": [
                 {
@@ -262,7 +262,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-11-21T11:48:40+00:00"
+            "time": "2022-04-11T12:49:04+00:00"
         },
         {
             "name": "liliuwei/thinkphp-social",
@@ -822,6 +822,46 @@
             "time": "2020-02-11T06:16:10+00:00"
         },
         {
+            "name": "taoser/think-setarr",
+            "version": "v0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/taoser/think-setarr.git",
+                "reference": "6651c31ef42417a6294ef08e6fb970917b7e7f86"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/taoser/think-setarr/zipball/6651c31ef42417a6294ef08e6fb970917b7e7f86",
+                "reference": "6651c31ef42417a6294ef08e6fb970917b7e7f86",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "taoser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "mit"
+            ],
+            "authors": [
+                {
+                    "name": "Taoser",
+                    "email": "changlin_zhao@qq.com"
+                }
+            ],
+            "description": "php confing",
+            "support": {
+                "issues": "https://github.com/taoser/think-setarr/issues",
+                "source": "https://github.com/taoser/think-setarr/tree/v0.0.3"
+            },
+            "time": "2022-04-16T23:08:43+00:00"
+        },
+        {
             "name": "topthink/framework",
             "version": "v6.0.12",
             "source": {
@@ -890,16 +930,16 @@
         },
         {
             "name": "topthink/think-captcha",
-            "version": "v3.0.4",
+            "version": "v3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-captcha.git",
-                "reference": "db5be361d3cd664d236fb95d5dffe93a117283ad"
+                "reference": "3b60feb4d484381ff7ddda4af7582a6b9be5dacf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/db5be361d3cd664d236fb95d5dffe93a117283ad",
-                "reference": "db5be361d3cd664d236fb95d5dffe93a117283ad",
+                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/3b60feb4d484381ff7ddda4af7582a6b9be5dacf",
+                "reference": "3b60feb4d484381ff7ddda4af7582a6b9be5dacf",
                 "shasum": ""
             },
             "require": {
@@ -937,9 +977,9 @@
             "description": "captcha package for thinkphp",
             "support": {
                 "issues": "https://github.com/top-think/think-captcha/issues",
-                "source": "https://github.com/top-think/think-captcha/tree/v3.0.4"
+                "source": "https://github.com/top-think/think-captcha/tree/v3.0.6"
             },
-            "time": "2022-01-07T06:34:19+00:00"
+            "time": "2022-03-18T09:11:51+00:00"
         },
         {
             "name": "topthink/think-helper",

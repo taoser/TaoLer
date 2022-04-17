@@ -6,3 +6,5 @@ Disallow: /index/api/
 Disallow: /index/login.html
 Disallow: /index/reg.html
 Disallow: /*?*
+sitemap:http://www.test.com/2022-04-16_1.xml
+sitemap:http://www.test.com/2022-04-16_2.xml

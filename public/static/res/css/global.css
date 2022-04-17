@@ -482,10 +482,8 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 /*详情页-问答*/
 .user-questions{position:relative; margin: 5px 0 15px;}
 .user-questions .user-avatar img{width: 25px; height: 25px; margin-top: 10; border-radius: 100%;}
-.user-questions .user-questions-right{position:absolute; right:0px; display: inline-block; font-size: 14px; padding-left: 5px;}
-.user-questions .user-questions-right i{padding: 0 3px 0 15px; font-size: 22px; color: #999;}
 
-.detail-body-wenda{margin: 10px 0 5px; line-height: 26px; font-size: 16px; color: #999; word-wrap: break-word;}
+.detail-body-wenda{margin: 10px 0 5px; line-height: 26px; font-size: 16px; color: rgb(82, 80, 80); word-wrap: break-word;}
 .detail-body-wenda p{margin-bottom:15px;}
 .detail-body-wenda img{max-width: 100%; cursor: pointer;}
 .detail-body-wenda .layui-btn{margin: 0 10px 10px 0;}

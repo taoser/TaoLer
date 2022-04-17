@@ -2,7 +2,6 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
-use think\exception\ValidateException;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -11,8 +10,10 @@ use think\facade\Config;
 use app\admin\model\System;
 use app\admin\model\MailServer;
 use taoler\com\Files;
-use taoler\com\Api;
 use app\common\lib\SetConf;
+use app\common\lib\SetArr;
+use think\facade\Session;
+use think\facade\Cookie;
 
 class Set extends AdminController
 {
@@ -28,6 +29,20 @@ class Set extends AdminController
 		$template = Files::getDirName('../view');
 		$email = Db::name('admin')->where('id',1)->value('email');
         View::assign(['sysInfo'=>$this->sysInfo,'mailserver'=>$mailserver,'template'=>$template,'email'=>$email]);
+		if(!empty(config('app.domain_bind'))){
+			$data = array_flip(config('app.domain_bind'));
+			$domain_bind = [
+				'index' => isset($data['index']) ? $data['index'] : '',
+				'admin' => isset($data['admin']) ? $data['admin'] : '',
+			];
+			
+		} else {
+			$domain_bind = [
+				'index' => '',
+				'admin' => '',
+			];
+		}
+		View::assign($domain_bind);
 		return View::fetch('set/system/website');
     }
 	
@@ -45,6 +60,44 @@ class Set extends AdminController
 			}
 		}
     }
+
+	// 域名绑定
+	public function setDomain()
+	{
+		if(Request::isPost()){
+			//$data = Request::only(['index','admin']);
+			$data = Request::param();
+			//dump($data);
+			if($data['domain_check'] == 'on') {
+				unset($data['domain_check']);
+				$data = array_flip($data);
+				if(empty(config('app.domain_bind'))){
+					// 写入token
+					$res = (new SetArr('app'))::add([
+						'domain_bind'=> $data,
+					]);
+				}else{
+					// 编辑
+					$res = (new SetArr('app'))::edit([
+						'domain_bind'=> $data,
+					]);
+				}
+				//清空缓存
+				Cookie::delete('adminAuth');
+				Session::clear();
+			} else {
+				$res = (new SetArr('app'))::delete([
+					'domain_bind'=> config('app.domain_bind'),
+				]);		
+			}
+			if($res == true){
+				return json(['code'=>0,'msg'=>'成功']);
+			} else{
+				return json(['code'=>-1,'msg'=>'失败']);
+			}
+		}
+		
+	}
 	
 	//综合设置
 	public function server()

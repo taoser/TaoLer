@@ -116,7 +116,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
               var str = window.getSelection().toString();
               if(!str == ''){
                 //var strB = '<b>'+ str + '</b>';
-                layui.focusInsert(editor[0], '[strong]  '+ str + '[/strong]');
+                layui.focusInsert(editor[0], '[strong]'+ str + '[/strong]');
                 //console.log(str);
                 // console.log(strB);
               }
@@ -583,8 +583,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 
               //转义加粗
               .replace(/\[strong\]([\s\S]*)\[\/strong\]\n*/g, function(str){
-                return str.replace(/\[strong\]\n*/g, '<b>')
-                    .replace(/\n*\[\/strong\]\n*/g, '</b>');
+                return str.replace(/\[strong\]\n*/g,'<b>')
+                .replace(/\n*\[\/strong\]\n*/g, '</b>');
               })
 
               //转义换行

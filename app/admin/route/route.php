@@ -12,4 +12,5 @@ use think\facade\Route;
 //Route::get('jie/:id','index/article/detail');
 
 Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
-Route::get('jie/:id', 'article/detail'); 
+//Route::get('jie/:id', '\app\index\controller\Article@detail')->name('detail_id');
+Route::get('jie/:id', 'index/Article/detail')->name('detail_id');

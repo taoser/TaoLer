@@ -1,0 +1,204 @@
+{extend name="public/base" /}
+
+{block name="body"}
+  <div class="layui-fluid" id="component-tabs">
+    <div class="layui-row">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+		  
+            <div class="layui-tab layui-tab-card" lay-filter="seo-tabs-brief">
+              <ul class="layui-tab-title">
+                <li class="layui-this" lay-id="push">百度推送</li>
+                <li lay-id="map">站点地图</li>
+				<li lay-id="robots">robots</li>
+				<li lay-id="config">* 接口配置</li>
+              </ul>
+              <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+					<div class="layui-form" wid100 lay-filter="push">					  
+					  <div class="layui-form-item">
+						<label class="layui-form-label">链接提交</label>
+						<div class="layui-input-block">
+							{if condition="checkRuleButton('Seo/push')"}
+							<button class="layui-btn" lay-submit lay-filter="search_push">提交推送</button>
+							{else /}
+							<button class="layui-btn layui-btn-disabled">提交推送</button>
+							{/if}
+						</div>
+					  </div>
+					</div>
+                </div>
+                <div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="map">
+						<div class="layui-form-item">
+							<label class="layui-form-label">限定数量</label>
+							<div class="layui-input-inline">
+								<input type="text" name="map_num" value="{:config('taoler.sitemap.map_num')}" placeholder="推荐5000" class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux">单个map文件xml数量</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">更新频率</label>
+							<div class="layui-input-inline">
+								<input type="text" name="map_time" value="" placeholder="daily" class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux">每天或定时</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">优先级</label>
+							<div class="layui-input-inline">
+								<input type="text" name="map_level" value="" placeholder="默认0.5" class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux">0.0-1.0之间</div>
+						</div>
+						<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="map_xml">生成</button>
+						</div>
+						</div>
+					</div>
+
+                </div>
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="robots">
+						<div class="layui-form-item">
+							<label class="layui-form-label">内容</label>
+							<div class="layui-input-block">
+								<textarea type="text" name="robots" placeholder="请正确填写robots内容" class="layui-textarea" style="height: 500px;">{$robots}</textarea>
+								<div class="layui-form-mid layui-word-aux">会自动写入sitemap的链接</div>
+							</div>
+						</div>
+						<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="robots_submit">生成</button>
+						</div>
+						</div>
+					</div>
+                </div>
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="config">
+						<div class="layui-form-item">
+						<label class="layui-form-label">key</label>
+						<div class="layui-input-inline">
+							<input type="text" name="client_id" value="{:config('taoler.baidu.client_id')}" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux">百度分词API Key</div>
+						</div>
+						<div class="layui-form-item">
+						<label class="layui-form-label">secret</label>
+						<div class="layui-input-inline">
+							<input type="text" name="client_secret" value="{:config('taoler.baidu.client_secret')}" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux">百度分词Secret Key</div>
+						</div>
+						<div class="layui-form-item">
+						<label class="layui-form-label">收录token</label>
+						<div class="layui-input-inline">
+							<input type="text" name="push_api" value="{:config('taoler.baidu.push_api')}" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux">百度准入密钥</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="baidu_config">确认保存</button>
+							</div>
+						</div>
+					</div>
+                </div>
+			  </div>
+            </div>
+			
+          </div>
+        </div>
+     </div>
+  </div>
+</div>  
+{/block}
+
+{block name="js"} 
+  <script>
+	  var setWebSite ="{:url('Set/website')}";
+      var setEmail ="{:url('Set/email')}";
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index'], function(){
+    var $ = layui.$
+	,form = layui.form
+	var element  =layui.element ;
+
+	// baidu push
+	form.on('submit(search_push)', function(data){
+	//var field = data.field;
+	$.post("{:url('seo/push')}",function(res){
+        if(res.code == 0){
+			layer.msg(res.msg,{icon:6,tiye:2000
+			});
+		} else {
+			layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+		}
+    });
+    return false;
+  });
+
+	//网站配置
+	form.on('submit(baidu_config)', function(data){
+	var field = data.field;
+	$.post("{:url('seo/config')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000
+				});
+			} else {
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+
+  // map
+  form.on('submit(map_xml)', function(data){
+	var field = data.field;
+	$.post("{:url('seo/map')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000
+				});
+			} else {
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+
+  // map
+  form.on('submit(robots_submit)', function(data){
+	var field = data.field;
+	$.post("{:url('seo/robots')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000
+				});
+			} else {
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+
+  
+   //显示当前tab
+  if(location.hash){
+    element.tabChange('seo-tabs-brief', location.hash.replace(/^#/, ''));
+  }
+
+  element.on('tab(seo-tabs-brief)', function(){
+    var othis = $(this), layid = othis.attr('lay-id');
+    if(layid){
+      location.hash = layid;
+    }
+  });
+	
+	
+  });
+  </script>
+{/block}

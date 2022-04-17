@@ -14,6 +14,8 @@ use think\exception\ValidateException;
 use taoler\com\Message;
 use app\common\lib\Msgres;
 use app\common\lib\Uploads;
+use app\common\lib\SetArr;
+use taoler\com\Api;
 
 class Article extends BaseController
 {
@@ -154,24 +156,25 @@ class Article extends BaseController
      */
     public function add()
     {
+		//dump(empty(config('taoler.baidu.client_id')));
         if (Request::isAjax()) {
-            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'captcha']);
-			
+            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'description', 'captcha']);
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
 			{				
-				if(!captcha_check($data['captcha'])){			 // 验证失败
+				if(!captcha_check($data['captcha'])){
 				 return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
-			
-			$validate = new \app\common\validate\Article; //调用验证器
-            $result = $validate->scene('Artadd')->check($data); //进行数据验证
+
+			// 调用验证器
+			$validate = new \app\common\validate\Article;
+            $result = $validate->scene('Artadd')->check($data);
             if (true !== $result) {
                 return Msgres::error($validate->getError());
             }
 			
-			//获取内容图片音视频标识
+			// 获取内容图片音视频标识
 			$iva= $this->hasIva($data['content']);
 			$data = array_merge($data,$iva);
 		
@@ -184,7 +187,7 @@ class Article extends BaseController
 				}else{
 					$link = (string)url('index/');
 				}
-                //清除文章tag缓存
+                // 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 				if(Config::get('taoler.config.email_notice')) mailto($this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。');
                 $res = Msgres::success($result['msg'], $link);
@@ -208,20 +211,19 @@ class Article extends BaseController
     public function edit($id)
     {
 		$article = ArticleModel::find($id);
-		//编辑
+		
 		if(Request::isAjax()){
-			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','tags','captcha']);
-			
+			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','tags','description','captcha']);
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
 			{				
-				if(!captcha_check($data['captcha'])){			 // 验证失败
+				if(!captcha_check($data['captcha'])){
 				 return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
-			
-			$validate = new \app\common\validate\Article(); //调用验证器
-			$res = $validate->scene('Artadd')->check($data); //进行数据验证
+			//调用验证器
+			$validate = new \app\common\validate\Article(); 
+			$res = $validate->scene('Artadd')->check($data);
 			
 			if(true !== $res){
                 return Msgres::error($validate->getError());
@@ -242,13 +244,13 @@ class Article extends BaseController
 				return $editRes;
 			}
 		}
-		//查询标签
+		// 查询标签
 		$tag = $article->tags;
 		$attr = explode(',',$tag);
 		$tags = [];
-			foreach($attr as $key=>$v){
+			foreach($attr as $key => $v){
 				if ($v !='') {
-				$tags[] = $v;
+					$tags[] = $v;
 				}
 			}
 			
@@ -256,7 +258,11 @@ class Article extends BaseController
 		return View::fetch();
     }
 	
-	//删除帖子
+	/**
+	 * 删除
+	 *
+	 * @return void
+	 */
     public function delete()
 	{
 		$article = ArticleModel::find(input('id'));
@@ -269,6 +275,11 @@ class Article extends BaseController
 		return $res;
 	}
 
+	/**
+	 * 上传接口
+	 *
+	 * @return void
+	 */
 	public function uploads()
     {
         $type = Request::param('type');
@@ -293,7 +304,12 @@ class Article extends BaseController
         return $upRes;
     }
 
-    //附件下载
+    /**
+	 * 附件下载
+	 *
+	 * @param [type] $id
+	 * @return void
+	 */
     public function download($id)
     {
         $zipdir = Db::name('article')->where('id',$id)->value('upzip');
@@ -304,18 +320,119 @@ class Article extends BaseController
         return download($zip,'my');
     }
 
-    //添加tag
+	/**
+	 * 获取描述，过滤html
+	 *
+	 * @return void
+	 */
+	public function getDescription()
+	{
+		$data = Request::only(['content']);
+		$description = getArtContent($data['content']);
+		return json(['code'=>0,'data'=>$description]);
+	}
+
+    /**
+	 * 关键词
+	 *
+	 * @return void
+	 */
     public function tags()
     {
-        $data = Request::only(['tags']);
-        $att = explode(',',$data['tags']);
-        $tags = [];
-        foreach($att as $v){
-            if ($v !='') {
-                $tags[] = $v;
-            }
-        }
+        $data = Request::only(['tags','flag']);
+		$tags = [];
+
+		if($data['flag'] == 'on') {
+			// 百度分词自动生成关键词
+			if(!empty(config('taoler.baidu.client_id')) == true) {
+				$url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+
+				//headers数组内的格式
+				$headers = array();
+				$headers[] = "Content-Type:application/json";
+				$body   = array(
+							"text" => $data['tags']
+					);
+				$postBody    = json_encode($body);
+				$curl = curl_init();
+				curl_setopt($curl, CURLOPT_URL, $url);
+				curl_setopt($curl, CURLOPT_POST, true);
+				curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);//设置请求头
+				curl_setopt($curl, CURLOPT_POSTFIELDS, $postBody);//设置请求体
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');//使用一个自定义的请求信息来代替"GET"或"HEAD"作为HTTP请求。(这个加不加没啥影响)
+				$datas = curl_exec($curl);
+				if($datas == false) {
+					echo '接口无法链接';
+				} else {
+					$res = stripos($datas,'error_code');
+					// 接收返回的数据
+					$dataItem = json_decode($datas);
+					if($res == false) {
+						// 数据正常
+						$items = $dataItem->items;
+						foreach($items as $item) {
+							if($item->pos == 'n' && !in_array($item->item,$tags)){
+								$tags[] = $item->item;
+							}
+						}
+					} else {
+						// 接口正常但获取数据失败，可能参数错误，重新获取token
+						$url = 'https://aip.baidubce.com/oauth/2.0/token';
+						$post_data['grant_type']       = config('taoler.baidu.grant_type');;
+						$post_data['client_id']      = config('taoler.baidu.client_id');
+						$post_data['client_secret'] = config('taoler.baidu.client_secret');
+	
+						$o = "";
+						foreach ( $post_data as $k => $v ) 
+						{
+							$o.= "$k=" . urlencode( $v ). "&" ;
+						}
+						$post_data = substr($o,0,-1);
+						$res = $this->request_post($url, $post_data);
+						// 写入token
+						(new SetArr('taoler'))::edit([
+							'baidu'=> [
+								'access_token'	=> json_decode($res)->access_token,
+							]
+						]);
+						echo 'api接口数据错误,重新自动尝试链接';
+					}
+				}
+			}
+		} else {
+			// 手动添加关键词
+			// 中文一个或者多个空格转换为英文空格
+			$str = preg_replace('/\s+/',' ',$data['tags']);
+			$att = explode(' ', $str);
+			foreach($att as $v){
+				if ($v !='') {
+					$tags[] = $v;
+				}
+			}
+		}
+		
         return json(['code'=>0,'data'=>$tags]);
+    }
+
+	//	api_post接口
+	function request_post($url = '', $param = '') 
+	{
+        if (empty($url) || empty($param)) {
+            return false;
+        }
+        
+        $postUrl = $url;
+        $curlPost = $param;
+        $curl = curl_init();//初始化curl
+        curl_setopt($curl, CURLOPT_URL,$postUrl);//抓取指定网页
+        curl_setopt($curl, CURLOPT_HEADER, 0);//设置header
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
+        curl_setopt($curl, CURLOPT_POST, 1);//post提交方式
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $curlPost);
+        $data = curl_exec($curl);//运行curl
+        curl_close($curl);
+        return $data;
     }
 	
 	//文章置顶，状态
@@ -372,7 +489,12 @@ class Article extends BaseController
 		return json($res);
 	}
 	
-	//内容中是否有图片视频音频插入
+	/**
+	 * 内容中是否有图片视频音频插入
+	 *
+	 * @param [type] $content
+	 * @return boolean
+	 */
 	public function hasIva($content)
 	{
 		//判断是否插入图片

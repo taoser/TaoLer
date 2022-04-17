@@ -12,10 +12,11 @@
                 <li class="layui-this" lay-id="website">网站设置</li>
                 <li lay-id="email">邮箱服务</li>
 				<li lay-id="config">服务配置</li>
+				<li lay-id="domain">域名绑定</li>
               </ul>
               <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
-					<div class="layui-form" wid100 lay-filter="">
+					<div class="layui-form" wid100 lay-filter="website">
 					  <div class="layui-form-item">
 						<label class="layui-form-label">网站名称</label>
 						<div class="layui-input-block">
@@ -128,7 +129,7 @@
 					</div>
                 </div>
                 <div class="layui-tab-item">
-					<div class="layui-form" wid100 lay-filter="">
+					<div class="layui-form" wid100 lay-filter="emai">
 					  <div class="layui-form-item">
 						<label class="layui-form-label">SMTP服务器</label>
 						<div class="layui-input-inline">
@@ -260,6 +261,46 @@
 					  </div>
 					</div>
                 </div>
+
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="domain">
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">多域名开关</label>
+							<div class="layui-input-inline">
+								<input type="checkbox" name="domain_check" lay-skin="switch" lay-filter="domain_check" lay-text="开启|关闭" {if empty(config('app.domain_bind')) == false} checked {/if}>
+							</div>
+						</div>
+						<div id="set_domain" class="{if empty(config('app.domain_bind')) == true} layui-hide {/if}">
+							<div class="layui-form-item">
+								<label class="layui-form-label">Index前端</label>
+								<div class="layui-input-inline">
+								<input type="text" name="index" {if(!empty(config('app.domain_bind'))) } value="{$index}" {/if}  class="layui-input">
+								</div>
+								<div class="layui-form-mid layui-word-aux">如：www.aieok.com</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">Admin后端</label>
+								<div class="layui-input-inline">
+								<input type="text" name="admin" {if(!empty(config('app.domain_bind'))) } value="{$admin}" {/if} class="layui-input">
+								</div>
+								<div class="layui-form-mid layui-word-aux">如：admin.aieok.com</div>
+							</div>
+							
+							<div class="layui-form-item">
+								<div class="layui-input-block">
+								{if condition="checkRuleButton('admin/Set/email')"}
+								<button class="layui-btn" lay-submit lay-filter="set_system_domain">确认保存</button>
+								{else /}<button class="layui-btn layui-btn-disabled">确认保存</button>{/if}
+								</div>
+							</div>
+						</div>
+					</div>
+			
+                </div>
+
+
+
 			  </div>
             </div>
 			
@@ -344,7 +385,44 @@
     });
     return false;
   });
-  
+
+  //网站配置
+	form.on('submit(set_system_domain)', function(data){
+	var field = data.field;
+	$.post("{:url('admin/set/setDomain')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000
+				}, function(){
+					parent.location.href = '/';
+            });
+			} else {
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+
+  form.on('switch(domain_check)', function(data){
+	var data = data.elem;
+	status = data.checked ? 'on' : 'off';
+	if(status == 'on'){
+		$('#set_domain').removeClass('layui-hide');
+	} else {
+		$('#set_domain').addClass('layui-hide');
+		$.post("{:url('admin/set/setDomain')}",{"domain_check":status},function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000
+				}, function(){
+					parent.location.href = '/';
+            });
+			} else {
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			}
+    	});
+	}
+    return false;
+	  
+  });
    //显示当前tab
   if(location.hash){
     element.tabChange('website-tabs-brief', location.hash.replace(/^#/, ''));
