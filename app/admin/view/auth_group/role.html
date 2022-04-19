@@ -27,14 +27,14 @@
       
         <table id="LAY-user-back-role" lay-filter="LAY-user-back-role"></table>  
         <script type="text/html" id="buttonCheck">
-			{if condition="checkRuleButton('admin/AuthGroup/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="rolecheck" lay-text="打开|关闭" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
+			{if condition="checkRuleButton('AuthGroup/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="rolecheck" lay-text="打开|关闭" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
 			{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>
         <script type="text/html" id="table-useradmin-admin">
-		{if condition="checkRuleButton('admin/AuthGroup/roleedit')"}
+		{if condition="checkRuleButton('AuthGroup/roleedit')"}
           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
 		{else /} <a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
-        {if condition="checkRuleButton('admin/AuthGroup/roledel')"}
+        {if condition="checkRuleButton('AuthGroup/roledel')"}
 		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
         {else /} <a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
 		</script>
@@ -74,7 +74,7 @@
 	
 	  $.ajax({
 		type:"post",
-		url:"{:url('admin/AuthGroup/list')}",
+		url:"{:url('AuthGroup/list')}",
 		data:{"id":data.value},
 		daType:"json",
 		success:function (data){
@@ -111,7 +111,7 @@
 	//执行角色审核
 		$.ajax({
 			type:'post',
-			url:"{:url('admin/AuthGroup/check')}",
+			url:"{:url('AuthGroup/check')}",
 			data:{id:data.id,status:data.value,},
 			dataType:'json',
 			success:function(res){
@@ -192,7 +192,7 @@
               //提交 Ajax 成功后，静态更新表格中的数据
               $.ajax({
 				type:"post",
-				url:"{:url('admin/AuthGroup/roleAdd')}",
+				url:"{:url('AuthGroup/roleAdd')}",
 				data:{"rules":rules,"title":field.title,"descr":field.descr},
 				daType:"json",
 				success:function (data){

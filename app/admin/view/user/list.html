@@ -74,21 +74,21 @@
 		{{#  if(d.id == '1'){ }}
 		<input type="checkbox" name="check" lay-skin="switch" disabled lay-text="通过|禁用" value="1" checked id="{{d.id}}">
 		{{#  } else { }}
-		{if condition="checkRuleButton('admin/user/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="usercheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
+		{if condition="checkRuleButton('user/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="usercheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
 		{{#  } }}
         </script>
 		<script type="text/html" id="buttonAuth">
 		{{#  if(d.id == '1'){ }}
 			<input type="checkbox" name="auth" lay-skin="primary"  checked disabled >
 		 {{#  } else { }}
-			{if condition="checkRuleButton('admin/user/auth')"}<input type="checkbox" name="auth" lay-skin="primary" lay-filter="auth" {{# if(d.auth ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs  layui-btn-disabled">无权限</button>{/if}
+			{if condition="checkRuleButton('user/auth')"}<input type="checkbox" name="auth" lay-skin="primary" lay-filter="auth" {{# if(d.auth ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs  layui-btn-disabled">无权限</button>{/if}
 		 {{#  } }}
         </script>
         <script type="text/html" id="table-useradmin-webuser">
-		{if condition="checkRuleButton('admin/user/useredit')"}
+		{if condition="checkRuleButton('user/useredit')"}
           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id={{ d.id }}><i class="layui-icon layui-icon-edit"></i>编辑</a>
 		  {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
-          {if condition="checkRuleButton('admin/user/delete')"}
+          {if condition="checkRuleButton('user/delete')"}
 		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" id={{ d.id }}><i class="layui-icon layui-icon-delete"></i>删除</a>
 		  {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
         </script>
@@ -126,7 +126,7 @@
     //监听搜索
     form.on('submit(LAY-user-front-search)', function(data){
       var field = data.field;
-	  $.post("{:url('admin/User/list')}",field);
+	  $.post("{:url('User/list')}",field);
       //执行重载
       table.reload('LAY-user-manage', {
         where: field
@@ -183,7 +183,7 @@
               //提交 Ajax 成功后，静态更新表格中的数据
               $.ajax({
 				type:"post",
-				url:"{:url('admin/User/userform')}",
+				url:"{:url('User/userform')}",
 				data:{"name":field.username,"phone":field.phone,"email":field.email,"user_img":field.avatar,"sex":field.sex},
 				daType:"json",
 				success:function (data){
@@ -219,7 +219,7 @@
 	//执行用户审核
 		$.ajax({
 			type:'post',
-			url:"{:url('admin/User/check')}",
+			url:"{:url('User/check')}",
 			data:{"id":data.id,"status":status},
 			dataType:'json',
 			success:function(res){
@@ -249,7 +249,7 @@
 	var auth = data.checked ? 1 : 0;
 	$.ajax({
 			type:'post',
-			url:"{:url('admin/User/auth')}",
+			url:"{:url('User/auth')}",
 			data:{"id":data.id,"auth":auth},
 			dataType:'json',
 			success:function(data){

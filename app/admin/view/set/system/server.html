@@ -38,7 +38,7 @@
 										<input type="tel" name="score" lay-verify="required" placeholder="获得积分" autocomplete="off" class="layui-input">
 									</div>
 									<div class="layui-input-inline">
-									{if condition="checkRuleButton('admin/Sign/add')"}
+									{if condition="checkRuleButton('Sign/add')"}
 									<input type="submit" class="layui-btn" lay-submit lay-filter="sign-rule-submit" id="sign-rule-submit" value="立即提交">
 									{else /}<input type="submit" class="layui-btn layui-btn-disabled" value="立即提交">{/if}
 									</div>
@@ -47,10 +47,10 @@
 							<div class="layui-form-item">
 							 <table id="sign-rule" lay-filter="sign-rule"></table>
 							 <script type="text/html" id="sign-rule-button">
-							 {if condition="checkRuleButton('admin/Sign/edit')"}
+							 {if condition="checkRuleButton('Sign/edit')"}
 							 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
 							 {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
-							 {if condition="checkRuleButton('admin/Sign/delete')"}
+							 {if condition="checkRuleButton('Sign/delete')"}
 							 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
 							 {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
 							 </script>
@@ -78,7 +78,7 @@
 										<input type="tel" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input">
 									</div>
 									<div class="layui-input-inline">
-									{if condition="checkRuleButton('admin/Vip/add')"}
+									{if condition="checkRuleButton('Vip/add')"}
 									<input type="submit" class="layui-btn" lay-submit lay-filter="vip-rule-submit" id="vip-rule-submit" value="立即提交">
 									{else /}<input type="submit" class="layui-btn layui-btn-disabled" value="立即提交">{/if}
 									</div>
@@ -88,10 +88,10 @@
 							<div class="layui-form-item">
 							 <table id="vip-rule" lay-filter="vip-rule"></table>
 							 <script type="text/html" id="vip-rule-button">
-							 {if condition="checkRuleButton('admin/Vip/vipEdit')"}
+							 {if condition="checkRuleButton('Vip/vipEdit')"}
 							 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></a>
 							 {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i></a>{/if}
-							 {if condition="checkRuleButton('admin/Vip/delete')"}
+							 {if condition="checkRuleButton('Vip/delete')"}
 							 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
 							 {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i></a>{/if}
 							 </script>
@@ -160,7 +160,7 @@
 			var field = data.field;
 				$.ajax({
 					type:"post",
-					url:"{:url('admin/Vip/add')}",
+					url:"{:url('Vip/add')}",
 					data:field,
 					daType:"json",
 					success:function (data){

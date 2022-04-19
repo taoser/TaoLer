@@ -2,9 +2,9 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-17 16:54:16
+ * @LastEditTime: 2022-04-19 16:48:27
  * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
+ * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
  * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
  */
@@ -16,11 +16,13 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 版本配置
-    'version'   => '1.9.1',
+    'version'   => '1.9.2',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 数据库备份目录
 	'databasebackdir' => app()->getRootPath() .'data/',
+	'article_as'   => 'aa',
+	'cate_as'   => 'column',
 	// 配置
 	'config'	=>[
         'email_notice'	=> 0,
@@ -36,19 +38,29 @@ return [
 	// 百度标签分词
 	'baidu'	=> [
 		'grant_type'	=> '',
-		'client_id'		=> '',
-		'client_secret'	=> '',
+		'client_id'   => 'aa',
+		'client_secret'   => 'aa',
 		'access_token'	=> '',
-		'push_api'		=> '',
+		'push_api'   => 'http://',
 	],
 
 	// sitemap
 	'sitemap' => [
+		// 每次生成数量
 		'map_num'   => '1000',
 		'map_time'	=> 'daily',
 		'map_level'	=> '0.5',
-		'write_id'   => 0,
+		// 已生成id位标记
+		'write_id'   => 12,
 
+	],
+
+	// URL美化
+	'url_rewrite' => [
+		// 详情url
+		'article_as'   => 'article',
+		// 分类url
+		'cate_as'   => 'column',
 	],
 
 	

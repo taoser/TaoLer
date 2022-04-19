@@ -19,7 +19,7 @@
     <!--a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a-->
 	{{#  if(d.id == '1' | d.id == '2' | d.id == '9' | d.id == '10' ){ }}<a class="layui-btn layui-btn-disabled layui-btn-xs">删除</a>
     {{#  } else { }}
-		{if condition="checkRuleButton('admin/authrule/delete')"}<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		{if condition="checkRuleButton('authrule/delete')"}<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 		{else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled">删除</a>{/if}
 	{{#  } }}
 </script>

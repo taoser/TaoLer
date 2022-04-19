@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-04-19 14:06:54
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\app\admin\controller\Set.php
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+ */
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
@@ -10,10 +19,9 @@ use think\facade\Config;
 use app\admin\model\System;
 use app\admin\model\MailServer;
 use taoler\com\Files;
-use app\common\lib\SetConf;
-use app\common\lib\SetArr;
 use think\facade\Session;
 use think\facade\Cookie;
+use taoser\SetArr;
 
 class Set extends AdminController
 {
@@ -35,7 +43,6 @@ class Set extends AdminController
 				'index' => isset($data['index']) ? $data['index'] : '',
 				'admin' => isset($data['admin']) ? $data['admin'] : '',
 			];
-			
 		} else {
 			$domain_bind = [
 				'index' => '',
@@ -73,12 +80,12 @@ class Set extends AdminController
 				$data = array_flip($data);
 				if(empty(config('app.domain_bind'))){
 					// 写入token
-					$res = (new SetArr('app'))::add([
+					$res = SetArr::name('app')->add([
 						'domain_bind'=> $data,
 					]);
 				}else{
 					// 编辑
-					$res = (new SetArr('app'))::edit([
+					$res = SetArr::name('app')->edit([
 						'domain_bind'=> $data,
 					]);
 				}
@@ -86,7 +93,7 @@ class Set extends AdminController
 				Cookie::delete('adminAuth');
 				Session::clear();
 			} else {
-				$res = (new SetArr('app'))::delete([
+				$res = SetArr::name('app')->delete([
 					'domain_bind'=> config('app.domain_bind'),
 				]);		
 			}
@@ -178,14 +185,40 @@ class Set extends AdminController
 				}
 			}
 
-			$setConf = new SetConf;
 			$value = [
 				'config'=>$conf
 			];
-			$upRes = $setConf->setConfig('taoler',$value);
-			return $upRes;
+
+			$result = SetArr::name('taoler')->edit($value);
+			if($result){
+				$res = ['code'=>0,'msg'=>'配置成功'];
+			} else {
+				$res = ['code'=>-1,'msg'=>'配置出错！'];
+			}
+			return json($res);
 		}
     }
+
+	public function setUrl()
+	{
+		//
+		$data = Request::only(['article_as','cate_as']);
+		$arr = [
+			'url_rewrite'=>$data,
+		];
+		if(!array_key_exists('url_rewrite',config('taoler'))){
+			$result = SetArr::name('taoler')->add($arr);
+		} else {
+			$result = SetArr::name('taoler')->edit($arr);
+		}
+		if($result){
+			$res = ['code'=>0,'msg'=>'配置成功'];
+		} else {
+			$res = ['code'=>-1,'msg'=>'配置出错！'];
+		}
+		return json($res);
+
+	}
 
 	//上传logo
 	public function upload()

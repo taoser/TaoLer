@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-04-17 16:55:13
+ * @LastEditTime: 2022-04-19 16:42:47
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -15,7 +15,7 @@ use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\common\lib\SetArr;
+use taoser\SetArr;
 
 class Seo extends AdminController
 {
@@ -34,9 +34,16 @@ class Seo extends AdminController
 
     public function push()
     {
+        $data = Request::only(['start_id','end_id']);
+
         if(empty(config('taoler.baidu.push_api'))) return json(['code'=>-1,'msg'=>'请先配置接口push_api']);
         $urls = [];
-        $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->column('id');
+        if(empty($data['start_id']) || empty($data['end_id'])) {
+            $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->column('id');
+        } else {
+            $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->where('id','between',[$data['start_id'],$data['end_id']])->column('id');
+        }
+
         foreach($artAllId as $aid) {
             $urls[] = $this->getRouteUrl($aid);
         }
@@ -62,9 +69,13 @@ class Seo extends AdminController
         return json(['code'=>0,'msg'=>'成功推送'.$data->success.'条,今天剩余'.$data->remain]);
     }
 
+    /**
+     * 百度接口配置
+     *
+     * @return void
+     */
     public function config()
     {
-        //
         $baidu = [];
         $data = Request::only(['client_id','client_secret','push_api']);
         foreach($data as $k => $v) {
@@ -76,7 +87,7 @@ class Seo extends AdminController
                 }
             }
         }
-        $res = (new SetArr('taoler'))::edit([
+        $res = SetArr::name('taoler')->edit([
             'baidu' => $baidu,
         ]);
         if($res == true){
@@ -150,6 +161,7 @@ class Seo extends AdminController
                     $str .= <<<STR
                     <url>
                         <loc>$url</loc>
+                        <mobile:mobile type="pc,mobile"/>
                         <lastmod>$time</lastmod>
                         <changefreq>daily</changefreq>
                         <priority>0.5</priority>
@@ -188,7 +200,7 @@ class Seo extends AdminController
         }
         while($last_id < (int) $maxId);
         // 写配置，标记最后写入ID
-        $res = (new SetArr('taoler'))::edit([
+        $res = SetArr::name('taoler')->edit([
             'sitemap' => [
                 'map_num'	=> $data['map_num'],
                 'write_id'	=> $last_id,
@@ -255,13 +267,36 @@ class Seo extends AdminController
     {
         $indexUrl = $this->getIndexUrl();
         $artUrl = (string) url('detail_id', ['id' => $aid]);
-        if(empty(config('app.domain_bind'))) {
-            // 未绑定域名
-            $url =  $indexUrl . str_replace('admin','index',$artUrl); 
-        } else {
-            // 单独绑定域名
-            $url =  $indexUrl . $artUrl;
+
+        // 判断是否开启绑定
+        //$domain_bind = array_key_exists('domain_bind',config('app'));
+
+        // 判断index应用是否绑定域名
+        $bind_index = array_search('index',config('app.domain_bind'));
+        // 判断admin应用是否绑定域名
+        $bind_admin = array_search('admin',config('app.domain_bind'));
+
+        // 判断index应用是否域名映射
+        $map_index = array_search('index',config('app.app_map'));
+        // 判断admin应用是否域名映射
+        $map_admin = array_search('admin',config('app.app_map'));
+
+        $index = $map_index ? $map_index : 'index'; // index应用名
+        $admin = $map_admin ? $map_admin : 'admin'; // admin应用名
+
+        if($bind_index) {
+            // index绑定域名
+            $url = $indexUrl . str_replace($admin.'/','',$artUrl);
+        } else { // index未绑定域名
+            // admin绑定域名
+            if($bind_admin) {
+                $url =  $indexUrl .'/' . $index . $artUrl;
+            } else {
+                $url =  $indexUrl . str_replace($admin,$index,$artUrl);
+            }
+            
         }
+
         return $url;
     }
 

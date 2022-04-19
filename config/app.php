@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-17 16:49:19
+ * @LastEditTime: 2022-04-19 16:49:29
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\config\app.php
@@ -30,7 +30,7 @@ return [
     'app_map' => [  
         //'bbs'  =>  'index',  
         //'*'     =>  'home',
-        //'admin' =>  'admin', 
+        //'admin1' =>  'admin', 
     ],
     // 域名绑定（自动多应用模式有效）
     'domain_bind'      => [

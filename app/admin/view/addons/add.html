@@ -70,7 +70,6 @@
       ,method: 'get'
       ,exts: 'zip|rar|7z'
       ,done: function(res){
-        //console.log(res)
 		$(this.item).prev("div").children("input").val(res.src)
 		
 			if(res.code == 0){

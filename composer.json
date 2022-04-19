@@ -29,7 +29,8 @@
         "wamkj/thinkphp6.0-databackup": "^1.0",
         "taoser/think-addons": "^1.0",
         "liliuwei/thinkphp-social": "^1.3",
-        "taoser/think-setarr": "^0.0.3"
+        "taoser/think-setarr": "^0.0.3",
+        "topthink/think-migration": "^3.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

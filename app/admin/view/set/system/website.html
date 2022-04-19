@@ -13,6 +13,7 @@
                 <li lay-id="email">邮箱服务</li>
 				<li lay-id="config">服务配置</li>
 				<li lay-id="domain">域名绑定</li>
+				<li lay-id="url_rewrite">URL美化</li>
               </ul>
               <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
@@ -44,7 +45,7 @@
 						<label class="layui-form-label">LOGO</label>
 						<div class="layui-input-block">
 						<span><img src="{$sysInfo.logo}" hight="40" width="50" ></span>
-						{if condition="checkRuleButton('admin/set/upload')"}
+						{if condition="checkRuleButton('set/upload')"}
 						<button type="button" class="layui-btn layui-btn-normal" id="logo-img">选择文件</button>
 						<button type="button" class="layui-btn" id="logo-upload-button">开始上传</button>
 						{else /}<button type="button" class="layui-btn layui-btn-normal layui-btn-disabled">选择文件</button>{/if}
@@ -121,7 +122,7 @@
 					  </div>
 					  <div class="layui-form-item">
 						<div class="layui-input-block">
-						{if condition="checkRuleButton('admin/Set/website')"}
+						{if condition="checkRuleButton('Set/website')"}
 						  <button class="layui-btn" lay-submit lay-filter="set_website">确认保存</button>
 						{else /}<button class="layui-btn layui-btn-disabled">确认保存</button>{/if}
 						</div>
@@ -164,7 +165,7 @@
 					  </div>
 					  <div class="layui-form-item">
 						<div class="layui-input-block">
-						{if condition="checkRuleButton('admin/Set/email')"}
+						{if condition="checkRuleButton('Set/email')"}
 						  <button class="layui-btn" lay-submit lay-filter="set_system_email">确认保存</button>
 						{else /}<button class="layui-btn layui-btn-disabled">确认保存</button>{/if}
 						</div>
@@ -289,17 +290,38 @@
 							
 							<div class="layui-form-item">
 								<div class="layui-input-block">
-								{if condition="checkRuleButton('admin/Set/email')"}
+								{if condition="checkRuleButton('Set/email')"}
 								<button class="layui-btn" lay-submit lay-filter="set_system_domain">确认保存</button>
 								{else /}<button class="layui-btn layui-btn-disabled">确认保存</button>{/if}
 								</div>
 							</div>
 						</div>
 					</div>
-			
                 </div>
 
-
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="url_rewrite">
+						<div class="layui-form-item">
+							<label class="layui-form-label">帖子别名</label>
+							<div class="layui-input-inline">
+							<input type="text" name="article_as" required value="{:config('taoler.url_rewrite.article_as')}" class="layui-input">
+							</div>
+							<div id="artdesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/article/1.html</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">分类别名</label>
+							<div class="layui-input-inline">
+							<input type="text" name="cate_as" required value="{:config('taoler.url_rewrite.cate_as')}" class="layui-input">
+							</div>
+							<div id="catedesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/cate/ask.html</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="set_url_rewrite">确认保存</button>
+							</div>
+						</div>
+					</div>
+                </div>
 
 			  </div>
             </div>
@@ -327,7 +349,7 @@
 	//LOGO选完文件后不自动上传
 	  upload.render({
 		elem: '#logo-img'
-		,url: "{:url('admin/set/upload')}"
+		,url: "{:url('set/upload')}"
         ,data: {type:'image'}
 		,auto: false
 		,exts: 'jpg|png|gif|bmp|jpeg'
@@ -348,7 +370,7 @@
 	//网站配置
 	form.on('submit(set_system_config)', function(data){
 	var field = data.field;
-	$.post("{:url('admin/set/config')}",field,function(res){
+	$.post("{:url('set/config')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000
 				});
@@ -361,7 +383,7 @@
   //邮箱发送测试码
   form.on('submit(test_system_email)', function(data){
 	var field = data.field;
-	$.post("{:url('admin/set/sendMailCode')}",field,function(res){
+	$.post("{:url('set/sendMailCode')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000
 				});
@@ -375,7 +397,7 @@
   //邮箱激活
   form.on('submit(active_system_email)', function(data){
 	var field = data.field;
-	$.post("{:url('admin/set/activeMailServer')}",field,function(res){
+	$.post("{:url('set/activeMailServer')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000
 				});
@@ -389,7 +411,7 @@
   //网站配置
 	form.on('submit(set_system_domain)', function(data){
 	var field = data.field;
-	$.post("{:url('admin/set/setDomain')}",field,function(res){
+	$.post("{:url('set/setDomain')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000
 				}, function(){
@@ -402,6 +424,33 @@
     return false;
   });
 
+    // URL美化
+	form.on('submit(set_url_rewrite)', function(data){
+	var field = data.field;
+	$.post("{:url('set/setUrl')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000
+				}, function(){
+					//parent.location.href = '/';
+            });
+			} else {
+				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+
+  // 获取描述的内容
+  $("input[name='article_as']").bind('input propertychange', function(){
+      var content = $(this).val()
+      $('#artdesc').html('如：www.aieok.com/'+  content +'/1.html');
+    })
+	$("input[name='cate_as']").bind('input propertychange', function(){
+      var content = $(this).val()
+      $('#catedesc').html('如：www.aieok.com/'+  content +'/ask.html');
+    })
+
+
   form.on('switch(domain_check)', function(data){
 	var data = data.elem;
 	status = data.checked ? 'on' : 'off';
@@ -409,7 +458,7 @@
 		$('#set_domain').removeClass('layui-hide');
 	} else {
 		$('#set_domain').addClass('layui-hide');
-		$.post("{:url('admin/set/setDomain')}",{"domain_check":status},function(res){
+		$.post("{:url('set/setDomain')}",{"domain_check":status},function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000
 				}, function(){

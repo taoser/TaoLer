@@ -51,7 +51,7 @@
 		{
 			//var index = layer.load();
 			$.ajax({
-				url: "{:url('admin/Databackup/backup')}",
+				url: "{:url('Databackup/backup')}",
 				type: 'POST', //POST
 				async: true, //或false,是否异步
 				dataType: 'json',
@@ -85,7 +85,7 @@
 	//总帐信息
     table.render({
         elem: '#LAY-app-content-ledger'
-        ,url: "{:url('admin/Database/index')}"	//进列表接口
+        ,url: "{:url('Database/index')}"	//进列表接口
         ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
         ,defaultToolbar: ['filter', 'exports', 'print']
         ,cols: [[

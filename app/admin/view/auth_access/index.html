@@ -27,13 +27,13 @@
       
         <table id="LAY-user-back-group" lay-filter="LAY-user-back-group"></table>  
         <script type="text/html" id="buttonCheck">
-			{if condition="checkRuleButton('admin/AuthAccess/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="groupcheck" lay-text="开启|禁用" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
+			{if condition="checkRuleButton('AuthAccess/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="groupcheck" lay-text="开启|禁用" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>
         <script type="text/html" id="table-useradmin-admin">
-		{if condition="checkRuleButton('admin/AuthAccess/edit')"}
+		{if condition="checkRuleButton('AuthAccess/edit')"}
           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
 		{else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
-        {if condition="checkRuleButton('admin/AuthAccess/delete')"}
+        {if condition="checkRuleButton('AuthAccess/delete')"}
 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
         {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
 		</script>
@@ -72,7 +72,7 @@
     form.on('select(LAY-admin-group-type)', function(data){
 	  $.ajax({
 		type:"post",
-		url:"{:url('admin/AuthAccess/index')}",
+		url:"{:url('AuthAccess/index')}",
 		data:{"uid":data.value},
 		daType:"json",
 		success:function (data){

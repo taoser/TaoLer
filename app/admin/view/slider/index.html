@@ -41,7 +41,7 @@
 						<th>{$vo.slid_status ?'显示':'禁止'}</th>
 						<th>
 						<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id-data="{$vo.id}"><i class="layui-icon layui-icon-edit"></i></a>
-						{if condition="checkRuleButton('admin/Slider/delete')"}
+						{if condition="checkRuleButton('Slider/delete')"}
 						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" id-data="{$vo.id}"><i class="layui-icon layui-icon-delete"></i></a>
 						{else /}<a class="layui-btn layui-btn-disabled layui-btn-danger layui-btn-xs"><i class="layui-icon layui-icon-delete"></i></a>{/if}
 						</th>
@@ -95,7 +95,7 @@
               //提交 Ajax 成功后，静态更新表格中的数据
               $.ajax({
 				type:"post",
-				url:"{:url('admin/slider/add')}",
+				url:"{:url('slider/add')}",
 				data:{"slid_type":field.slid_type,"slid_name":field.slid_name,"slid_color":field.slid_color,"slid_start":field.slid_start,"slid_over":field.slid_over,"slid_href":field.slid_href,"slid_img":field.slid_img},
 				daType:"json",
 				success:function (data){
@@ -145,7 +145,7 @@
               //提交 Ajax 成功后，静态更新表格中的数据
               $.ajax({
 				type:"post",
-				url:"{:url('admin/slider/edit')}",
+				url:"{:url('slider/edit')}",
 				data:{"id":id,"slid_type":field.slid_type,"slid_name":field.slid_name,"slid_color":field.slid_color,"slid_start":field.slid_start,"slid_over":field.slid_over,"slid_href":field.slid_href,"slid_img":field.slid_img},
 				daType:"json",
 				success:function (data){
@@ -180,7 +180,7 @@
 				  //提交 Ajax 成功后，静态更新表格中的数据
 				  $.ajax({
 					type:"post",
-					url:"{:url('admin/slider/delete')}",
+					url:"{:url('slider/delete')}",
 					data:{"id":id},
 					daType:"json",
 					success:function (data){

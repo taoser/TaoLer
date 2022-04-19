@@ -23,11 +23,9 @@ use taoler\com\Str;
 use taoler\com\Files;
 use think\facade\Config;
 use think\facade\Log;
-use app\common\lib\ZipFile;
-use app\common\lib\SetConf;
-use app\common\lib\SetArr;
 use app\common\lib\SqlFile;
 use app\common\lib\Zip;
+use taoser\SetArr;
 
 class Upgrade extends AdminController
 {
@@ -218,16 +216,15 @@ class Upgrade extends AdminController
 		
 		//更新版本
 		//Db::name('system')->update(['sys_version_num'=>$version_num,'id'=>1]);
-        $setConf = new SetConf;
+        
         $value = [
             'version'    => $version_num
         ];
-
-		$upRes = $setConf->setConfig('taoler',$value);
-		$result = $upRes->getData();
-		if($result['code'] == -1){
-			return json(['code'=>-1,'msg'=>'代码写入成功,但'.$result['msg']]);
+		$res = SetArr::name('taoler')->edit($value);
+		if($res == false){
+			return json(['code'=>-1,'msg'=>'代码更新成功,但版本写入失败']);
 		}
+
 		return json(['code'=>0,'msg'=>'升级成功']);
 		
     }
@@ -363,16 +360,15 @@ class Upgrade extends AdminController
 
         //更新版本
         //Db::name('system')->update(['sys_version_num'=>$version_num,'id'=>1]);
-        $setConf = new SetConf;
+   
         $value = [
             'version'    => $version_num
         ];
+		$res = SetArr::name('taoler')->edit($value);
+		if($res == false){
+			return json(['code'=>-1,'msg'=>'代码更新成功,但版本写入失败']);
+		}
 
-        $upRes = $setConf->setConfig('taoler',$value);
-        $result = $upRes->getData();
-        if($result['code'] == -1){
-            return json(['code'=>-1,'msg'=>$result['msg']]);
-        }
         return json(['code'=>0,'msg'=>'升级成功']);
     }
 

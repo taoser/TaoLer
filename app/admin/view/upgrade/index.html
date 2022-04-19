@@ -17,7 +17,7 @@
 					</div>
 					<div class="layui-input-inline layui-input-company"><button style="float: left;" type="button" class="layui-btn layui-btn-sm" id="upgrade-key">保存</button></div>
 					<div class="layui-form-mid layui-word-aux" >无Key不能升级</div>
-					<div class="layui-form-mid layui-word-aux " ><a href="http://bbs.aieok.com/Api/key.html" target="_blank">去官网申请Key</a></div>
+					<div class="layui-form-mid layui-word-aux " ><a href="https://www.aieok.com/bbs/Api/key.html" target="_blank">去官网申请Key</a></div>
 				</div>
 				{else /}
 				<div class="layui-form-item">
@@ -27,7 +27,7 @@
 					</div>
 					<div class="layui-form-mid layui-word-aux " ><span style="color:red">{$ver_num.key}</span></div>
 					<div class="layui-input-inline layui-input-company">
-					{if condition="checkRuleButton('admin/Upgrade/keyedit')"}
+					{if condition="checkRuleButton('Upgrade/keyedit')"}
 					<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id-data="{:url('upgrade/keyedit')}" ><i class="layui-icon layui-icon-edit"></i>修改？</a>
 					{else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled" ><i class="layui-icon layui-icon-edit"></i>修改？</a>{/if}
 					</div>
@@ -36,7 +36,7 @@
 					<label class="layui-form-label">在线升级</label>
 					<div class="layui-input-inline layui-input-company" id="ver_nums" >当前版本：Taoler v_{:config('taoler.version')}</div>
 					<div class="layui-upload">
-					{if condition="checkRuleButton('admin/Upgrade/check')"}
+					{if condition="checkRuleButton('Upgrade/check')"}
 					<button type="button" class="layui-btn layui-btn-sm" data-url="{$ver_num.upcheck_url}" id="upload-check">检查更新</button>
 					{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">检查更新</button>{/if}
 					</div>
@@ -44,7 +44,7 @@
 				<div class="layui-form-item">
                 <label class="layui-form-label">手动更新</label>
 					<div class="layui-upload">
-					{if condition="checkRuleButton('admin/Upgrade/uploadzip')"}
+					{if condition="checkRuleButton('Upgrade/uploadzip')"}
 					  <button type="button" class="layui-btn layui-btn-sm" id="select-file">选择文件</button>
 					  <button type="button" class="layui-btn layui-btn-sm" id="upgrade-sys-button">开始升级</button>
 					{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">无权限</button>{/if}
@@ -91,7 +91,7 @@
                     shade: [0.2, '#000'],
 					//time: 2000,
                 });
-		$.get("{:url('admin/upgrade/check')}",function (data){
+		$.get("{:url('upgrade/check')}",function (data){
 				if (data.code == 0) {
 					//已件最新版本
 					layer.close(loading);
@@ -130,7 +130,7 @@
 	//更新
 	function uploads(){
 		var load = layer.load(); //loading
-		$.get("{:url('admin/upgrade/upload')}",function (data){
+		$.get("{:url('upgrade/upload')}",function (data){
 				if (data.code == 0) {
 					layer.close(load);
 					layer.msg(data.msg,{
@@ -151,7 +151,7 @@
 	//手动更新，选完文件后不自动上传
 	upload.render({
 		elem: '#select-file'
-		,url: "{:url('admin/upgrade/uploadzip')}"
+		,url: "{:url('upgrade/uploadzip')}"
         ,data: {type:'zip'}
 		,accept: 'file'
         ,acceptMime: 'application/zip'
@@ -198,7 +198,7 @@
 
 		$.ajax({
 			type:"post",
-			url:"{:url('admin/upgrade/key')}",
+			url:"{:url('upgrade/key')}",
 			data:{"key":key},
 			daType:"json",
 			success:function (data){
@@ -245,7 +245,7 @@
               //提交 Ajax 成功后，静态更新表格中的数据
 				$.ajax({
 					type:"post",
-					url:"{:url('admin/upgrade/keyedit')}",
+					url:"{:url('upgrade/keyedit')}",
 					data:{"key":field.key,"upcheck_url":field.upcheck_url,"upgrade_url":field.upgrade_url},
 					daType:"json",
 					success:function (data){

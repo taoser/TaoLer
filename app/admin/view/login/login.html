@@ -33,7 +33,7 @@
         </div>
         <div class="layui-form-item" style="margin-bottom: 20px;">
           <input type="checkbox" name="remember" lay-skin="primary" title="记住密码">
-          <a href="{:url('admin/login/forget')}" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
+          <a href="{:url('login/forget')}" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
         </div>
         <div class="layui-form-item">
 			<input type="hidden" class="layui-hide" name="__token__" value="{:token()}" />
@@ -44,7 +44,7 @@
           <a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
           <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
           <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
-          <a href="{:url('admin/login/reg')}" class="layadmin-user-jump-change layadmin-link">注册帐号</a>
+          <a href="{:url('login/reg')}" class="layadmin-user-jump-change layadmin-link">注册帐号</a>
         </div-->
       {:hook('socialhook')}
       </div>

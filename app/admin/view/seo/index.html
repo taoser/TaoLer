@@ -1,32 +1,72 @@
 {extend name="public/base" /}
 
 {block name="body"}
-  <div class="layui-fluid" id="component-tabs">
+<div class="layui-fluid" id="component-tabs">
     <div class="layui-row">
       <div class="layui-col-md12">
         <div class="layui-card">
           <div class="layui-card-body">
-		  
             <div class="layui-tab layui-tab-card" lay-filter="seo-tabs-brief">
-              <ul class="layui-tab-title">
-                <li class="layui-this" lay-id="push">百度推送</li>
-                <li lay-id="map">站点地图</li>
+				<ul class="layui-tab-title">
+				<li lay-id="config"><span style="color:red">* </span>接口配置</li>
+				<li class="layui-this" lay-id="push">百度推送</li>
+				<li lay-id="map">站点地图</li>
 				<li lay-id="robots">robots</li>
-				<li lay-id="config">* 接口配置</li>
-              </ul>
+				</ul>
               <div class="layui-tab-content">
-                <div class="layui-tab-item layui-show">
-					<div class="layui-form" wid100 lay-filter="push">					  
-					  <div class="layui-form-item">
-						<label class="layui-form-label">链接提交</label>
-						<div class="layui-input-block">
-							{if condition="checkRuleButton('Seo/push')"}
-							<button class="layui-btn" lay-submit lay-filter="search_push">提交推送</button>
-							{else /}
-							<button class="layui-btn layui-btn-disabled">提交推送</button>
-							{/if}
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="config">
+						<div class="layui-form-item">
+						<label class="layui-form-label">key</label>
+						<div class="layui-input-inline">
+							<input type="text" name="client_id" value="{:config('taoler.baidu.client_id')}" class="layui-input">
 						</div>
-					  </div>
+						<div class="layui-form-mid layui-word-aux">百度分词API Key</div>
+						</div>
+						<div class="layui-form-item">
+						<label class="layui-form-label">secret</label>
+						<div class="layui-input-inline">
+							<input type="text" name="client_secret" value="{:config('taoler.baidu.client_secret')}" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux">百度分词Secret Key</div>
+						</div>
+						<div class="layui-form-item">
+						<label class="layui-form-label">推送接口</label>
+						<div class="layui-input-inline">
+							<input type="text" name="push_api" value="{:config('taoler.baidu.push_api')}" placeholder="http://完整的接口地址" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux">接口调用地址:http://data.zz.baidu.com/urls?site=https://www.youurl.com&token=yuotoken</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="baidu_config">确认保存</button>
+							</div>
+						</div>
+					</div>
+                </div>
+                <div class="layui-tab-item layui-show">
+					<div class="layui-form" wid100 lay-filter="push">
+						<div class="layui-form-item">
+							<label class="layui-form-label">推送范围</label>
+							<div class="layui-input-inline" style="width: 100px;">
+								<input type="text" name="start_id" value="" placeholder="开始ID" class="layui-input" >
+							</div>
+							<div class="layui-form-mid">-</div>
+							<div class="layui-input-inline" style="width: 100px;">
+								<input type="text" name="end_id" placeholder="结束ID" autocomplete="off" class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux">帖子ID范围,如果不填，默认全站提交</div>
+						</div>					  
+						<div class="layui-form-item">
+							<label class="layui-form-label">推送至API</label>
+							<div class="layui-input-block">
+								{if condition="checkRuleButton('Seo/push')"}
+								<button class="layui-btn" lay-submit lay-filter="search_push">提交推送</button>
+								{else /}
+								<button class="layui-btn layui-btn-disabled">提交推送</button>
+								{/if}
+							</div>
+						</div>
 					</div>
                 </div>
                 <div class="layui-tab-item">
@@ -76,36 +116,7 @@
 						</div>
 					</div>
                 </div>
-				<div class="layui-tab-item">
-					<div class="layui-form" wid100 lay-filter="config">
-						<div class="layui-form-item">
-						<label class="layui-form-label">key</label>
-						<div class="layui-input-inline">
-							<input type="text" name="client_id" value="{:config('taoler.baidu.client_id')}" class="layui-input">
-						</div>
-						<div class="layui-form-mid layui-word-aux">百度分词API Key</div>
-						</div>
-						<div class="layui-form-item">
-						<label class="layui-form-label">secret</label>
-						<div class="layui-input-inline">
-							<input type="text" name="client_secret" value="{:config('taoler.baidu.client_secret')}" class="layui-input">
-						</div>
-						<div class="layui-form-mid layui-word-aux">百度分词Secret Key</div>
-						</div>
-						<div class="layui-form-item">
-						<label class="layui-form-label">收录token</label>
-						<div class="layui-input-inline">
-							<input type="text" name="push_api" value="{:config('taoler.baidu.push_api')}" class="layui-input">
-						</div>
-						<div class="layui-form-mid layui-word-aux">百度准入密钥</div>
-						</div>
-						<div class="layui-form-item">
-							<div class="layui-input-block">
-							<button class="layui-btn" lay-submit lay-filter="baidu_config">确认保存</button>
-							</div>
-						</div>
-					</div>
-                </div>
+
 			  </div>
             </div>
 			
@@ -131,8 +142,8 @@
 
 	// baidu push
 	form.on('submit(search_push)', function(data){
-	//var field = data.field;
-	$.post("{:url('seo/push')}",function(res){
+	var field = data.field;
+	$.post("{:url('seo/push')}",field,function(res){
         if(res.code == 0){
 			layer.msg(res.msg,{icon:6,tiye:2000
 			});

@@ -10,8 +10,6 @@ use think\facade\Config;
 use app\admin\model\Addons as AddonsModel;
 use taoler\com\Files;
 use taoler\com\Api;
-use app\common\lib\SetConf;
-use think\App;
 use app\common\lib\Zip;
 
 class Addons extends AdminController

@@ -265,7 +265,7 @@ INSERT INTO `tao_auth_rule` VALUES ('96', 'Database/delete', '备份删除', '',
 INSERT INTO `tao_auth_rule` VALUES ('97', 'addons', '插件', '', '1', '1', '0', '0', 'layui-icon-flag', '1', '2', '', '1635757328', '1635757632', '0');
 INSERT INTO `tao_auth_rule` VALUES ('98', 'Addons/index', '插件市场', '', '1', '1', '97', '1', '', '1', '0', '', '1635757426', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('99', 'Addons/addonsList', '插件列表', '', '1', '1', '98', '2', '', '-1', '0', '', '1638775199', '0', '0');
-INSERT INTO `tao_auth_rule` VALUES ('111','Seo/index','SEO','1','1','0','0','layui-icon-component','1','7','','1649829142','0','0');
+INSERT INTO `tao_auth_rule` VALUES ('111','Seo/index','SEO', '', '1','1','0','0','layui-icon-component','1','7','','1649829142','0','0');
 
 -- ----------------------------
 -- Table structure for tao_cate
