@@ -436,6 +436,20 @@ CREATE TABLE `tao_message_to` (
 -- Records of tao_message_to
 -- ----------------------------
 
+--
+-- 表的结构 `tao_push_jscode`
+--
+
+CREATE TABLE `tao_push_jscode` (
+  `id` int(2) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '平台名',
+  `jscode` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'js代码',
+  `create_time` int NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` int NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `delete_time` int NOT NULL DEFAULT '0' COMMENT '删除时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='站长平台自动推送js代码';
+
 -- ----------------------------
 -- Table structure for tao_slider
 -- ----------------------------
