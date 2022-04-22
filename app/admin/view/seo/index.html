@@ -12,6 +12,7 @@
 				<li class="layui-this" lay-id="push">百度推送</li>
 				<li lay-id="map">站点地图</li>
 				<li lay-id="robots">robots</li>
+				<li lay-id="push_js">自动提交</li>
 				</ul>
               <div class="layui-tab-content">
 				<div class="layui-tab-item">
@@ -97,6 +98,12 @@
 							<button class="layui-btn" lay-submit lay-filter="map_xml">生成</button>
 						</div>
 						</div>
+						<hr>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<textarea type="text" class="layui-textarea" style="height: 300px;">{$xml}</textarea>
+							</div>
+						</div>
 					</div>
 
                 </div>
@@ -105,7 +112,7 @@
 						<div class="layui-form-item">
 							<label class="layui-form-label">内容</label>
 							<div class="layui-input-block">
-								<textarea type="text" name="robots" placeholder="请正确填写robots内容" class="layui-textarea" style="height: 500px;">{$robots}</textarea>
+								<textarea type="text" name="robots" placeholder="请正确填写robots内容" class="layui-textarea" style="height: 400px;">{$robots}</textarea>
 								<div class="layui-form-mid layui-word-aux">会自动写入sitemap的链接</div>
 							</div>
 						</div>
@@ -115,6 +122,47 @@
 						</div>
 						</div>
 					</div>
+                </div>
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="push_js">
+						<div class="layui-form-item">
+							<label class="layui-form-label">名称</label>
+							<div class="layui-input-inline">
+								<input type="text" name="name" required placeholder="请正确填写js平台名称" class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux">js自动收录平台</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">JS代码</label>
+							<div class="layui-input-block">
+								<textarea type="text" name="jscode" required placeholder="请正确填写robots内容" class="layui-textarea" style="height: 200px;"></textarea>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn layui-btn-danger" lay-submit lay-filter="push_jscode_submit">新增</button>
+							</div>
+						</div>
+					</div>
+
+					{volist name="jscode" id="vo"}
+					<hr>
+					<div class="layui-form" wid100>
+						<div class="layui-form-item">
+							<label class="layui-form-label">{$vo.name}</label>
+							<div class="layui-input-block">
+								<textarea type="text" name="jscode" placeholder="请正确填写robots内容" class="layui-textarea" style="height: 200px;">{$vo.jscode}</textarea>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<input type="text" name="id" class="layui-hide" value="{$vo.id}">
+								<button class="layui-btn layui-btn-sm" lay-submit lay-filter="push_jscode_del">删除</button>
+							</div>
+						</div>
+					</div>
+					{/volist}
+
                 </div>
 
 			  </div>
@@ -145,10 +193,11 @@
 	var field = data.field;
 	$.post("{:url('seo/push')}",field,function(res){
         if(res.code == 0){
-			layer.msg(res.msg,{icon:6,tiye:2000
-			});
+			layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
 		} else {
-			layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+			layer.open({title:"推送失败",content:res.msg,icon:5,anim:6});
 		}
     });
     return false;
@@ -159,10 +208,11 @@
 	var field = data.field;
 	$.post("{:url('seo/config')}",field,function(res){
         if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
 				});
 			} else {
-				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+				layer.open({title:"配置失败",content:res.msg,icon:5,anim:6});
 			}
     });
     return false;
@@ -173,21 +223,23 @@
 	var field = data.field;
 	$.post("{:url('seo/map')}",field,function(res){
         if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
 				});
 			} else {
-				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+				layer.open({title:"生成失败",content:res.msg,icon:5,anim:6});
 			}
     });
     return false;
   });
 
-  // map
+  // robots
   form.on('submit(robots_submit)', function(data){
 	var field = data.field;
 	$.post("{:url('seo/robots')}",field,function(res){
         if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
 				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
@@ -196,12 +248,40 @@
     return false;
   });
 
+  // 添加自动提交JS代码
+  form.on('submit(push_jscode_submit)', function(data){
+	var field = data.field;
+	$.post("{:url('seo/savePushJs')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
+			} else {
+				layer.open({title:"添加失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+
+  // 删除自动提交JS代码
+  form.on('submit(push_jscode_del)', function(data){
+	var field = data.field;
+	$.post("{:url('seo/delPushJs')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
+			} else {
+				layer.open({title:"删除失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
   
-   //显示当前tab
+   // 显示当前tab
   if(location.hash){
     element.tabChange('seo-tabs-brief', location.hash.replace(/^#/, ''));
   }
-
   element.on('tab(seo-tabs-brief)', function(){
     var othis = $(this), layid = othis.attr('lay-id');
     if(layid){

@@ -3,6 +3,7 @@ namespace app\index\controller;
 
 use app\common\controller\BaseController;
 use think\facade\Session;
+use think\facade\Cache;
 use app\common\model\Comment as CommentModel;
 use app\common\model\Article;
 use app\common\model\UserZan;
@@ -22,6 +23,8 @@ class Comment extends BaseController
 				if($jie){
 					$res['status'] = 0; 
 				}
+			// 清除文章tag缓存
+			Cache::tag('tagArtDetail')->clear();
         }
 	 return json($res);
     }

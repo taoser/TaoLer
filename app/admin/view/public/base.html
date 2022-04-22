@@ -1,3 +1,12 @@
+<!--
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-04-21 11:05:47
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\app\admin\view\public\base.html
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +19,7 @@
   <link rel="stylesheet" href="/static/admin/style/admin.css" media="all">
   {block name="css"}{/block}
 </head>
-<body {if($Request.url=='/admin/index/index')}class="layui-layout-body"{/if}>
+<body {if($Request.url==url('index/index'))}class="layui-layout-body"{/if}>
 {block name="body"}内容{/block}
 <script src="/static/layui/jquery.min.js" charset="utf-8"></script>
 <script src="/static/layui/layui.js"></script>

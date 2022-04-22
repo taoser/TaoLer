@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-04-19 16:42:47
+ * @LastEditTime: 2022-04-21 11:39:38
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -16,19 +16,30 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use taoser\SetArr;
+use app\admin\model\PushJscode;
 
 class Seo extends AdminController
 {
 
     public function index()
     {
+        // 站点地图
+        $xml = '';
+        $xmlArr = $this->getXmlFile(public_path());
+        foreach($xmlArr as $v) {
+            $map =  $this->getIndexUrl().'/'.$v;
+            $xml .= $map."\n";                  
+        }
+        // robots
         if(is_file($rob = public_path().'robots.txt')){
             $robots = file_get_contents($rob);
         } else {
             $robots = '';
-        }
-        
-        View::assign('robots',$robots);
+        }     
+        // push_js
+        $pushjs = new PushJscode();
+        $jscode = $pushjs->getAllCodes();
+        View::assign(['xml'=>$xml,'jscode'=>$jscode,'robots'=>$robots]);
         return View::fetch();
     }
 
@@ -161,7 +172,6 @@ class Seo extends AdminController
                     $str .= <<<STR
                     <url>
                         <loc>$url</loc>
-                        <mobile:mobile type="pc,mobile"/>
                         <lastmod>$time</lastmod>
                         <changefreq>daily</changefreq>
                         <priority>0.5</priority>
@@ -258,46 +268,41 @@ class Seo extends AdminController
     }
 
     /**
-     * 获取文章链接地址
+     * 保存搜索平台js代码
      *
-     * @param integer $aid
-     * @return string
+     * @return void
      */
-    protected function getRouteUrl(int $aid) : string
+    public function savePushJs()
     {
-        $indexUrl = $this->getIndexUrl();
-        $artUrl = (string) url('detail_id', ['id' => $aid]);
-
-        // 判断是否开启绑定
-        //$domain_bind = array_key_exists('domain_bind',config('app'));
-
-        // 判断index应用是否绑定域名
-        $bind_index = array_search('index',config('app.domain_bind'));
-        // 判断admin应用是否绑定域名
-        $bind_admin = array_search('admin',config('app.domain_bind'));
-
-        // 判断index应用是否域名映射
-        $map_index = array_search('index',config('app.app_map'));
-        // 判断admin应用是否域名映射
-        $map_admin = array_search('admin',config('app.app_map'));
-
-        $index = $map_index ? $map_index : 'index'; // index应用名
-        $admin = $map_admin ? $map_admin : 'admin'; // admin应用名
-
-        if($bind_index) {
-            // index绑定域名
-            $url = $indexUrl . str_replace($admin.'/','',$artUrl);
-        } else { // index未绑定域名
-            // admin绑定域名
-            if($bind_admin) {
-                $url =  $indexUrl .'/' . $index . $artUrl;
-            } else {
-                $url =  $indexUrl . str_replace($admin,$index,$artUrl);
-            }
-            
+        $data = Request::only(['name','jscode']);
+        if(empty($data['name'])) {
+            return json(['code'=>-1,'msg'=>'请术输入名称']);
         }
+        if(empty($data['jscode'])){
+            return json(['code'=>-1,'msg'=>'请术输入代码']);
+        }
+        $push = new PushJscode();
+        $res = $push->saveCode($data);
+        if(!$res) {
+            return json(['code'=>-1,'msg'=>'保存失败']);
+        }
+        return json(['code'=>0,'msg'=>'保存成功']);
+    }
 
-        return $url;
+    /**
+     * 删除平台js代码
+     *
+     * @return void
+     */
+    public function delPushJs()
+    {
+        $id = (int) input('id');
+        $push = new PushJscode();
+        $res = $push->delCode($id);
+        if(!$res) {
+            return json(['code'=>-1,'msg'=>'删除失败']);
+        }
+        return json(['code'=>0,'msg'=>'删除成功']);
     }
 
 }

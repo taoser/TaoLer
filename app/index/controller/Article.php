@@ -14,8 +14,7 @@ use think\exception\ValidateException;
 use taoler\com\Message;
 use app\common\lib\Msgres;
 use app\common\lib\Uploads;
-use app\common\lib\SetArr;
-use taoler\com\Api;
+use taoser\SetArr;
 
 class Article extends BaseController
 {
@@ -94,8 +93,9 @@ class Article extends BaseController
         $ad_artImg = $ad->getSliderList(4);
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(7);
+		$push_js = Db::name('push_jscode')->where(['delete_time'=>0])->cache(true)->select();
 		
-		View::assign(['article'=>$artDetail,'pv'=>$pv,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'page'=>$page,'comments'=>$comments,'jspage'=>'jie']);
+		View::assign(['article'=>$artDetail,'pv'=>$pv,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'page'=>$page,'comments'=>$comments,'jspage'=>'jie','push_js'=>$push_js]);
 		return View::fetch('article/'.$tpl.'/detail');
     }
 	
@@ -345,7 +345,7 @@ class Article extends BaseController
 		if($data['flag'] == 'on') {
 			// 百度分词自动生成关键词
 			if(!empty(config('taoler.baidu.client_id')) == true) {
-				$url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+				$url = config('taoler.baidu.push_api');
 
 				//headers数组内的格式
 				$headers = array();
@@ -391,7 +391,7 @@ class Article extends BaseController
 						$post_data = substr($o,0,-1);
 						$res = $this->request_post($url, $post_data);
 						// 写入token
-						(new SetArr('taoler'))::edit([
+						SetArr::name('taoler')->edit([
 							'baidu'=> [
 								'access_token'	=> json_decode($res)->access_token,
 							]

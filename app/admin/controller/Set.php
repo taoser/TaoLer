@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-19 14:06:54
+ * @LastEditTime: 2022-04-22 06:30:01
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Set.php
@@ -22,6 +22,7 @@ use taoler\com\Files;
 use think\facade\Session;
 use think\facade\Cookie;
 use taoser\SetArr;
+use app\common\lib\SetArr as SetArrConf;
 
 class Set extends AdminController
 {
@@ -30,13 +31,22 @@ class Set extends AdminController
         parent::initialize();
 		$this->sysInfo = $this->getSystem();
     }
+
 	//网站设置显示
 	public function index()
     {
 		$mailserver = MailServer::find(1);
 		$template = Files::getDirName('../view');
 		$email = Db::name('admin')->where('id',1)->value('email');
-        View::assign(['sysInfo'=>$this->sysInfo,'mailserver'=>$mailserver,'template'=>$template,'email'=>$email]);
+
+		// 应用映射
+		$index_map = array_search('index',config('app.app_map'));
+		$admin_map = array_search('admin',config('app.app_map'));
+		$index_map = $index_map ? $index_map : '';
+		$admin_map = $admin_map ? $admin_map : '';
+        View::assign(['sysInfo'=>$this->sysInfo,'mailserver'=>$mailserver,'template'=>$template,'email'=>$email,'index_map'=>$index_map,'admin_map'=>$admin_map]);
+		
+		// 域名绑定
 		if(!empty(config('app.domain_bind'))){
 			$data = array_flip(config('app.domain_bind'));
 			$domain_bind = [
@@ -50,6 +60,20 @@ class Set extends AdminController
 			];
 		}
 		View::assign($domain_bind);
+
+		// url美化
+		$urlArr = config('taoler.url_rewrite');
+		$urlRe = [];
+		foreach($urlArr as $k => $v) {
+			if(!empty($v)) {
+				$urlRe[$k] = substr($v, 0, strrpos($v, '/'));
+			} else {
+				$urlRe[$k] = '';
+			}
+ 		}
+		 
+		 View::assign('url_re',$urlRe);
+
 		return View::fetch('set/system/website');
     }
 	
@@ -67,44 +91,6 @@ class Set extends AdminController
 			}
 		}
     }
-
-	// 域名绑定
-	public function setDomain()
-	{
-		if(Request::isPost()){
-			//$data = Request::only(['index','admin']);
-			$data = Request::param();
-			//dump($data);
-			if($data['domain_check'] == 'on') {
-				unset($data['domain_check']);
-				$data = array_flip($data);
-				if(empty(config('app.domain_bind'))){
-					// 写入token
-					$res = SetArr::name('app')->add([
-						'domain_bind'=> $data,
-					]);
-				}else{
-					// 编辑
-					$res = SetArr::name('app')->edit([
-						'domain_bind'=> $data,
-					]);
-				}
-				//清空缓存
-				Cookie::delete('adminAuth');
-				Session::clear();
-			} else {
-				$res = SetArr::name('app')->delete([
-					'domain_bind'=> config('app.domain_bind'),
-				]);		
-			}
-			if($res == true){
-				return json(['code'=>0,'msg'=>'成功']);
-			} else{
-				return json(['code'=>-1,'msg'=>'失败']);
-			}
-		}
-		
-	}
 	
 	//综合设置
 	public function server()
@@ -130,8 +116,13 @@ class Set extends AdminController
 		}
     }
 	
-	 public function sendMailCode()
-	 {
+	/**
+	 * 发验证码
+	 *
+	 * @return void
+	 */
+	public function sendMailCode()
+	{
 		 if(Request::isPost()){
 			$email = Request::param('email');
 			$code = mt_rand('1111','9999');
@@ -146,8 +137,13 @@ class Set extends AdminController
 		 return json($res);
 	 }
 	 
-	  public function activeMailServer()
-	 {
+	 /**
+	  * 邮件激活
+	  *
+	  * @return void
+	  */
+	public function activeMailServer()
+	{
 		 if(Request::isPost()){
 			$eCode = Request::param('code');
 			$sCode = Cache::get('test_code');
@@ -199,13 +195,150 @@ class Set extends AdminController
 		}
     }
 
+	// 域名绑定
+	public function setDomain()
+	{
+		$str = file_get_contents(str_replace('\\', '/', app()->getConfigPath() . 'app.php'));
+		if(Request::isPost()){
+			$data = Request::only(['index','admin','domain_check']);
+			//$data = Request::param();
+			//dump($data);
+			if($data['domain_check'] == 'on') {
+				
+				// 过滤空项目
+				$domain_bind = [];
+				if(!empty($data['index'])){
+					$domain_bind[$data['index']] ='index';
+					if(config('app.default_app') == $domain_bind[$data['index']]) {
+						if(empty($data['admin'])) {
+							return json(['code'=>-1, 'msg'=>'默认应用和Index一致时必须绑定Admin域名,否则无法进入后台']);
+						}
+					}
+				}
+				if(!empty($data['admin'])){
+					$domain_bind[$data['admin']] ='admin';
+				}
+
+
+				// 匹配整个domain_map数组
+				$pats_domain_bind = '/\'(domain_bind)\'[^\]]*\],/';
+				// 	空数组
+				$rep_domain_null = "'domain_bind'\t=> [\n\t],";
+				$str = preg_replace($pats_domain_bind, $rep_domain_null, $str);
+
+				// 匹配'domain_bind' => [
+				$pats = '/\'(domain_bind)\'\s*=>\s*\[\r?\n/';
+				preg_match($pats,$str,$arr);
+
+				// 拼接数组内字符串
+				$domainArr = '';
+				foreach($domain_bind as $k => $v){
+					$domainArr .= "\t\t'". $k. "'   => '" . $v . "',\n";
+				}
+
+				// 追加组成新数组写入文件
+				$reps = $arr[0].$domainArr;
+				$str = preg_replace($pats, $reps, $str);
+
+				$res = file_put_contents(app()->getConfigPath() . 'app.php', $str);
+
+				// 如果编辑了后台 ，需要清理退出缓存
+				if(!empty($domain_bind[$data['admin']])) {
+					//清空缓存
+					Cookie::delete('adminAuth');
+					Session::clear();
+				}
+			} else {
+				$res = SetArr::name('app')->delete([
+					'domain_bind'=> config('app.domain_bind'),
+				]);		
+			}
+			
+			if($res == true){
+				return json(['code'=>0,'msg'=>'成功']);
+			} else{
+				return json(['code'=>-1,'msg'=>'失败']);
+			}
+		}
+		
+	}
+
+	/**
+	 * 绑定应用映射
+	 *
+	 * @return void
+	 */
+	public function bindMap()
+	{
+		$data = Request::only(['index_map','admin_map']);
+		$str = file_get_contents(str_replace('\\', '/', app()->getConfigPath() . 'app.php'));
+
+		// 过滤空项目
+		$app_map = [];
+		if(!empty($data['index_map'])){
+			$app_map[$data['index_map']]='index';
+		}
+		if(!empty($data['admin_map'])){
+			$app_map[$data['admin_map']] ='admin';
+		}
+
+		//halt($app_map);
+		// $set = new SetArrConf('app');
+		// $res = $set->delete(['app_map' => config('app.app_map')])->add([
+		// 	'app_map' => $app_map,
+		// ])->put();
+
+		// halt($res);
+
+		// 匹配整个app_map数组
+		$pats_app_map = '/\'(app_map)\'[^\]]*\],/';
+		preg_match($pats_app_map,$str,$arr_map);
+
+		// 	空数组
+		$rep_map_null = "'app_map'\t=> [\n\t],";
+		$str = preg_replace($pats_app_map, $rep_map_null, $str);
+
+		// 匹配'app_map' => [
+		$pats = '/\'(app_map)\'\s*=>\s*\[\r?\n/';
+		preg_match($pats,$str,$arr);
+
+		// 拼接数组内字符串
+		$appArr = '';
+		foreach($app_map as $k => $v){
+			$appArr .= "\t\t'". $k. "'   => '" . $v . "',\n";
+		}
+
+		// 追加组成新数组写入文件
+		$reps = $arr[0].$appArr;
+		$str = preg_replace($pats, $reps, $str);
+
+		$res = file_put_contents(app()->getConfigPath() . 'app.php', $str);
+
+		if(!$res) {
+			return json(['code'=>-1,'msg'=>'绑定失败']);
+		}
+		return json(['code'=>0,'msg'=>'绑定成功']);
+		
+	}
+
+	/**
+	 * URL美化，设置访问链接
+	 *
+	 * @return void
+	 */
 	public function setUrl()
 	{
-		//
 		$data = Request::only(['article_as','cate_as']);
-		$arr = [
-			'url_rewrite'=>$data,
-		];
+		$arr = [];
+		foreach($data as $k => $v) {
+			if(!empty($v)) {
+				$arr['url_rewrite'][$k] = $v . '/';
+			} else {
+				$arr['url_rewrite'][$k] = '';
+			}
+		}
+		if(empty($arr['url_rewrite']['cate_as'])) return json(['code'=>-1,'msg'=>'分类不能为空']);
+
 		if(!array_key_exists('url_rewrite',config('taoler'))){
 			$result = SetArr::name('taoler')->add($arr);
 		} else {

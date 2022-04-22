@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-19 16:49:29
+ * @LastEditTime: 2022-04-21 20:56:48
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\config\app.php
@@ -27,17 +27,13 @@ return [
     'default_timezone' => 'Asia/Shanghai',
 
     // 应用映射（自动多应用模式有效）
-    'app_map' => [  
-        //'bbs'  =>  'index',  
-        //'*'     =>  'home',
-        //'admin1' =>  'admin', 
-    ],
+	'app_map'	=> [
+		'bbs'   => 'index',
+		'adminff'   => 'admin',
+	],
     // 域名绑定（自动多应用模式有效）
-    'domain_bind'      => [
-		//'bbs' => 'index',
-		//'adm' => 'admin',
-        //'www'=>'home',
-		//'api' => 'api'
+    'domain_bind'	=> [
+		'adm.tp6.com'   => 'admin',
 	],
     // 禁止URL访问的应用列表（自动多应用模式有效）
 

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-19 16:48:27
+ * @LastEditTime: 2022-04-22 06:57:15
  * @LastEditors: TaoLer
  * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
@@ -16,13 +16,12 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 版本配置
-    'version'   => '1.9.2',
+    'version'   => '1.9.3',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 数据库备份目录
 	'databasebackdir' => app()->getRootPath() .'data/',
-	'article_as'   => 'aa',
-	'cate_as'   => 'column',
+
 	// 配置
 	'config'	=>[
         'email_notice'	=> 0,
@@ -58,9 +57,9 @@ return [
 	// URL美化
 	'url_rewrite' => [
 		// 详情url
-		'article_as'   => 'article',
+		'article_as'   => 'article/',
 		// 分类url
-		'cate_as'   => 'column',
+		'cate_as'   => 'column/',
 	],
 
 	

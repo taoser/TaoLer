@@ -37,10 +37,6 @@ class Login extends BaseController
         }
 		//获取登录前访问页面refer
 		$refer = Request::server('HTTP_REFERER');
-		//$domain = Request::domain();
-		//截取域名后面的字符
-		//$url = substr($refer,strlen($domain));
-        Cookie::set('url',$refer);
         if(Request::isAjax()) {
 			
             //登陆前数据校验
@@ -86,7 +82,7 @@ class Login extends BaseController
 			$user = new User();
 			$res = $user->login($data);
             if ($res == 1) {	//登陆成功
-                return Msgres::success('login_success',Cookie::get('url'));
+                return Msgres::success('login_success',$refer);
             } else {
 				return Msgres::error($res);
             }

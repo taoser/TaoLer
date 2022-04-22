@@ -10,37 +10,19 @@
     <div class="layui-col-md12 content detail">
       <div class="fly-panel detail-box">
 		    {//标题}
-        <h1 style="color:{$article.title_color};" align="center">{$article.title}</h1>
-		    <div class="detail_qrcode layui-hide-xs" onclick="PhoneDown();" id="mobile"></div>
-        
-		    {//图标}
-        <div class="fly-detail-info">
-		      <span id="LAY_jieAdmin" data-id="{$article['id']}"></span>
-		      <span class="fly-list-nums"> 
-			    <a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$article.comments_count}</a><i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
-		      </span>
-        </div>
+        <h1 style="color:{$article.title_color}; margin:10px 5px 15px 5px;" align="center">{$article.title}</h1>
+
 		    {//作者}
-        <div class="detail-about">
-			    <a class="fly-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
-			    <img src="{$article.user.user_img}" alt="{$article.user.name}">
-			    <i class="iconfont icon-renzheng" title="认证信息"></i>
-			    </a>
-			    <div class="fly-detail-user">
-			    <a href="{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
-			    {if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="">{:getAsing($article.user.area_id) ?: '无'}</i>{/if}
-			    <cite>{$article.user.nickname ?: $article.user.name}</cite>
-			    </a>
-		  	  <span class="layui-btn layui-btn-xs guanzhu" >关注</span>
-			    </div>
-          <div class="detail-hits">
-          <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
-          <span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
+        <div class="detail-about" align="center">
+          <div class="detail-hits" style="left:-30px;">
+            <span>{$article.user.name} /</span>
+            <span class="post-time" style="padding-top: 5px;" data="{$article.create_time}">{$article.create_time}</span>
+            <span>/ <i class="iconfont" title="浏览">&#xe60b;</i> {$pv}</span>
           </div>
         </div>
-        <hr>
+        <hr style="margin-bottom: 25px">
         {// 内容}
-        <div class="detail-body photos" id="content">{$article.content}</div>
+        <div class="detail-body photos" style="font-size: 18px;line-height: 200%;" id="content">{$article.content}</div>
 
         {//管理}
         {if (($article.upzip !== '') || session('?user_name'))}
@@ -51,13 +33,17 @@
           <div class="fly-admin-box" data-id="{$article.id}">
           {if ($user.auth ?? '')}
                 <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
-                {if($article.is_top == 0)}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
-          {else /}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>{/if}
-          {if($article.is_hot == 0)}
+                {if($article.is_top == 0)}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
+                {else /}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>
+                {/if}
+          
+                {if($article.is_hot == 0)}
                 <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
-          {else /}
+                {else /}
                 <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">{:lang('cancel hoting')}</span>
-          {/if}
+                {/if}
                 {if($article.is_reply == 1)}
                 <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0"><i class="layui-icon layui-icon-face-cry"></i></span>
                 {else /}
@@ -68,7 +54,7 @@
           {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
           <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
           {/if}
-              </div>
+          </div>
         </div>
         {/if}
       </div>
@@ -192,8 +178,8 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
         //首次不执行
         if(!first){
           var page = obj.curr;
-		  var url = "{:url('article/detail',['id'=>$article.id])}";
-		  var id = "{$article.id}";
+		      var url = "{:url('article/detail',['id'=>$article.id])}";
+		      var id = "{$article.id}";
           $.post("{:url('article/detail')}",{"id":id,"page":page},function(){
             window.location.href = url + '?page=' + page + '#flyReply';
           });
@@ -306,18 +292,10 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 		});
 	}
   //推送百度收录服务
-  (function(){
-      var bp = document.createElement('script');
-      var curProtocol = window.location.protocol.split(':')[0];
-      if (curProtocol === 'https') {
-          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-      }
-      else {
-          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-      }
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(bp, s);
-  })();
 </script>
+
+{volist name="push_js" id="vo"}
+{$vo.jscode|raw}
+{/volist}
 
 {/block}

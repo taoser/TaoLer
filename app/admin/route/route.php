@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-19 14:31:41
+ * @LastEditTime: 2022-04-21 17:02:15
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\route\route.php
@@ -11,8 +11,8 @@
 
 use think\facade\Route;
 
-//详情页URL别称
+// 动态详情页URL别称
 $detail_as = config('taoler.url_rewrite.article_as');
 
 Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
-Route::get($detail_as.'/:id', '\app\index\controller\Article::detail')->name('detail_id');
+Route::get(config('taoler.url_rewrite.article_as').'<id>', '\app\index\controller\Article@detail')->name('detail_id');

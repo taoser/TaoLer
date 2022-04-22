@@ -123,7 +123,8 @@ class Index extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-				    $url = (string) str_replace("admin","index",$this->domain.url('article/detail',['id'=>$v['aid']]));
+				    //$url = (string) str_replace("admin","index",$this->domain.url('article/detail',['id'=>$v['aid']]));
+					$url = $this->getRouteUrl($v['aid']);
 				$res['data'][]= ['id'=>$url,'title'=>htmlspecialchars($v['title']),'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
 				}
 			} else {
@@ -152,7 +153,7 @@ class Index extends AdminController
 			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
-					$res['data'][] = ['content'=>htmlspecialchars($v['content']),'title'=>htmlspecialchars($v['title']),'cid'=>str_replace("admin","index",$this->domain.(string) url('article/detail',['id'=>$v['cid']])),'name'=>$v['name']];
+					$res['data'][] = ['content'=>htmlspecialchars($v['content']),'title'=>htmlspecialchars($v['title']),'cid'=>$this->getRouteUrl($v['cid']),'name'=>$v['name']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没评论'];
@@ -183,7 +184,6 @@ class Index extends AdminController
 		//$mail = Db::name('system')->where('id',1)->value('auth_mail');	//	bug邮件发送
 		if(Request::isAjax()){
 			$data = Request::only(['type','title','content','post']);
-			//halt($data);
 			$apiRes = Api::urlPost($url,$data);
 			$data['poster'] = Session::get('admin_id');
 			unset($data['post']);

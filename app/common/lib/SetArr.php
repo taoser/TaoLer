@@ -1,53 +1,64 @@
 <?php
-/*
- * @Author: TaoLer <alipey_tao@qq.com>
- * @Date: 2022-04-14 16:05:35
- * @LastEditTime: 2022-04-20 14:49:27
- * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\vendor\taoser\think-setarr\src\SetArr.php
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+/**
+ * PHP配置文件的新增、编辑、删除
+ * 正则字符串内容进行替换
+ * 支持三级数组
+ * 数组内数值索引元素在前，关联子数组在后
+ * @author Taoser changlin_zhao@qq.com
+ * 2022
  */
-namespace taoser;
+namespace app\common\lib;
 
 class SetArr
 {
-	protected static string $str = '';
-	protected static string $configName = '';
-	protected static string $configFile = '';
-
-	function __construct()
+	/**
+	 * 数组字符串
+	 *
+	 * @var string
+	 */
+	protected string $str = '';
+	
+	function __construct(string $configName)
 	{
-		//self::$configName = $configName;
-		// 配置文件路径
-		self::$configFile = app()->getConfigPath() . self::$configName . '.php';
-		// 加载配置文件
-		self::$str = file_get_contents(self::$configFile);
+		/*
+		// 自动识别是插件配置还是项目配置
+		if(stripos()(__DIR__, 'vendor')){
+			// confing/plugin插件配置路径
+			$namespace = strtolower(__NAMESPACE__);
+			$path = config_path() . '/plugin/'.$namespace.'/'.$configName.'.php';
+		} else {
+			//config/*.php配置路径
+			$path= config_path() . '/' . $configName. ".php";
+		}
+		*/
+		
+		// 配置文件名称
+		$this->configName = $configName;
+		// 文件路径
+		$this->configFile = str_replace('\\', '/', app()->getConfigPath() . $configName . '.php');
+		//加载配置文件
+		$this->str = file_get_contents($this->configFile);
+		
 	}
 	
-	public static function name(string $configName)
-	{
-		self::$configName = $configName;
-		return new self;
-	}
-
 	/**
 	 * 新增配置项，支持三级数组配置
 	 *
 	 * @param array $arr
-	 * @return boolean
+	 * @return $this
 	 */
-	public static function add(array $arr) :bool
+	public function add(array $arr)
 	{
+		//dump($this->str);
 		//正则];数组结尾
 		$end = '/\];/';
 		//一级配置，内容追加到return [一级配置,之后
-		$start = self::getArrSonCount(config(self::$configName)) ? '/return\s*\[[^\[|\]]*,\r?\n/' : '/return\s*\[\r?\n?/';
+		$start = $this->getArrSonCount(config($this->configName)) ? '/return\s*\[[^\[|\]]*,\r?\n/' : '/return\s*\[\r?\n?/';
 		if(is_array($arr)) {
 			foreach ($arr as $k => $v)
 			{
 				if(!is_array($v)) {
-					preg_match($start,self::$str,$arrstart);
+					preg_match($start,$this->str,$arrstart);
 					if(is_int($k)) {
 						// 数值数组
 						if(is_string($v)){
@@ -66,7 +77,7 @@ class SetArr
 					} else {
 						// 键值关联数组
 						//判断是否存在KEY
-						if (array_key_exists($k,config(self::$configName))) {
+						if (array_key_exists($k,config($this->configName))) {
 							echo $k.'不能添加已存在的配置项';
 							return false;
 						}
@@ -82,12 +93,12 @@ class SetArr
 							$reps = $arrstart[0]."\t'" . $k . "'   => " . $v .",\n";
 						}
 					}
-					self::$str = preg_replace($start, $reps, self::$str);		
+					$this->str = preg_replace($start, $reps, $this->str);		
 				} else {
 				// $v是数组，存在多级配置
 
 					// $k不存在，新增二级配置数组, 数组插入];之前
-					if (!array_key_exists($k,config(self::$configName))) {
+					if (!array_key_exists($k,config($this->configName))) {
 						// 拼接数组内元素
 						$sonArr = '';
 						foreach($v as $kk => $vv) {
@@ -198,14 +209,14 @@ class SetArr
 							}
 						}
 						$reps = "\t'". $k. "'   => [\n".$sonArr."\t],\n];";
-						self::$str = preg_replace($end, $reps, self::$str);
+						$this->str = preg_replace($end, $reps, $this->str);
 					} else {
 					// $k已存在，二级配置是数组，需要添加二级或三数组元素
 					
 					// 把$v的子元素追加在匹配$k => [之后
 						// //匹配$k => [ 
 						// $kpats = '/\''.$k.'\'\s*=>\s*\[\r?\n/';
-						// preg_match($kpats,self::$str,$arrk);
+						// preg_match($kpats,$this->str,$arrk);
 						// 新增二级配置
 
 						// 往数组中追加子元素
@@ -218,12 +229,20 @@ class SetArr
 								//$kpats = '/\''.$k.'\'\s*=>\s*\[[^\[]*,[^\]]/';
 								//$kpats = '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/';
 								// 添加一维数组，数组中有元素匹配到最后一个数组，没有数组，匹配到数组开头[
-								$kpats = self::getArrSonCount(config(self::$configName.'.'.$k)) ? '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$k.'\'\s*=>\s*\[\r?\n/';
-
-								preg_match($kpats,self::$str,$arrk);
-
+								// 读$k 数组
+								$k_arr = '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*\]/';
+								preg_match($k_arr,$this->str,$k_arr);
+								//$k_arr[0]
+								$k_arr = preg_replace('/[\s|\'|>]/', '', $k_arr[0]);
+dump($k_arr);
+								$k_ar = eval('$'.$k_arr);
+								$n = $this->getArrSonCount($k_ar);
+dump($n);
+								$kpats = $this->getArrSonCount(config($this->configName.'.'.$k)) ? '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$k.'\'\s*=>\s*\[\r?\n/';
+								preg_match($kpats,$this->str,$arrk);
+dump($k,$kpats,$this->str,$arrk);
 								if(!is_int($kk)) {
-									if(array_key_exists($kk,config(self::$configName.'.'.$k))) {
+									if(array_key_exists($kk,config($this->configName.'.'.$k))) {
 										echo $kk.'不能添加已存在的配置项kk';
 										return false;
 									}
@@ -254,24 +273,24 @@ class SetArr
 										$reps = $arrk[0]."\t\t". $vv . ",\n";
 									}
 								}
-								self::$str = preg_replace($kpats, $reps, self::$str);
+								$this->str = preg_replace($kpats, $reps, $this->str);
 							} else {
 								// 2. $vv是数组
 
 								// 匹配到数组内部的后面
-								$sonArrnum = self::getArrSonNum(config(self::$configName.'.'.$k));
+								$sonArrnum = $this->getArrSonNum(config($this->configName.'.'.$k));
 								if($sonArrnum > 0) {
 									// 数组存在子数组，匹配到最后一个数组],\n后面
 									$kpats = '/\''.$k.'\'([^\]]*\]){'.$sonArrnum.'},\r?\n/';
 								} else {
 									// 没有子数组
 									//$kpats = '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/';
-									$kpats = self::getArrSonCount(config(self::$configName.'.'.$k)) ? '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$k.'\'\s*=>\s*\[\r?\n/';
+									$kpats = $this->getArrSonCount(config($this->configName.'.'.$k)) ? '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$k.'\'\s*=>\s*\[\r?\n/';
 								}
-								preg_match($kpats,self::$str,$arrk);
+								preg_match($kpats,$this->str,$arrk);
 
 								// a.$vv数组不存在，新建数组及它的子数组$kkk
-								if(!array_key_exists($kk,config(self::$configName . '.' . $k))) {
+								if(!array_key_exists($kk,config($this->configName . '.' . $k))) {
 
 									$sonArrson = '';
 									foreach($vv as $kkk => $vvv) {
@@ -312,7 +331,7 @@ class SetArr
 											$sonArrsonArr = '';
 											foreach($vvv as $kkkk => $vvvv) {
 												if(!is_int($kkkk)) {
-													if(array_key_exists($kkkk,config(self::$configName.'.'.$k.'.'.$kk.'.'.$kkk))) {
+													if(array_key_exists($kkkk,config($this->configName.'.'.$k.'.'.$kk.'.'.$kkk))) {
 														echo $kkkk."已存在?";
 														return false;
 													}
@@ -350,12 +369,12 @@ class SetArr
 										}										
 									}
 									$reps = $arrk[0]."\t\t'". $kk. "'   => [\n".$sonArrson."\t\t],\n";
-									self::$str = preg_replace($kpats, $reps, self::$str);
+									$this->str = preg_replace($kpats, $reps, $this->str);
 								} else {	
 								// b.$vv数组已存在
 									// 匹配包含$k $kk=>[
 									// $kkpats = '/\'' . $k . '\'[\s\S]*?(?:'.$kk.')\'[^\[]*\[\r?\n/';
-									// preg_match($kkpats,self::$str,$arrkk);
+									// preg_match($kkpats,$this->str,$arrkk);
 							
 									foreach($vv as $kkk => $vvv) {	
 										//halt(123,$arrkk[0]);	
@@ -364,12 +383,12 @@ class SetArr
 											// 匹配包含$k $kk=>[ ***,
 											//$kkpats = '/\'' . $k . '\'[\s\S]*?(?:'.$kk.')\'[^\[]*\[\r?\n/';
 											//$kkpats = '/\'' . $k . '\'[\s\S]*?(?:'.$kk.')\'\s*=>\s*\[[^\[|\]]*,/';
-											$kkpats = self::getArrSonCount(config(self::$configName.'.'.$k.'.'.$kk)) ? '/\''.$kk.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$kk.'\'\s*=>\s*\[\r?\n/';
-											preg_match($kkpats,self::$str,$arrkk);
-											
+											$kkpats = $this->getArrSonCount(config($this->configName.'.'.$k.'.'.$kk)) ? '/\''.$kk.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$kk.'\'\s*=>\s*\[\r?\n/';
+											preg_match($kkpats,$this->str,$arrkk);
+										
 											if(!is_int($kkk)) {
 												//判断第三级key是否存在
-												if(array_key_exists($kkk,config(self::$configName.'.'.$k.'.'.$kk))) {
+												if(array_key_exists($kkk,config($this->configName.'.'.$k.'.'.$kk))) {
 													echo $kkk.'不能添加已存在的配置项kkk';
 													return false;
 												}
@@ -399,12 +418,12 @@ class SetArr
 													$repsk = $arrkk[0]."\t\t\t" . $vvv . ",\n";
 												}
 											}
-											self::$str = preg_replace($kkpats,$repsk, self::$str);
+											$this->str = preg_replace($kkpats,$repsk, $this->str);
 										} else {
 											// $vvv是数组,a.数组存在，b.数组不存在
 
 											//a. $kkk数组存在
-											if(array_key_exists($kkk,config(self::$configName.'.'.$k.'.'.$kk))) {
+											if(array_key_exists($kkk,config($this->configName.'.'.$k.'.'.$kk))) {
 												//匹配包含$k $kk $kkk 到]的内容
 												//$sonPats = '/\'' . $k . '\'[\s\S]*?(?:'.$kk.')\'[\s\S]*?(?:'.$kkk.')\' [^\]]*/';
 												//[\s\S]*?(?:'.$kkk.')\'(.*),/
@@ -412,14 +431,14 @@ class SetArr
 												// $k3pats = '/\'' . $kk k. '\'[\s\S]*?(?:'.$kkk.')\'\s*=>\s*\[\r?\n/';
 												// 正则到数组内的元素，不包含子数组
 												//$k3pats = '/\'' . $kkk . '\'\s*=>\s*\[[^\[|\]]*,\r?\n/';
-												$k3pats = self::getArrSonCount(config(self::$configName.'.'.$k.'.'.$kk.'.'.$kkk)) ? '/\''.$kkk.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$kkk.'\'\s*=>\s*\[\r?\n/';
-												 preg_match($k3pats,self::$str,$arrk3);
+												$k3pats = $this->getArrSonCount(config($this->configName.'.'.$k.'.'.$kk.'.'.$kkk)) ? '/\''.$kkk.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$kkk.'\'\s*=>\s*\[\r?\n/';
+												 preg_match($k3pats,$this->str,$arrk3);
 
 												foreach($vvv as $kkkk => $vvvv) {
-													preg_match($k3pats,self::$str,$arrk3);
+													preg_match($k3pats,$this->str,$arrk3);
 													if(!is_int($kkkk)) {
 													// 多维数组
-														if(array_key_exists($kkkk,config(self::$configName.'.'.$k.'.'.$kk.'.'.$kkk))) {
+														if(array_key_exists($kkkk,config($this->configName.'.'.$k.'.'.$kk.'.'.$kkk))) {
 															echo $kkkk."已存在k4";
 															return false;
 														}
@@ -450,22 +469,22 @@ class SetArr
 															$sonReps = $arrk3[0]."\t\t\t\t" . $vvvv . ",\n";
 														}
 													}
-													self::$str = preg_replace($k3pats,$sonReps, self::$str);
+													$this->str = preg_replace($k3pats,$sonReps, $this->str);
 												}
 											} else {
 											// b. $kkk不存在
 
 												// 匹配到数组内部的后面k
-												$sonArrnum = self::getArrSonNum(config(self::$configName.'.'.$k.'.'.$kk));
+												$sonArrnum = $this->getArrSonNum(config($this->configName.'.'.$k.'.'.$kk));
 												if($sonArrnum > 0) {
 													// 数组存在子数组，匹配到最后一个数组],\n后面
 													$kkpats = '/\''.$kk.'\'([^\]]*\]){'.$sonArrnum.'},\r?\n/';
 												} else {
 													// 没有子数组k
 													//$kkpats = '/\''.$kk.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/';
-													$kkpats = self::getArrSonCount(config(self::$configName.'.'.$k.'.'.$kk)) ? '/\''.$kk.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$kk.'\'\s*=>\s*\[\r?\n/';
+													$kkpats = $this->getArrSonCount(config($this->configName.'.'.$k.'.'.$kk)) ? '/\''.$kk.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$kk.'\'\s*=>\s*\[\r?\n/';
 												}
-												preg_match($kkpats,self::$str,$arrkk);
+												preg_match($kkpats,$this->str,$arrkk);
 
 												$sonArrsonArr = '';
 												foreach($vvv as $kkkk => $vvvv) {
@@ -502,7 +521,7 @@ class SetArr
 													}
 												}
 												$reps = $arrkk[0]."\t\t\t'".$kkk."'	=> [\n" . $sonArrsonArr . "\t\t\t],\n";
-												self::$str = preg_replace($kkpats,$reps, self::$str);
+												$this->str = preg_replace($kkpats,$reps, $this->str);
 											}
 										}										
 									}
@@ -513,7 +532,9 @@ class SetArr
 				}
 			}
 			//写入配置
-			return file_put_contents(self::$configFile, self::$str) ? true : false;
+			//return file_put_contents($this->configFile, $this->str) ? true : false;
+
+			return $this;
 		}
 	}
 
@@ -523,9 +544,9 @@ class SetArr
 	 * 仅支持键值对的数组修改
 	 *
 	 * @param array $arr
-	 * @return boolean
+	 * @return $this
 	 */
-	public static function edit($arr) :bool
+	public function edit($arr)
 	{
 		
 		// 只能修改有键值对的数组
@@ -533,14 +554,14 @@ class SetArr
 			
 		foreach($arr as $k => $v) {
 			// key不存在
-			if(!array_key_exists($k,config(self::$configName))) {
+			if(!array_key_exists($k,config($this->configName))) {
 				echo $k.'不存在 '; 
 				return false;
 			}
 			// 一级数组修改
 			if(!is_array($v)) {
 				$pats ='/return\s*\[[^\[|\]]*,\r?\n/';
-				preg_match($pats,self::$str,$arr);
+				preg_match($pats,$this->str,$arr);
 				//halt($arr);
 				if(is_string($v)){
 					// 字符串
@@ -559,13 +580,13 @@ class SetArr
 				$patk = '/\'' . $k . '\'(.*),/';
 				$reps = preg_replace($patk, $repk, $arr[0]);
 				// 正则查找然后替换
-				self::$str = preg_replace($pats, $reps, self::$str);
+				$this->str = preg_replace($pats, $reps, $this->str);
 			} else {
 				// 正则二级配置
 				$pats = '/\'' . $k . '\'\s*=>\s*\[[^\[|\]]*,/';
 				// 二级和三级
 				foreach($v as $kk => $vv) {
-					if(!array_key_exists($kk, config(self::$configName.'.'.$k))) {
+					if(!array_key_exists($kk, config($this->configName.'.'.$k))) {
 						echo $kk.'不存在'; 
 						return false;
 					}
@@ -586,18 +607,18 @@ class SetArr
 							// 数字
 							$repkk = "'". $kk . "'   => " . $vv .",";
 						}
-						preg_match($pats,self::$str,$arrk);
+						preg_match($pats,$this->str,$arrk);
 						// 正则需要替换的部分
 						$patkk = '/\'' . $kk . '\'(.*?),/';
 						$reps =  preg_replace($patkk, $repkk, $arrk[0]);
-						self::$str = preg_replace($pats, $reps, self::$str);
+						$this->str = preg_replace($pats, $reps, $this->str);
 					} else {
 						// 三级配置
 						// 正则二级下的三级配置
 						//$pats = '/\'' . $kkk . '\'[\s\S]*?(?:'.$kkk.')\'(.*),/';
 						$pats = '/\'' . $kk . '\'\s*=>\s*\[[^\[|\]]*,/';
 						foreach($vv as $kkk => $vvv) {
-							if(!array_key_exists($kkk, config(self::$configName.'.'.$k.'.'.$kk))) {
+							if(!array_key_exists($kkk, config($this->configName.'.'.$k.'.'.$kk))) {
 								echo $kkk.'不存在';
 								return false;
 							}
@@ -615,18 +636,18 @@ class SetArr
 								} else {
 									$arrReps = "'" . $kkk . "'	=> " . $vvv . ",";
 								}
-								preg_match($pats,self::$str,$arrkk);
+								preg_match($pats,$this->str,$arrkk);
 								// 正则需要替换的部分
 								$arrPats = '/\'' . $kkk . '\'(.*),/';
 								$reps = preg_replace($arrPats, $arrReps, $arrkk[0]);
-								self::$str = preg_replace($pats, $reps, self::$str);
+								$this->str = preg_replace($pats, $reps, $this->str);
 							} else {
 								// 四级配置
 								// 正则$kkk
 								//$pats = '/\'' . $kk . '\'[\s\S]*?(?:'.$kkk.')\'[\s\S]*?(?:'.$kkkk.')\'(.*),/';
 								$pats = '/\'' . $kkk . '\'\s*=>\s*\[[^\[|\]]*,/';
 								foreach($vvv as $kkkk => $vvvv) {
-									if(!array_key_exists($kkkk, config(self::$configName.'.'.$k.'.'.$kk.'.'.$kkk))){
+									if(!array_key_exists($kkkk, config($this->configName.'.'.$k.'.'.$kk.'.'.$kkk))){
 										echo $kkk.'不存在';
 										return false;
 									}									
@@ -643,10 +664,10 @@ class SetArr
 									} else {
 										$repskkkk = "'" . $kkkk . "'	=> " . $vvvv . ",";
 									}
-									preg_match($pats,self::$str,$arrkkk);
+									preg_match($pats,$this->str,$arrkkk);
 									$patskkkk = '/\'' . $kkkk . '\'(.*),/';
 									$reps = preg_replace($patskkkk, $repskkkk, $arrkkk[0]);
-									self::$str = preg_replace($pats, $reps, self::$str);
+									$this->str = preg_replace($pats, $reps, $this->str);
 								}
 							}
 							
@@ -657,7 +678,8 @@ class SetArr
 
 		}
 		//写入配置
-		return  file_put_contents(self::$configFile, self::$str) ? true : false;
+		//return  file_put_contents($this->configFile, $this->str) ? true : false;
+		return $this;
 	}
 
 	/**
@@ -666,9 +688,9 @@ class SetArr
 	 * 子元素被删除会清理空数组
 	 *
 	 * @param array $arr
-	 * @return boolean
+	 * @return $this
 	 */
-	public static function delete($arr) :bool
+	public function delete($arr)
 	{
 		// 只能修改有键值对的数组
 		if(!is_array($arr)) return false;
@@ -678,17 +700,17 @@ class SetArr
 			if(!is_array($v)) {
 				// 正则开头到,不包含子数组
 				$pats ='/return\s*\[[^\[|\]]*,\r?\n/';
-				preg_match($pats,self::$str,$arr);
+				preg_match($pats,$this->str,$arr);
 				if(!isset($arr[0])) {
 					echo '有误，删除项可能并不存在';
 					return false;
 				}
 				if(is_int($k)) {
 					// 一维数组正则
-					$patk = self::getPats($v);
+					$patk = $this->getPats($v);
 				} else {
 					// key不存在
-					if(!array_key_exists($k,config(self::$configName))) {
+					if(!array_key_exists($k,config($this->configName))) {
 						echo $k.'不存在 '; 
 						return false;
 					}
@@ -697,7 +719,7 @@ class SetArr
 
 				// 正则查找然后替换
 				$reps =  preg_replace($patk, '', $arr[0]);
-				self::$str = preg_replace($pats, $reps, self::$str);
+				$this->str = preg_replace($pats, $reps, $this->str);
 			} else {
 				
 				// 二级和三级
@@ -706,16 +728,16 @@ class SetArr
 					if(!is_array($vv)) {
 						// 正则二级配置
 						$pats = '/\'' . $k . '\'\s*=>\s*\[[^\[|\]]*,\r?\n/';
-						preg_match($pats,self::$str,$arrk);
+						preg_match($pats,$this->str,$arrk);
 						if(!isset($arrk[0])) {
 							echo $k.'有误，可能并不存在';
 							return false;
 						}
 						if(is_int($kk)) {
-							$patkk = self::getPats($vv);
+							$patkk = $this->getPats($vv);
 						} else {
 							// key不存在
-							if(!array_key_exists($kk,config(self::$configName.'.'.$k))) {
+							if(!array_key_exists($kk,config($this->configName.'.'.$k))) {
 								echo $kk.'不存在 '; 
 								return false;
 							}
@@ -723,7 +745,7 @@ class SetArr
 							$patkk = '/[^\n]*\'' . $kk . '\'(.*?),\r?\n/';
 						}
 						$reps =  preg_replace($patkk, '', $arrk[0]);						
-						self::$str = preg_replace($pats, $reps, self::$str);
+						$this->str = preg_replace($pats, $reps, $this->str);
 					} else {
 						// 三级配置
 						
@@ -731,15 +753,15 @@ class SetArr
 							if(!is_array($vvv)) {
 								// 正则二级下的三级配置
 								$pats = '/\'' . $kk . '\'\s*=>\s*\[[^\[|\]]*,\r?\n/';
-								preg_match($pats,self::$str,$arrkk);
+								preg_match($pats,$this->str,$arrkk);
 								if(!isset($arrkkk[0])) {
 									echo $kk.'有误，可能并不存在';
 									return false;
 								}
 								if(is_int($kkk)) {
-									$patkkk = self::getPats($vvv);
+									$patkkk = $this->getPats($vvv);
 								} else {
-									if(!array_key_exists($kkk, config(self::$configName.'.'.$k.'.'.$kk))) {
+									if(!array_key_exists($kkk, config($this->configName.'.'.$k.'.'.$kk))) {
 										echo $kkk.'不存在';
 										return false;
 									}
@@ -748,7 +770,7 @@ class SetArr
 								
 								// 正则需要替换的部分
 								$reps = preg_replace($patkkk, '', $arrkk[0]);
-								self::$str = preg_replace($pats, $reps, self::$str);
+								$this->str = preg_replace($pats, $reps, $this->str);
 							} else {
 								// 四级配置
 																
@@ -756,15 +778,15 @@ class SetArr
 									if(!is_array($vvvv)) {
 										// 正则$kkk
 										$pats = '/\'' . $kkk . '\'\s*=>\s*\[[^\[|\]]*,\r?\n/';
-										preg_match($pats,self::$str,$arrkkk);
+										preg_match($pats,$this->str,$arrkkk);
 										if(!isset($arrkkk[0])) {
 											echo $kkk.'有误，可能并不存在';
 											return false;
 										}
 										if(is_int($kkkk)) {
-											$patskkkk = self::getPats($vvvv);
+											$patskkkk = $this->getPats($vvvv);
 										} else {
-											if(!array_key_exists($kkkk, config(self::$configName.'.'.$k.'.'.$kk.'.'.$kkk))){
+											if(!array_key_exists($kkkk, config($this->configName.'.'.$k.'.'.$kk.'.'.$kkk))){
 												echo $kkkk.'不存在';
 												return false;
 											}
@@ -772,7 +794,7 @@ class SetArr
 										}
 										
 										$reps = preg_replace($patskkkk, '', $arrkkk[0]);
-										self::$str = preg_replace($pats, $reps, self::$str);
+										$this->str = preg_replace($pats, $reps, $this->str);
 									} else {
 										echo '不支持更多的层级数组';
 									}
@@ -789,13 +811,19 @@ class SetArr
 				*	'key' => [
 				*		],
 				*/ 
-			$nullArray = '/[^\n]*\'\w+\'\s*=>\s*\[\s*\]{1}\S*\,?\r?\n/m';
-			//preg_match($nullArray,self::$str,$arr);
-			//self::$str = preg_replace($nullArray, '', self::$str);
+			//$nullArray = '/[^\n]*\'\w+\'\s*=>\s*\[\s*\]{1}\S*\,?\r?\n/m';
+			//preg_match($nullArray,$this->str,$arr);
+			//$this->str = preg_replace($nullArray, '', $this->str);
 
 		}
 		//写入配置
-		return  file_put_contents(self::$configFile, self::$str) ? true : false;
+		//return  file_put_contents($this->configFile, $this->str) ? true : false;
+		return $this;
+	}
+
+	public function put()
+	{
+		return  file_put_contents($this->configFile, $this->str) ? true : false;
 	}
 
 	/**
@@ -804,7 +832,7 @@ class SetArr
 	 * @param [type] $arr
 	 * @return integer
 	 */
-	public static function getArrSonNum($arr) :int
+	public function getArrSonNum($arr) :int
 	{
 		$i = 0;
 		foreach ($arr as $val) {
@@ -813,7 +841,7 @@ class SetArr
 				foreach($val as $vv){
 					if(is_array($vv)){
 						$i++;
-						self::getArrSonNum($vv);
+						$this->getArrSonNum($vv);
 					}
 				}
 			}
@@ -827,7 +855,7 @@ class SetArr
 	 * @param [type] $v
 	 * @return string
 	 */
-	public static function getPats($v) :string
+	public function getPats($v) :string
 	{
 		if(is_bool($v)){
 			//布尔
@@ -881,7 +909,7 @@ class SetArr
 	 * @param array $array
 	 * @return boolean
 	 */
-	public static function getArrSonCount(array $array) :bool
+	public function getArrSonCount(array $array) :bool
 	{
 		// 数组元素数量
 		$count = count($array);
@@ -900,5 +928,6 @@ class SetArr
 			return false;
 		}
 	}
+
 	
 }

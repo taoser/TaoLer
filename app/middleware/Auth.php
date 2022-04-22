@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-04-22 06:24:03
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\app\middleware\Auth.php
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+ */
 declare(strict_types=1);
 
 namespace app\middleware;
@@ -45,12 +54,12 @@ class Auth
 		//没有登录及当前非登录页重定向登录页
 		if(!Session::has('admin_id') && $path !== 'admin/login/index' && !(stristr($request->pathinfo(),"captcha.html") || stristr($request->pathinfo(),"addons")) )
 		{
-			return redirect((string) url('admin/login/index'));
+			return redirect((string) url('login/index'));
 		}
 		
 		//登陆后无法访问登录页
 		if(Session::has('admin_id') && $path == 'admin/login/index'){
-			return redirect((string) url('admin/index/index'));
+			return redirect((string) url('index/index'));
 		}
 		
 		// 排除公共权限

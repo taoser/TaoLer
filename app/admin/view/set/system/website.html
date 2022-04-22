@@ -13,6 +13,7 @@
                 <li lay-id="email">邮箱服务</li>
 				<li lay-id="config">服务配置</li>
 				<li lay-id="domain">域名绑定</li>
+				<li lay-id="bind_map">应用映射</li>
 				<li lay-id="url_rewrite">URL美化</li>
               </ul>
               <div class="layui-tab-content">
@@ -276,14 +277,14 @@
 							<div class="layui-form-item">
 								<label class="layui-form-label">Index前端</label>
 								<div class="layui-input-inline">
-								<input type="text" name="index" {if(!empty(config('app.domain_bind'))) } value="{$index}" {/if}  class="layui-input">
+								<input type="text" name="index" value="{$index}" class="layui-input">
 								</div>
 								<div class="layui-form-mid layui-word-aux">如：www.aieok.com</div>
 							</div>
 							<div class="layui-form-item">
 								<label class="layui-form-label">Admin后端</label>
 								<div class="layui-input-inline">
-								<input type="text" name="admin" {if(!empty(config('app.domain_bind'))) } value="{$admin}" {/if} class="layui-input">
+								<input type="text" name="admin" value="{$admin}" class="layui-input">
 								</div>
 								<div class="layui-form-mid layui-word-aux">如：admin.aieok.com</div>
 							</div>
@@ -298,20 +299,43 @@
 						</div>
 					</div>
                 </div>
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="bind_map">
+						<div class="layui-form-item">
+							<label class="layui-form-label">Index应用</label>
+							<div class="layui-input-inline">
+							<input type="text" name="index_map" required value="{$index_map}" class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux">改变后原路径访问无效</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">Admin应用</label>
+							<div class="layui-input-inline">
+							<input type="text" name="admin_map" required value="{$admin_map}" class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux">设置后需要使用新路径</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="set_bind_map">确认保存</button>
+							</div>
+						</div>
+					</div>
+                </div>
 
 				<div class="layui-tab-item">
 					<div class="layui-form" wid100 lay-filter="url_rewrite">
 						<div class="layui-form-item">
 							<label class="layui-form-label">帖子别名</label>
 							<div class="layui-input-inline">
-							<input type="text" name="article_as" required value="{:config('taoler.url_rewrite.article_as')}" class="layui-input">
+							<input type="text" name="article_as" required value="{$url_re['article_as']}" class="layui-input">
 							</div>
 							<div id="artdesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/article/1.html</div>
 						</div>
 						<div class="layui-form-item">
 							<label class="layui-form-label">分类别名</label>
 							<div class="layui-input-inline">
-							<input type="text" name="cate_as" required value="{:config('taoler.url_rewrite.cate_as')}" class="layui-input">
+							<input type="text" name="cate_as" required value="{$url_re['cate_as']}" class="layui-input">
 							</div>
 							<div id="catedesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/cate/ask.html</div>
 						</div>
@@ -333,20 +357,20 @@
 </div>  
 {/block}
 {block name="js"} 
-  <script>
-	  var setWebSite ="{:url('Set/website')}";
-      var setEmail ="{:url('Set/email')}";
-  layui.config({
-    base: '/static/admin/' //静态资源所在路径
-  }).extend({
-    index: 'lib/index' //主入口模块
-  }).use(['index', 'set', 'upload'], function(){
-    var $ = layui.$
-	,form = layui.form
-	,upload = layui.upload;
-	var element  =layui.element ;
+<script>
+	var setWebSite ="{:url('Set/website')}";
+    var setEmail ="{:url('Set/email')}";
+	layui.config({
+		base: '/static/admin/' //静态资源所在路径
+	}).extend({
+		index: 'lib/index' //主入口模块
+	}).use(['index', 'set', 'upload'], function(){
+		var $ = layui.$
+		,form = layui.form
+		,upload = layui.upload;
+		var element  =layui.element ;
 		
-	//LOGO选完文件后不自动上传
+	  //LOGO选完文件后不自动上传
 	  upload.render({
 		elem: '#logo-img'
 		,url: "{:url('set/upload')}"
@@ -358,8 +382,7 @@
 		,bindAction: '#logo-upload-button'
 		,done: function(res){
 		  if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
-				},function(){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
 					location.reload();
 				});
 			} else {
@@ -367,116 +390,132 @@
 			}
 		}
 	  });
+
 	//网站配置
 	form.on('submit(set_system_config)', function(data){
 	var field = data.field;
-	$.post("{:url('set/config')}",field,function(res){
-        if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
+		$.post("{:url('set/config')}",field,function(res){
+			if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
 				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
 			}
-    });
-    return false;
-  });
-  //邮箱发送测试码
-  form.on('submit(test_system_email)', function(data){
-	var field = data.field;
-	$.post("{:url('set/sendMailCode')}",field,function(res){
-        if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
+		});
+		return false;
+ 	});
+	//邮箱发送测试码
+	form.on('submit(test_system_email)', function(data){
+		var field = data.field;
+		$.post("{:url('set/sendMailCode')}",field,function(res){
+			if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
 				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
 			}
-    });
-    return false;
-  });
+		});
+		return false;
+	});
   
-  //邮箱激活
-  form.on('submit(active_system_email)', function(data){
-	var field = data.field;
-	$.post("{:url('set/activeMailServer')}",field,function(res){
-        if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
+	//邮箱激活
+	form.on('submit(active_system_email)', function(data){
+		var field = data.field;
+		$.post("{:url('set/activeMailServer')}",field,function(res){
+			if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
 				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
 			}
-    });
-    return false;
-  });
+		});
+		return false;
+	});
 
-  //网站配置
+	//网站配置
 	form.on('submit(set_system_domain)', function(data){
 	var field = data.field;
-	$.post("{:url('set/setDomain')}",field,function(res){
-        if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
-				}, function(){
-					parent.location.href = '/';
-            });
+		$.post("{:url('set/setDomain')}",field,function(res){
+			if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
 			}
-    });
-    return false;
-  });
+		});
+		return false;
+	});
 
     // URL美化
 	form.on('submit(set_url_rewrite)', function(data){
 	var field = data.field;
-	$.post("{:url('set/setUrl')}",field,function(res){
-        if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
-				}, function(){
-					//parent.location.href = '/';
-            });
+		$.post("{:url('set/setUrl')}",field,function(res){
+			if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
 			}
-    });
-    return false;
-  });
+		});
+		return false;
+	});
 
-  // 获取描述的内容
-  $("input[name='article_as']").bind('input propertychange', function(){
-      var content = $(this).val()
-      $('#artdesc').html('如：www.aieok.com/'+  content +'/1.html');
-    })
+	// 获取描述的内容
+	$("input[name='article_as']").bind('input propertychange', function(){
+		var content = $(this).val()
+		$('#artdesc').html('如：www.aieok.com/'+  content +'/1.html');
+	})
 	$("input[name='cate_as']").bind('input propertychange', function(){
-      var content = $(this).val()
-      $('#catedesc').html('如：www.aieok.com/'+  content +'/ask.html');
-    })
+		var content = $(this).val()
+		$('#catedesc').html('如：www.aieok.com/'+  content +'/ask.html');
+	})
 
+	// 域名绑定
+	form.on('switch(domain_check)', function(data){
+		var data = data.elem;
+		status = data.checked ? 'on' : 'off';
+		if(status == 'on'){
+			$('#set_domain').removeClass('layui-hide');
+		} else {
+			$('#set_domain').addClass('layui-hide');
+			$.post("{:url('set/setDomain')}",{"domain_check":status},function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
+				} else {
+					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+				}
+			});
+		}
+		return false;
+	});
 
-  form.on('switch(domain_check)', function(data){
-	var data = data.elem;
-	status = data.checked ? 'on' : 'off';
-	if(status == 'on'){
-		$('#set_domain').removeClass('layui-hide');
-	} else {
-		$('#set_domain').addClass('layui-hide');
-		$.post("{:url('set/setDomain')}",{"domain_check":status},function(res){
-        if(res.code == 0){
-				layer.msg(res.msg,{icon:6,tiye:2000
-				}, function(){
-					parent.location.href = '/';
-            });
+	// 应用映射
+	form.on('submit(set_bind_map)', function(data){
+	var field = data.field;
+		$.post("{:url('set/bindMap')}",field,function(res){
+			if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					window.location.reload();
+				});
 			} else {
 				layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
 			}
-    	});
-	}
-    return false;
-	  
-  });
+		});
+		return false;
+	});
+
+
    //显示当前tab
   if(location.hash){
     element.tabChange('website-tabs-brief', location.hash.replace(/^#/, ''));
   }
-
   element.on('tab(website-tabs-brief)', function(){
     var othis = $(this), layid = othis.attr('lay-id');
     if(layid){

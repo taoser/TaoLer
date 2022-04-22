@@ -137,5 +137,48 @@ class AdminController extends \app\BaseController
         return $runTime;
     }
 
+    /**
+     * 获取文章链接地址
+     *
+     * @param integer $aid
+     * @return string
+     */
+    protected function getRouteUrl(int $aid) : string
+    {
+        $indexUrl = $this->getIndexUrl();
+        $artUrl = (string) url('detail_id', ['id' => $aid]);
+
+        // 判断是否开启绑定
+        //$domain_bind = array_key_exists('domain_bind',config('app'));
+
+        // 判断index应用是否绑定域名
+        $bind_index = array_search('index',config('app.domain_bind'));
+        // 判断admin应用是否绑定域名
+        $bind_admin = array_search('admin',config('app.domain_bind'));
+
+        // 判断index应用是否域名映射
+        $map_index = array_search('index',config('app.app_map'));
+        // 判断admin应用是否域名映射
+        $map_admin = array_search('admin',config('app.app_map'));
+
+        $index = $map_index ? $map_index : 'index'; // index应用名
+        $admin = $map_admin ? $map_admin : 'admin'; // admin应用名
+
+        if($bind_index) {
+            // index绑定域名
+            $url = $indexUrl . str_replace($admin.'/','',$artUrl);
+        } else { // index未绑定域名
+            // admin绑定域名
+            if($bind_admin) {
+                $url =  $indexUrl .'/' . $index . $artUrl;
+            } else {
+                $url =  $indexUrl . str_replace($admin,$index,$artUrl);
+            }
+            
+        }
+
+        return $url;
+    }
+
 
 }
