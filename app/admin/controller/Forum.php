@@ -77,15 +77,7 @@ class Forum extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-					$indexUrl = $this->getIndexUrl();
-					$artUrl = (string) url('detail_id', ['id' => $v['aid']]);
-					if(empty(config('app.domain_bind'))) {
-						// 未绑定域名
-						$url =  $indexUrl . str_replace('admin','index',$artUrl);
-					} else {
-						// 单独绑定域名
-						$url =  $indexUrl . $artUrl;
-					}
+					$url = $this->getRouteUrl($v['aid']);
 				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'title'=>htmlspecialchars($v['title']),'url'=>$url,'content'=>htmlspecialchars($v['content']),'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
 				}
 			} else {
@@ -270,8 +262,9 @@ class Forum extends AdminController
 			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
+					$url = $this->getRouteUrl($v['cid']);
 					//$res['data'][] = ['id'=>$v['id'],'replyer'=>$v->user->name,'cardid'=>$v->article->title,'avatar'=>$v->user->user_img,'content'=>$v['content'],'replytime'=>$v['create_time']];
-					$res['data'][] = ['id'=>$v['aid'],'replyer'=>$v['name'],'cardid'=>htmlspecialchars($v['title']),'avatar'=>$v['user_img'],'content'=>htmlspecialchars($v['content']),'replytime'=>date("Y-m-d",$v['create_time']),'check'=>$v['astatus'],'cid'=>$v['cid']];
+					$res['data'][] = ['id'=>$v['aid'],'replyer'=>$v['name'],'title'=>htmlspecialchars($v['title']),'avatar'=>$v['user_img'],'content'=>htmlspecialchars($v['content']),'replytime'=>date("Y-m-d",$v['create_time']),'check'=>$v['astatus'],'url'=>$url];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'没有查询结果！'];

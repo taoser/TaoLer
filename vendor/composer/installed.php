@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '3f2bac47e4326e46b7e195dcaf909dfef2fb4c17',
+        'reference' => 'bf441719f29b5b109daebc5b9ededd8da8914773',
         'name' => 'taoser/taoler',
         'dev' => true,
     ),
@@ -160,7 +160,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '3f2bac47e4326e46b7e195dcaf909dfef2fb4c17',
+            'reference' => 'bf441719f29b5b109daebc5b9ededd8da8914773',
             'dev_requirement' => false,
         ),
         'taoser/think-addons' => array(

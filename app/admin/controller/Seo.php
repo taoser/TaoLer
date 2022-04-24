@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-04-21 11:39:38
+ * @LastEditTime: 2022-04-24 08:44:53
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -45,33 +45,41 @@ class Seo extends AdminController
 
     public function push()
     {
-        $data = Request::only(['start_id','end_id']);
+        $data = Request::only(['start_id','end_id','time']);
 
         if(empty(config('taoler.baidu.push_api'))) return json(['code'=>-1,'msg'=>'请先配置接口push_api']);
         $urls = [];
         if(empty($data['start_id']) || empty($data['end_id'])) {
-            $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->column('id');
+            $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->whereTime('create_time', $data['time'])->column('id');
         } else {
-            $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->where('id','between',[$data['start_id'],$data['end_id']])->column('id');
+            $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->where('id','between',[$data['start_id'],$data['end_id']])->whereTime('create_time', $data['time'])->column('id');
         }
-
+        if(empty($artAllId)) return json(['code'=>-1,'msg'=>'没有查询到结果，无需推送']);
+        // 组装链接数组
         foreach($artAllId as $aid) {
             $urls[] = $this->getRouteUrl($aid);
         }
+        // 百度接口单次最大提交200，进行分组
+        $urls = array_chunk($urls,2000);
+        
         $api = config('taoler.baidu.push_api');
         $ch = curl_init();
-        $options =  array(
-            CURLOPT_URL => $api,
-            CURLOPT_POST => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POSTFIELDS => implode("\n", $urls),
-            CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
-        );
-        curl_setopt_array($ch, $options);
-        $result = curl_exec($ch);
-        if($result == false) {
-            return json(['code'=>-1,'msg'=>'接口失败']);
+        foreach($urls as $url) {
+            $options =  array(
+                CURLOPT_URL => $api,
+                CURLOPT_POST => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => implode("\n", $url),
+                CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
+            );
+            curl_setopt_array($ch, $options);
+            $result = curl_exec($ch);
+            if($result == false) {
+                return json(['code'=>-1,'msg'=>'接口失败']);
+            }
         }
+        curl_close($ch);
+        
         $res = stripos($result,'error');
         $data = json_decode($result); 
         if($res !== false) {    

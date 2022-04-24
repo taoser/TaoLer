@@ -345,7 +345,7 @@ class Article extends BaseController
 		if($data['flag'] == 'on') {
 			// 百度分词自动生成关键词
 			if(!empty(config('taoler.baidu.client_id')) == true) {
-				$url = config('taoler.baidu.push_api');
+				$url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
 
 				//headers数组内的格式
 				$headers = array();

@@ -57,7 +57,20 @@
 								<input type="text" name="end_id" placeholder="结束ID" autocomplete="off" class="layui-input">
 							</div>
 							<div class="layui-form-mid layui-word-aux">帖子ID范围,如果不填，默认全站提交</div>
-						</div>					  
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">选择时间</label>
+							<div class="layui-input-inline">
+								<select name="time" lay-verify="required">
+									<option value="today">今天</option>
+									<option value="yesterday">昨天</option>
+									<option value="week">本周</option>
+									<option value="month">本月</option>
+									<option value="''">全部</option>
+								</select>
+							</div>
+
+						</div>				  
 						<div class="layui-form-item">
 							<label class="layui-form-label">推送至API</label>
 							<div class="layui-input-block">

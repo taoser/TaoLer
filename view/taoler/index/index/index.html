@@ -35,7 +35,7 @@
 			</ul>
 			<div style="text-align: center">
 			  <div class="laypage-main">
-				<a href="{:url('article/cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
+				<a href="{:url('cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
 			  </div>
 			</div>
 		  </div>
@@ -96,11 +96,11 @@
 
 {block name="script"}
 <script>
-var replyUrl = "{:url('index/reply')}";
-var signStatusUrl = "{:url('sign/status')}";
-var signInUrl = "{:url('sign/sign')}";
-var signRuleUrl = "{:url('sign/getsignrule')}";
-var signJsonUrl = "{:url('sign/signJson')}";
+var replyUrl 		= "{:url('index/reply')}";
+var signStatusUrl	= "{:url('sign/status')}";
+var signInUrl		= "{:url('sign/sign')}";
+var signRuleUrl		= "{:url('sign/getsignrule')}";
+var signJsonUrl		= "{:url('sign/signJson')}";
 
 $('#friend-link').on('click', function(){
 	layer.open({
@@ -112,6 +112,5 @@ $('#friend-link').on('click', function(){
 	});
 	return false;
 });
-	
 </script>
 {/block}

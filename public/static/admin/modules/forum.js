@@ -128,7 +128,7 @@ layui.define(['table', 'form'], function(exports){
       {type: 'checkbox'}
       ,{field: 'id', width: 80, title: 'ID', sort: true}
       ,{field: 'replyer', title: '回帖人', width: 80}
-      ,{field: 'cardid', title: '帖ID',templet: '#title'}
+      ,{field: 'title', title: '帖ID',templet: '#title'}
       ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
       ,{field: 'content', title: '评论', minWidth: 200}
       ,{field: 'replytime', title: '回复时间', width: 120, sort: true}

@@ -44,7 +44,7 @@
           <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
         </script>
 		<script type="text/html" id="title">
-		<a href="{$domain}/jie/{{d.cid}}.html" target="_blank">{{d.cardid}}</a>
+		<a href="{{d.url}}.html" target="_blank">{{d.title}}</a>
 		</script>
 		<script type="text/html" id="buttonCheck">
             {if condition="checkRuleButton('forum/recheck')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="recheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
@@ -64,15 +64,15 @@
 
 {block name="js"}  
 <script>
-var forumList = "{:url('Forum/list')}",
-    forumListdel = "{:url('Forum/listdel')}",
+var forumList     = "{:url('Forum/list')}",
+    forumListdel  = "{:url('Forum/listdel')}",
     forumListform = "{:url('Forum/listform')}",
-    forumReplys = "{:url('Forum/replys')}",
-    forumRedel = "{:url('Forum/redel')}",
+    forumReplys   = "{:url('Forum/replys')}",
+    forumRedel    = "{:url('Forum/redel')}",
     forumReplysform = "{:url('Forum/replysform')}",
-    forumTags = "{:url('Forum/tags')}",
+    forumTags       = "{:url('Forum/tags')}",
     forumTagsDelete = "{:url('Forum/tagsdelete')}",
-    forumTagsForm = "{:url('Forum/tagsform')}";
+    forumTagsForm   = "{:url('Forum/tagsform')}";
   layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({
