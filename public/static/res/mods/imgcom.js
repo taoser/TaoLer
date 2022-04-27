@@ -12,7 +12,7 @@ var compressImage = {
 	//obj.preview(function(index, file, result){
 				 
 		//执行实例
-					
+		var index = layer.load(1);	
 		var files = obj.pushFile();
 		var filesArry = [];
 		for (var key in files) { //将上传的文件转为数组形式

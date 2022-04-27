@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-04-24 08:44:53
+ * @LastEditTime: 2022-04-27 14:20:06
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -128,7 +128,7 @@ class Seo extends AdminController
         $flag= true;
         // 写ID
         $w_id = '';
-        // 新文件编号
+        // 生成新文件编号，防止重复写入，
         $i = 1;
         // 获取public下所有xml文件
         $newFile = $this->getXmlFile(public_path());
@@ -228,7 +228,7 @@ class Seo extends AdminController
             return json(['code'=>-1,'msg'=>'写xml配置失败']);
         }
         
-        return json(['code'=>0,'msg'=>'生成xml成功']);
+        return json(['code'=>0,'msg'=>'本次成功生成'.count($artAllId).'条xml']);
     }
 
     /**
@@ -311,6 +311,33 @@ class Seo extends AdminController
             return json(['code'=>-1,'msg'=>'删除失败']);
         }
         return json(['code'=>0,'msg'=>'删除成功']);
+    }
+
+    public function searchLog()
+    {
+        $time = input('search_time');
+        $logPath = app()->getRootPath().'runtime/log/browse/'.$time.'.log';
+        $logPath = str_replace('\\','/',$logPath);
+        if(!file_exists($logPath)) return json(['code'=>-1,'msg'=>'还没有要分析的日志哦']);
+        $log = file_get_contents($logPath);
+        $log = preg_replace('/\[info\][^\n]*compatible;/', '', $log);
+
+        // 正则蜘蛛
+        preg_match_all('/(.*?)(?:bingbot|Googlebot|Baiduspider|SemrushBot|AhrefsBot|MJ12bot)+[^\n]*\r?\n/',$log,$arr);
+
+        $string = '';
+        foreach($arr[0] as $str) {
+            $str = preg_replace('/\[(.*?)T/', '', $str);
+            $str = preg_replace('/\+08:00\]/', '', $str);
+            $string .= preg_replace('/\/(.*?)\)/', '', $str);
+        }
+
+        if(strlen($string)) {
+            return json(['code'=>0,'msg'=>'分析成功','data'=>$string]);
+        } else {
+            return json(['code'=>-1,'msg'=>'还没有蜘蛛来哦']);
+        }
+       
     }
 
 }

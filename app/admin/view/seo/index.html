@@ -13,6 +13,7 @@
 				<li lay-id="map">站点地图</li>
 				<li lay-id="robots">robots</li>
 				<li lay-id="push_js">自动提交</li>
+				<li lay-id="search_show">蜘蛛分析</li>
 				</ul>
               <div class="layui-tab-content">
 				<div class="layui-tab-item">
@@ -177,6 +178,27 @@
 					{/volist}
 
                 </div>
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="search_show">
+						<div class="layui-form-item">
+							<label class="layui-form-label">选择时间</label>
+							<div class="layui-input-inline">
+								<input type="text" name="search_time" id="search_time" required lay-verify="required" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn layui-btn-danger" lay-submit lay-filter="search_show_submit">开始分析</button>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">分析结果</label>
+						<div class="layui-input-block">
+							<textarea type="text" name="search_list" placeholder="搜索引擎抓取结果" class="layui-textarea" style="height: 600px;"></textarea>
+						</div>
+					</div>
+				</div>
 
 			  </div>
             </div>
@@ -196,10 +218,19 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index'], function(){
+  }).use(['index', 'laydate'], function(){
     var $ = layui.$
 	,form = layui.form
 	var element  =layui.element ;
+	var laydate = layui.laydate;
+
+	//执行一个laydate实例
+	laydate.render({
+    elem: '#search_time' //指定元素
+	,type: 'date'
+	,format: 'yyyyMM/dd'
+	,value: new Date()
+  });
 
 	// baidu push
 	form.on('submit(search_push)', function(data){
@@ -286,6 +317,22 @@
 				});
 			} else {
 				layer.open({title:"删除失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+
+  // 搜索引擎分析
+  form.on('submit(search_show_submit)', function(data){
+	var field = data.field;
+	$.post("{:url('seo/searchLog')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					$("textarea[name='search_list']").html(res.data);
+					//location.reload();
+				});
+			} else {
+				layer.open({title:"添加失败",content:res.msg,icon:5,anim:6});
 			}
     });
     return false;

@@ -331,7 +331,7 @@ layui.define(['table', 'form'], function(exports){
 
             
             //提交 Ajax 成功后，静态更新表格中的数据
-            $.ajax({
+        $.ajax({
 				type:"post",
 				url:authGroupRoleEdit,
 				data:{"id":field.id,"rules":rules,"title":field.title,"descr":field.descr},
@@ -419,7 +419,7 @@ layui.define(['table', 'form'], function(exports){
         type: 2
         ,title: '编辑用户权限'
         ,content: authAccessEdit +'?id='+ data.id
-        ,area: ['350px', '420px']
+        ,area: ['450px', '420px']
         ,btn: ['确定', '取消']
         ,yes: function(index, layero){
           var iframeWindow = window['layui-layer-iframe'+ index]
@@ -430,30 +430,30 @@ layui.define(['table', 'form'], function(exports){
             var field = data.field; //获取提交的字段
             //提交 Ajax 成功后，静态更新表格中的数据
             $.ajax({
-				type:"post",
-				url:authAccessEdit,
-				data:field,
-				daType:"json",
-				success:function (res){
-					if (res.code == 0) {
-						layer.msg(res.msg,{
-							icon:6,
-							time:2000
-						});
-					} else {
-						layer.open({
-							tiele:'修改失败',
-							content:res.msg,
-							icon:5,
-							anim:6
-						});
-					}
-				}
-			});
+            type:"post",
+            url:authAccessEdit,
+            data:field,
+            daType:"json",
+            success:function (res){
+              if (res.code == 0) {
+                layer.msg(res.msg,{
+                  icon:6,
+                  time:2000
+                });
+              } else {
+                layer.open({
+                  tiele:'修改失败',
+                  content:res.msg,
+                  icon:5,
+                  anim:6
+                });
+              }
+            }
+          });
 			
             table.reload('LAY-user-back-group'); //数据刷新
             layer.close(index); //关闭弹层
-          });  
+      });  
           
           submit.trigger('click');
         }
@@ -545,7 +545,7 @@ layui.define(['table', 'form'], function(exports){
 				field.ishidden = 1;
 				}
 			
-            //提交 Ajax 成功后，静态更新表格中的数据
+      //提交 Ajax 成功后，静态更新表格中的数据
 			$.ajax({
 				type:"post",
 				url:authRuleEdit,

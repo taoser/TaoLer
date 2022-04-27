@@ -234,13 +234,13 @@ class SetArr
 								preg_match($k_arr,$this->str,$k_arr);
 								//$k_arr[0]
 								$k_arr = preg_replace('/[\s|\'|>]/', '', $k_arr[0]);
-dump($k_arr);
+//dump($k_arr);
 								$k_ar = eval('$'.$k_arr);
 								$n = $this->getArrSonCount($k_ar);
-dump($n);
+//dump($n);
 								$kpats = $this->getArrSonCount(config($this->configName.'.'.$k)) ? '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$k.'\'\s*=>\s*\[\r?\n/';
 								preg_match($kpats,$this->str,$arrk);
-dump($k,$kpats,$this->str,$arrk);
+//dump($k,$kpats,$this->str,$arrk);
 								if(!is_int($kk)) {
 									if(array_key_exists($kk,config($this->configName.'.'.$k))) {
 										echo $kk.'不能添加已存在的配置项kk';

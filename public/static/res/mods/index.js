@@ -153,93 +153,93 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 					return false;
 				}
 			  
-                  layer.open({
-                      type: 1
-                      ,id: 'fly-jie-upload'
-                      ,title: '插入图片'
-                      ,area: 'auto'
-                      ,shade: false
-                      //,area: '465px'
-                      ,fixed: false
-                      ,offset: [
-                          editor.offset().top - $(window).scrollTop() + 'px'
-                          ,editor.offset().left + 'px'
-                      ]
-                      ,skin: 'layui-layer-border'
-                      ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
-                          ,'<li class="layui-form-item">'
-                          ,'<label class="layui-form-label">URL</label>'
-                          ,'<div class="layui-input-inline">'
-                          ,'<input required name="image" placeholder="支持粘贴远程图片地址" value="" class="layui-input">'
-                          ,'</div>'
-                          ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>上传图片</button>'
-                          ,'</li>'
-                          ,'<li class="layui-form-item" style="text-align: center;">'
-                          ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn" id="img-button">确认</button>'
-                          ,'</li>'
-                          ,'</ul>'].join('')
-                      ,success: function(layero, index){
-                          var image =  layero.find('input[name="image"]');
+        layer.open({
+            type: 1
+            ,id: 'fly-jie-upload'
+            ,title: '插入图片'
+            ,area: 'auto'
+            ,shade: false
+            //,area: '465px'
+            ,fixed: false
+            ,offset: [
+                editor.offset().top - $(window).scrollTop() + 'px'
+                ,editor.offset().left + 'px'
+            ]
+            ,skin: 'layui-layer-border'
+            ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
+                ,'<li class="layui-form-item">'
+                ,'<label class="layui-form-label">URL</label>'
+                ,'<div class="layui-input-inline">'
+                ,'<input required name="image" placeholder="支持粘贴远程图片地址" value="" class="layui-input">'
+                ,'</div>'
+                ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>上传图片</button>'
+                ,'</li>'
+                ,'<li class="layui-form-item" style="text-align: center;">'
+                ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn" id="img-button">确认</button>'
+                ,'</li>'
+                ,'</ul>'].join('')
+                ,success: function(layero, index){
+                var image =  layero.find('input[name="image"]');
 
-                          //执行上传实例
-                          upload.render({
-                              elem: '#uploadImg'
-							  ,accept: 'images'
-							  ,acceptMime: 'image/*'
-							  ,exts: 'jpg|png|gif|bmp|jpeg'
-                              ,url: uploads
-                              ,data: {type:'image'}
-							  ,auto: false
-							  //,bindAction: '#img-button' //指向一个按钮触发上传
-							  //,field: 'image'
-                              ,size: 10240
-							  ,choose: function (obj) { //选择文件后的回调
-								imgcom.uploads(obj);
-							  }
-      
-                              ,done: function(res){
-                                  if(res.status == 0){
-									  //console.log(res.url);
-                                      image.val(res.url);
-                                  } else {
-                                      layer.msg(res.msg, {icon: 5});
-                                  }
-                              }
-							  ,error: function(){
-									layer.msg('系统错误，请联系管理员');
-								}
-                          });
+                //执行上传实例
+                upload.render({
+                    elem: '#uploadImg'
+                    ,accept: 'images'
+                    ,acceptMime: 'image/*'
+                    ,exts: 'jpg|png|gif|bmp|jpeg'
+                    ,url: uploads
+                    ,data: {type:'image'}
+                    ,auto: false
+                    //,bindAction: '#img-button' //指向一个按钮触发上传
+                    //,field: 'image'
+                    ,size: 10240
+                    ,choose: function (obj) { //选择文件后的回调
+                      imgcom.uploads(obj);
+                    }
 
-                          form.on('submit(uploadImages)', function(data){
-                              var field = data.field;							  
-                              if(!field.image) return image.focus();
-                              layui.focusInsert(editor[0], 'img['+ field.image + '] ');
-                              layer.close(index);
-                              editor.trigger('keyup');
-                          });
-                      }
-                  });
+                    ,done: function(res){
+                        if(res.status == 0){
+                        //console.log(res.url);
+                            image.val(res.url);
+                        } else {
+                            layer.msg(res.msg, {icon: 5});
+                        }
+                    }
+                    ,error: function(){
+                      layer.msg('系统错误，请联系管理员');
+                    }
+                });
+
+                form.on('submit(uploadImages)', function(data){
+                    var field = data.field;							  
+                    if(!field.image) return image.focus();
+                    layui.focusInsert(editor[0], 'img['+ field.image + '] ');
+                    layer.close(index);
+                    editor.trigger('keyup');
+                });
+            }
+        });
+      }
+      ,href: function(editor){ //超链接
+          layer.prompt({
+              title: '请输入合法链接'
+              ,shade: false
+              ,fixed: false
+              ,id: 'LAY_flyedit_href'
+              ,offset: [
+                  editor.offset().top - $(window).scrollTop() + 1 + 'px'
+                  ,editor.offset().left + 1 + 'px'
+              ]
+          }, function(val, index, elem){
+              if(!/^http(s*):\/\/[\S]/.test(val)){
+                  layer.tips('请务必 http 或 https 开头', elem, {tips:1})
+                  return;
               }
-              ,href: function(editor){ //超链接
-                  layer.prompt({
-                      title: '请输入合法链接'
-                      ,shade: false
-                      ,fixed: false
-                      ,id: 'LAY_flyedit_href'
-                      ,offset: [
-                          editor.offset().top - $(window).scrollTop() + 1 + 'px'
-                          ,editor.offset().left + 1 + 'px'
-                      ]
-                  }, function(val, index, elem){
-                      if(!/^http(s*):\/\/[\S]/.test(val)){
-                          layer.tips('请务必 http 或 https 开头', elem, {tips:1})
-                          return;
-                      }
-                      layui.focusInsert(editor[0], ' a('+ val +')['+ val + '] ');
-                      layer.close(index);
-                      editor.trigger('keyup');
-                  });
-              }
+              layui.focusInsert(editor[0], ' a('+ val +')['+ val + '] ');
+              layer.close(index);
+              editor.trigger('keyup');
+          });
+      }
               ,quote: function(editor){ //引用
                   layer.prompt({
                       title: '请输入引用内容'

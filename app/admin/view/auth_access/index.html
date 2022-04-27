@@ -6,15 +6,13 @@
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
         <div class="layui-form-item">
-          <div class="layui-inline">
-            管理员筛选
-          </div>
+          <div class="layui-inline">管理员筛选</div>
           <div class="layui-inline">
             <select name="uid" lay-filter="LAY-admin-group-type">
               <option value="">全部用户</option>
-			  {volist name="admins" id="vo"}
+			        {volist name="admins" id="vo"}
               <option value="{$vo.id}">{$vo.username}</option>
-			  {/volist}
+			        {/volist}
             </select>
           </div>
         </div>
@@ -30,9 +28,9 @@
 			{if condition="checkRuleButton('AuthAccess/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="groupcheck" lay-text="开启|禁用" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
         </script>
         <script type="text/html" id="table-useradmin-admin">
-		{if condition="checkRuleButton('AuthAccess/edit')"}
+		  {if condition="checkRuleButton('AuthAccess/edit')"}
           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-		{else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
+		  {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
         {if condition="checkRuleButton('AuthAccess/delete')"}
 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
         {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
@@ -156,7 +154,7 @@
           type: 2
           ,title: '添加权限'
           ,content: 'add.html'
-          ,area: ['400px', '300px']
+          ,area: ['450px', '400px']
           ,btn: ['确定', '取消']
           ,yes: function(index, layero){
             var iframeWindow = window['layui-layer-iframe'+ index]
@@ -168,7 +166,7 @@
               //提交 Ajax 成功后，静态更新表格中的数据
               $.ajax({
 				type:"post",
-				url:"{:url('admin/AuthAccess/add')}",
+				url:"{:url('AuthAccess/add')}",
 				data:field,
 				daType:"json",
 				success:function (data){

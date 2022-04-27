@@ -79,8 +79,9 @@ class AuthAccess extends AdminController
 	}
 	
 	//管理员权限编辑
-	public function edit($id)
+	public function edit()
 	{
+		$id = input('id');
 		if(Request::isAjax()){
 			$data = Request::only(['id','uid','group_id']);	
 			//检测重复权限
@@ -98,7 +99,7 @@ class AuthAccess extends AdminController
 		return json($res);
 		}
 		
-		$access = Db::name('auth_group_access')->group('uid')->find($id);
+		$access = Db::name('auth_group_access')->find($id);
 		$admins = Db::name('admin')->field('id,username')->where('delete_time',0)->select();
 		$auth_groups = Db::name('auth_group')->field('id,title')->select();
 		

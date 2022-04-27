@@ -92,7 +92,7 @@ function getCateDesc($ename)
 function getArtContent($content)
 {
     // 过滤音视频图片
-    $content = preg_replace('/[(img)|(audio)|(video)]+(\(\S+\))?\[\S+\]/','',$content);
+    $content = preg_replace('/(?:img|audio|video)(\(\S+\))?\[\S+\]/','',$content);
     $content = preg_replace('/\s*/','',$content);
     $content = preg_replace('/\[[^\]]+\]/','',$content);
     return mb_substr(strip_tags($content),0,150).'...';
