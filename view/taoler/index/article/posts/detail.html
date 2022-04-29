@@ -44,7 +44,9 @@
         <hr>
         {// 内容}
         <div class="detail-body photos" id="content">{$article.content}</div>
+      </div>
 
+      <div class="fly-panel detail-box" >
         {//管理}
         {if (($article.upzip !== '') || session('?user_name'))}
         <div class="detail-assist">
@@ -77,10 +79,6 @@
           </div>
         </div>
         {/if}
-      </div>
-
-      <div class="fly-panel detail-box" >
-        
       </div>
 
       {//评论}

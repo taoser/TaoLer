@@ -1,3 +1,12 @@
+<!--
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-04-29 15:08:24
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\user\index.html
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+-->
 {extend name="public/user" /}
 
 {block name="content"}
@@ -20,16 +29,13 @@
 				<ul class="layui-row layui-col-space10 fly-shortcut"> 
 					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/set')}"><i class="layui-icon"></i><cite>修改信息</cite></a> </li> 
 					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/set#avatar')}"><i class="layui-icon"></i><cite>修改头像</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/set#pass')}"><i class="layui-icon"></i><cite>修改密码</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="/user/set/#bind"><i class="layui-icon"></i><cite>帐号绑定</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('article/add')}"><i class="layui-icon"></i><cite>发表新帖</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="/column/share/"><i class="layui-icon"></i><cite>查看分享</cite></a> </li> 
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/set#pass')}"><i class="layui-icon"></i><cite>修改密码</cite></a> </li>
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('article/add')}"><i class="layui-icon"></i><cite>发表新帖</cite></a> </li>
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/post#collection')}"><i class="layui-icon"></i><cite>我的收藏</cite></a> </li>
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="#"><i class="layui-icon"></i><cite>帐号绑定</cite></a> </li> 
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="#"><i class="layui-icon"></i><cite>查看分享</cite></a> </li> 
 					<li class="layui-col-sm3 layui-col-xs4 LAY_search "> <a href="javascript:;"><i class="layui-icon"></i><cite>搜索资源</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/post/#collection')}"><i class="layui-icon"></i><cite>我的收藏</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="/jie/15697/"><i class="layui-icon"></i><cite>成为赞助商</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="/jie/2461/"><i class="layui-icon"></i><cite>关注公众号</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="http://www.test.com/doc/"><i class="layui-icon"></i><cite>文档</cite></a> </li> 
-					<li class="layui-col-sm3 layui-col-xs4"> <a href="http://www.test.com/demo/"><i class="layui-icon"></i><cite>示例</cite></a> </li> 
+					 
 				</ul> 
 			</div> 
 		</div> 
@@ -39,10 +45,10 @@
 
 {block name="script"}
 <script>
-var replyUrl = "{:url('index/reply')}";
-var signStatusUrl = "{:url('sign/status')}";
-var signInUrl = "{:url('sign/sign')}";
-var signRuleUrl = "{:url('sign/getsignrule')}";
-var signJsonUrl = "{:url('sign/signJson')}";
+var replyUrl		= "{:url('index/reply')}";
+var signStatusUrl	= "{:url('sign/status')}";
+var signInUrl		= "{:url('sign/sign')}";
+var signRuleUrl		= "{:url('sign/getsignrule')}";
+var signJsonUrl		= "{:url('sign/signJson')}";
 </script>
 {/block}

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-04-27 14:20:06
+ * @LastEditTime: 2022-04-29 17:24:47
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -316,28 +316,74 @@ class Seo extends AdminController
     public function searchLog()
     {
         $time = input('search_time');
+        $name = input('spider_name');
         $logPath = app()->getRootPath().'runtime/log/browse/'.$time.'.log';
         $logPath = str_replace('\\','/',$logPath);
-        if(!file_exists($logPath)) return json(['code'=>-1,'msg'=>'还没有要分析的日志哦']);
+        if(!file_exists($logPath)) {
+            return json(['code'=>-1,'msg'=>'还没有要分析的日志哦!']);
+        }
         $log = file_get_contents($logPath);
         $log = preg_replace('/\[info\][^\n]*compatible;/', '', $log);
-
-        // 正则蜘蛛
-        preg_match_all('/(.*?)(?:bingbot|Googlebot|Baiduspider|SemrushBot|AhrefsBot|MJ12bot)+[^\n]*\r?\n/',$log,$arr);
-
-        $string = '';
-        foreach($arr[0] as $str) {
-            $str = preg_replace('/\[(.*?)T/', '', $str);
-            $str = preg_replace('/\+08:00\]/', '', $str);
-            $string .= preg_replace('/\/(.*?)\)/', '', $str);
+        
+        switch($name) {
+            case 'Baiduspider':
+                preg_match_all('/(.*?)(?:Baiduspider)+[^\n]*\r?\n/',$log,$arr);
+            break;
+            case 'Bytespider':
+                preg_match_all('/(.*?)(?:Bytespider)+[^\n]*\r?\n/',$log,$arr);
+            break;
+            case 'Googlebot':
+                preg_match_all('/(.*?)(?:Googlebot)+[^\n]*\r?\n/',$log,$arr);
+            break;
+            case 'bingbot':
+                preg_match_all('/(.*?)(?:bingbot)+[^\n]*\r?\n/',$log,$arr);
+            break;
+            default:
+                // 正则全部蜘蛛
+                preg_match_all('/(.*?)(?:bingbot|Googlebot|Baiduspider|Bytespider|SemrushBot|AhrefsBot|MJ12bot)+[^\n]*\r?\n/',$log,$arr);
         }
 
-        if(strlen($string)) {
-            return json(['code'=>0,'msg'=>'分析成功','data'=>$string]);
+        // $string = '';
+        // foreach($arr[0] as $str) {
+        //     $str = preg_replace('/\[(.*?)T/', '', $str);
+        //     $str = preg_replace('/\+08:00\]/', '', $str);
+        //     $string .= preg_replace('/\/(.*?)\)/', '', $str);
+        // }
+
+        // if(strlen($string)) {
+        //     return json(['code'=>0,'msg'=>'分析成功','data'=>$string]);
+        // } else {
+        //     return json(['code'=>-1,'msg'=>'还没有蜘蛛来哦']);
+        // }
+        $list = [];
+        if(count($arr[0])) {
+            $list['code']= 0;
+            $list['msg'] = '分析成功';
+            $list['count'] = count($arr[0]);
+            foreach($arr[0] as $k =>$str) {
+                // $str = preg_replace('/\[(.*?)T/', '', $str);
+                // $str = preg_replace('/\+08:00\]/', '', $str);
+                // 时间
+                $str = preg_replace('/\/(.*?)\)/', '', $str);
+                $ptime = "/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/";
+                preg_match($ptime, $str,$at);
+                $time = str_replace('T',' ',$at[0]);
+                //$list[$k]['time'] = $time;
+                // ip
+                $pip = '/(?:(?:2[0-4][0-9]\.)|(?:25[0-5]\.)|(?:1[0-9][0-9]\.)|(?:[1-9][0-9]\.)|(?:[0-9]\.)){3}(?:(?:2[0-5][0-5])|(?:25[0-5])|(?:1[0-9][0-9])|(?:[1-9][0-9])|(?:[1-9]))/';
+                preg_match($pip, $str,$aip);
+                $ip = $aip[0];
+                // url
+                $pattern="/(http|https):\/\/.*$/i";
+                preg_match($pattern, $str,$url);
+
+               $list['data'][] = ['id'=>$k + 1, 'time'=>$time, 'name'=>$name, 'ip'=>$ip, 'url'=>$url[0]];
+            }
+            return json($list);
         } else {
-            return json(['code'=>-1,'msg'=>'还没有蜘蛛来哦']);
+            return json(['code'=>-1,'msg'=> '没有需要分析的数据']);
         }
-       
+
     }
 
 }

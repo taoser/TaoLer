@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '55487e7d9d3d67406b0dbe02896d285923cec456',
+        'reference' => 'bb712c71c521dd5acc4656bb49ff90285de07458',
         'name' => 'taoser/taoler',
         'dev' => true,
     ),
@@ -146,12 +146,12 @@
             'dev_requirement' => true,
         ),
         'symfony/var-dumper' => array(
-            'pretty_version' => 'v4.4.39',
-            'version' => '4.4.39.0',
+            'pretty_version' => 'v4.4.41',
+            'version' => '4.4.41.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/var-dumper',
             'aliases' => array(),
-            'reference' => '35237c5e5dcb6593a46a860ba5b29c1d4683d80e',
+            'reference' => '58eb36075c04aaf92a7a9f38ee9a8b97e24eb481',
             'dev_requirement' => true,
         ),
         'taoser/taoler' => array(
@@ -160,7 +160,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '55487e7d9d3d67406b0dbe02896d285923cec456',
+            'reference' => 'bb712c71c521dd5acc4656bb49ff90285de07458',
             'dev_requirement' => false,
         ),
         'taoser/think-addons' => array(

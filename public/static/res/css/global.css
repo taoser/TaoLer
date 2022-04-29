@@ -464,7 +464,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-hits .layui-btn{border-radius: 0;}
 .detail-hits .layui-btn+.layui-btn{margin-left: 5px;}
 .detail-hits .jie-admin{margin-right: 1px;}
-.detail-body{margin: 10px 0 0; min-height: 306px; line-height: 26px; font-size: 16px; color: #333; word-wrap: break-word;}
+.detail-body{margin: 10px 0 0; min-height: 50px; line-height: 26px; font-size: 16px; color: #333; word-wrap: break-word;}
 .detail-body p{margin-bottom:15px;}
 .detail-body img{max-width: 100%; cursor: pointer;}
 /*

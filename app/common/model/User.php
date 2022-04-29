@@ -8,6 +8,7 @@ use think\facade\Cookie;
 use think\facade\Config;
 use think\facade\Lang;
 use app\event\UserLogin;
+use taoler\com\Files;
 
 class User extends Model
 {
@@ -105,21 +106,27 @@ class User extends Model
 	
     //注册校验
     public function reg($data)
-    {	
-			//随机存入默认头像
-			$code = mt_rand('1','11');
-			$data['user_img'] = "/static/res/images/avatar/$code.jpg";	
-			$data['create_time'] = time();
-			$salt = substr(md5($data['create_time']),-6);
-			$data['password'] = substr_replace(md5($data['password']),$salt,0,6);
-			$data['status'] = Config::get('taoler.config.regist_check');
-			$msg = $data['status'] ? '注册成功请登录' : '注册成功，请等待审核';
-            $result = $this->save($data);
-           if ($result) {
-               return ['code'=>1,'msg'=>$msg];
-           } else{
-               return '注册失败';
-           }
+    {
+        // public/static/res/images/avatar的所有图片
+		$images = Files::getAllFile('static/res/images/avatar');
+		//随机图片
+		$i = array_rand($images);
+		$img = $images[$i];
+        $data['user_img'] = '/'.str_replace('\\','/',$img);
+        //随机存入默认头像
+        // $code = mt_rand('1','11');
+        // $data['user_img'] = "/static/res/images/avatar/$code.jpg";
+        $data['create_time'] = time();
+        $salt = substr(md5($data['create_time']),-6);
+        $data['password'] = substr_replace(md5($data['password']),$salt,0,6);
+        $data['status'] = Config::get('taoler.config.regist_check');
+        $msg = $data['status'] ? '注册成功请登录' : '注册成功，请等待审核';
+        $result = $this->save($data);
+        if ($result) {
+            return ['code'=>1,'msg'=>$msg];
+        } else{
+            return '注册失败';
+        }
     }
 	
 	//重置密码

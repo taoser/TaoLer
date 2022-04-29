@@ -10,9 +10,8 @@ var layer = layui.layer;
 var compressImage = {
 	uploads:  function(obj){
 	//obj.preview(function(index, file, result){
-				 
-		//执行实例
-		var index = layer.load(1);	
+ 
+		//执行实例	
 		var files = obj.pushFile();
 		var filesArry = [];
 		for (var key in files) { //将上传的文件转为数组形式
@@ -105,7 +104,7 @@ var compressImage = {
 		
 	//})
 	}
- }		
+ }	
   //输出 imgcom 接口
   exports('imgcom', compressImage);
 });    

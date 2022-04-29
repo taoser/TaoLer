@@ -187,6 +187,18 @@
 							</div>
 						</div>
 						<div class="layui-form-item">
+							<label class="layui-form-label">选择蜘蛛</label>
+							<div class="layui-input-inline">
+								<select type="text" name="spider_name" required lay-verify="required" autocomplete="off" class="layui-input">
+									<option value="Baiduspider" selected>百度</option>
+									<option value="Bytespider" >头条</option>
+									<option value="Googlebot" >谷歌</option>
+									<option value="bingbot" >bing</option>
+									<option value="" >全部</option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-form-item">
 							<div class="layui-input-block">
 								<button class="layui-btn layui-btn-danger" lay-submit lay-filter="search_show_submit">开始分析</button>
 							</div>
@@ -194,8 +206,10 @@
 					</div>
 					<div class="layui-form-item">
 						<label class="layui-form-label">分析结果</label>
+						
 						<div class="layui-input-block">
-							<textarea type="text" name="search_list" placeholder="搜索引擎抓取结果" class="layui-textarea" style="height: 600px;"></textarea>
+							<table id="spider" lay-filter="spider"></table>
+							<!--textarea type="text" name="search_list" placeholder="搜索引擎抓取结果" class="layui-textarea" style="height: 600px;"></textarea-->
 						</div>
 					</div>
 				</div>
@@ -218,11 +232,12 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'laydate'], function(){
+  }).use(['index', 'laydate', 'table'], function(){
     var $ = layui.$
 	,form = layui.form
 	var element  =layui.element ;
 	var laydate = layui.laydate;
+	var table = layui.table;
 
 	//执行一个laydate实例
 	laydate.render({
@@ -230,6 +245,21 @@
 	,type: 'date'
 	,format: 'yyyyMM/dd'
 	,value: new Date()
+  });
+
+  //第一个实例
+  table.render({
+    elem: '#spider'
+    ,url: "{:url('seo/searchLog')}" //数据接口
+    ,page: true //开启分页
+    ,cols: [[ //表头
+      {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+      ,{field: 'time', title: '时间', width:160}
+      ,{field: 'name', title: '名称', width:120, sort: true}
+      ,{field: 'ip', title: 'IP', width:200} 
+      ,{field: 'url', title: 'URL', minWidth: 200}
+    ]]
+	,text: '对不起，加载出现异常！'
   });
 
 	// baidu push
@@ -328,12 +358,15 @@
 	$.post("{:url('seo/searchLog')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000},function(){
-					$("textarea[name='search_list']").html(res.data);
-					//location.reload();
+					//$("textarea[name='search_list']").html(res.data);
 				});
 			} else {
 				layer.open({title:"添加失败",content:res.msg,icon:5,anim:6});
 			}
+			//执行重载
+			table.reload('spider', {
+				where: field
+			});
     });
     return false;
   });

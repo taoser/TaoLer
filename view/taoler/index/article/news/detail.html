@@ -10,7 +10,7 @@
     <div class="layui-col-md12 content detail">
       <div class="fly-panel detail-box">
 		    {//标题}
-        <h1 style="color:{$article.title_color}; margin:10px 5px 15px 5px;" align="center">{$article.title}</h1>
+        <h1 style="color:{$article.title_color};margin:10px 5px 15px 5px;" align="center">{$article.title}</h1>
 
 		    {//作者}
         <div class="detail-about" align="center">
@@ -23,7 +23,9 @@
         <hr style="margin-bottom: 25px">
         {// 内容}
         <div class="detail-body photos" style="font-size: 18px;line-height: 200%;" id="content">{$article.content}</div>
+      </div>
 
+      <div class="fly-panel detail-box" >
         {//管理}
         {if (($article.upzip !== '') || session('?user_name'))}
         <div class="detail-assist">
@@ -31,7 +33,7 @@
         <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
         {/notempty}
           <div class="fly-admin-box" data-id="{$article.id}">
-          {if ($user.auth ?? '')}
+              {if ($user.auth ?? '')}
                 <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
                 {if($article.is_top == 0)}
                 <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
@@ -49,18 +51,14 @@
                 {else /}
                 <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;">{:lang('enable reply')}</span>
                 {/if}
-          <span id="color">{:lang('title color')}</span>
-          {/if}
-          {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-          <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
-          {/if}
+                <span id="color">{:lang('title color')}</span>
+              {/if}
+              {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
+              <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
+              {/if}
           </div>
         </div>
         {/if}
-      </div>
-
-      <div class="fly-panel detail-box" >
-        
       </div>
 
     </div>
@@ -100,7 +98,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){
     var othis = $(this), html = othis.html();
-	var string =  laytpl('{{ d.time }}').render({
+	  var string =  laytpl('{{ d.time }}').render({
 		//time: html
 		time: othis.attr('data')
 	});
@@ -217,7 +215,6 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
  $(function(){ 
     $(".photos").on("click","img",function(){ 
       var _this = $(this); 
-      console.log(_this);
       imgShow("#outerdiv", "#innerdiv", "#bigimg", _this); 
     }); 
   }); 
@@ -260,7 +257,6 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
       $(this).fadeOut("fast"); 
     }); 
   }
-  
 </script>
 
 <div id="outerdiv" style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:2;width:100%;height:100%;display:none;">
@@ -269,30 +265,6 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 </div>
 
 {:hook('markdownhook')}
-
-<script>
-  //扫码阅读
-  $("#rdown").hover(function(){
-      $("#phonedl").show().stop();
-    },function(){
-      $("#phonedl").hide().stop();
-    });
-    
-    $("#phonedl").hover(function(){
-      $("#phonedl").show().stop();
-    },function(){
-      $("#phonedl").hide().stop();
-  });
-
-	function PhoneDown(){
-		layer.open({                         
-			title: "扫码查阅",
-			skin: 'layui-layer',
-			content: "<img src='/qrcode/?text={$Request.domain}{:url('article/detail',['id' => $article.id])}&size=230'>"
-		});
-	}
-  //推送百度收录服务
-</script>
 
 {volist name="push_js" id="vo"}
 {$vo.jscode|raw}
