@@ -46,9 +46,9 @@
         <div class="detail-body photos" id="content">{$article.content}</div>
       </div>
 
+      {//管理}
+      {if (($article.upzip !== '') || session('?user_name'))}
       <div class="fly-panel detail-box" >
-        {//管理}
-        {if (($article.upzip !== '') || session('?user_name'))}
         <div class="detail-assist">
           {notempty name="$article.upzip"}
           <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
@@ -78,8 +78,9 @@
             {/if}
           </div>
         </div>
-        {/if}
       </div>
+      {/if}
+      
 
       {//评论}
       <div class="fly-panel detail-box" id="flyReply">

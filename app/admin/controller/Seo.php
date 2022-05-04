@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-04-29 17:24:47
+ * @LastEditTime: 2022-05-02 11:54:00
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -317,6 +317,8 @@ class Seo extends AdminController
     {
         $time = input('search_time');
         $name = input('spider_name');
+        $page = input('page') ? input('page') : 1;
+        $limit = input('limit') ? input('limit') : 20;
         $logPath = app()->getRootPath().'runtime/log/browse/'.$time.'.log';
         $logPath = str_replace('\\','/',$logPath);
         if(!file_exists($logPath)) {
@@ -324,6 +326,7 @@ class Seo extends AdminController
         }
         $log = file_get_contents($logPath);
         $log = preg_replace('/\[info\][^\n]*compatible;/', '', $log);
+        $log = preg_replace('/\[info\][^\n]*(?=YisouSpider)/', ' ', $log);
         
         switch($name) {
             case 'Baiduspider':
@@ -340,7 +343,7 @@ class Seo extends AdminController
             break;
             default:
                 // 正则全部蜘蛛
-                preg_match_all('/(.*?)(?:bingbot|Googlebot|Baiduspider|Bytespider|SemrushBot|AhrefsBot|MJ12bot)+[^\n]*\r?\n/',$log,$arr);
+                preg_match_all('/(.*?)(?:bingbot|Googlebot|Baiduspider|Bytespider|360Spider|YisouSpider|Sosospider|Sogou News Spider|SemrushBot|AhrefsBot|MJ12bot)+[^\n]*\r?\n/',$log,$arr);
         }
 
         // $string = '';
@@ -355,6 +358,7 @@ class Seo extends AdminController
         // } else {
         //     return json(['code'=>-1,'msg'=>'还没有蜘蛛来哦']);
         // }
+        $data = [];
         $list = [];
         if(count($arr[0])) {
             $list['code']= 0;
@@ -363,22 +367,35 @@ class Seo extends AdminController
             foreach($arr[0] as $k =>$str) {
                 // $str = preg_replace('/\[(.*?)T/', '', $str);
                 // $str = preg_replace('/\+08:00\]/', '', $str);
-                // 时间
                 $str = preg_replace('/\/(.*?)\)/', '', $str);
+                // 时间
                 $ptime = "/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/";
                 preg_match($ptime, $str,$at);
                 $time = str_replace('T',' ',$at[0]);
                 //$list[$k]['time'] = $time;
                 // ip
-                $pip = '/(?:(?:2[0-4][0-9]\.)|(?:25[0-5]\.)|(?:1[0-9][0-9]\.)|(?:[1-9][0-9]\.)|(?:[0-9]\.)){3}(?:(?:2[0-5][0-5])|(?:25[0-5])|(?:1[0-9][0-9])|(?:[1-9][0-9])|(?:[1-9]))/';
+                $pip = '/((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/';
                 preg_match($pip, $str,$aip);
                 $ip = $aip[0];
                 // url
                 $pattern="/(http|https):\/\/.*$/i";
                 preg_match($pattern, $str,$url);
+                // name
+                preg_match('/(?:bingbot|Googlebot|Baiduspider|Bytespider|360Spider|YisouSpider|Sosospider|Sogou News Spider|SemrushBot|AhrefsBot|MJ12bot)/', $str, $n);
+                $name = $n[0];
 
-               $list['data'][] = ['id'=>$k + 1, 'time'=>$time, 'name'=>$name, 'ip'=>$ip, 'url'=>$url[0]];
+               //$list['data'][] = ['id'=>$k + 1, 'time'=>$time, 'name'=>$name, 'ip'=>$ip, 'url'=>$url[0]];
+               $data[] = ['id'=>$k + 1, 'time'=>$time, 'name'=>$name, 'ip'=>$ip, 'url'=>$url[0]];
             }
+            $datas = array_chunk($data,(int)$limit);
+            //$pages = count($datas);
+
+            foreach($datas as $k=>$v) {
+                if($page-1 == $k) {
+                    $list['data'] = $v;
+                }
+            }
+
             return json($list);
         } else {
             return json(['code'=>-1,'msg'=> '没有需要分析的数据']);

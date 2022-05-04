@@ -32,7 +32,7 @@ class User extends BaseController
 	//发帖list
 	public function artList()
 	{
-		$article = Article::withCount('comments')->where('user_id',$this->uid)->order('update_time','desc')->paginate(10);
+		$article = Article::withCount('comments')->where(['user_id'=>$this->uid])->order('update_time','desc')->paginate(10);
 		//var_dump($article);
 		$count = $article->total();
 		$res = [];
@@ -198,9 +198,9 @@ class User extends BaseController
 		
 		
 		//用户发贴
-		$arts = Db::name('user')->alias('u')->join('article a','u.id = a.user_id')->field('u.id,a.id,a.title,a.pv,a.is_hot,a.create_time,a.delete_time')->where('a.delete_time',0)->where('a.user_id',$id)->order(['a.create_time'=>'desc'])->cache(3600)->select();
+		$arts = Db::name('user')->alias('u')->join('article a','u.id = a.user_id')->field('u.id,a.id,a.title,a.pv,a.is_hot,a.create_time,a.delete_time,a.status')->where(['a.delete_time'=>0,'a.status'=>1])->where('a.user_id',$id)->order(['a.create_time'=>'desc'])->cache(3600)->select();
 		//用户回答
-        $reys = Db::name('comment')->alias('c')->join('article a','c.article_id = a.id')->field('a.id,a.title,c.content,c.create_time,c.delete_time')->where(['a.delete_time'=>0,'c.delete_time'=>0])->where('c.user_id',$id)->order(['c.create_time'=>'desc'])->cache(3600)->select();
+        $reys = Db::name('comment')->alias('c')->join('article a','c.article_id = a.id')->field('a.id,a.title,c.content,c.create_time,c.delete_time,c.status')->where(['a.delete_time'=>0,'c.delete_time'=>0,'c.status'=>1])->where('c.user_id',$id)->order(['c.create_time'=>'desc'])->cache(3600)->select();
 		
 		View::assign(['u'=>$u,'arts'=>$arts,'reys'=>$reys,'jspage'=>'']);
         return View::fetch();

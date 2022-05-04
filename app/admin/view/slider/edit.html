@@ -7,18 +7,18 @@
       <label class="layui-form-label">位置</label>
       <div class="layui-input-inline">
         <select name="slid_type" lay-verify="required">
-		  <option {if condition="$slider.slid_type eq 1"} selected {/if} value="1">1首页幻灯</option>
-		  <option {if condition="$slider.slid_type eq 2"} selected {/if} value="2">2首页图片</option>
-		  <option {if condition="$slider.slid_type eq 3"} selected {/if} value="3">3分类图片</option>
-		  <option {if condition="$slider.slid_type eq 4"} selected {/if} value="4">4详情图片</option>
-		  <option {if condition="$slider.slid_type eq 5"} selected {/if} value="5">5首页赞助</option>
-		  <option {if condition="$slider.slid_type eq 6"} selected {/if} value="6">6分类赞助</option>
-		  <option {if condition="$slider.slid_type eq 7"} selected {/if} value="7">7详情赞助</option>
-		  <option {if condition="$slider.slid_type eq 8"} selected {/if} value="8">8温馨通道</option>
-		  <option {if condition="$slider.slid_type eq 9"} selected {/if} value="9">9友情链接</option>
+          <option {if condition="$slider.slid_type eq 1"} selected {/if} value="1">1首页幻灯</option>
+          <option {if condition="$slider.slid_type eq 2"} selected {/if} value="2">2首页图片</option>
+          <option {if condition="$slider.slid_type eq 3"} selected {/if} value="3">3分类图片</option>
+          <option {if condition="$slider.slid_type eq 4"} selected {/if} value="4">4详情图片</option>
+          <option {if condition="$slider.slid_type eq 5"} selected {/if} value="5">5首页赞助</option>
+          <option {if condition="$slider.slid_type eq 6"} selected {/if} value="6">6分类赞助</option>
+          <option {if condition="$slider.slid_type eq 7"} selected {/if} value="7">7详情赞助</option>
+          <option {if condition="$slider.slid_type eq 8"} selected {/if} value="8">8温馨通道</option>
+          <option {if condition="$slider.slid_type eq 9"} selected {/if} value="9">9友情链接</option>
           <option {if condition="$slider.slid_type eq 10"} selected {/if} value="10">10头部菜单</option>
           <option {if condition="$slider.slid_type eq 11"} selected {/if} value="11">11页脚链接</option>
-		</select>
+        </select>
       </div>
     </div>
     <div class="layui-form-item">
@@ -34,12 +34,12 @@
           </div>
           <button style="float: left;" type="button" class="layui-btn" dataid="{$slider.id}" id="layuiadmin-upload-slid-img">选图</button>
       </div>
-	<div class="layui-form-item">
-      <label class="layui-form-label">背景</label>
-      <div class="layui-input-inline">
-        <input type="text" name="slid_color" lay-verify="" placeholder="选位置3,4,5请选背景色" autocomplete="off" class="layui-input" value="{$slider.slid_color}" id="color-select">
-      </div>
-	  <div class="layui-inline" style="left: -11px;">
+      <div class="layui-form-item">
+        <label class="layui-form-label">背景</label>
+        <div class="layui-input-inline">
+          <input type="text" name="slid_color" lay-verify="" placeholder="选位置3,4,5请选背景色" autocomplete="off" class="layui-input" value="{$slider.slid_color}" id="color-select">
+        </div>
+      <div class="layui-inline" style="left: -11px;">
         <div id="coloer-form"></div>
       </div>
     </div>
@@ -118,20 +118,13 @@
             imgcom.uploads(obj);
         }
       ,done: function(res){
-		$(this.item).prev("div").children("input").val(res.src)
-			if(res.code == 0){
-				layer.msg(res.msg,{
-					icon:6,
-					tiye:2000
-				});
-			} else {
-				layer.open({
-					title:"上传失败",
-					content:res.msg,
-					icon:5,
-					anim:6
-				});
-			}
+      $(this.item).prev("div").children("input").val(res.src)
+        if(res.code == 0){
+          layer.msg(res.msg,{icon:6,tiye:2000});
+        } else {
+          layer.open({title:"上传失败",content:res.msg,icon:5,anim:6
+          });
+        }
       }
     });
   })

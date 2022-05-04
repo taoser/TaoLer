@@ -194,7 +194,7 @@
 									<option value="Bytespider" >头条</option>
 									<option value="Googlebot" >谷歌</option>
 									<option value="bingbot" >bing</option>
-									<option value="" >全部</option>
+									<option value="''" >全部</option>
 								</select>
 							</div>
 						</div>
@@ -257,8 +257,9 @@
       ,{field: 'time', title: '时间', width:160}
       ,{field: 'name', title: '名称', width:120, sort: true}
       ,{field: 'ip', title: 'IP', width:200} 
-      ,{field: 'url', title: 'URL', minWidth: 200}
+      ,{field: 'url', title: 'URL', minWidth: 200, templet: '<div><a href="{{d.url}}" target="_blank">{{d.url}}</a></div>'}
     ]]
+	,limit: 20
 	,text: '对不起，加载出现异常！'
   });
 
@@ -366,6 +367,9 @@
 			//执行重载
 			table.reload('spider', {
 				where: field
+				,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
 			});
     });
     return false;

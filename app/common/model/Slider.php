@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-05-01 17:10:55
+ * @LastEditors: TaoLer
+ * @Description: 链接投放优化设置
+ * @FilePath: \TaoLer\app\common\model\Slider.php
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+ */
 namespace app\common\model;
 
 use think\Model;
@@ -35,7 +44,7 @@ class Slider extends Model
         $sliders = Cache::get('slider'.$type);
         if(!$sliders){
             $sliders = $this::where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>$type])->whereTime('slid_over','>=',time())->select()->toArray();
-            Cache::set('slider'.$type,$sliders,3600);
+            Cache::tag('tagSlider')->set('slider'.$type,$sliders,3600);
         }
         return $sliders;
     }
@@ -46,6 +55,7 @@ class Slider extends Model
 		$result = $this::save($data);
 
 		if($result) {
+			Cache::tag('tagSlider')->clear();
 			return 1;
 		} else {
 			return 'add_error';
@@ -58,6 +68,7 @@ class Slider extends Model
 		$slider = $this::find($data['id']);
 		$result = $slider->save($data);
 		if($result) {
+			Cache::tag('tagSlider')->clear();
 			return 1;
 		} else {
 			return 'edit_error';

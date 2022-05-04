@@ -5,8 +5,6 @@ use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Request;
-use think\facade\Config;
-use think\exception\ValidateException;
 use app\common\model\Slider as SliderModel;
 
 class Slider extends AdminController
@@ -19,10 +17,51 @@ class Slider extends AdminController
      */
     public function index()
     {
-        //幻灯列表
-		$sliders = SliderModel::select();
-		View::assign('slider',$sliders);
-		return View::fetch();
+		  return View::fetch();
+    }
+
+    /**
+     * 链接列表
+     *
+     * @return void
+     */
+    public function list()
+    {
+      $list = [];
+      $type = input('slid_type');
+      $limit = input('limit');
+      $page = input('page');
+      if($type) {
+        $datas = SliderModel::where('slid_type',$type)->where('')->paginate([
+          'list_rows'=> $limit,
+          'page'=>$page
+        ]);
+      } else {
+        $datas = SliderModel::paginate([
+          'list_rows'=> $limit,
+          'page'=>$page
+        ]);
+      }
+
+      if(count($datas)) {
+        $list = ['code'=>0,'msg'=>'获取数据成功'];
+        foreach($datas as $k=>$v) {
+          $list['data'][] = [
+            'id'=>$v['id'],
+            'slid_name'=>$v['slid_name'],
+            'slid_img' =>$v['slid_img'],
+            'slid_type'=>$v['slid_type'],
+            'slid_href'=>$v['slid_href'],
+            'slid_color'=>$v['slid_color'],
+            'slid_start'=> time() < $v['slid_start'] ? '<span style="color:#1c97f5;">未开始</span>' : date('Y-m-d H:i',$v['slid_start']),
+            'slid_over'=> time() > $v['slid_over'] ? '<span style="color:#F00;">已结束</span>' : date('Y-m-d H:i',$v['slid_over']),
+            'slid_status'=> $v['slid_status'] ? '正常' : '禁止'
+          ];
+        }
+        return json($list);
+      } else {
+        return json(['code'=>-1,'msg'=>'还没有数据']);
+      }
     }
 
     /**
@@ -37,13 +76,14 @@ class Slider extends AdminController
 			$data = Request::param();
 			$data['slid_start'] =  strtotime($data['slid_start']);
 			$data['slid_over'] =  strtotime($data['slid_over']);
-			$result = Db::name('slider')->save($data);
-			if($result){
+      $slid = new SliderModel();
+      $result = $slid->add($data);
+			if($result == 1){
 				$res = ['code'=>0,'msg'=>'添加成功'];
 			}else{
 				$res = ['code'=>-1,'msg'=>'添加失败'];
 			}
-		return json($res);
+		  return json($res);
 		}
 		
 		return View::fetch();
@@ -57,22 +97,23 @@ class Slider extends AdminController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function edit($id)
+    public function edit()
     {
-		$slider = Db::name('slider')->find($id);
+      $id = (int)input('id');
+      $slider = Db::name('slider')->find($id);
 
-		if(Request::isAjax()){
-			$data = Request::param();
-			//var_dump($data);
-			$data['slid_start'] =  strtotime($data['slid_start']);
-			$data['slid_over'] =  strtotime($data['slid_over']);
-			$result = Db::name('slider')->where('id',$id)->save($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'编辑成功'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'编辑失败'];
-			}
-			return json($res);
+      if(Request::isAjax()){
+        $data = Request::param();
+        $data['slid_start'] =  strtotime($data['slid_start']);
+        $data['slid_over'] =  strtotime($data['slid_over']);
+        $slid = new SliderModel();
+        $result = $slid->edit($data);
+        if($result == 1){
+          $res = ['code'=>0,'msg'=>'编辑成功'];
+        }else{
+          $res = ['code'=>-1,'msg'=>'编辑失败'];
+        }
+        return json($res);
 		}
 		View::assign('slider',$slider);
 		
@@ -84,11 +125,11 @@ class Slider extends AdminController
      */
     public function uploadImg()
     {
-        $uploads = new \app\common\lib\Uploads();
-        $upRes = $uploads->put('file','slider',1024,'image');
-        $slires = $upRes->getData();
+      $uploads = new \app\common\lib\Uploads();
+      $upRes = $uploads->put('file','slider',1024,'image');
+      $slires = $upRes->getData();
 
-		if($slires['status'] == 0){
+		  if($slires['status'] == 0){
             $name_path = $slires['url'];
 				$res = ['code'=>0,'msg'=>'上传flash成功','src'=>$name_path];
 			} else {
@@ -106,13 +147,12 @@ class Slider extends AdminController
      */
     public function delete($id)
     {
-        //
-		$slider = SliderModel::find($id);
-		$res = $slider->delete();
-		if($res){
-			return json(['code'=>0,'msg'=>'删除成功']);
-		} else {
-			return json(['code'=>-1,'msg'=>'删除失败']);
-		}
+      $slider = SliderModel::find($id);
+      $res = $slider->delete();
+      if($res){
+        return json(['code'=>0,'msg'=>'删除成功']);
+      } else {
+        return json(['code'=>-1,'msg'=>'删除失败']);
+      }
     }
 }

@@ -25,9 +25,10 @@
         <div class="detail-body photos" style="font-size: 18px;line-height: 200%;" id="content">{$article.content}</div>
       </div>
 
-      <div class="fly-panel detail-box" >
-        {//管理}
+      
+      {//管理}
         {if (($article.upzip !== '') || session('?user_name'))}
+        <div class="fly-panel detail-box" >
         <div class="detail-assist">
         {notempty name="$article.upzip"}
         <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
@@ -40,7 +41,6 @@
                 {else /}
                 <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>
                 {/if}
-          
                 {if($article.is_hot == 0)}
                 <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
                 {else /}
@@ -58,8 +58,9 @@
               {/if}
           </div>
         </div>
-        {/if}
       </div>
+      {/if}
+      
 
     </div>
   </div>
