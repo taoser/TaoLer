@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-14 16:05:35
- * @LastEditTime: 2022-04-20 14:49:27
+ * @LastEditTime: 2022-05-09 11:31:00
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\vendor\taoser\think-setarr\src\SetArr.php
@@ -692,7 +692,7 @@ class SetArr
 						echo $k.'不存在 '; 
 						return false;
 					}
-					$patk = '/[^\n]*\'' . $v . '\'(.*?)\r?\n/';
+					$patk = '/[^\n]*\'' . $k . '\'(.*?)\r?\n/';
 				}
 
 				// 正则查找然后替换

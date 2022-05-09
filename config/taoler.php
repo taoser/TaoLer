@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-27 14:22:42
+ * @LastEditTime: 2022-05-07 18:37:39
  * @LastEditors: TaoLer
  * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 版本配置
-    'version'   => '1.9.7',
+    'version'   => '1.9.8',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 数据库备份目录
@@ -37,10 +37,10 @@ return [
 	// 百度标签分词
 	'baidu'	=> [
 		'grant_type'	=> '',
-		'client_id'   => 'aa',
-		'client_secret'   => 'aa',
+		'client_id'   => '',
+		'client_secret'   => '',
 		'access_token'	=> '',
-		'push_api'   => 'http://',
+		'push_api'   => '',
 	],
 
 	// sitemap

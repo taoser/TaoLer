@@ -1,0 +1,27 @@
+{extend name="public/base" /}
+
+{block name="body"}
+  <div class="layui-form" lay-filter="layuiadmin-form-slider" id="layuiadmin-form-slider" style="padding: 20px 20px 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">Tag</label>
+      <div class="layui-input-inline">
+        <input type="text" name="tag" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input layui-disabled" disabled value="{$tag}">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">Link</label>
+      <div class="layui-input-inline">
+        <input type="text" name="link"  lay-verify="required|url" placeholder="http://链接" autocomplete="off" class="layui-input" value="{$link}" >
+      </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit lay-filter="Tag-Link-submit" id="Tag-Link-submit" value="确认">
+    </div>
+  </div>
+
+{/block}
+{block name="js"}  
+  <script>
+
+  </script>
+{/block}

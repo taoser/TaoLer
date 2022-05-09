@@ -7,6 +7,7 @@ use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Session;
 use taoser\think\Auth;
+
 // 应用公共文件
 function mailto($to,$title,$content)
 {
@@ -97,8 +98,6 @@ function getArtContent($content)
     $content = preg_replace('/\[[^\]]+\]/','',$content);
     return mb_substr(strip_tags($content),0,150).'...';
 }
-
-
 
 //根据帖子收藏主键ID，查询帖子名称
 if(!function_exists('getArticName'))

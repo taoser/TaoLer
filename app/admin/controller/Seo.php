@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-05-02 11:54:00
+ * @LastEditTime: 2022-05-07 12:00:01
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -106,6 +106,8 @@ class Seo extends AdminController
                 }
             }
         }
+        // 获取Access Token分词的必选参数，设置时写入
+        $baidu['grant_type'] = 'client_credentials';
         $res = SetArr::name('taoler')->edit([
             'baidu' => $baidu,
         ]);

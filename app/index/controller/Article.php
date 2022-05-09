@@ -71,6 +71,8 @@ class Article extends BaseController
 		$page = input('page') ? input('page') : 1;
         $article = new ArticleModel();
         $artDetail = $article->getArtDetail($id,$page);
+		// 设置tag内链
+		$artDetail['content'] = $this->setArtTagLink($artDetail['content']);
 		$arId = $artDetail['cate_id'];
 		$tpl = Db::name('cate')->where('id',$arId)->value('detpl');
 		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
@@ -508,6 +510,20 @@ class Article extends BaseController
 		$data['has_audio'] = is_int($isHasAudio) ? 1 : 0;
 		
 		return $data;
+	}
+
+	//设置文章内容tag
+	protected function setArtTagLink($content)
+	{
+		// tag链接数组
+		$tag = Config::get('taglink');
+		if(count($tag)) {
+			foreach($tag as $key=>$value) {
+				$content = str_replace("$key", 'a('.$value.')['.$key.']',$content);
+			}
+		}
+		
+		return $content;
 	}
 	
 }

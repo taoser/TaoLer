@@ -515,7 +515,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
         //XSS
         content = util.escape(content||'')
 
-        //转义图片
+            //转义图片
             .replace(/img\[([^\s]+?)\]/g, function(img){
                 return '<div style="text-align: center;"><img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '"></div>';
             })
@@ -538,7 +538,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
                 var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
                 if(!href) return str;
                 var rel =  /^(http(s)*:\/\/)\b(?!(\w+\.)*(sentsin.com|layui.com))\b/.test(href.replace(/\s/g, ''));
-                return '<a href="'+ href +'" target="_blank"'+ (rel ? ' rel="nofollow"' : '') +'>'+ (text||href) +'</a>';
+                return '<a href="'+ href +'" style="color: red;" target="_blank"'+ (rel ? ' rel="nofollow"' : '') +'>'+ (text||href) +'</a>';
             })
 
             //转义横线
