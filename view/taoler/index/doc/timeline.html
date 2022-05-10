@@ -16,7 +16,7 @@
 			<div carousel-item=""> 
 			{volist name="slider" id="vo"}
 			 <div time-limit="2019-04-18 0:0:0" > 
-			  <a href="{$vo.slid_href}" target="_blank" rel="nofollow"> <img src="{$vo.slid_img}" alt="{$vo.slid_name}" /> </a> 
+			  <a href="{$Request.domain}{$vo.slid_href}" target="_blank" rel="nofollow"> <img src="{$Request.domain}{$vo.slid_img}" alt="{$vo.slid_name}" /> </a> 
 			 </div> 
 			{/volist} 
 			</div> 
@@ -51,7 +51,7 @@
               <div><a href="https://gitee.com/toogee/TaoLer/repository/archive/master.zip" target="_blank"> 程序下载 </a></div>
             </div>
             <div class="layui-col-xs6">
-              <div><a href="{:url('article/detail',['id'=>25])}" target="_blank"> 应用说明 </a></div>
+              <div><a href="{$Request.domain}{:url('article/detail',['id'=>25])}" target="_blank"> 应用说明 </a></div>
             </div>
             <div class="layui-col-xs6">
               <div><a href="#" target="_blank"> 申请Key </a></div>
@@ -60,7 +60,7 @@
               <div><a href="https://gitee.com/toogee/TaoLer" target="_blank"> Git 仓库 </a></div>
             </div>
             <div class="layui-col-xs6">
-              <div><a href="{:url('doc/timeline')}" target="_blank">版本更新日志</a></div>
+              <div><a href="{$Request.domain}{:url('doc/timeline')}" target="_blank">版本更新日志</a></div>
             </div>
             <div class="layui-col-xs6">
               <div><a href="#" target="_blank"> 关于积分 </a></div>
@@ -75,7 +75,7 @@
 		</div> 
 	<div class="fly-panel-main" style="padding: 13px 15px;"> 
 	{volist name="ad_index" id="vo"}
-		<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color}';">{$vo.slid_name}</a>
+		<a href="{$Request.domain}{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color}';">{$vo.slid_name}</a>
 	{/volist}
 	<!--a href="/" target="_blank" rel="nofollow" class="fly-zanzhu  fly-zanzhu-img" ><img src="//11886.png" alt="topjui"></a--> 
 	</div>
@@ -85,7 +85,7 @@
         <dt class="fly-panel-title">本周热议</dt>
         {volist name="artHot" id="vo"}
 		<dd>
-          <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+          <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
           <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
         </dd>
 		{/volist}
@@ -106,7 +106,7 @@
       </div>
 	  <div class="fly-panel" style="padding: 20px 0; text-align: center;">
 		{volist name="ad_comm" id="vo"}		
-		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+		  <a href="{$Request.domain}{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}
        </div>
 	  

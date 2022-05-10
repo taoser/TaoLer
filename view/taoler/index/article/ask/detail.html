@@ -1,9 +1,16 @@
 {extend name="public/base" /}
 
-{block name="title"}{$article.title}-{$sysInfo.webtitle}{/block} 
+{block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.tags}{/block}
 {block name="description"}{$article.title},{$article.description}{/block}
-{block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
+{block name="ogtitle"}
+<meta property="og:title" content="{$article.title}">
+{/block}
+{block name="ogdescription"}
+<meta property="og:description" content="{$article.description}" />
+{/block}
+
+{block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
 <div class="layui-container">
@@ -16,8 +23,8 @@
       
         {//图标}
         <div class="user-questions">
-          <a class="user-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
-          <img src="{$article.user.user_img}" alt="{$article.user.name}">
+          <a class="user-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
+          <img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
           <cite>{$article.user.nickname ?: $article.user.name} / </cite>
           </a>
           <span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
@@ -57,7 +64,7 @@
                 <span id="color">{:lang('title color')}</span>
             {/if}
             {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
+            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
             {/if}
           </div>
         </div>
@@ -69,6 +76,19 @@
         <div style="margin-top: 15px; font-size: 18px; font-weight:bold; color: rgb(130, 125, 125);">问题描述：</div>
         <hr>
         <div class="detail-body-wenda photos" id="content">{$article.content}</div>
+        <div style="margin: 25px 0px 15px 0px; color: rgb(130, 125, 125);">
+          <p>{$sysInfo.state}</p>    
+        </div>
+        <div>本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</div>
+        <div style="margin-top: 15px">
+          <h2>关键词</h2>
+          <div class="layui-btn-container" style="padding-top: 15px;">
+            {volist name="tags" id="vo" }
+            <button type="button" class="layui-btn layui-btn-sm  layui-btn-radius layui-btn-danger" value="{$vo}">{$vo}</button>
+            {/volist}
+          </div>
+        </div>
+
       </div>
 
       {//评论区}
@@ -97,11 +117,11 @@
           <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" href="{:url('user/home',['id'=>$vo.user.id])}">
-                <img src="{$vo.user.user_img}" alt=" ">{if($vo.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
+              <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$vo.user.id])}">
+                <img src="{$Request.domain}{$vo.user.user_img}" alt=" ">{if($vo.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
               </a>
               <div class="fly-detail-user">
-                <a href="{:url('user/home',['id'=>$vo.user.id])}" class="fly-link">
+                <a href="{$Request.domain}{:url('user/home',['id'=>$vo.user.id])}" class="fly-link">
                   <cite>{$vo.user.nickname ?: $vo.user.name}</cite>     
                 </a>
                 {if condition="$article.user.id eq $vo.user.id"}<span>({:lang('poster')})</span>{/if}
@@ -139,8 +159,8 @@
 		  <div class="fly-panel">
         <div class="fly-panel-main wenda-user">
           <div class="user-img">
-            <a href="{:url('user/home',['id'=>$article.user.id])}">
-            <img class="" src="{$article.user.user_img}" alt="{$article.user.name}">
+            <a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
+            <img class="" src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
             {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
             </a>
           </div>
@@ -163,14 +183,14 @@
 			  <dt class="fly-panel-title">{:lang('hot post list')}</dt>
 			    {volist name="artHot" id="vo"}
 			    <dd>
-            <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+            <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
             <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
           </dd>
 			    {/volist}
       </dl>
       <div class="fly-panel" style="padding: 5px 0; text-align: center;">
         {volist name="ad_art" id="vo"}
-          <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+          <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
         {/volist}
       </div>
     </div>

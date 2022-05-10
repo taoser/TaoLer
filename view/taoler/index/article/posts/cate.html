@@ -2,6 +2,12 @@
 {block name="title"}{$Request.param.ename|getCateName}-{$sysInfo.webname}{/block}
 {block name="keywords"}{$Request.param.ename|getCateName},{$sysInfo.webname}{/block}
 {block name="description"}{$Request.param.ename|getCateDesc}{/block}
+{block name="ogtitle"}
+<meta property="og:title" content="{$Request.param.ename|getCateName}">
+{/block}
+{block name="ogdescription"}
+<meta property="og:description" content="{$Request.param.ename|getCateDesc}" />
+{/block}
 {block name="column"}{include file="/public/column" /}{/block}
 
 {block name="content"}
@@ -12,15 +18,15 @@
         <ul class="fly-list">
 		    {volist name="artList['data']" id="art"}
           <li>
-            <a href="{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
+            <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
               <img src="{$art.user.user_img}" alt="{$art.user.name}">
             </a>
             <h2>
               {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
-              <a href="{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
+              <a href="{$Request.domain}{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
             </h2>
             <div class="fly-list-info">
-              <a href="{:url('user/home',['id'=>$art.user.id])}" link>
+              <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
 			    {if config('taoler.config.area_show') == 1}<span class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</span>{/if}
                 <cite>{$art.user.nickname ?: $art.user.name}</cite>
 				<i>{$art.create_time|date='Y-m-d'}</i>
@@ -49,7 +55,7 @@
         <div class="fly-panel">
             <div class="fly-panel" style="padding: 5px 0; text-align: center;">
                 {volist name="ad_cateImg" id="vo"}
-                <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+                <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
                 {/volist}
             </div>
         </div>
@@ -57,7 +63,7 @@
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
 		<dd>
-          <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+          <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
           <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
         </dd>
 		{/volist} 
@@ -69,7 +75,7 @@
 		</div>  
 		<div class="fly-panel-main">
 		{volist name="ad_comm" id="vo"}
-			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color}';">{$vo.slid_name}</a>
+			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
 		{/volist}
 		</div>
 		</div>

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-22 06:30:01
+ * @LastEditTime: 2022-05-10 15:00:49
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Set.php
@@ -81,7 +81,7 @@ class Set extends AdminController
     public function website()
     {
 		if(Request::isPost()){
-			$data = Request::only(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','icp','showlist','copyright']);
+			$data = Request::only(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','state','icp','showlist','copyright']);
 			$system = new System();
 			$result = $system->sets($data,$this->sysInfo['clevel']);
 			if($result == 1){

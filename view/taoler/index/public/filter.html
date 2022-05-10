@@ -1,11 +1,20 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-10 12:49:45
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\public\filter.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 <div class="fly-panel-title fly-filter">
-	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} " {if condition="$type eq 'all'" } class="layui-this" {/if} >{:lang('all')}</a>
+	<a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} " {if condition="$type eq 'all'" } class="layui-this" {/if} >{:lang('all')}</a>
 	<span class="fly-mid"></span>
-	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} " {if condition="$type eq 'jie'" } class="layui-this" {/if} >{:lang('end')}</a>
+	<a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} " {if condition="$type eq 'jie'" } class="layui-this" {/if} >{:lang('end')}</a>
 	<span class="fly-mid"></span>
-	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'top'])} " {if condition="$type eq 'top'" } class="layui-this" {/if} >{:lang('top')}</a>
+	<a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'top'])} " {if condition="$type eq 'top'" } class="layui-this" {/if} >{:lang('top')}</a>
 	<span class="fly-mid"></span>
-	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'hot'])} " {if condition="$type eq 'hot'" } class="layui-this" {/if} >{:lang('hot')}</a>
+	<a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'hot'])} " {if condition="$type eq 'hot'" } class="layui-this" {/if} >{:lang('hot')}</a>
 		  
   <!--span class="fly-filter-right layui-hide-xs"><a href="" class="layui-this">按最新</a>
   <span class="fly-mid"></span><a href="">按热议</a></span-->

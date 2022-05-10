@@ -1,3 +1,12 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-10 12:55:02
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\index\search.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 {extend name="public/base" /}
 
 {block name="title"}{$sysInfo.webname}{$keywords}搜索内容{/block}
@@ -14,15 +23,15 @@
         <ul class="fly-list">   
 		    {volist name="artList" id="art"}
           <li>
-            <a href="{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
+            <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
               <img src="{$art.user.user_img}" alt="{$art.user_id|getUserName}"><i class="iconfont icon-renzheng" title="认证信息"></i>  
             </a>
             <h2>
               {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{$art.cate.catename}</a>{/if}
-              <a href="{:url('article/detail',['id' => $art.id])}">{$art.title}</a>
+              <a href="{$Request.domain}{:url('article/detail',['id' => $art.id])}">{$art.title}</a>
             </h2>
             <div class="fly-list-info">
-              <a href="{:url('user/home',['id'=>$art.user_id])}" link>
+              <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" link>
                 <cite>{$art.user.name}</cite>
               </a>
               <span>{$art.create_time|date='Y-m-d'}</span>
@@ -44,7 +53,7 @@
 			<dt class="fly-panel-title">本周热议</dt>
 			{volist name="artHot" id="vo"  empty="还没有帖子"}
 			<dd>
-			  <a href="{:url('article/detail',['id'=>$vo.id])}">{$vo.title}</a>
+			  <a href="{$Request.domain}{:url('article/detail',['id'=>$vo.id])}">{$vo.title}</a>
 			  <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
 			</dd>
 			{/volist}
@@ -52,7 +61,7 @@
 		<!--自定义-->
 		<div class="fly-panel" style="padding: 5px 0; text-align: center;">
 		{volist name="ad_comm" id="vo"}		
-		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+		  <a href="{$Request.domain}{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}
         </div>
     </div>

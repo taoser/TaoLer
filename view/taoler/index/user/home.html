@@ -1,12 +1,21 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-10 12:52:55
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\user\home.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 {extend name="public/base" /}
 
 {block name="title"}{$u.nickname ?: $u.name}的主页-{$sysInfo.webname}{/block}
 {block name="description"}{$u.sign}{/block}
-{block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
+{block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}{/block}
 {block name="content"}
 <div class="fly-home fly-panel" style="background-image: url();">
-  <img src="{$u.user_img}" alt="{$u.name}">
+  <img src="{$Request.domain}{$u.user_img}" alt="{$u.name}">
   {if($u.vip > 0)}<i class="iconfont icon-renzheng" title="Fly社区认证"></i>{/if}
   <h1>
     {$u.nickname ?: $u.name}
@@ -44,7 +53,7 @@
 		    {volist name="$arts" id="vo"}
           <li>
             {if condition="$vo.is_hot==1"}<span class="fly-jing">{:lang('hot')}</span>{/if}
-            <a href="{:url('article/detail',['id'=>$vo.id])}" class="jie-title"> {$vo.title}</a>
+            <a href="{$Request.domain}{:url('article/detail',['id'=>$vo.id])}" class="jie-title"> {$vo.title}</a>
             <i>{$vo.create_time|date='Y-m-d'}</i>
             <em class="layui-hide-xs">{$vo.pv} {:lang('browses')}</em>
           </li>
@@ -64,7 +73,7 @@
           <li>
           <p>
           <span>{$vo.create_time|date='Y-m-d H-m'}</span>
-          {:lang('in')}<a href="{:url('article/detail',['id'=>$vo.id])}" target="_blank">{$vo.title}</a>{:lang('reply')}：
+          {:lang('in')}<a href="{$Request.domain}{:url('article/detail',['id'=>$vo.id])}" target="_blank">{$vo.title}</a>{:lang('reply')}：
           </p>
           <div class="home-dacontent detail-body jieda-body photos" >{$vo.content}</div>
         </li>

@@ -1,18 +1,26 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-10 12:49:25
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\public\footer.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 <div class="fly-footer html5plus-hide">
   <p>
     Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}v{:config('taoler.version')}
   </p>
   <p>
     {$sysInfo.showlist|raw} {volist name="footlinks" id="vo"}
-    <a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a>
+    <a href="{$Request.domain}{$vo.slid_href}" target="_blank">{$vo.slid_name}</a>
     {/volist}
     <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank"
-      >{$sysInfo.icp}</a
-    >
+      >{$sysInfo.icp}</a>
   </p>
 </div>
-<script src="/static/layui/jquery.min.js" charset="utf-8"></script>
-<script src="/static/layui/layui.js" charset="utf-8"></script>
+<script src="{$Request.domain}/static/layui/jquery.min.js" charset="utf-8"></script>
+<script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
 <script>
   var messageNums = "{:url('message/nums')}",
     messageRead = "{:url('Message/read')}",

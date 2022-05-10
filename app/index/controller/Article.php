@@ -73,6 +73,15 @@ class Article extends BaseController
         $artDetail = $article->getArtDetail($id,$page);
 		// 设置tag内链
 		$artDetail['content'] = $this->setArtTagLink($artDetail['content']);
+		// tag
+		$attr = explode(',', $artDetail['tags']);
+		$tags = [];
+		foreach($attr as $v){
+			if ($v !='') {
+				$tags[] = $v;
+			}
+		}
+
 		$arId = $artDetail['cate_id'];
 		$tpl = Db::name('cate')->where('id',$arId)->value('detpl');
 		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
@@ -97,7 +106,20 @@ class Article extends BaseController
         $ad_comm = $ad->getSliderList(7);
 		$push_js = Db::name('push_jscode')->where(['delete_time'=>0])->cache(true)->select();
 		
-		View::assign(['article'=>$artDetail,'pv'=>$pv,'artHot'=>$artHot,'ad_art'=>$ad_artImg,'ad_comm'=>$ad_comm,$download,'page'=>$page,'comments'=>$comments,'jspage'=>'jie','push_js'=>$push_js]);
+		View::assign([
+			'article'	=> $artDetail,
+			'pv'		=> $pv,
+			'artHot'	=> $artHot,
+			'ad_art'	=> $ad_artImg,
+			'ad_comm'	=> $ad_comm,
+			'tags'		=> $tags,
+			'page'		=> $page,
+			'comments'	=> $comments,
+			'jspage'	=> 'jie',
+			'push_js'	=> $push_js,
+			$download,
+		]);
+		
 		return View::fetch('article/'.$tpl.'/detail');
     }
 	
@@ -250,11 +272,11 @@ class Article extends BaseController
 		$tag = $article->tags;
 		$attr = explode(',',$tag);
 		$tags = [];
-			foreach($attr as $key => $v){
-				if ($v !='') {
-					$tags[] = $v;
-				}
+		foreach($attr as $key => $v){
+			if ($v !='') {
+				$tags[] = $v;
 			}
+		}
 			
         View::assign(['article'=>$article,'tags'=>$tags,'jspage'=>'jie']);
 		return View::fetch();

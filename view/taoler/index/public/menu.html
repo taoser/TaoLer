@@ -1,14 +1,23 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-10 12:47:05
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\public\menu.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 <div class="layui-panel site-menu layui-hide-md">
     <ul class="layui-menu layui-menu-lg">
 		<li class="search" style="padding-left:5px;padding-top:2px;padding-right:5px;">
-		<form action="{:url('index/search',['keywords'=>$Request.param.keywords])}">
+		<form action="{$Request.domain}{:url('index/search',['keywords'=>$Request.param.keywords])}">
 		<input  type="search" name="keywords" value="" aria-label="Search text" placeholder="搜索" class="layui-input">
 		</form>
 		</li>
 	{if session('?user_id')}
 		<li class="layui-nav-item" style="padding-left:25px;">
 		<a class="fly-nav-avatar" href="javascript:;">
-		<img src="{$user['user_img']}" >
+		<img src="{$Request.domain}{$user['user_img']}" >
 		</a>
 		</li>
 	{else /}
@@ -35,7 +44,7 @@
 		{volist name="cateList" id="cate"} 
 		<li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if}> 
 		<div class="layui-menu-body-title">
-		<a href="{:url('cate',['ename' => $cate.ename])}"><i class="layui-icon {$cate.icon}"></i>  {:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}
+		<a href="{$Request.domain}{:url('cate',['ename' => $cate.ename])}"><i class="layui-icon {$cate.icon}"></i>  {:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}
 		<span class="layui-font-12 layui-font-gray">>> {$cate.ename}</span>
 		{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}
 		</a>
@@ -52,7 +61,7 @@
 			{volist name="headlinks" id="vo"}
 			<li class="">
 				<div class="layui-menu-body-title">
-					<a href="{$vo.slid_href}"><i class="layui-icon {$vo.slid_img}"></i><span> {$vo.slid_name} </span></a>
+					<a href="{$Request.domain}{$vo.slid_href}"><i class="layui-icon {$vo.slid_img}"></i><span> {$vo.slid_name} </span></a>
 				</div>
 			</li>
 			{/volist}

@@ -3,7 +3,7 @@
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.title},{$article.tags}{/block}
 {block name="description"}{$article.title},{:getArtContent($article.content)}{/block}
-{block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
+{block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
 <div class="layui-container">
@@ -33,12 +33,12 @@
         </div>
 		{//作者}
         <div class="detail-about">
-			<a class="fly-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
-			<img src="{$article.user.user_img}" alt="{$article.user.name}">
+			<a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
+			<img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
 			<i class="iconfont icon-renzheng" title="认证信息"></i>
 			</a>
 			<div class="fly-detail-user">
-			<a href="{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
+			<a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
 			{if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="">{:getAsing($article.user.area_id) ?: '无'}</i>{/if}
 			<cite>{$article.user.nickname ?: $article.user.name}</cite>
 			</a>
@@ -75,7 +75,7 @@
 			<span id="color">{:lang('title color')}</span>
 		  {/if}
 		   {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-			<span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
+			<span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
 		  {/if}
           </div>
 		</div>

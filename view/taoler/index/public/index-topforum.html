@@ -1,13 +1,13 @@
 <li>
-	<a href="{:url('user/home',['id'=>$top.user_id])}" class="fly-avatar">
-	  <img src="{$top.user.user_img}" alt="{$top.user.name}">
+	<a href="{$Request.domain}{:url('user/home',['id'=>$top.user_id])}" class="fly-avatar">
+	  <img src="{$Request.domain}{$top.user.user_img}" alt="{$top.user.name}">
 	</a>
 	<h2>
 		{if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $top.cate.ename : $top.cate.catename}</a>{/if}
-	  <a href="{:url('article/detail',['id' => $top.id])}" style="color:{$top.title_color};">{$top.title}</a>
+	  <a href="{$Request.domain}{:url('article/detail',['id' => $top.id])}" style="color:{$top.title_color};">{$top.title}</a>
 	</h2>
 	<div class="fly-list-info">
-	  <a href="{:url('user/home',['id'=>$top.user_id])}" link>
+	  <a href="{$Request.domain}{:url('user/home',['id'=>$top.user_id])}" link>
 		{if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green" title="来自哪简称">{:getAsing($top.user.area_id) ?: '无'}</i>{/if}
 		<cite>{$top.user.nickname ?: $top.user.name}</cite>
 		<i>{$top.create_time|date='Y-m-d'}</i>

@@ -1,12 +1,12 @@
 <?php
 /*
- * @Author: TaoLer <alipey_tao@qq.com>
+ * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
  * @LastEditTime: 2022-05-07 18:37:39
  * @LastEditors: TaoLer
  * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
- * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 // +----------------------------------------------------------------------
 // | 网站公共配置
@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 版本配置
-    'version'   => '1.9.8',
+    'version'   => '1.9.9',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 数据库备份目录

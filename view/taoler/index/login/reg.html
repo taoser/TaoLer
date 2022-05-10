@@ -1,3 +1,12 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-10 13:12:36
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\login\reg.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 {extend name="public:base" /}
 
 {block name="title"}注册账号{/block}
@@ -7,7 +16,7 @@
   <div class="fly-panel fly-panel-user" pad20>
     <div class="layui-tab layui-tab-brief" lay-filter="user">
       <ul class="layui-tab-title">
-        <li><a href="{:url('login/index')}">{:lang('login')}</a></li>
+        <li><a href="{$Request.domain}{:url('login/index')}">{:lang('login')}</a></li>
         <li class="layui-this">{:lang('sign up')}</li>
       </ul>
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
