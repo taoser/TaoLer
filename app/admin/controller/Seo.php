@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-05-07 12:00:01
+ * @LastEditTime: 2022-05-12 16:21:33
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -60,8 +60,7 @@ class Seo extends AdminController
             $urls[] = $this->getRouteUrl($aid);
         }
         // 百度接口单次最大提交200，进行分组
-        $urls = array_chunk($urls,2000);
-        
+        $urls = array_chunk($urls,2000); 
         $api = config('taoler.baidu.push_api');
         $ch = curl_init();
         foreach($urls as $url) {

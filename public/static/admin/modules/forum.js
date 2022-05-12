@@ -1,25 +1,25 @@
-
+﻿
 layui.define(['table', 'form'], function(exports){
   var $ = layui.$
   ,table = layui.table
   ,form = layui.form;
 
   //帖子管理
-  table.render({
+var forms = table.render({
     elem: '#LAY-app-forum-list'
     ,url: forumList //帖子数据接口
     ,cols: [[
       {type: 'checkbox'}
       ,{field: 'id', width: 60, title: 'ID', sort: true}
-      ,{field: 'poster', title: '贴主',width: 100}
-      ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
-      ,{field: 'title', title: '标题', mWidth: 200,templet: '#title'}
-      ,{field: 'content', title: '内容', mWidth: 200}
+      ,{field: 'poster', title: '账号',width: 80}
+      ,{field: 'avatar', title: '头像', width: 60, templet: '#avatarTpl'}
+      ,{field: 'title', title: '标题', minWidth: 180,templet: '<div><a href="{{ d.url }}" target="_blank">{{d.title}}</a></div>'}
+      ,{field: 'content', title: '内容', minWidth: 200}
       ,{field: 'posttime', title: '时间',width: 120, sort: true}
       ,{field: 'top', title: '置顶', templet: '#buttonTpl', width: 80, align: 'center'}
       ,{field: 'hot', title: '加精', templet: '#buttonHot', width: 80, align: 'center'}
       ,{field: 'reply', title: '禁评', templet: '#buttonReply', width: 80, align: 'center'}
-      ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
+      ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 95, align: 'center'}
       ,{title: '操作', width: 60, align: 'center', toolbar: '#table-forum-list'}
     ]]
     ,page: true
@@ -34,29 +34,29 @@ layui.define(['table', 'form'], function(exports){
     if(obj.event === 'del'){
       layer.confirm('确定删除此条帖子？', function(index){
         //obj.del();
-		$.ajax({
-				type:'post',
-				url:forumListdel,
-				data:{id:data.id},
-				dataType:'json',
-				success:function(data){
-					if(data.code == 0){
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						},function(){
-							location.reload();
-						});
-					} else {
-						layer.open({
-							title:'删除失败',
-							content:data.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			});
+        $.ajax({
+          type:'post',
+          url:forumListdel,
+          data:{id:data.id},
+          dataType:'json',
+          success:function(data){
+            if(data.code == 0){
+              layer.msg(data.msg,{
+                icon:6,
+                time:2000
+              },function(){
+                forms.reload();
+              });
+            } else {
+              layer.open({
+                title:'删除失败',
+                content:data.msg,
+                icon:5,
+                adim:6
+              })
+            }
+          }
+        });
         layer.close(index);
       });
     } else if(obj.event === 'edit'){
@@ -74,8 +74,8 @@ layui.define(['table', 'form'], function(exports){
           ,submitID = 'LAY-app-forum-submit'
           ,submit = layero.find('iframe').contents().find("#layuiadmin-form-list")
           ,poster = submit.find('input[name="poster"]').val()
-		  ,content = submit.find('input[name="content"]').val()
-		  ,avatar = submit.find('input[name="avatar"]').val();
+		      ,content = submit.find('input[name="content"]').val()
+		      ,avatar = submit.find('input[name="avatar"]').val();
 
           //监听提交
           iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
@@ -132,7 +132,7 @@ layui.define(['table', 'form'], function(exports){
       ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
       ,{field: 'content', title: '评论', minWidth: 200}
       ,{field: 'replytime', title: '回复时间', width: 120, sort: true}
-	  ,{field: 'check', title: '审核', templet: '#buttonCheck', width: 100}
+	    ,{field: 'check', title: '审核', templet: '#buttonCheck', width: 100}
       ,{title: '操作', width: 60, align: 'center', toolbar: '#table-forum-replys'}
     ]]
     ,page: true

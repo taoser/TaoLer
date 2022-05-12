@@ -3,12 +3,8 @@
 {block name="title"}{$Request.param.ename|getCateName}-{$sysInfo.webname}{/block}
 {block name="keywords"}{$Request.param.ename|getCateName},{$sysInfo.webname}{/block}
 {block name="description"}{$Request.param.ename|getCateDesc}{/block}
-{block name="ogtitle"}
-<meta property="og:title" content="{$Request.param.ename|getCateName}">
-{/block}
-{block name="ogdescription"}
-<meta property="og:description" content="{$Request.param.ename|getCateDesc}" />
-{/block}
+{block name="ogtitle"}<meta property="og:title" content="{$Request.param.ename|getCateName}-{$sysInfo.webname}">{/block}
+{block name="ogdescription"}<meta property="og:description" content="{$Request.param.ename|getCateDesc}" />{/block}
 {block name="column"}{include file="/public/column" /}{/block}
 
 {block name="content"}

@@ -205,16 +205,24 @@ class Article extends BaseController
             $article = new ArticleModel();
             $result = $article->add($data);
             if ($result['code'] == 1) {
+				// 获取到的最新ID
+				$aid = Db::name('article')->max('id');
+				// 清除文章tag缓存
+                Cache::tag('tagArtDetail')->clear();
+				// 发提醒邮件
+				if(Config::get('taoler.config.email_notice')) mailto($this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。');
+                
 				if(Config::get('taoler.config.posts_check')){
-					$aid = Db::name('article')->max('id');
 					$link = (string)url('article/detail', ['id' => $aid]);
 				}else{
 					$link = (string)url('index/');
 				}
-                // 清除文章tag缓存
-                Cache::tag('tagArtDetail')->clear();
-				if(Config::get('taoler.config.email_notice')) mailto($this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。');
-                $res = Msgres::success($result['msg'], $link);
+                // 推送给百度收录接口
+				if(empty(config('taoler.baidu.push_api'))) {
+					$this->baiduPush($aid);
+				}
+				
+				$res = Msgres::success($result['msg'], $link);
             } else {
                 $res = Msgres::error('add_error');
             }
@@ -261,6 +269,10 @@ class Article extends BaseController
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
                     $link = (string) url('article/detail',['id'=> $id]);
+					// 推送给百度收录接口
+					if(empty(config('taoler.baidu.push_api'))) {
+						$this->baiduPush($data['id']);
+					}
 					$editRes = Msgres::success('edit_success',$link);
 				} else {
                     $editRes = Msgres::error($result);
@@ -541,11 +553,35 @@ class Article extends BaseController
 		$tag = Config::get('taglink');
 		if(count($tag)) {
 			foreach($tag as $key=>$value) {
-				$content = str_replace("$key", 'a('.$value.')['.$key.']',$content);
+				// 匹配所有
+				//$content = str_replace("$key", 'a('.$value.')['.$key.']',$content);
+				// 限定匹配数量
+				$content = preg_replace('/'.$key.'/','a('.$value.')['.$key.']',$content,2);
 			}
 		}
 		
 		return $content;
+	}
+
+	// baidu push api
+	protected function baiduPush($id)
+	{
+		// baidu 接口
+		$api = config('taoler.baidu.push_api');
+		$artUrl = $this->getRouteUrl((int)$id);
+		$url = [$artUrl];
+		$ch = curl_init();
+		$options =  array(
+			CURLOPT_URL => $api,
+			CURLOPT_POST => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_POSTFIELDS => implode("\n", $url),
+			CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
+		);
+		curl_setopt_array($ch, $options);
+		curl_exec($ch);
+		curl_close($ch);
+
 	}
 	
 }

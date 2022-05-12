@@ -1,3 +1,12 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-11 07:38:52
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\public\base.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,20 +54,20 @@
 {block name="content"}内容{/block}
 {include file="public/footer" /}
 <script>
-    layui.cache.page = '{$jspage}';
-    layui.cache.user = {
-        username: "{$user.name??'游客'}"
-        ,uid: "{$user.id ?? -1}"
-        ,avatar: '/static/res/images/avatar/00.jpg'
-        ,experience: "{$user.point ?? ''}"
-        ,sex: "{$user.sex ? '女':'男'}"
-    };
-    layui.config({
-        version: "3.0.0"
-        ,base: '/static/res/mods/'
-    }).extend({
-        fly: 'index'
-    }).use('fly');
+  layui.cache.page = '{$jspage}';
+  layui.cache.user = {
+    username: "{$user.name??'游客'}"
+    ,uid: "{$user.id ?? -1}"
+    ,avatar: '/static/res/images/avatar/00.jpg'
+    ,experience: "{$user.point ?? ''}"
+    ,sex: "{$user.sex ? '女':'男'}"
+  };
+  layui.config({
+    version: "3.0.0"
+    ,base: '{$Request.domain}/static/res/mods/'
+  }).extend({
+  fly: 'index'
+  }).use('fly');
 </script>
 {block name="script"}{/block}
 </body>

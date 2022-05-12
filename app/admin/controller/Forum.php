@@ -3,17 +3,13 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
-use app\admin\validate\Admin;
-use app\admin\model\Admin as adminModel;
 use app\common\model\Cate;
 use app\common\model\Comment;
 use app\common\model\Article;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use think\facade\Session;
 use think\facade\Cache;
-use think\exception\ValidateException;
 use taoler\com\Files;
 
 class Forum extends AdminController
@@ -117,32 +113,22 @@ class Forum extends AdminController
 		}
 	}
 
-	//置顶帖子
-	public function top()
-	{
-		//
-	}
-	//加精帖子
-	public function hot()
-	{
-		//
-	}
-	//审核帖子
+	/**
+	 * 置顶、加精、评论开关，审核等状态管理
+	 *
+	 * @return void
+	 */
 	public function check()
 	{
-		$data = Request::only(['id','status']);
-
+		$param = Request::only(['id','name','value']);
+		$data = ['id'=>$param['id'],$param['name']=>$param['value']];
 		//获取状态
-		$res = Db::name('article')->where('id',$data['id'])->save(['status' => $data['status']]);
+		$res = Db::name('article')->save($data);
+		Cache::delete('article_'.$data['id']);
 		if($res){
-			if($data['status'] == 1){
-				return json(['code'=>0,'msg'=>'帖子审核通过','icon'=>6]);
-			} else {
-				return json(['code'=>0,'msg'=>'帖子被禁止','icon'=>5]);
-			}
-			
+			return json(['code'=>0,'msg'=>'设置成功','icon'=>6]);
 		}else {
-			return json(['code'=>-1,'msg'=>'审核出错']);
+			return json(['code'=>-1,'msg'=>'失败啦','icon'=>6]);
 		}
 	}
 	

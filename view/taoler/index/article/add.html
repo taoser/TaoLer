@@ -216,8 +216,42 @@
     });
 
     // 获取描述的内容
-    $("#L_content").bind('input propertychange', function(){
-      var content = $(this).val()
+    // $("#L_content111").bind('input propertychange', function(){
+    //   var content = $(this).val();
+    //   setTimeout(function(){
+    //         $.ajax({
+    //         type:"post",
+    //         url:"{:url('article/getDescription')}",
+    //         data:{"content":content},
+    //         daType:"json",
+    //         success:function (data){
+    //           if (data.code == 0) {
+    //             $('[name="description"]').val(data.data);
+    //           }
+    //         }
+    //       })
+    //     }, 5000)
+    //   return false;
+    // })
+
+    // 获取描述的内容 非实时获取，停止输入后获取
+    var flag = false;
+    var othis = $('#L_content');
+    othis.on('compositionstart',function(){
+      flag = true;
+    })
+    othis.on('compositionend',function(){
+        flag = false;
+        desc(othis.val());
+
+    })
+
+    // othis.on('input', function (event) {
+    //   // 忽略一切非直接输入，不做逻辑处理
+    //   if (!flag) todo(event.target.value);
+    // });
+
+    function desc(content){
       $.ajax({
         type:"post",
         url:"{:url('article/getDescription')}",
@@ -228,9 +262,8 @@
             $('[name="description"]').val(data.data);
           }
         }
-      });
-      return false;
-    })
+      })
+    }
 		 
     // 手动添加tags
     $('#article-tags-button').on('click',function(){

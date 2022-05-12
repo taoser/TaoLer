@@ -49,38 +49,21 @@
         <div style="padding-bottom: 10px;">
           <button class="layui-btn layuiadmin-btn-forum-list" data-type="batchdel">删除</button>
         </div>
-        <table id="LAY-app-forum-list" lay-filter="LAY-app-forum-list" ></table> 
-        <script type="text/html" id="imgTpl">
-          <img style="display: inline-block; width: 50%; height: 100%;" src= "{{ d.avatar }}">
-        </script> 
-        <script type="text/html" id="title">
-        <a href="{{ d.url }}" target="_blank">{{d.title}}</a>
+        <table id="LAY-app-forum-list" lay-filter="LAY-app-forum-list" ></table>
+        <script type="text/html" id="avatarTpl">
+          <div><img style="width: 25px; height: 25px;" src= "{{ d.avatar }}"></div>
         </script>
         <script type="text/html" id="buttonTpl">
-          {{#  if(d.top == 1){ }}
-            <button class="layui-btn layui-btn-xs">是</button>
-          {{#  } else { }}
-            <button class="layui-btn layui-btn-primary layui-btn-xs">否</button>
-          {{#  } }}
-        </script> 
-		    <script type="text/html" id="buttonHot">
-            {{#  if(d.hot == 1){ }}
-            <button class="layui-btn layui-btn-xs">是</button>
-          {{#  } else { }}
-            <button class="layui-btn layui-btn-primary layui-btn-xs">否</button>
-          {{#  } }}
+          <input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.top == 1 ? 'checked' : '' }}>
         </script>
-		    <script type="text/html" id="buttonReply">
-            {{#  if(d.reply == 1){ }}
-            <button class="layui-btn layui-btn-primary layui-btn-xs">否</button>
-          {{#  } else { }}
-            <button class="layui-btn  layui-btn-xs">禁</button>
-          {{#  } }}
+        <script type="text/html" id="buttonHot">
+          <input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isHot" {{ d.hot == 1 ? 'checked' : '' }}>
         </script>
-		    <script type="text/html" id="buttonCheck">
-            {if condition="checkRuleButton('forum/check')"}
-            <input type="checkbox" name="check" lay-skin="switch" lay-filter="forumcheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >
-            {else /}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
+        <script type="text/html" id="buttonReply">
+          <input type="checkbox" name="is_reply" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isReply" {{ d.reply == 0 ? 'checked' : '' }}>
+        </script>
+        <script type="text/html" id="buttonCheck">
+          <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{ d.check == 1 ? 'checked' : '' }}>
         </script>
         <script type="text/html" id="table-forum-list">
 		      {if condition="checkRuleButton('forum/listdel')"}
@@ -96,108 +79,106 @@
 
 {block name="js"}
 <script>
-var forumList = "{:url('Forum/list')}",
-    forumListdel = "{:url('Forum/listdel')}",
-    forumListform = "{:url('Forum/listform')}",
-    forumReplys = "{:url('Forum/replys')}",
-    forumRedel = "{:url('Forum/redel')}",
+var forumList       = "{:url('Forum/list')}",
+    forumListdel    = "{:url('Forum/listdel')}",
+    forumListform   = "{:url('Forum/listform')}",
+    forumReplys     = "{:url('Forum/replys')}",
+    forumRedel      = "{:url('Forum/redel')}",
     forumReplysform = "{:url('Forum/replysform')}",
-    forumTags = "{:url('Forum/tags')}",
+    forumTags       = "{:url('Forum/tags')}",
     forumTagsDelete = "{:url('Forum/tagsdelete')}",
-    forumTagsForm = "{:url('Forum/tagsform')}";
-  layui.config({
-    base: '/static/admin/' //静态资源所在路径
-  }).extend({
-    index: 'lib/index' //主入口模块
-  }).use(['index', 'forum', 'table'], function(){
-    var $ = layui.$
-    ,form = layui.form
-    ,table = layui.table;
-   
-    //监听搜索
-    form.on('submit(LAY-app-forumlist-search)', function(data){
-      var field = data.field;
-	  	$.post("{:url('Forum/list')}",field);
-      //执行重载
-      table.reload('LAY-app-forum-list', {
-        where: field
-      });
-    });
-    
-    //事件
-    var active = {
-      batchdel: function(){
-        var checkStatus = table.checkStatus('LAY-app-forum-list')
-        ,checkData = checkStatus.data; //得到选中的数据
-
-        if(checkData.length === 0){
-          return layer.msg('请选择数据');
-        }
-      
-        layer.confirm('确定删除吗？', function(index) {
-		
-			//获取所选id
-			var idsArray = [];
-            for (var i = 0; i < checkData.length; i++) {
-                idsArray.push(checkData[i].id);
-            }
-			
-            var ids = idsArray.toString();
-             //console.log(ids);
-          
-          //执行 Ajax 后重载
-         
-          $.post("{:url('Forum/listdel')}",{"id": ids},function(res){
-			  if(res.code == 0){
-				layer.msg('删除成功', {
-				  icon: 1
-				  ,shade: 0
-				});
-			  }
-          }
-            //,……
-          );
-          
-          table.reload('LAY-app-forum-list');
-          layer.msg('已删除');
-        });
-      }
-    }  
-    
-	//监听帖子审核
-	form.on('switch(forumcheck)', function(data){
-	var data= data.elem;
-	status = data.checked ? 1 : -1;
-	//执行帖子审核
-		$.ajax({
-			type:'post',
-			url:"{:url('Forum/check')}",
-			data:{id:data.id,status:status},
-			dataType:'json',
-			success:function(res){
-				if(res.code == 0){
-					layer.msg(res.msg,{
-						icon:res.icon,
-						time:2000
-					});
-				} else {
-					layer.open({
-						title:'审核失败',
-						content:res.msg,
-						icon:5,
-						adim:6
-					})
-				}
-			table.reload('LAY-app-forum-list');
-			}
-		});
-		return false;
-	});  
-	
-    $('.layui-btn.layuiadmin-btn-forum-list').on('click', function(){
-      var type = $(this).data('type');
-      active[type] ? active[type].call(this) : '';
+    forumTagsForm   = "{:url('Forum/tagsform')}";
+layui.config({
+  base: '/static/admin/' //静态资源所在路径
+}).extend({
+  index: 'lib/index' //主入口模块
+}).use(['index', 'forum', 'table'], function(){
+  var $ = layui.$
+  ,form = layui.form
+  ,table = layui.table;
+  
+  // 监听搜索
+  form.on('submit(LAY-app-forumlist-search)', function(data){
+    var field = data.field;
+    $.post("{:url('Forum/list')}",field);
+    //执行重载
+    table.reload('LAY-app-forum-list', {
+      where: field
     });
   });
+
+   // 监听置顶
+   form.on('switch(isTop)', function(obj){
+    $.post("{:url('Forum/check')}",{id:obj.value, name:obj.elem.name,value:obj.elem.checked ? 1 : 0},function(res){
+      layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+    });
+  });
+
+  // 监听加精
+  form.on('switch(isHot)', function(obj){
+    $.post("{:url('Forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
+      layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+    });
+  });
+
+  // 监听回复
+  form.on('switch(isReply)', function(obj){
+    $.post("{:url('Forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
+      layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+    });
+  });
+
+  // 监听审贴
+  form.on('switch(artStatus)', function(obj){
+    //layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+    $.post("{:url('Forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
+      if(res.code == 0){
+					layer.msg(res.msg,{icon:res.icon,time:2000})
+			} else {
+					layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+      }
+    });
+    //执行重载
+    table.reload('LAY-app-forum-list', {
+      where: field
+    });
+  }); 
+    
+  //事件
+  var active = {
+    batchdel: function(){
+      var checkStatus = table.checkStatus('LAY-app-forum-list')
+      ,checkData = checkStatus.data; //得到选中的数据
+
+      if(checkData.length === 0){
+        return layer.msg('请选择数据');
+      }
+    
+      layer.confirm('确定删除吗？', function(index) {
+        //获取所选id
+        var idsArray = [];
+        for (var i = 0; i < checkData.length; i++) {
+            idsArray.push(checkData[i].id);
+        }
+        var ids = idsArray.toString();
+            
+        //执行 Ajax 后重载
+        $.post("{:url('Forum/listdel')}",{"id": ids},function(res){
+          if(res.code == 0){
+            layer.msg('删除成功', {icon: 1,shade: 0});
+          }
+        });
+        
+        table.reload('LAY-app-forum-list');
+        layer.msg('已删除');
+      });
+    }
+  }
+
+  $('.layui-btn.layuiadmin-btn-forum-list').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+});
 </script>
 {/block}

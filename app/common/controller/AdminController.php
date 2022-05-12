@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-05-12 16:02:40
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\app\common\controller\AdminController.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 declare (strict_types = 1);
 
 namespace app\common\controller;
@@ -92,93 +101,6 @@ class AdminController extends \app\BaseController
 		return true;
     }
 	
-	//显示网站设置
-    protected function getSystem()
-    {
-        //1.系统配置信息
-		return Db::name('system')->cache('system',3600)->find(1);
-       
-    }
 	
-	//域名协议转换 把数据库中的带HTTP或不带协议的域名转换为当前协议的域名前缀
-	protected function getHttpUrl($url)
-	{
-		//域名转换为无http协议
-        $www = stripos($url,'://') ? substr(stristr($url,'://'),3) : $url;
-		$htpw = Request::scheme().'://'. $www;
-		return  $htpw;
-	}
-	
-	//得到当前系统安装前台域名
-	protected function getIndexUrl()
-	{
-		$sys = $this->getSystem();
-		$domain = $this->getHttpUrl($sys['domain']);
-		$syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
-        $runTime = $this->getRunTime();
-		View::assign(['domain'=>$domain,'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime]);
-        return $domain;
-	}
-
-	protected function getRunTime()
-    {
-        //运行时间
-        $now = time();
-        $sys = $this->getSystem();
-        $count = $now-$sys['create_time'];
-        $days = floor($count/86400);
-        $hos = floor(($count%86400)/3600);
-        $mins = floor(($count%3600)/60);
-        $years = floor($days/365);
-        if($years >= 1){
-            $days = floor($days%365);
-        }
-        $runTime = $years ? "{$years}年{$days}天{$hos}时{$mins}分" : "{$days}天{$hos}时{$mins}分";
-        return $runTime;
-    }
-
-    /**
-     * 获取文章链接地址
-     *
-     * @param integer $aid
-     * @return string
-     */
-    protected function getRouteUrl(int $aid) : string
-    {
-        $indexUrl = $this->getIndexUrl();
-        $artUrl = (string) url('detail_id', ['id' => $aid]);
-
-        // 判断是否开启绑定
-        //$domain_bind = array_key_exists('domain_bind',config('app'));
-
-        // 判断index应用是否绑定域名
-        $bind_index = array_search('index',config('app.domain_bind'));
-        // 判断admin应用是否绑定域名
-        $bind_admin = array_search('admin',config('app.domain_bind'));
-
-        // 判断index应用是否域名映射
-        $map_index = array_search('index',config('app.app_map'));
-        // 判断admin应用是否域名映射
-        $map_admin = array_search('admin',config('app.app_map'));
-
-        $index = $map_index ? $map_index : 'index'; // index应用名
-        $admin = $map_admin ? $map_admin : 'admin'; // admin应用名
-
-        if($bind_index) {
-            // index绑定域名
-            $url = $indexUrl . str_replace($admin.'/','',$artUrl);
-        } else { // index未绑定域名
-            // admin绑定域名
-            if($bind_admin) {
-                $url =  $indexUrl .'/' . $index . $artUrl;
-            } else {
-                $url =  $indexUrl . str_replace($admin,$index,$artUrl);
-            }
-            
-        }
-
-        return $url;
-    }
-
 
 }

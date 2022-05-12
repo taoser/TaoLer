@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 版本配置
-    'version'   => '1.9.9',
+    'version'   => '1.9.10',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 数据库备份目录
@@ -36,7 +36,7 @@ return [
 
 	// 百度标签分词
 	'baidu'	=> [
-		'grant_type'	=> '',
+		'grant_type'   => 'client_credentials',
 		'client_id'   => '',
 		'client_secret'   => '',
 		'access_token'	=> '',
