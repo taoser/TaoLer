@@ -494,6 +494,7 @@ CREATE TABLE `tao_system` (
   `copyright` varchar(100) NOT NULL DEFAULT '' COMMENT '版权',
   `keywords` tinytext NOT NULL COMMENT '网站关键字',
   `descript` tinytext NOT NULL COMMENT '网站描述',
+  `state` tinytext CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '网站声明',
   `is_open` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开启站点1开启0关闭',
   `is_comment` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开启评论1开启0关闭',
   `is_reg` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开放注册1开启0禁止',
@@ -515,7 +516,7 @@ CREATE TABLE `tao_system` (
 -- ----------------------------
 -- Records of tao_system
 -- ----------------------------
-INSERT INTO `tao_system` VALUES ('1', 'TaoLer社区演示站', '轻论坛系统', 'http://www.xxx.com', 'taoler', '/storage/logo/logo.png', '10', '2048', 'image:png|gif|jpg|jpeg,application:zip|rar,video:mp4,audio:mp3|m4a|mp4', '<a href="https://www.aieok.com" target="_blank">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '1', '1', '1', '0.0.0.0-1', '', '管理员|admin|审核员|超级|垃圾', '1.6.3', '','0', 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', '1581221008', '1577419197');
+INSERT INTO `tao_system` VALUES (1, 'TaoLer', 'TaoLer社区-www.aieok.com', 'www.tp6.com', 'taoler', '/storage/logo/logo.png', 10, 2048, 'image:png|gif|jpg|jpeg,application:zip|rar|docx,video:mp4,audio:mp3|m4a|mp4,zip:zip,application/msword:docx', '<a href=\"https://www.aieok.com\" target=\"_blank\">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '网站声明：如果转载，请联系本站管理员。否则一切后果自行承担。', '1', '1', '1', '0.0.0.0-1', '', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 0, 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', 1641004619, 1652345050);
 
 -- ----------------------------
 -- Table structure for tao_user
