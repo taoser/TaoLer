@@ -1,5 +1,4 @@
 {extend name="public/base" /}
-
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.tags}{/block}
 {block name="description"}{$article.title},{$article.description}{/block}
@@ -29,7 +28,7 @@
         <div class="detail-about">
 			    <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
 			    <img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
-			    <i class="iconfont icon-renzheng" title="认证信息"></i>
+			    {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
 			    </a>
 			    <div class="fly-detail-user">
 			    <a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
@@ -46,7 +45,7 @@
         <hr>
         {// 内容}
         <div class="detail-body photos" id="content">{$article.content}</div>
-        <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</div>
+        <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
           <div style="margin-top: 15px">
             <h2>关键词</h2>
             <div class="layui-btn-container" style="padding-top: 15px;">
@@ -69,32 +68,31 @@
           {/notempty}
           <div class="fly-admin-box" data-id="{$article.id}">
             {if ($user.auth ?? '')}
-                <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
-                {if($article.is_top == 0)}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
-                {else /}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>
-                {/if}
-                {if($article.is_hot == 0)}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
-                {else /}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">{:lang('cancel hoting')}</span>
-                {/if}
-                {if($article.is_reply == 1)}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0"><i class="layui-icon layui-icon-face-cry"></i></span>
-                {else /}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;">{:lang('enable reply')}</span>
-                {/if}
-                <span id="color">{:lang('title color')}</span>
-            {/if}
-            {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
-            {/if}
+              {if($article.is_top == 0)}
+              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1" style="background-color:#ccc;" title="置顶">顶</span> 
+              {else /}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" title="取消置顶">顶</span>
+              {/if}
+              {if($article.is_hot == 0)}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1" style="background-color:#ccc;" title="加精">精</span> 
+              {else /}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" title="取消加精">精</span>
+              {/if}
+              {if($article.is_reply == 1)}
+              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0" title="禁评">评</span>
+              {else /}
+              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;" title="可评">评</span>
+              {/if}
+              <span id="color">{:lang('title color')}</span>
+              <span class="layui-btn layui-btn-xs jie-admin" type="del" title="删除"><i class="layui-icon layui-icon-delete"></i></span>
+              {/if}
+              {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
+              <a class="layui-btn layui-btn-xs" href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}" title="编辑"><i class="layui-icon layui-icon-edit"></i></a>
+              {/if}
           </div>
         </div>
       </div>
       {/if}
-      
 
       {//评论}
       <div class="fly-panel detail-box" id="flyReply">
@@ -138,7 +136,8 @@
           {/volist} 
         </ul>
 		    <div style="text-align: center" id="pages"></div>
-        {if condition="$article.is_reply == 1"}
+        {//评论}
+        {if ( config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}
         <div class="layui-form layui-form-pane">
           <div class="layui-form-item layui-form-text">
             <a name="comment"></a>
@@ -152,8 +151,6 @@
             <button class="layui-btn" lay-filter="user-comment" lay-submit>{:lang('submit comments')}</button>
           </div>
         </div>
-		    {else /}
-		    <blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">本帖已设置禁止回复</blockquote>
 		    {/if}
       </div>
     </div>
@@ -210,10 +207,10 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 	,form = layui.form
 	,fly = layui.fly
 	,colorpicker = layui.colorpicker
-	,plyr = layui.plyr;
-	var laytpl = layui.laytpl;
-	var uid = layui.cache.user.uid;
-	var laypage = layui.laypage;
+	,plyr = layui.plyr
+	,laytpl = layui.laytpl
+	,uid = layui.cache.user.uid
+	,laypage = layui.laypage;
   
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){
@@ -330,7 +327,6 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
  $(function(){ 
     $(".photos").on("click","img",function(){ 
       var _this = $(this); 
-      console.log(_this);
       imgShow("#outerdiv", "#innerdiv", "#bigimg", _this); 
     }); 
   });

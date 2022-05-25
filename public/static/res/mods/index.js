@@ -17,6 +17,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   ,device = layui.device()
   ,DISABLED = 'layui-btn-disabled';
   var uid = layui.cache.user.uid;
+
   //阻止IE7以下访问
   if(device.ie && device.ie < 8){
     layer.alert('如果您非得使用 IE 浏览器访问Fly社区，那么请使用 IE8+');

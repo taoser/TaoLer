@@ -1,29 +1,38 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-15 17:02:18
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\public\index-forumlist.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 <li>
 	<a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
 	  <img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
 	</a>
-	<h2>
-		{if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
-	  <a href="{$Request.domain}{:url('article/detail',['id' => $art.id])}" style="color:{$art.title_color};">{$art.title}</a>
-	</h2>
+	<h2><a href="{$Request.domain}{:url('article/detail',['id' => $art.id])}" style="color:{$art.title_color};">{$art.title}</a></h2>
 	<div class="fly-list-info">
-	  <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
-	  {if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green" title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</i>{/if}
+		{if config('taoler.config.cate_show') == 1}
+		<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
+		{/if}
+		{if config('taoler.config.area_show') == 1}
+		<i class="layui-badge layui-bg-green" title="归属地简称">{:getAsing($art.user.area_id) ?: '无'}</i>
+		{/if}
+		<a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
 		<cite>{$art.user.nickname ?: $art.user.name}</cite>
+		</a>
 		<i>{$art.create_time|date='Y-m-d'}</i>
-	  </a>
-	  <span>
-	  {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i>'}
-	  {$art.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
-	  {$art.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
-	  {$art.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
-	  </span>
-	  <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
-	  <span class="fly-list-nums">
-		<i class="iconfont icon-pinglun1" title="回答"></i>{$art.comments_count}
-	  </span> 
+		{$art.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+		{$art.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+		{$art.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+		{$art.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+		<span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
+		<span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i>{$art.comments_count}</span> 
 	</div>
 	<div class="fly-list-badge">
-	  {if ($art.is_hot == 1)}<i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i>  <span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span> {/if}
+	  {if ($art.is_hot == 1)}
+	  <i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i><span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span>
+	  {/if}
 	</div>
 </li>

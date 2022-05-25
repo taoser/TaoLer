@@ -38,7 +38,8 @@ class Login extends BaseController
 		//获取登录前访问页面refer
 		$refer = Request::server('HTTP_REFERER');
         if(Request::isAjax()) {
-			
+			// 检验登录是否开放
+			if(config('taoler.config.is_login') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，网站维护中，暂时不能登录哦！']);
             //登陆前数据校验
 			$data = Request::param();
 			if(Config::get('taoler.config.login_captcha') == 1)
@@ -94,7 +95,11 @@ class Login extends BaseController
     //注册
     public function reg()
     {
+		
         if(Request::isAjax()){
+			// 检验注册是否开放
+			if(config('taoler.config.is_regist') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，注册暂时未开放']);
+
 			$data = Request::only(['name','email','password','repassword','captcha']);
 		
 			//校验场景中reg的方法数据

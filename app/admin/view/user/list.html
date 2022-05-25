@@ -61,36 +61,32 @@
         
         <table id="LAY-user-manage" lay-filter="LAY-user-manage"></table>
         <script type="text/html" id="imgTpl"> 
-          <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+          <img style="width: 25px; height: 25px;" src= {{ d.avatar }}>
         </script>
         <script type="text/html" id="sex">
-          {{#  if(d.sex == 0){ }}
-          <button class="layui-btn layui-btn-normal layui-btn-xs" >男</button>
-          {{#  } else { }}
-          <button class="layui-btn layui-btn-danger layui-btn-xs">女</button>
-          {{#  } }}
+          <span class="layui-btn {{ d.sex == 0 ? 'layui-btn-normal' : 'layui-btn-danger' }} layui-btn-xs" >{{ d.sex == 0 ? '男' : '女' }}</span>
         </script>
-		<script type="text/html" id="buttonCheck">
-		{{#  if(d.id == '1'){ }}
-		<input type="checkbox" name="check" lay-skin="switch" disabled lay-text="通过|禁用" value="1" checked id="{{d.id}}">
-		{{#  } else { }}
-		{if condition="checkRuleButton('user/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="usercheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
-		{{#  } }}
+        <script type="text/html" id="buttonCheck">
+        {{#  if(d.id == '1'){ }}
+        <input type="checkbox" name="check" lay-skin="switch" disabled lay-text="通过|禁用" value="1" checked id="{{d.id}}">
+        {{#  } else { }}
+        {if condition="checkRuleButton('user/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="usercheck" lay-text="通过|{{#  if(d.check == -1){ }}禁止{{#  } }} {{#  if(d.check == 0){ }}待审{{#  } }}" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
+        {{#  } }}
         </script>
-		<script type="text/html" id="buttonAuth">
-		{{#  if(d.id == '1'){ }}
-			<input type="checkbox" name="auth" lay-skin="primary"  checked disabled >
-		 {{#  } else { }}
-			{if condition="checkRuleButton('user/auth')"}<input type="checkbox" name="auth" lay-skin="primary" lay-filter="auth" {{# if(d.auth ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs  layui-btn-disabled">无权限</button>{/if}
-		 {{#  } }}
+        <script type="text/html" id="buttonAuth">
+        {{#  if(d.id == '1'){ }}
+          <input type="checkbox" name="auth" lay-skin="primary"  checked disabled >
+        {{#  } else { }}
+          {if condition="checkRuleButton('user/auth')"}<input type="checkbox" name="auth" lay-skin="primary" lay-filter="auth" {{# if(d.auth ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs  layui-btn-disabled">无权限</button>{/if}
+        {{#  } }}
         </script>
         <script type="text/html" id="table-useradmin-webuser">
-		{if condition="checkRuleButton('user/useredit')"}
-          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id={{ d.id }}><i class="layui-icon layui-icon-edit"></i>编辑</a>
-		  {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
-          {if condition="checkRuleButton('user/delete')"}
-		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" id={{ d.id }}><i class="layui-icon layui-icon-delete"></i>删除</a>
-		  {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
+		    {if condition="checkRuleButton('user/useredit')"}
+          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" id={{ d.id }}><i class="layui-icon layui-icon-edit"></i></a>
+		    {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i></a>{/if}
+        {if condition="checkRuleButton('user/delete')"}
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" id={{ d.id }}><i class="layui-icon layui-icon-delete"></i></a>
+        {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i></a>{/if}
         </script>
       </div>
     </div>

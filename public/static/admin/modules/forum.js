@@ -127,9 +127,9 @@ var forms = table.render({
     ,cols: [[
       {type: 'checkbox'}
       ,{field: 'id', width: 80, title: 'ID', sort: true}
-      ,{field: 'replyer', title: '回帖人', width: 80}
-      ,{field: 'title', title: '帖ID',templet: '#title'}
-      ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
+      ,{field: 'title', title: '标题',minWidth: 150, templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
+      ,{field: 'replyer', title: '账号', width: 80}
+      ,{field: 'avatar', title: '头像', width: 60, templet: '#imgTpl'}
       ,{field: 'content', title: '评论', minWidth: 200}
       ,{field: 'replytime', title: '回复时间', width: 120, sort: true}
 	    ,{field: 'check', title: '审核', templet: '#buttonCheck', width: 100}

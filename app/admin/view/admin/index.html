@@ -46,23 +46,23 @@
           {{#  } }}
         </script>
 -->
-		<script type="text/html" id="buttonTpl">
-		{{#  if(d.id == '1'){ }}
-		<input type="checkbox" name="check" lay-skin="switch" disabled lay-text="通过|禁用" value="1" checked id="{{d.id}}">
-		{{#  } else { }}
-		{if condition="checkRuleButton('admin/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="admincheck" lay-text="通过|禁用" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
-		{{#  } }}
+        <script type="text/html" id="buttonTpl">
+        {{#  if(d.id == '1'){ }}
+        <input type="checkbox" name="check" lay-skin="switch" disabled lay-text="通过|禁用" value="1" checked id="{{d.id}}">
+        {{#  } else { }}
+        {if condition="checkRuleButton('admin/check')"}<input type="checkbox" name="check" lay-skin="switch" lay-filter="admincheck" lay-text="通过|禁用" {{#  if(d.check == 1){ }} checked {{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs layui-btn-radius layui-btn-disabled">无权限</button>{/if}
+        {{#  } }}
         </script>
         <script type="text/html" id="table-useradmin-admin">
-		{if condition="checkRuleButton('admin/edit')"}
+		    {if condition="checkRuleButton('admin/edit')"}
           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-		{else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
+		    {else /}<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-edit"></i>编辑</a>{/if}
           {{#  if(d.id == '1'){ }}
             <a class="layui-btn layui-btn-disabled layui-btn-xs"><i class="layui-icon layui-icon-delete"></i>删除</a>
           {{#  } else { }}
-		  {if condition="checkRuleButton('admin/delete')"}
+		    {if condition="checkRuleButton('admin/delete')"}
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-			{else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
+			  {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i>删除</a>{/if}
           {{#  } }}
         </script>
       </div>
@@ -99,23 +99,7 @@
     //监听搜索
     form.on('submit(LAY-user-back-search)', function(data){
       var field = data.field;
-	  $.ajax({
-		type:"post",
-		url:"{:url('admin/index')}",
-		data:{"id":field.id,"username":field.username,"mobile":field.mobile,"email":field.email},
-		daType:"json",
-		success:function (data){
-			if (data.code == 0) {
-				
-			} else {
-				layer.open({
-					content:data.msg,
-					icon:5,
-					anim:6
-				});
-			}
-		}
-	});
+      $.post("{:url('admin/index')}",field);
       //执行重载
       table.reload('LAY-user-back-manage', {
         where: field
@@ -125,37 +109,17 @@
 	//监听管理员审核
 	form.on('switch(admincheck)', function(data){
 	var data= data.elem;
-	//console.log(data);
-	
-	if(data.checked == true){
-		data.value = 1;
-	}else{
-		data.value = 0;
-	}
-	//执行管理员审核
-		$.ajax({
-			type:'post',
-			url:"{:url('admin/check')}",
-			data:{"id":data.id,"status":data.value,},
-			dataType:'json',
-			success:function(res){
+
+  //执行管理员审核
+  var status = data.checked ? 1 : 0;
+  $.post("{:url('admin/check')}",{"id":data.id,"status":status},function(res){
 				if(res.code == 0){
-					layer.msg(res.msg,{
-						icon:res.icon,
-						time:2000
-					}
-					//,function(){location.reload();}
-					);
+					layer.msg(res.msg,{icon:res.icon,time:2000})
 				} else {
-					layer.open({
-						title:'审核失败',
-						content:res.msg,
-						icon:5,
-						adim:6
-					})
+					layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
 				}
-			}
-		});
+			});
+
 		return false;
 	}); 
 
@@ -206,28 +170,14 @@
               var field = data.field; //获取提交的字段
 
               //提交 Ajax 成功后，静态更新表格中的数据
-              $.ajax({
-				type:"post",
-				url:"{:url('admin/add')}",
-				data:{"username":field.username,"password":field.password,"mobile":field.mobile,"email":field.email,"auth_group_id":field.auth_group_id,"status":field.status},
-				daType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						});
-					} else {
-						layer.open({
-							title:'添加失败',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-					}
-				}
-			});
-			  
+              $.post("{:url('admin/add')}",field,function(res){
+                if(res.code == 0){
+                  layer.msg(res.msg,{icon:res.icon,time:2000})
+                } else {
+                  layer.open({title:'添加失败',content:res.msg,icon:5,adim:6})
+                }
+              });
+
               table.reload('LAY-user-back-manage'); //数据刷新
               layer.close(index); //关闭弹层
             });  
@@ -236,7 +186,8 @@
           }
         }); 
       }
-    }  
+    }
+    
     $('.layui-btn.layuiadmin-btn-admin').on('click', function(){
       var type = $(this).data('type');
       active[type] ? active[type].call(this) : '';

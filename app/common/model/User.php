@@ -40,6 +40,11 @@ class User extends Model
     {
         return $this->belongsTo('UserArea','user_raea_id','id');
     }
+
+    public function user()
+    {
+        return $this->hasMany(Article::class);
+    }
 	
 	//登陆校验
     public function login($data)

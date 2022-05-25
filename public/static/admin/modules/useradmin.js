@@ -20,19 +20,19 @@ layui.define(['table', 'form'], function(exports){
     ,cols: [[
       {type: 'checkbox'}
       ,{field: 'id', width: 60, title: 'ID', sort: true}
-      ,{field: 'username', title: '用户名', minWidth: 100}
-	  ,{field: 'nick', title: '昵称',minWidth: 100}
-      ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
+      ,{field: 'username', title: '用户名', minWidth: 80}
+	    ,{field: 'nick', title: '昵称',Width: 80}
+      ,{field: 'avatar', title: '头像', width: 60, templet: '#imgTpl'}
       //,{field: 'phone', title: '手机',width: 80}
-      ,{field: 'email', title: '邮箱', width: 120}
+      ,{field: 'email', title: '邮箱', minWidth: 120}
       ,{field: 'sex', width: 60, title: '性别',templet: '#sex'}
       ,{field: 'ip', title: '登录IP', width: 100}
-	  ,{field: 'city', title: '城市', width: 80}
-	  ,{field: 'logintime', title: '最后登录',width: 150, sort: true}
+	    ,{field: 'city', title: '城市', width: 80}
+	    ,{field: 'logintime', title: '最后登录',width: 150, sort: true}
       ,{field: 'jointime', title: '注册时间',width: 110, sort: true}
-	  ,{field: 'check', title: '状态', templet: '#buttonCheck', width: 95, align: 'center'}
-	  ,{field: 'auth', title: '超级管理员', templet: '#buttonAuth', width: 80, align: 'center'}
-      ,{title: '操作', width: 150, align:'center', toolbar: '#table-useradmin-webuser'}
+	    ,{field: 'check', title: '状态', templet: '#buttonCheck', width: 95, align: 'center'}
+	    ,{field: 'auth', title: '超级管理员', templet: '#buttonAuth', width: 80, align: 'center'}
+      ,{title: '操作', width: 100, align:'center', toolbar: '#table-useradmin-webuser'}
     ]]
     ,page: true
     ,limit: 30
@@ -52,30 +52,21 @@ layui.define(['table', 'form'], function(exports){
         
         layer.confirm('真的删除行么', function(index){
           //obj.del();
-		  $.ajax({
-				type:'post',
-				url:userDelete,
-				data:{id:data.id},
-				dataType:'json',
-				success:function(data){
-					if(data.code == 0){
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						},function(){
-							location.reload();
-						});
-					} else {
-						layer.open({
-							title:'删除失败',
-							content:data.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			});
-		  
+          $.ajax({
+            type:'post',
+            url:userDelete,
+            data:{id:data.id},
+            dataType:'json',
+            success:function(data){
+              if(data.code == 0){
+                layer.msg(data.msg,{icon:6,time:2000});
+              } else {
+                layer.open({title:'删除失败',content:data.msg,icon:5,adim:6})
+              }
+            }
+          });
+
+		      table.reload('LAY-user-manage');
           layer.close(index);
         });
       });
@@ -97,34 +88,23 @@ layui.define(['table', 'form'], function(exports){
 
           //监听提交
           iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
-            var field = data.field; //获取提交的字段
+          var field = data.field; //获取提交的字段
 			
             //提交 Ajax 成功后，静态更新表格中的数据
             $.ajax({
-				type:"post",
-				url:userEdit,
-				data:{"id":field.id,"name":field.username,"phone":field.phone,"email":field.email,"user_img":field.avatar,"sex":field.sex},
-				daType:"json",
-				success:function (res){
-					if (res.code == 0) {
-						layer.msg(res.msg,{
-							icon:6,
-							time:2000
-						}, function(){
-							location.reload();
-						});
-					} else {
-						layer.open({
-							tiele:'修改失败',
-							content:res.msg,
-							icon:5,
-							anim:6
-						});
-					}
-				}
-			});
-			
-            table.reload('LAY-user-front-submit'); //数据刷新
+              type:"post",
+              url:userEdit,
+              data:{"id":field.id,"name":field.username,"phone":field.phone,"email":field.email,"user_img":field.avatar,"sex":field.sex},
+              daType:"json",
+              success:function (res){
+                if(data.code == 0){
+                  layer.msg(data.msg,{icon:6,time:2000});
+                } else {
+                  layer.open({title:'修改失败',content:data.msg,icon:5,adim:6})
+                }
+              }
+            });
+            table.reload('LAY-user-manage'); //数据刷新
             layer.close(index); //关闭弹层
           });  
           
@@ -149,7 +129,7 @@ layui.define(['table', 'form'], function(exports){
       ,{field: 'email', title: '邮箱', minWidth: 150}
       ,{field: 'check', title:'审核状态', templet: '#buttonTpl', width: 100, align: 'center'}
       ,{field: 'ip', title: 'IP', width: 100}
-	  ,{field: 'logintime', title: '最后登陆', width: 150}
+	    ,{field: 'logintime', title: '最后登陆', width: 150}
       ,{title: '操作', width: 150, align: 'center', toolbar: '#table-useradmin-admin'}
     ]]
     ,text: '对不起，加载出现异常！'

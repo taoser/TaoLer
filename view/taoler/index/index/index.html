@@ -39,7 +39,7 @@
 			</ul>
 			<div style="text-align: center">
 			  <div class="laypage-main">
-				<a href="{:url('cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
+				<a href="{$Request.domain}{:url('cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
 			  </div>
 			</div>
 		  </div>
@@ -76,7 +76,7 @@
 			<dt class="fly-panel-title">{:lang('hot post list')}</dt>
 			{volist name="artHot" id="vo"}
 			<dd>
-			  <a href="{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+			  <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
 			  <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
 			</dd>
 			{/volist}
@@ -84,7 +84,7 @@
 		<!--首页图片广告-->
 		<div class="fly-panel" style="padding: 5px 0; text-align: center;">
 		{volist name="ad_comm" id="vo"}		
-		  <a href="{$vo.slid_href}" target="_blank"><img src="{$vo.slid_img}" style="max-width: 100%;"></a>
+		  <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}
         </div>
 		<!--友情链接-->

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-10 15:00:49
+ * @LastEditTime: 2022-05-16 09:23:46
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Set.php
@@ -161,7 +161,7 @@ class Set extends AdminController
 		 return json($res);
 	 }
 	
-	/**配置设置
+	/**基础服务配置
      * parem $id
      */
     public function config()

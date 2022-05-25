@@ -75,34 +75,34 @@ layui.define('fly', function(exports){
     //删帖子
     del: function(div){
       layer.confirm('确认删除该贴么？', function(index){
-        layer.close(index);
-		$.ajax({
-				type:'get',
-				url:articleDelete,
-				data:{id: div.data('id')},
-				dataType:'json',
-				success:function(data){
-					if(data.code == 0){
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						},function(){
-							location.href = '/';
-						});
-					} else {
-						layer.open({
-							title:'删除失败',
-							content:data.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			});
+      layer.close(index);
+      $.ajax({
+          type:'get',
+          url:articleDelete,
+          data:{id: div.data('id')},
+          dataType:'json',
+          success:function(data){
+            if(data.code == 0){
+              layer.msg(data.msg,{
+                icon:6,
+                time:2000
+              },function(){
+                location.href = '/';
+              });
+            } else {
+              layer.open({
+                title:'删除失败',
+                content:data.msg,
+                icon:5,
+                adim:6
+              })
+            }
+          }
+        });
 		});
     }
     
-    //设置置顶、加精、禁评、状态
+    // 设置置顶、加精、禁评、状态
     ,set: function(div){
       var othis = $(this);
       fly.json(articleJieset, {
@@ -111,13 +111,13 @@ layui.define('fly', function(exports){
         ,field: othis.attr('field')
       }, function(res){
         if(res.status === 0){
-			layer.msg(res.msg);
-          location.reload();
-        }
+          layer.msg(res.msg);
+            location.reload();
+          }
       });
     }
 
-    //收藏
+    // 收藏
     ,collect: function(div){
       var othis = $(this), type = othis.data('type');
       fly.json(collection+ type +'/', {

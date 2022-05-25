@@ -2,35 +2,37 @@
 	<a href="{$Request.domain}{:url('user/home',['id'=>$top.user_id])}" class="fly-avatar">
 	  <img src="{$Request.domain}{$top.user.user_img}" alt="{$top.user.name}">
 	</a>
-	<h2>
-		{if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $top.cate.ename : $top.cate.catename}</a>{/if}
-	  <a href="{$Request.domain}{:url('article/detail',['id' => $top.id])}" style="color:{$top.title_color};">{$top.title}</a>
-	</h2>
+	<h2><a href="{$Request.domain}{:url('article/detail',['id' => $top.id])}" style="color:{$top.title_color};">{$top.title}</a></h2>
 	<div class="fly-list-info">
-	  <a href="{$Request.domain}{:url('user/home',['id'=>$top.user_id])}" link>
-		{if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green" title="来自哪简称">{:getAsing($top.user.area_id) ?: '无'}</i>{/if}
+		{if config('taoler.config.cate_show') == 1}
+		<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $top.cate.ename : $top.cate.catename}</a>
+		{/if}
+		{if config('taoler.config.area_show') == 1}
+		<i class="layui-badge layui-bg-green" title="归属地简称">{:getAsing($top.user.area_id) ?: '无'}</i>
+		{/if}
+	  	<a href="{$Request.domain}{:url('user/home',['id'=>$top.user_id])}" link>
 		<cite>{$top.user.nickname ?: $top.user.name}</cite>
-		<i>{$top.create_time|date='Y-m-d'}</i>
 		<!--
 		<i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
 		{if($top.user.vip > 0)}
 		<i class="layui-badge fly-badge-vip">vip{$top.user.vip}</i>
 		{/if}
 		-->
-	  </a>
-	  <span>
-	  {$top.has_img ?= ' <i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i>'}
-	  {$top.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
-	  {$top.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
-	  {$top.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
-	  </span>
-	  <span class=" layui-hide-xs" title="浏览"> <i class="iconfont" title="浏览">&#xe60b;</i> {$top.pv} </span>
-	  {if ($top.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/if}
-	  <span class="fly-list-nums">	  
-		<i class="iconfont icon-pinglun1" title="回答"></i> {$top.comments_count}
-	  </span>
+		</a>
+		<i>{$top.create_time|date='Y-m-d'}</i>
+		{$top.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+		{$top.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+		{$top.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+		{$top.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+		<span class=" layui-hide-xs" title="浏览"> <i class="iconfont" title="浏览">&#xe60b;</i> {$top.pv} </span>
+		{if ($top.jie == 1)}
+		<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>
+		{/if}
+		<span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {$top.comments_count}</span>
 	</div>
 	<div class="fly-list-badge">
-	{if ($top.is_top == 1)}<i class="layui-icon layui-icon-top layui-hide-md" style="font-size: 25px; color: #000000;"></i> <span class="layui-badge layui-bg-black layui-hide-xs" >{:lang('top')}</span> {/if}			 
+	{if ($top.is_top == 1)}
+	<i class="layui-icon layui-icon-top layui-hide-md" style="font-size: 25px; color: #000000;"></i> <span class="layui-badge layui-bg-black layui-hide-xs" >{:lang('top')}</span>
+	{/if}			 
 	</div>
 </li>

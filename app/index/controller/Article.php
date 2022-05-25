@@ -10,11 +10,11 @@ use think\facade\Config;
 use app\common\model\Comment;
 use app\common\model\Article as ArticleModel;
 use app\common\model\Slider;
-use think\exception\ValidateException;
 use taoler\com\Message;
 use app\common\lib\Msgres;
 use app\common\lib\Uploads;
 use taoser\SetArr;
+use taoler\com\Api;
 
 class Article extends BaseController
 {
@@ -70,7 +70,8 @@ class Article extends BaseController
 		//输出内容
 		$page = input('page') ? input('page') : 1;
         $article = new ArticleModel();
-        $artDetail = $article->getArtDetail($id,$page);
+        $artDetail = $article->getArtDetail($id);
+	
 		// 设置tag内链
 		$artDetail['content'] = $this->setArtTagLink($artDetail['content']);
 		// tag
@@ -117,6 +118,7 @@ class Article extends BaseController
 			'comments'	=> $comments,
 			'jspage'	=> 'jie',
 			'push_js'	=> $push_js,
+			'cid' => $id,
 			$download,
 		]);
 		
@@ -133,6 +135,9 @@ class Article extends BaseController
 	//文章评论
 	public function comment()
 	{
+		// 检验发帖是否开放
+		if(config('taoler.config.is_reply') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止评论！']);
+
 		if (Request::isAjax()){
 			//获取评论
 			$data = Request::only(['content','article_id','user_id']);
@@ -142,7 +147,7 @@ class Article extends BaseController
 				return json(['code'=>-1, 'msg'=>'评论不可用状态']);
 			}
 			if(empty($data['content'])){
-				return json(['code'=>0, 'msg'=>'评论不能为空！']);
+				return json(['code'=>-1, 'msg'=>'评论不能为空！']);
 			}
 			$superAdmin = Db::name('user')->where('id',$sendId)->value('auth');
 			$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.commnets_check');
@@ -182,6 +187,9 @@ class Article extends BaseController
     {
 		//dump(empty(config('taoler.baidu.client_id')));
         if (Request::isAjax()) {
+			// 检验发帖是否开放
+			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
+
             $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'description', 'captcha']);
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
@@ -368,6 +376,29 @@ class Article extends BaseController
 		return json(['code'=>0,'data'=>$description]);
 	}
 
+	public function getWordList()
+	{
+		//
+		$title = input('title');
+		if(empty($title)) return json(['code'=>-1,'msg'=>'null']);
+		$url = 'https://www.baidu.com/sugrec?prod=pc&from=pc_web&wd='.$title;
+		//$result = Api::urlGet($url);
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		$datas = curl_exec($curl);
+		curl_close($curl);
+		$data = json_decode($datas,true);
+		if(isset($data['g'])) {
+			return json(['code'=>0,'msg'=>'success','data'=>$data['g']]);
+		} else {
+			return json(['code'=>-1,'msg'=>'null']);
+		}
+		
+	}
+
     /**
 	 * 关键词
 	 *
@@ -471,8 +502,9 @@ class Article extends BaseController
         return $data;
     }
 	
-	//文章置顶，状态
-	public function jieset(){
+	// 文章置顶、加精、评论状态
+	public function jieset()
+	{
 		$data = Request::param();
 		$article = ArticleModel::field('id,is_top,is_hot,is_reply')->find($data['id']);
 		switch ($data['field']){
@@ -482,22 +514,22 @@ class Article extends BaseController
                     $res = ['status'=>0,'msg'=>'置顶成功'];
                 } else {
                     $article->save(['is_top' => 0]);
-                    $res = ['status'=>0,'msg'=>'已取消置顶'];
+                    $res = ['status'=>0,'msg'=>'置顶已取消'];
                 }
             break;
             case 'hot':
                 if($data['rank']==1){
                     $article->save(['is_hot' => 1]);
-                    $res = ['status'=>0,'msg'=>'已设精贴'];
+                    $res = ['status'=>0,'msg'=>'加精成功'];
                 } else {
                     $article->save(['is_hot' => 0]);
-                    $res = ['status'=>0,'msg'=>'精贴已取消'];
+                    $res = ['status'=>0,'msg'=>'加精已取消'];
                 }
             break;
             case 'reply':
                 if($data['rank']==1){
                     $article->save(['is_reply' => 1]);
-                    $res = ['status'=>0,'msg'=>'本帖禁评'];
+                    $res = ['status'=>0,'msg'=>'禁评成功'];
                 } else {
                     $article->save(['is_reply' => 0]);
                     $res = ['status'=>0,'msg'=>'禁评已取消'];
@@ -510,7 +542,7 @@ class Article extends BaseController
 		return json($res);	
 	}
 	
-	//改变标题颜色
+	// 改变标题颜色
 	public function titleColor()
 	{
 		$data = Request::param();
@@ -555,8 +587,12 @@ class Article extends BaseController
 			foreach($tag as $key=>$value) {
 				// 匹配所有
 				//$content = str_replace("$key", 'a('.$value.')['.$key.']',$content);
-				// 限定匹配数量
-				$content = preg_replace('/'.$key.'/','a('.$value.')['.$key.']',$content,2);
+				// 限定匹配数量 '/'.$key.'/'
+				// 匹配不包含[和]的内容
+				$pats = '/(?<!\[)'.$key.'(?!\])/';
+				//preg_match($pats,$content,$arr);
+				//halt($arr[0]);
+				$content = preg_replace($pats,'a('.$value.')['.$key.']',$content,2);
 			}
 		}
 		

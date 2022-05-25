@@ -1,7 +1,7 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-05-10 13:12:21
+ * @LastEditTime: 2022-05-16 10:54:14
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\view\taoler\index\login\login.html
@@ -20,6 +20,7 @@
         <li><a href="{$Request.domain}{:url('login/reg')}">{:lang('sign up')}</a></li>
       </ul>
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+        {if config('taoler.config.is_login') == 1}
         <div class="layui-tab-item layui-show">
           <div class="layui-form layui-form-pane">
             <form method="post" >
@@ -59,6 +60,9 @@
             </form>
           </div>
         </div>
+        {else /}
+        <div class="layui-form-item">抱歉，网站维护中，暂时不能登录，耐心等待一下哦！</div>
+        {/if}
       </div>
     </div>
   </div>

@@ -12,11 +12,12 @@
     <div class="layui-col-md12 content detail">
       <div class="fly-panel detail-box">
 		    {//标题}
-        <h1 style="color:{$article.title_color};margin:10px 5px 15px 5px;" align="center">{$article.title}</h1>
+        <h1 style="color:{$article.title_color}; margin:10px 5px 15px 5px;" align="center">{$article.title}</h1>
 
 		    {//作者}
         <div class="detail-about" align="center">
           <div class="detail-hits" style="left:-30px;">
+            <span>{$article.cate.catename} /</span>
             <span>{$article.user.name} /</span>
             <span class="post-time" style="padding-top: 5px;" data="{$article.create_time}">{$article.create_time}</span>
             <span>/ <i class="iconfont" title="浏览">&#xe60b;</i> {$pv}</span>
@@ -25,7 +26,7 @@
         <hr style="margin-bottom: 25px">
         {// 内容}
         <div class="detail-body photos" style="font-size: 18px;line-height: 200%;" id="content">{$article.content}</div>
-        <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</div>
+        <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
           <div style="margin-top: 15px">
             <h2>关键词</h2>
             <div class="layui-btn-container" style="padding-top: 15px;">
@@ -49,26 +50,26 @@
         {/notempty}
           <div class="fly-admin-box" data-id="{$article.id}">
               {if ($user.auth ?? '')}
-                <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
-                {if($article.is_top == 0)}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
-                {else /}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>
-                {/if}
-                {if($article.is_hot == 0)}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
-                {else /}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">{:lang('cancel hoting')}</span>
-                {/if}
-                {if($article.is_reply == 1)}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0"><i class="layui-icon layui-icon-face-cry"></i></span>
-                {else /}
-                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;">{:lang('enable reply')}</span>
-                {/if}
-                <span id="color">{:lang('title color')}</span>
+              {if($article.is_top == 0)}
+              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1" style="background-color:#ccc;" title="置顶">顶</span> 
+              {else /}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" title="取消置顶">顶</span>
+              {/if}
+              {if($article.is_hot == 0)}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1" style="background-color:#ccc;" title="加精">精</span> 
+              {else /}
+                <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" title="取消加精">精</span>
+              {/if}
+              {if($article.is_reply == 1)}
+              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0" title="禁评">评</span>
+              {else /}
+              <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;" title="可评">评</span>
+              {/if}
+              <span id="color">{:lang('title color')}</span>
+              <span class="layui-btn layui-btn-xs jie-admin" type="del" title="删除"><i class="layui-icon layui-icon-delete"></i></span>
               {/if}
               {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-              <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
+              <a class="layui-btn layui-btn-xs" href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}" title="编辑"><i class="layui-icon layui-icon-edit"></i></a>
               {/if}
           </div>
         </div>
@@ -81,34 +82,34 @@
 <!--底部栏-->
 	<div class="site-tree-mobile-detail-bottom layui-hide-md">
 		<div id="LAY_jieAdmin1" data-id="{$article['id']}"></div>
-    </div> 
+  </div> 
 </div>
 {include file="public/menu" /}
 {/block}
 
 {block name="script"}
 <script>
-var collectionFind = "{:url('Collection/find')}",
-    collection = "{:url('collection/')}",
-    articleJieset = "{:url('Article/jieset')}",
-    articleDelete = "{:url('Article/delete')}",
-    commentJiedaZan = "{:url('Comment/jiedaZan')}",
-    commentJiedaCai = "{:url('Comment/jiedaCai')}",
-    commentGetDa = "{:url('Comment/getDa')}",
-    commentUpdateDa = "{:url('Comment/updateDa')}",
-    commentJiedaDelete = "{:url('Comment/jiedaDelete')}",
-	  langCollection = "{:lang('collection')}",
+  var collectionFind    = "{:url('Collection/find')}",
+    collection          = "{:url('collection/')}",
+    articleJieset       = "{:url('Article/jieset')}",
+    articleDelete       = "{:url('Article/delete')}",
+    commentJiedaZan     = "{:url('Comment/jiedaZan')}",
+    commentJiedaCai     = "{:url('Comment/jiedaCai')}",
+    commentGetDa        = "{:url('Comment/getDa')}",
+    commentUpdateDa     = "{:url('Comment/updateDa')}",
+    commentJiedaDelete  = "{:url('Comment/jiedaDelete')}",
+	  langCollection      = "{:lang('collection')}",
 	  langCancelCollection = "{:lang('cancel collection')}";
-	  
-layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
+    
+  layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 	var $ = layui.jquery
-	,form = layui.form
-	,fly = layui.fly
-	,colorpicker = layui.colorpicker
-	,plyr = layui.plyr;
-	var laytpl = layui.laytpl;
-	var uid = layui.cache.user.uid;
-	var laypage = layui.laypage;
+    ,form = layui.form
+    ,fly = layui.fly
+    ,colorpicker = layui.colorpicker
+    ,plyr = layui.plyr
+	  ,laytpl = layui.laytpl
+    ,uid = layui.cache.user.uid
+    ,laypage = layui.laypage;
   
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){

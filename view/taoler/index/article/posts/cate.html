@@ -1,4 +1,5 @@
 {extend name="public/base" /}
+
 {block name="title"}{$Request.param.ename|getCateName}-{$sysInfo.webname}{/block}
 {block name="keywords"}{$Request.param.ename|getCateName},{$sysInfo.webname}{/block}
 {block name="description"}{$Request.param.ename|getCateDesc}{/block}
@@ -15,36 +16,42 @@
 		    {volist name="artList['data']" id="art"}
           <li>
             <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
-              <img src="{$art.user.user_img}" alt="{$art.user.name}">
+              <img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
             </a>
             <h2>
-              {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
               <a href="{$Request.domain}{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
             </h2>
+            
             <div class="fly-list-info">
+              {if config('taoler.config.cate_show') == 1}
+              <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
+              {/if}
               <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
-			    {if config('taoler.config.area_show') == 1}<span class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</span>{/if}
+                {if config('taoler.config.area_show') == 1}
+                <span class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</span>
+                {/if}
                 <cite>{$art.user.nickname ?: $art.user.name}</cite>
-				<i>{$art.create_time|date='Y-m-d'}</i>
+                <i>{$art.create_time|date='Y-m-d'}</i>
               </a>
+              {//图标}
               <span>
-			  {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style=" color: #5FB878;"></i>'}
-			  {$art.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
-			  {$art.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
-			  {$art.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
-			  </span>
-              <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
-              <span class="fly-list-nums">
-                <i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}
+                {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style=" color: #5FB878;"></i>'}
+                {$art.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
+                {$art.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
+                {$art.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
               </span>
+              <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
+              <span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}</span>
             </div>
             <div class="fly-list-badge">
-            {if ($art.is_hot == 1)}<i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i><span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span> {/if}
+              {if ($art.is_hot == 1)}
+              <i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i><span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span>
+              {/if}
             </div>
           </li>
 		    {/volist}	
         </ul>
-		<div style="text-align: center" id="pages"></div>
+		    <div style="text-align: center" id="pages"></div>
       </div>
     </div>
     <div class="layui-col-md3">
@@ -58,11 +65,11 @@
         <dl class="fly-panel fly-list-one layui-hide-xs">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
-		<dd>
+		    <dd>
           <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
           <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
         </dd>
-		{/volist} 
+		    {/volist} 
       </dl>
 
 		<div class="fly-panel">

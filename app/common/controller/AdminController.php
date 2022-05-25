@@ -2,9 +2,9 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-12 16:02:40
+ * @LastEditTime: 2022-05-17 11:15:46
  * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
+ * @Description: 后台控制器设置
  * @FilePath: \TaoLer\app\common\controller\AdminController.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
@@ -15,10 +15,8 @@ namespace app\common\controller;
 use think\facade\Session;
 use think\facade\View;
 use think\facade\Db;
-use think\facade\Request;
 use taoser\think\Auth;
 use taoler\com\Files;
-use think\facade\Lang;
 
 /**
  * 控制器基础类
@@ -76,7 +74,7 @@ class AdminController extends \app\BaseController
     protected function getMenus($type)
     {
         $menu     = [];
-        $auth_rule_list = Db::name('auth_rule')->where('delete_time',0)->where(['status'=> 1])->where('type',$type)->order(['sort' => 'ASC', 'id' => 'ASC'])->select();
+        $auth_rule_list = Db::name('auth_rule')->where(['delete_time'=> 0, 'status'=> 1,'type'=> $type])->order(['sort' => 'ASC', 'id' => 'ASC'])->select();
         //var_export($auth_rule_list);
 
         foreach ($auth_rule_list as $value) {

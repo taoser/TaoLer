@@ -1,4 +1,4 @@
-/**
+﻿/**
  
  @Name: Fly社区
  @Author: 贤心
@@ -221,8 +221,8 @@ pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border
 
 /* 底部 */
 .fly-footer {margin: 50px 0 0; padding: 20px 0 30px; line-height: 30px; text-align: center; color: #737573; border-top: 1px solid #e2e2e2;}
-.fly-footer a{padding:0 6px; font-weight: 300; color: #333;}
-.fly-footer a:hover{color: #777;}
+.fly-footer a{padding:0 6px; font-weight: 300;color: rgb(230, 227, 227);}
+.fly-footer a:hover{color: #fff;}
 .fly-union{margin-top: 10px; color: #999;}
 .fly-union>*{display: inline-block; vertical-align: middle;}
 .fly-union a[upyun] img{width: 80px;}
@@ -329,11 +329,12 @@ pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border
 .fly-list li h2 .layui-badge{top: -2px; height: 16px; line-height: 16px; padding: 0 5px; margin-right: 10px; font-size: 12px; border: 1px solid #5FB878; background: none; color: #5FB878;}
 
 .fly-list-info{position: relative; font-size: 13px; color: #999;}
-.fly-list-info>*{padding-right: 15px;}
+.fly-list-info>*{padding-right: 5px;}
 .fly-list-info a[link]{color: #999;}
 .fly-list-info a[link]:hover{color: #5FB878;}
 .fly-list-info .icon-renzheng{position: relative; top: 1px; margin-right: 3px;}
 .fly-list-info .fly-badge-vip{position: relative; margin-left: 2px;}
+.fly-list-info .layui-badge{height: 16px; line-height: 16px; padding: 0 5px; margin-right: 5px; font-size: 12px; border: 1px solid #5FB878; background: none; color: #5FB878;}
 .fly-list-kiss{color: #FF5722;}
 .fly-list-nums{position: absolute; right: 0; top: 0; padding-right: 0!important;}
 .fly-list-nums i{position: relative; padding: 0 3px 0 15px;}
@@ -518,7 +519,9 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 /* 发帖 */
 .layui-form-item.layui-col-space15{margin-bottom: 7.5px;}
-
+.bdsug{height: auto; position: absolute; left: 0; top: 30px; z-index: 100; background: #fff; border-radius: 0 0 10px 10px; border: 1px solid #dadade!important; border-top: 0!important; box-shadow: none;}
+.bdsug ul{display: block;margin: 5px 2px 0; padding: 5px 0 7px; background: 0 0; border-top: 0px solid #f5f5f6;}
+.bdsug ul>li{margin-top: 0;height:30px;line-height: 25px;}
 /* 求解管理 */
 .jie-admin{cursor: pointer;}
 .detail-hits .jie-admin{color: #fff; padding: 0 10px; }
@@ -730,38 +733,3 @@ body .fly-user-main{position: relative; min-height: 600px;}
 
 /*前台公用样式*/
 
-/*分页*/
-.pagination {
- display: inline-block;
- padding: 0 auto;
- margin: 20px 0;
- border-radius: 4px;
-}
-.pagination li {
-  display: inline;
-}
-.pagination li a,
-.pagination li span {
-  position: relative;
-  float: left;
-  padding: 6px 12px;
-  line-height: 1.42857143;
-  color: #393D49;
-  background: #fff;
-  margin: 0 0 0 8px;
-  border: 1px solid #eee;
-}
-
-.pagination li a:hover {
-	color: #fff;
-	background: #009688;
-}
-.pagination .active span{
-background: #009688;
-color: #fff;
-}
-.pagination .disabled{
-display: none;
-@media screen and (max-width: 992px) {
-  body .header .layui-nav .layui-nav-item{margin: 0 5px;}
-}

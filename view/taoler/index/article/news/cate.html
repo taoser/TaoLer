@@ -15,11 +15,11 @@
 		    {volist name="artList['data']" id="art"}
           <li>
             <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar"><img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}"></a>
-            <h2>
-              {if config('taoler.config.cate_show') == 1}<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>{/if}
-              <a href="{$Request.domain}{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a>
-            </h2>
+            <h2><a href="{$Request.domain}{:url('article/detail',['id' => $art.id])}"  style="color:{$art.title_color};">{$art.title}</a></h2>
             <div class="fly-list-info">
+              {if config('taoler.config.cate_show') == 1}
+              <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
+              {/if}
               <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
 			        {if config('taoler.config.area_show') == 1}
               <span class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</span>
@@ -28,10 +28,10 @@
 				      <i>{$art.create_time|date='Y-m-d'}</i>
               </a>
               <span>
-              {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style=" color: #5FB878;"></i>'}
-              {$art.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
-              {$art.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
-              {$art.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
+                {$art.has_img ?= ' <i class="layui-icon layui-icon-picture" style=" color: #5FB878;"></i>'}
+                {$art.has_video ?= ' <i class="layui-icon layui-icon-play" style="color: #FF5722;"></i>'}
+                {$art.has_audio ?= ' <i class="layui-icon layui-icon-speaker" style="color: #000000;"></i>'}
+                {$art.upzip ?= ' <i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i>'}
               </span>
               <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
               <span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}</span>

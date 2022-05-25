@@ -168,7 +168,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getArtDetail(int $id, int $page)
+    public function getArtDetail(int $id)
     {
         $article = Cache::get('article_'.$id);
         if(!$article){

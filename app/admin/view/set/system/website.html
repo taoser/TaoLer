@@ -202,6 +202,86 @@
                 </div>
 				<div class="layui-tab-item">
 					<div class="layui-form" wid100 lay-filter="config">
+						<div class="layui-form-item">
+							<label class="layui-form-label">注册开关：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="is_regist" lay-skin="primary" value=1 {if config('taoler.config.is_regist') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选可注册</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">登录开关：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="is_login" lay-skin="primary" value=1 {if config('taoler.config.is_login') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选可登录</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">发帖开关：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="is_post" lay-skin="primary" value=1 {if config('taoler.config.is_post') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选可发贴</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">评论开关：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="is_reply" lay-skin="primary" value=1 {if config('taoler.config.is_reply') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选可评论</div>
+						</div>
+						<hr>
+						<div class="layui-form-item">
+							<label class="layui-form-label">注册审核：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="regist_check" lay-skin="primary" value=0 {if config('taoler.config.regist_check') == 0} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选需审核</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">发帖审核：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="posts_check" lay-skin="primary" value=0 {if config('taoler.config.posts_check') == 0} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选需审核</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">评论审核：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="commnets_check" lay-skin="primary" value=0 {if config('taoler.config.commnets_check') == 0} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选需审核</div>
+						</div>
+						<hr>
+						<div class="layui-form-item">
+							<label class="layui-form-label">登录验证码：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="login_captcha" lay-skin="primary" value=1 {if config('taoler.config.login_captcha') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选需验证</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">发帖验证码：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="post_captcha" lay-skin="primary" value=1 {if config('taoler.config.post_captcha') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选需验证</div>
+						</div>
+						<hr>
+						<div class="layui-form-item">
+						<label class="layui-form-label">分类显示：</label>
+						<div class="layui-input-inline" style="width: 30px;">
+							<input type="checkbox" name="cate_show" lay-skin="primary" value=1 {if config('taoler.config.cate_show') == 1} checked {/if}>
+						</div>
+						<div class="layui-form-mid layui-word-aux">勾选显示文章所属类别</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">区域简称：</label>
+							<div class="layui-input-inline" style="width: 30px;">
+								<input type="checkbox" name="area_show" lay-skin="primary" value=1 {if config('taoler.config.area_show') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">勾选显示归属地简称</div>
+						</div>
 						{if($mailserver.active == 1)}
 						<div class="layui-form-item">
 							<label class="layui-form-label">邮件通知：</label>
@@ -212,61 +292,10 @@
 						</div>
 						{/if}
 						<div class="layui-form-item">
-							<label class="layui-form-label">注册审核：</label>
-							<div class="layui-input-inline" style="width: 30px;">
-								<input type="checkbox" name="regist_check" lay-skin="primary" value=0 {if config('taoler.config.regist_check') == 0} checked {/if}>
+							<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="set_system_config">确认保存</button>
 							</div>
-							<div class="layui-form-mid layui-word-aux">注册是否需要审核</div>
 						</div>
-						<div class="layui-form-item">
-							<label class="layui-form-label">发帖审核：</label>
-							<div class="layui-input-inline" style="width: 30px;">
-								<input type="checkbox" name="posts_check" lay-skin="primary" value=0 {if config('taoler.config.posts_check') == 0} checked {/if}>
-							</div>
-							<div class="layui-form-mid layui-word-aux">发帖是否需要审核</div>
-						</div>
-						<div class="layui-form-item">
-							<label class="layui-form-label">评论审核：</label>
-							<div class="layui-input-inline" style="width: 30px;">
-								<input type="checkbox" name="commnets_check" lay-skin="primary" value=0 {if config('taoler.config.commnets_check') == 0} checked {/if}>
-							</div>
-							<div class="layui-form-mid layui-word-aux">评论是否需要审核</div>
-						</div>
-						<div class="layui-form-item">
-						<label class="layui-form-label">分类显示：</label>
-						<div class="layui-input-inline" style="width: 30px;">
-						  <input type="checkbox" name="cate_show" lay-skin="primary" value=1 {if config('taoler.config.cate_show') == 1} checked {/if}>
-						</div>
-						<div class="layui-form-mid layui-word-aux">是否显示列表及详情所属分类</div>
-						</div>
-						<div class="layui-form-item">
-							<label class="layui-form-label">区域简称：</label>
-							<div class="layui-input-inline" style="width: 30px;">
-								<input type="checkbox" name="area_show" lay-skin="primary" value=1 {if config('taoler.config.area_show') == 1} checked {/if}>
-							</div>
-							<div class="layui-form-mid layui-word-aux">是否显示发件人所在地区简称</div>
-						</div>
-						<div class="layui-form-item">
-							<label class="layui-form-label">登录验证码：</label>
-							<div class="layui-input-inline" style="width: 30px;">
-								<input type="checkbox" name="login_captcha" lay-skin="primary" value=1 {if config('taoler.config.login_captcha') == 1} checked {/if}>
-							</div>
-							<div class="layui-form-mid layui-word-aux">勾选则验证</div>
-						</div>
-						<div class="layui-form-item">
-							<label class="layui-form-label">发帖验证码：</label>
-							<div class="layui-input-inline" style="width: 30px;">
-								<input type="checkbox" name="post_captcha" lay-skin="primary" value=1 {if config('taoler.config.post_captcha') == 1} checked {/if}>
-							</div>
-							<div class="layui-form-mid layui-word-aux">勾选则验证</div>
-						</div>
-
-					
-					  <div class="layui-form-item">
-						<div class="layui-input-block">
-						  <button class="layui-btn" lay-submit lay-filter="set_system_config">确认保存</button>
-						</div>
-					  </div>
 					</div>
                 </div>
 

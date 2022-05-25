@@ -1,12 +1,3 @@
-<!--
- * @Author: TaoLer <alipay_tao@qq.com>
- * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-05-11 07:38:52
- * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\view\taoler\index\public\base.html
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
--->
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,6 +44,8 @@
 {block name="column"}导航{/block}
 {block name="content"}内容{/block}
 {include file="public/footer" /}
+<script src="{$Request.domain}/static/layui/jquery.min.js" charset="utf-8"></script>
+<script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
 <script>
   layui.cache.page = '{$jspage}';
   layui.cache.user = {
@@ -66,8 +59,18 @@
     version: "3.0.0"
     ,base: '{$Request.domain}/static/res/mods/'
   }).extend({
-  fly: 'index'
+    fly: 'index'
   }).use('fly');
+  var messageNums = "{:url('message/nums')}",
+      messageRead = "{:url('Message/read')}",
+      userMessage = "{:url('User/message')}",
+      login       = "{:url('Login/index')}",
+      articleAdd  = "{:url('Article/add')}",
+      uploads     = "{:url('article/uploads')}",
+      searchUrl   = "{:url('index/search')}",
+      langUrl     = "{:url('index/language')}",
+      replyNum    = "{:lang('replies')}",
+      jumpUrl     = "{:url('/jump/index/')}";
 </script>
 {block name="script"}{/block}
 </body>

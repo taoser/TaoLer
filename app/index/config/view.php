@@ -1,15 +1,35 @@
 <?php
+/*
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2022-05-17 15:40:57
+ * @LastEditTime: 2022-05-18 08:49:23
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\app\index\config\view.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 // +----------------------------------------------------------------------
 // | 模板设置
 // +----------------------------------------------------------------------
+use think\facade\Db;
+	//如果网站安装从数据库查询选择的模板
+	if(file_exists('./install.lock')){
+			$template = Db::name('system')->where('id',1)->value('template');
+	} else {
+		$template = '';
+	}
 
 return [
     // 模板引擎类型使用Think
     'type'          => 'Think',
     // 默认模板渲染规则 1 解析为小写+下划线 2 全部转换小写 3 保持操作方法
     'auto_rule'     => 1,
+    // 模板目录名
+    'view_dir_name' => 'view/'.$template,
     // 模板后缀
     'view_suffix'   => 'html',
+    // 预先加载的标签库
+    'taglib_pre_load' => 'app\common\taglib\Article',
     // 模板文件名分隔符
     'view_depr'     => DIRECTORY_SEPARATOR,
     // 模板引擎普通标签开始标记
@@ -22,11 +42,11 @@ return [
     'taglib_end'    => '}',
 	
 	'default_filter' => 'htmlspecialchars',
-    
 
 	//模板输出替换
-	'tpl_replace_string'  =>  [
-    '__STATIC__'=>'/static/layui',
-	'__JS__' => '/static/res/',
-	]
+	// 'tpl_replace_string'  =>  [
+    // '__STATIC__'=>'/static/layui',
+	// '__JS__' => '/static/res/',
+	// ],
+
 ];

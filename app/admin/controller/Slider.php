@@ -32,7 +32,7 @@ class Slider extends AdminController
       $limit = input('limit');
       $page = input('page');
       if($type) {
-        $datas = SliderModel::where('slid_type',$type)->where('')->paginate([
+        $datas = SliderModel::where('slid_type',$type)->paginate([
           'list_rows'=> $limit,
           'page'=>$page
         ]);

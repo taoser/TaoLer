@@ -1,26 +1,22 @@
-<div class="fly-footer html5plus-hide">
-  <p>
-    Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}v{:config('taoler.version')}
-  </p>
-  <p>
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-05-17 11:24:36
+ * @LastEditors: TaoLer
+ * @Description: 页脚
+ * @FilePath: \TaoLer\view\taoler\index\public\footer.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
+<div class="fly-footer layui-bg-black html5plus-hide">
+  <div>
+    <span>Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}v{:config('taoler.version')}</span>
+  </div>
+  <div>
     {$sysInfo.showlist|raw} {volist name="footlinks" id="vo"}
     <a href="{$Request.domain}{$vo.slid_href}" target="_blank">{$vo.slid_name}</a>
     {/volist}
-    <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank"
-      >{$sysInfo.icp}</a>
-  </p>
+    <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">{$sysInfo.icp}</a>
+  </div>
 </div>
-<script src="{$Request.domain}/static/layui/jquery.min.js" charset="utf-8"></script>
-<script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
-<script>
-  var messageNums = "{:url('message/nums')}",
-    messageRead = "{:url('Message/read')}",
-    userMessage = "{:url('User/message')}",
-    login = "{:url('Login/index')}",
-    articleAdd = "{:url('Article/add')}",
-    uploads = "{:url('article/uploads')}",
-    searchUrl = "{:url('index/search')}",
-    langUrl = "{:url('index/language')}",
-    replyNum = "{:lang('replies')}";
-  var jumpUrl = "{:url('/jump/index/')}";
-</script>
+
+

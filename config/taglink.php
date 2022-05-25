@@ -1,4 +1,5 @@
 <?php
 return [
-	'一'   => 'http://aa.com',
+	'一个'   => 'http://www.bi.com',
+	'描述'   => 'http://ww.com',
 ];

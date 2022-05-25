@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-07 18:37:39
+ * @LastEditTime: 2022-05-16 10:09:06
  * @LastEditors: TaoLer
  * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 版本配置
-    'version'   => '1.9.10',
+    'version'   => '1.9.11',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 数据库备份目录
@@ -24,14 +24,30 @@ return [
 
 	// 配置
 	'config'	=>[
-        'email_notice'	=> 0,
-        'cate_show'	=> 1,
-        'area_show'	=> 1,
-		'regist_check'	=> 0,
-		'posts_check'	=> 0,
-		'commnets_check'	=> 0,
-		'login_captcha'	=> 0,
-		'post_captcha'	=> 0,
+		// 注册开关
+		'is_regist'   => 1,
+		// 登录开关
+		'is_login'   => 1,
+		// 发帖开关
+		'is_post'   => 1,
+		// 评论开关
+		'is_reply'   => 1,
+		// 注册审核
+		'regist_check'   => 0,
+		// 发帖审核
+		'posts_check'   => 0,
+		// 评论审核
+		'commnets_check'   => 0,
+		// 登录验证码
+		'login_captcha'   => 0,
+		// 发帖验证码
+		'post_captcha'   => 0,
+		// 显示分类
+        'cate_show'   => 0,
+		// 显示用户归属地简称
+        'area_show'   => 0,
+		// 邮件通知
+        'email_notice'   => 0,
 	],
 
 	// 百度标签分词
