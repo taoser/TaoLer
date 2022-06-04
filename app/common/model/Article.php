@@ -173,7 +173,7 @@ class Article extends Model
         $article = Cache::get('article_'.$id);
         if(!$article){
             //查询文章
-            $article = $this::field('id,title,content,status,cate_id,user_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,tags,description,title_color,create_time')->where('status',1)->with([
+            $article = $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,tags,description,title_color,create_time')->where('status',1)->with([
                 'cate' => function($query){
                     $query->where('delete_time',0)->field('id,catename,ename');
                 },

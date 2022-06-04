@@ -22,7 +22,9 @@ spl_autoload_register(function ($class) {
 
     $class = ltrim($class, '\\');
 
-    $dir = app()->getRootPath();
+    //$dir = app()->getRootPath();
+	$app = new App();
+    $dir = $app::getRootPath();
     $namespace = 'addons';
 
     if (strpos($class, $namespace) === 0) {

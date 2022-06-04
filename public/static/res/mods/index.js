@@ -608,7 +608,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
     //新消息通知
     ,newmsg: function(){
       var elemUser = $('.fly-nav-user');
-      if(layui.cache.user.uid !== -1 && elemUser[0]){
+      if(uid != -1 && elemUser[0]){
         fly.json(messageNums, {
           _: new Date().getTime()
         }, function(res){

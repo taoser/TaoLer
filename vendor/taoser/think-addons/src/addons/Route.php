@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-05 10:46:07
+ * @LastEditTime: 2022-05-22 21:19:31
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\vendor\taoser\think-addons\src\addons\Route.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 
 declare(strict_types=1);
 
@@ -22,6 +31,18 @@ class Route
     {
         $app = app();
         $request = $app->request;
+
+        $module_path  = $app->addons->getAddonsPath() . $addon . DIRECTORY_SEPARATOR;
+        
+        //注册路由配置
+        $addonsRouteConfig = [];
+        if (is_file($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php')) {
+            $addonsRouteConfig = include($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php');
+            $app->config->load($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php', pathinfo($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php', PATHINFO_FILENAME));
+        }
+        if (isset($addonsRouteConfig['url_route_must']) && $addonsRouteConfig['url_route_must']) {
+            throw new HttpException(400, lang("addon {$addon}：已开启强制路由"));
+        }
 
         Event::trigger('addons_begin', $request);
 

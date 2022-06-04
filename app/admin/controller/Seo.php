@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-05-12 16:21:33
+ * @LastEditTime: 2022-06-04 16:52:27
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -20,6 +20,8 @@ use app\admin\model\PushJscode;
 
 class Seo extends AdminController
 {
+    // 写ID
+    protected $w_id = 0;
 
     public function index()
     {
@@ -128,7 +130,7 @@ class Seo extends AdminController
         // 标记第一次调用写ID
         $flag= true;
         // 写ID
-        $w_id = '';
+        //$w_id = '';
         // 生成新文件编号，防止重复写入，
         $i = 1;
         // 获取public下所有xml文件
@@ -162,10 +164,10 @@ class Seo extends AdminController
 
         do
         {
-            $wr_id = $flag ? config('taoler.sitemap.write_id') : $w_id;
+            $this->wr_id = $flag ? config('taoler.sitemap.write_id') : $this->w_id;
             $artAllId = Db::name('article')
                         ->where(['delete_time'=>0,'status'=>1])
-                        ->where('id', '>', (int) $wr_id)
+                        ->where('id', '>', (int) $this->wr_id)
                         ->order('id','asc')->limit($limit)->column('update_time','id');
             if(empty($artAllId)) {
                 return json(['code'=>-1,'msg'=>'本次无需生成']);
@@ -213,7 +215,7 @@ class Seo extends AdminController
                 // 重置标记内容
                 $str = '';
                 $i++;
-                $w_id = $last_id;
+                $this->w_id = $last_id;
                 $flag = false;
             }
         }

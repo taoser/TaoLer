@@ -224,7 +224,7 @@ class Captcha
             $y     = $this->fontSize + mt_rand(10, 20);
             $angle = $this->math ? 0 : mt_rand(-40, 40);
 
-            imagettftext($this->im, $this->fontSize, $angle, $x, $y, $this->color, $fontttf, $char);
+            imagettftext($this->im, $this->fontSize, $angle, (int) $x, (int) $y, $this->color, $fontttf, $char);
         }
 
         ob_start();
@@ -253,10 +253,10 @@ class Captcha
         $px = $py = 0;
 
         // 曲线前部分
-        $A = mt_rand(1, $this->imageH / 2); // 振幅
-        $b = mt_rand(-$this->imageH / 4, $this->imageH / 4); // Y轴方向偏移量
-        $f = mt_rand(-$this->imageH / 4, $this->imageH / 4); // X轴方向偏移量
-        $T = mt_rand($this->imageH, $this->imageW * 2); // 周期
+        $A = mt_rand(1, (int) ($this->imageH / 2)); // 振幅
+        $b = mt_rand(-intval($this->imageH / 4), intval($this->imageH / 4)); // Y轴方向偏移量
+        $f = mt_rand(-intval($this->imageH / 4), intval($this->imageH / 4)); // X轴方向偏移量
+        $T = mt_rand((int)$this->imageH, intval($this->imageW * 2)); // 周期
         $w = (2 * M_PI) / $T;
 
         $px1 = 0; // 曲线横坐标起始位置
@@ -267,16 +267,16 @@ class Captcha
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
                 $i  = (int) ($this->fontSize / 5);
                 while ($i > 0) {
-                    imagesetpixel($this->im, $px + $i, $py + $i, $this->color); // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
+                    imagesetpixel($this->im, (int) $px + $i, (int) $py + $i, $this->color); // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
                     $i--;
                 }
             }
         }
 
         // 曲线后部分
-        $A   = mt_rand(1, $this->imageH / 2); // 振幅
-        $f   = mt_rand(-$this->imageH / 4, $this->imageH / 4); // X轴方向偏移量
-        $T   = mt_rand($this->imageH, $this->imageW * 2); // 周期
+        $A   = mt_rand(1, (int) ($this->imageH / 2)); // 振幅
+        $f   = mt_rand(-(int) ($this->imageH / 4), (int) ($this->imageH / 4)); // X轴方向偏移量
+        $T   = mt_rand((int) $this->imageH, (int) ($this->imageW * 2)); // 周期
         $w   = (2 * M_PI) / $T;
         $b   = $py - $A * sin($w * $px + $f) - $this->imageH / 2;
         $px1 = $px2;
@@ -287,7 +287,7 @@ class Captcha
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
                 $i  = (int) ($this->fontSize / 5);
                 while ($i > 0) {
-                    imagesetpixel($this->im, $px + $i, $py + $i, $this->color);
+                    imagesetpixel($this->im, (int) ($px + $i), (int) ($py + $i), $this->color);
                     $i--;
                 }
             }
@@ -306,7 +306,7 @@ class Captcha
             $noiseColor = imagecolorallocate($this->im, mt_rand(150, 225), mt_rand(150, 225), mt_rand(150, 225));
             for ($j = 0; $j < 5; $j++) {
                 // 绘杂点
-                imagestring($this->im, 5, mt_rand(-10, $this->imageW), mt_rand(-10, $this->imageH), $codeSet[mt_rand(0, 29)], $noiseColor);
+                imagestring($this->im, 5, mt_rand(-10, (int) $this->imageW), mt_rand(-10, (int) $this->imageH), $codeSet[mt_rand(0, 29)], $noiseColor);
             }
         }
     }

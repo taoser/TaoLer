@@ -74,7 +74,7 @@ abstract class Addons
      */
     protected function fetch($template = '', $vars = [])
     {
-        return $this->view->fetch($template, $vars);
+        return $this->view->fetch(DIRECTORY_SEPARATOR . $template, $vars);
     }
 
     /**
