@@ -54,6 +54,7 @@ CREATE TABLE `tao_article` (
   `status` enum('0','-1','1') NOT NULL DEFAULT '1' COMMENT '状态1显示0待审-1禁止',
   `cate_id` int(11) NOT NULL COMMENT '分类id',
   `user_id` int(11) NOT NULL COMMENT '用户id',
+  `goods_detail_id` int DEFAULT NULL COMMENT '商品ID',
   `is_top` enum('0','1') NOT NULL DEFAULT '0' COMMENT '置顶1否0',
   `is_hot` enum('0','1') NOT NULL DEFAULT '0' COMMENT '推荐1否0',
   `is_reply` enum('1','0') NOT NULL DEFAULT '1' COMMENT '0禁评1可评',
@@ -76,7 +77,7 @@ CREATE TABLE `tao_article` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`) USING BTREE COMMENT '文章的用户索引',
   KEY `cate_id` (`cate_id`) USING BTREE COMMENT '文章分类索引'
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tao_article
@@ -141,7 +142,7 @@ CREATE TABLE `tao_auth_group_copy` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tao_auth_group_copy
@@ -310,7 +311,7 @@ CREATE TABLE `tao_collection` (
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='文章收藏表';
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='文章收藏表';
 
 -- ----------------------------
 -- Table structure for tao_comment
@@ -350,7 +351,7 @@ CREATE TABLE `tao_cunsult` (
   `create_time` int(10) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `delete_time` int(10) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for tao_friend_link
