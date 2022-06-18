@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-16 10:09:06
+ * @LastEditTime: 2022-06-18 18:21:33
  * @LastEditors: TaoLer
  * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 版本配置
-    'version'   => '1.9.12',
+    'version'   => '1.9.13',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 数据库备份目录
@@ -66,7 +66,7 @@ return [
 		'map_time'	=> 'daily',
 		'map_level'	=> '0.5',
 		// 已生成id位标记
-		'write_id'   => 12,
+		'write_id'   => 0,
 
 	],
 

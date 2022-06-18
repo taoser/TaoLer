@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-06-04 16:52:27
+ * @LastEditTime: 2022-06-14 13:50:44
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -45,6 +45,11 @@ class Seo extends AdminController
         return View::fetch();
     }
 
+    /**
+     * 百度推送
+     *
+     * @return void
+     */
     public function push()
     {
         $data = Request::only(['start_id','end_id','time']);
@@ -316,6 +321,11 @@ class Seo extends AdminController
         return json(['code'=>0,'msg'=>'删除成功']);
     }
 
+    /**
+     * 搜索引擎日志分析
+     *
+     * @return void
+     */
     public function searchLog()
     {
         $time = input('search_time');

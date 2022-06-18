@@ -461,7 +461,7 @@ CREATE TABLE `tao_slider` (
   `slid_name` varchar(30) NOT NULL COMMENT '幻灯名',
   `slid_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '类型',
   `slid_img` varchar(70) NOT NULL DEFAULT '' COMMENT '幻灯图片地址',
-  `slid_href` varchar(70) NOT NULL DEFAULT '' COMMENT '链接',
+  `slid_href` varchar(255) NOT NULL DEFAULT '' COMMENT '链接',
   `slid_color` varchar(10) NOT NULL DEFAULT '' COMMENT '广告块颜色',
   `slid_start` int(11) NOT NULL DEFAULT '0' COMMENT '开始时间',
   `slid_over` int(11) NOT NULL DEFAULT '0' COMMENT '结束时间',

@@ -28,7 +28,7 @@
 #### 构架组成
 - 1.x版本构架：
 	- 构架：Tinkphp6 + layui2.6
-	- 环境：php7/php8.0 + mysql
+	- 环境：php7/php8.1 + mysql
 	- 前端：Fly template V3.0
 	
 #### 构架介绍

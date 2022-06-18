@@ -1,4 +1,4 @@
-/**
+﻿/**
   images压缩扩展模块
   changlin_zhao@qq.com
   2021.5.25
@@ -10,9 +10,8 @@ var layer = layui.layer;
 var compressImage = {
 	uploads:  function(obj){
 	//obj.preview(function(index, file, result){
-				 
-		//执行实例
-					
+ 
+		//执行实例	
 		var files = obj.pushFile();
 		var filesArry = [];
 		for (var key in files) { //将上传的文件转为数组形式
@@ -54,7 +53,7 @@ var compressImage = {
 		reader.readAsDataURL(file)
 		reader.onload = function (e) {
 		  const img = new Image()
-		  const quality = 0.5 // 图像质量
+		  const quality = 0.8 // 图像质量
 		  const canvas = document.createElement('canvas')
 		  const drawer = canvas.getContext('2d')
 		  img.src = this.result
@@ -64,7 +63,7 @@ var compressImage = {
 		  originHeight = img.height; /* 图片的高度 */
 		  
 		  // 设置最大尺寸限制，将所有图片都压缩到小于1m
-			const maxWidth = 1024, maxHeight = 1024;
+			const maxWidth = 2560, maxHeight = 1600;
 			// 需要压缩的目标尺寸
 			let targetWidth = originWidth, targetHeight = originHeight;
 			// 等比例计算超过最大限制时缩放后的图片尺寸
@@ -105,7 +104,7 @@ var compressImage = {
 		
 	//})
 	}
- }		
+ }	
   //输出 imgcom 接口
   exports('imgcom', compressImage);
 });    

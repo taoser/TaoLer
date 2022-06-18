@@ -376,6 +376,11 @@ class Article extends BaseController
 		return json(['code'=>0,'data'=>$description]);
 	}
 
+	/**
+	 * 标题调用百度关键词
+	 *
+	 * @return void
+	 */
 	public function getWordList()
 	{
 		//
@@ -446,9 +451,9 @@ class Article extends BaseController
 					} else {
 						// 接口正常但获取数据失败，可能参数错误，重新获取token
 						$url = 'https://aip.baidubce.com/oauth/2.0/token';
-						$post_data['grant_type']       = config('taoler.baidu.grant_type');;
+						$post_data['grant_type']     = config('taoler.baidu.grant_type');;
 						$post_data['client_id']      = config('taoler.baidu.client_id');
-						$post_data['client_secret'] = config('taoler.baidu.client_secret');
+						$post_data['client_secret']  = config('taoler.baidu.client_secret');
 	
 						$o = "";
 						foreach ( $post_data as $k => $v ) 
@@ -463,7 +468,8 @@ class Article extends BaseController
 								'access_token'	=> json_decode($res)->access_token,
 							]
 						]);
-						echo 'api接口数据错误,重新自动尝试链接';
+						echo 'api接口数据错误 - ';
+						echo $dataItem->error_msg; 
 					}
 				}
 			}
