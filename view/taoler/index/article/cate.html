@@ -17,7 +17,7 @@
             <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
               <img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
             </a>
-            <h2><a href="{$Request.domain}{:url('article/detail',['id' => $art.id])}"  style="color: {$art['title_color'] ?? '#333'};">{$art.title}</a></h2>
+            <h2><a href="{$Request.domain}{$art.url}"  style="color: {$art['title_color'] ?? '#333'};">{$art.title}</a></h2>
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
               <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
@@ -56,6 +56,7 @@
       </div>
     </div>
     <div class="layui-col-md3">
+      {if showSlider(3)}
         <div class="fly-panel">
             <div class="fly-panel" style="padding: 5px 0; text-align: center;">
                 {volist name="ad_cateImg" id="vo"}
@@ -63,16 +64,17 @@
                 {/volist}
             </div>
         </div>
+      {/if}
         <dl class="fly-panel fly-list-one layui-hide-xs">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
 		<dd>
-          <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+          <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
           <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
         </dd>
 		{/volist} 
       </dl>
-
+      {if showSlider(6)}
 		<div class="fly-panel">
 		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
 		<a href="" class="fly-link fly-joinad    ">{:lang('i want to join')}</a>
@@ -83,6 +85,7 @@
 		{/volist}
 		</div>
 		</div>
+    {/if}
     </div>
   </div>
 </div>
