@@ -60,7 +60,8 @@ class Forum extends AdminController
 			$forumList = Db::name('article')
 			->alias('a')
 			->join('user u','a.user_id = u.id')
-			->field('a.id as aid,name,user_img,title,content,a.update_time as update_time,is_top,is_hot,is_reply,a.status as status')
+			->join('cate c','a.cate_id = c.id')
+			->field('a.id as aid,ename,name,user_img,title,content,a.update_time as update_time,is_top,a.is_hot as is_hot,is_reply,a.status as status')
 			->where('a.delete_time',0)
 			->where($map)
 			->where($where)
@@ -73,7 +74,7 @@ class Forum extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-					$url = $this->getRouteUrl($v['aid']);
+					$url = $this->getRouteUrl($v['aid'],$v['ename']);
 				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'title'=>htmlspecialchars($v['title']),'url'=>$url,'content'=>htmlspecialchars($v['content']),'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
 				}
 			} else {
@@ -236,7 +237,8 @@ class Forum extends AdminController
 				->alias('a')
 				->join('user u','a.user_id = u.id')
 				->join('article c','a.article_id = c.id')
-				->field('a.id as aid,name,title,user_img,a.content as content,a.create_time as create_time,a.status as astatus,c.id as cid')
+				->join('cate ca','c.cate_id = ca.id')
+				->field('a.id as aid,name,ename,title,user_img,a.content as content,a.create_time as create_time,a.status as astatus,c.id as cid')
 				->where('a.delete_time',0)
 				->where($map)
 				->where($where)
@@ -248,7 +250,7 @@ class Forum extends AdminController
 			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
-					$url = $this->getRouteUrl($v['cid']);
+					$url = $this->getRouteUrl($v['cid'],$v['ename']);
 					//$res['data'][] = ['id'=>$v['id'],'replyer'=>$v->user->name,'cardid'=>$v->article->title,'avatar'=>$v->user->user_img,'content'=>$v['content'],'replytime'=>$v['create_time']];
 					$res['data'][] = ['id'=>$v['aid'],'replyer'=>$v['name'],'title'=>htmlspecialchars($v['title']),'avatar'=>$v['user_img'],'content'=>htmlspecialchars($v['content']),'replytime'=>date("Y-m-d",$v['create_time']),'check'=>$v['astatus'],'url'=>$url];
 				}

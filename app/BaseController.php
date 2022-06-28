@@ -244,10 +244,16 @@ abstract class BaseController
      * @param integer $aid
      * @return string
      */
-    protected function getRouteUrl(int $aid) : string
+    protected function getRouteUrl(int $aid,string $ename = '') : string
     {
         $indexUrl = $this->getIndexUrl();
-        $artUrl = (string) url('detail_id', ['id' => $aid]);
+        if(config('taoler.url_rewrite.article_as') == '<ename>/'){
+            // 分类可变路由
+            $artUrl = (string) url('detail_id', ['ename'=> $ename,'id' => $aid]);
+        } else {
+            $artUrl = (string) url('detail_id', ['id' => $aid]);
+        }
+        
 
         // 判断是否开启绑定
         //$domain_bind = array_key_exists('domain_bind',config('app'));

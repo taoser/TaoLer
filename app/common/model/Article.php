@@ -107,7 +107,12 @@ class Article extends Model
                 'user' => function ($query) {
                     $query->field('id,name,nickname,user_img,area_id,vip');
                 }
-            ])->withCount(['comments'])->order('create_time', 'desc')->limit($num)->select()->toArray();
+            ])->withCount(['comments'])
+            ->order('create_time', 'desc')
+            ->limit($num)
+            ->append(['url'])
+            ->select()
+            ->toArray();
 			
             Cache::tag('tagArtDetail')->set('arttop', $artTop, 60);
         }
@@ -134,7 +139,14 @@ class Article extends Model
 			'user' => function($query){
                 $query->field('id,name,nickname,user_img,area_id,vip');
 			} ])
-            ->withCount(['comments'])->where(['status'=>1,'is_top'=>0])->order('create_time','desc')->limit($num)->select()->toArray();
+            ->withCount(['comments'])
+            ->where(['status'=>1,'is_top'=>0])
+            ->order('create_time','desc')
+            ->limit($num)
+            ->append(['url'])
+            ->select()
+            ->toArray();
+
 			Cache::tag('tagArt')->set('artlist',$artList,60);
 		}
 		return $artList;
@@ -150,13 +162,19 @@ class Article extends Model
      */
     public function getArtHot(int $num)
     {
-        $artHot = $this::field('id,title')
+        $artHot = $this::field('id,cate_id,title')
+        ->with([ 'cate' => function($query){
+                $query->where('delete_time',0)->field('id,ename');
+            }])
             ->withCount('comments')
             ->where(['status'=>1,'delete_time'=>0])
             ->whereTime('create_time', 'year')
             ->order('comments_count','desc')
             ->limit($num)
-            ->withCache(60)->select();
+            ->withCache(120)
+            ->append(['url'])
+            ->select();
+
         return $artHot;
     }
 
@@ -173,12 +191,12 @@ class Article extends Model
         $article = Cache::get('article_'.$id);
         if(!$article){
             //查询文章
-            $article = $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,tags,description,title_color,create_time')->where('status',1)->with([
+            $article = $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,tags,description,title_color,create_time,update_time')->where('status',1)->with([
                 'cate' => function($query){
                     $query->where('delete_time',0)->field('id,catename,ename');
                 },
                 'user' => function($query){
-                    $query->field('id,name,nickname,user_img,area_id,vip');
+                    $query->field('id,name,nickname,user_img,area_id,vip,city');
                 }
             ])->withCount(['comments'])->find($id)->toArray();
             Cache::tag('tagArtDetail')->set('article_'.$id, $article, 3600);
@@ -212,83 +230,68 @@ class Article extends Model
             switch ($type) {
                 //查询文章,15个分1页
                 case 'jie':
-                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
-                        'cate' => function($query){
-                            $query->where('delete_time',0)->field('id,catename,ename');
-                        },
-                        'user' => function($query){
-                            $query->field('id,name,nickname,user_img,area_id,vip');
-                        }
-                    ])->withCount(['comments'])->where(['status'=>1,'jie'=>1])->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
-                        ->paginate([
-                            'list_rows' => 15,
-                            'page' => $page
-                        ])->toArray();
+                    $where['jie'] = 1;
                     break;
-
                 case 'hot':
-                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
-                        'cate' => function($query){
-                            $query->where('delete_time',0)->field('id,catename,ename');
-                        },
-                        'user' => function($query){
-                            $query->field('id,name,nickname,user_img,area_id,vip');
-                        }
-                    ])->withCount(['comments'])->where('status',1)->where($where)->where('is_hot',1)->order(['is_top'=>'desc','create_time'=>'desc'])
-                        ->paginate([
-                            'list_rows' => 15,
-                            'page' => $page
-                        ])->toArray();
+                    $where['is_hot'] = 1;
                     break;
-
                 case 'top':
-                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
-                        'cate' => function($query){
-                            $query->where('delete_time',0)->field('id,catename,ename');
-                        },
-                        'user' => function($query){
-                            $query->field('id,name,nickname,user_img,area_id,vip');
-                        }
-                    ])->withCount(['comments'])->where('status',1)->where($where)->where('is_top',1)->order(['is_top'=>'desc','create_time'=>'desc'])
-                        ->paginate([
-                            'list_rows' => 15,
-                            'page' => $page
-                        ])->toArray();
+                    $where['is_top'] = 1;
                     break;
-					
 				case 'wait':
-                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
-                        'cate' => function($query){
-                            $query->where('delete_time',0)->field('id,catename,ename');
-                        },
-                        'user' => function($query){
-                            $query->field('id,name,nickname,user_img,area_id,vip');
-                        }
-                    ])->withCount(['comments'])->where('status',1)->where($where)->where('jie',0)->order(['is_top'=>'desc','create_time'=>'desc'])
-                        ->paginate([
-                            'list_rows' => 15,
-                            'page' => $page
-                        ])->toArray();
+                    $where['jie'] = 0;
                     break;
-
                 default:
-                    $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')->with([
-                        'cate' => function($query){
-                            $query->where('delete_time',0)->field('id,catename,ename');
-                        },
-                        'user' => function($query){
-                            $query->field('id,name,nickname,user_img,area_id,vip');
-                        }
-                    ])->withCount(['comments'])->where('status',1)->where($where)->order(['is_top'=>'desc','create_time'=>'desc'])
-                        ->paginate([
-                            'list_rows' => 15,
-                            'page' => $page
-                        ])->toArray();
+                   $where = $where;
                     break;
             }
+            $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')
+            ->with([
+                'cate' => function($query){
+                    $query->where('delete_time',0)->field('id,catename,ename');
+                },
+                'user' => function($query){
+                    $query->field('id,name,nickname,user_img,area_id,vip');
+                }
+            ])->withCount(['comments'])
+                ->where('status',1)
+                ->where($where)
+                ->order(['is_top'=>'desc','create_time'=>'desc'])
+                ->paginate([
+                    'list_rows' => 15,
+                    'page' => $page
+                ])->append(['url'])->toArray();
+
             Cache::tag('tagArtDetail')->set('arts'.$ename.$type.$page,$artList,600);
         }
         return $artList;
+    }
+
+    // 获取用户发帖列表
+    public function getUserArtList(int $id) {
+        $userArtList = $this::field('id,cate_id,title,create_time,pv,is_hot')
+        ->with(['cate' => function($query){
+            $query->where(['delete_time'=>0,'status'=>1])->field('id,ename');
+        }])
+        ->where(['user_id' => $id,'status' => 1])
+        ->order(['create_time'=>'desc'])
+        ->append(['url'])
+        ->cache(3600)
+        ->select()
+        ->toArray();
+
+        return $userArtList;
+    }
+
+    // 获取url
+    public function getUrlAttr($value,$data)
+    {
+        if(config('taoler.url_rewrite.article_as') == '<ename>/') {
+            $cate = Cate::field('id,ename')->find($data['cate_id']);
+            return (string) url('detail',['id' => $data['id'],'ename'=>$cate->ename]);
+        } else {
+            return (string) url('detail',['id' => $data['id']]);
+        }
     }
 
 

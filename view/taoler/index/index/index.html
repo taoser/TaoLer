@@ -3,10 +3,10 @@
 {block name="title"}{$sysInfo.webtitle}{/block}
 {block name="keywords"}{$sysInfo.keywords}{/block}
 {block name="description"}{$sysInfo.descript}{/block}
-{block name="ogtitle"}<meta property="og:title" content="{$sysInfo.webtitle}">{/block}
+{block name="ogtitle"}<meta property="og:title" content="{$sysInfo.webtitle}" />{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$sysInfo.descript}" />{/block}
 {block name="ogimage"}<meta property="og:image" content="{$Request.domain}{$sysInfo.logo}" />{/block}
-
+{block name="meta"}{/block}
 {block name="column"}{include file="public/column" /}{/block}
 
 {block name="content"}
@@ -15,9 +15,11 @@
 	
     <div class="layui-col-md8">
 		<!--首页幻灯-->
+		{if showSlider(1)}
 		<div class="fly-panel"> 
 		  {include file="public/index-slider" /}
-		 </div> 
+		 </div>
+		 {/if}
 		<!--置顶文章-->
 		  <div class="fly-panel">
 			<div class="fly-panel-title fly-filter">
@@ -46,24 +48,36 @@
     </div>
     <div class="layui-col-md4">
 		{:hook('signhook', ['id'=>1])}
-		
+
+		<!--首页图片广告-->
+		{if showSlider(13)}
+		<div class="fly-panel" style="padding: 5px 0; text-align: center;">
+			{volist name="ad_index_r" id="vo"}		
+			  <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
+			{/volist}
+		</div>
+		{/if}
 		<!--温馨通道-->
+		{if showSlider(8)}
 		<div class="fly-panel layui-hide-xs">
 		<h3 class="fly-panel-title">{:lang('links list')}</h3>
 		{include file="public/index-static" /}
 		</div>
+		{/if}
 		
 		<!--广告赞助-->
+		{if showSlider(5)}
 		<div class="fly-panel"> 
 			<div class="fly-panel-title">{:lang('sponsor')}<span class="fly-mid"></span> 
 				<a href="/" class="fly-link fly-joinad">{:lang('i want to join')}</a> 
 			</div> 
-		<div class="fly-panel-main" style="padding: 13px 15px;"> 
-		{volist name="ad_index" id="vo"}
-			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
-		{/volist}
+			<div class="fly-panel-main" style="padding: 13px 15px;"> 
+			{volist name="ad_index" id="vo"}
+				<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
+			{/volist}
+			</div>
 		</div>
-		</div>
+		{/if}
 		<!--回帖榜-->
 		<div class="fly-panel fly-rank fly-rank-reply layui-hide-xs" id="LAY_replyRank">
 			<h3 class="fly-panel-title">{:lang('reviewers list')}</h3>
@@ -76,21 +90,25 @@
 			<dt class="fly-panel-title">{:lang('hot post list')}</dt>
 			{volist name="artHot" id="vo"}
 			<dd>
-			  <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+			  <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
 			  <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
 			</dd>
 			{/volist}
 		</dl>
 		<!--首页图片广告-->
+		{if showSlider(2)}
 		<div class="fly-panel" style="padding: 5px 0; text-align: center;">
 		{volist name="ad_comm" id="vo"}		
 		  <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
 		{/volist}
         </div>
+		{/if}
 		<!--友情链接-->
+		{if showSlider(9)}
 		<div class="fly-panel fly-link html5plus-hide layui-hide-xs">		
 		{include file="public/flink" /}
 		</div>
+		{/if}
     </div>
 	
   </div>

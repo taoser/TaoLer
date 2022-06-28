@@ -25,6 +25,8 @@
 								<option value="9">9友情链接</option>
 								<option value="10">10头部菜单</option>
 								<option value="11">11页脚链接</option>
+								<option value="12">12移动首页幻灯</option>
+								<option value="13">13首页右栏广告</option>
 							</select>
 						</div>
 					</div>
@@ -67,13 +69,13 @@
     ,cols: [[ //表头
       {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
 	  ,{field: 'slid_type', title: '位置', width:120}
-      ,{field: 'slid_img', title: '图片/icon', width:150, templet: '#imgTpl'}
+      ,{field: 'slid_img', title: '图片/icon', width:120, templet: '#imgTpl'}
 	  ,{field: 'slid_name', title: '名称', width:180}
       ,{field: 'slid_href', title: 'URL', minWidth: 250}
       ,{field: 'slid_color', title: '颜色', width: 80}
       ,{field: 'slid_start', title: '开始', width: 150, sort: true}
       ,{field: 'slid_over', title: '结束', width: 150, sort: true}
-      ,{field: 'slid_status', title: '状态', width: 135}
+      ,{field: 'slid_status', title: '状态', width: 80}
 	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
     ]]
 	,limit: 15

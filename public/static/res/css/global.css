@@ -708,7 +708,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
   .laypage-main .laypage-next{display: inline-block;}
 
   /* 列表 */
-  .fly-list li h2 a{max-width: 72%;}
+  .fly-list li h2 a{max-width: 90%;}
 
   /* Detail 页 
 	.fly-admin-box{display: block; margin: 0; margin-top: 10px;}

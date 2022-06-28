@@ -100,7 +100,26 @@ class Login extends BaseController
 			// 检验注册是否开放
 			if(config('taoler.config.is_regist') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，注册暂时未开放']);
 
-			$data = Request::only(['name','email','password','repassword','captcha']);
+			$data = Request::only(['name','email','email_code','password','repassword','captcha']);
+
+			if(Config::get('taoler.config.regist_type') == 1) {				
+				//先校验验证码
+				if(!captcha_check($data['captcha'])){
+				 // 验证失败
+				 return json(['code'=>-1,'msg'=> '验证码失败']);
+				};
+			}
+			if(Config::get('taoler.config.regist_type') == 2) {
+				$emailCode = Cache::get($data['email']);
+				if($emailCode) {
+					if($data['email_code'] != $emailCode) {
+						// 验证失败
+				 		return json(['code' => -1,'msg' => '验证码不正确']);
+					}
+				} else {
+					return json(['code' => -1,'msg' => '验证码过期，请重试']);
+				}
+			}
 		
 			//校验场景中reg的方法数据
 			try{
@@ -208,12 +227,35 @@ class Login extends BaseController
 			$user = new User();
 			$res = $user->respass($data);
 				if ($res == 1) {
-						return json(['code'=>0,'msg'=>'修改成功','url'=>(string) url('login/index')]);
+					return json(['code'=> 0, 'msg'=> '修改成功', 'url'=>(string) url('login/index')]);
 				} else {
-						return json(['code'=>-1,'msg'=>'$res']);		
+					return json(['code'=> -1, 'msg'=> '$res']);		
 				}
         }
 		return View::fetch('forget');
+	}
+
+	// 邮箱注册验证
+	public function sentMailCode()
+	{
+		if(Request::isAjax()) {
+			// 用户邮箱
+			$email = input('email');
+			//dump($email);
+			if(empty($email)) return json(['code'=>-1,'msg'=>'邮箱不能为空']);
+
+			$code = mt_rand('1111','9999');
+			Cache::set($email, $code, 600);
+
+			$result = mailto($email,'注册邮箱验证码','Hi亲爱的新用户:</br>您正在注册我们站点的新账户，请在10分钟内验证，您的验证码为:'.$code);
+			if($result == 1) {
+				$res = ['code' => 0, 'msg' => '验证码已发送成功，请去邮箱查看！']; 
+			} else {
+				$res = ['code' => -1, 'msg' => $result];
+			}
+			return json($res);
+		}
+		
 	}
 
 }

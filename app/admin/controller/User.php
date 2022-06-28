@@ -31,7 +31,7 @@ class User extends AdminController
 			if($count){
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($user as $k => $v){
-				$data = ['id'=>$v['id'],'username'=>$v['name'],'avatar'=>$v['user_img'],'phone'=>$v['phone'],'email'=>$v['email'],'sex'=>$v['sex'],'ip'=>$v['last_login_ip'],'city'=>$v['city'],'logintime'=>date("Y-m-d H:i",$v['last_login_time']),'jointime'=>date("Y-m-d",$v['create_time']),'check'=>$v['status'],'auth'=>$v['auth']];
+				$data = ['id'=>$v['id'],'username'=>$v['name'],'nick'=>$v['nickname'],'avatar'=>$v['user_img'],'phone'=>$v['phone'],'email'=>$v['email'],'sex'=>$v['sex'],'ip'=>$v['last_login_ip'],'city'=>$v['city'],'logintime'=>date("Y-m-d H:i",$v['last_login_time']),'jointime'=>date("Y-m-d",$v['create_time']),'check'=>$v['status'],'auth'=>$v['auth']];
 				$res['data'][] = $data; 
 				}
 			} else {

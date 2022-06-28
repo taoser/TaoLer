@@ -254,6 +254,14 @@
 						</div>
 						<hr>
 						<div class="layui-form-item">
+							<label class="layui-form-label">注册验证：</label>
+							<div class="layui-input-block">
+								<input type="radio" name="regist_type" value=1 title="验证码" {if config('taoler.config.regist_type') == 1} checked {/if}>
+								<input type="radio" name="regist_type" value=2 title="邮箱验证" {if config('taoler.config.regist_type') == 2} checked {/if}>
+      							<input type="radio" name="regist_type" value=3 title="手机短信" {if config('taoler.config.regist_type') == 3} checked {/if}>
+							</div>
+						</div>
+						<div class="layui-form-item">
 							<label class="layui-form-label">登录验证码：</label>
 							<div class="layui-input-inline" style="width: 30px;">
 								<input type="checkbox" name="login_captcha" lay-skin="primary" value=1 {if config('taoler.config.login_captcha') == 1} checked {/if}>
@@ -282,6 +290,15 @@
 							</div>
 							<div class="layui-form-mid layui-word-aux">勾选显示归属地简称</div>
 						</div>
+						<hr>
+						<div class="layui-form-item">
+							<label class="layui-form-label">百度词条：</label>
+							<div class="layui-input-inline" style="width: 60px;">
+								<input type="checkbox" name="baidu_title_switch" lay-skin="switch" lay-text="开启|关闭" value=1 {if config('taoler.config.baidu_title_switch') == 1} checked {/if}>
+							</div>
+							<div class="layui-form-mid layui-word-aux">发文章标题引用百度词条</div>
+						</div>
+						<hr>
 						{if($mailserver.active == 1)}
 						<div class="layui-form-item">
 							<label class="layui-form-label">邮件通知：</label>

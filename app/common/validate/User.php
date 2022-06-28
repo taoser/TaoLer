@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-06-22 16:19:38
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\app\common\validate\User.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 namespace app\common\validate;
 
 use think\Validate;
@@ -42,7 +51,7 @@ class User extends Validate
         //注册验证场景
     public function sceneReg()
     {
-        return $this->only(['name','email','password','repassword','captcha']);
+        return $this->only(['name','email','password','repassword']);
             
     }
 	

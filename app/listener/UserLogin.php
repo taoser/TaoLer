@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-06-19 16:35:30
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\app\listener\UserLogin.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 declare (strict_types = 1);
 
 namespace app\listener;
@@ -7,6 +16,7 @@ use think\facade\Db;
 use think\facade\Log;
 use app\common\model\User;
 use think\facade\Lang;
+use taoler\com\Api;
 
 class UserLogin
 {
@@ -25,21 +35,17 @@ class UserLogin
 		if($type == 'log'){
 			//$name = $user->user['name'];
 			$ip = request()->ip();
-		
-			/*
-			$url = 'http://ip-api.com/json/'.$ip.'?lang=zh-CN';
-							//$url = 'http://ip-api.com/json/?lang=zh-CN';
-							$add = Api::urlGet($url);
-							if($add->status == 'success'){
-								$city = $add->city;
-							} else {
-								$city ='未知';
-							}
-			*/
-
-			$u->allowField(['last_login_ip','last_login_time','login_error_num'])->save(
+			$url = 'http://ip-api.com/json/' . $ip . '?lang=zh-CN&fields=57361';
+			$ipJson = Api::urlGet($url);
+			if($ipJson->status == 'success'){
+				$city = $ipJson->city;
+			} else {
+				$city ='未知';
+			}
+			
+			$u->allowField(['city','last_login_ip','last_login_time','login_error_num'])->save(
 				[
-					//'city' => $city,
+					'city' => $city,
 					'last_login_ip'		=> $ip,
 					'last_login_time'	=> time(),
 					'login_error_num'	=> 0

@@ -20,6 +20,8 @@
           <option value="9">9友情链接</option>
           <option value="10">10头部菜单</option>
           <option value="11">11页脚链接</option>
+          <option value="12">12移动首页幻灯-360x172</option>
+          <option value="13">13首页右栏广告</option>
 		    </select>
       </div>
     </div>
@@ -75,21 +77,21 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form', 'upload','laydate','colorpicker', 'imgcom'], function(){
+  }).use(['index','imgcom'], function(){
     var $ = layui.$
     ,form = layui.form
-	,laydate = layui.laydate
+	  ,laydate = layui.laydate
     ,upload = layui.upload 
-	,imgcom = layui.imgcom;
-	var colorpicker = layui.colorpicker;
+	  ,imgcom = layui.imgcom;
+	  var colorpicker = layui.colorpicker;
     
 	//颜色表单赋值
 	  colorpicker.render({
-		elem: '#coloer-form'
-		,color: '#1c97f5'
-		,done: function(color){
-		  $('#color-select').val(color);
-		}
+      elem: '#coloer-form'
+      ,color: '#1c97f5'
+      ,done: function(color){
+        $('#color-select').val(color);
+      }
 	  });
 	
 	//开始时间
@@ -98,13 +100,13 @@
 		,btns: ['clear', 'now']
 		,trigger: 'click'
 	  });
-	  
-	  //结束时间
+	//结束时间
 	  laydate.render({
 		elem: '#over-time'
 		,btns: ['clear', 'now']
 		,trigger: 'click'
 	  });
+
 	//上传图片
     upload.render({
       elem: '#layuiadmin-upload-slid-img'
@@ -112,26 +114,17 @@
       ,data:{type:'image'}
       ,accept: 'images'
       ,acceptMime: 'image/*'
-	  ,auto: false
-	  ,choose: function (obj) { //选择文件后的回调
-			imgcom.uploads(obj);
-		  }
+      ,auto: false
+      ,choose: function (obj) { //选择文件后的回调
+        imgcom.uploads(obj);
+        }
       ,done: function(res){
-        //console.log(res)
-		$(this.item).prev("div").children("input").val(res.src)
-			if(res.code == 0){
-				layer.msg(res.msg,{
-					icon:6,
-					tiye:2000
-				});
-			} else {
-				layer.open({
-					title:"上传失败",
-					content:res.msg,
-					icon:5,
-					anim:6
-				});
-			}
+        $(this.item).prev("div").children("input").val(res.src)
+          if(res.code == 0){
+            layer.msg(res.msg,{icon:6,tiye:2000});
+          } else {
+            layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+          }
       }
     });
   })

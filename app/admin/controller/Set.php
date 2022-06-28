@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-16 09:23:46
+ * @LastEditTime: 2022-06-22 16:37:35
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Set.php
@@ -173,7 +173,6 @@ class Set extends AdminController
 			if(!isset($data['posts_check'])) $data['posts_check'] =1;
 			if(!isset($data['commnets_check'])) $data['commnets_check'] =1;
 			foreach($conf as $c=>$f){
-
 				if(array_key_exists($c,$data)){
 					$conf[$c] = (int) $data[$c];
 				}else{

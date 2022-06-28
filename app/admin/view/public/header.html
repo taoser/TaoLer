@@ -1,72 +1,79 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-06-28 10:00:54
+ * @LastEditors: TaoLer
+ * @Description: 后台头部结构
+ * @FilePath: \TaoLer\app\admin\view\public\header.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 <div class="layui-header">
-        <!-- 头部区域 -->
-        <ul class="layui-nav layui-layout-left">
-          <li class="layui-nav-item layadmin-flexible" lay-unselect>
-            <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
-              <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="{$domain}" target="_blank" title="前台">
-              <i class="layui-icon layui-icon-website"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item" lay-unselect>
-            <a href="javascript:;" layadmin-event="refresh" title="刷新">
-              <i class="layui-icon layui-icon-refresh-3"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search.html?keywords="> 
-          </li>
-        </ul>
-        <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
-          
-          <li class="layui-nav-item" lay-unselect>
-            <a lay-href="app/message/index.html" layadmin-event="message" lay-text="消息中心">
-              <i class="layui-icon layui-icon-notice"></i>  
-              
-              <!-- 如果有新消息，则显示小圆点 -->
-              <span class="layui-badge-dot"></span>
-            </a>
-          </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="javascript:;" layadmin-event="theme">
-              <i class="layui-icon layui-icon-theme"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="javascript:;" layadmin-event="note">
-              <i class="layui-icon layui-icon-note"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="javascript:;" layadmin-event="fullscreen">
-              <i class="layui-icon layui-icon-screen-full"></i>
-            </a>
-          </li>
-		  <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="javascript:;" layadmin-event="clearcache">
-              <i class="layui-icon layui-icon-fonts-clear"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item" lay-unselect>
-            <a href="javascript:;">
-              <cite>{:session('admin_name')}</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a lay-href="{:url('Admin/info')}">基本资料</a></dd>
-              <dd><a lay-href="{:url('Admin/repass')}">修改密码</a></dd>
-              <hr>
-              <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
-            </dl>
-          </li>
-          
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="javascript:;" layadmin-event=""><i class="layui-icon layui-icon-more-vertical"></i></a>
-          </li>
-          <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
-            <a href="javascript:;" layadmin-event=""><i class="layui-icon layui-icon-more-vertical"></i></a>
-          </li>
-        </ul>
-      </div>
+  <!-- 头部区域 -->
+  <ul class="layui-nav layui-layout-left">
+    <li class="layui-nav-item layadmin-flexible" lay-unselect>
+      <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+        <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+      </a>
+    </li>
+    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+      <a href="{$domain}" target="_blank" title="前台">
+        <i class="layui-icon layui-icon-website"></i>
+      </a>
+    </li>
+    <li class="layui-nav-item" lay-unselect>
+      <a href="javascript:;" layadmin-event="refresh" title="刷新">
+        <i class="layui-icon layui-icon-refresh-3"></i>
+      </a>
+    </li>
+    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+      <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search.html?keywords="> 
+    </li>
+  </ul>
+  <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+    <li class="layui-nav-item" lay-unselect>
+      <a lay-href="app/message/index.html" layadmin-event="message" lay-text="消息中心">
+        <i class="layui-icon layui-icon-notice"></i>  
+        
+        <!-- 如果有新消息，则显示小圆点 -->
+        <span class="layui-badge-dot"></span>
+      </a>
+    </li>
+    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+      <a href="javascript:;" layadmin-event="theme">
+        <i class="layui-icon layui-icon-theme"></i>
+      </a>
+    </li>
+    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+      <a href="javascript:;" layadmin-event="note">
+        <i class="layui-icon layui-icon-note"></i>
+      </a>
+    </li>
+    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+      <a href="javascript:;" layadmin-event="fullscreen">
+        <i class="layui-icon layui-icon-screen-full"></i>
+      </a>
+    </li>
+    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+      <a href="javascript:;" layadmin-event="clearcache">
+        <i class="layui-icon layui-icon-fonts-clear"></i>
+      </a>
+    </li>
+    <li class="layui-nav-item" lay-unselect>
+      <a href="javascript:;">
+        <cite>{:session('admin_name')}</cite>
+      </a>
+      <dl class="layui-nav-child">
+        <dd><a lay-href="{:url('Admin/info')}">基本资料</a></dd>
+        <dd><a lay-href="{:url('Admin/repass')}">修改密码</a></dd>
+        <hr>
+        <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+      </dl>
+    </li>
+    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+      <a href="javascript:;" layadmin-event=""><i class="layui-icon layui-icon-more-vertical"></i></a>
+    </li>
+    <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+      <a href="javascript:;" layadmin-event=""><i class="layui-icon layui-icon-more-vertical"></i></a>
+    </li>
+  </ul>
+</div>

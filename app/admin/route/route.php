@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-07 18:33:23
+ * @LastEditTime: 2022-06-26 12:28:13
  * @LastEditors: TaoLer
  * @Description: admin路由配置
  * @FilePath: \TaoLer\app\admin\route\route.php
@@ -14,4 +14,9 @@ use think\facade\Route;
 $detail_as = config('taoler.url_rewrite.article_as');
 
 Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
-Route::get("$detail_as<id>$", '\app\index\controller\Article@detail')->name('detail_id');
+Route::get("$detail_as<id>$", '\app\index\controller\Article@detail')
+->pattern([
+    //'name' => '\w+',
+    'id'   => '\d+',
+])
+->name('detail_id');

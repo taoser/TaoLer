@@ -327,37 +327,40 @@
     }
 
     // 百度词条
-    $("#L_title").bind('input propertychange',function () {
-        var title = $(this).val();
-        var str = '';
-        if(title.length > 0 ) {
-          $.post("{:url('article/getWordList')}",{title:title},function(res){
-            // 动态生成ur>li内容
-            if (res.code == 0) {
-              // 显示动态框
-              $(".bdsug").removeClass('layui-hide');
-              for (var i = 0; i < res.data.length; i++) {
-                //str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q.replace(title,'') + '</b></li>';
-                str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q + '</b></li>';
-              }
-              // 清空ul并追加li
-              $('.wordlist').empty().append(str);
-              // 点击李获取li值并复制给#L_title input的value
-              $(".bdsug li").on('click',function(){
-                var word = $(this).attr('data-key');
-                var words = title + '(' + word + ')';
-                $("#L_title").val(words);
-                // 关闭动态框
+    var baidu_title_switch = "{:config('taoler.config.baidu_title_switch')}";
+    if(baidu_title_switch == 1) {
+      $("#L_title").bind('input propertychange',function () {
+          var title = $(this).val();
+          var str = '';
+          if(title.length > 0 ) {
+            $.post("{:url('article/getWordList')}",{title:title},function(res){
+              // 动态生成ur>li内容
+              if (res.code == 0) {
+                // 显示动态框
+                $(".bdsug").removeClass('layui-hide');
+                for (var i = 0; i < res.data.length; i++) {
+                  //str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q.replace(title,'') + '</b></li>';
+                  str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q + '</b></li>';
+                }
+                // 清空ul并追加li
+                $('.wordlist').empty().append(str);
+                // 点击李获取li值并复制给#L_title input的value
+                $(".bdsug li").on('click',function(){
+                  var word = $(this).attr('data-key');
+                  var words = title + '(' + word + ')';
+                  $("#L_title").val(words);
+                  // 关闭动态框
+                  $(".bdsug").addClass('layui-hide');
+                });
+              } else {
                 $(".bdsug").addClass('layui-hide');
-              });
-            } else {
-              $(".bdsug").addClass('layui-hide');
-            }
-          });
-        } else {
-          $(".bdsug").addClass('layui-hide');
-        }
-    });
+              }
+            });
+          } else {
+            $(".bdsug").addClass('layui-hide');
+          }
+      });
+    }  
 
     // 添加关键词button
     function getTags(tags, flag) {

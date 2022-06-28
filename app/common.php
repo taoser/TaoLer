@@ -46,11 +46,13 @@ try {
 
     $mail->send();
     //echo 'Message has been sent';
-	return true;
+	//return true;
 	} catch (Exception $e) {
     //echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
-	return false;
+	//return false;
+    return $mail->ErrorInfo;
     }
+    return 1;
 }
 
 //根据user area_id查询区域简称
@@ -79,14 +81,21 @@ if(!function_exists('getUserImg'))
 //根据文章分类ID查询分类名
 function getCateName($ename)
     {
-       
-        return  Db::name('cate')->where('ename',$ename)->cache(3600)->value('catename');  
+        if($ename == 'all') {
+            return '全部分类';
+        } else {
+            return Db::name('cate')->where('ename',$ename)->cache(3600)->value('catename');
+        }  
     }
 
 //根据文章分类ID查询分类描述
 function getCateDesc($ename)
     {
-        return  Db::name('cate')->where('ename',$ename)->cache(3600)->value('desc');
+        if($ename == 'all') {
+            return '全部分类，为您展示全部分类信息';
+        } else {
+            return  Db::name('cate')->where('ename',$ename)->cache(3600)->value('desc');
+        }
     }
 
 //过滤文章摘要
@@ -256,4 +265,14 @@ function checkRuleButton($rules_button)
 function getSpaceNmu($level)
 {
 	return str_repeat('---',$level);
+}
+
+function showSlider($type)
+{
+    $sliders = Cache::get('slider'.$type);
+    if(!empty($sliders)) {
+        return true;
+    } else {
+        return false;
+    }
 }

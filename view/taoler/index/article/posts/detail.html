@@ -4,6 +4,11 @@
 {block name="description"}{$article.title},{$article.description}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{$article.title}-{$sysInfo.webname}">{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description}" />{/block}
+{block name="meta"}
+<meta property="article:published_time" content="{$article.create_time|date='c'}"/>
+<meta property="bytedance:published_time" content="{$article.create_time|date='c'}" />
+<meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
+{/block}
 {block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
@@ -12,7 +17,7 @@
     <div class="layui-col-md9 content detail">
       <div class="fly-panel detail-box">
 		    {//标题}
-        <h1 style="color:{$article.title_color};">{$article.title}</h1>
+        <h1 style="color:{$article.title_color ?? '#333'};">{$article.title}</h1>
 		    <div class="detail_qrcode layui-hide-xs" onclick="PhoneDown();" id="mobile"></div>
 		    {//图标}
         <div class="fly-detail-info">
@@ -26,20 +31,21 @@
         </div>
 		    {//作者}
         <div class="detail-about">
-			    <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
-			    <img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
-			    {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
-			    </a>
-			    <div class="fly-detail-user">
-			    <a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
-			    {if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="">{:getAsing($article.user.area_id) ?: '无'}</i>{/if}
-			    <cite>{$article.user.nickname ?: $article.user.name}</cite>
-			    </a>
-		  	  <span class="layui-btn layui-btn-xs guanzhu" >关注</span>
-			    </div>
+          <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
+            <img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
+            {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
+          </a>
+          <div class="fly-detail-user">
+            <a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
+            {if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="">{:getAsing($article.user.area_id) ?: '无'}</i>{/if}
+            <cite>{$article.user.nickname ?: $article.user.name}</cite>
+            </a>
+            <span class="layui-btn layui-btn-xs guanzhu" >关注</span>
+          </div>
           <div class="detail-hits">
-          <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
-          <span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
+            <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
+            <span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>・
+            <span>{$article.user.city}</span>
           </div>
         </div>
         <hr>
@@ -112,7 +118,7 @@
                 </a>
                 {if condition="$article.user.id eq $vo.user.id"}<span>({:lang('poster')})</span>{/if}
               </div>
-              <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span></div>
+              <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span>・<span>{$vo.user.city}</span></div>
 			        {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
             <div class="detail-body jieda-body photos">{$vo.content}</div>
@@ -155,6 +161,7 @@
       </div>
     </div>
     <div class="layui-col-md3">
+      {if showSlider(7)}
       <div class="fly-panel">
         <div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
           <a href="" class="fly-link fly-joinad">{:lang('i want to join')}</a>
@@ -165,6 +172,7 @@
           {/volist}
         </div>
       </div>
+      {/if}
       <dl class="fly-panel fly-list-one">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
           {volist name="artHot" id="vo"}
@@ -174,11 +182,13 @@
           </dd>
           {/volist}
       </dl>
+      {if showSlider(4)}
       <div class="fly-panel" style="padding: 5px 0; text-align: center;">
       {volist name="ad_art" id="vo"}
         <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
       {/volist}
       </div>
+      {/if}
     </div>
   </div>
   <!--底部栏-->

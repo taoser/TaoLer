@@ -518,7 +518,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 
             //转义图片
             .replace(/img\[([^\s]+?)\]/g, function(img){
-                return '<div style="text-align: center;"><img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '"></div>';
+                return '<div><img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '"></div>';
             })
 
             //转义@
@@ -1031,7 +1031,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
     elem: '.fly-editor'
   });
   
-  //手机设备的简单适配 底部左侧栏导航
+  //手机设备的简单适配 用户中心底部左侧栏导航
   var treeMobile = $('.site-tree-mobile')
   ,shadeMobile = $('.site-mobile-shade')
 
@@ -1137,6 +1137,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 		});
 		return false;
 	});
+
 	//移动端左侧栏监听多语言切换
 	$('#language1').on('change',function(){
 	  var data = $(this).val();

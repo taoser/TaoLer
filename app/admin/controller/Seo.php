@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-06-14 13:50:44
+ * @LastEditTime: 2022-06-27 16:55:54
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -53,19 +53,53 @@ class Seo extends AdminController
     public function push()
     {
         $data = Request::only(['start_id','end_id','time']);
+        // 动态路由配置
+        $article_as = config('taoler.url_rewrite.article_as');
 
         if(empty(config('taoler.baidu.push_api'))) return json(['code'=>-1,'msg'=>'请先配置接口push_api']);
         $urls = [];
         if(empty($data['start_id']) || empty($data['end_id'])) {
-            $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->whereTime('create_time', $data['time'])->column('id');
+            if($article_as == '<ename>/'){ //变量路由
+                $artAllId = Db::name('article')
+                ->alias('a')
+                ->join('cate c','a.cate_id = c.id')
+                ->field('a.id as aid,ename')
+                ->where(['a.delete_time'=>0,'a.status'=>1])
+                ->whereTime('a.create_time', $data['time'])
+                ->select()->toArray();
+            } else { //常量路由
+                $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->whereTime('create_time', $data['time'])->column('id');
+            }
+            
         } else {
-            $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->where('id','between',[$data['start_id'],$data['end_id']])->whereTime('create_time', $data['time'])->column('id');
+            if($article_as == '<ename>/') {
+                $artAllId = Db::name('article')
+                ->alias('a')
+                ->join('cate c','a.cate_id = c.id')
+                ->field('a.id as aid,ename')
+                ->where(['a.delete_time'=>0,'a.status'=>1])
+                ->where('a.id','between',[$data['start_id'],$data['end_id']])
+                ->whereTime('a.create_time', $data['time'])
+                ->select()->toArray();
+            } else {
+                $artAllId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->where('id','between',[$data['start_id'],$data['end_id']])->whereTime('create_time', $data['time'])->column('id');
+            }
+           
         }
+        //halt($artAllId);
         if(empty($artAllId)) return json(['code'=>-1,'msg'=>'没有查询到结果，无需推送']);
         // 组装链接数组
-        foreach($artAllId as $aid) {
-            $urls[] = $this->getRouteUrl($aid);
+        if($article_as == '<ename>/') {
+            foreach($artAllId as $art) {
+                $urls[] = $this->getRouteUrl($art['aid'],$art['ename']);
+                halt( $urls);
+            }
+        } else {
+            foreach($artAllId as $aid) {
+                $urls[] = $this->getRouteUrl($aid);
+            }
         }
+        
         // 百度接口单次最大提交200，进行分组
         $urls = array_chunk($urls,2000); 
         $api = config('taoler.baidu.push_api');
@@ -140,6 +174,8 @@ class Seo extends AdminController
         $i = 1;
         // 获取public下所有xml文件
         $newFile = $this->getXmlFile(public_path());
+        // 路由配置
+        $article_as = config('taoler.url_rewrite.article_as');
         // 没有xml文件时，不存在重写
         if(empty($newFile)) {
             $rewrite = false;
@@ -166,33 +202,68 @@ class Seo extends AdminController
        }
         // 最新ID
         $maxId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->max('id');
-
+       
         do
         {
             $this->wr_id = $flag ? config('taoler.sitemap.write_id') : $this->w_id;
-            $artAllId = Db::name('article')
+            if($article_as == '<ename>/') {
+                // 分类名
+                $artAllId = Db::name('article')
+                        ->alias('a')
+                        ->join('cate c','a.cate_id = c.id')
+                        ->field('a.id as aid,a.update_time as uptime,ename')
+                        ->where(['a.delete_time'=>0,'a.status'=>1])
+                        ->where('a.id', '>', (int) $this->wr_id)
+                        ->order('a.id','asc')->limit($limit)
+                        ->select()->toArray();
+            } else {
+                $artAllId = Db::name('article')
                         ->where(['delete_time'=>0,'status'=>1])
                         ->where('id', '>', (int) $this->wr_id)
                         ->order('id','asc')->limit($limit)->column('update_time','id');
+            }
+            
+            //halt($artAllId);            
             if(empty($artAllId)) {
                 return json(['code'=>-1,'msg'=>'本次无需生成']);
             } else {
                 // 本次最新文件ID
-                $last_id = array_key_last($artAllId);
-                // 循环拼接文件字符串
-                foreach($artAllId as $aid => $uptime) {
-                    // url生成
-                    $url = $this->getRouteUrl($aid);
-                    $time = date('Y-m-d', $uptime);
-                    // 组装字符串
-                    $str .= <<<STR
-                    <url>
-                        <loc>$url</loc>
-                        <lastmod>$time</lastmod>
-                        <changefreq>daily</changefreq>
-                        <priority>0.5</priority>
-                    </url>\n
-                    STR;         
+                if($article_as == '<ename>/') {
+                    $last_arr = array_pop($artAllId);
+                    $last_id = $last_arr['aid'];
+
+                    // 循环拼接文件字符串
+                    foreach($artAllId as $art) {
+                        // url生成
+                        $url = $this->getRouteUrl($art['aid'],$art['ename']);
+                        $time = date('Y-m-d', $art['uptime']);
+                        // 组装字符串
+                        $str .= <<<STR
+                        <url>
+                            <loc>$url</loc>
+                            <lastmod>$time</lastmod>
+                            <changefreq>daily</changefreq>
+                            <priority>0.5</priority>
+                        </url>\n
+                        STR;         
+                    }
+                } else {
+                    $last_id = array_key_last($artAllId);
+                    // 循环拼接文件字符串
+                    foreach($artAllId as $aid => $uptime) {
+                        // url生成
+                        $url = $this->getRouteUrl($aid);
+                        $time = date('Y-m-d', $uptime);
+                        // 组装字符串
+                        $str .= <<<STR
+                        <url>
+                            <loc>$url</loc>
+                            <lastmod>$time</lastmod>
+                            <changefreq>daily</changefreq>
+                            <priority>0.5</priority>
+                        </url>\n
+                        STR;         
+                    }
                 }
                 
                 // 写文件

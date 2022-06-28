@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-18 18:21:33
+ * @LastEditTime: 2022-06-27 13:14:46
  * @LastEditors: TaoLer
  * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 版本配置
-    'version'   => '1.9.13',
+    'version'   => '1.9.14',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 数据库备份目录
@@ -38,6 +38,8 @@ return [
 		'posts_check'   => 0,
 		// 评论审核
 		'commnets_check'   => 0,
+		// 注册验证类型 1验证码2邮箱3手机短信
+		'regist_type'   => 1,
 		// 登录验证码
 		'login_captcha'   => 0,
 		// 发帖验证码
@@ -48,6 +50,8 @@ return [
         'area_show'   => 0,
 		// 邮件通知
         'email_notice'   => 0,
+		// 百度词条开关
+		'baidu_title_switch'   => 0,
 	],
 
 	// 百度标签分词
@@ -66,14 +70,14 @@ return [
 		'map_time'	=> 'daily',
 		'map_level'	=> '0.5',
 		// 已生成id位标记
-		'write_id'   => 0,
+		'write_id'   => 21,
 
 	],
 
 	// URL美化
 	'url_rewrite' => [
 		// 详情url
-		'article_as'   => 'article/',
+		'article_as'   => '<ename>/',
 		// 分类url
 		'cate_as'   => 'column/',
 	],

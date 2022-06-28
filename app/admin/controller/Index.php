@@ -111,7 +111,7 @@ class Index extends AdminController
 			->alias('a')
 			->join('user u','a.user_id = u.id')
 			->join('cate c','a.cate_id = c.id')
-			->field('a.id as aid,title,name,catename,pv')
+			->field('a.id as aid,title,name,ename,catename,pv')
 			->where('a.delete_time',0)
 			->whereWeek('a.create_time')
 			->order('a.create_time', 'desc')
@@ -124,7 +124,7 @@ class Index extends AdminController
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
 				    //$url = (string) str_replace("admin","index",$this->domain.url('article/detail',['id'=>$v['aid']]));
-					$url = $this->getRouteUrl($v['aid']);
+					$url = $this->getRouteUrl($v['aid'],$v['ename']);
 				$res['data'][]= ['id'=>$url,'title'=>htmlspecialchars($v['title']),'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
 				}
 			} else {
@@ -142,7 +142,8 @@ class Index extends AdminController
 				->alias('a')
 				->join('user u','a.user_id = u.id')
 				->join('article c','a.article_id = c.id')
-				->field('a.content as content,title,c.id as cid,name')
+				->join('cate ca','c.cate_id = ca.id')
+				->field('a.content as content,title,c.id as cid,name,ename')
 				->where('c.delete_time',0)
 				->whereWeek('a.create_time')
 				->order('a.create_time', 'desc')
@@ -153,7 +154,7 @@ class Index extends AdminController
 			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
-					$res['data'][] = ['content'=>htmlspecialchars($v['content']),'title'=>htmlspecialchars($v['title']),'cid'=>$this->getRouteUrl($v['cid']),'name'=>$v['name']];
+					$res['data'][] = ['content'=>htmlspecialchars($v['content']),'title'=>htmlspecialchars($v['title']),'cid'=>$this->getRouteUrl($v['cid'],$v['ename']),'name'=>$v['name']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没评论'];

@@ -64,7 +64,7 @@ class Sign extends BaseController
      */
 	public function status()
 	{
-		if(session('user_id')){
+		if($this->uid){
 			$res = $this->todayData()->getData();
 
 			if($res['is_sign'] == 1){

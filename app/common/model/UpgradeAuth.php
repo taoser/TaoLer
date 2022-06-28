@@ -18,7 +18,7 @@ class UpgradeAuth extends Model
 	
    public function getAuthLevelAttr($value)
     {
-        $level = [0=>'免费版',1=>'初级版',2=>'高级版'];
+        $level = [0=>'免费版', 1=>'初级版', 2=>'中级版', 3=>'高级版'];
         return $level[$value];
     }
 

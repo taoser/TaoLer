@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-17 12:49:34
+ * @LastEditTime: 2022-06-28 13:54:55
  * @LastEditors: TaoLer
  * @Description: 链接设置
  * @FilePath: \TaoLer\app\common\model\Slider.php
@@ -78,7 +78,7 @@ class Slider extends Model
 	// 获取器
     public function getSlidTypeAttr($value)
     {
-        $slid_type = [1=>'首页幻灯',2=>'首页图片',3=>'分类图片',4=>'详情图片',5=>'首页赞助',6=>'分类赞助',7=>'详情赞助',8=>'温馨通道',9=>'友情链接',10=>'头部菜单',11=>'页脚链接'];
+        $slid_type = [1=>'首页幻灯',2=>'首页图片',3=>'分类图片',4=>'详情图片',5=>'首页赞助',6=>'分类赞助',7=>'详情赞助',8=>'温馨通道',9=>'友情链接',10=>'头部菜单',11=>'页脚链接',12=>'移动首页幻灯',13=>'首页右栏广告'];
         return $slid_type[$value];
     }
 	

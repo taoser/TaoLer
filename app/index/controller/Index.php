@@ -25,13 +25,15 @@ class Index extends BaseController
 
         $slider = new Slider();
 		//幻灯
-        $sliders = $slider->getSliderList(1);
+        $sliders = Request::isMobile() ? $slider->getSliderList(12) : $slider->getSliderList(1);
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示20个
         $artList = Article::getArtList(22);
         //热议文章
         $artHot = Article::getArtHot(10);
+		//首页广告
+		$indexAd = $slider->getSliderList(13);
         //温馨通道
         $fast_links = $slider->getSliderList(8);
 		//首页赞助
@@ -49,6 +51,7 @@ class Index extends BaseController
 			'artTop'	=>	$artTop,
 			'artList'	=>	$artList,
 			'artHot'	=>	$artHot,
+			'ad_index_r'=>  $indexAd,
 			'type'		=>	$types,
 			'ad_index'	=>	$ad_index,
 			'ad_comm'	=>	$ad_comm,

@@ -1,7 +1,7 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-05-10 12:52:55
+ * @LastEditTime: 2022-06-27 16:14:49
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\view\taoler\index\user\home.html
@@ -53,7 +53,7 @@
 		    {volist name="$arts" id="vo"}
           <li>
             {if condition="$vo.is_hot==1"}<span class="fly-jing">{:lang('hot')}</span>{/if}
-            <a href="{$Request.domain}{:url('article/detail',['id'=>$vo.id])}" class="jie-title"> {$vo.title}</a>
+            <a href="{$Request.domain}{$vo.url}" class="jie-title"> {$vo.title}</a>
             <i>{$vo.create_time|date='Y-m-d'}</i>
             <em class="layui-hide-xs">{$vo.pv} {:lang('browses')}</em>
           </li>

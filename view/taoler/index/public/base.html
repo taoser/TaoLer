@@ -1,7 +1,7 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-06-09 17:37:42
+ * @LastEditTime: 2022-06-28 13:43:46
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\view\taoler\index\public\base.html
@@ -16,7 +16,7 @@
   <meta name="renderer" content="webkit">
   <meta name="force-rendering" content="webkit">
   <title>{block name="title"}标题{/block}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="keywords" content="{block name='keywords'}关键词{/block}">
   <meta name="description" content="{block name='description'}描述{/block}">
   <meta property="og:type" content="article">
@@ -25,6 +25,7 @@
   {block name="ogtitle"} {/block}
   {block name="ogdescription"} {/block}
   {block name="ogimage"} {/block}
+  {block name="meta"}{/block}
   <meta name="applicable-device" content="pc,mobile">
   <link rel="canonical" href="{$Request.domain}{$Request.url}">
   <link rel="stylesheet" href="{$Request.domain}/static/layui/css/layui.css"  charset="utf-8">
@@ -39,6 +40,7 @@
   html body{margin-top: 1px;}
 	{/if}	
   </style>
+  <script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
   <script src="{$Request.domain}/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body >
@@ -53,12 +55,11 @@
 {block name="column"}导航{/block}
 {block name="content"}内容{/block}
 {include file="public/footer" /}
-<script src="{$Request.domain}/static/layui/jquery.min.js" charset="utf-8"></script>
-<script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
+
 <script>
   layui.cache.page = '{$jspage}';
   layui.cache.user = {
-    username: "{$user.name??'游客'}"
+    username: "{$user.name ?? '游客'}"
     ,uid: "{$user.id ?? -1}"
     ,avatar: '/static/res/images/avatar/00.jpg'
     ,experience: "{$user.point ?? ''}"
@@ -70,6 +71,7 @@
   }).extend({
     fly: 'index'
   }).use('fly');
+  var $ = layui.jquery;
 </script>
 {block name="script"}{/block}
 </body>

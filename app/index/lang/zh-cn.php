@@ -105,7 +105,7 @@ return [
 	 'submit'			=> '提交',
 	 'go back'			=> '返回',
 	 'register now'		=> '立即注册',
-	 'mail/username'	=> '邮箱/用户名',
+	 'mail/username/mobile'	=> '邮箱/用户名/手机号',
 	 '6-16 characters'	=> '6-16 字符',
 	 'strong type encryption'	=> '经过强类型加密',
 	 'it cannot be changed'	=> '不能更改',
