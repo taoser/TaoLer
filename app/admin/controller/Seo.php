@@ -2,11 +2,11 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-06-27 16:55:54
+ * @LastEditTime: 2022-06-29 14:49:09
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
- * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 declare(strict_types=1); 
 namespace app\admin\controller;
@@ -55,8 +55,9 @@ class Seo extends AdminController
         $data = Request::only(['start_id','end_id','time']);
         // 动态路由配置
         $article_as = config('taoler.url_rewrite.article_as');
+        $api = config('taoler.baidu.push_api');
 
-        if(empty(config('taoler.baidu.push_api'))) return json(['code'=>-1,'msg'=>'请先配置接口push_api']);
+        if(empty(config($api))) return json(['code'=>-1,'msg'=>'请先配置接口push_api']);
         $urls = [];
         if(empty($data['start_id']) || empty($data['end_id'])) {
             if($article_as == '<ename>/'){ //变量路由
@@ -86,13 +87,12 @@ class Seo extends AdminController
             }
            
         }
-        //halt($artAllId);
+
         if(empty($artAllId)) return json(['code'=>-1,'msg'=>'没有查询到结果，无需推送']);
         // 组装链接数组
         if($article_as == '<ename>/') {
             foreach($artAllId as $art) {
-                $urls[] = $this->getRouteUrl($art['aid'],$art['ename']);
-                halt( $urls);
+                $urls[] = $this->getRouteUrl($art['aid'], $art['ename']);
             }
         } else {
             foreach($artAllId as $aid) {
@@ -102,7 +102,6 @@ class Seo extends AdminController
         
         // 百度接口单次最大提交200，进行分组
         $urls = array_chunk($urls,2000); 
-        $api = config('taoler.baidu.push_api');
         $ch = curl_init();
         foreach($urls as $url) {
             $options =  array(
@@ -222,8 +221,7 @@ class Seo extends AdminController
                         ->where('id', '>', (int) $this->wr_id)
                         ->order('id','asc')->limit($limit)->column('update_time','id');
             }
-            
-            //halt($artAllId);            
+                      
             if(empty($artAllId)) {
                 return json(['code'=>-1,'msg'=>'本次无需生成']);
             } else {

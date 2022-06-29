@@ -58,12 +58,13 @@ class Article extends Model
      */
 	public function add(array $data)
 	{
-		$superAdmin = Db::name('user')->where('id',$data['user_id'])->value('auth');
+		$superAdmin = User::where('id',$data['user_id'])->value('auth');
+        // 超级管理员无需审核
 		$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
 		$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
 		$result = $this->save($data);
 		if($result) {
-			return ['code'=>1,'msg'=>$msg];
+			return ['code' => 1, 'msg' => $msg, 'data' => ['status' => $data['status']]];
 		} else {
 			return 'add_error';
 		}
@@ -79,7 +80,7 @@ class Article extends Model
      */
 	public function edit(array $data)
 	{
-		$article = $this->find($data['id']);
+		$article = $this::find($data['id']);
 		$result = $article->save($data);
 		if($result) {
 			return 1;
@@ -288,9 +289,9 @@ class Article extends Model
     {
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
             $cate = Cate::field('id,ename')->find($data['cate_id']);
-            return (string) url('detail',['id' => $data['id'],'ename'=>$cate->ename]);
+            return (string) url('article_detail',['id' => $data['id'],'ename' => $cate->ename]);
         } else {
-            return (string) url('detail',['id' => $data['id']]);
+            return (string) url('article_detail',['id' => $data['id']]);
         }
     }
 

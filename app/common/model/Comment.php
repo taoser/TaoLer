@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-27 16:51:29
+ * @LastEditTime: 2022-06-29 14:40:14
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\common\model\Comment.php
@@ -47,8 +47,8 @@ class Comment extends Model
     //回帖榜
     public function reply($num)
     {
-        $user = Cache::get('user_reply');
-        if(!$user){
+        // $user = Cache::get('user_reply');
+        // if(empty($user)){
             $user = User::field('id,user_img,name,nickname')
             ->withCount(['comments'=> function($query) {
                 $query->where(['status'=>1]);
@@ -57,8 +57,8 @@ class Comment extends Model
             ->limit($num)
             ->select()
             ->toArray();
-            Cache::set('user_reply',$user,180);
-        }
+        //     Cache::set('user_reply',$user,180);
+        // }
 
         if(!empty($user)) {
             $res['status'] = 0;
@@ -75,9 +75,10 @@ class Comment extends Model
                 }
                 $res['data'][] = $u;
             }
-            return json($res);
+        } else {
+            $res = ['status' => -1, 'msg' =>'no ok'];
         }
-        
+        return json($res);
     }
 
     /**

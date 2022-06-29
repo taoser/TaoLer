@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-06-29 13:52:52
+ * @LastEditors: TaoLer
+ * @Description: 优化版
+ * @FilePath: \TaoLer\app\index\controller\Message.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
@@ -14,13 +23,13 @@ class Message extends BaseController
 	//消息数目
 	public function nums()
 	{
-		$msg = Db::name('message_to')->where('receve_id',Session::get('user_id'))->where(['is_read'=>0,'delete_time'=>0])->select();
+		$msg = Db::name('message_to')->where(['receve_id'=>$this->uid,'is_read'=>0,'delete_time'=>0])->select();
 
 		$count = $msg->count();
 		if($count){
-			$res=['status' =>0,'count' => $count, 'msg' => 'nums'];
+			$res = ['status' =>0,'count' => $count, 'msg' => 'nums'];
 		} else {
-			$res=['status' =>0,'count' => 0, 'msg' => $count];
+			$res = ['status' =>0,'count' => 0, 'msg' => $count];
 		}
         return json($res);
 	}

@@ -12,6 +12,7 @@ use think\facade\Db;
 use think\facade\Request;
 use think\facade\Lang;
 use think\facade\View;
+use think\facade\Route;
 
 /**
  * 控制器基础类
@@ -249,9 +250,9 @@ abstract class BaseController
         $indexUrl = $this->getIndexUrl();
         if(config('taoler.url_rewrite.article_as') == '<ename>/'){
             // 分类可变路由
-            $artUrl = (string) url('detail_id', ['ename'=> $ename,'id' => $aid]);
+            $artUrl = (string) Route::buildUrl('article_detail', ['id' => $aid, 'ename'=> $ename]);
         } else {
-            $artUrl = (string) url('detail_id', ['id' => $aid]);
+            $artUrl = (string) url('article_detail', ['id' => $aid]);
         }
         
 

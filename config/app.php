@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-17 20:31:39
+ * @LastEditTime: 2022-06-29 11:13:33
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\config\app.php
@@ -28,9 +28,12 @@ return [
 
     // 应用映射（自动多应用模式有效）
 	'app_map'	=> [
+        //'bbs' => 'index'
 	],
     // 域名绑定（自动多应用模式有效）
     'domain_bind'	=> [
+        //'www' => 'index',
+        //'adm' => 'admin'
 	],
     // 禁止URL访问的应用列表（自动多应用模式有效）
 

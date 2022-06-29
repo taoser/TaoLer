@@ -3,7 +3,7 @@
 {block name="keywords"}{$article.tags}{/block}
 {block name="description"}{$article.title},{$article.description}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{$article.title}-{$sysInfo.webname}">{/block}
-{block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description}" />{/block}
+{block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description ?? ''}" />{/block}
 {block name="meta"}
 <meta property="article:published_time" content="{$article.create_time|date='c'}"/>
 <meta property="bytedance:published_time" content="{$article.create_time|date='c'}" />

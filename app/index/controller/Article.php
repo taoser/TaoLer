@@ -1,4 +1,5 @@
 <?php
+
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
@@ -43,7 +44,6 @@ class Article extends BaseController
         //分类列表
         $article = new ArticleModel();
 		$artList = $article->getCateList($ename,$type,$page);
-
 		//	热议文章
 		$artHot = $article->getArtHot(10);
 		//广告
@@ -52,7 +52,7 @@ class Article extends BaseController
         $ad_cateImg = $ad->getSliderList(3);
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(6);
-		
+
 		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie','ename'=>$ename,'path'=>$path]);
 		return View::fetch('article/'.$tpl.'/cate');
     }
@@ -121,7 +121,7 @@ class Article extends BaseController
 			'cid' => $id,
 			$download,
 		]);
-		
+		//dump($artDetail);
 		return View::fetch('article/'.$tpl.'/detail');
     }
 	
@@ -143,6 +143,7 @@ class Article extends BaseController
 			$data = Request::only(['content','article_id','user_id']);
 			$sendId = $data['user_id'];
 			$art = Db::name('article')->field('id,status,is_reply,delete_time')->find($data['article_id']);
+
 			if($art['delete_time'] != 0 || $art['status'] != 1 || $art['is_reply'] != 1){
 				return json(['code'=>-1, 'msg'=>'评论不可用状态']);
 			}
@@ -156,9 +157,12 @@ class Article extends BaseController
 			//用户留言存入数据库
 			if (Comment::create($data)) {
 				//站内信
-				$article = Db::name('article')->field('id,title,user_id')->where('id',$data['article_id'])->find();
+				$article = Db::name('article')->field('id,title,user_id,cate_id')->where('id',$data['article_id'])->find();
+				// 获取分类ename
+				$cate_ename = Db::name('cate')->where('id',$article['cate_id'])->value('ename');
 				$title = $article['title'];
-				$link = (string) url('article/detail',['id'=>$data['article_id']]);
+				//$link = (string) url('article_detail',['id'=>$data['article_id']]);
+				$link = $this->getRouteUrl($data['article_id'], $cate_ename);
 
 				//评论中回复@user comment
 				$preg = "/@([^@\s]*)\s/";
@@ -185,7 +189,6 @@ class Article extends BaseController
      */
     public function add()
     {
-		//dump(empty(config('taoler.baidu.client_id')));
         if (Request::isAjax()) {
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
@@ -209,6 +212,8 @@ class Article extends BaseController
 			// 获取内容图片音视频标识
 			$iva= $this->hasIva($data['content']);
 			$data = array_merge($data,$iva);
+			// 获取分类ename
+			$cate_ename = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
 		
             $article = new ArticleModel();
             $result = $article->add($data);
@@ -219,23 +224,19 @@ class Article extends BaseController
                 Cache::tag('tagArtDetail')->clear();
 				// 发提醒邮件
 				if(Config::get('taoler.config.email_notice')) mailto($this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。');
-                
-				if(Config::get('taoler.config.posts_check')){
-					$link = (string)url('article/detail', ['id' => $aid]);
-				}else{
-					$link = (string)url('index/');
-				}
-                // 推送给百度收录接口
-				if(empty(config('taoler.baidu.push_api'))) {
-					$this->baiduPush($aid);
-				}
-				
-				$res = Msgres::success($result['msg'], $link);
+
+				$link = $this->getRouteUrl((int)$aid, $cate_ename);
+				// 推送给百度收录接口
+				$this->baiduPush($link);
+				    
+				$url = $result['data']['status'] ? $link : (string)url('index/');
+				$res = Msgres::success($result['msg'], $url);
             } else {
                 $res = Msgres::error('add_error');
             }
             return $res;
         }
+
 		View::assign(['jspage'=>'jie']);
         return View::fetch();
     }
@@ -276,11 +277,9 @@ class Article extends BaseController
 				if($result == 1) {
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
-                    $link = (string) url('article/detail',['id'=> $id]);
+					$link = $this->getRouteUrl((int) $id, $article->cate->ename);
 					// 推送给百度收录接口
-					if(empty(config('taoler.baidu.push_api'))) {
-						$this->baiduPush($data['id']);
-					}
+					$this->baiduPush($link);
 					$editRes = Msgres::success('edit_success',$link);
 				} else {
                     $editRes = Msgres::error($result);
@@ -377,13 +376,12 @@ class Article extends BaseController
 	}
 
 	/**
-	 * 标题调用百度关键词
+	 * 标题调用百度关键词词条
 	 *
 	 * @return void
 	 */
 	public function getWordList()
 	{
-		//
 		$title = input('title');
 		if(empty($title)) return json(['code'=>-1,'msg'=>'null']);
 		$url = 'https://www.baidu.com/sugrec?prod=pc&from=pc_web&wd='.$title;
@@ -605,25 +603,31 @@ class Article extends BaseController
 		return $content;
 	}
 
-	// baidu push api
-	protected function baiduPush($id)
+	/**
+	 * baidu push api
+	 *
+	 * @param string $link
+	 * @return void
+	 */
+	protected function baiduPush(string $link)
 	{
 		// baidu 接口
 		$api = config('taoler.baidu.push_api');
-		$artUrl = $this->getRouteUrl((int)$id);
-		$url = [$artUrl];
-		$ch = curl_init();
-		$options =  array(
-			CURLOPT_URL => $api,
-			CURLOPT_POST => true,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_POSTFIELDS => implode("\n", $url),
-			CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
-		);
-		curl_setopt_array($ch, $options);
-		curl_exec($ch);
-		curl_close($ch);
-
+		if(!empty($api)) {
+			$url[] = $link;
+			$ch = curl_init();
+			$options =  array(
+				CURLOPT_URL => $api,
+				CURLOPT_POST => true,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_POSTFIELDS => implode("\n", $url),
+				CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
+			);
+			curl_setopt_array($ch, $options);
+			curl_exec($ch);
+			curl_close($ch);
+		}
+		
 	}
 	
 }

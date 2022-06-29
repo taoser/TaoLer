@@ -4,7 +4,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use think\facade\Request;
 use think\facade\Db;
-use think\facade\Cache;
 use think\facade\Session;
 use taoser\think\Auth;
 
@@ -267,10 +266,12 @@ function getSpaceNmu($level)
 	return str_repeat('---',$level);
 }
 
+//链接投放开关，有设置则打开
 function showSlider($type)
 {
-    $sliders = Cache::get('slider'.$type);
-    if(!empty($sliders)) {
+    $sliders = new \app\common\model\Slider();
+    $sliderArr = $sliders->getSliderList($type);
+    if(!empty($sliderArr)) {
         return true;
     } else {
         return false;
