@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-06-29 14:49:09
+ * @LastEditTime: 2022-06-29 15:30:28
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -233,7 +233,7 @@ class Seo extends AdminController
                     // 循环拼接文件字符串
                     foreach($artAllId as $art) {
                         // url生成
-                        $url = $this->getRouteUrl($art['aid'],$art['ename']);
+                        $url = $this->getRouteUrl($art['aid'], $art['ename']);
                         $time = date('Y-m-d', $art['uptime']);
                         // 组装字符串
                         $str .= <<<STR

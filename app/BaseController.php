@@ -250,11 +250,12 @@ abstract class BaseController
         $indexUrl = $this->getIndexUrl();
         if(config('taoler.url_rewrite.article_as') == '<ename>/'){
             // 分类可变路由
-            $artUrl = (string) Route::buildUrl('article_detail', ['id' => $aid, 'ename'=> $ename]);
+            $artUrl = (string) url('article_detail', ['id' => (int) $aid, 'ename'=> $ename]);
+            //$artUrl = (string) Route::buildUrl('article_detail', ['id' => $aid, 'ename'=> $ename]);
         } else {
             $artUrl = (string) url('article_detail', ['id' => $aid]);
         }
-        
+        //dump($artUrl);
 
         // 判断是否开启绑定
         //$domain_bind = array_key_exists('domain_bind',config('app'));

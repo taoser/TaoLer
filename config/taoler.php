@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-29 14:48:17
+ * @LastEditTime: 2022-06-29 15:16:16
  * @LastEditors: TaoLer
  * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
@@ -70,7 +70,7 @@ return [
 		'map_time'	=> 'daily',
 		'map_level'	=> '0.5',
 		// 已生成id位标记
-		'write_id'   => 21,
+		'write_id'   => 0,
 
 	],
 

@@ -121,7 +121,7 @@ class Article extends BaseController
 			'cid' => $id,
 			$download,
 		]);
-		//dump($artDetail);
+	
 		return View::fetch('article/'.$tpl.'/detail');
     }
 	

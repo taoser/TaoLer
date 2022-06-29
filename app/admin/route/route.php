@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-26 12:28:13
+ * @LastEditTime: 2022-06-29 15:29:13
  * @LastEditors: TaoLer
  * @Description: admin路由配置
  * @FilePath: \TaoLer\app\admin\route\route.php
@@ -19,4 +19,4 @@ Route::get("$detail_as<id>$", '\app\index\controller\Article@detail')
     //'name' => '\w+',
     'id'   => '\d+',
 ])
-->name('detail_id');
+->name('article_detail');
