@@ -199,7 +199,9 @@ class Article extends Model
                 'user' => function($query){
                     $query->field('id,name,nickname,user_img,area_id,vip,city');
                 }
-            ])->withCount(['comments'])->find($id)->toArray();
+            ])->withCount(['comments'])
+            ->append(['url'])
+            ->find($id)->toArray();
             Cache::tag('tagArtDetail')->set('article_'.$id, $article, 3600);
         }
         return $article;

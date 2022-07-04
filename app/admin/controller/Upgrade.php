@@ -6,8 +6,8 @@
  *   |————runtime
  *   |    |
  *   |    |___update.sql(更新脚本) //create table test(id init(11)); create table test2(id init(11));
- *
  *   |    |___rockback.sql（回滚脚本） //drop table test; //drop table test2;
+ * 	 |	  |___remove.txt // clear清除目录和文件
  *   |    
  *   |____php
  * 

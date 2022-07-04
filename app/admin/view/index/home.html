@@ -5,12 +5,11 @@
     <div class="layui-row layui-col-space15">
       <div class="layui-col-md8">
         <div class="layui-row layui-col-space15">
-          <div class="layui-col-md12">
+          <div class="layui-col-md12">            
             <div class="layui-card">
               <div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a id="up_version" lay-href="{:url('Upgrade/index')}"></a></div>
             </div>
           </div>
-
           <div class="layui-col-md6">
             <div class="layui-card">
               <div class="layui-card-header">快捷方式</div>
@@ -127,7 +126,6 @@
             <div class="layui-card">
               <div class="layui-card-header">数据概览</div>
               <div class="layui-card-body">
-                
                 <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-dataview">
                   <div carousel-item id="LAY-index-dataview">
                     <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
@@ -135,7 +133,6 @@
                     <div></div>
                   </div>
                 </div>
-                
               </div>
             </div>
             <div class="layui-card">
@@ -207,6 +204,14 @@
         <div class="layui-card">
           <div class="layui-card-header">版本信息</div>
           <div class="layui-card-body layui-text">
+            <div class="layui-form">
+              <div class="layui-form-item">
+                <label class="layui-form-label">系统调试：</label>
+                <div class="layui-input-inline" style="width: 60px;">
+                  <input type="checkbox" name="sys-sys" lay-skin="switch" lay-text="开启|关闭" lay-filter="sys-sys" {if env('APP_DEBUG') == true} checked {/if}>
+                </div>
+              </div>
+            </div>
             <table class="layui-table">
               <colgroup>
                 <col width="100">
@@ -226,7 +231,7 @@
                   <td>
                     <script type="text/html" template>
                      TaoLer_{:config('taoler.version')}
-                      <a href="https://www.aieok.com/bbs/doc/timeline.html" target="_blank" style="padding-left: 15px;">更新日志</a>
+                      <a href="https://www.aieok.com/article/doc/timeline.html" target="_blank">更新日志</a>
                     </script>
                   </td>
                 </tr>
@@ -324,7 +329,7 @@
           <div class="layui-card-body layui-text layadmin-text">
             <p>TaoLer，采用Thinkphp6.0最新版本为开发框架，代码简洁，运行高效，更新及时。layui是国内比较流行的前端框架，两者完美结合，您会拥有一个非常让人舒适的网站。</p>
             <p>专注专一，大简其道！--本系统的特点，力争做到简洁，不臃肿，功能专一。不管是学习还是商用，都可以良好的运行。</p>
-			<p>作者尽最大可能，长期进行项目的维护，做到长期可用。</p>
+			      <p>作者尽最大可能，长期进行项目的维护，做到长期可用。</p>
           </div>
         </div>
       </div>
@@ -368,6 +373,30 @@
 			return layedit.sync(index);
 		}
 	});
+
+  // 系统调试
+    form.on('switch(sys-sys)',function(data){
+      var status = data.elem.checked;
+      console.log(status);
+      $.post("{:url('index/sysSys')}",{status:status},function(res){
+        if (res.code == 0) {
+						layer.msg(res.msg,{
+							icon:6,
+							time:2000
+						}, function(){
+							location.reload();
+						});
+					} else {
+						layer.open({
+							content:res.msg,
+							icon:5,
+							anim:6
+						});
+					}
+      })
+    
+
+    });
 		
 		form.on('submit(cunsult-add)',function(data){
 		var field = data.field;
@@ -427,7 +456,7 @@
                     }
                 });
                 //obj.del();
-				table.reload('LAY-index-topreply');
+				        table.reload('LAY-index-topreply');
                 layer.close(index);
             });
         }
@@ -438,21 +467,20 @@
 		$.get("{:url('Index/getVersion')}",function(data){
 			$('#up_version').html(data);
 		})
-	
 	})();
 		
 		
 	$('.layui-btn.layuiadmin-btn-oiltank').on('click', function(){
       var type = $(this).data('type');
       active[type] ? active[type].call(this) : '';
-    });		
+    });	
 		
   });
 	var indexForums = "{:url('Index/forums')}",	//帖子
-	indexReplys = "{:url('Index/replys')}";		//回复
-	var indexNews = "{:url('Index/news')}",	 //动态
-		indexReply = "{:url('Index/reply')}";	//反馈
-	var monthTime = "{$monthTime}",
-		monthUserCount = "{$monthUserCount}";
+	    indexReplys = "{:url('Index/replys')}",		//回复
+	    indexNews = "{:url('Index/news')}",	 //动态
+		  indexReply = "{:url('Index/reply')}",	//反馈
+	    monthTime = "{$monthTime}",
+		  monthUserCount = "{$monthUserCount}";
   </script>
 {/block}

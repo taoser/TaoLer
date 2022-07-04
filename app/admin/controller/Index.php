@@ -13,6 +13,7 @@ use app\admin\model\Article;
 use app\admin\model\Cunsult;
 use think\facade\Config;
 use taoler\com\Api;
+use taoser\SetArr;
 
 class Index extends AdminController
 {
@@ -243,7 +244,40 @@ class Index extends AdminController
 		}
 	}
 	
+	// 系统调试
+	public function sysSys()
+	{
+		$status = input('status');
 	
+		//打开调试
+		$env = root_path().'.env';
+		$app = config_path().'app.php';
+
+		if(file_exists($env)){
+			$str = file_get_contents($env);
+			$appStr = file_get_contents($app);
+			$patk = '/APP_DEBUG[^\r?\n]*/';
+			$appPatk = '/'.'exception_tmpl'.'[^\r?\n]*/';
+			if($status == 'true'){
+				$reps = 'APP_DEBUG = true';
+				$appArr = "exception_tmpl' => app()->getThinkPath() . 'tpl/think_exception.tpl',";
+			} else {
+				$reps = 'APP_DEBUG = false';
+				$appArr = "exception_tmpl' => app()->getAppPath() . '404.html',";
+			}
+			$str = preg_replace($patk, $reps, $str);
+			file_put_contents($env, $str);
+
+			$appStr = preg_replace($appPatk, $appArr, $appStr);
+			$res = file_put_contents($app, $appStr) ? true : false;
+			if($res == true){
+				return json(['code'=>0,'msg'=>'设置成功']);
+			} else {
+				return json(['code'=>-1,'msg'=>'开启失败']);
+			}
+		}
+		
+	}
 	
 	public function layout(){
         return view();

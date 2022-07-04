@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-29 11:13:33
+ * @LastEditTime: 2022-07-03 04:21:02
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\config\app.php
@@ -38,8 +38,7 @@ return [
     // 禁止URL访问的应用列表（自动多应用模式有效）
 
     // 异常页面的模板文件
-    'exception_tmpl'   =>  app()->getThinkPath() . 'tpl/think_exception.tpl',
-	//'exception_tmpl'   =>  app()->getAppPath() . '404.html',
+    'exception_tmpl' => app()->getThinkPath() . 'tpl/think_exception.tpl',
 	
     // 错误显示信息,非调试模式有效
     'error_message'    => '页面错误！请稍后再试～',

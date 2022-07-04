@@ -9,7 +9,9 @@
     <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">{$sysInfo.icp}</a>
   </div>
 </div>
+{:hook('showLeftLayer')}
 <script>
+    var $ = layui.jquery;
     var messageNums = "{:url('message/nums')}",
       messageRead = "{:url('Message/read')}",
       userMessage = "{:url('User/message')}",

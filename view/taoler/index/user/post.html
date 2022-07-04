@@ -12,15 +12,13 @@
         <li data-type="collection" lay-id="collection" href="{:url('user/post')}#collection">我的收藏</li>
         <li lay-id="postarc"><a href="{:url('article/add')}">我要发帖</a></li>
       </ul>
-	  
       <div class="layui-tab-content" style="padding: 20px 0;">
         <div class="layui-form layui-form-pane  layui-tab-item layui-show">
-			<table class="layui-table" lay-skin="line" lay-filter="art-post" id="art-post"></table>
-			
+			    <table class="layui-table" lay-skin="line" lay-filter="art-post" id="art-post"></table>
         </div>
         <div class="layui-form layui-form-pane  layui-tab-item">
-			<table class="layui-table" lay-skin="line" lay-filter="coll-post" id="coll-post"></table>
-		</div>
+          <table class="layui-table" lay-skin="line" lay-filter="coll-post" id="coll-post"></table>
+        </div>
       </div>
     </div>
 	
@@ -31,6 +29,7 @@
 	<script type="text/html" id="collTool">
 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">取消</a>
 	</script>
+
 {/block}
 {block name="script"}
 {/block}

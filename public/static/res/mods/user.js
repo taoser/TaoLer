@@ -33,34 +33,34 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
     var post = table.render({
         elem: '#art-post'
         ,url: artListUrl
-		,title: ''
+		    ,title: ''
         ,cols: [[
             {type: 'numbers', fixed: 'left'}
-            ,{field: 'title', title: '标题',minWidth: 250 ,templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
-			,{field: 'status', title: '状态', width: 80}
-			,{field: 'ctime', title: '时间', width: 120}
+            ,{field: 'title', title: '标题',minWidth: 250 ,templet: '<div><a href="{{d.url}}" target="_blank">{{-d.title}}</a></div>'}
+			      ,{field: 'status', title: '状态', width: 80}
+			      ,{field: 'ctime', title: '时间', width: 120}
             ,{field: 'datas', title: '数据', width: 120}
             ,{title: '操作', width: 150, align: 'center', toolbar: '#artTool'}
         ]]
         ,text: '对不起，加载出现异常！'
-		,page: true
+		    ,page: true
     });
   
   //收藏list
     table.render({
         elem: '#coll-post'
         ,url: collListUrl
-		,title: ''
+		    ,title: ''
         ,cols: [[
             {type: 'numbers', fixed: 'left'}
             ,{field: 'title', title: '标题',minWidth: 250,templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
-			,{field: 'auther', title: '作者', width: 120}
-			,{field: 'status', title: '状态', width: 80}
-			,{field: 'ctime', title: '时间', width: 120}
+			      ,{field: 'auther', title: '作者', width: 120}
+			      ,{field: 'status', title: '状态', width: 80}
+			      ,{field: 'ctime', title: '时间', width: 120}
             ,{title: '取消', width: 80, align: 'center', toolbar: '#collTool'}
         ]]
         ,text: '对不起，加载出现异常！'
-		,page: true
+		    ,page: true
     });
  
   //监听行工具事件
@@ -68,33 +68,24 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
     var data = obj.data;
     var id = data.id;
     if(obj.event === 'del'){	  
-	  layer.confirm('确定删除吗?',{
-			title:'删除文章',
-			icon:3
-		},function(index){
-			layer.close(index);
-			$.post(atrDelUrl,{"id":id},function(data){
-					if(data.code == 0){
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						});
-					} else {
-						layer.open({
-							title:'删除失败',
-							content:data.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			);
-			table.reload('art-post');
-		});
-		
+      layer.confirm('确定删除吗?',{
+        title:'删除文章',
+        icon:3
+      },function(index){
+        layer.close(index);
+        $.post(atrDelUrl,{"id":id},function(data){
+            if(data.code == 0){
+              layer.msg(data.msg,{icon:6,time:2000});
+            } else {
+              layer.open({title:'删除失败',content:data.msg,icon:5,adim:6})
+            }
+          }
+        );
+        table.reload('art-post');
+      });
     } else if(obj.event === 'edit'){//编辑
 		  $.post(artEditUrl,{"id":id},function(){
-			location.href = artEditUrl + '?id=' + id;
+			  location.href = artEditUrl + '?id=' + id;
 		  });
 		}
   
@@ -156,23 +147,25 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
 
       upload.render({
         elem: '.upload-img'
-		,accept: 'images'
-		,acceptMime: 'image/*'
-		,exts: 'jpg|png|gif|bmp|jpeg'
+		    ,accept: 'images'
+		    ,acceptMime: 'image/*'
+		    ,exts: 'jpg|png|gif|bmp|jpeg'
         ,url: uploadHeadImg
         ,size: 10240
-		,auto: false
-		,choose: function (obj) { //选择文件后的回调
+		    ,auto: false
+		    ,choose: function (obj) { //选择文件后的回调
 				imgcom.uploads(obj);
 			}
         ,before: function(){
           avatarAdd.find('.loading').show();
         }
         ,done: function(res){
-          if(res.status == 0){
-            location.reload();
+          if(res.code == 0){
+            layer.msg(res.msg, { icon: 6, time: 2000 },function(){
+              location.reload();
+            });
           } else {
-            layer.msg(res.msg, {icon: 5});
+            layer.open({ content: data.msg, icon: 5, adim: 6 });
           }
           avatarAdd.find('.loading').hide();
         }

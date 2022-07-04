@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-06-29 15:30:28
+ * @LastEditTime: 2022-06-29 16:10:51
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -57,7 +57,7 @@ class Seo extends AdminController
         $article_as = config('taoler.url_rewrite.article_as');
         $api = config('taoler.baidu.push_api');
 
-        if(empty(config($api))) return json(['code'=>-1,'msg'=>'请先配置接口push_api']);
+        if(empty($api)) return json(['code'=>-1,'msg'=>'请先配置接口push_api']);
         $urls = [];
         if(empty($data['start_id']) || empty($data['end_id'])) {
             if($article_as == '<ename>/'){ //变量路由

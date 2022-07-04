@@ -1,10 +1,17 @@
+<!--
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-07-01 13:44:37
+ * @LastEditors: TaoLer
+ * @Description: 安装引导程序优化版
+ * @FilePath: \TaoLer\app\install\view\index\base.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <title>TaoLer安装程序</title>
-    <script type="text/javascript" src="/static/layui/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/res/css/admin.css">
     <link rel="stylesheet" href="/static/layui/css/layui.css">
     <script src="/static/layui/layui.js"></script>
@@ -34,7 +41,10 @@
         </div>
     </div>
 {block name="body"}主题{/block}
-
+<script>
+    var $ = layui.jquery;
+    var layer = layui.layer;
+</script>
+{block name="script"}{/block}
 </body>
-
 </html>

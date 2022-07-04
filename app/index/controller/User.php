@@ -14,8 +14,6 @@ use app\common\model\Article;
 use app\common\model\Collection;
 use app\common\model\User as userModel;
 use app\common\model\Comment;
-use app\index\controller\Comment as ControllerComment;
-use think\facade\Config;
 use taoler\com\Message;
 
 class User extends BaseController
@@ -31,11 +29,10 @@ class User extends BaseController
     }
 	
 	
-	//发帖list
+	// 发帖list
 	public function artList()
 	{
 		$article = Article::withCount('comments')->where(['user_id'=>$this->uid])->order('update_time','desc')->paginate(10);
-		//var_dump($article);
 		$count = $article->total();
 		$res = [];
 		if($count){
@@ -45,6 +42,7 @@ class User extends BaseController
 				$res['data'][] = ['id'=>$v['id'],
 				'title'	=> htmlspecialchars($v['title']),
 				'url'	=> (string) url('article/detail',['id'=>$v['id']]),
+				'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename),
 				'status'	=> $v['status'] ? '正常':'待审核',
 				'ctime'		=> $v['create_time'],
 				'datas'		=> $v['pv'].'阅/'.$v['comments_count'].'答'
@@ -57,8 +55,9 @@ class User extends BaseController
 		return json($res);	
 	}
 	
-	//收藏list
-	public function collList(){
+	// 收藏list
+	public function collList()
+	{
 		//收藏的帖子
 		$collect = Collection::with(['article'=>function($query){
 			$query->withCount('comments')->where('status',1);
@@ -73,7 +72,7 @@ class User extends BaseController
 				$res['data'][] = [
 					'id' 	=>$v['id'],
 					'title'	=> htmlspecialchars($v['collect_title']),
-					'url'	=> (string) url('article/detail',['id'=>$v['article_id']]),
+					'url'	=> $this->getRouteUrl($v['article_id'], $v->article->cate->ename),
 					'auther' => $v['auther'],
 					'status' => is_null(Db::name('article')->field('id')->where('delete_time',0)->find($v['article_id'])) ? '已失效' : '正常',
 					'ctime' =>	$v['create_time']
@@ -114,6 +113,9 @@ class User extends BaseController
 	{
 		if(Request::isAjax()){
 			$data = Request::only(['user_id','email','nickname','sex','city','area_id','sign']);
+			// 过滤
+			if(strstr($data['sign'], 'script')) return json(['code'=>-1,'msg'=>'包含有非法字符串']);
+			// 验证
 			$validate = new userValidate;
 			$result = $validate->scene('Set')->check($data);
 			if(!$result){
@@ -133,7 +135,7 @@ class User extends BaseController
                 $result = $user->setNew($data);
 				if($result == 1){
 					Cache::tag('user')->clear();
-				    return ['code'=>0,'msg'=>'资料更新成功'];
+				    return json(['code'=>0,'msg'=>'资料更新成功']);
 				} else {
 					$this->error($result);
 				}
@@ -169,14 +171,14 @@ class User extends BaseController
                 ->update(['user_img'=>$name_path]);
 			Cache::tag(['user','tagArtDetail','tagArt'])->clear();
             if($result) {
-				$res = ['status'=>0,'msg'=>'头像更新成功'];
+				$res = ['code'=>0,'msg'=>'头像更新成功'];
             } else {
-                $res = ['status'=>1,'msg'=>'头像更新失败'];
+                $res = ['code'=>1,'msg'=>'头像更新失败'];
             }
         } else {
-            $res = ['status'=>1,'msg'=>'上传错误'];
+            $res = ['code'=>1,'msg'=>'上传错误'];
         }
-	return json($res);
+		return json($res);
 	}
 
 

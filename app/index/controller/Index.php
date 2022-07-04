@@ -21,7 +21,7 @@ class Index extends BaseController
     public function index()
     {
 		$types = input('type');
-
+		
         $slider = new Slider();
 		//幻灯
         $sliders = Request::isMobile() ? $slider->getSliderList(12) : $slider->getSliderList(1);

@@ -22,7 +22,6 @@ class Addons extends AdminController
 		//$conf = new \addons\social\model\Conf;
 		//$arr = $conf->getConf();
 		//dump($arr);
-//dump($arr[0]['value']['app_key']);
 		return View::fetch();
     }
 	
@@ -159,7 +158,7 @@ class Addons extends AdminController
 			validate(['file'=>'filesize:2048|fileExt:zip,rar,7z'])
             ->check(array($file));
 			$savename = \think\facade\Filesystem::disk('public')->putFile('addons',$file);
-		} catch (think\exception\ValidateException $e) {
+		} catch (\think\exception\ValidateException $e) {
 			echo $e->getMessage();
 		}
 		$upload = Config::get('filesystem.disks.public.url');
@@ -189,6 +188,7 @@ class Addons extends AdminController
 	        if(!$verRes){
 	            return json(['code'=>-1,'msg'=>'不能降级，请选择正确版本']);
 	        }
+			//$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
 		}
 
         $file_url = $addons->addons_src;

@@ -119,13 +119,16 @@
             </div>
         </div>
     </div>
-	<script>
-        function testClick() {
-            if ($('.yes').length != 7) {
-                alert('您的配置或权限不符合要求');
-            } else {
-                location.href = '{:url('index/create')}';
-            }
+	
+{/block}
+{block name="script"}
+<script>
+    function testClick() {
+        if ($('.yes').length != 7) {
+            alert('您的配置或权限不符合要求');
+        } else {
+            location.href = "{:url('index/create')}";
         }
-    </script>
+    }
+</script>
 {/block}

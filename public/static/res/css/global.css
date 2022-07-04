@@ -1,5 +1,4 @@
 ﻿/**
- 
  @Name: Fly社区
  @Author: 贤心
  @Site: fly.layui.com
@@ -453,9 +452,24 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .fly-detail-user a{padding-right: 10px; font-size: 14px;}
 .fly-detail-user .guanzhu{position: absolute;  right:10px; }
 
-.detail-assist{position: relative; height:22px; margin-top: 10px; line-height: 15px; padding: 5px 10px 5px 10px; font-size: 13px; background-color: #f8f8f8; color: #999;border-radius:5px;}
-.detail-assist .fly-admin-box{position: absolute; top: 6px;right:10px;}
-.detail-assist span{height: 20px; line-height: 20px;}
+/*详情页管理工具条*/
+.detail-assist{
+  position: fixed;
+  width: 35px; 
+  height:185px; 
+  right: calc(50% - 625px);
+  top: 200px;
+  margin: 0 auto;
+  display: block;
+  line-height: 30px;
+  font-size: 13px;
+  background-color: #e7acac;
+  color: #999;
+  border-radius:5px;
+  z-index: 100;
+}
+.detail-assist .fly-admin-box{text-align: center;}
+.detail-assist span{height: 30px;width:30px; line-height:30px;}
 .detail-assist .layui-btn{border-radius: 0;}
 .detail-assist .layui-btn+.layui-btn{margin-left: 1px;}
 .detail-assist .jie-admin{margin-right: 1px;}

@@ -44,11 +44,9 @@
             <p>{$sysInfo.state}</p>    
           </div>
       </div>
-
-      
-      {//管理}
+    </div>
+    {//帖子管理}
         {if (($article.upzip !== '') || session('?user_name'))}
-        <div class="fly-panel detail-box" >
         <div class="detail-assist">
         {notempty name="$article.upzip"}
         <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
@@ -78,11 +76,7 @@
               {/if}
           </div>
         </div>
-      </div>
       {/if}
-      
-
-    </div>
   </div>
 <!--底部栏-->
 	<div class="site-tree-mobile-detail-bottom layui-hide-md">
