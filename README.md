@@ -1,8 +1,10 @@
 # TaoLer
 
-> TaoLer是一个简单迅捷的轻论坛系统，适用于个人或组织区域型信息交流发布平台。
+> TaoLer是一个简单迅捷的管理系统，支持插件化开发，适用于个人或组织区域型信息交流发布平台，内置一套轻论坛CMS。
 
  * 官网：https://www.aieok.com
+ * 文档：http://wiki.aieok.com
+ * 演示后台：https://www.aieok.com/adminff
  
  webman版新架构已适配90%
 

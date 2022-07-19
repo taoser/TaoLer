@@ -16,26 +16,26 @@
 		{/volist}
     </ul>
     
-    <ul class="layui-nav fly-nav-user">     
+    <ul class="layui-nav fly-nav-user" msg-url="{:url('message/nums')}" readMsg-url="{:url('Message/read')}">
 	  {if session('?user_id')}
 		{if($Request.action=='user')}
-		  <li class="layui-nav-item">
-		  <a href="{$Request.domain}">{:lang('home page')}</a>
-		  </li>
+		<li class="layui-nav-item">
+		  	<a href="{$Request.domain}">{:lang('home page')}</a>
+		</li>
 		{/if}
 		<li class="layui-nav-item">
-		<a class="fly-nav-avatar" href="javascript:;">
-			<cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}{$user.user_img}">
-		</a>
-		<dl class="layui-nav-child">
-			<dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
-			<dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>
-			<hr>
-			<dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
-			<dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
-			<hr style="margin: 5px 0;">
-			<dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
-		</dl>
+			<a class="fly-nav-avatar" href="javascript:;">
+				<cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}{$user.user_img}">
+			</a>
+			<dl class="layui-nav-child">
+				<dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
+				<dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>
+				<hr>
+				<dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
+				<dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
+				<hr style="margin: 5px 0;">
+				<dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
+			</dl>
 		</li>
 	  {else /}
 	   <!-- 未登入的状态 -->

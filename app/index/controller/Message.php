@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-29 13:52:52
+ * @LastEditTime: 2022-07-19 16:45:37
  * @LastEditors: TaoLer
  * @Description: 优化版
  * @FilePath: \TaoLer\app\index\controller\Message.php
@@ -29,7 +29,7 @@ class Message extends BaseController
 		if($count){
 			$res = ['status' =>0,'count' => $count, 'msg' => 'nums'];
 		} else {
-			$res = ['status' =>0,'count' => 0, 'msg' => $count];
+			$res = ['status' =>0,'count' => 0, 'msg' => ''];
 		}
         return json($res);
 	}
@@ -71,7 +71,7 @@ class Message extends BaseController
 				}
 			} 
 		} else {
-			return json(['status' =>0]);
+			return json(['status' =>0, 'url'=>(string) url('User/message')]);
 		}  
 	}
 	

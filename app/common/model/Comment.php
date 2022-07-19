@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-29 14:40:14
+ * @LastEditTime: 2022-07-19 10:33:02
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\common\model\Comment.php
@@ -40,7 +40,7 @@ class Comment extends Model
 	//获取评论
     public function getComment($id, $page)
     {
-	    $comments = $this::with(['user'])->where(['article_id'=>$id,'status'=>1])->order(['cai'=>'asc','create_time'=>'asc'])->paginate(['list_rows'=>10, 'page'=>$page]);
+	    $comments = $this::with(['user'])->where(['article_id'=>(int)$id,'status'=>1])->order(['cai'=>'asc','create_time'=>'asc'])->paginate(['list_rows'=>10, 'page'=>$page]);
 	    return $comments;
     }
 
@@ -66,7 +66,7 @@ class Comment extends Model
             foreach ($user as $key=>$v) {
                 //$u['uid'] = (string) url('user/home',['id'=>$v['id']]);
                 $u['uid'] = (string) \think\facade\Route::buildUrl('user_home', ['id' => $v['id']]);
-                $u['count(*)'] = $v['comments_count'];
+                $u['count'] = $v['comments_count'];
                 if($v['nickname'])
                 {
                     $u['user'] = ['username'=>$v['nickname'],'avatar'=>$v['user_img']];

@@ -7,6 +7,7 @@
 {block name="meta"}
 <meta property="article:published_time" content="{$article.create_time|date='c'}"/>
 <meta property="bytedance:published_time" content="{$article.create_time|date='c'}" />
+<meta property="bytedance:lrDate_time" content="{$lrDate_time|date='c'}" />
 <meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
 {/block}
 {block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
@@ -62,6 +63,14 @@
           </div>
           <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
             <p>{$sysInfo.state}</p>    
+          </div>
+          <div class="jieda-reply">
+            <span class="jieda-zan" type="zan" id="article-zan">
+              点赞 <i class="iconfont icon-zan"></i> <em>{:count($userZanList)}</em>
+            </span>
+            {volist name="userZanList" id="vo" }
+              <span><img src="{$vo.userImg}" style="height: 20px; border-radius: 10px;"></span>
+            {/volist}
           </div>
       </div>
 
@@ -224,6 +233,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 	,laytpl = layui.laytpl
 	,uid = layui.cache.user.uid
 	,laypage = layui.laypage;
+  var id = "{$article.id}";
   
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){
@@ -236,6 +246,24 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 	othis.text(posttime);
     //console.log(othis.attr('data'));
   });
+
+  //文章点赞
+  $("#article-zan").on('click',function(){
+    //判断登陆
+    if(uid == -1){
+          layer.msg('请登录再发图', {icon: 6}, function(){
+            location.href = login;
+          })
+          return false;
+        }
+    $.post("{:url('article/userZanArticle')}",{article_id:id,type:1},function(data){
+      // if(data.code == 0){
+      //     layer.msg(data.msg,{icon:6,time:2000});
+      //   } else {
+      //     layer.msg(data.msg,{icon:5,adim:6});
+      //   }
+    })
+  });
   
 	//预定义颜色项
 	colorpicker.render({
@@ -246,7 +274,6 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 		,done: function(color){
       //改变标题颜色
       $('h1').css("color", color);
-      var id = "{$article.id}";
       $.ajax({
         type:'post',
         url:"{:url('Article/titleColor')}",
@@ -389,7 +416,7 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
   <div id="innerdiv" style="position:absolute;">
     <img id="bigimg" style="border:5px solid #fff;" src="" />
   </div>
-
+</div>
 {:hook('markdownhook')}
 
 <script>

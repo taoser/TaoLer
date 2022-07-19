@@ -443,9 +443,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
     ,preview: function(editor, span){ //预览
         var othis = $(span), getContent = function(){
             var content = editor.val();
-            return /^\{html\}/.test(content)
-                ? content.replace(/^\{html\}/, '')
-                : fly.content(content)
+            return /^\{html\}/.test(content) ? content.replace(/^\{html\}/, '') : fly.content(content)
         }, isMobile = device.ios || device.android;
 
         if(mod.preview.isOpen) return layer.close(mod.preview.index);
@@ -608,6 +606,8 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
     //新消息通知
     ,newmsg: function(){
       var elemUser = $('.fly-nav-user');
+      var messageNums = elemUser.attr('msg-url'),
+      messageRead = elemUser.attr('readMsg-url');
       if(uid != -1 && elemUser[0]){
         fly.json(messageNums, {
           _: new Date().getTime()
@@ -618,7 +618,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
             msg.on('click', function(){
               fly.json(messageRead, {}, function(res){
                 if(res.status === 0){
-                  location.href = userMessage;
+                  location.href = res.url;
                 }
               });
             });
@@ -731,189 +731,28 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
     });
   }
 
-
   //签到
-  var jName = "金币";
-  var tplSignin = ['{{# if(d.signed){ }}'
-    ,'<button class="layui-btn layui-btn-disabled">今日已签到</button>'
-    ,'<span>获得了<cite>{{ d.experience }}</cite>' + jName + '</span>'
-    ,'{{# } else { }}'
-    ,'<button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>'
-    ,'<span>可获得<cite>{{ d.experience }}</cite>' + jName + '</span>'
-    ,'{{# } }}'].join('')
-    ,tplSigninDay = '已连续签到<cite>{{ d.days }}</cite>天'
 
-    ,signRender = function(data){
-      laytpl(tplSignin).render(data, function(html){
-      elemSigninMain.html(html);
-    });
-    laytpl(tplSigninDay).render(data, function(html){
-      elemSigninDays.html(html);
-    });
-  }
-
-  ,elemSigninHelp = $('#LAY_signinHelp')
-  ,elemSigninTop = $('#LAY_signinTop')
-  ,elemSigninMain = $('.fly-signin-main')
-  ,elemSigninDays = $('.fly-signin-days');
-  
-  if(elemSigninMain[0]){
-    fly.json(signStatusUrl, function(res){
-      if(!res.data) return;
-      signRender.token = res.data.token;
-      signRender(res.data);
-    });
-    
-  }
-
-  $('body').on('click', '#LAY_signin', function(){
-  	//登录判断
-  	if(uid == -1){
-  		layer.msg('请登录再签到', {icon: 6}, function(){
-  			location.href = login;
-  		})
-    	return false;
-    }
-    		
-    var othis = $(this);
-    if(othis.hasClass(DISABLED)) return;
-	
-    fly.json(signInUrl, {
-      token: signRender.token || 1
-    }, function(res){
-      signRender(res.data);
-    }, {
-      error: function(){
-        othis.removeClass(DISABLED);
-      }
-    });
-
-    othis.addClass(DISABLED);
-  });
-
-  //签到说明
-  elemSigninHelp.on('click', function(){
-	  
-	$.getJSON(signRuleUrl, function(data) {
-		
-		//拼接表格字符串
-		var $str = '';
-		$.each(data.msg, function(k, v) {
-			$str += '<tr><td>≥' + v.days + '</td><td>' + v.score + '</td></tr>';
-		 });
-		 
-		layer.open({
-		  type: 1
-		  ,title: '签到说明'
-		  ,area: '300px'
-		  ,shade: 0.8
-		  ,shadeClose: true
-		  ,content: ['<div class="layui-text" style="padding: 20px;">'
-			,'<blockquote class="layui-elem-quote">“签到”可获得社区' + jName + '，规则如下</blockquote>'
-			,'<table class="layui-table">'
-			  ,'<thead>'
-				,'<tr><th>连续签到天数</th><th>每天可获' + jName + '</th></tr>'
-			  ,'</thead>'
-			  ,'<tbody>'
-			   ,$str
-			  ,'</tbody>'
-			,'</table>'
-			,'<ul>'
-			  ,'<li>中间若有间隔，则连续天数重新计算</li>'
-			  ,'<li style="color: #FF5722;">不可利用程序自动签到，否则' + jName + '清零</li>'
-			,'</ul>'
-		  ,'</div>'].join('')
-		});
-	});
-	
-  });
-
-  //签到活跃榜
-  var tplSigninTop = ['{{# layui.each(d.data, function(index, item){ }}'
-    ,'<li>'
-      ,'<a href="/u/{{item.uid}}" target="_blank">'
-        ,'<img src="{{item.user.avatar}}">'
-        ,'<cite class="fly-link">{{item.user.username}}</cite>'
-      ,'</a>'
-      ,'{{# var date = new Date(item.time); if(d.index === 0) { }}'
-        ,'<span class="fly-grey"> {{ layui.laytpl.digit(date.getFullYear()) + "-" + layui.laytpl.digit(date.getMonth()+1) + "-" + layui.laytpl.digit(date.getDate())}} 签到 <i class="layui-icon layui-icon-ok"></i></span>'
-      ,'{{# } else if(d.index == 1) { }}' 
-        ,'<span class="fly-grey">签到于 {{ layui.laytpl.digit(date.getHours()) + ":" + layui.laytpl.digit(date.getMinutes()) + ":" + layui.laytpl.digit(date.getSeconds()) }} <i class="layui-icon layui-icon-flag"></i></span>'
-      ,'{{# } else { }}'
-        ,'<span class="fly-grey">已连续签到 <i>{{ item.days }}</i> 天 <i class="layui-icon layui-icon-face-smile"></i></span>'
-      ,'{{# } }}'
-    ,'</li>'
-  ,'{{# }); }}'
-  ,'{{# if(d.data.length === 0) { }}'
-    ,'{{# if(d.index < 2) { }}'
-      ,'<li class="fly-none fly-grey">今天还没有人签到</li>'
-    ,'{{# } else { }}'
-      ,'<li class="fly-none fly-grey">还没有签到记录</li>'
-    ,'{{# } }}'
-  ,'{{# } }}'].join('');
-
-  elemSigninTop.on('click', function(){
-    var loadIndex = layer.load(1, {shade: 0.8});
-    fly.json(signJsonUrl, function(res){ //实际使用，请将 url 改为真实接口
-      var tpl = $(['<div class="layui-tab layui-tab-brief" style="margin: 5px 0 0;">'
-        ,'<ul class="layui-tab-title">'
-          ,'<li class="layui-this">最新签到</li>'
-          ,'<li>今日最快</li>'
-          ,'<li>总签到榜</li>'
-        ,'</ul>'
-        ,'<div class="layui-tab-content fly-signin-list" id="LAY_signin_list">'
-          ,'<ul class="layui-tab-item layui-show"></ul>'
-          ,'<ul class="layui-tab-item">2</ul>'
-          ,'<ul class="layui-tab-item">3</ul>'
-        ,'</div>'
-      ,'</div>'].join(''))
-      ,signinItems = tpl.find('.layui-tab-item');
-
-      layer.close(loadIndex);
-
-      layui.each(signinItems, function(index, item){
-        var html = laytpl(tplSigninTop).render({
-          data: res.data[index]
-          ,index: index
-        });
-        $(item).html(html);
-      });
-
-      layer.open({
-        type: 1
-        ,title: '签到活跃榜 - TOP 20'
-        ,area: '300px'
-        ,shade: 0.8
-        ,shadeClose: true
-        ,id: 'layer-pop-signintop'
-        ,content: tpl.prop('outerHTML')
-      });
-
-    }, {type: 'get'});
-  });
-
-
-  //回帖榜
+  //活跃榜
   var tplReply = ['{{# layui.each(d.data, function(index, item){ }}'
     ,'<dd>'
       ,'<a href="{{item.uid}}">'
         ,'<img src="{{item.user.avatar}}">'
         ,'<cite>{{item.user.username}}</cite>'
-        ,'<i>{{item["count(*)"]}}' +replyNum+'</i>'
+        ,'<i>{{item["count"]}}' + replyNum + '</i>'
       ,'</a>'
     ,'</dd>'
   ,'{{# }); }}'].join('')
   ,elemReply = $('#LAY_replyRank');
 
+  var replyUrl = elemReply.attr('data-url');
   if(elemReply[0]){
-    
     fly.json(replyUrl, {
       limit: 20
     }, function(res){
       var html = laytpl(tplReply).render(res);
       elemReply.find('dl').html(html);
     });
-    
   };
 
   //相册
@@ -931,16 +770,18 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
 
 
   //搜索
-  $('.fly-search').on('click', function(){
+  $('.fly-search').on('click', function(data){
+    var searchUrl = $('.fly-search').attr('data-url');
+    var forms = '<form action='+ searchUrl + '>';
     layer.open({
       type: 1
       ,title: false
       ,closeBtn: false
-      //,shade: [0.1, '#fff']
+      ,shade: [0.1, '#fff']
       ,shadeClose: true
       ,maxWidth: 10000
       ,skin: 'fly-layer-search'
-      ,content: ['<form action='+searchUrl+'>'
+      ,content: [forms
         ,'<input autocomplete="off" placeholder="搜索内容，回车跳转" type="text" name="keywords">'
       ,'</form>'].join('')
       ,success: function(layero){

@@ -32,7 +32,7 @@
                 <label for="L_title" class="layui-form-label">{:lang('title')}</label>
                 <div class="layui-input-block">
                   <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$article.title}">
-                  <input type="hidden" id="L_title_color"  name="title_color" autocomplete="off" class="layui-input" value="{$article.title_color}">
+                  <input type="hidden" id="L_title_color"  name="title_color" autocomplete="off" class="layui-input" value="{$article.title_color ?? '#333'}">
                   <input type="hidden" name="user_id" value="{$article.user_id}">
                 </div>
               </div>
@@ -159,7 +159,7 @@
 		//预定义颜色项
     colorpicker.render({
       elem: '#color'
-      ,color: '{$article.title_color}'
+      ,color: "{$article.title_color ?? '#333'}"
       ,predefine: true // 开启预定义颜色
       ,done: function(color){
         //console.log(color);

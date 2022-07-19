@@ -11,6 +11,7 @@ use think\facade\Config;
 use app\common\model\Comment;
 use app\common\model\Article as ArticleModel;
 use app\common\model\Slider;
+use app\common\model\UserZan;
 use taoler\com\Message;
 use app\common\lib\Msgres;
 use app\common\lib\Uploads;
@@ -71,6 +72,12 @@ class Article extends BaseController
 		$page = input('page') ? input('page') : 1;
         $article = new ArticleModel();
         $artDetail = $article->getArtDetail($id);
+		//赞列表
+		$userZanList = [];
+		$userZan = UserZan::where(['article_id'=>$id,'type'=>1])->select();
+		foreach($userZan as $v){
+			$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
+		}
 	
 		// 设置tag内链
 		$artDetail['content'] = $this->setArtTagLink($artDetail['content']);
@@ -83,8 +90,7 @@ class Article extends BaseController
 			}
 		}
 
-		$arId = $artDetail['cate_id'];
-		$tpl = Db::name('cate')->where('id',$arId)->value('detpl');
+		$tpl = Db::name('cate')->where('id', $artDetail['cate_id'])->value('detpl');
 		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
 
 		//$count = $comments->total();
@@ -96,7 +102,8 @@ class Article extends BaseController
 
 		//评论
 		$comments = $this->getComments($id, $page);
-		
+		//最新评论时间
+		$lrDate_time = Db::name('comment')->where('article_id', $id)->max('update_time',false) ?? time();
 		//	热议文章
 		$artHot = $article->getArtHot(10);
         //广告
@@ -105,6 +112,7 @@ class Article extends BaseController
         $ad_artImg = $ad->getSliderList(4);
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(7);
+		//push
 		$push_js = Db::name('push_jscode')->where(['delete_time'=>0])->cache(true)->select();
 		
 		View::assign([
@@ -116,9 +124,11 @@ class Article extends BaseController
 			'tags'		=> $tags,
 			'page'		=> $page,
 			'comments'	=> $comments,
-			'jspage'	=> 'jie',
 			'push_js'	=> $push_js,
-			'cid' => $id,
+			'cid' 		=> $id,
+			'lrDate_time' => $lrDate_time,
+			'userZanList' => $userZanList,
+			'jspage'	=> 'jie',
 			$download,
 		]);
 	
@@ -626,6 +636,24 @@ class Article extends BaseController
 			curl_setopt_array($ch, $options);
 			curl_exec($ch);
 			curl_close($ch);
+		}
+		
+	}
+
+	public function userZanArticle()
+	{
+		//
+		if(Request::isPost()) {
+			$data = Request::post();
+			$data['user_id'] = $this->uid;
+			$userZan = Db::name('user_zan')->where(['user_id'=>$this->uid,'article_id'=>$data['article_id']])->find();
+			if($userZan){
+				return json(['code'=> -1, 'msg'=>'您已赞过了哦']);
+			}
+			$res = Db::name('user_zan')->insert($data);
+			if($res) {
+				return json(['code'=> 0, 'msg'=>'点赞成功']);
+			}
 		}
 		
 	}

@@ -33,19 +33,20 @@
 			<span >？</span>
 			</div>
 			{/if}
+			<div class="que-sta-view layui-hide-xs">
+				<span>{$art.pv}</span>
+				<span >阅读</span>
+			</div>
 			<div class="que-body">
 			  <h2><a href="{$Request.domain}{$art.url}"  style="color:{$art.title_color ?? '#333'};">{$art.title}</a></h2>
 			  <div class="que-user-info">
 				  <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="que-avatar">
-					  <img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
 					  <cite>{$art.user.nickname ?: $art.user.name}</cite>
 				  </a>
 				  {$art.create_time|date='Y-m-d'}
-				  <span  title="浏览">浏览{$art.pv}</span>
 				  <span ><i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}</span>
 			  </div>
 			</div>
-			<div class="que-content">{:getArtContent($art.content)}</div>
 		  </li>
 		  {/volist}
 		</ul>

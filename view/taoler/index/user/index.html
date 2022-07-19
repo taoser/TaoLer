@@ -1,7 +1,7 @@
 <!--
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-04-29 15:08:24
+ * @LastEditTime: 2022-07-19 11:17:50
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\view\taoler\index\user\index.html
@@ -16,7 +16,7 @@
 <div class="layui-row layui-col-space20"> 
 <div class="layui-col-md6">
 <div class="fly-panel fly-signin"> 
-{include file="public/sign" /}
+	{:hook('signhook', ['id'=>1])}
 </div>
 </div> 
 <div class="layui-col-md6"> 
@@ -44,11 +44,4 @@
 {/block}
 
 {block name="script"}
-<script>
-var replyUrl		= "{:url('index/reply')}";
-var signStatusUrl	= "{:url('sign/status')}";
-var signInUrl		= "{:url('sign/sign')}";
-var signRuleUrl		= "{:url('sign/getsignrule')}";
-var signJsonUrl		= "{:url('sign/signJson')}";
-</script>
 {/block}

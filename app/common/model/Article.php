@@ -44,6 +44,12 @@ class Article extends Model
 	{
 		return $this->hasMany(Collection::class);
 	}
+
+    //文章关联用户点赞
+	public function userzan()
+	{
+		return $this->hasMany(UserZan::class);
+	}
 	
 	//文章关联用户
 	public function user()

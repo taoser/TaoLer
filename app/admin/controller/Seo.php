@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-06-29 16:10:51
+ * @LastEditTime: 2022-07-15 18:28:57
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Seo.php
@@ -101,7 +101,7 @@ class Seo extends AdminController
         }
         
         // 百度接口单次最大提交200，进行分组
-        $urls = array_chunk($urls,2000); 
+        $urls = array_chunk($urls,2000);
         $ch = curl_init();
         foreach($urls as $url) {
             $options =  array(
@@ -165,10 +165,10 @@ class Seo extends AdminController
         $data = Request::only(['map_num','map_time','map_level']);
         // 写文件字符串
         $str = '';
-        // 标记第一次调用写ID
+        // 标记每次调用首次调用写ID
         $flag= true;
         // 写ID
-        //$w_id = '';
+        $w_id = '';
         // 生成新文件编号，防止重复写入，
         $i = 1;
         // 获取public下所有xml文件
@@ -185,7 +185,7 @@ class Seo extends AdminController
             // 是否有需要追加在文件，判断最新文件是否未写满
             $rewrite = $num < $data['map_num'] ? true : false;
         }
-        
+
        if($rewrite){
             // 需要追加的数量
            $limit = (int) $data['map_num'] - $num;
@@ -199,12 +199,14 @@ class Seo extends AdminController
        } else {
             $limit = (int) $data['map_num'];
        }
+
         // 最新ID
         $maxId = Db::name('article')->where(['delete_time'=>0,'status'=>1])->max('id');
-       
+        
         do
         {
             $this->wr_id = $flag ? config('taoler.sitemap.write_id') : $this->w_id;
+           
             if($article_as == '<ename>/') {
                 // 分类名
                 $artAllId = Db::name('article')
@@ -221,18 +223,15 @@ class Seo extends AdminController
                         ->where('id', '>', (int) $this->wr_id)
                         ->order('id','asc')->limit($limit)->column('update_time','id');
             }
-                      
+       
             if(empty($artAllId)) {
                 return json(['code'=>-1,'msg'=>'本次无需生成']);
             } else {
                 // 本次最新文件ID
                 if($article_as == '<ename>/') {
-                    $last_arr = array_pop($artAllId);
-                    $last_id = $last_arr['aid'];
-
                     // 循环拼接文件字符串
                     foreach($artAllId as $art) {
-                        // url生成
+                        //url生成
                         $url = $this->getRouteUrl($art['aid'], $art['ename']);
                         $time = date('Y-m-d', $art['uptime']);
                         // 组装字符串
@@ -245,8 +244,10 @@ class Seo extends AdminController
                         </url>\n
                         STR;         
                     }
+                    
+                    $last_arr = end($artAllId);
+                    $last_id = $last_arr['aid'];
                 } else {
-                    $last_id = array_key_last($artAllId);
                     // 循环拼接文件字符串
                     foreach($artAllId as $aid => $uptime) {
                         // url生成
@@ -262,8 +263,9 @@ class Seo extends AdminController
                         </url>\n
                         STR;         
                     }
+                    $last_id = array_key_last($artAllId);
                 }
-                
+
                 // 写文件
                 if($rewrite){
                     // 写入旧xml文件
@@ -304,8 +306,7 @@ class Seo extends AdminController
         if($res == false){
             return json(['code'=>-1,'msg'=>'写xml配置失败']);
         }
-        
-        return json(['code'=>0,'msg'=>'本次成功生成'.count($artAllId).'条xml']);
+        return json(['code'=>0,'msg'=>'本次成功生成' . count($artAllId) . '条xml']);
     }
 
     /**

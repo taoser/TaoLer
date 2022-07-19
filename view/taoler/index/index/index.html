@@ -79,7 +79,7 @@
 		</div>
 		{/if}
 		<!--回帖榜-->
-		<div class="fly-panel fly-rank fly-rank-reply layui-hide-xs" id="LAY_replyRank">
+		<div class="fly-panel fly-rank fly-rank-reply layui-hide-xs" id="LAY_replyRank" data-url="{:url('user_reply')}">
 			<h3 class="fly-panel-title">{:lang('reviewers list')}</h3>
 			<dl>
 			  <i class="layui-icon fly-loading">&#xe63d;</i>
@@ -118,12 +118,6 @@
 
 {block name="script"}
 <script>
-var replyUrl 		= "{:url('index/reply')}";
-var signStatusUrl	= "{:url('sign/status')}";
-var signInUrl		= "{:url('sign/sign')}";
-var signRuleUrl		= "{:url('sign/getsignrule')}";
-var signJsonUrl		= "{:url('sign/signJson')}";
-
 $('#friend-link').on('click', function(){
 	layer.open({
 		title: '申请友链',

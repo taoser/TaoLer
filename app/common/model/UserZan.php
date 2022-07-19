@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-07-18 18:32:40
+ * @LastEditors: TaoLer
+ * @Description: 优化版
+ * @FilePath: \TaoLer\app\common\model\UserZan.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 namespace app\common\model;
 
 use think\Model;
@@ -25,6 +34,12 @@ class UserZan extends Model
 	{
 		//评论关联用户
 		return $this->belongsTo('User','user_id','id');
+	}
+
+	public function article()
+	{
+		//评论关联用户
+		return $this->belongsTo(Article::class);
 	}
 	
 }

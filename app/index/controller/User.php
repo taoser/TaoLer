@@ -114,7 +114,13 @@ class User extends BaseController
 		if(Request::isAjax()){
 			$data = Request::only(['user_id','email','nickname','sex','city','area_id','sign']);
 			// 过滤
-			if(strstr($data['sign'], 'script')) return json(['code'=>-1,'msg'=>'包含有非法字符串']);
+			$sign = strtolower($data['sign']);
+			if(strstr($sign, 'script')) return json(['code'=>-1,'msg'=>'包含有非法字符串script脚本']);
+			if(strstr($sign, 'alert')) return json(['code'=>-1,'msg'=>'包含有非法字符alert']);
+			if(strstr($sign, 'img')) return json(['code'=>-1,'msg'=>'禁用img标签']);
+			if(strstr($sign, 'body')) return json(['code'=>-1,'msg'=>'禁用img标签']);
+			if(strstr($sign, 'video')) return json(['code'=>-1,'msg'=>'禁用video标签']);
+
 			// 验证
 			$validate = new userValidate;
 			$result = $validate->scene('Set')->check($data);

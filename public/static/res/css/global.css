@@ -318,7 +318,7 @@ pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border
 .fly-list-top li h2 a{display: inline-block;  padding-right: 10px; font-size: 16px;}
 
 /* 列表 */
-.fly-list li{position: relative; height: 45px; line-height: 22px; padding: 15px 15px 15px 75px; border-bottom: 1px dotted #e2e2e2;}
+.fly-list li{position: relative; height: 45px; line-height: 22px; padding: 15px 15px 15px 75px; border-bottom: 1px dotted #c3c1c1;}
 .fly-list li:last-child{border-bottom: none;}
 .fly-list li h2,
 .fly-list li h2 a,
@@ -343,10 +343,10 @@ pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border
 
 /* 单行列表 */
 .fly-list-one .fly-panel-title{margin-bottom: 5px;}
-.fly-list-one dd{margin: 0 15px; line-height: 26px; white-space: nowrap; overflow: hidden; list-style: decimal-leading-zero inside; *list-style-type: decimal inside; color: #009E94;}
+.fly-list-one dd{margin: 0 15px; line-height: 28px; white-space: nowrap; overflow: hidden; list-style: decimal-leading-zero inside; *list-style-type: decimal inside; color: #009E94;}
 .fly-list-one dd a,
 .fly-list-one dd span{display: inline-block; *display: inline; *zoom: 1; vertical-align: top; font-style: normal}
-.fly-list-one dd a{max-width: 85%; margin-right: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px;}
+.fly-list-one dd a{max-width: 85%; margin-right: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px;}
 .fly-list-one dd span{font-size: 12px; color: #ccc;}
 .fly-list-one dd:last-child{padding-bottom: 5px;}
 
@@ -359,22 +359,26 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 /*问题列表*/
 .question-list{width: 100%;}
-.question-list li{line-height: 30px; padding: 10px 15px 15px 20px; border-bottom: 1px dotted #e2e2e2; }
+.question-list li{line-height: 30px; padding: 10px 15px 15px 20px; border-bottom: 1px dotted #cccbcb; }
 .que-sta-jie,
-.que-sta-ask{float: left; margin-top:5px; margin-right:10px; text-align:center; padding:2px; width:38px; height:38px; line-height: 20px; border-radius: 10%; color: #fff;}
-.que-sta-jie{background: #5FB878;}
-.que-sta-ask{background: #FF5722;}
+.que-sta-ask,
+.que-sta-view{float: left; margin-top:5px; margin-right:10px; text-align:center; padding:2px; width:46px; height:46px; line-height: 23px; border-radius: 10%;}
+.que-sta-jie{color: #fff; background: #5FB878;}
+.que-sta-ask{color: #fff; background: #FF5722;}
+.que-sta-jie span{display: block;width:46px; height:23px;}
+.que-sta-ask span{display: block;width:46px; height:23px;}
+
+.que-sta-view{color: rgb(84, 81, 81);background: #f7f6f5;}
+.que-sta-view span{display: block;width:46px; height:23px;}
+
 .que-body{width:100%; padding: 0px; }
 .que-body h2{margin-right:10px; line-height: 26px;  font-size: 16px; overflow: hidden; white-space: nowrap;text-overflow: ellipsis;}
 .que-body h2 a{display: inline-block; max-width: 95%; height: 20px; font-size: 16px;}
 .que-body .que-user-info{display: block;  text-overflow: ellipsis;}
 .que-body .que-user-info a{margin-right: 10px;}
 .que-body .que-user-info .que-avatar{top: 20px;}
-.que-body .que-user-info .que-avatar img{width: 25px; height: 25px; margin-top: 10; border-radius: 100%;}
 .que-body .que-user-info .que-avatar i{position: absolute; left: 35px; top: 15px;  }
 .que-body .que-user-info span{display: inline-block; font-size: 12px; padding-left: 5px;}
-.que-content{font-size: 14px; color:#999;}
-
 
   /* 签到 */
 .fly-signin cite{padding: 0 5px; color: #FF5722; font-style: normal;}

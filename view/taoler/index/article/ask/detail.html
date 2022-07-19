@@ -7,6 +7,7 @@
 {block name="meta"}
 <meta property="article:published_time" content="{$article.create_time|date='c'}"/>
 <meta property="bytedance:published_time" content="{$article.create_time|date='c'}" />
+<meta property="bytedance:lrDate_time" content="{$lrDate_time|date='c'}" />
 <meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
 {/block}
 {block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8"/>{/block}

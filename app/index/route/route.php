@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-29 10:57:40
+ * @LastEditTime: 2022-07-19 15:43:06
  * @LastEditors: TaoLer
  * @Description: 前端路由设置
  * @FilePath: \TaoLer\app\index\route\route.php
@@ -18,7 +18,9 @@ $cate_as = config('taoler.url_rewrite.cate_as');
 Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 Route::rule('/', 'index'); // 首页访问路由
 
-
+Route::get('index/reply','index/reply')->name('user_reply');
+Route::rule('search','index/search')->name('user_search');
+Route::get('message/nums','message/nums')->name('user_message');
 // 用户中心
 Route::group(function () {
 	Route::get('u/:id$', 'user/home')->name('user_home'); 
@@ -28,7 +30,7 @@ Route::group(function () {
 	Route::get('user/post', 'user/post');
 	Route::get('user/article','user/artList');
 	Route::get('user/coll','user/collList');
-	Route::get('user/colldel','user/colltDel');
+	Route::get('user/colldel','user/collDel');
 	Route::get('user/setpass','user/setPass');
 	Route::get('user/activate','user/activate');
 	Route::get('user/active','user/active');

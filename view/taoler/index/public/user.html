@@ -1,7 +1,7 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-06-29 13:55:10
+ * @LastEditTime: 2022-07-19 11:05:29
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\view\taoler\index\public\user.html
@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="{$Request.domain}/static/layui/css/layui.css">
   <link rel="stylesheet" href="{$Request.domain}/static/res/css/global.css">
   {block name="css"}{/block}
+  <script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
 </head>
 <body>
 {include file="public/header" /}
@@ -30,7 +31,6 @@
   </div>
 </div> 
 {include file="public/footer" /}
-<script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
 <script>
     layui.cache.page = 'user';
     layui.cache.user = {
