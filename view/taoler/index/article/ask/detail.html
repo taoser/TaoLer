@@ -1,6 +1,6 @@
 {extend name="public/base" /}
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block}
-{block name="keywords"}{$article.tags}{/block}
+{block name="keywords"}{$article.tags ?: $article.title}{/block}
 {block name="description"}{$article.title},{$article.description ?? ''}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{$article.title}-{$sysInfo.webname}"/>{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description ?? ''}" />{/block}
@@ -49,7 +49,7 @@
           <h3>关键词</h3>
           <div class="layui-btn-container" style="padding-top: 15px">
             {volist name="tags" id="vo" }
-            <button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger" value="{$vo}">{$vo}</button>
+            <a href="{:url('tag_list',['tag'=>$vo.pinyin])}"><span class="layui-btn layui-btn-sm  layui-btn-radius layui-btn-danger">{$vo.tag}</span></a>
             {/volist}
           </div>
         </div>
@@ -96,9 +96,7 @@
               {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
             <div class="detail-body jieda-body photos">{$vo.content}</div>
-            <div style="margin: 5px 0px"><i class="layui-icon layui-icon-edit" style="font-size: 14px; color: #31BDEC;">---------------- 个性签名 ---------------</i>
-              <div style="padding: 10px 0px">{$vo.user.sign|raw}</div>
-            </div>
+            
             <div class="jieda-reply">
               <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan"><i class="iconfont icon-zan"></i><em>{$vo.zan}</em>赞</span>
               <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
@@ -112,14 +110,16 @@
                 {/if}
               </div>
             </div>
+            <div style="margin: 5px 0px;">
+              <hr width="90%" style="border:1px dotted red;height:1px" />
+              <div style="padding: 10px 0px">{$vo.user.sign|raw}</div>
+            </div>
           </li>
           {/volist}
         </ul>
         <div style="text-align: center" id="pages"></div>
       </div>
     </div>
-
-   
 
     {// 右栏}
     <div class="layui-col-md3">
@@ -132,7 +132,7 @@
             </a>
           </div>
           <div class="questions">
-            <span class="layui-badge layui-bg-green">回答 100</span> <span class="layui-badge layui-bg-green">提问 100</span>
+            <span class="layui-badge layui-bg-green">回答 {$article.user.comments_count}</span> <span class="layui-badge layui-bg-green">提问 {$article.user.article_count}</span>
             <span class="layui-badge layui-bg-green">+ 关注</span>
           </div>
         </div>
@@ -161,7 +161,7 @@
       {if showSlider(4)}
       <div class="fly-panel" style="padding: 5px 0; text-align: center">
         {volist name="ad_art" id="vo"}
-        <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%" /></a>
+        <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}/{$vo.slid_img}" style="max-width: 100%" /></a>
         {/volist}
       </div>
       {/if}

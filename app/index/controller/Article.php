@@ -17,6 +17,7 @@ use app\common\lib\Msgres;
 use app\common\lib\Uploads;
 use taoser\SetArr;
 use taoler\com\Api;
+use Overtrue\Pinyin\Pinyin;
 
 class Article extends BaseController
 {
@@ -61,6 +62,7 @@ class Article extends BaseController
 	//文章详情页
     public function detail()
     {
+		
 		$id = input('id');
 		$artStu = Db::name('article')->field('id')->where(['status'=>1,'delete_time'=>0])->find($id);
 		if(is_null($artStu)){
@@ -72,6 +74,14 @@ class Article extends BaseController
 		$page = input('page') ? input('page') : 1;
         $article = new ArticleModel();
         $artDetail = $article->getArtDetail($id);
+		//用户个人tag标签
+		$userTags = $article->where(['user_id'=>$artDetail['user_id'],'status'=>1])->where('tags','<>','')->column('tags');
+		//转换为字符串
+		$tagStr = implode(",",$userTags);
+		//转换为数组并去重
+		$tagArr = array_unique(explode(",",$tagStr));
+		$userTagCount = count($tagArr);
+
 		//赞列表
 		$userZanList = [];
 		$userZan = UserZan::where(['article_id'=>$id,'type'=>1])->select();
@@ -79,16 +89,37 @@ class Article extends BaseController
 			$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
 		}
 	
-		// 设置tag内链
+		// 设置内容的tag内链
 		$artDetail['content'] = $this->setArtTagLink($artDetail['content']);
+		
 		// tag
-		$attr = explode(',', $artDetail['tags']);
-		$tags = [];
-		foreach($attr as $v){
-			if ($v !='') {
-				$tags[] = $v;
-			}
+		// $tags = [];
+		// if(!is_null($artDetail['tags'])){
+		//     $attr = explode(',', $artDetail['tags']);
+    	// 	foreach($attr as $v){
+    	// 		if ($v !='') {
+    	// 			$tags[] = $v;
+    	// 		}
+    	// 	}
+		// } else {
+		//     $tags[] = $artDetail['title'];
+		// }
+		
+		// $tag = new Tag();
+		// $tags = $tag->getArtTag($artDetail['tags']);
+
+		$pinyin = new Pinyin();
+        $tags = [];
+		if(!is_null($artDetail['tags'])){
+		    $attr = explode(',', $artDetail['tags']);
+    		foreach($attr as $v){
+    			if ($v !='') {
+    				$tags[] = ['tag'=>$v,'pinyin'=>$pinyin->permalink($v,''), 'url'=> (string) url('tag_list',['tag'=>$pinyin->permalink($v,'')])];
+    			}
+    		}
 		}
+
+
 
 		$tpl = Db::name('cate')->where('id', $artDetail['cate_id'])->value('detpl');
 		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
@@ -128,6 +159,7 @@ class Article extends BaseController
 			'cid' 		=> $id,
 			'lrDate_time' => $lrDate_time,
 			'userZanList' => $userZanList,
+			'userTagCount'=> $userTagCount,
 			'jspage'	=> 'jie',
 			$download,
 		]);
@@ -203,7 +235,8 @@ class Article extends BaseController
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
 
-            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'description', 'captcha']);
+            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'tiny_content', 'content', 'upzip', 'tags', 'description', 'captcha']);
+			
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
 			{				
@@ -248,7 +281,14 @@ class Article extends BaseController
         }
 
 		View::assign(['jspage'=>'jie']);
-        return View::fetch();
+		$tpl = Db::name('cate')->where('ename', input('cate'))->value('detpl');
+		$appName = $this->app->http->getName();
+		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
+		$view = 'article' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'add.html';
+		$vfile = $viewRoot . $view;
+		$addTpl = is_file($vfile) ? $vfile : 'add';
+
+		return View::fetch($addTpl);
     }
 
     /**
@@ -299,16 +339,27 @@ class Article extends BaseController
 		}
 		// 查询标签
 		$tag = $article->tags;
-		$attr = explode(',',$tag);
 		$tags = [];
-		foreach($attr as $key => $v){
-			if ($v !='') {
-				$tags[] = $v;
-			}
+		if(!is_null($tag)) {
+		    $attr = explode(',',$tag);
+    		foreach($attr as $key => $v){
+    			if ($v !='') {
+    				$tags[] = $v;
+    			}
+    		}
+
 		}
 			
         View::assign(['article'=>$article,'tags'=>$tags,'jspage'=>'jie']);
-		return View::fetch();
+		// 编辑多模板支持
+		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('detpl');
+		$appName = $this->app->http->getName();
+		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
+		$view = 'article' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'edit.html';
+		$vfile = $viewRoot . $view;
+		$editTpl = is_file($vfile) ? $vfile : 'edit';
+
+		return View::fetch($editTpl);
     }
 	
 	/**

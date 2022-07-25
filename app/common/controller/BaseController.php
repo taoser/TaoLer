@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-17 11:14:51
+ * @LastEditTime: 2022-07-25 18:31:40
  * @LastEditors: TaoLer
  * @Description: 前端基础控制器设置
  * @FilePath: \TaoLer\app\common\controller\BaseController.php
@@ -17,6 +17,7 @@ use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cache;
+use app\facade\Article;
 use app\BaseController as BaseCtrl;
 
 /**
@@ -81,8 +82,19 @@ class BaseController extends BaseCtrl
 		View::assign('user',$user);
 		return $user;
     }
+
+	//热门标签
+	protected function getHotTag()
+	{
+		//热门标签
+		return Article::getHotTags();
+        //转换为字符串
+		// $tagStr = implode(",",$tags);
+		//转换为数组并去重
+		// return array_unique(explode(",",$tagStr));
+	}
 	
-	 //显示网站设置
+	//显示网站设置
     protected function showSystem()
     {
         //1.查询分类表获取所有分类
@@ -90,11 +102,22 @@ class BaseController extends BaseCtrl
 		$slider = new \app\common\model\Slider();
 		//头部链接
 		$head_links = $slider->getSliderList(10);
-		
 		//页脚链接
 		$foot_links = $slider->getSliderList(11);
+		//友情链接
+		$friend_links = $slider->getSliderList(9);
+		//获取热门标签
+		$hotTag = $this->getHotTag();
+
+		$assign = [
+			'sysInfo'	=> $sysInfo,
+			'headlinks'	=> $head_links,
+			'footlinks'	=> $foot_links,
+			'flinks'	=> $friend_links,
+			'hotTag'	=> $hotTag
+		];
 		
-        View::assign(['sysInfo'=>$sysInfo,'headlinks'=>$head_links,'footlinks'=>$foot_links]);
+        View::assign($assign);
 		return $sysInfo;
     }
 

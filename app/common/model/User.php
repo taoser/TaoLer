@@ -41,7 +41,7 @@ class User extends Model
         return $this->belongsTo('UserArea','user_raea_id','id');
     }
 
-    public function user()
+    public function article()
     {
         return $this->hasMany(Article::class);
     }

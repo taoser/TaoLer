@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-07-21 12:09:17
+ * @LastEditors: TaoLer
+ * @Description: 首页优化版
+ * @FilePath: \TaoLer\app\index\controller\Index.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
@@ -39,8 +48,6 @@ class Index extends BaseController
 		$ad_index =  $slider->getSliderList(5);
 		//首页右栏图片
 		$ad_comm = $slider->getSliderList(2);
-		//友情链接
-		$friend_links = $slider->getSliderList(9);
 
 		//友情链接申请
 		$adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
@@ -55,7 +62,6 @@ class Index extends BaseController
 			'ad_index'	=>	$ad_index,
 			'ad_comm'	=>	$ad_comm,
 			'fastlinks' =>	$fast_links,
-			'flinks'	=>	$friend_links,
 			'adminEmail' => $adminEmail,
 			'jspage'	=>	'',
 		];
@@ -69,34 +75,6 @@ class Index extends BaseController
 	{
         $comment = new \app\common\model\Comment();
         return $comment->reply(20);
-	}
-
-	//搜索功能
-	public function search()
-	{
-		//$t = input('keywords');
-		//halt($t);
-        $ser = Request::only(['keywords']);
-
-	    $search = new \app\index\controller\Search();
-	    $artList = $search->getSearch($ser['keywords']);
-        $counts = $artList->count();
-        $slider = new Slider();
-        //首页右栏
-        $ad_comm = $slider->getSliderList(2);
-        //	查询热议
-        $artHot = Article::getArtHot(10);
-
-        $searchs = [
-            'artList' => $artList,
-            'keywords' => $ser['keywords'],
-            'counts' => $counts,
-            'ad_comm'=>$ad_comm,
-            'artHot'=>$artHot,
-            'jspage'=>''
-        ];
-        View::assign($searchs);
-		return View::fetch('search');
 	}
 
     public function jump()

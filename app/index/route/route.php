@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-19 15:43:06
+ * @LastEditTime: 2022-07-25 10:51:53
  * @LastEditors: TaoLer
  * @Description: 前端路由设置
  * @FilePath: \TaoLer\app\index\route\route.php
@@ -19,8 +19,9 @@ Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 Route::rule('/', 'index'); // 首页访问路由
 
 Route::get('index/reply','index/reply')->name('user_reply');
-Route::rule('search','index/search')->name('user_search');
+Route::rule('search','Search/getSearch')->name('user_search');
 Route::get('message/nums','message/nums')->name('user_message');
+Route::get('tag/:tag', 'Tag/list')->name('tag_list');
 // 用户中心
 Route::group(function () {
 	Route::get('u/:id$', 'user/home')->name('user_home'); 
@@ -53,7 +54,7 @@ Route::group(function () {
 
 // article
 Route::group(function () use($detail_as,$cate_as){
-	Route::rule('add','Article/add');
+	Route::rule('add/[:cate]','Article/add');
 	Route::rule('delete/[:id]','Article/delete');
 	Route::rule('tags','Article/tags')->allowCrossDomain();
 	Route::rule('edit/[:id]','Article/edit');

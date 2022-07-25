@@ -1,6 +1,6 @@
 {extend name="public/base" /}
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
-{block name="keywords"}{$article.tags}{/block}
+{block name="keywords"}{$article.tags ?: $article.title}{/block}
 {block name="description"}{$article.title},{$article.description ?? ''}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{$article.title}-{$sysInfo.webname}">{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description ?? ''}" />{/block}
@@ -30,13 +30,13 @@
         </div>
         <hr style="margin-bottom: 25px">
         {// 内容}
-        <div class="detail-body photos" style="font-size: 18px;line-height: 200%;" id="content">{$article.content}</div>
+        <div class="detail-body photos" style="font-size: 18px;line-height: 200%;" id="content">{$article.content|raw}</div>
         <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
           <div style="margin-top: 15px">
             <h2>关键词</h2>
             <div class="layui-btn-container" style="padding-top: 15px;">
               {volist name="tags" id="vo" }
-              <button type="button" class="layui-btn layui-btn-sm  layui-btn-radius layui-btn-danger" value="{$vo}">{$vo}</button>
+              <a href="{$vo.url}"><span class="layui-btn layui-btn-sm  layui-btn-radius layui-btn-danger">{$vo.tag}</span></a>
               {/volist}
             </div>
           </div>
@@ -214,10 +214,10 @@
     });
 	
 	//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  $('.detail-body').each(function(){
+ /*  $('.detail-body').each(function(){
     var othis = $(this), html = othis.html();
     othis.html(fly.content(html));
-  });
+  }); */
   //加载播放器
   plyr.setup();
 

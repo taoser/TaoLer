@@ -7,7 +7,7 @@
 	</div>
 	<div class="site-mobile-shade-top"></div>
 	{//移动端LOGO}
-	<a class="fly-logo layui-hide-md" href="/" style="padding-left:50%; margin-left:-60px;"><img src="{$Request.domain}/static/res/images/logo-m.png"></a>
+	<a class="fly-logo layui-hide-md layui-hide-sm" href="{$Request.domain}" style="padding-left:50%; margin-left:-60px;"><img src="{$Request.domain}{$sysInfo.m_logo}" style="height:37px;"></a>
     <ul class="layui-nav fly-nav layui-hide-xs">
 		{volist name="headlinks" id="vo"}
 		<li class="layui-nav-item">

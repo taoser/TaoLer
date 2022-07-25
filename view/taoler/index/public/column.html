@@ -16,8 +16,10 @@
       {/if}
     </ul> 
     <div class="fly-column-right layui-hide-xs"> 
-      <span class="fly-search" data-url="{:url('user_search')}"><i class="layui-icon">&#xe615;</i></span> 
-      <a href="{:url('article/add')}" class="layui-btn" >{:lang('add post')}</a> 
+      <span class="fly-search" data-url="{:url('user_search')}"><i class="layui-icon">&#xe615;</i></span>
+      {if($Request.action !=='index')}
+      <a href="{:url('article/add',['cate'=>$Request.param.ename])}" class="layui-btn" >{:lang('add post')}</a>
+      {/if} 
     </div> 
     <!--div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;"> 
       <a href="javascript:void(0)" class="layui-btn" id="add_post">{:lang('add post')}</a> 

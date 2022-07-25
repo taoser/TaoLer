@@ -1,6 +1,6 @@
 {extend name="public/base" /}
 {block name="title"}{$article.title}-{$sysInfo.webname}{/block} 
-{block name="keywords"}{$article.tags}{/block}
+{block name="keywords"}{$article.tags ?: $article.title}{/block}
 {block name="description"}{$article.title},{$article.description}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{$article.title}-{$sysInfo.webname}">{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description ?? ''}" />{/block}
@@ -57,19 +57,19 @@
             <h2>关键词</h2>
             <div class="layui-btn-container" style="padding-top: 15px;">
               {volist name="tags" id="vo" }
-              <button type="button" class="layui-btn layui-btn-sm  layui-btn-radius layui-btn-danger" value="{$vo}">{$vo}</button>
+              <a href="{$vo.url}"><span class="layui-btn layui-btn-sm  layui-btn-radius layui-btn-danger">{$vo.tag}</span></a>
               {/volist}
             </div>
           </div>
           <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
             <p>{$sysInfo.state}</p>    
           </div>
-          <div class="jieda-reply">
+          <div class="detail-zan">
             <span class="jieda-zan" type="zan" id="article-zan">
               点赞 <i class="iconfont icon-zan"></i> <em>{:count($userZanList)}</em>
             </span>
             {volist name="userZanList" id="vo" }
-              <span><img src="{$vo.userImg}" style="height: 20px; border-radius: 10px;"></span>
+              <span><img src="{$vo.userImg}"></span>
             {/volist}
           </div>
       </div>
@@ -96,9 +96,6 @@
 			        {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
             <div class="detail-body jieda-body photos">{$vo.content}</div>
-            <div style="margin: 5px 0px"><i class="layui-icon layui-icon-edit" style="font-size: 14px; color: #31BDEC;">---------------- 个性签名 ---------------</i>
-              <div style="padding: 10px 0px">{$vo.user.sign|raw}</div>
-            </div>
             <div class="jieda-reply">
               <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
                 <i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
@@ -114,6 +111,10 @@
                 <span class="jieda-accept" type="accept">{:lang('accept')}</span>
                 {/if}
               </div>
+            </div>
+            <div style="margin: 5px 0px;">
+              <hr width="90%" style="border:1px dotted red;height:1px" />
+              <div style="padding: 10px 0px">{$vo.user.sign|raw}</div>
             </div>
           </li>
           {/volist} 
@@ -139,6 +140,20 @@
     </div>
     {//右栏}
     <div class="layui-col-md3">
+      <div class="fly-panel">
+        <div class="fly-panel-main wenda-user">
+          <div class="user-img">
+            <a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
+              <img class="" src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}" />
+              {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
+            </a>
+          </div>
+          <div class="questions">
+            <span class="layui-badge layui-bg-green">回答 {$article.user.comments_count}</span> <span class="layui-badge layui-bg-green">提问 {$article.user.article_count}</span>
+            <span class="layui-badge layui-bg-green">+ 关注</span>
+          </div>
+        </div>
+      </div>
       {if showSlider(7)}
       <div class="fly-panel">
         <div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
@@ -251,17 +266,17 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
   $("#article-zan").on('click',function(){
     //判断登陆
     if(uid == -1){
-          layer.msg('请登录再发图', {icon: 6}, function(){
-            location.href = login;
-          })
+          layer.msg('请登录再点赞', {icon: 6}, function(){location.href = login})
           return false;
         }
     $.post("{:url('article/userZanArticle')}",{article_id:id,type:1},function(data){
-      // if(data.code == 0){
-      //     layer.msg(data.msg,{icon:6,time:2000});
-      //   } else {
-      //     layer.msg(data.msg,{icon:5,adim:6});
-      //   }
+      if(data.code == 0){
+          layer.msg(data.msg,{icon:6,time:2000},function () {
+                location.reload(true);
+            });
+        } else {
+          layer.msg(data.msg,{icon:6,adim:6});
+        }
     })
   });
   

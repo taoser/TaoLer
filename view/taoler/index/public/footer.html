@@ -13,7 +13,7 @@
 <script>
     var $ = layui.jquery;
     var login       = "{:url('Login/index')}",
-      articleAdd  = "{:url('Article/add')}",
+      articleAdd  = "{:url('Article/add',['cate'=>$Request.param.ename])}",
       uploads     = "{:url('article/uploads')}",
       langUrl     = "{:url('index/language')}",
       replyNum    = "{:lang('replies')}",

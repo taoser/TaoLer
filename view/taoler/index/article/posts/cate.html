@@ -64,15 +64,26 @@
             </div>
         </div>
       {/if}
-        <dl class="fly-panel fly-list-one layui-hide-xs">
-        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
-        {volist name="artHot" id="vo"}
-		    <dd>
-          <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
-          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-        </dd>
-		    {/volist} 
-      </dl>
+      {//热门文章}
+      <dl class="fly-panel fly-list-one layui-hide-xs">
+      <dt class="fly-panel-title">{:lang('hot post list')}</dt>
+      {volist name="artHot" id="vo"}
+      <dd>
+        <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
+        <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+      </dd>
+      {/volist} 
+    </dl>
+    {//热门标签}
+		<div class="fly-panel layui-hide-xs">
+		<div class="fly-panel-title">热门标签</div>
+		<div class="fly-panel-main">
+			<ul>
+				{volist name="hotTag" id="vo"}
+				<li style="padding:10px;display:inline-block;height: 15px;"><a href="{$Request.domain}/{$vo.url}">{$vo.tag}</a></li>
+				{/volist}
+			</ul>
+		</div>
     {if showSlider(6)}
 		<div class="fly-panel">
 		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>

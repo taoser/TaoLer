@@ -1,7 +1,7 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-06-27 16:14:49
+ * @LastEditTime: 2022-07-20 16:42:38
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\view\taoler\index\user\home.html
@@ -36,7 +36,7 @@
     <i class="iconfont icon-shijian"></i><span>{$u.create_time|date='Y-m-d'} {:lang('join')}</span>
     <i class="iconfont icon-chengshi"></i><span>{:session('user_id') ? '来自'.$u.city: lang('log in to view')}</span>
   </p>
-  <p class="fly-home-sign">（{$u.sign ?: lang('it is not signed yet')}）</p>
+  <p class="fly-home-sign">（{$u.sign ? $u.sign|raw : lang('it is not signed yet')}）</p>
 
   <div class="fly-sns" data-user="">
     <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">{:lang('add friends')}</a>

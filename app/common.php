@@ -277,3 +277,27 @@ function showSlider($type)
         return false;
     }
 }
+
+//提取内容第一张图片
+function getOnepic($str)
+{
+    // <img src="http://img.com" />
+    /* $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
+        preg_match_all($pattern,$str,$matchContent);
+        if(isset($matchContent[1][0])){
+            $img = $matchContent[1][0];
+        }else{
+            $temp="./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
+        }
+    */
+    // img[/storage/1/article_pic/20220428/6c2647d24d5ca2c179e4a5b76990c00c.jpg]
+    $pattern = "/(?<=img\[)[^\]]*(?=\])/";
+    preg_match($pattern,$str,$matchContent);
+    if(isset($matchContent[0])){
+        $img = $matchContent[0];
+    }else{
+        return false;
+    }
+    return $img;
+    
+}

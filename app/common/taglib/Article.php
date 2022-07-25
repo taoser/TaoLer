@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2022-05-17 13:08:11
- * @LastEditTime: 2022-05-18 17:22:50
+ * @LastEditTime: 2022-07-23 09:39:52
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\common\taglib\Article.php
@@ -20,7 +20,7 @@ class Article extends TagLib
     //
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
-        'id'            => ['attr' => 'name', 'close' => 0],
+        'id'            => ['attr' => '', 'close' => 0],
         'title'         => ['attr' => 'cid', 'close' => 0], 
         'content'       => ['attr' => 'name', 'close' => 0],
         'istop'         => ['attr' => '', 'close' => 0],
@@ -30,24 +30,26 @@ class Article extends TagLib
         
     ];
 
-    // public function __construct($tag)
+    // public function __construct($a)
     // {
-    //     $id = (int) input('id');        
+    //     $id = (int) input('id');
+    //     $this->id = $id;
     //     $page = input('page') ? (int) input('page') : 1;
     //     //parent::__construct();
     //     if(request()->action() == 'detail') {
     //         $article = new ArticleModel();
     //         $this->article = $article->getArtDetail($id);
-    //         //dump($this->article);
+    //        // dump($this->article);
     //     }
         
     // }
 
     public function tagId($tag): string
     {
-        $parseStr = $this->article['id'];
+        //dump($tag);
+       $parseStr = $this->article;
         //return $parseStr;
-        return '<?php echo "' . $parseStr . '"; ?>';
+        return '<?php echo "' . $parseStr['id'] . '"; ?>';
     }
 
     public function tagTitle(array $tag, string $content): string

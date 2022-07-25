@@ -126,7 +126,7 @@ class Slider extends AdminController
     public function uploadImg()
     {
       $uploads = new \app\common\lib\Uploads();
-      $upRes = $uploads->put('file','slider',1024,'image');
+      $upRes = $uploads->put('file','SYS_slider',1024,'image');
       $slires = $upRes->getData();
 
 		  if($slires['status'] == 0){
@@ -135,7 +135,7 @@ class Slider extends AdminController
 			} else {
 				$res = ['code'=>1,'msg'=>'上传错误'];
 			}
-		return json($res);
+		  return json($res);
     }
 
     /**

@@ -21,7 +21,7 @@
                   <select lay-verify="required" name="cate_id" lay-filter="column">
                     <option></option>
                     {volist name="cateList" id="cate"}
-                    <option value="{$cate.id}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
+                    <option value="{$cate.id}" {if($Request.param.cate == $cate.ename)} selected {/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
                     {/volist}
                   </select>
                 </div>

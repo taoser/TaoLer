@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-22 16:37:35
+ * @LastEditTime: 2022-07-24 11:06:14
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\admin\controller\Set.php
@@ -355,18 +355,27 @@ class Set extends AdminController
 	//上传logo
 	public function upload()
 	{
+		$param = Request::param('field');
         $uploads = new \app\common\lib\Uploads();
-        $upRes = $uploads->put('file','logo',2000,'image','uniqid');
+        $upRes = $uploads->put('file','SYS_logo',2000,'image');
         $logoJson = $upRes->getData();
 		if($logoJson['status'] == 0){
-			$result = Db::name('system')->where('id', 1)->cache('system')->update(['logo'=>$logoJson['url']]);
-			if($result){
-				$res = ['code'=>0,'msg'=>'上传logo成功'];
+			if($param == 'logo'){
+				$result = Db::name('system')->where('id', 1)->cache('system')->update(['logo'=>$logoJson['url']]);
 			} else {
-				$res = ['code'=>1,'msg'=>'上传错误'];
+				//移动端logo
+				$result = Db::name('system')->where('id', 1)->cache('system')->update(['m_logo'=>$logoJson['url']]);
 			}
-        }
-	return json($res);
+			
+			if($result){
+				$res = ['code'=>0,'msg'=>'更新logo成功'];
+			} else {
+				$res = ['code'=>-1,'msg'=>'上传成功，数据无须更新'];
+			}
+        } else {
+			$res = ['code'=>-1, 'msg'=>$logoJson['msg']];
+		}
+		return json($res);
 	}
 		
 }

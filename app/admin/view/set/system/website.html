@@ -43,13 +43,23 @@
 						</div>
 					  </div>
 					  <div class="layui-form-item">
-						<label class="layui-form-label">LOGO</label>
+						<label class="layui-form-label">Logo</label>
 						<div class="layui-input-block">
 						<span><img src="{$sysInfo.logo}" hight="40" width="50" ></span>
 						{if condition="checkRuleButton('set/upload')"}
-						<button type="button" class="layui-btn layui-btn-normal" id="logo-img">选择文件</button>
-						<button type="button" class="layui-btn" id="logo-upload-button">开始上传</button>
-						{else /}<button type="button" class="layui-btn layui-btn-normal layui-btn-disabled">选择文件</button>{/if}
+						<button type="button" class="layui-btn layui-btn-sm" id="logo-img">选择文件</button>
+						<button type="button" class="layui-btn layui-btn-sm" id="logo-upload-button">开始上传</button>
+						{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">选择文件</button>{/if}
+						</div>
+					  </div>
+					  <div class="layui-form-item">
+						<label class="layui-form-label">M-logo</label>
+						<div class="layui-input-block">
+						<span><img src="{$sysInfo.m_logo}" hight="40" width="50" ></span>
+						{if condition="checkRuleButton('set/upload')"}
+						<button type="button" class="layui-btn layui-btn-sm" id="m-logo-img">选择文件</button>
+						<button type="button" class="layui-btn layui-btn-sm" id="m-logo-upload-button">开始上传</button>
+						{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">选择文件</button>{/if}
 						</div>
 					  </div>
 					  <div class="layui-form-item">
@@ -426,12 +436,33 @@
 	  upload.render({
 		elem: '#logo-img'
 		,url: "{:url('set/upload')}"
-        ,data: {type:'image'}
+        ,data: {type:'image',field:'logo'}
 		,auto: false
 		,exts: 'jpg|png|gif|bmp|jpeg'
 		,size: 1000
 		//,multiple: true
 		,bindAction: '#logo-upload-button'
+		,done: function(res){
+		  if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
+			} else {
+				layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+			}
+		}
+	  });
+
+	  //移动端logo
+	  upload.render({
+		elem: '#m-logo-img'
+		,url: "{:url('set/upload')}"
+        ,data: {type:'image',field:'mlogo'}
+		,auto: false
+		,exts: 'jpg|png|gif|bmp|jpeg'
+		,size: 1000
+		//,multiple: true
+		,bindAction: '#m-logo-upload-button'
 		,done: function(res){
 		  if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000},function(){

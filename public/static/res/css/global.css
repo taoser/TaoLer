@@ -518,6 +518,12 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .wenda-user .user-img i{posation:absolute;right:20px;top:30px;width: 25px; height:25px; color:#fff; font-site:18px; border-radius: 100%;background-color:#FFB800;}
 .wenda-user .questions{height:30px;margin:20px 20px;}
 
+/*详情页-文章post*/
+.detail-zan{margin-top: 15px;}
+.detail-zan span{padding-right:5px; color:#999; cursor:pointer;}
+.detail-zan span:hover{color:#666;}
+.detail-zan span .icon-zan{font-size: 22px;}
+.detail-zan span img{height: 25px; border-radius: 100%;}
 
 
 /* 详情页的底部操作条 */

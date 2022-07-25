@@ -7,7 +7,7 @@ use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Cache;
 use think\facade\Config;
-use think\facade\Db;
+use Overtrue\Pinyin\Pinyin;
 
 class Article extends Model
 {
@@ -169,7 +169,7 @@ class Article extends Model
      */
     public function getArtHot(int $num)
     {
-        $artHot = $this::field('id,cate_id,title')
+        $artHot = $this::field('id,cate_id,title,create_time')
         ->with([ 'cate' => function($query){
                 $query->where('delete_time',0)->field('id,ename');
             }])
@@ -203,11 +203,13 @@ class Article extends Model
                     $query->where('delete_time',0)->field('id,catename,ename');
                 },
                 'user' => function($query){
-                    $query->field('id,name,nickname,user_img,area_id,vip,city');
+                    $query->field('id,name,nickname,user_img,area_id,vip,city')->withCount(['article','comments']);
                 }
-            ])->withCount(['comments'])
+            ])
+            ->withCount(['comments'])
             ->append(['url'])
-            ->find($id)->toArray();
+            ->find($id)
+            ->toArray();
             Cache::tag('tagArtDetail')->set('article_'.$id, $article, 3600);
         }
         return $article;
@@ -290,6 +292,80 @@ class Article extends Model
         ->toArray();
 
         return $userArtList;
+    }
+
+    // 获取搜索文章
+    public function getSearchKeyWord(string $keywords)
+    {
+        //全局查询条件
+        $map = []; //所有的查询条件封装到数组中
+        //条件1：
+        $map[] = ['status','=',1]; //这里等号不能省略
+
+        if(!empty($keywords)){
+            //条件2
+            $map[] = ['title','like','%'.$keywords.'%'];
+            $res = Article::where($map)
+            ->withCount('comments')
+            ->order('create_time','desc')
+            ->append(['url'])
+            ->paginate(10);
+        return $res;
+        }
+    }
+
+    // 热门标签
+    public function getHotTags()
+    {
+        $pinyin = new Pinyin();
+        $tags = $this->where(['status'=>1])->where('tags','<>','')->order('pv desc')->limit(100)->column('tags');
+        //转换为字符串
+		$tagStr = implode(",",$tags);
+		//转换为数组并去重
+		$tagArr = array_unique(explode(",",$tagStr));
+
+        $tagHot = [];
+        foreach($tagArr as $v) {
+            $tagHot[] = ['tag'=>$v,'url'=> (string) url('tag_list',['tag'=>$pinyin->permalink($v,'')])];
+        }
+        
+        return $tagHot;
+    }
+
+    // 查询包含tag标签的文章
+    public function getAllTags($tag)
+    {
+        $pinyin = new Pinyin();
+        $allTags = $this->field('id,title,is_hot,tags,cate_id,user_id,create_time,pv')->where(['status'=>1])->where('tags','<>','')
+        ->with([
+            'cate' => function($query){
+                $query->where('delete_time',0)->field('id,catename,ename');
+            },
+            'user' => function($query){
+                $query->field('id,name,nickname,user_img,area_id,vip');
+            }
+        ])->withCount(['comments'])
+        ->order('pv desc')->limit(100)->append(['url'])->select()->toArray();
+        //halt($tags);
+        $artTag = [];
+        foreach($allTags as $v) {
+            if(stripos($v['tags'],',') !== false){
+                $tagArr = explode(",",$v['tags']);
+                foreach($tagArr as $s) {
+                    $tagPinyin = $pinyin->permalink($s,'');
+                    if(stripos($tagPinyin, $tag) !== false) {
+                        $artTag[] = $v;
+                    }
+                }
+            } else {
+                $tagPinyin = $pinyin->permalink($v['tags'],'');
+                if(stripos($tagPinyin, $tag) !== false) {
+                    $artTag[] = $v;
+                }
+            }
+            
+        }
+        return $artTag;
     }
 
     // 获取url

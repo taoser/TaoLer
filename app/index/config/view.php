@@ -1,13 +1,4 @@
 <?php
-/*
- * @Author: TaoLer <alipay_tao@qq.com>
- * @Date: 2022-05-17 15:40:57
- * @LastEditTime: 2022-05-18 08:49:23
- * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\app\index\config\view.php
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
- */
 // +----------------------------------------------------------------------
 // | 模板设置
 // +----------------------------------------------------------------------
