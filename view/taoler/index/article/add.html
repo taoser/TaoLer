@@ -80,8 +80,8 @@
                   lay-verify="required"
                   placeholder="{:lang('please input the content')}"
                   class="layui-textarea fly-editor"
-                  style="height: 260px"
-                ></textarea>
+                  style="height: 260px">
+                </textarea>
               </div>
             </div>
             <div class="layui-form-item">
@@ -178,13 +178,6 @@
       upload = layui.upload,
       plyr = layui.plyr;
 
-    // 如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-    $(".layui-textarea").each(function () {
-      var othis = $(this),
-        html = othis.html();
-      othis.html(fly.content(html));
-    });
-
      // 改变标题颜色
     colorpicker.render({
       elem: "#color",
@@ -213,13 +206,14 @@
       },
     });
 
+    // 描述
+    getDesc();
+
     // 发布文章
     form.on("submit(article-add)", function (data) {
       var field = data.field;
       var numArr = new Array();
-      $(".layui-btn-container")
-        .children("button")
-        .each(function () {
+      $(".layui-btn-container").children("button").each(function () {
           numArr.push($(this).val()); //添加至数组
         });
       tags = numArr.lenth ? "" : numArr.join(",");
@@ -227,17 +221,7 @@
       $.ajax({
         type: "post",
         url: "{:url('article/add')}",
-        data: {
-          cate_id: field.cate_id,
-          title: field.title,
-          title_color: field.title_color,
-          user_id: field.user_id,
-          content: field.content,
-          upzip: field.upzip,
-          tags: tags,
-          description: field.description,
-          captcha: field.captcha,
-        },
+        data: field,
         dataType: "json",
         success: function (data) {
           if (data.code == 0) {
@@ -254,53 +238,16 @@
       return false;
     });
 
-    // 获取描述的内容
-    // $("#L_content111").bind('input propertychange', function(){
-    //   var content = $(this).val();
-    //   setTimeout(function(){
-    //         $.ajax({
-    //         type:"post",
-    //         url:"{:url('article/getDescription')}",
-    //         data:{"content":content},
-    //         daType:"json",
-    //         success:function (data){
-    //           if (data.code == 0) {
-    //             $('[name="description"]').val(data.data);
-    //           }
-    //         }
-    //       })
-    //     }, 5000)
-    //   return false;
-    // })
-
-    // 获取描述的内容 非实时获取，停止输入后获取
-    var flag = false;
-    var othis = $("#L_content");
-    othis.on("compositionstart", function () {
-      flag = true;
-    });
-    othis.on("compositionend", function () {
-      flag = false;
-      desc(othis.val());
-    });
-
-    // othis.on('input', function (event) {
-    //   // 忽略一切非直接输入，不做逻辑处理
-    //   if (!flag) todo(event.target.value);
-    // });
-
-    function desc(content) {
-      $.ajax({
-        type: "post",
-        url: "{:url('article/getDescription')}",
-        data: { content: content },
-        daType: "json",
-        success: function (data) {
-          if (data.code == 0) {
-            $('[name="description"]').val(data.data);
-          }
-        },
-      });
+   // 从详情页自动调用端口过滤，获取描述信息
+    function getDesc() {
+      $("#L_content").on('blur', function() {
+        var content = $(this).val();
+					$.post("{:url('article/getDescription')}", { content: content }, function(data){
+            if (data.code == 0) {
+              $('[name="description"]').val(data.data);
+            }
+          });
+				});
     }
 
     // 手动添加tags

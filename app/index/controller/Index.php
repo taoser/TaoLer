@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-21 12:09:17
+ * @LastEditTime: 2022-07-26 15:16:26
  * @LastEditors: TaoLer
  * @Description: 首页优化版
- * @FilePath: \TaoLer\app\index\controller\Index.php
+ * @FilePath: \github\TaoLer\app\index\controller\Index.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 namespace app\index\controller;
@@ -30,7 +30,7 @@ class Index extends BaseController
     public function index()
     {
 		$types = input('type');
-		
+
         $slider = new Slider();
 		//幻灯
         $sliders = Request::isMobile() ? $slider->getSliderList(12) : $slider->getSliderList(1);

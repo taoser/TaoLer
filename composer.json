@@ -33,7 +33,10 @@
         "topthink/think-migration": "^3.0",
         "workerman/workerman": "^4.0",
         "endroid/qr-code": "^4.4",
-        "overtrue/pinyin": "^4.0"
+        "overtrue/pinyin": "^4.0",
+        "yansongda/pay": "~3.1.0",
+        "guzzlehttp/guzzle": "7.0",
+        "php-di/php-di": "^6.4"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

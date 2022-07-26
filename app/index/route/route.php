@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-25 10:51:53
+ * @LastEditTime: 2022-07-26 13:58:17
  * @LastEditors: TaoLer
  * @Description: 前端路由设置
- * @FilePath: \TaoLer\app\index\route\route.php
+ * @FilePath: \github\TaoLer\app\index\route\route.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 use think\facade\Route;
@@ -41,12 +41,12 @@ Route::group(function () {
 
 // 登录注册
 Route::group(function () {
-	Route::rule('login','login/index');
-	Route::rule('forget','login/forget');
+	Route::rule('login','login/index')->name('user_login');
+	Route::rule('forget','login/forget')->name('user_forget');
 	Route::rule('postcode','login/postcode');
 	Route::rule('sentemailcode','login/sentMailCode');
 	Route::rule('respass','login/respass');
-	Route::rule('reg$','Login/reg')
+	Route::rule('reg$','Login/reg')->name('user_reg')
 		->middleware(\app\middleware\CheckRegister::class);
 });
 
@@ -54,7 +54,7 @@ Route::group(function () {
 
 // article
 Route::group(function () use($detail_as,$cate_as){
-	Route::rule('add/[:cate]','Article/add');
+	Route::rule('add/[:cate]','Article/add')->name('add_article');
 	Route::rule('delete/[:id]','Article/delete');
 	Route::rule('tags','Article/tags')->allowCrossDomain();
 	Route::rule('edit/[:id]','Article/edit');

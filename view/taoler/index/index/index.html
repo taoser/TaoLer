@@ -7,12 +7,11 @@
 {block name="ogdescription"}<meta property="og:description" content="{$sysInfo.descript}" />{/block}
 {block name="ogimage"}<meta property="og:image" content="{$Request.domain}{$sysInfo.logo}" />{/block}
 {block name="meta"}{/block}
-{block name="column"}{include file="public/column" /}{/block}
 
+{block name="column"}{include file="public/column" /}{/block}
 {block name="content"}
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
-	
     <div class="layui-col-md8">
 		<!--首页幻灯-->
 		{if showSlider(1)}
@@ -46,6 +45,7 @@
 			</div>
 		  </div>
     </div>
+	{//右栏}
     <div class="layui-col-md4">
 		{:hook('signhook', ['id'=>1])}
 
@@ -110,7 +110,6 @@
 		</div>
 		{/if}
     </div>
-	
   </div>
 </div>
 {include file="public/menu" /}
@@ -118,14 +117,14 @@
 
 {block name="script"}
 <script>
-$('#friend-link').on('click', function(){
-	layer.open({
-		title: '申请友链',
-		content: '发送邮件至：{$adminEmail} ',
-		yes: function(index, layero){
-			layer.close(index);
-		}
-	});
+	$('#friend-link').on('click', function(){
+		layer.open({
+			title: '申请友链',
+			content: '发送邮件至：{$adminEmail} ',
+			yes: function(index, layero){
+				layer.close(index);
+			}
+		});
 	return false;
 });
 </script>

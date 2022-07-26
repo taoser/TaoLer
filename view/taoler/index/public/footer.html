@@ -8,12 +8,13 @@
     {/volist}
     <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">{$sysInfo.icp}</a>
   </div>
+  {//websocket统计脚本}
+  <div style="text-align:center;color:#999;font-size:14px;padding:0 0 10px;" id="online_count"></div>
 </div>
 {:hook('showLeftLayer')}
 <script>
     var $ = layui.jquery;
-    var login       = "{:url('Login/index')}",
-      articleAdd  = "{:url('Article/add',['cate'=>$Request.param.ename])}",
+    var articleAdd  = "{:url('add_article',['cate'=>$Request.param.ename])}",
       uploads     = "{:url('article/uploads')}",
       langUrl     = "{:url('index/language')}",
       replyNum    = "{:lang('replies')}",

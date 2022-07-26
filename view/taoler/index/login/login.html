@@ -1,10 +1,10 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-06-22 14:21:32
+ * @LastEditTime: 2022-07-26 13:11:56
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\view\taoler\index\login\login.html
+ * @FilePath: \github\TaoLer\view\taoler\index\login\login.html
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
 -->
 {extend name="public/base" /}
@@ -17,7 +17,7 @@
     <div class="layui-tab layui-tab-brief" lay-filter="user">
       <ul class="layui-tab-title">
         <li class="layui-this">{:lang('login')}</li>
-        <li><a href="{$Request.domain}{:url('login/reg')}">{:lang('sign up')}</a></li>
+        <li><a href="{:url('user_reg')}">{:lang('sign up')}</a></li>
       </ul>
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
         {if config('taoler.config.is_login') == 1}
@@ -53,7 +53,7 @@
               <div class="layui-form-item">
                 <button type="submit" name="submit" class="layui-btn" lay-filter="user" lay-submit id="login">{:lang('login now')}</button>
                 <span style="padding-left:20px;">
-                  <a href="{$Request.domain}{:url('login/forget')}">{:lang('forget password')}？</a>
+                  <a href="{$Request.domain}{:url('user_forget')}">{:lang('forget password')}？</a>
                 </span>
               </div>
               {:hook('socialhook')}

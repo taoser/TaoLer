@@ -1,53 +1,54 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-07-02 11:25:01
+ * @LastEditTime: 2022-07-26 13:43:10
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\view\taoler\index\public\base.html
+ * @FilePath: \github\TaoLer\view\taoler\index\public\base.html
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
 -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="renderer" content="webkit">
-  <meta name="force-rendering" content="webkit">
+  <meta name="applicable-device" content="pc,mobile" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="renderer" content="webkit" />
+  <meta name="force-rendering" content="webkit" />
+  <!-- seo -->
   <title>{block name="title"}标题{/block}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="keywords" content="{block name='keywords'}关键词{/block}">
-  <meta name="description" content="{block name='description'}描述{/block}">
+  <meta name="keywords" content="{block name='keywords'}关键词{/block}" />
+  <meta name="description" content="{block name='description'}描述{/block}" />
+  <meta name="Copyright" content="{$sysInfo.webname}" />
   <meta property="og:type" content="article">
-  <meta property="og:site_name" content="{$sysInfo.webname}" />
-  <meta property="og:url" content="{$Request.domain}{$Request.url}">
   {block name="ogtitle"} {/block}
   {block name="ogdescription"} {/block}
+  <meta property="og:url" content="{$Request.domain}{$Request.url}" />
+  <meta property="og:site_name" content="{$sysInfo.webname}" />
   {block name="ogimage"} {/block}
   {block name="meta"}{/block}
-  <meta name="applicable-device" content="pc,mobile">
+  <!-- 样式 -->
   <link rel="canonical" href="{$Request.domain}{$Request.url}">
   <link rel="stylesheet" href="{$Request.domain}/static/layui/css/layui.css"  charset="utf-8">
   <link rel="stylesheet" href="{$Request.domain}/static/res/css/global.css" charset="utf-8">
   {block name="link"}{/block}
   <style>  
-	/*5+ 引擎环境下自动隐藏无关元素*/  
-	.html5plus .html5plus-hide {  
-		display: none  
-	}
-	{if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") !== false}
+  /*5+ 引擎环境下自动隐藏无关元素,适配App*/  
+  .html5plus .html5plus-hide {  
+    display: none  
+  }
+  {if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") !== false}
   html body{margin-top: 1px;}
-	{/if}	
+  {/if}	
   </style>
   <script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
   <script src="{$Request.domain}/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body >
 <script>  
-	if(navigator.userAgent.indexOf("Html5Plus") > -1) {  
-		document.body.classList.add("html5plus");  
-	}  
+	if(navigator.userAgent.indexOf("Html5Plus") > -1) {document.body.classList.add("html5plus")}  
 </script>
 {if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") === false}
 {include file="public/header" /}
@@ -55,19 +56,19 @@
 {block name="column"}导航{/block}
 {block name="content"}内容{/block}
 {include file="public/footer" /}
-
+{include file="public/js" /}
 <script>
-  layui.cache.page = '{$jspage}';
+  layui.cache.page = "{$jspage}";
   layui.cache.user = {
     username: "{$user.name ?? '游客'}"
     ,uid: "{$user.id ?? -1}"
     ,avatar: '/static/res/images/avatar/00.jpg'
-    ,experience: "{$user.point ?? ''}"
+    ,experience: "{$user.point ?? 0}"
     ,sex: "{$user.sex ? '女':'男'}"
   };
   layui.config({
     version: "3.0.0"
-    ,base: '{$Request.domain}/static/res/mods/'
+    ,base: "{$Request.domain}/static/res/mods/"
   }).extend({
     fly: 'index'
   }).use('fly');

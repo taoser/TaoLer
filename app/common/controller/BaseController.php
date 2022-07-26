@@ -2,17 +2,17 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-25 18:31:40
+ * @LastEditTime: 2022-07-26 15:17:08
  * @LastEditors: TaoLer
  * @Description: 前端基础控制器设置
- * @FilePath: \TaoLer\app\common\controller\BaseController.php
+ * @FilePath: \github\TaoLer\app\common\controller\BaseController.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 declare (strict_types = 1);
 
 namespace app\common\controller;
 
-use think\App;
+use think\facade\Request;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
@@ -114,7 +114,8 @@ class BaseController extends BaseCtrl
 			'headlinks'	=> $head_links,
 			'footlinks'	=> $foot_links,
 			'flinks'	=> $friend_links,
-			'hotTag'	=> $hotTag
+			'hotTag'	=> $hotTag,
+			'host'		=> Request::domain() . '/'
 		];
 		
         View::assign($assign);

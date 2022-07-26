@@ -17,6 +17,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   ,device = layui.device()
   ,DISABLED = 'layui-btn-disabled';
   var uid = layui.cache.user.uid;
+  var login = $('.fly-nav-user').attr('userlogin');
 
   //阻止IE7以下访问
   if(device.ie && device.ie < 8){

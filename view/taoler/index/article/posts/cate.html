@@ -10,7 +10,7 @@
 {block name="content"}
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
-    <div class="layui-col-md9">
+    <div class="layui-col-md8">
       <div class="fly-panel" style="margin-bottom: 0;">
         <ul class="fly-list">
 		    {volist name="artList['data']" id="art"}
@@ -54,7 +54,7 @@
 		    <div style="text-align: center" id="pages"></div>
       </div>
     </div>
-    <div class="layui-col-md3">
+    <div class="layui-col-md4">
       {if showSlider(3)}
         <div class="fly-panel">
             <div class="fly-panel" style="padding: 5px 0; text-align: center;">
@@ -74,15 +74,16 @@
       </dd>
       {/volist} 
     </dl>
-    {//热门标签}
+		{//热门标签}
 		<div class="fly-panel layui-hide-xs">
-		<div class="fly-panel-title">热门标签</div>
-		<div class="fly-panel-main">
-			<ul>
-				{volist name="hotTag" id="vo"}
-				<li style="padding:10px;display:inline-block;height: 15px;"><a href="{$Request.domain}/{$vo.url}">{$vo.tag}</a></li>
-				{/volist}
-			</ul>
+			<div class="fly-panel-title">热门标签</div>
+			<div class="fly-panel-main">
+				<ul>
+					{volist name="hotTag" id="vo"}
+					<li style="padding:10px;display:inline-block;height: 15px;"><a href="{$Request.domain}{$vo.url}">{$vo.tag}</a></li>
+					{/volist}
+				</ul>
+			</div>
 		</div>
     {if showSlider(6)}
 		<div class="fly-panel">

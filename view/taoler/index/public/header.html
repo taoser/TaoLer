@@ -1,13 +1,11 @@
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
-    <a class="fly-logo layui-hide-xs" href="{$Request.domain}"><img src="{$Request.domain}{$sysInfo.logo}" alt="taoler" width="135" height="37"></a>
+    <a class="fly-logo layui-hide-xs" href="{$Request.domain}"><img src="{$Request.domain}{$sysInfo.logo}" alt="{$sysInfo.webname}logo" width="135" height="37"></a>
 	<!--头部伸缩侧边栏-->
-	<div class="site-tree-mobile-top layui-hide">
-	  <i class="layui-icon layui-icon-spread-left"></i>
-	</div>
+	<div class="site-tree-mobile-top layui-hide"><i class="layui-icon layui-icon-spread-left"></i></div>
 	<div class="site-mobile-shade-top"></div>
 	{//移动端LOGO}
-	<a class="fly-logo layui-hide-md layui-hide-sm" href="{$Request.domain}" style="padding-left:50%; margin-left:-60px;"><img src="{$Request.domain}{$sysInfo.m_logo}" style="height:37px;"></a>
+	<a class="fly-logo layui-hide-md layui-hide-sm" href="{$Request.domain}" style="padding-left:50%; margin-left:-60px;"><img src="{$Request.domain}{$sysInfo.m_logo}" style="height:37px;" alt="logo"></a>
     <ul class="layui-nav fly-nav layui-hide-xs">
 		{volist name="headlinks" id="vo"}
 		<li class="layui-nav-item">
@@ -15,52 +13,37 @@
 		</li>
 		{/volist}
     </ul>
-    
-    <ul class="layui-nav fly-nav-user" msg-url="{:url('message/nums')}" readMsg-url="{:url('Message/read')}">
+    {//头部右栏}
+    <ul class="layui-nav fly-nav-user" msg-url="{:url('message/nums')}" readMsg-url="{:url('Message/read')}" userlogin="{:url('user_login')}">
 	  {if session('?user_id')}
-		{if($Request.action=='user')}
-		<li class="layui-nav-item">
-		  	<a href="{$Request.domain}">{:lang('home page')}</a>
-		</li>
+	  <!-- 登录 -->
+		{if ($Request.action=='user')}
+		<li class="layui-nav-item"><a href="{$Request.domain}">{:lang('home page')}</a></li>
 		{/if}
 		<li class="layui-nav-item">
-			<a class="fly-nav-avatar" href="javascript:;">
-				<cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}{$user.user_img}">
-			</a>
+			<a class="fly-nav-avatar" href="javascript:;"><cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}{$user.user_img}"></a>
 			<dl class="layui-nav-child">
 				<dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
 				<dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>
 				<hr>
 				<dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
-				<dd><a href="{:url('user/home',['id'=>session('user_id')])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
+				<dd><a href="{:url('user/home',['id'=>$user.id])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
 				<hr style="margin: 5px 0;">
 				<dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
 			</dl>
 		</li>
 	  {else /}
 	   <!-- 未登入的状态 -->
-		  <li class="layui-nav-item">
-			<a class="iconfont icon-touxiang" href="{$Request.domain}{:url('login/index')}"></a>
-		  </li>
-		  <li class="layui-nav-item layui-hide-xs">
-			<a href="{$Request.domain}{:url('login/index')}">{:lang('login')}</a>
-		  </li>
-		  <li class="layui-nav-item layui-hide-xs">
-			<a href="{$Request.domain}{:url('login/reg')}">{:lang('register')}</a>
-		  </li>
-		  <li class="layui-nav-item layui-hide-xs" >
-			<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
-			<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >{:lang('chinese')}</option>
-			<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >{:lang('tChinese')}</option>
-			<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >{:lang('english')}</option>
-			</select>
-		  </li>	
-		  <!--li class="layui-nav-item layui-hide-xs">
-			<a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" title="QQ登入" class="iconfont icon-qq"></a>
-		  </li>
-		  <li class="layui-nav-item layui-hide-xs">
-			<a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" title="微博登入" class="iconfont icon-weibo"></a>
-		  </li-->
+		<li class="layui-nav-item"><a class="iconfont icon-touxiang" href="{:url('user_login')}"></a></li>
+		<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_login')}">{:lang('login')}</a></li>
+		<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_reg')}">{:lang('register')}</a></li>
+		<li class="layui-nav-item layui-hide-xs" >
+		<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
+			<option value="cn" {if cookie('think_lang') == 'zh-cn'} selected {/if} >{:lang('chinese')}</option>
+			<option value="tw" {if cookie('think_lang') == 'zh-tw'} selected {/if} >{:lang('tChinese')}</option>
+			<option value="en" {if cookie('think_lang') == 'en-us'} selected {/if} >{:lang('english')}</option>
+		</select>
+		</li>
 	  {/if}
     </ul>
   </div>

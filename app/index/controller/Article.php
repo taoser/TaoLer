@@ -62,7 +62,6 @@ class Article extends BaseController
 	//文章详情页
     public function detail()
     {
-		
 		$id = input('id');
 		$artStu = Db::name('article')->field('id')->where(['status'=>1,'delete_time'=>0])->find($id);
 		if(is_null($artStu)){
