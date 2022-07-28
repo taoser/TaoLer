@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-19 10:33:02
+ * @LastEditTime: 2022-07-27 21:42:34
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\app\common\model\Comment.php
+ * @FilePath: \github\TaoLer\app\common\model\Comment.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 namespace app\common\model;
@@ -49,18 +49,23 @@ class Comment extends Model
     {
         // $user = Cache::get('user_reply');
         // if(empty($user)){
-            $user = User::field('id,user_img,name,nickname')
-            ->withCount(['comments'=> function($query) {
-                $query->where(['status'=>1]);
-            }])
-            ->order(['comments_count'=>'desc','last_login_time'=>'desc'])
-            ->limit($num)
-            ->select()
-            ->toArray();
+            try {
+                $user = User::field('id,user_img,name,nickname')
+                ->withCount(['comments'=> function($query) {
+                    $query->where(['status'=>1]);
+                }])
+                ->order(['comments_count'=>'desc','last_login_time'=>'desc'])
+                ->limit($num)
+                ->select()
+                ->toArray();
+            } catch(\Exception $e) {
+                return json(['status'=>-1,'msg'=>$e->getMessage()]);
+            }
+            
         //     Cache::set('user_reply',$user,180);
         // }
 
-        if(!empty($user)) {
+        if(count($user)) {
             $res['status'] = 0;
             $res['data'] = array();
             foreach ($user as $key=>$v) {
@@ -76,7 +81,7 @@ class Comment extends Model
                 $res['data'][] = $u;
             }
         } else {
-            $res = ['status' => -1, 'msg' =>'no ok'];
+            $res = ['status' => 0, 'msg' =>'no reply'];
         }
         return json($res);
     }

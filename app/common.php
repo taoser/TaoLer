@@ -100,6 +100,8 @@ function getCateDesc($ename)
 //过滤文章摘要
 function getArtContent($content)
 {
+    //过滤html标签
+    $content = strip_tags($content);
     // 过滤音视频图片
     $content = preg_replace('/(?:img|audio|video)(\(\S+\))?\[\S+\]/','',$content);
     $content = preg_replace('/\s*/','',$content);

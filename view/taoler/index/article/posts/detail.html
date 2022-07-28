@@ -10,7 +10,10 @@
 <meta property="bytedance:lrDate_time" content="{$lrDate_time|date='c'}" />
 <meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
 {/block}
-{block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
+{block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">
+<link rel="stylesheet" type="text/css" id="mce-u0" href="http://www.tp6.com/addons/taonyeditor/tinymce/skins/ui/oxide/content.min.css">
+<link rel="stylesheet" type="text/css" id="mce-u1" href="http://www.tp6.com/addons/taonyeditor/tinymce/skins/content/default/content.min.css">
+{/block}
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
 <div class="layui-container">
@@ -51,7 +54,7 @@
         </div>
         <hr>
         {// 内容}
-        <div class="detail-body photos" id="content">{$article.content}</div>
+        <div class="detail-body photos mce-content-body" id="content">{$article.content|raw}</div>
         <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
           <div style="margin-top: 15px">
             <h2>关键词</h2>
@@ -95,7 +98,7 @@
               <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span>・<span>{$vo.user.city}</span></div>
 			        {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
-            <div class="detail-body jieda-body photos">{$vo.content}</div>
+            <div class="detail-body jieda-body photos">{$vo.content|raw}</div>
             <div class="jieda-reply">
               <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
                 <i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
@@ -226,6 +229,7 @@
 {include file="public/menu" /}
 {/block}
 {block name="script"}
+{:hook('taonyeditor')}
 <script>
 var collectionFind = "{:url('Collection/find')}",
     collection = "{:url('collection/')}",
@@ -249,7 +253,18 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
 	,uid = layui.cache.user.uid
 	,laypage = layui.laypage;
   var id = "{$article.id}";
-  
+
+  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+  var taonystatus = "{:hook('taonystatus')}";
+  // 编辑器插件启用状态
+  var isShow = taonystatus ? false : true;
+  if(isShow) {
+    $('.detail-body').each(function(){
+      var othis = $(this), html = othis.html();
+      othis.html(fly.content(html));
+    });
+  }
+
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){
     var othis = $(this), html = othis.html();
@@ -365,18 +380,18 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
         }
       });
     });
-	
-	//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  $('.detail-body').each(function(){
-    var othis = $(this), html = othis.html();
-    othis.html(fly.content(html));
-  });
+
   //加载播放器
   plyr.setup();
 
 });
 </script>
 
+<div id="outerdiv" style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:2;width:100%;height:100%;display:none;">
+  <div id="innerdiv" style="position:absolute;">
+    <img id="bigimg" style="border:5px solid #fff;" src="" />
+  </div>
+</div>
 <script type="text/javascript">
   // 点击图片放大
  $(function(){ 
@@ -427,11 +442,6 @@ layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
   }
 </script>
 
-<div id="outerdiv" style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:2;width:100%;height:100%;display:none;">
-  <div id="innerdiv" style="position:absolute;">
-    <img id="bigimg" style="border:5px solid #fff;" src="" />
-  </div>
-</div>
 {:hook('markdownhook')}
 
 <script>

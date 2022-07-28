@@ -235,7 +235,7 @@ class Article extends BaseController
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
 
             $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'tiny_content', 'content', 'upzip', 'tags', 'description', 'captcha']);
-			
+
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
 			{				
@@ -656,7 +656,10 @@ class Article extends BaseController
 				$pats = '/(?<!\[)'.$key.'(?!\])/';
 				//preg_match($pats,$content,$arr);
 				//halt($arr[0]);
-				$content = preg_replace($pats,'a('.$value.')['.$key.']',$content,2);
+				// 开启和关闭编辑器使用不同的链接方式
+				$rpes = hook('taonystatus') ? '<a href="'.$value.'" target="_blank" title="'.$key.'" style="font-weight: bold;color:#31BDEC">'.$key.'</a>' : 'a('.$value.')['.$key.']';
+
+				$content = preg_replace($pats,$rpes,$content,2);
 			}
 		}
 		

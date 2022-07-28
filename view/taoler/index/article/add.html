@@ -169,6 +169,7 @@
 {include file="public/menu" /} {/block}
 
 {block name="script"}
+{:hook('taonyeditor')}
 <script>
   layui.use(["fly", "form", "colorpicker", "upload", "plyr"], function () {
     var $ = layui.jquery,
@@ -206,9 +207,6 @@
       },
     });
 
-    // 描述
-    getDesc();
-
     // 发布文章
     form.on("submit(article-add)", function (data) {
       var field = data.field;
@@ -239,16 +237,14 @@
     });
 
    // 从详情页自动调用端口过滤，获取描述信息
-    function getDesc() {
-      $("#L_content").on('blur', function() {
-        var content = $(this).val();
-					$.post("{:url('article/getDescription')}", { content: content }, function(data){
-            if (data.code == 0) {
-              $('[name="description"]').val(data.data);
-            }
-          });
-				});
-    }
+   $("#L_content").mouseleave(function() {
+    var content = $(this).val().replace(/[\r\n]/g,"").replace(/\n/g, '').replace(/\s/g, '').replace(/\t/g, '');
+      $.post("{:url('article/getDescription')}", { content: content }, function(data){
+        if (data.code == 0) {
+          $('[name="description"]').val(data.data);
+        }
+      });
+    });
 
     // 手动添加tags
     $("#article-tags-button").on("click", function () {
@@ -355,4 +351,5 @@
     plyr.setup();
   });
 </script>
+
 {/block}

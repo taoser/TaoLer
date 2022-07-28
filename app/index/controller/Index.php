@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-26 15:16:26
+ * @LastEditTime: 2022-07-27 09:14:12
  * @LastEditors: TaoLer
  * @Description: 首页优化版
  * @FilePath: \github\TaoLer\app\index\controller\Index.php

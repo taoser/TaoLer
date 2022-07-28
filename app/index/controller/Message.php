@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-19 16:45:37
+ * @LastEditTime: 2022-07-27 21:29:43
  * @LastEditors: TaoLer
  * @Description: 优化版
- * @FilePath: \TaoLer\app\index\controller\Message.php
+ * @FilePath: \github\TaoLer\app\index\controller\Message.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 namespace app\index\controller;
@@ -23,13 +23,12 @@ class Message extends BaseController
 	//消息数目
 	public function nums()
 	{
-		$msg = Db::name('message_to')->where(['receve_id'=>$this->uid,'is_read'=>0,'delete_time'=>0])->select();
-
-		$count = $msg->count();
-		if($count){
-			$res = ['status' =>0,'count' => $count, 'msg' => 'nums'];
+		$messgeto = new MessageTo();
+		$num = $messgeto->getMsgNum($this->uid);
+		if(!is_null($num)){
+			$res = ['status' =>0,'count' => $num, 'msg' => 'ok'];
 		} else {
-			$res = ['status' =>0,'count' => 0, 'msg' => ''];
+			$res = ['status' =>-1,'count' => 0, 'msg' => 'message error'];
 		}
         return json($res);
 	}
@@ -37,8 +36,7 @@ class Message extends BaseController
 	//消息查询
 	public function find()
 	{
-		$uid = Session::get('user_id');
-		$msg = MessageApi::receveMsg($uid);
+		$msg = MessageApi::receveMsg($this->uid);
 		$count = $msg->count();
 		$res = [];
 		if($count){
@@ -48,7 +46,7 @@ class Message extends BaseController
 			$res['rows'][] = $data;
 			}
 		} else {
-			$res = ['status'=>0,'msg'=>'','rows'=>''];;
+			$res = ['status'=>-1,'msg'=>'message find error','rows'=>''];;
 		} 
 		//var_dump($res);
 		return json($res);
