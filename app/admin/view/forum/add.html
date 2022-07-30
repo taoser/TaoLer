@@ -1,0 +1,291 @@
+{extend name="public/base" /}
+
+{block name="body"}
+
+    <div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-addforum" id="layuiadmin-form-addforum">
+      <div class="layui-tab layui-tab-brief" lay-filter="user">
+        <div class="layui-tab-content" id="LAY_ucm" style="padding: 20px 0">
+          <div class="layui-tab-item layui-show">
+
+            <div class="layui-row layui-col-space15 layui-form-item">
+              <div class="layui-col-md3">
+                <label class="layui-form-label">{:lang('special column')}</label>
+                <div class="layui-input-block">
+                  <select lay-verify="required" name="cate_id" lay-filter="column">
+                    <option></option>
+                    {volist name="cateList" id="cate"}
+                    <option value="{$cate.id}" {if($Request.param.cate == $cate.ename)} selected {/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
+                    {/volist}
+                  </select>
+                </div>
+              </div>
+              <div class="layui-col-md8">
+                <label for="L_title" class="layui-form-label">{:lang('title')}</label>
+                <div class="layui-input-block">
+                  <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;" value=""/>
+                  <input type="hidden" id="L_title_color" name="title_color" autocomplete="off" class="layui-input" />
+                  <div class="layui-input bdsug layui-hide">
+                    <ul class="wordlist">
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="layui-col-md1">
+                <div id="color"></div>
+              </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+              <div class="layui-input-block">
+                <textarea
+                  id="L_content"
+                  name="content"
+                  required
+                  lay-verify="required"
+                  placeholder="{:lang('please input the content')}"
+                  class="layui-textarea fly-editor"
+                  style="height: 260px">
+                </textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-inline">
+                <label class="layui-form-label">{:lang('enclosure')}</label>
+                <div class="layui-input-inline" style="width: 190px">
+                  <input type="text" class="layui-input" name="upzip" value="" placeholder="zip,image文件" title="上传附件" />
+                </div>
+                <button type="button" class="layui-btn" id="zip-button"><i class="layui-icon"></i>{:lang('uploads')}</button>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">{:lang('描述')}</label>
+              <div class="layui-input-block">
+                <textarea name="description" class="layui-textarea" placeholder="SEO描述"></textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-inline">
+                <label class="layui-form-label">{:lang('add tags')}</label>
+                <div class="layui-input-inline" style="width: 190px">
+                  <input type="text" class="layui-input" name="tags" value="" placeholder="多个用空格隔开" title="添加标签" />
+                </div>
+                <button type="button" class="layui-btn" id="article-tags-button">{:lang('add')}</button>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-btn-container"></div>
+            </div>
+
+            <div class="layui-form-item layui-hide">
+              <button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="article-add">{:lang('post now')}</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+{/block}
+{block name="js"}
+<script src="/static/jquery-3.6.0.min.js"></script>
+<script src="/addons/taonyeditor/tinymce/tinymce.min.js"></script>
+<script src="/addons/taonyeditor/tinymce/tinymce-jquery.min.js"></script>
+<script>
+    //定义选择器
+    var mytextareaid = 'textarea#L_content';
+    var imagePrependUrl = "{$domain}";
+    //定义文件上传接口接口
+    var taonyUploadUrl = "{:url('forum/uploads')}",
+    taonyUploadImgage = "{:url('forum/uploads')}?type=image",
+    taonyUploadVideo = "{:url('forum/uploads')}?type=video";
+    taonyUploadZip = "{:url('forum/uploads')}?type=zip";
+    taonyUploadAudio = "{:url('forum/uploads')}?type=audio";
+    $(mytextareaid).removeClass();
+</script>
+<script src="/addons/taonyeditor/js/taonyeditor.js"></script>
+
+<script>
+layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(["form", "colorpicker", "upload", 'editor'], function () {
+    var $ = layui.jquery,
+      form = layui.form,
+      colorpicker = layui.colorpicker,
+      upload = layui.upload;
+
+      var editor = layui.editor;
+
+      // 从详情页自动调用端口过滤，获取描述信息
+      tinymce.get('L_content').on('mouseleave', function() {
+          var content = tinymce.get('L_content').getContent({format: 'text'});
+          content = content.replace(/[\r\n]/g,"").replace(/\n/g, '').replace(/\s/g, '').replace(/\t/g, '');
+          if(content.length >200) {
+              content = content.substring(0,200);
+          }
+          // var test = tinymce.activeEditor.getContent({format: 'text'});
+          $('[name="description"]').val(content);
+      });
+
+
+     // 改变标题颜色
+    colorpicker.render({
+      elem: "#color",
+      color: "#393d49",
+      predefine: true, // 开启预定义颜色
+      done: function (color) {
+        //譬如你可以在回调中把得到的 color 赋值给表单
+        $("#L_title_color").val(color);
+        $("#L_title").css("color", color);
+      },
+    });
+
+    //上传附件
+    upload.render({
+      elem: "#zip-button",
+      url: "{:url('forum/uploads')}", //改成您自己的上传接口
+      data: { type: "zip" },
+      accept: "file", //普通文件
+      done: function (res) {
+        if (res.status == 0) {
+          $('input[name="upzip"]').val(res.url);
+          layer.msg("上传成功");
+        } else {
+          layer.msg(res.msg);
+        }
+      },
+    });
+
+    // 发布文章
+    // form.on("submit(article-add)", function (data) {
+    //   var field = data.field;
+    //   var numArr = new Array();
+    //   $(".layui-btn-container").children("button").each(function () {
+    //       numArr.push($(this).val()); //添加至数组
+    //     });
+    //   tags = numArr.lenth ? "" : numArr.join(",");
+    //   var index = layer.load(1);
+    //   $.ajax({
+    //     type: "post",
+    //     url: "{:url('Forum/add')}",
+    //     data: field,
+    //     dataType: "json",
+    //     success: function (data) {
+    //       if (data.code == 0) {
+    //         layer.msg(data.msg, { icon: 6, time: 2000 }, function () {
+    //           location.href = data.url;
+    //         });
+    //       } else {
+    //         layer.open({ title: "发布失败", content: data.msg, icon: 5, anim: 6 });
+    //       }
+    //       layer.close(index);
+    //     },
+    //   });
+    //   return false;
+    // });
+
+
+    // 手动添加tags
+    $("#article-tags-button").on("click", function () {
+      var tags = $("input[name='tags']").val();
+      var flag = "off";
+      getTags(tags, flag);
+    });
+
+    // 通过接口自动获取tag的内容
+    var conf = "{:empty(config('taoler.baidu.client_id'))}";
+    if (conf !== "1") {
+      $("#L_title").on("blur", function () {
+        var title = $(this).val();
+        var flag = "on";
+        // 清空上次生成的tag button
+        $(".layui-btn-container").children("button").each(function () {
+            $(this).remove();
+          });
+        getTags(title, flag);
+      });
+    }
+
+    // 百度词条
+    var baidu_title_switch = "{:config('taoler.config.baidu_title_switch')}";
+    if(baidu_title_switch == 1) {
+      $("#L_title").bind('input propertychange',function () {
+          var title = $(this).val();
+          var str = '';
+          if(title.length > 0 ) {
+            $.post("{:url('forum/getWordList')}",{title:title},function(res){
+              // 动态生成ur>li内容
+              if (res.code == 0) {
+                // 显示动态框
+                $(".bdsug").removeClass('layui-hide');
+                for (var i = 0; i < res.data.length; i++) {
+                  //str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q.replace(title,'') + '</b></li>';
+                  str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q + '</b></li>';
+                }
+                // 清空ul并追加li
+                $('.wordlist').empty().append(str);
+                // 点击李获取li值并复制给#L_title input的value
+                $(".bdsug li").on('click',function(){
+                  var word = $(this).attr('data-key');
+                  var words = title + '(' + word + ')';
+                  $("#L_title").val(words);
+                  // 关闭动态框
+                  $(".bdsug").addClass('layui-hide');
+                });
+              } else {
+                $(".bdsug").addClass('layui-hide');
+              }
+            });
+          } else {
+            $(".bdsug").addClass('layui-hide');
+          }
+      });
+    }  
+
+    // 添加关键词button
+    function getTags(tags, flag) {
+      if (tags == "") {
+        layer.msg("tag不能为空");
+        return false;
+      }
+
+      //把得到的tags放进数组
+      var numArr = new Array();
+      $(".layui-btn-container")
+        .children("button")
+        .each(function () {
+          numArr.push($(this).val()); //添加至数组
+        });
+
+      $.ajax({
+        type: "post",
+        url: "{:url('Forum/tagWord')}",
+        data: { tags: tags, flag: flag },
+        daType: "json",
+        success: function (data) {
+          if (data.code == 0) {
+            for (var i = 0; i < data.data.length; i++) {
+              if ($.inArray(data.data[i], numArr) < 0) {
+                $(".layui-btn-container").append(
+                  '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" value=' + data.data[i] + ">" + data.data[i] + " x" + "</button>"
+                );
+              }
+            }
+            $("input[name='tags']").val("");
+          }
+        },
+      });
+    }
+
+    // 删除tag
+    $(document).ready(function () {
+      $(".layui-btn-container").on("click", "button", function () {
+        $(this).remove();
+      });
+    });
+
+  });
+
+</script>
+
+{/block}

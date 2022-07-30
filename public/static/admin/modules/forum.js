@@ -20,7 +20,7 @@ var forms = table.render({
       ,{field: 'hot', title: '加精', templet: '#buttonHot', width: 80, align: 'center'}
       ,{field: 'reply', title: '禁评', templet: '#buttonReply', width: 80, align: 'center'}
       ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 95, align: 'center'}
-      ,{title: '操作', width: 60, align: 'center', toolbar: '#table-forum-list'}
+      ,{title: '操作', width: 110, align: 'center', toolbar: '#table-forum-list'}
     ]]
     ,page: true
     ,limit: 15
@@ -65,45 +65,30 @@ var forms = table.render({
       layer.open({
         type: 2
         ,title: '编辑帖子'
-        ,content: '/admin/Forum/listform?id='+ data.id
-        ,area: ['550px', '400px']
+        ,content: forumEdit + '?id='+ data.id
+        ,area: ['100%', '100%']
         ,btn: ['确定', '取消']
         ,resize: false
         ,yes: function(index, layero){
           var iframeWindow = window['layui-layer-iframe'+ index]
-          ,submitID = 'LAY-app-forum-submit'
-          ,submit = layero.find('iframe').contents().find("#layuiadmin-form-list")
-          ,poster = submit.find('input[name="poster"]').val()
-		      ,content = submit.find('input[name="content"]').val()
-		      ,avatar = submit.find('input[name="avatar"]').val();
+          ,submitID = 'article-edit'
+          ,submit = layero.find('iframe').contents().find('#'+ submitID)
 
           //监听提交
           iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
             var field = data.field; //获取提交的字段
-            
-            //提交 Ajax 成功后，静态更新表格中的数据
-            //$.ajax({});
+
             $.ajax({
               type:"post",
-              url:"/admin/Forum/listform",
-              data:{"id":data.id,"poster":name,"sort":sort,"ename":ename},
+              url: forumEdit,
+              data: field,
               daType:"json",
               success:function (data){
                 if (data.code == 0) {
-                  layer.msg(data.msg,{
-                    icon:6,
-                    time:2000
-                  }, function(){
-                    location.reload();
-                  });
+                  layer.msg(data.msg,{icon:6,time:2000});
                 } else {
-                  layer.open({
-                    tiele:'修改失败',
-                    content:data.msg,
-                    icon:5,
-                    anim:6
-                  });
-                }
+                  layer.open({title:'编辑失败',content:data.msg,icon:5,anim:6});
+                };
               }
             });
 
@@ -112,9 +97,6 @@ var forms = table.render({
           });  
           
           submit.trigger('click');
-        }
-        ,success: function(layero, index){
-          
         }
       });
     }
@@ -264,8 +246,8 @@ var forms = table.render({
                         ,sort = othis.find('input[name="sort"]').val()
                         ,tags = othis.find('input[name="tags"]').val()
                         ,ename = othis.find('input[name="ename"]').val()
-						,detpl = othis.find('select[name="detpl"]').val()
-						,icon = othis.find('input[name="icon"]').val()
+                        ,detpl = othis.find('select[name="detpl"]').val()
+                        ,icon = othis.find('input[name="icon"]').val()
                         ,desc = othis.find('input[name="desc"]').val();
 
                     if(!tags.replace(/\s/g, '')) return;

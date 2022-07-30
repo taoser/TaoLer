@@ -2850,6 +2850,94 @@
             "install-path": "../wamkj/thinkphp6.0-databackup"
         },
         {
+            "name": "workerman/channel",
+            "version": "v1.1.0",
+            "version_normalized": "1.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/walkor/channel.git",
+                "reference": "3df772d0d20d4cebfcfd621c33d1a1ab732db523"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/walkor/channel/zipball/3df772d0d20d4cebfcfd621c33d1a1ab732db523",
+                "reference": "3df772d0d20d4cebfcfd621c33d1a1ab732db523",
+                "shasum": ""
+            },
+            "require": {
+                "workerman/workerman": ">=4.0.12"
+            },
+            "time": "2021-02-08T02:45:42+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Channel\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "homepage": "http://www.workerman.net",
+            "support": {
+                "issues": "https://github.com/walkor/channel/issues",
+                "source": "https://github.com/walkor/channel/tree/v1.1.0"
+            },
+            "install-path": "../workerman/channel"
+        },
+        {
+            "name": "workerman/phpsocket.io",
+            "version": "v1.1.14",
+            "version_normalized": "1.1.14.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/walkor/phpsocket.io.git",
+                "reference": "a5758da4d55b4744a4cc9c956816d88ce385601e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/a5758da4d55b4744a4cc9c956816d88ce385601e",
+                "reference": "a5758da4d55b4744a4cc9c956816d88ce385601e",
+                "shasum": ""
+            },
+            "require": {
+                "workerman/channel": ">=1.0.0",
+                "workerman/workerman": ">=3.5.16"
+            },
+            "time": "2022-02-24T03:33:45+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "PHPSocketIO\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "homepage": "http://www.workerman.net",
+            "keywords": [
+                "Socket.io"
+            ],
+            "support": {
+                "issues": "https://github.com/walkor/phpsocket.io/issues",
+                "source": "https://github.com/walkor/phpsocket.io/tree/v1.1.14"
+            },
+            "funding": [
+                {
+                    "url": "https://opencollective.com/walkor",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://www.patreon.com/walkor",
+                    "type": "patreon"
+                }
+            ],
+            "install-path": "../workerman/phpsocket.io"
+        },
+        {
             "name": "workerman/workerman",
             "version": "v4.0.41",
             "version_normalized": "4.0.41.0",

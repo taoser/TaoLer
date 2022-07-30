@@ -1,3 +1,12 @@
+<!--
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-07-30 07:24:25
+ * @LastEditors: TaoLer
+ * @Description: 优化版
+ * @FilePath: \github\TaoLer\view\404.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
 {extend name="public/base" /}
 
 {block name="title"}404 - {$sysInfo.webname}{/block}
@@ -16,22 +25,7 @@
 {/block}
 
 {block name="script"}
-<script>
-
-    layui.cache.user = {
-        username: '{$user.name??'游客'}'
-        ,uid: {$user.id ? $user.id : -1}
-        ,avatar: '{if condition="$user['user_img'] neq ''"}{$user['user_img']}{else /}/static/res/images/avatar/00.jpg{/if}'
-        ,experience: 83
-        ,sex: '{if condition="$user['sex'] eq 0"}男{else/}女{/if}'
-    };
-    layui.config({
-        version: "3.0.0"
-        ,base: '/static/res/mods/'
-    }).extend({
-        fly: 'index'
-    }).use('fly');
-</script>
+404
 {/block}
 
 

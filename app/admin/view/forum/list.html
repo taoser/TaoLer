@@ -47,7 +47,8 @@
       
       <div class="layui-card-body">
         <div style="padding-bottom: 10px;">
-          <button class="layui-btn layuiadmin-btn-forum-list" data-type="batchdel">删除</button>
+        <button class="layui-btn layuiadmin-btn-forum-list" data-type="add">添加</button>
+        <button class="layui-btn layuiadmin-btn-forum-list" data-type="batchdel">删除</button>
         </div>
         <table id="LAY-app-forum-list" lay-filter="LAY-app-forum-list" ></table>
         <script type="text/html" id="avatarTpl">
@@ -66,8 +67,8 @@
           <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{ d.check == 1 ? 'checked' : '' }}>
         </script>
         <script type="text/html" id="table-forum-list">
+          <a class="layui-btn layui-btn-xs" lay-event="edit" ><i class="layui-icon layui-icon-edit"></i></a>
 		      {if condition="checkRuleButton('forum/listdel')"}
-          <!--a class="layui-btn layui-btn-disabled layui-btn-xs" lay-event="edit" ><i class="layui-icon layui-icon-edit"></i>编辑</a-->
           <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
 		      {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i></a>{/if}
         </script>
@@ -78,6 +79,7 @@
 {/block}
 
 {block name="js"}
+
 <script>
 var forumList       = "{:url('Forum/list')}",
     forumListdel    = "{:url('Forum/listdel')}",
@@ -88,6 +90,7 @@ var forumList       = "{:url('Forum/list')}",
     forumTags       = "{:url('Forum/tags')}",
     forumTagsDelete = "{:url('Forum/tagsdelete')}",
     forumTagsForm   = "{:url('Forum/tagsform')}";
+    forumEdit   = "{:url('Forum/edit')}";
 layui.config({
   base: '/static/admin/' //静态资源所在路径
 }).extend({
@@ -173,12 +176,66 @@ layui.config({
         layer.msg('已删除');
       });
     }
+	 ,add: function(){
+        layer.open({
+          type: 2
+          ,title: '添加'
+          ,content: 'add.html'
+          ,maxmin: true
+          ,area: ['100%', '100%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submitID = 'article-add'
+            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+            //监听提交
+            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var field = data.field; //获取提交的字段
+			  
+              //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+                type:"post",
+                url:"{:url('Forum/add')}",
+                data: field,
+                daType:"json",
+                success:function (data){
+                  if (data.code == 0) {
+                    layer.msg(data.msg,{
+                      icon:6,
+                      time:2000
+                    });
+                  } else {
+                    layer.open({
+                      tiele:'添加失败',
+                      content:data.msg,
+                      icon:5,
+                      anim:6
+                    });
+                  }
+                }
+              });
+              table.reload('LAY-app-forum-list'); //数据刷新
+              layer.close(index); //关闭弹层
+            });  
+            
+            submit.trigger('click');
+          }
+        }); 
+      }
   }
 
   $('.layui-btn.layuiadmin-btn-forum-list').on('click', function(){
     var type = $(this).data('type');
     active[type] ? active[type].call(this) : '';
   });
+
+  //   $(document).on('focusin', function(e) {
+  //   if ($(e.target).closest(".tox-tinymce, .tox-tinymce-aux, .moxman-window, .tam-assetmanager-root").length) {
+  //     e.stopImmediatePropagation();
+  //   }
+  // });
+
 });
 </script>
 {/block}

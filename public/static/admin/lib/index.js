@@ -1,3 +1,12 @@
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-07-29 16:22:20
+ * @LastEditors: TaoLer
+ * @Description: 优化版
+ * @FilePath: \github\TaoLer\public\static\admin\lib\index.js
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 /**
 
  @Name：layuiAdmin iframe版主入口
@@ -11,13 +20,14 @@ layui.extend({
   setter: 'config' //配置模块
   ,admin: 'lib/admin' //核心模块
   ,view: 'lib/view' //视图渲染模块
+  ,editor: '{/}/addons/taonyeditor/js/taonyeditor'
 }).define(['setter', 'admin'], function(exports){
   var setter = layui.setter
   ,element = layui.element
   ,admin = layui.admin
   ,tabsPage = admin.tabsPage
   ,view = layui.view
-  
+  ,editor = layui.editor
   //打开标签页
   ,openTabsPage = function(url, text){
     //遍历页签选项卡

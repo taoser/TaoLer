@@ -35,6 +35,7 @@ return array(
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
     'PhpDocReader\\' => array($vendorDir . '/php-di/phpdoc-reader/src/PhpDocReader'),
     'Phinx\\' => array($vendorDir . '/topthink/think-migration/phinx/src/Phinx'),
+    'PHPSocketIO\\' => array($vendorDir . '/workerman/phpsocket.io/src'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Overtrue\\Pinyin\\' => array($vendorDir . '/overtrue/pinyin/src'),
     'League\\MimeTypeDetection\\' => array($vendorDir . '/league/mime-type-detection/src'),
@@ -49,5 +50,6 @@ return array(
     'Endroid\\QrCode\\' => array($vendorDir . '/endroid/qr-code/src'),
     'DI\\' => array($vendorDir . '/php-di/php-di/src'),
     'DASPRiD\\Enum\\' => array($vendorDir . '/dasprid/enum/src'),
+    'Channel\\' => array($vendorDir . '/workerman/channel/src'),
     'BaconQrCode\\' => array($vendorDir . '/bacon/bacon-qr-code/src'),
 );

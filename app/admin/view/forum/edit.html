@@ -1,0 +1,255 @@
+{extend name="public/base" /}
+
+{block name="body"}
+    <div class="layui-form layui-form-pane">
+      <div class="layui-tab layui-tab-brief" lay-filter="user">
+        <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+          <div class="layui-tab-item layui-show">
+           
+            <input type="hidden" name="id" value="{$article.id}">
+            <div class="layui-row layui-col-space15 layui-form-item">
+              <div class="layui-col-md3">
+                <label class="layui-form-label">{:lang('special column')}</label>
+                <div class="layui-input-block">
+                  <select lay-verify="required" name="cate_id" lay-filter="column"> 
+                    <option></option>
+                    {volist name="cateList" id="cate"}
+                    <option value="{$cate.id}" {if $article.cate_id == $cate.id}selected{/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
+                    {/volist}
+                  </select>
+                </div>
+              </div>
+              <div class="layui-col-md8">
+                <label for="L_title" class="layui-form-label">{:lang('title')}</label>
+                <div class="layui-input-block">
+                  <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$article.title}">
+                  <input type="hidden" id="L_title_color"  name="title_color" autocomplete="off" class="layui-input" value="{$article.title_color ?? '#333'}">
+                  <input type="hidden" name="user_id" value="{$article.user_id}">
+                </div>
+              </div>
+              <div class="layui-col-md1">
+                <div id="color"></div>
+                <div id="test9" style="margin-left: 30px;"></div>
+              </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+              <div class="layui-input-block">
+                <textarea id="L_content" name="content" required lay-verify="required" placeholder="详细内容"  class="layui-textarea fly-editor" style="height: 260px;">{$article.content}</textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-inline">
+                <label class="layui-form-label">{:lang('enclosure')}</label>
+                <div class="layui-input-inline" style="width: 190px;">
+                  <input type="text" class="layui-input" name="upzip" value="{$article.upzip}" placeholder="zip,jpg格式" title="上传附件"/>
+                </div>
+                <button type="button" class="layui-btn" id="zip-button"><i class="layui-icon"></i>上传文件</button>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">{:lang('描述')}</label>
+              <div class="layui-input-block">
+                <textarea name="description" class="layui-textarea" placeholder="SEO描述">{$article.description}</textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-inline">
+                <label class="layui-form-label">{:lang('add tags')}</label>
+                <div class="layui-input-inline" style="width: 190px;">
+                  <input type="text" class="layui-input" name="tags" placeholder="多个用空格隔开" title="添加标签"/>
+                </div>
+                <button type="button" class="layui-btn" id="article-tags-button">{:lang('add')}</button>
+              </div>
+            </div>
+            <div class="layui-form-item">
+            <div class="layui-btn-container">
+              {volist name="tags" id="vo" }
+              <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" value="{$vo}">{$vo} x</button>
+              {/volist}
+            </div>
+            </div>
+            <div class="layui-form-item layui-hide">
+              <button type="submit" class="layui-btn" lay-filter="article-edit" lay-submit id="article-edit">{:lang('post now')}</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/block}
+
+{block name="js"}
+<script src="/static/jquery-3.6.0.min.js"></script>
+<script src="/addons/taonyeditor/tinymce/tinymce.min.js"></script>
+<script src="/addons/taonyeditor/tinymce/tinymce-jquery.min.js"></script>
+<script>
+    //定义选择器
+    var mytextareaid = 'textarea#L_content';
+    var imagePrependUrl = "{domain}";
+    //定义文件上传接口接口
+    var taonyUploadUrl = "{:url('forum/uploads')}",
+    taonyUploadImgage = "{:url('forum/uploads')}?type=image",
+    taonyUploadVideo = "{:url('forum/uploads')}?type=video";
+    taonyUploadZip = "{:url('forum/uploads')}?type=zip";
+    taonyUploadAudio = "{:url('forum/uploads')}?type=audio";
+    $(mytextareaid).removeClass();
+</script>
+<script src="/addons/taonyeditor/js/taonyeditor.js"></script>
+<script>
+	layui.use(['colorpicker','form','upload', 'editor'], function(){
+    var $ = layui.jquery
+    ,colorpicker = layui.colorpicker
+    ,form = layui.form
+    ,upload = layui.upload;
+
+    var editor = layui.editor;
+    // 从详情页自动调用端口过滤，获取描述信息
+    tinymce.get('L_content').on('mouseleave', function() {
+        var content = tinymce.get('L_content').getContent({format: 'text'});
+        content = content.replace(/[\r\n]/g,"").replace(/\n/g, '').replace(/\s/g, '').replace(/\t/g, '');
+        if(content.length >200) {
+            content = content.substring(0,200);
+        }
+        // var test = tinymce.activeEditor.getContent({format: 'text'});
+        $('[name="description"]').val(content);
+    });
+
+		//预定义颜色项
+    colorpicker.render({
+      elem: '#color'
+      ,color: "{$article.title_color ?? '#333'}"
+      ,predefine: true // 开启预定义颜色
+      ,done: function(color){
+        //譬如你可以在回调中把得到的 color 赋值给表单
+        $('#L_title_color').val(color);
+        //改变标题颜色
+        $('#L_title').css("color", color);
+      }
+    });
+		  
+		
+		//指定允许上传的文件类型
+		upload.render({
+			elem: '#zip-button'
+			,url: "{:url('forum/uploads')}" //改成您自己的上传接口
+			,data: {type:'zip'}
+			,accept: 'file' //普通文件
+			,done: function(res){
+				if(res.status == 0){
+					$('input[name="upzip"]').val(res.url);
+					layer.msg('上传成功');
+				} else {
+					layer.msg(res.msg);
+				}
+			}
+		});
+
+	//编辑文章
+	form.on('submit(article-edit)', function(data){
+		var field = data.field;
+		var numArr = new Array();
+		$('.layui-btn-container').children('button').each(function(){
+			numArr.push($(this).val());//添加至数组
+		});
+		tags = numArr.lenth ? '' : numArr.join(',');
+		$.ajax({
+			type:"post",
+			url:"{:url('Forum/edit')}",
+			data: field,
+			daType:"json",
+			success:function (data){
+				if (data.code == 0) {
+					layer.msg(data.msg,{icon:6,time:2000}, function(){
+						location.href = data.url;
+					});
+				} else {
+					layer.open({title:'编辑失败',content:data.msg,icon:5,anim:6});
+				};
+			}
+		});
+		return false;
+	});
+
+  // 获取描述的内容
+  $("#L_content").bind('input propertychange', function(){
+    var content = $(this).val()
+    $.ajax({
+      type:"post",
+      url:"{:url('Forum/getDescription')}",
+      data:{"content":content},
+      daType:"json",
+      success:function (data){
+        if (data.code == 0) {
+          $('[name="description"]').val(data.data);
+        }
+      }
+    });
+    return false;
+    })
+
+	// 手动添加tags
+  $('#article-tags-button').on('click',function(){
+    var tags = $("input[name='tags']").val();
+    var flag = 'off';
+    getTags(tags,flag);
+  });
+
+  // 获取tag的内容
+	var conf = "{:empty(config('taoler.baidu.client_id'))}";
+	if(conf !== '1'){
+    $("#L_title").on('blur', function(){
+      var title = $(this).val();
+      var flag = 'on';
+      // 清空上次生成的tag button
+    $('.layui-btn-container').children('button').each(function(){
+            $(this).remove();
+        });
+      getTags(title,flag);
+    })
+	}
+
+  //	循环添加button
+  function getTags(tags,flag)
+  {
+      if(tags == ''){
+          layer.msg('不能为空');
+          return false;
+      }
+      //把得到的tags放进数组
+      var numArr = new Array();
+      $('.layui-btn-container').children('button').each(function(){
+        numArr.push($(this).val());//添加至数组
+      });
+
+      $.ajax({
+        type:"post",
+        url:"{:url('Forum/tagWord')}",
+        data:{"tags":tags,"flag":flag},
+        daType:"json",
+        success:function (data){
+          if (data.code == 0) {
+            for(var i=0; i<data.data.length; i++){
+              if($.inArray(data.data[i],numArr) < 0){
+                $('.layui-btn-container').append('<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" value='+data.data[i]+'>'+data.data[i]+' x'+'</button>');
+              }
+            }
+            $("input[name='tags']").val("");
+          }
+        }
+      });
+      return false;
+    }
+
+  //删除tag
+  $(document).ready(function(){
+    $('.layui-btn-container').on('click','button',function(){
+        $(this).remove();
+    });
+  });
+
+});
+</script>
+{/block}

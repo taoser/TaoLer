@@ -11,6 +11,7 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
 use taoler\com\Files;
+use app\common\lib\Msgres;
 
 class Forum extends AdminController
 {
@@ -326,4 +327,188 @@ class Forum extends AdminController
 			}
         return true;
 	}
+
+
+	 /**
+     * 添加帖子文章
+     * @return string|\think\Response|\think\response\Json|void
+     */
+    public function add()
+    {
+        if (Request::isAjax()) {
+			
+            $data = Request::only(['cate_id', 'title', 'title_color', 'tiny_content', 'content', 'upzip', 'tags', 'description', 'captcha']);
+			$data['user_id'] = 1; //管理员ID
+			// 调用验证器
+			$validate = new \app\common\validate\Article;
+            $result = $validate->scene('Artadd')->check($data);
+            if (true !== $result) {
+                return Msgres::error($validate->getError());
+            }
+			
+			// 获取内容图片音视频标识
+			$iva= $this->hasIva($data['content']);
+			$data = array_merge($data,$iva);
+			// 获取分类ename
+			$cate_ename = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
+		
+            $article = new Article();
+            $result = $article->add($data);
+            if ($result['code'] == 1) {
+				// 获取到的最新ID
+				$aid = Db::name('article')->max('id');
+				// 清除文章tag缓存
+                Cache::tag('tagArtDetail')->clear();
+
+				$link = $this->getRouteUrl((int)$aid, $cate_ename);
+				// 推送给百度收录接口
+				$this->baiduPushUrl($link);
+				    
+				$url = $result['data']['status'] ? $link : (string)url('index/');
+				$res = Msgres::success($result['msg'], $url);
+            } else {
+                $res = Msgres::error('add_error');
+            }
+            return $res;
+        }
+		//1.查询分类表获取所有分类
+		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select();
+		
+        //2.将catelist变量赋给模板 公共模板nav.html
+        View::assign('cateList',$cateList);
+
+		return View::fetch('add');
+    }
+
+    /**
+     * 编辑文章
+     * @param $id
+     * @return string|\think\Response|\think\response\Json|void
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function edit($id)
+    {
+		$article = Article::find($id);
+		
+		if(Request::isAjax()){
+			$data = Request::only(['id','cate_id','title','title_color','content','upzip','tags','description','captcha']);
+			$data['user_id'] = 1;
+			//调用验证器
+			$validate = new \app\common\validate\Article(); 
+			$res = $validate->scene('Artadd')->check($data);
+			
+			if(true !== $res){
+                return Msgres::error($validate->getError());
+			} else {
+				//获取内容图片音视频标识
+				$iva= $this->hasIva($data['content']);
+				$data = array_merge($data,$iva);
+				
+				$result = $article->edit($data);
+				if($result == 1) {
+                    //删除原有缓存显示编辑后内容
+                    Cache::delete('article_'.$id);
+					$link = $this->getRouteUrl((int) $id, $article->cate->ename);
+					// 推送给百度收录接口
+					$this->baiduPushUrl($link);
+					$editRes = Msgres::success('edit_success',$link);
+				} else {
+                    $editRes = Msgres::error($result);
+				}
+				return $editRes;
+			}
+		}
+		// 查询标签
+		$tag = $article->tags;
+		$tags = [];
+		if(!is_null($tag)) {
+		    $attr = explode(',',$tag);
+    		foreach($attr as $key => $v){
+    			if ($v !='') {
+    				$tags[] = $v;
+    			}
+    		}
+
+		}
+			
+        View::assign(['article'=>$article,'tags'=>$tags]);
+		//1.查询分类表获取所有分类
+		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select();
+		
+        //2.将catelist变量赋给模板 公共模板nav.html
+        View::assign('cateList',$cateList);
+
+		return View::fetch();
+    }
+
+	/**
+	 * 调用百度关键词
+	 *
+	 * @return void
+	 */
+    public function tagWord()
+    {
+        $data = Request::only(['tags','flag']);
+		return $this->setTags($data);
+    }
+
+	/**
+	 * 标题调用百度关键词词条
+	 *
+	 * @return void
+	 */
+	public function getWordList()
+	{
+		$title = input('title');
+		return $this->getBdiduSearchWordList($title);
+	}
+
+
+	/**
+	 * 内容中是否有图片视频音频插入
+	 *
+	 * @param [type] $content
+	 * @return boolean
+	 */
+	public function hasIva($content)
+	{
+		//判断是否插入图片
+		$isHasImg = strpos($content,'img[');
+		$data['has_img'] = is_int($isHasImg) ? 1 : 0;
+		//判断是否插入视频
+		$isHasVideo = strpos($content,'video(');
+		$data['has_video'] = is_int($isHasVideo) ? 1 : 0;
+		//判断是否插入音频
+		$isHasAudio = strpos($content,'audio[');
+		$data['has_audio'] = is_int($isHasAudio) ? 1 : 0;
+		
+		return $data;
+	}
+	/**
+	 * 获取描述，过滤html
+	 *
+	 * @return void
+	 */
+	public function getDescription()
+	{
+		$data = Request::only(['content']);
+		$description = getArtContent($data['content']);
+		return json(['code'=>0,'data'=>$description]);
+	}
+
+	/**
+	 * 上传接口
+	 *
+	 * @return void
+	 */
+	public function uploads()
+    {
+        $type = Request::param('type');
+        return $this->uploadFiles($type);
+    }
+
+
+
 }

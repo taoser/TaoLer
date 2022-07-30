@@ -178,26 +178,26 @@
 			  
               //提交 Ajax 成功后，静态更新表格中的数据
               $.ajax({
-				type:"post",
-				url:"{:url('User/userform')}",
-				data:{"name":field.username,"phone":field.phone,"email":field.email,"user_img":field.avatar,"sex":field.sex},
-				daType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						});
-					} else {
-						layer.open({
-							tiele:'添加失败',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-					}
-				}
-			});
+                type:"post",
+                url:"{:url('User/userform')}",
+                data:{"name":field.username,"phone":field.phone,"email":field.email,"user_img":field.avatar,"sex":field.sex},
+                daType:"json",
+                success:function (data){
+                  if (data.code == 0) {
+                    layer.msg(data.msg,{
+                      icon:6,
+                      time:2000
+                    });
+                  } else {
+                    layer.open({
+                      tiele:'添加失败',
+                      content:data.msg,
+                      icon:5,
+                      anim:6
+                    });
+                  }
+                }
+              });
               table.reload('LAY-user-manage'); //数据刷新
               layer.close(index); //关闭弹层
             });  

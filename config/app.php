@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-03 04:21:02
+ * @LastEditTime: 2022-07-30 10:21:48
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\config\app.php
+ * @FilePath: \github\TaoLer\config\app.php
  * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
  */
 // +----------------------------------------------------------------------

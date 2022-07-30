@@ -82,6 +82,7 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'Psr\\Cache\\' => 10,
             'PhpDocReader\\' => 13,
             'Phinx\\' => 6,
+            'PHPSocketIO\\' => 12,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' => 
@@ -117,6 +118,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             'DI\\' => 3,
             'DASPRiD\\Enum\\' => 13,
+        ),
+        'C' => 
+        array (
+            'Channel\\' => 8,
         ),
         'B' => 
         array (
@@ -245,6 +250,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/topthink/think-migration/phinx/src/Phinx',
         ),
+        'PHPSocketIO\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/phpsocket.io/src',
+        ),
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
@@ -300,6 +309,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'DASPRiD\\Enum\\' => 
         array (
             0 => __DIR__ . '/..' . '/dasprid/enum/src',
+        ),
+        'Channel\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/channel/src',
         ),
         'BaconQrCode\\' => 
         array (

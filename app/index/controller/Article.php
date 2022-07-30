@@ -269,7 +269,7 @@ class Article extends BaseController
 
 				$link = $this->getRouteUrl((int)$aid, $cate_ename);
 				// 推送给百度收录接口
-				$this->baiduPush($link);
+				$this->baiduPushUrl($link);
 				    
 				$url = $result['data']['status'] ? $link : (string)url('index/');
 				$res = Msgres::success($result['msg'], $url);
@@ -328,7 +328,7 @@ class Article extends BaseController
                     Cache::delete('article_'.$id);
 					$link = $this->getRouteUrl((int) $id, $article->cate->ename);
 					// 推送给百度收录接口
-					$this->baiduPush($link);
+					$this->baiduPushUrl($link);
 					$editRes = Msgres::success('edit_success',$link);
 				} else {
                     $editRes = Msgres::error($result);
@@ -386,25 +386,7 @@ class Article extends BaseController
 	public function uploads()
     {
         $type = Request::param('type');
-        $uploads = new Uploads();
-        switch ($type){
-            case 'image':
-                $upRes = $uploads->put('file','article_pic',1024,'image');
-                break;
-            case 'zip':
-                $upRes = $uploads->put('file','article_zip',1024,'application|image');
-                break;
-            case 'video':
-                $upRes = $uploads->put('file','article_video',102400,'video|audio');
-                break;
-            case 'audio':
-                $upRes = $uploads->put('file','article_audio',102400,'audio');
-                break;
-            default:
-                $upRes = $uploads->put('file','article_file',1024,'image');
-                break;
-        }
-        return $upRes;
+        return $this->uploadFiles($type);
     }
 
     /**
@@ -443,23 +425,7 @@ class Article extends BaseController
 	public function getWordList()
 	{
 		$title = input('title');
-		if(empty($title)) return json(['code'=>-1,'msg'=>'null']);
-		$url = 'https://www.baidu.com/sugrec?prod=pc&from=pc_web&wd='.$title;
-		//$result = Api::urlGet($url);
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $url);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		$datas = curl_exec($curl);
-		curl_close($curl);
-		$data = json_decode($datas,true);
-		if(isset($data['g'])) {
-			return json(['code'=>0,'msg'=>'success','data'=>$data['g']]);
-		} else {
-			return json(['code'=>-1,'msg'=>'null']);
-		}
-		
+		return $this->getBdiduSearchWordList($title);
 	}
 
     /**
@@ -470,102 +436,9 @@ class Article extends BaseController
     public function tags()
     {
         $data = Request::only(['tags','flag']);
-		$tags = [];
-
-		if($data['flag'] == 'on') {
-			// 百度分词自动生成关键词
-			if(!empty(config('taoler.baidu.client_id')) == true) {
-				$url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
-
-				//headers数组内的格式
-				$headers = array();
-				$headers[] = "Content-Type:application/json";
-				$body   = array(
-							"text" => $data['tags']
-					);
-				$postBody    = json_encode($body);
-				$curl = curl_init();
-				curl_setopt($curl, CURLOPT_URL, $url);
-				curl_setopt($curl, CURLOPT_POST, true);
-				curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);//设置请求头
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $postBody);//设置请求体
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');//使用一个自定义的请求信息来代替"GET"或"HEAD"作为HTTP请求。(这个加不加没啥影响)
-				$datas = curl_exec($curl);
-				if($datas == false) {
-					echo '接口无法链接';
-				} else {
-					$res = stripos($datas,'error_code');
-					// 接收返回的数据
-					$dataItem = json_decode($datas);
-					if($res == false) {
-						// 数据正常
-						$items = $dataItem->items;
-						foreach($items as $item) {
-							if($item->pos == 'n' && !in_array($item->item,$tags)){
-								$tags[] = $item->item;
-							}
-						}
-					} else {
-						// 接口正常但获取数据失败，可能参数错误，重新获取token
-						$url = 'https://aip.baidubce.com/oauth/2.0/token';
-						$post_data['grant_type']     = config('taoler.baidu.grant_type');;
-						$post_data['client_id']      = config('taoler.baidu.client_id');
-						$post_data['client_secret']  = config('taoler.baidu.client_secret');
-	
-						$o = "";
-						foreach ( $post_data as $k => $v ) 
-						{
-							$o.= "$k=" . urlencode( $v ). "&" ;
-						}
-						$post_data = substr($o,0,-1);
-						$res = $this->request_post($url, $post_data);
-						// 写入token
-						SetArr::name('taoler')->edit([
-							'baidu'=> [
-								'access_token'	=> json_decode($res)->access_token,
-							]
-						]);
-						echo 'api接口数据错误 - ';
-						echo $dataItem->error_msg; 
-					}
-				}
-			}
-		} else {
-			// 手动添加关键词
-			// 中文一个或者多个空格转换为英文空格
-			$str = preg_replace('/\s+/',' ',$data['tags']);
-			$att = explode(' ', $str);
-			foreach($att as $v){
-				if ($v !='') {
-					$tags[] = $v;
-				}
-			}
-		}
-		
-        return json(['code'=>0,'data'=>$tags]);
+		return $this->setTags($data);
     }
 
-	//	api_post接口
-	function request_post($url = '', $param = '') 
-	{
-        if (empty($url) || empty($param)) {
-            return false;
-        }
-        
-        $postUrl = $url;
-        $curlPost = $param;
-        $curl = curl_init();//初始化curl
-        curl_setopt($curl, CURLOPT_URL,$postUrl);//抓取指定网页
-        curl_setopt($curl, CURLOPT_HEADER, 0);//设置header
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
-        curl_setopt($curl, CURLOPT_POST, 1);//post提交方式
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $curlPost);
-        $data = curl_exec($curl);//运行curl
-        curl_close($curl);
-        return $data;
-    }
-	
 	// 文章置顶、加精、评论状态
 	public function jieset()
 	{
@@ -664,33 +537,6 @@ class Article extends BaseController
 		}
 		
 		return $content;
-	}
-
-	/**
-	 * baidu push api
-	 *
-	 * @param string $link
-	 * @return void
-	 */
-	protected function baiduPush(string $link)
-	{
-		// baidu 接口
-		$api = config('taoler.baidu.push_api');
-		if(!empty($api)) {
-			$url[] = $link;
-			$ch = curl_init();
-			$options =  array(
-				CURLOPT_URL => $api,
-				CURLOPT_POST => true,
-				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_POSTFIELDS => implode("\n", $url),
-				CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
-			);
-			curl_setopt_array($ch, $options);
-			curl_exec($ch);
-			curl_close($ch);
-		}
-		
 	}
 
 	public function userZanArticle()

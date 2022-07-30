@@ -12,7 +12,6 @@ i{font-style: normal;}
 
 /* 布局 */
 .layui-mm{position: fixed; top: 100px; bottom: 0;}
-.site-menu,
 .site-menu{box-shadow: none; border-left: none;}
 
 /* 文档 */
