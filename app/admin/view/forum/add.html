@@ -156,35 +156,6 @@ layui.config({
       },
     });
 
-    // 发布文章
-    // form.on("submit(article-add)", function (data) {
-    //   var field = data.field;
-    //   var numArr = new Array();
-    //   $(".layui-btn-container").children("button").each(function () {
-    //       numArr.push($(this).val()); //添加至数组
-    //     });
-    //   tags = numArr.lenth ? "" : numArr.join(",");
-    //   var index = layer.load(1);
-    //   $.ajax({
-    //     type: "post",
-    //     url: "{:url('Forum/add')}",
-    //     data: field,
-    //     dataType: "json",
-    //     success: function (data) {
-    //       if (data.code == 0) {
-    //         layer.msg(data.msg, { icon: 6, time: 2000 }, function () {
-    //           location.href = data.url;
-    //         });
-    //       } else {
-    //         layer.open({ title: "发布失败", content: data.msg, icon: 5, anim: 6 });
-    //       }
-    //       layer.close(index);
-    //     },
-    //   });
-    //   return false;
-    // });
-
-
     // 手动添加tags
     $("#article-tags-button").on("click", function () {
       var tags = $("input[name='tags']").val();

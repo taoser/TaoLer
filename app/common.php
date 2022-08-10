@@ -76,27 +76,6 @@ if(!function_exists('getUserImg'))
     }
 }
 
-
-//根据文章分类ID查询分类名
-function getCateName($ename)
-    {
-        if($ename == 'all') {
-            return '全部分类';
-        } else {
-            return Db::name('cate')->where('ename',$ename)->cache(3600)->value('catename');
-        }  
-    }
-
-//根据文章分类ID查询分类描述
-function getCateDesc($ename)
-    {
-        if($ename == 'all') {
-            return '全部分类，为您展示全部分类信息';
-        } else {
-            return  Db::name('cate')->where('ename',$ename)->cache(3600)->value('desc');
-        }
-    }
-
 //过滤文章摘要
 function getArtContent($content)
 {
@@ -283,23 +262,23 @@ function showSlider($type)
 //提取内容第一张图片
 function getOnepic($str)
 {
-    // <img src="http://img.com" />
-    /* $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
+    //匹配格式为 <img src="http://img.com" />
+    $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
         preg_match_all($pattern,$str,$matchContent);
         if(isset($matchContent[1][0])){
             $img = $matchContent[1][0];
-        }else{
-            $temp="./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
+        } else {
+            //$temp="./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
+
+            //匹配格式为 img[/storage/1/article_pic/20220428/6c2647d24d5ca2c179e4a5b76990c00c.jpg]
+            $pattern = "/(?<=img\[)[^\]]*(?=\])/";
+            preg_match($pattern,$str,$matchContent);
+            if(isset($matchContent[0])){
+                $img = $matchContent[0];
+            }else{
+                return false;
+            }
         }
-    */
-    // img[/storage/1/article_pic/20220428/6c2647d24d5ca2c179e4a5b76990c00c.jpg]
-    $pattern = "/(?<=img\[)[^\]]*(?=\])/";
-    preg_match($pattern,$str,$matchContent);
-    if(isset($matchContent[0])){
-        $img = $matchContent[0];
-    }else{
-        return false;
-    }
+
     return $img;
-    
 }

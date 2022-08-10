@@ -1,18 +1,21 @@
 # TaoLer
 
-> TaoLer是一个简单迅捷的管理系统，支持插件化开发，适用于个人或组织区域型信息交流发布平台，内置一套轻论坛CMS。
+> TaoLer是一个简单迅捷的管理系统，支持插件化开发，适用于企业、个人或组织建站需求。
+
+支持多模板、多单页自由切换，网站风格可定制性强，支持插件化开发，方便二开。可做为企业门户网站，生活服务，学习问答笔记，文章分享等。
+默认内置一套完整的**问答+博客+论坛+新闻+轻社区化**的模板系统，还可持续增加模块，一个系统拥有多个版式的网站风格。
 
  * 官网：https://www.aieok.com
  * 文档：http://wiki.aieok.com
  * 演示后台：https://www.aieok.com/adminff
- 
- webman版新架构已适配90%
 
 #### 项目地址
 
 1.	gitee	https://www.gitee.com/toogee/Taoler
 2.	github	https://www.github.com/taoser/TaoLer
 3.  composer create-project taoser/taoler
+
+![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/3cf60f90f7d75b7ddb7efedd96b9e62c.png "TaoLerCMS")
 
 #### 介绍
 
@@ -24,14 +27,14 @@
 6.	双升级系统，可支持自动和手动升级。可在线检测并升级系统，保持网站的更新和安全。
 7.	代码开源，不设暗门操作，更安全。
 8.	项目会长期维护，优化更新。
-9.	预增加插件管理机制1.0（2.0版本正式上线）
+9.	预增加插件管理机制1.x（2.x版本正式上线）
 
+![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/6ea6bb3e40d9a3bc7c9ec28f3e0d7b90.png "TaoLerCMS")
 
 #### 构架组成
 - 1.x版本构架：
 	- 构架：Tinkphp6 + layui2.7
-	- 环境：php7/php8.1 + mysql
-	- 前端：Fly template V3.0
+	- 环境：php7/8.1 + mysql5.7/8.0
 	
 #### 构架介绍
 	thinkphp:
@@ -40,12 +43,19 @@
 	极简、丰盈，简单高效，模块化UI框架，体积轻盈，组件丰盈。
 	Fly模板:
 	一款至简的社区模板。
+	
+![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/edd9bfc2ca1d1ec52a551b2233b5ab62.png "TaoLerCMS")
+	
+#### 重点
+* 长期维护，对抗消亡
+* 迭代及时，查漏补缺
+* 多模板多模块，一站顶多站
 
 #### 安装教程
 
 1.	首选确保满目使用环境要求，php > 7.2, mysql > 5.7.3
-2.	git下载：https://gitee.com/toogee/TaoLer 
-	github	https://www.github.com/taoser/TaoLer
+2.	https://github.com/taoser/TaoLer/archive/refs/heads/master.zip
+	git下载：https://gitee.com/toogee/TaoLer 
 	官网下载：https://www.aieok.com
 	
 #### 引导安装
@@ -89,13 +99,19 @@
 	}
 	```
 	
->如果是宝塔集成环境，网站目录部署如下示例：
+> 如果是宝塔集成环境，网站目录部署如下示例：
 网站目录：D:/www/TaoLer
-运行目录：/public	
+运行目录：/public
+
+![alt install](https://www.aieok.com/storage/1/article_pic/20220802/f3ae219092a10548268693ec85d978ee.png "install")
+
 	
 3.	首次安装，访问域名http://www.youdomain.com可自动跳转到/install/index进行引导安装，重新安装需删除public目录下install.lock。
 4.	安装前需要先创建mysql数据库(准备：数据库连接地址，数据库用户名，密码，端口)
 5.	如果手动导入数据库，管理员用户名和密码，默认admin/123456，前后台的管理员密码一致。前后端管理员账户是独立的，前端主要对文章内容的审查管理等操作。
+
+
+![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/54c8364fffd9ca1d15856efd90b689bc.png "TaoLerAdmin")
 
 #### 前后台独立域名的绑定
 

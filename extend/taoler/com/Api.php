@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-08-01 10:09:11
+ * @LastEditors: TaoLer
+ * @Description: 优化版
+ * @FilePath: \github\TaoLer\extend\taoler\com\Api.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 
 namespace taoler\com;
 
@@ -45,6 +54,25 @@ class Api
 		} else {
 			//$status ='{"code":-1,"msg":"远程服务器失败"}';	//字符串
 			return json_decode('{"code":-1,"msg":"远程服务器失败,稍后重试"}');	//转换为对象
+		}
+	}
+
+	public static function urlGetRespond($url)
+	{
+		$ch =curl_init ();
+		curl_setopt($ch,CURLOPT_URL, $url);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);	//将curl_exec()获取的信息以文件流的形式返回，而不是直接输出。 1表示传输数据，为0表示直接输出显示。
+		//curl_setopt($ch,CURLOPT_CONNECTTIMEOUT, 20);
+		curl_setopt($ch, CURLOPT_HEADER, false); //启用时会将头文件的信息作为数据流输出。 参数为1表示输出信息头,为0表示不输出
+		$data = curl_exec($ch);
+		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		if($httpCode == '200'){
+			//return json_decode($data);
+            return json(['code'=>0, 'data'=>$data]);
+		} else {
+			//return json_decode('{"code":-1,"msg":"远程服务器失败,稍后重试"}');	//转换为对象
+			return json(['code'=>-1,'msg'=>'Remote server failed, try again later']);
 		}
 	}
 	

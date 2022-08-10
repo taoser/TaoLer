@@ -214,7 +214,8 @@
       $(".layui-btn-container").children("button").each(function () {
           numArr.push($(this).val()); //添加至数组
         });
-      tags = numArr.lenth ? "" : numArr.join(",");
+      field.tags = numArr.lenth ? "" : numArr.join(",");
+ 
       var index = layer.load(1);
       $.ajax({
         type: "post",
@@ -306,7 +307,8 @@
     }  
 
     // 添加关键词button
-    function getTags(tags, flag) {
+    function getTags(tags, flag)
+    {
       if (tags == "") {
         layer.msg("tag不能为空");
         return false;

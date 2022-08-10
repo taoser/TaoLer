@@ -147,32 +147,6 @@
 			}
 		});
 
-	//编辑文章
-	form.on('submit(article-edit)', function(data){
-		var field = data.field;
-		var numArr = new Array();
-		$('.layui-btn-container').children('button').each(function(){
-			numArr.push($(this).val());//添加至数组
-		});
-		tags = numArr.lenth ? '' : numArr.join(',');
-		$.ajax({
-			type:"post",
-			url:"{:url('Forum/edit')}",
-			data: field,
-			daType:"json",
-			success:function (data){
-				if (data.code == 0) {
-					layer.msg(data.msg,{icon:6,time:2000}, function(){
-						location.href = data.url;
-					});
-				} else {
-					layer.open({title:'编辑失败',content:data.msg,icon:5,anim:6});
-				};
-			}
-		});
-		return false;
-	});
-
   // 获取描述的内容
   $("#L_content").bind('input propertychange', function(){
     var content = $(this).val()

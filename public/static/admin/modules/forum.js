@@ -77,6 +77,12 @@ var forms = table.render({
           //监听提交
           iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
             var field = data.field; //获取提交的字段
+            //tag
+            var numArr = new Array();
+            layero.find('iframe').contents().find(".layui-btn-container").children("button").each(function () {
+                numArr.push($(this).val()); //添加至数组
+              });
+            field.tags = numArr.lenth ? "" : numArr.join(",");
 
             $.ajax({
               type:"post",

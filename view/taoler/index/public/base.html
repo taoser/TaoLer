@@ -1,7 +1,7 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-07-30 07:20:01
+ * @LastEditTime: 2022-08-10 16:50:38
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \github\TaoLer\view\taoler\index\public\base.html
@@ -22,13 +22,14 @@
   <meta name="keywords" content="{block name='keywords'}关键词{/block}" />
   <meta name="description" content="{block name='description'}描述{/block}" />
   <meta name="Copyright" content="{$sysInfo.webname}" />
-  <meta property="og:type" content="article">
   {block name="ogtitle"} {/block}
   {block name="ogdescription"} {/block}
   <meta property="og:url" content="{$Request.domain}{$Request.url}" />
   <meta property="og:site_name" content="{$sysInfo.webname}" />
   {block name="ogimage"} {/block}
   {block name="meta"}{/block}
+  <script src="/static/jquery-3.6.0.min.js"></script>
+  <script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
   <!-- 样式 -->
   <link rel="canonical" href="{$Request.domain}{$Request.url}">
   <link rel="stylesheet" href="{$Request.domain}/static/layui/css/layui.css"  charset="utf-8">
@@ -43,7 +44,6 @@
   html body{margin-top: 1px;}
   {/if}	
   </style>
-  <script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
   <script src="{$Request.domain}/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body >

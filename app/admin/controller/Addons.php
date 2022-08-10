@@ -19,9 +19,6 @@ class Addons extends AdminController
      */
     public function index()
     {
-		//$conf = new \addons\social\model\Conf;
-		//$arr = $conf->getConf();
-		//dump($arr);
 		return View::fetch();
     }
 	
@@ -63,9 +60,6 @@ class Addons extends AdminController
             //在线
             case 'onlineAddons':
                 $url = $this->getSystem()['api_url'].'/v1/addons';
-				$res = Cache::get('addons');
-				if(empty($res)){
-					
 					$addons = Api::urlGet($url,[]);
 					if( $addons->code !== -1){
 						$res['code'] = 0;
@@ -84,12 +78,9 @@ class Addons extends AdminController
 							['field' => 'ctime','title'=> '时间', 'width'=> 150],
 							['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
 						];
-						
-						Cache::set('addons', $res, 600);
 					} else {
 						$res = ['code'=>-1,'msg'=>'未获取到服务器信息'];
 					}
-				}
                 
                 break;
         }

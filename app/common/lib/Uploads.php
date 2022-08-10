@@ -72,7 +72,12 @@ class Uploads
      */
     public function put(string $fileName, string $dirName, int $fileSize, string $fileType, string $rule = null)
     {
-		$file = request()->file($fileName);
+        if(stripos($fileName,'http') !== false) {
+            $file = $fileName;
+        } else {
+            $file = request()->file($fileName);
+        }
+		
         //halt($file->getOriginalName());
 		//$type = $file->getMime();
 		$fileExt = $this->getFileInfo($fileType,'ext');

@@ -1,10 +1,11 @@
 {extend name="public/base" /}
-{block name="title"}{$article.title}-{$sysInfo.webname}{/block}
+{block name="title"}{$article.title} - {$sysInfo.webname}{/block}
 {block name="keywords"}{$article.tags ?: $article.title}{/block}
 {block name="description"}{$article.title},{$article.description ?? ''}{/block}
-{block name="ogtitle"}<meta property="og:title" content="{$article.title}-{$sysInfo.webname}"/>{/block}
+{block name="ogtitle"}<meta property="og:title" content="{$article.title} - {$sysInfo.webname}"/>{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description ?? ''}" />{/block}
 {block name="meta"}
+<meta property="og:type" content="article"/>
 <meta property="article:published_time" content="{$article.create_time|date='c'}"/>
 <meta property="bytedance:published_time" content="{$article.create_time|date='c'}" />
 <meta property="bytedance:lrDate_time" content="{$lrDate_time|date='c'}" />
@@ -166,45 +167,16 @@
       </div>
       {/if}
     </div>
-
-    {//帖子管理}
-    {if (($article.upzip !== '') || (session('user_id')==$article.user_id) OR ($user.auth ?? ''))}
-    <div class="detail-assist">
-      {notempty name="$article.upzip"}
-      <button type="button" class="layui-btn layui-btn-xs" id="zip-download">
-        <i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次
-      </button>
-      {/notempty}
-      <div class="fly-admin-box" data-id="{$article.id}">
-        {if ($user.auth ?? '')}
-          {article:istop}
-          {if($article.is_hot == 0)}
-          <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1" style="background-color: #ccc" title="加精">精</span>
-          {else /}
-          <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" title="取消加精">精</span>
-          {/if}
-          {if($article.is_reply == 1)}
-          <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0" title="禁评">评</span>
-          {else /}
-          <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color: #ccc" title="可评">评</span>
-          {/if}
-          <span id="color">{:lang('title color')}</span>
-          <span class="layui-btn layui-btn-xs jie-admin" type="del" title="删除"><i class="layui-icon layui-icon-delete"></i></span>
-          {/if}
-          {if(session('user_name')==$article.user.name || ($user.auth ?? ''))}
-          <a class="layui-btn layui-btn-xs" href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}" title="编辑"><i class="layui-icon layui-icon-edit"></i></a>
-          {/if}
-      </div>
-    </div>
-    {/if}
-    
+    {//crud管理模块}
+    {include file="/public/crud" /}    
   </div>
   <!--底部栏-->
   <div class="site-tree-mobile-detail-bottom layui-hide-md">
     <div id="LAY_jieAdmin1" data-id="{$article['id']}"></div>
   </div>
 </div>
-{include file="public/menu" /} {/block}
+{include file="public/menu" /}
+{/block}
 {block name="script"}
 {:hook('taonyeditor')}
 <script>
@@ -369,93 +341,11 @@
     plyr.setup();
   });
 </script>
+{//图片点击放大}
+{include file="/public/images-click" /}
+{:hook('markdownhook')}
+{include file="/public/qr-read" /}
+ 
+{volist name="push_js" id="vo"} {$vo.jscode|raw} {/volist}
+{/block}
 
-// 点击图片放大
-<div id="outerdiv" style="position: fixed; top: 0; left: 0; background: rgba(0, 0, 0, 0.7); z-index: 2; width: 100%; height: 100%; display: none">
-  <div id="innerdiv" style="position: absolute">
-    <img id="bigimg" style="border: 5px solid #fff" src="" />
-  </div>
-</div>
-<script type="text/javascript">
-  $(function () {
-    $(".photos").on("click", "img", function () {
-      var _this = $(this);
-      imgShow("#outerdiv", "#innerdiv", "#bigimg", _this);
-    });
-  });
-  function imgShow(outerdiv, innerdiv, bigimg, _this) {
-    var src = _this.attr("src");
-    $(bigimg).attr("src", src);
-
-    $("<img/>")
-      .attr("src", src)
-      .on("load", function () {
-        var windowW = $(window).width();
-        var windowH = $(window).height();
-        var realWidth = this.width;
-        var realHeight = this.height;
-        var imgWidth, imgHeight;
-        var scale = 0.8;
-        if (realHeight > windowH * scale) {
-          //判断图片高度
-          imgHeight = windowH * scale;
-          imgWidth = (imgHeight / realHeight) * realWidth;
-          if (imgWidth > windowW * scale) {
-            //如宽度扔大于窗口宽度
-            imgWidth = windowW * scale;
-          }
-        } else if (realWidth > windowW * scale) {
-          imgWidth = windowW * scale;
-          imgHeight = (imgWidth / realWidth) * realHeight;
-        } else {
-          //如果图片真实高度和宽度都符合要求，高宽不变
-          imgWidth = realWidth;
-          imgHeight = realHeight;
-        }
-        $(bigimg).css("width", imgWidth);
-        var w = (windowW - imgWidth) / 2;
-        var h = (windowH - imgHeight) / 2;
-        $(innerdiv).css({ top: h, left: w });
-        $(outerdiv).fadeIn("fast");
-      });
-    $(outerdiv).click(function () {
-      //再次点击淡出消失弹出层
-      $(this).fadeOut("fast");
-    });
-  }
-</script>
-
-  {:hook('markdownhook')}
-
-  <script>
-    //扫码阅读
-    $("#rdown").hover(
-      function () {
-        $("#phonedl").show().stop();
-      },
-      function () {
-        $("#phonedl").hide().stop();
-      }
-    );
-
-    $("#phonedl").hover(
-      function () {
-        $("#phonedl").show().stop();
-      },
-      function () {
-        $("#phonedl").hide().stop();
-      }
-    );
-
-    function PhoneDown() {
-      layer.open({
-        title: "扫码查阅",
-        skin: "layui-layer",
-        content: "<img src='/qrcode/?text={$Request.domain}{:url('article/detail',['id' => $article.id])}&size=230'>",
-      });
-    }
-  </script>
-
-  {volist name="push_js" id="vo"} {$vo.jscode|raw} {/volist}
-  {/block}
-</div>

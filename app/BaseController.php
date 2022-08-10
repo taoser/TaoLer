@@ -454,7 +454,6 @@ abstract class BaseController
 	 */
 	public function uploadFiles($type)
     {
-        $type = Request::param('type');
         $uploads = new Uploads();
         switch ($type){
             case 'image':

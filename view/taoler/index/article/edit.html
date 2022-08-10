@@ -195,11 +195,11 @@
 		$('.layui-btn-container').children('button').each(function(){
 			numArr.push($(this).val());//添加至数组
 		});
-		tags = numArr.lenth ? '' : numArr.join(',');
+		field.tags = numArr.lenth ? '' : numArr.join(',');
 		$.ajax({
 			type:"post",
 			url:"{:url('article/edit')}",
-			data:{"id":field.id,"cate_id":field.cate_id,"title":field.title,"title_color":field.title_color,"user_id":field.user_id,"content":field.content,"upzip":field.upzip,"tags":tags,"description":field.description,"captcha":field.captcha},
+			data: field,
 			daType:"json",
 			success:function (data){
 				if (data.code == 0) {

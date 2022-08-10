@@ -8,16 +8,16 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Config;
+use app\common\model\Cate;
 use app\common\model\Comment;
 use app\common\model\Article as ArticleModel;
 use app\common\model\Slider;
 use app\common\model\UserZan;
+
 use taoler\com\Message;
 use app\common\lib\Msgres;
-use app\common\lib\Uploads;
-use taoser\SetArr;
-use taoler\com\Api;
 use Overtrue\Pinyin\Pinyin;
+
 
 class Article extends BaseController
 {
@@ -35,9 +35,12 @@ class Article extends BaseController
 		}
 		//动态参数
 		$ename = Request::param('ename') ?? 'all';
+		$cate = new Cate();
+		$cateInfo = $cate->getCateInfo($ename);
+		// halt($cateInfo);
 		$type = Request::param('type') ?? 'all';
 		$page = Request::param('page') ? Request::param('page') : 1;
-		$tpl = Db::name('cate')->where('ename',$ename)->value('detpl');
+
 		//分页url
 		$url = url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
 		//返回最后/前面的字符串
@@ -55,8 +58,18 @@ class Article extends BaseController
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(6);
 
-		View::assign(['type'=>$type,'artList'=>$artList,'artHot'=>$artHot,'ad_cateImg'=>$ad_cateImg,'ad_comm'=>$ad_comm,'jspage'=>'jie','ename'=>$ename,'path'=>$path]);
-		return View::fetch('article/'.$tpl.'/cate');
+		View::assign([
+			'ename'=>$ename,
+			'cateinfo'=> $cateInfo,
+			'type'=>$type,
+			'artList'=>$artList,
+			'artHot'=>$artHot,
+			'ad_cateImg'=>$ad_cateImg,
+			'ad_comm'=>$ad_comm,
+			'path'=>$path,
+			'jspage'=>'jie'
+		]);
+		return View::fetch('article/' . $cateInfo->detpl . '/cate');
     }
 
 	//文章详情页
@@ -234,7 +247,7 @@ class Article extends BaseController
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
 
-            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'tiny_content', 'content', 'upzip', 'tags', 'description', 'captcha']);
+            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'description', 'captcha']);
 
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
@@ -254,10 +267,14 @@ class Article extends BaseController
 			// 获取内容图片音视频标识
 			$iva= $this->hasIva($data['content']);
 			$data = array_merge($data,$iva);
+
+			$data['content'] = $this->downUrlPicsReaplace($data['content']);
+
 			// 获取分类ename
 			$cate_ename = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
 		
             $article = new ArticleModel();
+
             $result = $article->add($data);
             if ($result['code'] == 1) {
 				// 获取到的最新ID
@@ -321,6 +338,9 @@ class Article extends BaseController
 				//获取内容图片音视频标识
 				$iva= $this->hasIva($data['content']);
 				$data = array_merge($data,$iva);
+
+				$data['content'] = $this->downUrlPicsReaplace($data['content']);
+
 				
 				$result = $article->edit($data);
 				if($result == 1) {
@@ -525,10 +545,16 @@ class Article extends BaseController
 				// 匹配所有
 				//$content = str_replace("$key", 'a('.$value.')['.$key.']',$content);
 				// 限定匹配数量 '/'.$key.'/'
+
 				// 匹配不包含[和]的内容
-				$pats = '/(?<!\[)'.$key.'(?!\])/';
-				//preg_match($pats,$content,$arr);
-				//halt($arr[0]);
+				// $pats = '/(?<!\[)'.$key.'(?!\])/';
+				// $pats = '/(?<!<a\s?(.*)?)'.$key.'(?!<\/a>)/';
+				//$pats = '/'.$key.'(?!<\/a>)/';
+				// 不匹配 $key</a>已经存在链接的情况
+				$pats = '/'.$key. '\s?(?!<\/a>|")/is';
+
+				preg_match($pats,$content,$arr);
+
 				// 开启和关闭编辑器使用不同的链接方式
 				$rpes = hook('taonystatus') ? '<a href="'.$value.'" target="_blank" title="'.$key.'" style="font-weight: bold;color:#31BDEC">'.$key.'</a>' : 'a('.$value.')['.$key.']';
 
@@ -539,6 +565,7 @@ class Article extends BaseController
 		return $content;
 	}
 
+	//点赞文章
 	public function userZanArticle()
 	{
 		//
@@ -556,5 +583,78 @@ class Article extends BaseController
 		}
 		
 	}
+	
+	//下载图片
+	private function downloadImage($url)
+	{
+		$ch = curl_init();
+		curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, 'GET' );  
+    	curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false ); 
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		$file = curl_exec($ch);
+		curl_close($ch);
+		return $this->saveAsImage($url, $file);
+
+	}
+
+	//保存图片
+	private function saveAsImage($url, $file)
+	{
+		$filename = pathinfo($url, PATHINFO_BASENAME);
+		//$dirname = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_DIRNAME);
+		$dirname = date('Ymd',time());
+		//路径
+		$path =  'storage/' . $this->uid . '/article_pic/' . $dirname . '/';
+		//绝对文件夹
+		$fileDir = public_path() . $path;
+		//文件绝对路径
+		$filePath =  $fileDir . $filename;
+		//相对路径文件名
+		$realFile = '/' . $path . $filename;
+		// 如果目录不存在，则创建
+
+		if(!is_dir($fileDir)) {
+			mkdir($fileDir, 0777, true);
+		}
+
+		if(file_exists($filePath)) {
+			//$this->output->writeln("【已存在】输出路径" . $fullpath);
+			return $realFile;
+
+		} else {
+			$resource = fopen($filePath, 'a');
+			$res = fwrite($resource, $file);
+			fclose($resource);
+			if($res !== false) {
+				return $realFile;
+			}
+		}
+	}
+
+	//下载网络图片到本地并替换
+    public function downUrlPicsReaplace($content)
+	{
+		// 批量下载网络图片并替换
+		$images = $this->getArticleAllpic($content);
+		if(count($images)) {
+			foreach($images as $image){
+				//1.网络图片
+				//halt((stripos($image, Request::domain()) === false));
+				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) === false)) { 
+					
+					//2.下载远程图片
+					$newImageUrl = $this->downloadImage($image);
+					
+					$content = str_replace($image,Request::domain().$newImageUrl,$content);
+	
+				}
+			}
+		}
+		
+		return $content;
+	}
+	
 	
 }

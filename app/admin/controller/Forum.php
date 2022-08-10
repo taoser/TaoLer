@@ -339,6 +339,7 @@ class Forum extends AdminController
 			
             $data = Request::only(['cate_id', 'title', 'title_color', 'tiny_content', 'content', 'upzip', 'tags', 'description', 'captcha']);
 			$data['user_id'] = 1; //管理员ID
+
 			// 调用验证器
 			$validate = new \app\common\validate\Article;
             $result = $validate->scene('Artadd')->check($data);
@@ -452,6 +453,7 @@ class Forum extends AdminController
     {
         $data = Request::only(['tags','flag']);
 		return $this->setTags($data);
+		
     }
 
 	/**

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-26 15:17:08
+ * @LastEditTime: 2022-08-03 10:34:42
  * @LastEditors: TaoLer
  * @Description: 前端基础控制器设置
  * @FilePath: \github\TaoLer\app\common\controller\BaseController.php
@@ -121,5 +121,21 @@ class BaseController extends BaseCtrl
         View::assign($assign);
 		return $sysInfo;
     }
+
+	//获取artcile所有图片
+	protected function getArticleAllpic($str)
+	{
+		// <img src="http://img.com" />
+		$pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
+		preg_match_all($pattern,$str,$matchContent);
+		if(isset($matchContent[1])){
+			$img = $matchContent[1];
+		}else{
+			$temp = "./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
+		}
+		
+		return $img;
+
+	}
 
 }
