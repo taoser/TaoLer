@@ -446,6 +446,7 @@ CREATE TABLE `tao_push_jscode` (
   `id` int(2) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '平台名',
   `jscode` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'js代码',
+  `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1push2taglink',
   `create_time` int NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int NOT NULL DEFAULT '0' COMMENT '删除时间',
@@ -522,37 +523,25 @@ INSERT INTO `tao_system` VALUES (1, 'TaoLer', 'TaoLer社区-www.aieok.com', 'www
 
 DROP TABLE IF EXISTS `tao_tag`;
 CREATE TABLE `tao_tag` (
-  `id` int NOT NULL COMMENT 'tag自增id',
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'tag自增id',
   `name` varchar(20) NOT NULL COMMENT '名称',
   `ename` varchar(20) NOT NULL COMMENT '英文名',
   `create_time` int NOT NULL COMMENT '创建时间',
-  `update_time` int NOT NULL COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章tag表';
-
-ALTER TABLE `tao_tag`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `ename` (`ename`);
-
-ALTER TABLE `tao_tag`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'tag自增id', AUTO_INCREMENT=1;
-COMMIT;
+  `update_time` int NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `ename` (`ename`) USING BTREE COMMENT 'ename查询tag索引'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='文章tag表';
 
 DROP TABLE IF EXISTS `tao_taglist`;
 CREATE TABLE `tao_taglist` (
-  `id` int NOT NULL COMMENT '标签列表id',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '标签列表id',
   `tag_id` int NOT NULL COMMENT '标签id',
   `article_id` int NOT NULL COMMENT '文章id',
-  `create_time` int NOT NULL COMMENT '创建时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-ALTER TABLE `tao_taglist`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `article_id` (`article_id`),
-  ADD KEY `tag_id` (`tag_id`);
-
-ALTER TABLE `tao_taglist`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT '标签列表id', AUTO_INCREMENT=1;
-COMMIT;
+  `create_time` int NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `tag_id` (`tag_id`) USING BTREE COMMENT 'tagID索引',
+  KEY `article_id` (`article_id`) USING BTREE COMMENT '文章ID查询索引'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='tag详细列表';
 
 -- ----------------------------
 -- Table structure for tao_user
