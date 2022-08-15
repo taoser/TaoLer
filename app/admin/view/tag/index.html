@@ -22,17 +22,14 @@
 				  </div>
 				</div>
 			</div-->
-            <div class="layui-form" wid100 lay-filter="">
-				<div class="layui-upload">
-					<button type="button" class="layui-btn layui-btn-normal" id="slid-add">添加</button>
-					<table id="tag-link" lay-filter="tag-link"></table>
-					<script type="text/html" id="barDemo">
-						<a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></a>
-						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
-					</script>
-				</div> 
-            </div>
-            
+			<div style="padding-bottom: 10px;">
+				<button type="button" class="layui-btn layuiadmin-btn-forum-list" id="slid-add">添加</button>
+			</div>	
+			<table id="tag" lay-filter="tag"></table>
+			<script type="text/html" id="barDemo">
+				<a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></a>
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
+			</script>            
           </div>
         </div>
       </div>
@@ -46,7 +43,7 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index','layer','table','form'], function(){
+  }).use(['index'], function(){
   var $ = layui.jquery
   ,layer = layui.layer
   ,table = layui.table
@@ -54,21 +51,22 @@
 
   //第一个实例
   table.render({
-    elem: '#tag-link'
-    ,url: "{:url('TagLink/list')}" //数据接口
+    elem: '#tag'
+    ,url: "{:url('Tag/list')}" //数据接口
     ,page: true //开启分页
     ,cols: [[ //表头
       {type: 'numbers', fixed: 'left'}
-	  ,{field: 'tag', title: 'Tag', width:200}
-      ,{field: 'link', title: 'Link', minWidth:300}
+	  ,{field: 'name', title: '名称', width:200}
+      ,{field: 'ename', title: '别名', minWidth:300}
+	  ,{field: 'time', title: '时间', minWidth:100}
 	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
     ]]
-	,limit: 15
+	,limit: 100
 	,text: '对不起，加载出现异常！'
   });
 
   form.on('submit(Tag-link-search)', function(data){
-	  $.post("{:url('TagLink/list')}", {"tag":data.value}, function (data){
+	  $.post("{:url('Tag/list')}", {"tag":data.value}, function (data){
 			if (data.code == -1){
 				layer.open({content:data.msg,icon:5,anim:6});
 			}
@@ -84,13 +82,13 @@
   });
 
   //监听行工具事件
-  table.on('tool(tag-link)', function(obj){
+  table.on('tool(tag)', function(obj){
     var data = obj.data;
-	var tag = data.tag;
+	var id = data.id;
     if(obj.event === 'del'){
     	layer.confirm('真的删除行么', {icon: 3, title:'删除TagLink？'}, function(index){
 			//提交 Ajax 成功后，静态更新表格中的数据
-			$.post("{:url('TagLink/delete')}", {"tag":tag}, function(data){
+			$.post("{:url('Tag/delete')}", {"id":id}, function(data){
 				if (data.code == 0) {
 					layer.msg(data.msg,{icon:6,time:2000}, function(){
 						location.reload();
@@ -104,21 +102,21 @@
     } else if(obj.event === 'edit'){
 		layer.open({
 		  type: 2,
-		  title: '编辑TagLink',
-		  content: 'edit.html?tag='+ tag,
+		  title: '编辑Tag',
+		  content: 'edit.html?id='+ id,
 		  maxmin: true,
 		  area : ['400px' , '300px'],
 		  btn: ['确定', '取消'],
           yes: function(index, layero){
 		  var iframeWindow = window['layui-layer-iframe'+ index]
-            ,submitID = 'Tag-Link-submit'
+            ,submitID = 'Tag-submit'
             ,submit = layero.find('iframe').contents().find('#'+ submitID);
             //监听提交
             iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
               var field = data.field; //获取提交的字段
               $.ajax({
 				type:"post",
-				url:"{:url('TagLink/edit')}",
+				url:"{:url('Tag/edit')}",
 				data: field,
 				daType:"json",
 				success:function (data){
@@ -143,14 +141,14 @@
   $('#slid-add').on('click', function(){
       layer.open({
 		  type: 2,
-		  title: '添加TagLink',
+		  title: '添加Tag',
 		  content: 'add.html',
 		  maxmin: true,
 		  area : ['400px' , '300px'],
 		  btn: ['确定', '取消'],
           yes: function(index, layero){
 		  var iframeWindow = window['layui-layer-iframe'+ index]
-            ,submitID = 'Tag-Link-submit'
+            ,submitID = 'Tag-submit'
             ,submit = layero.find('iframe').contents().find('#'+ submitID);
 
             //监听提交
@@ -160,7 +158,7 @@
               //提交 Ajax 成功后，静态更新表格中的数据
               $.ajax({
 				type:"post",
-				url:"{:url('TagLink/add')}",
+				url:"{:url('Tag/add')}",
 				data: field,
 				daType:"json",
 				success:function (data){

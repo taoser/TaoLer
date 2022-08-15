@@ -12,7 +12,6 @@ use think\facade\Db;
 use think\facade\Request;
 use think\facade\Lang;
 use think\facade\View;
-use think\facade\Route;
 use taoser\SetArr;
 use app\common\lib\Uploads;
 
@@ -296,9 +295,9 @@ abstract class BaseController
 	 *
 	 * @return void
 	 */
-    public function setTags($data)
+    public function setKeywords($data)
     {
-		$tags = [];
+		$keywords = [];
 
 		if($data['flag'] == 'on') {
 			// 百度分词自动生成关键词
@@ -309,7 +308,7 @@ abstract class BaseController
 				$headers = array();
 				$headers[] = "Content-Type:application/json";
 				$body   = array(
-							"text" => $data['tags']
+							"text" => $data['$keywords']
 					);
 				$postBody    = json_encode($body);
 				$curl = curl_init();
@@ -330,8 +329,8 @@ abstract class BaseController
 						// 数据正常
 						$items = $dataItem->items;
 						foreach($items as $item) {
-							if($item->pos == 'n' && !in_array($item->item,$tags)){
-								$tags[] = $item->item;
+							if($item->pos == 'n' && !in_array($item->item,$keywords)){
+								$keywords[] = $item->item;
 							}
 						}
 					} else {
@@ -362,16 +361,16 @@ abstract class BaseController
 		} else {
 			// 手动添加关键词
 			// 中文一个或者多个空格转换为英文空格
-			$str = preg_replace('/\s+/',' ',$data['tags']);
+			$str = preg_replace('/\s+/',' ',$data['keywords']);
 			$att = explode(' ', $str);
 			foreach($att as $v){
 				if ($v !='') {
-					$tags[] = $v;
+					$keywords[] = $v;
 				}
 			}
 		}
 		
-        return json(['code'=>0,'data'=>$tags]);
+        return json(['code'=>0,'data'=>$keywords]);
     }
 
 	//	api_post接口
@@ -474,6 +473,95 @@ abstract class BaseController
         }
         return $upRes;
     }
+
+    //获取artcile所有图片
+	protected function getArticleAllpic($str)
+	{
+		// <img src="http://img.com" />
+		$pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
+		preg_match_all($pattern,$str,$matchContent);
+		if(isset($matchContent[1])){
+			$img = $matchContent[1];
+		}else{
+			$temp = "./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
+		}
+		
+		return $img;
+
+	}
+
+
+    //下载图片
+	private function downloadImage($url)
+	{
+		$ch = curl_init();
+		curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, 'GET' );  
+    	curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false ); 
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		$file = curl_exec($ch);
+		curl_close($ch);
+		return $this->saveAsImage($url, $file);
+
+	}
+
+	//保存图片
+	private function saveAsImage($url, $file)
+	{
+		$filename = pathinfo($url, PATHINFO_BASENAME);
+		//$dirname = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_DIRNAME);
+		$dirname = date('Ymd',time());
+		//路径
+		$path =  'storage/' . $this->uid . '/article_pic/' . $dirname . '/';
+		//绝对文件夹
+		$fileDir = public_path() . $path;
+		//文件绝对路径
+		$filePath =  $fileDir . $filename;
+		//相对路径文件名
+		$realFile = '/' . $path . $filename;
+		// 如果目录不存在，则创建
+
+		if(!is_dir($fileDir)) {
+			mkdir($fileDir, 0777, true);
+		}
+
+		if(file_exists($filePath)) {
+			//$this->output->writeln("【已存在】输出路径" . $fullpath);
+			return $realFile;
+
+		} else {
+			$resource = fopen($filePath, 'a');
+			$res = fwrite($resource, $file);
+			fclose($resource);
+			if($res !== false) {
+				return $realFile;
+			}
+		}
+	}
+
+	//下载网络图片到本地并替换
+    public function downUrlPicsReaplace($content)
+	{
+		// 批量下载网络图片并替换
+		$images = $this->getArticleAllpic($content);
+		if(count($images)) {
+			foreach($images as $image){
+				//1.网络图片
+				//halt((stripos($image, Request::domain()) === false));
+				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) === false)) { 
+					
+					//2.下载远程图片
+					$newImageUrl = $this->downloadImage($image);
+					
+					$content = str_replace($image,Request::domain().$newImageUrl,$content);
+	
+				}
+			}
+		}
+		
+		return $content;
+	}
 
 
 

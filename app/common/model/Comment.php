@@ -2,24 +2,19 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-27 21:42:34
+ * @LastEditTime: 2022-08-15 13:37:58
  * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
- * @FilePath: \github\TaoLer\app\common\model\Comment.php
+ * @Description: 评论模型
+ * @FilePath: \TaoLer\app\common\model\Comment.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 namespace app\common\model;
 
 use think\Model;
 use think\model\concern\SoftDelete;
-use think\facade\Cache;
 
 class Comment extends Model
-{
-	protected $autoWriteTimestamp = true; //开启自动时间戳
-    protected $createTime = 'create_time';
-    protected $updateTime = 'update_time';
-	
+{	
 	//软删除
 	use SoftDelete;
 	protected $deleteTime = 'delete_time';
@@ -47,37 +42,30 @@ class Comment extends Model
     //回帖榜
     public function reply($num)
     {
-        // $user = Cache::get('user_reply');
-        // if(empty($user)){
-            try {
-                $user = User::field('id,user_img,name,nickname')
-                ->withCount(['comments'=> function($query) {
-                    $query->where(['status'=>1]);
-                }])
-                ->order(['comments_count'=>'desc','last_login_time'=>'desc'])
-                ->limit($num)
-                ->select()
-                ->toArray();
-            } catch(\Exception $e) {
-                return json(['status'=>-1,'msg'=>$e->getMessage()]);
-            }
-            
-        //     Cache::set('user_reply',$user,180);
-        // }
+        try {
+            $user = User::field('id,user_img,name,nickname')
+            ->withCount(['comments'=> function($query) {
+                $query->where(['status'=>1]);
+            }])
+            ->order(['comments_count'=>'desc','last_login_time'=>'desc'])
+            ->limit($num)
+            ->withCache(300)
+            ->select()
+            ->toArray();
+        } catch(\Exception $e) {
+            return json(['status'=>-1,'msg'=>$e->getMessage()]);
+        }
 
         if(count($user)) {
             $res['status'] = 0;
             $res['data'] = array();
             foreach ($user as $key=>$v) {
-                //$u['uid'] = (string) url('user/home',['id'=>$v['id']]);
-                $u['uid'] = (string) \think\facade\Route::buildUrl('user_home', ['id' => $v['id']]);
+                $u['uid'] = (string) url('user_home',['id'=>$v['id']]);
+                // $u['uid'] = (string) \think\facade\Route::buildUrl('user_home', ['id' => $v['id']]);
                 $u['count'] = $v['comments_count'];
-                if($v['nickname'])
-                {
-                    $u['user'] = ['username'=>$v['nickname'],'avatar'=>$v['user_img']];
-                } else {
-                    $u['user'] = ['username'=>$v['name'],'avatar'=>$v['user_img']];
-                }
+                
+                $u['user'] = ['username'=>$v['nickname'] ?: $v['name'] ,'avatar'=>$v['user_img']];
+                
                 $res['data'][] = $u;
             }
         } else {

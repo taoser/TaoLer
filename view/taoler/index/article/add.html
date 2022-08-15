@@ -99,17 +99,20 @@
                 <textarea name="description" class="layui-textarea" placeholder="SEO描述"></textarea>
               </div>
             </div>
+            {//关键词}
             <div class="layui-form-item">
-              <div class="layui-inline">
-                <label class="layui-form-label">{:lang('add tags')}</label>
-                <div class="layui-input-inline" style="width: 190px">
-                  <input type="text" class="layui-input" name="tags" value="" placeholder="多个用空格隔开" title="添加标签" />
+                <label class="layui-form-label">{:lang('添加关键词')}</label>
+                <div class="layui-input-block">
+                  <!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
+                  <input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="添加关键词" />
                 </div>
-                <button type="button" class="layui-btn" id="article-tags-button">{:lang('add')}</button>
-              </div>
             </div>
+            {//tag}
             <div class="layui-form-item">
-              <div class="layui-btn-container"></div>
+                <label class="layui-form-label">{:lang('add tags')}</label>
+                <div class="layui-input-block">
+                  <div id="tag"></div>
+                </div>
             </div>
 
             <!--div class="layui-form-item">
@@ -132,25 +135,10 @@
             <div class="layui-form-item">
               <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
               <div class="layui-input-inline">
-                <input
-                  type="text"
-                  id="L_vercode"
-                  name="captcha"
-                  required
-                  lay-verify="required"
-                  placeholder="{:lang('please input the captcha')}"
-                  autocomplete="off"
-                  class="layui-input"
-                />
+                <input type="text" id="L_vercode" name="captcha" required lay-verify="required"  placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input" />
               </div>
               <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important">
-                <img
-                  id="captcha"
-                  src="{:captcha_src()}"
-                  onclick="this.src='{:captcha_src()}?'+Math.random();"
-                  style="float: left; cursor: pointer"
-                  alt="captcha"
-                />
+                <img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();" style="float: left; cursor: pointer"  alt="captcha" />
               </div>
             </div>
             {/if}
@@ -170,8 +158,9 @@
 
 {block name="script"}
 {:hook('taonyeditor')}
+<script src="/static/xm-select.js"></script>
 <script>
-  layui.use(["fly", "form", "colorpicker", "upload", "plyr"], function () {
+  layui.use(["fly", "plyr",'inputTags'], function () {
     var $ = layui.jquery,
       fly = layui.fly,
       form = layui.form,
@@ -179,94 +168,68 @@
       upload = layui.upload,
       plyr = layui.plyr;
 
-     // 改变标题颜色
-    colorpicker.render({
-      elem: "#color",
-      color: "#393d49",
-      predefine: true, // 开启预定义颜色
-      done: function (color) {
-        //譬如你可以在回调中把得到的 color 赋值给表单
-        $("#L_title_color").val(color);
-        $("#L_title").css("color", color);
-      },
-    });
 
-    //上传附件
-    upload.render({
-      elem: "#zip-button",
-      url: "{:url('article/uploads')}", //改成您自己的上传接口
-      data: { type: "zip" },
-      accept: "file", //普通文件
-      done: function (res) {
-        if (res.status == 0) {
-          $('input[name="upzip"]').val(res.url);
-          layer.msg("上传成功");
-        } else {
-          layer.msg(res.msg);
+    //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+    var taonystatus = "{:hook('taonystatus')}";
+    // 编辑器插件启用状态
+    var isShow = taonystatus ? false : true;
+    if(isShow) {
+      $('.layui-textarea').each(function(){
+        var othis = $(this), html = othis.html();
+        othis.attr(fly.content(html));
+      })
+    }
+
+    var inputTags = layui.inputTags;
+      //关键词
+    inputTags.render({
+        elem:'#inputTags',
+        content: [],
+        aldaBtn: false,
+        done: function(value){
+          //console.log(value)
+          var keywords = this.content.join(',');
+          $("input[name='keywords']").val(keywords);          
         }
-      },
+      })    
+      
+    //1.渲染标签
+    var addTags = xmSelect.render({
+      el: '#tag',
+      name: 'tagid',
+      layVerify: 'required',
+      layVerType: 'msg',
+      paging: true,
+      pageSize: 5,
+      data: []
+    });
+    //2.动态标签赋值
+    $.get("{:url('get_all_tag')}",function(res){
+      if(res.code == 0){
+        addTags.update({
+          data: res.data,
+          autoRow: true,
+        })
+      }
     });
 
-    // 发布文章
-    form.on("submit(article-add)", function (data) {
-      var field = data.field;
-      var numArr = new Array();
-      $(".layui-btn-container").children("button").each(function () {
-          numArr.push($(this).val()); //添加至数组
-        });
-      field.tags = numArr.lenth ? "" : numArr.join(",");
- 
-      var index = layer.load(1);
-      $.ajax({
-        type: "post",
-        url: "{:url('article/add')}",
-        data: field,
-        dataType: "json",
-        success: function (data) {
-          if (data.code == 0) {
-            layer.msg(data.msg, { icon: 6, time: 2000 }, function () {
-              location.href = data.url;
-            });
-          } else {
-            layer.open({ title: "发布失败", content: data.msg, icon: 5, anim: 6 });
-            layui.jquery("#captcha").attr("src", "{:captcha_src()}?" + Math.random());
-          }
-          layer.close(index);
-        },
-      });
-      return false;
-    });
-
-   // 从详情页自动调用端口过滤，获取描述信息
-   $("#L_content").mouseleave(function() {
-    var content = $(this).val().replace(/[\r\n]/g,"").replace(/\n/g, '').replace(/\s/g, '').replace(/\t/g, '');
-      $.post("{:url('article/getDescription')}", { content: content }, function(data){
-        if (data.code == 0) {
-          $('[name="description"]').val(data.data);
-        }
-      });
-    });
-
-    // 手动添加tags
-    $("#article-tags-button").on("click", function () {
-      var tags = $("input[name='tags']").val();
-      var flag = "off";
-      getTags(tags, flag);
-    });
-
-    // 获取tag的内容
+    // 通过标题内容自动获取tag的内容
     var conf = "{:empty(config('taoler.baidu.client_id'))}";
     if (conf !== "1") {
       $("#L_title").on("blur", function () {
         var title = $(this).val();
         var flag = "on";
-        // 清空上次生成的tag button
-        $(".layui-btn-container")
-          .children("button")
-          .each(function () {
-            $(this).remove();
-          });
-        getTags(title, flag);
+        $.ajax({
+          type: "post",
+          url: "{:url('article/keywords')}",
+          data: { keywords: keywords, flag: flag },
+          daType: "json",
+          success: function (res) {
+            if (res.code == 0) {
+              $("input[name='keywords']").val(res.data);
+            }
+          },
+        })
       });
     }
 
@@ -304,53 +267,74 @@
             $(".bdsug").addClass('layui-hide');
           }
       });
-    }  
-
-    // 添加关键词button
-    function getTags(tags, flag)
-    {
-      if (tags == "") {
-        layer.msg("tag不能为空");
-        return false;
-      }
-
-      //把得到的tags放进数组
-      var numArr = new Array();
-      $(".layui-btn-container")
-        .children("button")
-        .each(function () {
-          numArr.push($(this).val()); //添加至数组
-        });
-
-      $.ajax({
-        type: "post",
-        url: "{:url('article/tags')}",
-        data: { tags: tags, flag: flag },
-        daType: "json",
-        success: function (data) {
-          if (data.code == 0) {
-            for (var i = 0; i < data.data.length; i++) {
-              if ($.inArray(data.data[i], numArr) < 0) {
-                $(".layui-btn-container").append(
-                  '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" value=' + data.data[i] + ">" + data.data[i] + " x" + "</button>"
-                );
-              }
-            }
-            $("input[name='tags']").val("");
-          }
-        },
-      });
     }
 
-    // 删除tag
-    $(document).ready(function () {
-      $(".layui-btn-container").on("click", "button", function () {
-        $(this).remove();
+    // 从详情页自动调用端口过滤，获取描述信息
+   $("#L_content").mouseleave(function() {
+    var content = $(this).val().replace(/[\r\n]/g,"").replace(/\n/g, '').replace(/\s/g, '').replace(/\t/g, '');
+      $.post("{:url('article/getDescription')}", { content: content }, function(data){
+        if (data.code == 0) {
+          $('[name="description"]').val(data.data);
+        }
       });
+    });
+
+    // 改变标题颜色
+    colorpicker.render({
+      elem: "#color",
+      color: "#393d49",
+      predefine: true, // 开启预定义颜色
+      done: function (color) {
+        //譬如你可以在回调中把得到的 color 赋值给表单
+        $("#L_title_color").val(color);
+        $("#L_title").css("color", color);
+      },
+    });
+
+    // 发布文章
+    form.on("submit(article-add)", function (data) {
+      var field = data.field;
+      console.log(field)
+      var index = layer.load(1);
+      $.ajax({
+        type: "post",
+        url: "{:url('article/add')}",
+        data: field,
+        dataType: "json",
+        success: function (data) {
+          if (data.code == 0) {
+            layer.msg(data.msg, { icon: 6, time: 2000 }, function () {
+              location.href = data.url;
+            });
+          } else {
+            layer.open({ title: "发布失败", content: data.msg, icon: 5, anim: 6 });
+            l$("#captcha").attr("src", "{:captcha_src()}?" + Math.random());
+          }
+          layer.close(index);
+        },
+      });
+      return false;
+    });
+
+    //上传附件
+    upload.render({
+      elem: "#zip-button",
+      url: "{:url('article/uploads')}",
+      data: { type: "zip" },
+      accept: "file", //普通文件
+      done: function (res) {
+        if (res.status == 0) {
+          $('input[name="upzip"]').val(res.url);
+          layer.msg("上传成功");
+        } else {
+          layer.msg(res.msg);
+        }
+      },
     });
 
     //加载播放器
     plyr.setup();
+
   });
 </script>
 

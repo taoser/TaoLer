@@ -1,7 +1,7 @@
 {extend name="public/base" /}
 
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
-{block name="keywords"}{$article.tags ?: $article.title}{/block}
+{block name="keywords"}{$article.keywords ?: $article.title}{/block}
 {block name="description"}{$article.title},{$article.description}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{$article.title} - {$sysInfo.webname}">{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description ?? ''}" />{/block}
@@ -38,7 +38,7 @@
                 <div class="meta d-flex align-items-center text-xs text-muted">
                 <div>
                   <div class="d-inline-block" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
-                    Posted by <a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">用户投稿</span></a>，<a href="{:url('cate',['ename'=>$article.cate.ename])}" target="_blank" class="text-muted" rel="category">{$article.user.name}</a>，<time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d h:m:s'}" itemprop="datePublished">{$article.create_time}</time> 
+                    Posted by <a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">{$article.user.name}</span></a>，<a href="{:url('cate',['ename'=>$article.cate.ename])}" target="_blank" class="text-muted" rel="category">{$article.cate.catename}</a>，<time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d h:m:s'}" itemprop="datePublished">{$article.create_time}</time> 
                   </div>
                 </div>
                 <div class="ml-auto text-sm yincang">
@@ -54,13 +54,10 @@
               </article>
               {//文章末尾}
               <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
-              <div style="margin-top: 15px">
-                <h2>关键词</h2>
-                <div class="layui-btn-container" style="padding-top: 15px;">
+              <div style="margin-top: 15px">标签
                   {volist name="tags" id="vo" }
-                  <a href="{$vo.url}"><span class="layui-btn layui-btn-sm  layui-btn-radius layui-btn-danger">{$vo.tag}</span></a>
+                  <a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
                   {/volist}
-                </div>
               </div>
               <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
                 <p>{$sysInfo.state}</p>    
@@ -185,7 +182,7 @@
               <dd class="function_c">              
                 <ul>
                   {volist name="hotTag" id="vo"}
-                  <li><a href="{$vo.url}" rel="tag">{$vo.tag}</a></li>
+                  <li><a href="{$vo.url}" rel="tag">{$vo.name}</a></li>
                   {/volist}
                 </ul>
               </dd>

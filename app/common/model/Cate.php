@@ -2,9 +2,9 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-08-10 14:36:20
+ * @LastEditTime: 2022-08-14 07:33:14
  * @LastEditors: TaoLer
- * @Description: 优化版
+ * @Description: 分类模型
  * @FilePath: \github\TaoLer\app\common\model\Cate.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */

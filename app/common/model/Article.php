@@ -7,11 +7,9 @@ use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Cache;
 use think\facade\Config;
-use Overtrue\Pinyin\Pinyin;
 
 class Article extends Model
 {
-	//protected $pk = 'id'; //主键
     protected $autoWriteTimestamp = true; //开启自动时间戳
     protected $createTime = 'create_time';
     protected $updateTime = 'update_time';
@@ -57,6 +55,12 @@ class Article extends Model
 		return $this->belongsTo('User','user_id','id');
 	}
 
+    //文章关联Tag表
+	public function taglist()
+	{
+		return $this->hasMany(Taglist::class);
+	}
+
     /**
      * 添加
      * @param array $data
@@ -69,10 +73,10 @@ class Article extends Model
 		$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
 		$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
 		$result = $this->save($data);
-		if($result) {
-			return ['code' => 1, 'msg' => $msg, 'data' => ['status' => $data['status']]];
+		if($result == true) {
+			return ['code' => 1, 'msg' => $msg, 'data' => ['status' => $data['status'], 'id'=> $this->id]];
 		} else {
-			return 'add_error';
+			return ['code' => -1, 'msg'=> '添加文章失败'];
 		}
 	}
 
@@ -170,7 +174,7 @@ class Article extends Model
     public function getArtHot(int $num)
     {
         $artHot = $this::field('id,cate_id,title,create_time')
-        ->with([ 'cate' => function($query){
+        ->with(['cate' => function($query){
                 $query->where('delete_time',0)->field('id,ename');
             }])
             ->withCount('comments')
@@ -198,7 +202,9 @@ class Article extends Model
         $article = Cache::get('article_'.$id);
         if(!$article){
             //查询文章
-            $article = $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,tags,description,title_color,create_time,update_time')->where('status',1)->with([
+            $article = $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,keywords,description,title_color,create_time,update_time')
+            ->where(['status'=>1])
+            ->with([
                 'cate' => function($query){
                     $query->where('delete_time',0)->field('id,catename,ename');
                 },
@@ -208,9 +214,13 @@ class Article extends Model
             ])
             ->withCount(['comments'])
             ->append(['url'])
-            ->find($id)
-            ->toArray();
-            Cache::tag('tagArtDetail')->set('article_'.$id, $article, 3600);
+            ->find($id);
+            if (!is_null($article)) {
+                Cache::tag('tagArtDetail')->set('article_'.$id, $article->toArray(), 3600);
+            } else {
+                return null;
+            }
+            
         }
         return $article;
     }
@@ -314,58 +324,23 @@ class Article extends Model
         }
     }
 
-    // 热门标签
-    public function getHotTags()
+    // 标签列表
+    public function getAllTags($tagId)
     {
-        $pinyin = new Pinyin();
-        $tags = $this->where(['status'=>1])->where('tags','<>','')->order('pv desc')->limit(100)->column('tags');
-        //转换为字符串
-		$tagStr = implode(",",$tags);
-		//转换为数组并去重
-		$tagArr = array_unique(explode(",",$tagStr));
-
-        $tagHot = [];
-        foreach($tagArr as $v) {
-            $tagHot[] = ['tag'=>$v,'url'=> (string) url('tag_list',['tag'=>$pinyin->permalink($v,'')])];
-        }
-        
-        return $tagHot;
-    }
-
-    // 查询包含tag标签的文章
-    public function getAllTags($tag)
-    {
-        $pinyin = new Pinyin();
-        $allTags = $this->field('id,title,is_hot,tags,cate_id,user_id,create_time,pv')->where(['status'=>1])->where('tags','<>','')
-        ->with([
-            'cate' => function($query){
-                $query->where('delete_time',0)->field('id,catename,ename');
-            },
-            'user' => function($query){
-                $query->field('id,name,nickname,user_img,area_id,vip');
-            }
-        ])->withCount(['comments'])
-        ->order('pv desc')->limit(100)->append(['url'])->select()->toArray();
-        //halt($tags);
-        $artTag = [];
-        foreach($allTags as $v) {
-            if(stripos($v['tags'],',') !== false){
-                $tagArr = explode(",",$v['tags']);
-                foreach($tagArr as $s) {
-                    $tagPinyin = $pinyin->permalink($s,'');
-                    if(stripos($tagPinyin, $tag) !== false) {
-                        $artTag[] = $v;
-                    }
-                }
-            } else {
-                $tagPinyin = $pinyin->permalink($v['tags'],'');
-                if(stripos($tagPinyin, $tag) !== false) {
-                    $artTag[] = $v;
-                }
-            }
-            
-        }
-        return $artTag;
+        $allTags = $this::hasWhere('taglist',['tag_id'=>$tagId])
+        ->with(['user' => function($query){
+            $query->field('id,name,nickname,user_img,area_id,vip');
+        },'cate' => function($query){
+            $query->where('delete_time',0)->field('id,catename,ename');
+        }])
+        ->where(['status'=>1])
+        ->order('pv desc')
+        ->limit(50)
+        ->append(['url'])
+        ->select()
+        ->toArray();
+    
+        return $allTags;
     }
 
     // 获取url

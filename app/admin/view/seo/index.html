@@ -13,6 +13,7 @@
 				<li lay-id="map">站点地图</li>
 				<li lay-id="robots">robots</li>
 				<li lay-id="push_js">自动提交</li>
+				<li lay-id="tag_link">TagLink</li>
 				<li lay-id="search_show">蜘蛛分析</li>
 				</ul>
               <div class="layui-tab-content">
@@ -176,8 +177,43 @@
 						</div>
 					</div>
 					{/volist}
-
                 </div>
+
+				{//taglink}
+				<div class="layui-tab-item">
+					<div class="layui-form" wid100 lay-filter="tag_link">
+						<div class="layui-form-item">
+							<label class="layui-form-label">关键词</label>
+							<div class="layui-input-inline">
+								<input type="text" name="name" required lay-verify="required" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">链接</label>
+							<div class="layui-input-inline">
+								<input type="text" name="jscode" required lay-verify="required" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn layui-btn-danger" lay-submit lay-filter="tag_link_submit">提交</button>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<table id="taglink" lay-filter="taglink"></table>
+							<script type="text/html" id="barDemo">
+								<a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></a>
+								<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
+							</script>
+							<!--textarea type="text" name="search_list" placeholder="搜索引擎抓取结果" class="layui-textarea" style="height: 600px;"></textarea-->
+						</div>
+					</div>
+				</div>
+
+				{//蜘蛛分析}
+
 				<div class="layui-tab-item">
 					<div class="layui-form" wid100 lay-filter="search_show">
 						<div class="layui-form-item">
@@ -206,7 +242,6 @@
 					</div>
 					<div class="layui-form-item">
 						<label class="layui-form-label">分析结果</label>
-						
 						<div class="layui-input-block">
 							<table id="spider" lay-filter="spider"></table>
 							<!--textarea type="text" name="search_list" placeholder="搜索引擎抓取结果" class="layui-textarea" style="height: 600px;"></textarea-->
@@ -225,14 +260,14 @@
 {/block}
 
 {block name="js"} 
-  <script>
-	  var setWebSite ="{:url('Set/website')}";
-      var setEmail ="{:url('Set/email')}";
+<script>
+var setWebSite ="{:url('Set/website')}";
+var setEmail ="{:url('Set/email')}";
   layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'laydate', 'table'], function(){
+  }).use(['index'], function(){
     var $ = layui.$
 	,form = layui.form
 	var element  =layui.element ;
@@ -245,9 +280,9 @@
 	,type: 'date'
 	,format: 'yyyyMM/dd'
 	,value: new Date()
-  });
+  	});
 
-  //第一个实例
+  //蜘蛛列表
   table.render({
     elem: '#spider'
     ,url: "{:url('seo/searchLog')}" //数据接口
@@ -260,6 +295,19 @@
       ,{field: 'url', title: 'URL', minWidth: 200, templet: '<div><a href="{{d.url}}" target="_blank">{{d.url}}</a></div>'}
     ]]
 	,limit: 20
+	,text: '对不起，加载出现异常！'
+  });
+  //taglink列表
+  table.render({
+    elem: '#taglink'
+    ,url: "{:url('seo/tagLinkList')}" //数据接口
+    ,cols: [[ //表头
+      {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+      ,{field: 'tag', title: '名称', width:120, sort: true}
+      ,{field: 'link', title: 'URL', minWidth: 200, templet: '<div><a href="{{d.link}}" target="_blank">{{d.link}}</a></div>'}
+	  ,{field: 'time', title: '时间', width:160}
+	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+    ]]
 	,text: '对不起，加载出现异常！'
   });
 
@@ -326,6 +374,7 @@
   // 添加自动提交JS代码
   form.on('submit(push_jscode_submit)', function(data){
 	var field = data.field;
+	field.type = 1;
 	$.post("{:url('seo/savePushJs')}",field,function(res){
         if(res.code == 0){
 				layer.msg(res.msg,{icon:6,tiye:2000},function(){
@@ -352,6 +401,43 @@
     });
     return false;
   });
+
+  // 添加taglink
+  form.on('submit(tag_link_submit)', function(data){
+	var field = data.field;
+	field.type = 2;
+	$.post("{:url('seo/savePushJs')}",field,function(res){
+        if(res.code == 0){
+				layer.msg(res.msg,{icon:6,tiye:2000},function(){
+					location.reload();
+				});
+			} else {
+				layer.open({title:"添加失败",content:res.msg,icon:5,anim:6});
+			}
+    });
+    return false;
+  });
+
+	// 删除taglink代码
+	table.on('tool(taglink)', function(obj){
+    var data = obj.data;
+    if(obj.event === 'del'){
+    	layer.confirm('真的删除行么', {icon: 3, title:'删除TagLink？'}, function(index){
+			//提交 Ajax 成功后，静态更新表格中的数据
+			$.post("{:url('seo/delPushJs')}", {"id":data.id}, function(data){
+				if (data.code == 0) {
+					layer.msg(data.msg,{icon:6,time:2000}, function(){
+						location.reload();
+					});
+				} else {
+					layer.open({title:'删除失败',content:data.msg,icon:5,anim:6});
+				}
+			});
+		});
+	  layer.close(index);
+    }
+  });
+
 
   // 搜索引擎分析
   form.on('submit(search_show_submit)', function(data){
@@ -385,8 +471,7 @@
       location.hash = layid;
     }
   });
-	
-	
-  });
-  </script>
+
+});
+</script>
 {/block}

@@ -2,14 +2,14 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-20 10:45:41
- * @LastEditTime: 2022-04-20 12:34:40
+ * @LastEditTime: 2022-08-14 09:23:02
  * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\app\admin\model\PushJscode.php
+ * @Description: jscode和taglink设置
+ * @FilePath: \github\TaoLer\app\common\model\PushJscode.php
  * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
  */
 
-namespace app\admin\model;
+namespace app\common\model;
 
 use think\Model;
 
@@ -32,14 +32,16 @@ class PushJscode extends Model
     }
 
     /**
-     * 获取所有数据
+     * 获取分类数据
+     * 1jscode 2taglink
      *
-     * @return void
+     * @param integer $type
+     * @return array
      */
-    public function getAllCodes()
+    public function getAllCodes(int $type)
     {
         //
-        return $this->select();
+        return $this->where('type',$type)->select()->toArray();
     }
 
     /**

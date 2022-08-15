@@ -12,13 +12,6 @@ use app\common\lib\Uploads;
 
 class User extends AdminController
 {
-	/**
-	protected function initialize()
-    {
-        parent::initialize();
-       
-    }
-	*/
 	//用户表
 	public function list()
 	{

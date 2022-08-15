@@ -337,7 +337,8 @@ class Forum extends AdminController
     {
         if (Request::isAjax()) {
 			
-            $data = Request::only(['cate_id', 'title', 'title_color', 'tiny_content', 'content', 'upzip', 'tags', 'description', 'captcha']);
+            $data = Request::only(['cate_id', 'title', 'title_color', 'tiny_content', 'content', 'upzip', 'keywords', 'description', 'captcha']);
+			$tagId = input('tagid');
 			$data['user_id'] = 1; //管理员ID
 
 			// 调用验证器
@@ -350,6 +351,12 @@ class Forum extends AdminController
 			// 获取内容图片音视频标识
 			$iva= $this->hasIva($data['content']);
 			$data = array_merge($data,$iva);
+
+			// 处理内容
+			$data['content'] = $this->downUrlPicsReaplace($data['content']);
+			// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+
 			// 获取分类ename
 			$cate_ename = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
 		
@@ -357,7 +364,17 @@ class Forum extends AdminController
             $result = $article->add($data);
             if ($result['code'] == 1) {
 				// 获取到的最新ID
-				$aid = Db::name('article')->max('id');
+				$aid = $result['data']['id'];
+				//写入taglist表
+				$tagArr = [];
+				if(isset($tagId)) {
+					$tagIdArr = explode(',',$tagId);
+					foreach($tagIdArr as $tid) {
+						$tagArr[] = ['article_id'=>$aid,'tag_id'=>$tid,'create_time'=>time()];
+					}
+				}
+				Db::name('taglist')->insertAll($tagArr);
+
 				// 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 
@@ -394,7 +411,8 @@ class Forum extends AdminController
 		$article = Article::find($id);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id','cate_id','title','title_color','content','upzip','tags','description','captcha']);
+			$data = Request::only(['id','cate_id','title','title_color','content','upzip','keywords','description','captcha']);
+			$tagId = input('tagid');
 			$data['user_id'] = 1;
 			//调用验证器
 			$validate = new \app\common\validate\Article(); 
@@ -406,9 +424,36 @@ class Forum extends AdminController
 				//获取内容图片音视频标识
 				$iva= $this->hasIva($data['content']);
 				$data = array_merge($data,$iva);
+
+				// 处理内容
+				$data['content'] = $this->downUrlPicsReaplace($data['content']);
+				// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+				$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 				
 				$result = $article->edit($data);
 				if($result == 1) {
+					//处理标签
+					$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
+					if(isset($tagId)) {
+						$tagIdArr = explode(',',$tagId);
+						foreach($artTags as $aid => $tid) {
+							if(!in_array($tid,$tagIdArr)){
+								//删除被取消的tag
+								Db::name('taglist')->delete($aid);
+							}
+						}
+						//查询保留的标签
+						$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
+						$tagArr = [];
+						foreach($tagIdArr as $tid) {
+							if(!in_array($tid, $artTags)){
+								//新标签
+								$tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
+							}
+						}
+						//更新新标签
+						Db::name('taglist')->insertAll($tagArr);
+					}
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
 					$link = $this->getRouteUrl((int) $id, $article->cate->ename);
@@ -449,10 +494,10 @@ class Forum extends AdminController
 	 *
 	 * @return void
 	 */
-    public function tagWord()
+    public function getKeywords()
     {
         $data = Request::only(['tags','flag']);
-		return $this->setTags($data);
+		return $this->setKeywords($data);
 		
     }
 

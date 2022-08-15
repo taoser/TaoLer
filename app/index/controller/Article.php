@@ -13,11 +13,9 @@ use app\common\model\Comment;
 use app\common\model\Article as ArticleModel;
 use app\common\model\Slider;
 use app\common\model\UserZan;
-
+use app\common\model\PushJscode;
 use taoler\com\Message;
 use app\common\lib\Msgres;
-use Overtrue\Pinyin\Pinyin;
-
 
 class Article extends BaseController
 {
@@ -28,18 +26,16 @@ class Article extends BaseController
 	//文章分类
     public function cate()
 	{
-		//非法请求参数，抛出异常
-		if(count(Request::param()) >3){
-			// 抛出 HTTP 异常
-                throw new \think\exception\HttpException(404, '请求异常');
-		}
-		//动态参数
-		$ename = Request::param('ename') ?? 'all';
 		$cate = new Cate();
+		$ad = new Slider();
+		$article = new ArticleModel();
+		//动态参数
+		$ename = Request::param('ename');
+		$type = Request::param('type','all');
+		$page = Request::param('page',1);
+
+		// 分类信息
 		$cateInfo = $cate->getCateInfo($ename);
-		// halt($cateInfo);
-		$type = Request::param('type') ?? 'all';
-		$page = Request::param('page') ? Request::param('page') : 1;
 
 		//分页url
 		$url = url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
@@ -47,18 +43,15 @@ class Article extends BaseController
 		$path = substr($url,0,strrpos($url,"/"));
 		
         //分类列表
-        $article = new ArticleModel();
 		$artList = $article->getCateList($ename,$type,$page);
 		//	热议文章
 		$artHot = $article->getArtHot(10);
-		//广告
-        $ad = new Slider();
         //分类图片
         $ad_cateImg = $ad->getSliderList(3);
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(6);
 
-		View::assign([
+		$assignArr = [
 			'ename'=>$ename,
 			'cateinfo'=> $cateInfo,
 			'type'=>$type,
@@ -68,26 +61,27 @@ class Article extends BaseController
 			'ad_comm'=>$ad_comm,
 			'path'=>$path,
 			'jspage'=>'jie'
-		]);
-		return View::fetch('article/' . $cateInfo->detpl . '/cate');
+		];
+		View::assign($assignArr);
+
+		$cateView = is_null($cateInfo) ? 'article/cate' : 'article/' . $cateInfo->detpl . '/cate';
+		return View::fetch($cateView);
     }
 
 	//文章详情页
     public function detail()
     {
 		$id = input('id');
-		$artStu = Db::name('article')->field('id')->where(['status'=>1,'delete_time'=>0])->find($id);
-		if(is_null($artStu)){
-			// 抛出 HTTP 异常
-			throw new \think\exception\HttpException(404, '异常消息');
-		}
-
+		$page = input('page',1);
 		//输出内容
-		$page = input('page') ? input('page') : 1;
         $article = new ArticleModel();
         $artDetail = $article->getArtDetail($id);
+		if(is_null($artDetail)){
+			// 抛出 HTTP 异常
+			throw new \think\exception\HttpException(404, '无内容');
+		}
 		//用户个人tag标签
-		$userTags = $article->where(['user_id'=>$artDetail['user_id'],'status'=>1])->where('tags','<>','')->column('tags');
+		$userTags = $article->where(['user_id'=>$artDetail['user_id'],'status'=>1])->where('keywords','<>','')->column('keywords');
 		//转换为字符串
 		$tagStr = implode(",",$userTags);
 		//转换为数组并去重
@@ -103,41 +97,19 @@ class Article extends BaseController
 	
 		// 设置内容的tag内链
 		$artDetail['content'] = $this->setArtTagLink($artDetail['content']);
-		
-		// tag
-		// $tags = [];
-		// if(!is_null($artDetail['tags'])){
-		//     $attr = explode(',', $artDetail['tags']);
-    	// 	foreach($attr as $v){
-    	// 		if ($v !='') {
-    	// 			$tags[] = $v;
-    	// 		}
-    	// 	}
-		// } else {
-		//     $tags[] = $artDetail['title'];
-		// }
-		
-		// $tag = new Tag();
-		// $tags = $tag->getArtTag($artDetail['tags']);
 
-		$pinyin = new Pinyin();
-        $tags = [];
-		if(!is_null($artDetail['tags'])){
-		    $attr = explode(',', $artDetail['tags']);
-    		foreach($attr as $v){
-    			if ($v !='') {
-    				$tags[] = ['tag'=>$v,'pinyin'=>$pinyin->permalink($v,''), 'url'=> (string) url('tag_list',['tag'=>$pinyin->permalink($v,'')])];
-    			}
-    		}
-		}
-
+		// 标签
+		$tags = [];
+        $artTags = Db::name('taglist')->where('article_id',$id)->select();
+        // halt($artTags);
+        foreach($artTags as $v) {
+            $tag = Db::name('tag')->find($v['tag_id']);
+            $tags[] = ['name'=>$tag['name'],'url'=> (string) url('tag_list',['ename'=>$tag['ename']])];
+        }
 
 
 		$tpl = Db::name('cate')->where('id', $artDetail['cate_id'])->value('detpl');
 		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
-
-		//$count = $comments->total();
-        //$artDetail->inc('pv')->update();
 
 		//浏览pv
 		Db::name('article')->where('id',$id)->inc('pv')->update();
@@ -246,18 +218,18 @@ class Article extends BaseController
         if (Request::isAjax()) {
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
-
-            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'tags', 'description', 'captcha']);
+			// 数据
+            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'keywords', 'description', 'captcha']);
+			$tagId = input('tagid');
 
 			// 验证码
-			if(Config::get('taoler.config.post_captcha') == 1)
-			{				
+			if(Config::get('taoler.config.post_captcha') == 1) {				
 				if(!captcha_check($data['captcha'])){
 				 return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
 
-			// 调用验证器
+			// 验证器
 			$validate = new \app\common\validate\Article;
             $result = $validate->scene('Artadd')->check($data);
             if (true !== $result) {
@@ -268,7 +240,10 @@ class Article extends BaseController
 			$iva= $this->hasIva($data['content']);
 			$data = array_merge($data,$iva);
 
+			// 处理内容
 			$data['content'] = $this->downUrlPicsReaplace($data['content']);
+			// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
 			// 获取分类ename
 			$cate_ename = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
@@ -277,8 +252,19 @@ class Article extends BaseController
 
             $result = $article->add($data);
             if ($result['code'] == 1) {
+				$aid = $result['data']['id'];
+				//写入taglist表
+				$tagArr = [];
+				if(isset($tagId)) {
+					$tagIdArr = explode(',',$tagId);
+					foreach($tagIdArr as $tid) {
+						$tagArr[] = ['article_id'=>$aid,'tag_id'=>$tid,'create_time'=>time()];
+					}
+				}
+				Db::name('taglist')->insertAll($tagArr);
 				// 获取到的最新ID
-				$aid = Db::name('article')->max('id');
+				//$aid = Db::name('article')->max('id');
+				
 				// 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 				// 发提醒邮件
@@ -296,7 +282,8 @@ class Article extends BaseController
             return $res;
         }
 
-		View::assign(['jspage'=>'jie']);
+		
+		// 子模块自定义自适应add.html模板
 		$tpl = Db::name('cate')->where('ename', input('cate'))->value('detpl');
 		$appName = $this->app->http->getName();
 		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
@@ -304,6 +291,7 @@ class Article extends BaseController
 		$vfile = $viewRoot . $view;
 		$addTpl = is_file($vfile) ? $vfile : 'add';
 
+		View::assign(['jspage'=>'jie']);
 		return View::fetch($addTpl);
     }
 
@@ -320,7 +308,10 @@ class Article extends BaseController
 		$article = ArticleModel::find($id);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','tags','description','captcha']);
+			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','keywords','description','captcha']);
+			$tagId = input('tagid');	
+
+			
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
 			{				
@@ -340,10 +331,35 @@ class Article extends BaseController
 				$data = array_merge($data,$iva);
 
 				$data['content'] = $this->downUrlPicsReaplace($data['content']);
+				// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+				$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
 				
 				$result = $article->edit($data);
 				if($result == 1) {
+					//处理标签
+					$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
+					if(isset($tagId)) {
+						$tagIdArr = explode(',',$tagId);
+						foreach($artTags as $aid => $tid) {
+							if(!in_array($tid,$tagIdArr)){
+								//删除被取消的tag
+								Db::name('taglist')->delete($aid);
+							}
+						}
+						//查询保留的标签
+						$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
+						$tagArr = [];
+						foreach($tagIdArr as $tid) {
+							if(!in_array($tid, $artTags)){
+								//新标签
+								$tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
+							}
+						}
+						//更新新标签
+						Db::name('taglist')->insertAll($tagArr);
+					}
+					
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
 					$link = $this->getRouteUrl((int) $id, $article->cate->ename);
@@ -453,10 +469,10 @@ class Article extends BaseController
 	 *
 	 * @return void
 	 */
-    public function tags()
+    public function keywords()
     {
-        $data = Request::only(['tags','flag']);
-		return $this->setTags($data);
+        $data = Request::only(['keywords','flag']);
+		return $this->setKeywords($data);
     }
 
 	// 文章置顶、加精、评论状态
@@ -539,7 +555,8 @@ class Article extends BaseController
 	protected function setArtTagLink($content)
 	{
 		// tag链接数组
-		$tag = Config::get('taglink');
+		$taglink = new PushJscode();
+		$tag = $taglink->getAllCodes(2);
 		if(count($tag)) {
 			foreach($tag as $key=>$value) {
 				// 匹配所有
@@ -551,12 +568,12 @@ class Article extends BaseController
 				// $pats = '/(?<!<a\s?(.*)?)'.$key.'(?!<\/a>)/';
 				//$pats = '/'.$key.'(?!<\/a>)/';
 				// 不匹配 $key</a>已经存在链接的情况
-				$pats = '/'.$key. '\s?(?!<\/a>|")/is';
+				$pats = '/' . $value['name'] . '\s?(?!<\/a>|")/is';
 
 				preg_match($pats,$content,$arr);
 
 				// 开启和关闭编辑器使用不同的链接方式
-				$rpes = hook('taonystatus') ? '<a href="'.$value.'" target="_blank" title="'.$key.'" style="font-weight: bold;color:#31BDEC">'.$key.'</a>' : 'a('.$value.')['.$key.']';
+				$rpes = hook('taonystatus') ? '<a href="' . $value['jscode'] . '" target="_blank" title="' . $value['name'] . '" style="font-weight: bold;color:#31BDEC">' . $value['name'] . '</a>' : 'a(' . $value['jscode'] . ')[' . $value['name'] . ']';
 
 				$content = preg_replace($pats,$rpes,$content,2);
 			}
@@ -582,78 +599,6 @@ class Article extends BaseController
 			}
 		}
 		
-	}
-	
-	//下载图片
-	private function downloadImage($url)
-	{
-		$ch = curl_init();
-		curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, 'GET' );  
-    	curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false ); 
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		$file = curl_exec($ch);
-		curl_close($ch);
-		return $this->saveAsImage($url, $file);
-
-	}
-
-	//保存图片
-	private function saveAsImage($url, $file)
-	{
-		$filename = pathinfo($url, PATHINFO_BASENAME);
-		//$dirname = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_DIRNAME);
-		$dirname = date('Ymd',time());
-		//路径
-		$path =  'storage/' . $this->uid . '/article_pic/' . $dirname . '/';
-		//绝对文件夹
-		$fileDir = public_path() . $path;
-		//文件绝对路径
-		$filePath =  $fileDir . $filename;
-		//相对路径文件名
-		$realFile = '/' . $path . $filename;
-		// 如果目录不存在，则创建
-
-		if(!is_dir($fileDir)) {
-			mkdir($fileDir, 0777, true);
-		}
-
-		if(file_exists($filePath)) {
-			//$this->output->writeln("【已存在】输出路径" . $fullpath);
-			return $realFile;
-
-		} else {
-			$resource = fopen($filePath, 'a');
-			$res = fwrite($resource, $file);
-			fclose($resource);
-			if($res !== false) {
-				return $realFile;
-			}
-		}
-	}
-
-	//下载网络图片到本地并替换
-    public function downUrlPicsReaplace($content)
-	{
-		// 批量下载网络图片并替换
-		$images = $this->getArticleAllpic($content);
-		if(count($images)) {
-			foreach($images as $image){
-				//1.网络图片
-				//halt((stripos($image, Request::domain()) === false));
-				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) === false)) { 
-					
-					//2.下载远程图片
-					$newImageUrl = $this->downloadImage($image);
-					
-					$content = str_replace($image,Request::domain().$newImageUrl,$content);
-	
-				}
-			}
-		}
-		
-		return $content;
 	}
 	
 	

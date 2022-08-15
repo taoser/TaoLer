@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-30 08:58:51
+ * @LastEditTime: 2022-08-15 12:24:56
  * @LastEditors: TaoLer
  * @Description: 前端路由设置
- * @FilePath: \github\TaoLer\app\index\route\route.php
+ * @FilePath: \TaoLer\app\index\route\route.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 use think\facade\Route;
@@ -21,7 +21,7 @@ Route::rule('/', 'index'); // 首页访问路由
 Route::get('index/reply$','index/reply')->name('user_reply');
 Route::rule('search','Search/getSearch')->name('user_search');
 Route::get('message/nums$','message/nums')->name('user_message');
-Route::get('tag/:tag', 'Tag/list')->name('tag_list');
+Route::get('tag/:ename', 'Tag/list')->name('tag_list');
 // 用户中心
 Route::group(function () {
 	Route::get('u/:id$', 'user/home')->name('user_home'); 
@@ -50,8 +50,6 @@ Route::group(function () {
 		->middleware(\app\middleware\CheckRegister::class);
 });
 
-	
-
 // article
 Route::group('art',function () use($detail_as,$cate_as){
 	Route::rule('add/[:cate]','Article/add')->name('add_article');
@@ -59,6 +57,11 @@ Route::group('art',function () use($detail_as,$cate_as){
 	Route::rule('tags','Article/tags')->allowCrossDomain();
 	Route::rule('edit/[:id]','Article/edit');
 });
+
+//tag
+Route::get('tag','tag/getAllTag')->name('get_all_tag');
+Route::get('arttag','tag/getArticleTag')->name('get_art_tag');
+
 Route::group(function () use($detail_as,$cate_as){
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
 	Route::get($detail_as . ':id$', 'article/detail')->name('article_detail');

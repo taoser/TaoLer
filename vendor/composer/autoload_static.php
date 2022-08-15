@@ -17,7 +17,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        'dc1275c308c5b416beb314b6317daca2' => __DIR__ . '/..' . '/overtrue/pinyin/src/const.php',
         'b33e3d135e5d9e47d845c576147bda89' => __DIR__ . '/..' . '/php-di/php-di/src/functions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
@@ -84,10 +83,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'Phinx\\' => 6,
             'PHPSocketIO\\' => 12,
             'PHPMailer\\PHPMailer\\' => 20,
-        ),
-        'O' => 
-        array (
-            'Overtrue\\Pinyin\\' => 16,
         ),
         'L' => 
         array (
@@ -257,10 +252,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
-        ),
-        'Overtrue\\Pinyin\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/overtrue/pinyin/src',
         ),
         'League\\MimeTypeDetection\\' => 
         array (

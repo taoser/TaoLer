@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-08-03 10:34:42
+ * @LastEditTime: 2022-08-15 13:30:05
  * @LastEditors: TaoLer
  * @Description: 前端基础控制器设置
- * @FilePath: \github\TaoLer\app\common\controller\BaseController.php
+ * @FilePath: \TaoLer\app\common\controller\BaseController.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 declare (strict_types = 1);
@@ -87,11 +87,19 @@ class BaseController extends BaseCtrl
 	protected function getHotTag()
 	{
 		//热门标签
-		return Article::getHotTags();
+		//return Article::getHotTags();
         //转换为字符串
 		// $tagStr = implode(",",$tags);
 		//转换为数组并去重
 		// return array_unique(explode(",",$tagStr));
+		$allTags = Db::name('tag')->field('name,ename')->select();
+		$tagHot = [];
+        foreach($allTags as $v) {
+            $tagHot[] = ['name'=>$v['name'],'url'=> (string) url('tag_list',['ename'=>$v['ename']])];
+        }
+        
+        return $tagHot;
+
 	}
 	
 	//显示网站设置
@@ -121,21 +129,5 @@ class BaseController extends BaseCtrl
         View::assign($assign);
 		return $sysInfo;
     }
-
-	//获取artcile所有图片
-	protected function getArticleAllpic($str)
-	{
-		// <img src="http://img.com" />
-		$pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
-		preg_match_all($pattern,$str,$matchContent);
-		if(isset($matchContent[1])){
-			$img = $matchContent[1];
-		}else{
-			$temp = "./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
-		}
-		
-		return $img;
-
-	}
 
 }

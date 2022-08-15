@@ -207,7 +207,7 @@ class User extends BaseController
 		}
 		
 		$article = new Article();
-		$commont = new Comment();
+		// $commont = new Comment();
 		$arts = $article->getUserArtList((int) $id);
 
 	// 	$reys = $commont->getUserCommentList((int) $id);

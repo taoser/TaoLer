@@ -1,7 +1,7 @@
 {extend name="public/base" /}
 
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
-{block name="keywords"}{$article.tags ?: $article.title}{/block}
+{block name="keywords"}{$article.keywords ?: $article.title}{/block}
 {block name="description"}{$article.title},{$article.description}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{$article.title} - {$sysInfo.webname}">{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$article.title},{$article.description ?? ''}" />{/block}
@@ -55,14 +55,11 @@
         {// 内容}
         <div class="detail-body photos mce-content-body" id="content">{$article.content|raw}</div>
         <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
-          <div style="margin-top: 15px">
-            <h2>关键词</h2>
-            <div class="layui-btn-container" style="padding-top: 15px;">
-              {volist name="tags" id="vo" }
-              <a href="{$vo.url}"><span class="layui-btn layui-btn-sm  layui-btn-radius layui-btn-danger">{$vo.tag}</span></a>
-              {/volist}
-            </div>
-          </div>
+        <div style="margin-top: 15px">标签
+          {volist name="tags" id="vo" }
+          <a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
+          {/volist}
+        </div>
           <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
             <p>{$sysInfo.state}</p>    
           </div>

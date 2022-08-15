@@ -53,21 +53,19 @@
                 <textarea name="description" class="layui-textarea" placeholder="SEO描述">{$article.description}</textarea>
               </div>
             </div>
+            {//关键词}
             <div class="layui-form-item">
-              <div class="layui-inline">
-                <label class="layui-form-label">{:lang('add tags')}</label>
-                <div class="layui-input-inline" style="width: 190px;">
-                  <input type="text" class="layui-input" name="tags" placeholder="多个用空格隔开" title="添加标签"/>
+                <label class="layui-form-label">{:lang('添加关键词')}</label>
+                <div class="layui-input-block">
+                  <input type="text" class="layui-input" name="keywords" value="{$article.keywords}" placeholder="多个英文逗号隔开" title="添加关键词" />
                 </div>
-                <button type="button" class="layui-btn" id="article-tags-button">{:lang('add')}</button>
-              </div>
             </div>
+            {//tag}
             <div class="layui-form-item">
-            <div class="layui-btn-container">
-              {volist name="tags" id="vo" }
-              <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" value="{$vo}">{$vo} x</button>
-              {/volist}
-            </div>
+                <label class="layui-form-label">{:lang('add tags')}</label>
+                <div class="layui-input-block">
+                  <div id="tag"></div>
+                </div>
             </div>
             <div class="layui-form-item layui-hide">
               <button type="submit" class="layui-btn" lay-filter="article-edit" lay-submit id="article-edit">{:lang('post now')}</button>
@@ -98,6 +96,38 @@
     $(mytextareaid).removeClass();
 </script>
 <script src="/addons/taonyeditor/js/taonyeditor.js"></script>
+<script src="/static/xm-select.js"></script>
+<script>
+var artId = "{$article.id}";
+
+//1.渲染标签
+var addTags = xmSelect.render({
+  el: '#tag',
+  name: 'tagid',
+  layVerify: 'required',
+  layVerType: 'msg',
+  paging: true,
+  pageSize: 5,
+  data: []
+});
+//2.动态赋值
+$.get("{:url('get_art_tag')}",{id:artId},function(res){
+  if(res.code == 0){
+    addTags.setValue(
+      res.data
+    )
+  }
+});
+//3.动态标签赋值
+$.get("{:url('get_all_tag')}",function(res){
+  if(res.code == 0){
+    addTags.update({
+      data: res.data,
+      autoRow: true,
+    })
+  }
+});
+</script>
 <script>
 	layui.use(['colorpicker','form','upload', 'editor'], function(){
     var $ = layui.jquery
@@ -117,36 +147,6 @@
         $('[name="description"]').val(content);
     });
 
-		//预定义颜色项
-    colorpicker.render({
-      elem: '#color'
-      ,color: "{$article.title_color ?? '#333'}"
-      ,predefine: true // 开启预定义颜色
-      ,done: function(color){
-        //譬如你可以在回调中把得到的 color 赋值给表单
-        $('#L_title_color').val(color);
-        //改变标题颜色
-        $('#L_title').css("color", color);
-      }
-    });
-		  
-		
-		//指定允许上传的文件类型
-		upload.render({
-			elem: '#zip-button'
-			,url: "{:url('forum/uploads')}" //改成您自己的上传接口
-			,data: {type:'zip'}
-			,accept: 'file' //普通文件
-			,done: function(res){
-				if(res.status == 0){
-					$('input[name="upzip"]').val(res.url);
-					layer.msg('上传成功');
-				} else {
-					layer.msg(res.msg);
-				}
-			}
-		});
-
   // 获取描述的内容
   $("#L_content").bind('input propertychange', function(){
     var content = $(this).val()
@@ -164,65 +164,55 @@
     return false;
     })
 
-	// 手动添加tags
-  $('#article-tags-button').on('click',function(){
-    var tags = $("input[name='tags']").val();
-    var flag = 'off';
-    getTags(tags,flag);
-  });
-
   // 获取tag的内容
 	var conf = "{:empty(config('taoler.baidu.client_id'))}";
 	if(conf !== '1'){
     $("#L_title").on('blur', function(){
       var title = $(this).val();
       var flag = 'on';
-      // 清空上次生成的tag button
-    $('.layui-btn-container').children('button').each(function(){
-            $(this).remove();
-        });
-      getTags(title,flag);
-    })
-	}
-
-  //	循环添加button
-  function getTags(tags,flag)
-  {
-      if(tags == ''){
-          layer.msg('不能为空');
-          return false;
-      }
-      //把得到的tags放进数组
-      var numArr = new Array();
-      $('.layui-btn-container').children('button').each(function(){
-        numArr.push($(this).val());//添加至数组
-      });
-
       $.ajax({
         type:"post",
-        url:"{:url('Forum/tagWord')}",
-        data:{"tags":tags,"flag":flag},
+        url:"{:url('Forum/getKeywords')}",
+        data:{"keywords":keywords,"flag":flag},
         daType:"json",
         success:function (data){
           if (data.code == 0) {
-            for(var i=0; i<data.data.length; i++){
-              if($.inArray(data.data[i],numArr) < 0){
-                $('.layui-btn-container').append('<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" value='+data.data[i]+'>'+data.data[i]+' x'+'</button>');
-              }
-            }
-            $("input[name='tags']").val("");
+            $("input[name='keywords']").val("");
           }
         }
       });
       return false;
-    }
+    })
+	}
 
-  //删除tag
-  $(document).ready(function(){
-    $('.layui-btn-container').on('click','button',function(){
-        $(this).remove();
+  //预定义颜色项
+  colorpicker.render({
+      elem: '#color'
+      ,color: "{$article.title_color ?? '#333'}"
+      ,predefine: true // 开启预定义颜色
+      ,done: function(color){
+        //譬如你可以在回调中把得到的 color 赋值给表单
+        $('#L_title_color').val(color);
+        //改变标题颜色
+        $('#L_title').css("color", color);
+      }
     });
-  });
+
+  //指定允许上传的文件类型
+  upload.render({
+			elem: '#zip-button'
+			,url: "{:url('forum/uploads')}" //改成您自己的上传接口
+			,data: {type:'zip'}
+			,accept: 'file' //普通文件
+			,done: function(res){
+				if(res.status == 0){
+					$('input[name="upzip"]').val(res.url);
+					layer.msg('上传成功');
+				} else {
+					layer.msg(res.msg);
+				}
+			}
+		});
 
 });
 </script>

@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-13 09:54:31
- * @LastEditTime: 2022-07-15 18:28:57
+ * @LastEditTime: 2022-08-14 09:23:13
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\app\admin\controller\Seo.php
+ * @FilePath: \github\TaoLer\app\admin\controller\Seo.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 declare(strict_types=1); 
@@ -16,7 +16,7 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use taoser\SetArr;
-use app\admin\model\PushJscode;
+use app\common\model\PushJscode;
 
 class Seo extends AdminController
 {
@@ -40,7 +40,7 @@ class Seo extends AdminController
         }     
         // push_js
         $pushjs = new PushJscode();
-        $jscode = $pushjs->getAllCodes();
+        $jscode = $pushjs->getAllCodes(1);
         View::assign(['xml'=>$xml,'jscode'=>$jscode,'robots'=>$robots]);
         return View::fetch();
     }
@@ -360,7 +360,7 @@ class Seo extends AdminController
      */
     public function savePushJs()
     {
-        $data = Request::only(['name','jscode']);
+        $data = Request::only(['name','jscode','type']);
         if(empty($data['name'])) {
             return json(['code'=>-1,'msg'=>'请术输入名称']);
         }
@@ -484,6 +484,22 @@ class Seo extends AdminController
             return json(['code'=>-1,'msg'=> '没有需要分析的数据']);
         }
 
+    }
+
+    public function tagLinkList()
+    {
+        $arr = [];
+        $pushjs = new PushJscode();
+        $tags = $pushjs->getAllCodes(2);
+        if(count($tags)) {
+            $arr = ['code'=>0, 'msg'=>'', 'count' => count($tags)];
+            foreach($tags as $k=>$v) {
+                $arr['data'][] = ['id'=>$v['id'],'tag'=>$v['name'], 'link'=>$v['jscode'],'time'=>$v['create_time']];
+            }
+        } else {
+            $arr = ['code'=>-1, 'msg'=>'没有数据'];
+        }
+        return json($arr);
     }
 
 }
