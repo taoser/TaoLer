@@ -111,7 +111,7 @@ var addTags = xmSelect.render({
   data: []
 });
 //2.动态赋值
-$.get("{:url('get_art_tag')}",{id:artId},function(res){
+$.get("{:url('tag/getArtTag')}",{id:artId},function(res){
   if(res.code == 0){
     addTags.setValue(
       res.data
@@ -119,7 +119,7 @@ $.get("{:url('get_art_tag')}",{id:artId},function(res){
   }
 });
 //3.动态标签赋值
-$.get("{:url('get_all_tag')}",function(res){
+$.get("{:url('tag/getAllTag')}",function(res){
   if(res.code == 0){
     addTags.update({
       data: res.data,

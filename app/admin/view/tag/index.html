@@ -43,7 +43,7 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index'], function(){
+  }).use(['index','table'], function(){
   var $ = layui.jquery
   ,layer = layui.layer
   ,table = layui.table

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2022-08-14 09:39:01
- * @LastEditTime: 2022-08-15 11:34:14
+ * @LastEditTime: 2022-08-15 16:12:13
  * @LastEditors: TaoLer
  * @Description: 优化版
  * @FilePath: \TaoLer\app\admin\controller\Tag.php
@@ -29,7 +29,7 @@ class Tag extends AdminController
 
     public function index()
     {
-        return view();
+        return View::fetch('index');
     }
 
     public function list()

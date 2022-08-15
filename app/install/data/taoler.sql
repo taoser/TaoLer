@@ -65,7 +65,7 @@ CREATE TABLE `tao_article` (
   `jie` enum('1','0') NOT NULL DEFAULT '0' COMMENT '0未结1已结',
   `upzip` varchar(70) DEFAULT NULL COMMENT '文章附件',
   `downloads` int(5) NOT NULL DEFAULT '0' COMMENT '下载量',
-  `tags` varchar(255) DEFAULT NULL COMMENT 'tag',
+  `keywords` varchar(255) DEFAULT NULL COMMENT '关键词',
   `description` text NOT NULL COMMENT 'seo描述',
   `read_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '阅读权限0开放1回复可读2密码可读3私密',
   `art_pass` varchar(6) DEFAULT NULL COMMENT '文章加密密码',
@@ -267,7 +267,7 @@ INSERT INTO `tao_auth_rule` VALUES ('97', 'addons', '插件', '', '1', '1', '0',
 INSERT INTO `tao_auth_rule` VALUES ('98', 'Addons/index', '插件市场', '', '1', '1', '97', '1', '', '1', '0', '', '1635757426', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('99', 'Addons/addonsList', '插件列表', '', '1', '1', '98', '2', '', '-1', '0', '', '1638775199', '0', '0');
 INSERT INTO `tao_auth_rule` VALUES ('111','Seo/index','SEO', '', '1','1','0','0','layui-icon-component','1','7','','1649829142','0','0');
-INSERT INTO `tao_auth_rule` VALUES ('112', 'TagLink/index', 'TagLinks', '', '1', '1', '93', '1', '', '1', '0', '', '1652053762', '1652053830', '0');
+INSERT INTO `tao_auth_rule` VALUES ('112', 'Tag/index', 'Tag设置', '', '1', '1', '5', '1', '', '1', '16', '', '1652053762', '1652053830', '0');
 
 -- ----------------------------
 -- Table structure for tao_cate
@@ -519,6 +519,40 @@ CREATE TABLE `tao_system` (
 -- Records of tao_system
 -- ----------------------------
 INSERT INTO `tao_system` VALUES (1, 'TaoLer', 'TaoLer社区-www.aieok.com', 'www.tp6.com', 'taoler', '/storage/logo/logo.png', '/static/res/images/logo-m.png', 10, 2048, 'image:png|gif|jpg|jpeg,application:zip|rar|docx,video:mp4,audio:mp3|m4a|mp4,zip:zip,application/msword:docx', '<a href=\"https://www.aieok.com\" target=\"_blank\">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统', '网站声明：如果转载，请联系本站管理员。否则一切后果自行承担。', '1', '1', '1', '0.0.0.0-1', '', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 0, 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', 1641004619, 1652345050);
+
+DROP TABLE IF EXISTS `tao_tag`;
+CREATE TABLE `tao_tag` (
+  `id` int NOT NULL COMMENT 'tag自增id',
+  `name` varchar(20) NOT NULL COMMENT '名称',
+  `ename` varchar(20) NOT NULL COMMENT '英文名',
+  `create_time` int NOT NULL COMMENT '创建时间',
+  `update_time` int NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章tag表';
+
+ALTER TABLE `tao_tag`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ename` (`ename`);
+
+ALTER TABLE `tao_tag`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'tag自增id', AUTO_INCREMENT=1;
+COMMIT;
+
+DROP TABLE IF EXISTS `tao_taglist`;
+CREATE TABLE `tao_taglist` (
+  `id` int NOT NULL COMMENT '标签列表id',
+  `tag_id` int NOT NULL COMMENT '标签id',
+  `article_id` int NOT NULL COMMENT '文章id',
+  `create_time` int NOT NULL COMMENT '创建时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `tao_taglist`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `article_id` (`article_id`),
+  ADD KEY `tag_id` (`tag_id`);
+
+ALTER TABLE `tao_taglist`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT '标签列表id', AUTO_INCREMENT=1;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for tao_user
