@@ -154,19 +154,23 @@
     </div>
   </div>
 </div>
-{include file="public/menu" /} {/block}
+{include file="public/menu" /}
+{/block}
 
 {block name="script"}
 {:hook('taonyeditor')}
 <script src="/static/xm-select.js"></script>
 <script>
-  layui.use(["fly", "plyr",'inputTags'], function () {
+  layui.use(["fly", "plyr"], function () {
     var $ = layui.jquery,
       fly = layui.fly,
       form = layui.form,
       colorpicker = layui.colorpicker,
       upload = layui.upload,
       plyr = layui.plyr;
+      
+     //获取百度标签标志，tag或者word;
+     var flag = 'word';
 
 
     //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
@@ -178,20 +182,7 @@
         var othis = $(this), html = othis.html();
         othis.attr(fly.content(html));
       })
-    }
-
-    var inputTags = layui.inputTags;
-      //关键词
-    inputTags.render({
-        elem:'#inputTags',
-        content: [],
-        aldaBtn: false,
-        done: function(value){
-          //console.log(value)
-          var keywords = this.content.join(',');
-          $("input[name='keywords']").val(keywords);          
-        }
-      })    
+    }   
       
     //1.渲染标签
     var addTags = xmSelect.render({
@@ -218,19 +209,33 @@
     if (conf !== "1") {
       $("#L_title").on("blur", function () {
         var title = $(this).val();
-        var flag = "on";
-        $.ajax({
-          type: "post",
-          url: "{:url('article/keywords')}",
-          data: { keywords: keywords, flag: flag },
-          daType: "json",
-          success: function (res) {
+        var content = $("#L_content").val();
+        getBdiduWords(flag,title,content);
+      });
+    }
+
+    // 从详情页自动调用端口过滤，获取描述信息
+   $("#L_content").mouseleave(function() {
+    var content = $(this).val().replace(/[\r\n]/g,"").replace(/\n/g, '').replace(/\s/g, '').replace(/\t/g, '');
+    var title = $("#L_title").val();
+      $.post("{:url('article/getDescription')}", { content: content }, function(data){
+        if (data.code == 0) {
+          $('[name="description"]').val(data.data);
+        }
+      });
+      getBdiduWords(flag,title,content);
+    });
+    
+    // 获取百度分词接口的关键词
+    function getBdiduWords(flag,title,content) {
+        console.log(flag,title,content)
+        $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
             if (res.code == 0) {
-              $("input[name='keywords']").val(res.data);
+                console.log(res.data)
+              $("input[name='keywords']").val(res.data.join(','));
             }
           },
-        })
-      });
+        )
     }
 
     // 百度词条
@@ -266,30 +271,9 @@
           } else {
             $(".bdsug").addClass('layui-hide');
           }
+          
       });
     }
-
-    // 从详情页自动调用端口过滤，获取描述信息
-   $("#L_content").mouseleave(function() {
-    var content = $(this).val().replace(/[\r\n]/g,"").replace(/\n/g, '').replace(/\s/g, '').replace(/\t/g, '');
-      $.post("{:url('article/getDescription')}", { content: content }, function(data){
-        if (data.code == 0) {
-          $('[name="description"]').val(data.data);
-        }
-      });
-    });
-
-    // 改变标题颜色
-    colorpicker.render({
-      elem: "#color",
-      color: "#393d49",
-      predefine: true, // 开启预定义颜色
-      done: function (color) {
-        //譬如你可以在回调中把得到的 color 赋值给表单
-        $("#L_title_color").val(color);
-        $("#L_title").css("color", color);
-      },
-    });
 
     // 发布文章
     form.on("submit(article-add)", function (data) {
@@ -314,6 +298,18 @@
         },
       });
       return false;
+    });
+
+    // 改变标题颜色
+    colorpicker.render({
+      elem: "#color",
+      color: "#393d49",
+      predefine: true, // 开启预定义颜色
+      done: function (color) {
+        //譬如你可以在回调中把得到的 color 赋值给表单
+        $("#L_title_color").val(color);
+        $("#L_title").css("color", color);
+      },
     });
 
     //上传附件

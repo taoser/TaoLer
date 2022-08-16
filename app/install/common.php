@@ -10,9 +10,7 @@
 // 检测环境是否支持可写
 //define('IS_WRITE', true);
 
-use Think\Request;
 use think\facade\Session;
-use think\facade\Config;
 use think\facade\Env;
 
 /**
@@ -51,12 +49,12 @@ function create_tables($db, $prefix = '')
 {
 	// 导入sql数据表
     //$sql = file_get_contents('../app/install/data/taoler.sql');
+    //$sql_array = preg_split("/;[\r\n]+/", $sql);
 	$sql_array = load_sql_file('../app/install/data/taoler.sql');	//sql文件中sql语句转换为数组
-	if ($sql_array) {
+	if (count($sql_array)) {
 		$orginal = 'tao_';	//sql表前缀
 		($orginal==$prefix) ? true : $sql_array = str_replace(" `{$orginal}", " `{$prefix}", $sql_array);	//替换数组中表前缀
-		//$sql_array = preg_split("/;[\r\n]+/", $sql);
-	
+
 		//开始写入表
         foreach ($sql_array as $k => $v) {
 			//halt($v);
@@ -176,7 +174,7 @@ function load_sql_file($path, $fn_splitor = ';;') {
         return false;
     }
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    $aout = false;
+    $aout = [];
     $str = '';
     $skip = false;
     $fn = false;

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-28 13:54:55
+ * @LastEditTime: 2022-08-16 12:21:14
  * @LastEditors: TaoLer
  * @Description: 链接设置
  * @FilePath: \TaoLer\app\common\model\Slider.php
@@ -43,7 +43,7 @@ class Slider extends Model
     {
         $sliders = Cache::get('slider'.$type);
         if(!$sliders){
-            $sliders = $this::where(['slid_status'=>1,'delete_time'=>0,'slid_type'=>$type])->whereTime('slid_over','>=',time())->select()->toArray();
+            $sliders = $this::where(['slid_status'=>1,'slid_type'=>$type])->whereTime('slid_over','>=',time())->select()->toArray();
             Cache::tag('tagSlider'.$type)->set('slider'.$type,$sliders,3600);
         }
         return $sliders;

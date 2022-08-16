@@ -471,7 +471,7 @@ class Article extends BaseController
 	 */
     public function keywords()
     {
-        $data = Request::only(['keywords','flag']);
+        $data = Request::only(['flag','keywords','content']);
 		return $this->setKeywords($data);
     }
 

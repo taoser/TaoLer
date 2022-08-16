@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-08-16 14:16:40
+ * @LastEditors: TaoLer
+ * @Description: 优化版
+ * @FilePath: \TaoLer\app\common\lib\SqlFile.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 declare (strict_types = 1);
 
 namespace app\common\lib;
@@ -20,7 +29,7 @@ class SqlFile
 			return false;
 		}
 		$lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		$aout = false;
+		$aout = [];
 		$str = '';
 		$skip = false;
 		$fn = false;

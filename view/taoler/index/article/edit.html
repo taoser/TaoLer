@@ -113,7 +113,6 @@
                   <input type="text" class="layui-input" name="keywords" value="{$article.keywords}" placeholder="多个英文逗号隔开" title="添加关键词" />
                 </div>
             </div>
-
             {//tag}
             <div class="layui-form-item">
                 <label class="layui-form-label">{:lang('add tags')}</label>
@@ -121,7 +120,6 @@
                   <div id="tag"></div>
                 </div>
             </div>
-
             {if config('taoler.config.post_captcha') == 1}
             <div class="layui-form-item">
               <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
@@ -189,6 +187,9 @@ $.get("{:url('get_all_tag')}",function(res){
     ,upload = layui.upload
     ,plyr = layui.plyr;
 
+    //获取百度标签标志，tag或者word;
+    var flag = 'word';
+
 
     //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
     var taonystatus = "{:hook('taonystatus')}";
@@ -201,55 +202,39 @@ $.get("{:url('get_all_tag')}",function(res){
       })
     }
 
-		//预定义颜色项
-    colorpicker.render({
-      elem: '#color'
-      ,color: "{$article.title_color ?? '#333'}"
-      ,predefine: true // 开启预定义颜色
-      ,done: function(color){
-        //console.log(color);
-        //譬如你可以在回调中把得到的 color 赋值给表单
-        $('#L_title_color').val(color);
-        //改变标题颜色
-        $('#L_title').css("color", color);
-      }
-    });
-
-  // 获取描述的内容
-  $("#L_content").bind('input propertychange', function(){
-    var content = $(this).val()
-    $.ajax({
-      type:"post",
-      url:"{:url('article/getDescription')}",
-      data:{"content":content},
-      daType:"json",
-      success:function (data){
-        if (data.code == 0) {
-          $('[name="description"]').val(data.data);
-        }
-      }
-    });
-    return false;
-    })
-
   // 获取百度获取的关键词内容
 	var conf = "{:empty(config('taoler.baidu.client_id'))}";
 	if(conf !== '1'){
     $("#L_title").on('blur', function(){
       var title = $(this).val();
-      var flag = 'on';
-      $.ajax({
-        type:"post",
-        url:"{:url('article/keywords')}",
-        data:{"keywords":keywords,"flag":flag},
-        daType:"json",
-        success:function (data){
-          $("input[name='keywords']").val(res.data);
-        }
-      });
-      return false;
+      var content = $("#L_content").val();
+      getBdiduWords(flag,title,content);
     })
 	}
+
+  // 获取描述的内容
+  $("#L_content").bind('input propertychange', function(){
+    var content = $(this).val()
+    var title = $("#L_title").val();
+      $.post("{:url('article/getDescription')}", { content: content }, function(data){
+        if (data.code == 0) {
+          $('[name="description"]').val(data.data);
+        }
+      });
+      getBdiduWords(flag,title,content);
+    })
+
+  // 获取百度分词接口的关键词
+  function getBdiduWords(flag,title,content) {
+        console.log(flag,title,content)
+        $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
+            if (res.code == 0) {
+                console.log(res.data)
+              $("input[name='keywords']").val(res.data.join(','));
+            }
+          },
+        )
+    }
 
   //编辑文章
 	form.on('submit(article-edit)', function(data){
@@ -272,6 +257,20 @@ $.get("{:url('get_all_tag')}",function(res){
 		});
 		return false;
 	});
+
+  //预定义颜色项
+  colorpicker.render({
+      elem: '#color'
+      ,color: "{$article.title_color ?? '#333'}"
+      ,predefine: true // 开启预定义颜色
+      ,done: function(color){
+        //console.log(color);
+        //譬如你可以在回调中把得到的 color 赋值给表单
+        $('#L_title_color').val(color);
+        //改变标题颜色
+        $('#L_title').css("color", color);
+      }
+    });
 
   //指定允许上传的文件类型
   upload.render({

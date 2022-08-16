@@ -298,78 +298,90 @@ abstract class BaseController
     public function setKeywords($data)
     {
 		$keywords = [];
+        // 百度分词自动生成关键词
+        if(!empty(config('taoler.baidu.client_id')) == true) {
+            //headers数组内的格式
+            $headers = array();
+            $headers[] = "Content-Type:application/json";
 
-		if($data['flag'] == 'on') {
-			// 百度分词自动生成关键词
-			if(!empty(config('taoler.baidu.client_id')) == true) {
-				$url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+            switch($data['flag']) {
+                //分词
+                case 'word':
+                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+                    $body = ["text" => $data['keywords']];
+                    break;
+                //标签
+                case 'tag':
+                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+                    $body = ['title' => $data['keywords'], 'content'=>$data['content']];
+                    break;
+                default:
+                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+                    $body = ["text" => $data['keywords']];
+            }
+            
+            $postBody    = json_encode($body);
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);//设置请求头
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $postBody);//设置请求体
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');//使用一个自定义的请求信息来代替"GET"或"HEAD"作为HTTP请求。(这个加不加没啥影响)
+            $datas = curl_exec($curl);
+            if($datas == false) {
+                echo '接口无法链接';
+            } else {
+                $res = stripos($datas,'error_code');
+                // 接收返回的数据
+                $dataItem = json_decode($datas);
+                if($res == false) {
+                    // 数据正常
+                    $items = $dataItem->items;
+                    foreach($items as $item) {
+                        
+                        switch($data['flag']) {
+                            case 'word':
+                                if($item->pos == 'n' && !in_array($item->item,$keywords)){
+                                    $keywords[] = $item->item;
+                                }
+                                break;
+                            case 'tag':
+                                if(!in_array($item->tag,$keywords)){
+                                    $keywords[] = $item->tag;
+                                }
+                                break;
+                            default:
+                                if($item->pos == 'n' && !in_array($item->item,$keywords)){
+                                    $keywords[] = $item->item;
+                                }
+                        }
+                    }
+                } else {
+                    // 接口正常但获取数据失败，可能参数错误，重新获取token
+                    $url = 'https://aip.baidubce.com/oauth/2.0/token';
+                    $post_data['grant_type']     = config('taoler.baidu.grant_type');;
+                    $post_data['client_id']      = config('taoler.baidu.client_id');
+                    $post_data['client_secret']  = config('taoler.baidu.client_secret');
 
-				//headers数组内的格式
-				$headers = array();
-				$headers[] = "Content-Type:application/json";
-				$body   = array(
-							"text" => $data['$keywords']
-					);
-				$postBody    = json_encode($body);
-				$curl = curl_init();
-				curl_setopt($curl, CURLOPT_URL, $url);
-				curl_setopt($curl, CURLOPT_POST, true);
-				curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);//设置请求头
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $postBody);//设置请求体
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');//使用一个自定义的请求信息来代替"GET"或"HEAD"作为HTTP请求。(这个加不加没啥影响)
-				$datas = curl_exec($curl);
-				if($datas == false) {
-					echo '接口无法链接';
-				} else {
-					$res = stripos($datas,'error_code');
-					// 接收返回的数据
-					$dataItem = json_decode($datas);
-					if($res == false) {
-						// 数据正常
-						$items = $dataItem->items;
-						foreach($items as $item) {
-							if($item->pos == 'n' && !in_array($item->item,$keywords)){
-								$keywords[] = $item->item;
-							}
-						}
-					} else {
-						// 接口正常但获取数据失败，可能参数错误，重新获取token
-						$url = 'https://aip.baidubce.com/oauth/2.0/token';
-						$post_data['grant_type']     = config('taoler.baidu.grant_type');;
-						$post_data['client_id']      = config('taoler.baidu.client_id');
-						$post_data['client_secret']  = config('taoler.baidu.client_secret');
-	
-						$o = "";
-						foreach ( $post_data as $k => $v ) 
-						{
-							$o.= "$k=" . urlencode( $v ). "&" ;
-						}
-						$post_data = substr($o,0,-1);
-						$res = $this->request_post($url, $post_data);
-						// 写入token
-						SetArr::name('taoler')->edit([
-							'baidu'=> [
-								'access_token'	=> json_decode($res)->access_token,
-							]
-						]);
-						echo 'api接口数据错误 - ';
-						echo $dataItem->error_msg; 
-					}
-				}
-			}
-		} else {
-			// 手动添加关键词
-			// 中文一个或者多个空格转换为英文空格
-			$str = preg_replace('/\s+/',' ',$data['keywords']);
-			$att = explode(' ', $str);
-			foreach($att as $v){
-				if ($v !='') {
-					$keywords[] = $v;
-				}
-			}
-		}
-		
+                    $o = "";
+                    foreach ( $post_data as $k => $v ) 
+                    {
+                        $o.= "$k=" . urlencode( $v ). "&" ;
+                    }
+                    $post_data = substr($o,0,-1);
+                    $res = $this->request_post($url, $post_data);
+                    // 写入token
+                    SetArr::name('taoler')->edit([
+                        'baidu'=> [
+                            'access_token'	=> json_decode($res)->access_token,
+                        ]
+                    ]);
+                    echo 'api接口数据错误 - ';
+                    echo $dataItem->error_msg; 
+                }
+            }
+        }
         return json(['code'=>0,'data'=>$keywords]);
     }
 

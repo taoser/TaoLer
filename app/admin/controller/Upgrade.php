@@ -378,7 +378,7 @@ class Upgrade extends AdminController
      */
     public function database_operation($file)
     {
-        $mysqli = new mysqli('localhost','root','root','test');
+        $mysqli = new \mysqli('localhost','root','root','test');
         if($mysqli->connect_errno)
         {
             return json(['code'=>0,'msg'=>'Connect failed:'.$mysqli->connect_error]);

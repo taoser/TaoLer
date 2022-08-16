@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-08-15 13:37:58
+ * @LastEditTime: 2022-08-16 12:18:29
  * @LastEditors: TaoLer
  * @Description: 评论模型
  * @FilePath: \TaoLer\app\common\model\Comment.php
@@ -83,9 +83,9 @@ class Comment extends Model
     public function getUserCommentList(int $id) {
         $userCommList = $this::field('id,user_id,create_time,delete_time,article_id,content')
         ->with(['article' => function(\think\model\Relation $query){
-            $query->withField('id,title,cate_id,delete_time')->where(['status' => 1,'delete_time' => 0]);
+            $query->withField('id,title,cate_id,delete_time')->where(['status' => 1]);
         }])
-        ->where(['user_id' => $id,'status' => 1,'delete_time'=>0])
+        ->where(['user_id' => $id,'status' => 1])
         //->append(['url'])
         ->order(['create_time' => 'desc'])
         //->cache(3600)

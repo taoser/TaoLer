@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2021-12-06 16:04:50
+ * @LastEditTime: 2022-08-16 12:09:28
+ * @LastEditors: TaoLer
+ * @Description: 优化版
+ * @FilePath: \TaoLer\extend\taoler\com\Message.php
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ */
 
 namespace taoler\com;
 
@@ -45,7 +54,7 @@ class Message
      */
 	public static function receveMsg($uid)
 	{
-		 $msg = Db::name('message_to')
+		return Db::name('message_to')
 		->alias('t')
 		->join('message m','t.message_id = m.id' )
 		->join('user u','t.send_id = u.id')
@@ -53,8 +62,7 @@ class Message
 		->where('t.receve_id',$uid)
 		->where(['t.delete_time'=>0])
 		->order(['t.is_read'=>'asc','t.create_time'=>'desc'])
-		->select();
-		return $msg;
+		->select()->toArray(); 
     }
 
     /**
@@ -67,10 +75,10 @@ class Message
 	public static function insertMsg(int $uid)
 	{
 		//得到所有系统消息
-		$sysmsg = MessageModel::where(['type'=>0,'delete_time'=>0])->select();
+		$sysmsg = MessageModel::where(['type'=>0])->select();
 		foreach($sysmsg as $smg){
 			//检验通知ID是否被写入个人收件箱
-			$msgId = Db::name('message_to')->where('message_id',$smg['id'])->find();
+			$msgId = Db::name('message_to')->where(['message_id'=>$smg['id'],'delete_time'=>0])->find();
 			if(!$msgId){
 				$result = MessageTo::create(['send_id'=>$smg['user_id'],'receve_id'=>$uid,'message_id'=>$smg['id'],'message_type'=>$smg['type']]);
 			}

@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-27 21:29:43
+ * @LastEditTime: 2022-08-16 12:12:11
  * @LastEditors: TaoLer
  * @Description: 优化版
- * @FilePath: \github\TaoLer\app\index\controller\Message.php
+ * @FilePath: \TaoLer\app\index\controller\Message.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 namespace app\index\controller;
@@ -25,10 +25,10 @@ class Message extends BaseController
 	{
 		$messgeto = new MessageTo();
 		$num = $messgeto->getMsgNum($this->uid);
-		if(!is_null($num)){
+		if($num){
 			$res = ['status' =>0,'count' => $num, 'msg' => 'ok'];
 		} else {
-			$res = ['status' =>-1,'count' => 0, 'msg' => 'message error'];
+			$res = ['status' =>0,'count' => 0, 'msg' => 'no message'];
 		}
         return json($res);
 	}
@@ -37,18 +37,18 @@ class Message extends BaseController
 	public function find()
 	{
 		$msg = MessageApi::receveMsg($this->uid);
-		$count = $msg->count();
+		
+		$count = count($msg);
 		$res = [];
 		if($count){
 			$res = ['status'=>0,'msg'=>'','count'=>$count];
 			foreach ($msg as $k => $v){
-			$data = ['id'=>$v['id'],'name'=>$v['name'],'title'=>$v['title'],'content'=>$v['content'],'time'=>date("Y-m-d H:i",$v['create_time']),'link'=>$v['link'],'read'=>$v['is_read'] ? '已读':'未读','type'=>$v['message_type']];
-			$res['rows'][] = $data;
+				$res['rows'][] = ['id'=>$v['id'],'name'=>$v['name'],'title'=>$v['title'],'content'=>$v['content'],'time'=>date("Y-m-d H:i",$v['create_time']),'link'=>$v['link'],'read'=>$v['is_read'] ? '已读':'未读','type'=>$v['message_type']];
+			 
 			}
 		} else {
-			$res = ['status'=>-1,'msg'=>'message find error','rows'=>''];;
+			$res = ['status'=>0,'msg'=>'message find error','rows'=>''];;
 		} 
-		//var_dump($res);
 		return json($res);
 	}
 	
@@ -57,9 +57,12 @@ class Message extends BaseController
 	{
 		$id =input('id');
 		if($id){
-			$msg = MessageTo::field('id,message_id')->with(['messages' => function($query){
-				$query->where('delete_time',0)->field('id,content');
-            }])->where('id',$id)->find();
+			$msg = MessageTo::field('id,message_id')
+			->with(['messages' => function($query){
+				$query->field('id,content');
+            }])
+			->where('id',$id)
+			->find();
 			//改变读状态
 			if($msg->is_read == 0){
 				$result = $msg->update(['id'=>$id,'is_read'=>1]);

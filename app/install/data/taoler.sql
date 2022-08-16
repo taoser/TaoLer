@@ -77,7 +77,7 @@ CREATE TABLE `tao_article` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`) USING BTREE COMMENT '文章的用户索引',
   KEY `cate_id` (`cate_id`) USING BTREE COMMENT '文章分类索引'
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='文章表';
 
 -- ----------------------------
 -- Records of tao_article
@@ -98,7 +98,7 @@ CREATE TABLE `tao_auth_group` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='用户组权限表';
 
 -- ----------------------------
 -- Records of tao_auth_group
@@ -124,7 +124,7 @@ CREATE TABLE `tao_auth_group_access` (
   KEY `uid` (`uid`),
   KEY `group_id` (`group_id`),
   KEY `uid_group_id` (`uid`,`group_id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='用户组明细表';
 
 
 -- ----------------------------
@@ -142,7 +142,7 @@ CREATE TABLE `tao_auth_group_copy` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='用户角色表';
 
 -- ----------------------------
 -- Records of tao_auth_group_copy
@@ -174,7 +174,7 @@ CREATE TABLE `tao_auth_rule` (
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=97 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=97 DEFAULT CHARSET=utf8 COMMENT='权限表';
 
 -- ----------------------------
 -- Records of tao_auth_rule
@@ -289,7 +289,7 @@ CREATE TABLE `tao_cate` (
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`),
   KEY `ename` (`ename`) COMMENT '英文名称索引'
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='分类表';
 
 -- ----------------------------
 -- Records of tao_cate
@@ -319,7 +319,7 @@ CREATE TABLE `tao_collection` (
 DROP TABLE IF EXISTS `tao_comment`;
 CREATE TABLE `tao_comment` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '评论id',
-  `content` text NOT NULL COMMENT '评论',
+  `content` text  COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论',
   `article_id` int(11) NOT NULL COMMENT '文章id',
   `user_id` int(11) NOT NULL COMMENT '评论用户',
   `zan` tinyint(4) NOT NULL DEFAULT '0' COMMENT '赞',
@@ -331,7 +331,7 @@ CREATE TABLE `tao_comment` (
   PRIMARY KEY (`id`),
   KEY `aiticle_id` (`article_id`) USING BTREE COMMENT '文章评论索引',
   KEY `user_id` (`user_id`) USING BTREE COMMENT '评论用户索引'
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='评论表';
 
 -- ----------------------------
 -- Records of tao_comment
@@ -351,7 +351,7 @@ CREATE TABLE `tao_cunsult` (
   `create_time` int(10) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `delete_time` int(10) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='反馈表';
 
 -- ----------------------------
 -- Table structure for tao_friend_link
@@ -366,7 +366,7 @@ CREATE TABLE `tao_friend_link` (
   `update_time` int(10) NOT NULL COMMENT '更新时间',
   `delete_time` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='友情链接';
 
 -- ----------------------------
 -- Records of tao_friend_link
@@ -389,7 +389,7 @@ CREATE TABLE `tao_mail_server` (
   `active` tinyint(1) NOT NULL DEFAULT '0' COMMENT '邮箱服务1激活0未激活',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='邮件服务器配置表';
 
 -- ----------------------------
 -- Records of tao_mail_server
@@ -411,11 +411,8 @@ CREATE TABLE `tao_message` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消息表';
 
--- ----------------------------
--- Records of tao_message
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for tao_message_to
@@ -432,16 +429,12 @@ CREATE TABLE `tao_message_to` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of tao_message_to
--- ----------------------------
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消息详细表';
 
 --
 -- 表的结构 `tao_push_jscode`
 --
-
+DROP TABLE IF EXISTS `tao_push_jscode`;
 CREATE TABLE `tao_push_jscode` (
   `id` int(2) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '平台名',
@@ -471,13 +464,13 @@ CREATE TABLE `tao_slider` (
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tao_slider
 -- ----------------------------
 INSERT INTO `tao_slider` VALUES ('1', 'CODING', '1', '/storage/slider/F1.jpg', '#', '', '1574870400', '1575043200', '1', '0', '0', '0');
-INSERT INTO `tao_slider` VALUES ('3', '通用右栏底部广告', '2', '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'https://www.aieok.com', '', '1571155200', '1609344000', '1', '0', '0', '0');
+INSERT INTO `tao_slider` VALUES ('2', '通用右栏底部广告', '2', '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'https://www.aieok.com', '', '1571155200', '1609344000', '1', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for tao_system
