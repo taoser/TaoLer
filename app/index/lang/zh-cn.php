@@ -88,6 +88,8 @@ return [
     'special column'    => '选择专栏',
     'tags'              => '标签',
     'add tags'          => '添加标签',
+	'add keywords'		=> '添加关键词',
+	'description'		=> '描述',
 
 	 //Sign in/up
 	 'username'			=> '用户',
@@ -107,7 +109,7 @@ return [
 	 'register now'		=> '立即注册',
 	 'mail/username/mobile'	=> '邮箱/用户名/手机号',
 	 '6-16 characters'	=> '6-16 字符',
-	 'strong type encryption'	=> '经过强类型加密',
+	 'strong type encryption'	=> '强类型加密',
 	 'it cannot be changed'	=> '不能更改',
 	 'the only way to get back your password'	=> '找回密码唯一途径',
 	 'please input the password' => '请输入密码',

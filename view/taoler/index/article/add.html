@@ -44,7 +44,7 @@
               </div>
               {/if}
             </div>
-            <div class="layui-row layui-col-space15 layui-form-item layui-hide" id="LAY_quiz">
+            <!-- <div class="layui-row layui-col-space15 layui-form-item layui-hide" id="LAY_quiz">
               <div class="layui-col-md3">
                 <label class="layui-form-label">所属产品</label>
                 <div class="layui-input-block">
@@ -70,41 +70,34 @@
                   <input type="text" id="L_browser" value="" name="browser" placeholder="浏览器名称及版本，如：IE 11" autocomplete="off" class="layui-input" />
                 </div>
               </div>
-            </div>
+            </div> -->
             <div class="layui-form-item layui-form-text">
               <div class="layui-input-block">
-                <textarea
-                  id="L_content"
-                  name="content"
-                  required
-                  lay-verify="required"
-                  placeholder="{:lang('please input the content')}"
-                  class="layui-textarea fly-editor"
-                  style="height: 260px">
-                </textarea>
+                <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea fly-editor"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
               <div class="layui-inline">
                 <label class="layui-form-label">{:lang('enclosure')}</label>
                 <div class="layui-input-inline" style="width: 190px">
-                  <input type="text" class="layui-input" name="upzip" value="" placeholder="zip,image文件" title="上传附件" />
+                  <input type="text" class="layui-input" name="upzip" value="" placeholder="zip,image" title="上传附件" />
                 </div>
                 <button type="button" class="layui-btn" id="zip-button"><i class="layui-icon"></i>{:lang('uploads')}</button>
               </div>
             </div>
+            {//描述}
             <div class="layui-form-item">
-              <label class="layui-form-label">{:lang('描述')}</label>
+              <label class="layui-form-label">{:lang('description')}</label>
               <div class="layui-input-block">
-                <textarea name="description" class="layui-textarea" placeholder="SEO描述"></textarea>
+                <textarea name="description" class="layui-textarea" placeholder="SEO {:lang('description')}"></textarea>
               </div>
             </div>
             {//关键词}
             <div class="layui-form-item">
-                <label class="layui-form-label">{:lang('添加关键词')}</label>
+                <label class="layui-form-label">{:lang('add keywords')}</label>
                 <div class="layui-input-block">
                   <!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
-                  <input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="添加关键词" />
+                  <input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="{:lang('add keywords')}" />
                 </div>
             </div>
             {//tag}
@@ -239,41 +232,52 @@
     }
 
     // 百度词条
-    var baidu_title_switch = "{:config('taoler.config.baidu_title_switch')}";
-    if(baidu_title_switch == 1) {
-      $("#L_title").bind('input propertychange',function () {
-          var title = $(this).val();
-          var str = '';
-          if(title.length > 0 ) {
-            $.post("{:url('article/getWordList')}",{title:title},function(res){
-              // 动态生成ur>li内容
-              if (res.code == 0) {
-                // 显示动态框
-                $(".bdsug").removeClass('layui-hide');
-                for (var i = 0; i < res.data.length; i++) {
-                  //str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q.replace(title,'') + '</b></li>';
-                  str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q + '</b></li>';
-                }
-                // 清空ul并追加li
-                $('.wordlist').empty().append(str);
-                // 点击李获取li值并复制给#L_title input的value
-                $(".bdsug li").on('click',function(){
-                  var word = $(this).attr('data-key');
-                  var words = title + '(' + word + ')';
-                  $("#L_title").val(words);
-                  // 关闭动态框
+    (function(){
+      var baidu_title_switch = "{:config('taoler.config.baidu_title_switch')}";
+      if(baidu_title_switch == 1) {
+        $("#L_title").bind('input propertychange',function () {
+            var title = $(this).val();
+            var str = '';
+            if(title.length > 0 ) {
+              $.post("{:url('article/getWordList')}",{title:title},function(res){
+                // 动态生成ur>li内容
+                if (res.code == 0) {
+                  // 显示动态框
+                  $(".bdsug").removeClass('layui-hide');
+                  for (var i = 0; i < res.data.length; i++) {
+                    //str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q.replace(title,'') + '</b></li>';
+                    str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q + '</b></li>';
+                  }
+                  // 清空ul并追加li
+                  $('.wordlist').empty().append(str);
+                  // 点击李获取li值并复制给#L_title input的value
+                  $(".bdsug li").on('click',function(){
+                    var word = $(this).attr('data-key');
+                    var words = title + '(' + word + ')';
+                    $("#L_title").val(words);
+                    // 关闭动态框
+                    $(".bdsug").addClass('layui-hide');
+                  });
+                } else {
                   $(".bdsug").addClass('layui-hide');
-                });
-              } else {
-                $(".bdsug").addClass('layui-hide');
-              }
+                }
+              });
+            } else {
+              $(".bdsug").addClass('layui-hide');
+            }
+        });
+      }
+    }())
+
+    //关闭百度词条
+    $(function(){
+        $(".bdsug").mouseleave(function(){
+            $(this).addClass('layui-hide');
+            $("#LAY_ucm").click(function(){
+              $(this).addClass('layui-hide');
             });
-          } else {
-            $(".bdsug").addClass('layui-hide');
-          }
-          
-      });
-    }
+        });
+    });
 
     // 发布文章
     form.on("submit(article-add)", function (data) {

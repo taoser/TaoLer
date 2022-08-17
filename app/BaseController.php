@@ -292,6 +292,8 @@ abstract class BaseController
 
     /**
 	 * 关键词
+     * 通过百度分词接口获取关键词或者标签
+     * flag 1.为word时获取分词，2.为tag时获取标签
 	 *
 	 * @return void
 	 */
