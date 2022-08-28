@@ -46,11 +46,13 @@
         <div class="detail-body-wenda photos" id="content">{$article.content|raw}</div>
 
         <div style="margin-top: 25px">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
+        {notempty name="tags"}
         <div style="margin-top: 15px">标签
           {volist name="tags" id="vo" }
           <a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
           {/volist}
         </div>
+        {/notempty}
         <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125)">
           <p>{$sysInfo.state}</p>
         </div>

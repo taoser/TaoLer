@@ -409,11 +409,11 @@ class Forum extends AdminController
     public function edit($id)
     {
 		$article = Article::find($id);
-		
 		if(Request::isAjax()){
+
 			$data = Request::only(['id','cate_id','title','title_color','content','upzip','keywords','description','captcha']);
 			$tagId = input('tagid');
-			$data['user_id'] = 1;
+
 			//调用验证器
 			$validate = new \app\common\validate\Article(); 
 			$res = $validate->scene('Artadd')->check($data);
@@ -466,20 +466,8 @@ class Forum extends AdminController
 				return $editRes;
 			}
 		}
-		// 查询标签
-		$tag = $article->tags;
-		$tags = [];
-		if(!is_null($tag)) {
-		    $attr = explode(',',$tag);
-    		foreach($attr as $key => $v){
-    			if ($v !='') {
-    				$tags[] = $v;
-    			}
-    		}
-
-		}
 			
-        View::assign(['article'=>$article,'tags'=>$tags]);
+        View::assign(['article'=>$article]);
 		//1.查询分类表获取所有分类
 		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select();
 		

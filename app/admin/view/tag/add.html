@@ -25,6 +25,24 @@
         <input type="text" name="ename" lay-verify="required" placeholder="英文或者拼音别名" autocomplete="off" class="layui-input" >
       </div>
     </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">关键词</label>
+      <div class="layui-input-inline">
+        <input type="text" name="keywords" lay-verify="required" placeholder="关键词 多个以逗号,隔开" autocomplete="off" class="layui-input" >
+      </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+      <label class="layui-form-label">摘要</label>
+      <div class="layui-input-block">
+        <textarea type="text" name="description" lay-verify="required" placeholder="请输入内容" autocomplete="off" class="layui-textarea"></textarea>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">seo标题</label>
+      <div class="layui-input-inline">
+        <input type="text" name="title" lay-verify="required" placeholder="tag标题" autocomplete="off" class="layui-input" >
+      </div>
+    </div>
     <div class="layui-form-item layui-hide">
       <input type="button" lay-submit lay-filter="Tag-submit" id="Tag-submit" value="确认">
     </div>

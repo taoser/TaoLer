@@ -324,7 +324,13 @@ class Article extends Model
         }
     }
 
-    // 标签列表
+    /**
+     * 标签列表
+     *
+     * @param [type] $tagId 标签id
+     * @param [type] $limit 输出数量
+     * @return void
+     */
     public function getAllTags($tagId)
     {
         $allTags = $this::hasWhere('taglist',['tag_id'=>$tagId])
@@ -335,12 +341,65 @@ class Article extends Model
         }])
         ->where(['status'=>1])
         ->order('pv desc')
-        ->limit(50)
         ->append(['url'])
         ->select()
         ->toArray();
     
         return $allTags;
+    }
+
+    /**
+     * 相关文章(标签)
+     * 相同标签文章，不包含自己
+     * @param [type] $tagId
+     * @param [type] $limit
+     * @return void
+     */
+    public function getRelationTags($tagId,$id,$limit)
+    {
+        $allTags = $this::hasWhere('taglist',['tag_id'=>$tagId])
+        ->with(['user' => function($query){
+            $query->field('id,name,nickname,user_img,area_id,vip');
+        },'cate' => function($query){
+            $query->where('delete_time',0)->field('id,catename,ename');
+        }])
+        ->where(['status'=>1])
+        ->where('article.id', '<>', $id)
+        ->order('pv desc')
+        ->limit($limit)
+        ->append(['url'])
+        ->select()
+        ->toArray();
+    
+        return $allTags;
+    }
+
+    /**
+     * 上下文
+     *
+     * @param [type] $id 当前文章ID
+     * @param [type] $cid 当前分类ID
+     * @return void
+     */
+    public function getPrevNextArticle($id,$cid)
+    {
+        //上一篇
+        $previous = $this::field('id,title,cate_id')
+        ->where([
+            ['id', '<', $id],
+            ['cate_id', '=', $cid],
+            ['status', '=',1]
+        ])->order('id desc')->limit(1)->append(['url'])->select()->toArray();
+
+        //下一篇
+        $next = $this::field('id,title,cate_id')
+        ->where([
+            ['id', '>', $id],
+            ['cate_id', '=', $cid],
+            ['status', '=',1]
+        ])->limit(1)->append(['url'])->select()->toArray();
+
+        return ['previous' => $previous, 'next' => $next];
     }
 
     // 获取url

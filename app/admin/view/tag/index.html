@@ -56,8 +56,11 @@
     ,page: true //开启分页
     ,cols: [[ //表头
       {type: 'numbers', fixed: 'left'}
-	  ,{field: 'name', title: '名称', width:200}
-      ,{field: 'ename', title: '别名', minWidth:300}
+	  ,{field: 'name', title: '名称', width:100}
+      ,{field: 'ename', title: '别名', width:100}
+	  ,{field: 'keywords', title: '关键词', width:150}
+	  ,{field: 'description', title: '摘要', minWidth:300}
+	  ,{field: 'title', title: 'seo标题', width:200}
 	  ,{field: 'time', title: '时间', minWidth:100}
 	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
     ]]
@@ -105,7 +108,7 @@
 		  title: '编辑Tag',
 		  content: 'edit.html?id='+ id,
 		  maxmin: true,
-		  area : ['400px' , '300px'],
+		  area : ['450px' , '80%'],
 		  btn: ['确定', '取消'],
           yes: function(index, layero){
 		  var iframeWindow = window['layui-layer-iframe'+ index]
@@ -144,7 +147,7 @@
 		  title: '添加Tag',
 		  content: 'add.html',
 		  maxmin: true,
-		  area : ['400px' , '300px'],
+		  area : ['450px' , '80%'],
 		  btn: ['确定', '取消'],
           yes: function(index, layero){
 		  var iframeWindow = window['layui-layer-iframe'+ index]

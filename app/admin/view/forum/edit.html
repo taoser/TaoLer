@@ -104,14 +104,14 @@ var artId = "{$article.id}";
 var addTags = xmSelect.render({
   el: '#tag',
   name: 'tagid',
-  layVerify: 'required',
+  layVerify: '',
   layVerType: 'msg',
   paging: true,
   pageSize: 5,
   data: []
 });
 //2.动态赋值
-$.get("{:url('tag/getArtTag')}",{id:artId},function(res){
+$.get("{:url('tag/getArticleTag')}",{id:artId},function(res){
   if(res.code == 0){
     addTags.setValue(
       res.data

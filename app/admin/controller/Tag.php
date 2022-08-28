@@ -41,7 +41,7 @@ class Tag extends AdminController
         if(count($tags)) {
             $arr = ['code'=>0, 'msg'=>'', 'count' => count($tags)];
             foreach($tags as $k=>$v) {
-                $arr['data'][] = ['id'=>$v['id'],'name'=>$v['name'], 'ename'=>$v['ename'],'time'=>$v['create_time']];
+                $arr['data'][] = ['id'=>$v['id'],'name'=>$v['name'], 'ename'=>$v['ename'], 'keywords'=>$v['keywords'], 'description'=>$v['description'], 'title'=>$v['title'],'time'=>$v['create_time']];
             }
         } else {
             $arr = ['code'=>-1, 'msg'=>'没有数据'];
@@ -52,7 +52,10 @@ class Tag extends AdminController
     public function add()
     {
         if(Request::isAjax()) {
-            $data = Request::only(['name','ename']);
+            $data = Request::only(['name','ename','keywords','description','title']);
+            // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+
             $tagModel = new TagModel;
             $res = $tagModel->saveTag($data);
             if($res == true){
@@ -67,13 +70,17 @@ class Tag extends AdminController
         $tagModel = new TagModel;
         
         if(Request::isAjax()) {
-            $data = Request::only(['name','ename','id']);
+            $data = Request::only(['name','ename','id','keywords','description','title']);
+            // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+
             $res =$tagModel::update($data);
             if($res == true){
                 return json(['code'=>0,'msg'=>'设置成功']);
             }
         }
         $tag = $tagModel->getTag(input('id'));
+
         View::assign('tag',$tag);
         return view();
     }

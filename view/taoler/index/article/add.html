@@ -86,14 +86,14 @@
               </div>
             </div>
             {//描述}
-            <div class="layui-form-item">
+            <div class="layui-form-item layui-hide">
               <label class="layui-form-label">{:lang('description')}</label>
               <div class="layui-input-block">
                 <textarea name="description" class="layui-textarea" placeholder="SEO {:lang('description')}"></textarea>
               </div>
             </div>
             {//关键词}
-            <div class="layui-form-item">
+            <div class="layui-form-item layui-hide">
                 <label class="layui-form-label">{:lang('add keywords')}</label>
                 <div class="layui-input-block">
                   <!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
@@ -181,7 +181,7 @@
     var addTags = xmSelect.render({
       el: '#tag',
       name: 'tagid',
-      layVerify: 'required',
+      layVerify: '',
       layVerType: 'msg',
       paging: true,
       pageSize: 5,
@@ -224,7 +224,6 @@
         console.log(flag,title,content)
         $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
             if (res.code == 0) {
-                console.log(res.data)
               $("input[name='keywords']").val(res.data.join(','));
             }
           },
@@ -273,9 +272,9 @@
     $(function(){
         $(".bdsug").mouseleave(function(){
             $(this).addClass('layui-hide');
-            $("#LAY_ucm").click(function(){
-              $(this).addClass('layui-hide');
-            });
+            // $("#LAY_ucm").click(function(){
+            //   $(this).addClass('layui-hide');
+            // });
         });
     });
 

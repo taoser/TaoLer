@@ -339,16 +339,16 @@
 							<div class="layui-form-item">
 								<label class="layui-form-label">Index前端</label>
 								<div class="layui-input-inline">
-								<input type="text" name="index" value="{$index}" class="layui-input">
+								<input type="text" name="index" required lay-verify="required" placeholder="只需填写子域如www" value="{$index}" class="layui-input">
 								</div>
-								<div class="layui-form-mid layui-word-aux">如：www.aieok.com</div>
+								<div class="layui-form-mid layui-word-aux">访问则为www.aieok.com</div>
 							</div>
 							<div class="layui-form-item">
 								<label class="layui-form-label">Admin后端</label>
 								<div class="layui-input-inline">
-								<input type="text" name="admin" value="{$admin}" class="layui-input">
+								<input type="text" name="admin" required lay-verify="required" placeholder="只需填写子域如admin" value="{$admin}" class="layui-input">
 								</div>
-								<div class="layui-form-mid layui-word-aux">如：admin.aieok.com</div>
+								<div class="layui-form-mid layui-word-aux">访问则为admin.aieok.com</div>
 							</div>
 							
 							<div class="layui-form-item">
@@ -388,14 +388,14 @@
 				<div class="layui-tab-item">
 					<div class="layui-form" wid100 lay-filter="url_rewrite">
 						<div class="layui-form-item">
-							<label class="layui-form-label">帖子别名</label>
+							<label class="layui-form-label">帖子url字段</label>
 							<div class="layui-input-inline">
 							<input type="text" name="article_as" required value="{$url_re['article_as']}" class="layui-input">
 							</div>
 							<div id="artdesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/article/1.html</div>
 						</div>
 						<div class="layui-form-item">
-							<label class="layui-form-label">分类别名</label>
+							<label class="layui-form-label">分类url字段</label>
 							<div class="layui-input-inline">
 							<input type="text" name="cate_as" required value="{$url_re['cate_as']}" class="layui-input">
 							</div>

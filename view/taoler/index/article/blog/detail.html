@@ -54,11 +54,13 @@
               </article>
               {//文章末尾}
               <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
+              {notempty name="tags"}
               <div style="margin-top: 15px">标签
-                  {volist name="tags" id="vo" }
-                  <a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
-                  {/volist}
+                {volist name="tags" id="vo" }
+                <a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
+                {/volist}
               </div>
+              {/notempty}
               <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
                 <p>{$sysInfo.state}</p>    
               </div>
@@ -81,15 +83,16 @@
             </div>
           </div>
           <div class="post card block d-flex p-4">
-            <span class="d-inline-block text-muted mr-2 fanpian pb-2 mb-2"> # 上一篇： <a href="" rel="prev">8个稳赚的女性创业 女性创业应该注意什么</a></span>
-            <span class="d-inline-block text-muted mr-2 fanpian"># 下一篇： 已经是最新的内容了!</span>
+            <span class="d-inline-block text-muted mr-2 fanpian pb-2 mb-2"> # 上一篇： {$previous|raw}</span>
+            <span class="d-inline-block text-muted mr-2 fanpian"># 下一篇： {$next|raw}</span>
           </div>
+          {notempty name="relationArticle"}
           <section class="list-related">
             <div class="content-related card">
               <div class="card-body">
                 <div class="mb-3">相关文章</div>
                   <div class="list list-dots my-n2">
-                    {volist name="artHot" id="vo"}
+                    {volist name="relationArticle" id="vo"}
                       <div class="list-item py-2">
                         <a href="{$Request.domain}{$vo.url}" target="_blank" class="list-title fanpian" title="{$vo.title}" rel="bookmark">{$vo.title} </a>
                       </div>
@@ -98,7 +101,7 @@
               </div>
             </div>
           </section>
-
+          {/notempty}
           <section class="comments">
             <div class="card">
               <div class="card-body pt-4">

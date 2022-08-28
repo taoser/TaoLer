@@ -37,11 +37,6 @@
     <i class="iconfont icon-chengshi"></i><span>{:session('user_id') ? '来自'.$u.city: lang('log in to view')}</span>
   </p>
   <p class="fly-home-sign">（{$u.sign ? $u.sign|raw : lang('it is not signed yet')}）</p>
-
-  <div class="fly-sns" data-user="">
-    <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">{:lang('add friends')}</a>
-    <a href="javascript:;" class="layui-btn layui-btn-normal fly-imActive" data-type="chat">{:lang('start a chat')}</a>
-  </div>
 </div>
 
 <div class="layui-container">

@@ -336,7 +336,7 @@ class Set extends AdminController
 				$arr['url_rewrite'][$k] = '';
 			}
 		}
-		if(empty($arr['url_rewrite']['cate_as'])) return json(['code'=>-1,'msg'=>'分类不能为空']);
+		// if(empty($arr['url_rewrite']['cate_as'])) return json(['code'=>-1,'msg'=>'分类不能为空']);
 
 		if(!array_key_exists('url_rewrite',config('taoler'))){
 			$result = SetArr::name('taoler')->add($arr);

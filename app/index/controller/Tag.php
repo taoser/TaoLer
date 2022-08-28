@@ -31,9 +31,9 @@ class Tag extends BaseController
     {
         //
         $tagEname = Request::param('ename');
-        $tagId = Db::name('tag')->where('ename',$tagEname)->value('id');
+        $tag = Db::name('tag')->where('ename',$tagEname)->find();
 
-        $artList = Article::getAllTags($tagId);
+        $artList = Article::getAllTags($tag['id']);
         $slider = new Slider();
         //首页右栏
         $ad_comm = $slider->getSliderList(2);
@@ -41,7 +41,7 @@ class Tag extends BaseController
         $artHot = Article::getArtHot(10);
 
         $assign = [
-            'tag'=>$tagEname,
+            'tag'=>$tag,
             'artList'=>$artList,
             'ad_comm'=>$ad_comm,
             'artHot'=>$artHot,

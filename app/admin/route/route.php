@@ -21,6 +21,4 @@ Route::get("$detail_as<id>$", '\app\index\controller\Article@detail')
 ])
 ->name('article_detail');
 
-//tag
-
 

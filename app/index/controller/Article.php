@@ -91,22 +91,29 @@ class Article extends BaseController
 		//赞列表
 		$userZanList = [];
 		$userZan = UserZan::where(['article_id'=>$id,'type'=>1])->select();
-		foreach($userZan as $v){
-			$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
+		if(count($userZan)) {
+			foreach($userZan as $v){
+				$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
+			}
 		}
+		
 	
 		// 设置内容的tag内链
 		$artDetail['content'] = $this->setArtTagLink($artDetail['content']);
 
 		// 标签
 		$tags = [];
+		$relationArticle = [];
         $artTags = Db::name('taglist')->where('article_id',$id)->select();
-        // halt($artTags);
-        foreach($artTags as $v) {
-            $tag = Db::name('tag')->find($v['tag_id']);
-            $tags[] = ['name'=>$tag['name'],'url'=> (string) url('tag_list',['ename'=>$tag['ename']])];
-        }
-
+		if(count($artTags)) {
+			foreach($artTags as $v) {
+				$tag = Db::name('tag')->find($v['tag_id']);
+				if(!is_null($tag)) 
+				$tags[] = ['name'=>$tag['name'],'url'=> (string) url('tag_list',['ename'=>$tag['ename']])];
+			}
+			//相关帖子
+			$relationArticle = $article->getRelationTags($artTags[0]['tag_id'],$id,5);
+		}
 
 		$tpl = Db::name('cate')->where('id', $artDetail['cate_id'])->value('detpl');
 		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
@@ -114,6 +121,19 @@ class Article extends BaseController
 		//浏览pv
 		Db::name('article')->where('id',$id)->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
+
+		//上一篇下一篇
+		$upDownArt = $article->getPrevNextArticle($id,$artDetail['cate_id']);
+		if(empty($upDownArt['previous'][0])) {
+            $previous = '前面已经没有了！';
+        } else {
+            $previous = '<a href="' . $upDownArt['previous'][0]['url'] . '" rel="prev">' . $upDownArt['previous'][0]['title'] . '</a>';
+        }
+		if(empty($upDownArt['next'][0])) {
+            $next = '已经是最新的内容了!';
+        } else {
+            $next = '<a href="' . $upDownArt['next'][0]['url'] . '" rel="prev">' . $upDownArt['next'][0]['title'] . '</a>';
+        }
 
 		//评论
 		$comments = $this->getComments($id, $page);
@@ -128,7 +148,7 @@ class Article extends BaseController
         //分类钻展赞助
         $ad_comm = $ad->getSliderList(7);
 		//push
-		$push_js = Db::name('push_jscode')->where(['delete_time'=>0])->cache(true)->select();
+		$push_js = Db::name('push_jscode')->where(['delete_time'=>0,'type'=>1])->cache(true)->select();
 		
 		View::assign([
 			'article'	=> $artDetail,
@@ -137,6 +157,9 @@ class Article extends BaseController
 			'ad_art'	=> $ad_artImg,
 			'ad_comm'	=> $ad_comm,
 			'tags'		=> $tags,
+			'relationArticle' => $relationArticle,
+			'previous'	=> $previous,
+			'next'		=> $next,
 			'page'		=> $page,
 			'comments'	=> $comments,
 			'push_js'	=> $push_js,
@@ -310,7 +333,6 @@ class Article extends BaseController
 		if(Request::isAjax()){
 			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','keywords','description','captcha']);
 			$tagId = input('tagid');	
-
 			
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
@@ -372,20 +394,8 @@ class Article extends BaseController
 				return $editRes;
 			}
 		}
-		// 查询标签
-		$tag = $article->tags;
-		$tags = [];
-		if(!is_null($tag)) {
-		    $attr = explode(',',$tag);
-    		foreach($attr as $key => $v){
-    			if ($v !='') {
-    				$tags[] = $v;
-    			}
-    		}
-
-		}
 			
-        View::assign(['article'=>$article,'tags'=>$tags,'jspage'=>'jie']);
+        View::assign(['article'=>$article,'jspage'=>'jie']);
 		// 编辑多模板支持
 		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('detpl');
 		$appName = $this->app->http->getName();
