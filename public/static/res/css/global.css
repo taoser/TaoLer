@@ -195,12 +195,12 @@ pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border
 .fly-nav-msg:hover{color:#fff;}
 
 .fly-header .layui-nav{padding: 0; background: none;}
-.fly-header .fly-nav a{padding: 0 25px 0 60px;}
+.fly-header .fly-nav a{padding: 0 25px 0 40px;}
 .fly-header .fly-nav-user li a{padding: 0 10px;}
 .fly-header .fly-nav-user li .fly-nav-avatar{padding-right: 0;}
 .fly-header .fly-nav-user a.iconfont{color: #A9B7B7;}
 .fly-header>.layui-nav-item a{color: rgba(255,255,255,0.5);}
-.fly-header .layui-this a{color: #fff;}
+.fly-header .layui-this>a{color: #00AF83;}
 .fly-header .layui-nav .layui-this:after,
 .fly-header .layui-nav .layui-nav-bar,
 .fly-header .fly-nav-user .layui-nav-more{display: none !important;}
@@ -536,7 +536,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 /*标题颜色展示方式*/
 .layui-colorpicker.layui-colorpicker-xs {width: 30px;height: 20px;line-height: 16px;border: 0px solid #e6e6e6;padding: 0;vertical-align: top;border-radius: 0;}
 .layui-colorpicker-trigger-span {display: block;height: 100%;box-sizing: border-box;border: 1px solid rgba(2, 0, 0, 0.24);border-radius: 2px;text-align: center;}
-.layui-icon-down:before {font-size: 12px;content: "高亮";}
+/* .layui-icon-down:before {font-size: 12px;content: "高亮";} */
 /*扫码阅读*/
 .detail_qrcode{position: absolute;top: 7px;right: 7px;width: 30px;height: 30px;background: url("/static/res/images/detail_qrcode.png") no-repeat;background-size: 30px 30px;}
 

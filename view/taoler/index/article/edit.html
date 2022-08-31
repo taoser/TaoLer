@@ -20,12 +20,7 @@
               <div class="layui-col-md3">
                 <label class="layui-form-label">{:lang('special column')}</label>
                 <div class="layui-input-block">
-                  <select lay-verify="required" name="cate_id" lay-filter="column"> 
-                    <option></option>
-                    {volist name="cateList" id="cate"}
-                    <option value="{$cate.id}" {if $article.cate_id == $cate.id}selected{/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
-                    {/volist}
-                  </select>
+                  <div id="CateId" class="xm-select-demo"></div>
                 </div>
               </div>
               <div class="layui-col-md8">
@@ -148,35 +143,71 @@
 {:hook('taonyeditor')}
 <script src="/static/xm-select.js"></script>
 <script>
-var artId = "{$article.id}";
-
-//1.渲染标签
-var addTags = xmSelect.render({
-  el: '#tag',
-  name: 'tagid',
-  layVerify: '',
-  layVerType: 'msg',
-  paging: true,
-  pageSize: 5,
-  data: []
-});
-//2.动态赋值
-$.get("{:url('get_art_tag')}",{id:artId},function(res){
-  if(res.code == 0){
-    addTags.setValue(
-      res.data
-    )
-  }
-});
-//3.动态标签赋值
-$.get("{:url('get_all_tag')}",function(res){
-  if(res.code == 0){
-    addTags.update({
-      data: res.data,
-      autoRow: true,
+var cateId = "{$article.cate.id}";
+// 分类选择
+$(function(){
+      //这里模拟ajax
+      $.get("{:url('article/getCateTree')}",function(res){
+        var data = res.data;
+            // 渲染下拉树
+            xmSelect.render({
+                el: '#CateId',
+                name: 'id',
+                height: '250px',
+                layVerify: 'required',
+                layVerType: 'tips',
+                data: data,
+                initValue:  [cateId],
+                model: {label: {type: 'text'}},
+                prop: {
+                    name: 'catename',
+                    value: 'id'
+                },
+                radio: true,
+                clickClose: true,
+                tree: {
+                    show: true,
+                    indent: 15,
+                    strict: false,
+                    expandedKeys: true
+                },
+                tips: '请选择'
+            });
+  
+      });
+    });
+    
+    // tag标签
+    $(function(){
+      //1.渲染标签
+      var addTags = xmSelect.render({
+        el: '#tag',
+        name: 'tagid',
+        layVerify: '',
+        layVerType: 'msg',
+        paging: true,
+        pageSize: 5,
+        data: []
+      });
+      //2.动态赋值
+      $.get("{:url('get_art_tag')}",{id:artId},function(res){
+        if(res.code == 0){
+          addTags.setValue(
+            res.data
+          )
+        }
+      });
+      //3.动态标签赋值
+      $.get("{:url('get_all_tag')}",function(res){
+        if(res.code == 0){
+          addTags.update({
+            data: res.data,
+            autoRow: true,
+          })
+        }
+      });
     })
-  }
-});
+
 </script>
 <script>
 	layui.use(['fly','plyr'], function(){

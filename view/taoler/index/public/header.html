@@ -7,12 +7,29 @@
 	{//移动端LOGO}
 	<a class="fly-logo layui-hide-md layui-hide-sm" href="{$Request.domain}" style="padding-left:50%; margin-left:-60px;"><img src="{$Request.domain}{$sysInfo.m_logo}" style="height:37px;" alt="logo"></a>
     <ul class="layui-nav fly-nav layui-hide-xs">
+		{//导航nav}
+		{volist name="cateList" id="cate"}
+		<li class="layui-nav-item {if($cate.ename eq $Request.param.ename)} layui-this {/if}" >
+		<a href="{$Request.domain}{:url('cate',['ename' => $cate.ename])}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}</a>
+		{notempty name="cate.children"}
+			{volist name="cate.children" id="vo2"}
+			<dl class="layui-nav-child"> <!-- 二级菜单 -->
+				<dd><a href="{$Request.domain}{:url('cate',['ename' => $vo2.ename])}">{$vo2.catename}</a></dd>
+			</dl>
+			{/volist}
+		{/notempty}
+		</li> 
+		{/volist}
+		
+		{// 后台自定义头部链接}
 		{volist name="headlinks" id="vo"}
 		<li class="layui-nav-item">
 			<a href="{$vo.slid_href}"><i class="layui-icon {$vo.slid_img}"></i>{$vo.slid_name}</a>
 		</li>
 		{/volist}
     </ul>
+	
+
     {//头部右栏}
     <ul class="layui-nav fly-nav-user" msg-url="{:url('message/nums')}" readMsg-url="{:url('Message/read')}" userlogin="{:url('user_login')}">
 	  {if session('?user_id')}

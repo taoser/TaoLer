@@ -307,14 +307,24 @@ class Article extends BaseController
 
 		
 		// 子模块自定义自适应add.html模板
-		$tpl = Db::name('cate')->where('ename', input('cate'))->value('detpl');
+		$cate = Db::name('cate')->field('id,detpl')->where('ename', input('cate'))->find();
+		// 子模块下有add.html模板
+		if(!empty($cate)) {
+			$cid = $cate['id'];
+		} else {
+			$cate['detpl'] = '';
+			$cid = '';
+		}
+		// 模板路径
 		$appName = $this->app->http->getName();
 		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
-		$view = 'article' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'add.html';
+		$view = 'article' . DIRECTORY_SEPARATOR . $cate['detpl'] . DIRECTORY_SEPARATOR . 'add.html';
 		$vfile = $viewRoot . $view;
+
+		//子模块下存在add模板则调用，否则调用article/add.html
 		$addTpl = is_file($vfile) ? $vfile : 'add';
 
-		View::assign(['jspage'=>'jie']);
+		View::assign(['jspage'=>'jie','cid'=>$cid]);
 		return View::fetch($addTpl);
     }
 
@@ -577,8 +587,10 @@ class Article extends BaseController
 				// $pats = '/(?<!\[)'.$key.'(?!\])/';
 				// $pats = '/(?<!<a\s?(.*)?)'.$key.'(?!<\/a>)/';
 				//$pats = '/'.$key.'(?!<\/a>)/';
-				// 不匹配 $key</a>已经存在链接的情况
-				$pats = '/' . $value['name'] . '\s?(?!<\/a>|")/is';
+
+				//1.不匹配 $key</a>已经存在链接的情况
+				//2.或不匹配 alt="$key等等等" $key后面有"这种情况
+				$pats = '/' . $value['name'] . '\s?(?!<\/a>|\s?\S*")/is';
 
 				preg_match($pats,$content,$arr);
 
@@ -609,6 +621,50 @@ class Article extends BaseController
 			}
 		}
 		
+	}
+
+	public function getCateTree()
+	{
+		//
+		$cate = Db::name('cate')->order(['id' => 'ASC','sort' => 'ASC'])->where(['delete_time'=>0])->select()->toArray();
+		
+		$cateTree = array2tree($cate);
+
+		$count = count($cateTree);
+			$tree = [];			
+			if($cateTree){
+				$tree = ['code'=>0,'msg'=>'','count'=>$count];
+				
+				$res = [];	//auth_rule储存数据表中的表结构
+				foreach($cateTree as $k => $v){
+					//第一层子权限
+					$children = [];
+					if(isset($v['children'])){
+						
+						foreach($v['children'] as $m => $j){
+							//第二层子权限
+							$chichi = [];
+							if(isset($j['children'])){
+								//第三层子权限
+								foreach($j as $s){
+									if(isset($s['children'])){
+										$chichi[] = ['id'=>$s['id'],'catename'=>$s['catename'],'pid'=>$s['pid']];	//子数据的子数据
+									}
+								}
+							}
+							
+						//if($j['level']  < 3){}
+						$children[] = ['id'=>$j['id'],'catename'=>$j['catename'],'pid'=>$j['pid'],'children'=>$chichi];		//子数据
+						}
+					}
+					$data[] = ['id'=>$v['id'],'catename'=>$v['catename'],'pid'=>$v['pid'],'children'=>$children];
+				}
+				
+				//构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
+				//$tree['data'][] = ['id'=>0,'catename'=>'顶级','pid'=>0,'children'=>$data];
+				$tree['data'] = $data;
+			}
+		return json($tree);
 	}
 	
 	

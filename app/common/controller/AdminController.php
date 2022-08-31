@@ -70,6 +70,7 @@ class AdminController extends \app\BaseController
 	
 	/**
      * 获取角色菜单
+     * $type 1 admin后端权限,2 index前端权限
      */
     protected function getMenus($type)
     {

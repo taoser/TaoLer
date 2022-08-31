@@ -4,6 +4,12 @@
 
   <div class="layui-form" lay-filter="layuiadmin-form-tags" id="layuiadmin-app-form-tags" style="padding: 20px 30px 0 0 ; text-align: center;">
     <div class="layui-form-item">
+      <label class="layui-form-label">上级分类</label>
+      <div class="layui-input-block">
+	    <div id="menuSelectBox" class="ew-xmselect-tree"></div>
+      </div>
+    </div>
+    <div class="layui-form-item">
       <label class="layui-form-label">分类名</label>
       <div class="layui-input-inline">
         <input type="text" name="tags" lay-verify="required" placeholder="分类名*" autocomplete="off" class="layui-input">
@@ -15,9 +21,9 @@
 	  <label class="layui-form-label">详情页模板</label>
 	  <div class="layui-input-inline">
       <select name="detpl"  lay-filter="detpl">
-		{volist name="template" id="vo"}
-			<option value="{$vo}" {if($vo == $tplname)}selected{/if}>{$vo}</option>
-		{/volist}
+		  {volist name="template" id="vo"}
+			<option value="{$vo}" {if($vo == $cate.detpl)} selected {/if} >{$vo}</option>
+		  {/volist}
 	  </select>
 	  </div>
 	  <label class="layui-form-label">图标</label>
@@ -43,10 +49,13 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form', 'iconPicker'], function(){
+  }).use(['index', 'form','admin', 'iconPicker', 'xmSelect',], function(){
     var $ = layui.$ 
     ,form = layui.form ;
+  var admin = layui.admin;
 	var iconPicker = layui.iconPicker;
+  var xmSelect = layui.xmSelect;
+  var initPid = "{$cate.pid}";
 	
 	//初始化图标选择
 	iconPicker.render({
@@ -59,6 +68,91 @@
 			//console.log(data);
 		}
 	});
+
+  //分类菜单结构
+	admin.req({
+	type: "post",
+	url: "{:url('Forum/getCateTree')}", 
+	data:{},
+	done:function(res){
+		var data = res.data;
+		
+            // 渲染下拉树
+            xmSelect.render({
+                el: '#menuSelectBox',
+                name: 'pid',
+                height: '250px',
+                layVerify: 'required',
+                layVerType: 'tips',
+                data: data,
+                initValue:  [initPid],
+                model: {label: {type: 'text'}},
+                prop: {
+                    name: 'catename',
+                    value: 'id'
+                },
+                radio: true,
+                clickClose: true,
+                tree: {
+                    show: true,
+                    indent: 15,
+                    strict: false,
+                    expandedKeys: true
+                },
+                tips: '请选择上级菜单'
+            });
+
+
+            // var demo4 = xmSelect.render({
+            //   el: '#menuSelectBox', 
+            //   model: { label: { type: 'text' } },
+            //   tree: {
+            //     show: true,
+            //     strict: false,
+            //     expandedKeys: [ -1 ],
+            //   },
+            //   on: function(data){
+            //     if(data.isAdd){
+            //       return data.change.slice(0, 1)
+            //     }
+            //   },
+            //   height: 'auto',
+            // })
+
+            // //这里模拟ajax
+            // setTimeout(function(){
+            //   demo4.update({
+            //     data: [
+            //       {name: '销售员', value: -1, children: [
+            //         {name: '张三', value: 100, children: []},
+            //         {name: '李四1', value: 2},
+            //         {name: '王五1', value: 3, disabled: true},
+            //       ]},
+            //       {name: '奖品', value: -2, children: [
+            //         {name: '奖品3', value: -3, children: [
+            //           {name: '苹果3', value: 14},
+            //           {name: '香蕉3', value: 15},
+            //           {name: '葡萄3', value: 16},
+            //         ]},
+            //         {name: '苹果2', value: 4, disabled: true},
+            //         {name: '香蕉2', value: 5},
+            //         {name: '葡萄2', value: 6},
+            //       ]},
+            //     ]
+            //   })
+              
+            //   //设置默认值
+            //   demo4.setValue([
+            //     {name: '李四1', value: 2},
+            //     {name: '苹果3', value: 14},
+            //   ], null, true)
+              
+            // }, 300)
+
+        }
+		
+	});
+
   })
   </script>
 {/block}

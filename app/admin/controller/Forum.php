@@ -145,7 +145,7 @@ class Forum extends AdminController
 				$res['count']= count($list);
 				$res['data'] = [];
 				foreach($list as $k=>$v){
-				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'tags'=>$v['catename'],'ename'=>$v['ename'],'detpl'=>$v['detpl'],'icon'=>$v['icon'],'is_hot'=>$v['is_hot'],'desc'=>$v['desc']];
+				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'pid'=>$v['pid'],'tags'=>$v['catename'],'ename'=>$v['ename'],'detpl'=>$v['detpl'],'icon'=>$v['icon'],'is_hot'=>$v['is_hot'],'desc'=>$v['desc']];
 				}
 			}
 			return json($res);
@@ -162,9 +162,9 @@ class Forum extends AdminController
 	{
 		$addOrEdit = !is_null(input('id'));//true是编辑false新增
 		$msg = $addOrEdit ? lang('edit') : lang('add');
-		if(Request::isAjax()){
-		$data = Request::param();
-		$list = Db::name('cate')->cache('catename')->save($data);
+		if(Request::isAjax()) {
+			$data = Request::param();
+			$list = Db::name('cate')->cache('catename')->save($data);
 		
 			if($list){
 				return json(['code'=>0,'msg'=> $msg.'分类成功']);
@@ -172,11 +172,12 @@ class Forum extends AdminController
 				return json(['code'=>-1,'msg'=> $msg.'分类失败']);
 			}
 		}
-		$tplname = $addOrEdit ? Db::name('cate')->where('id',input('id'))->value('detpl') : '';
 		//详情模板
 		$sys = $this->getSystem();
 		$template = Files::getDirName('../view/'.$sys['template'].'/index/article/');
-		View::assign(['template'=>$template,'tplname'=>$tplname]);
+		// 如果是新增，pid=0,detpl默认第一个子模块，如果是编辑，查询出cate
+		$cate = $addOrEdit ? Db::name('cate')->field('detpl,pid')->find((int) input('id')) : ['pid'=>0,'detpl'=>$template[0]];
+		View::assign(['template'=>$template,'cate'=>$cate]);
 		return View::fetch();
 	}
 	
@@ -543,6 +544,49 @@ class Forum extends AdminController
         $type = Request::param('type');
         return $this->uploadFiles($type);
     }
+
+	public function getCateTree()
+	{
+		//
+		$cate = Db::name('cate')->order(['id' => 'ASC','sort' => 'ASC'])->where(['delete_time'=>0])->select()->toArray();
+		
+		$cateTree = array2tree($cate);
+
+		$count = count($cateTree);
+			$tree = [];			
+			if($cateTree){
+				$tree = ['code'=>0,'msg'=>'','count'=>$count];
+				
+				$res = [];	//auth_rule储存数据表中的表结构
+				foreach($cateTree as $k => $v){
+					//第一层子权限
+					$children = [];
+					if(isset($v['children'])){
+						
+						foreach($v['children'] as $m => $j){
+							//第二层子权限
+							$chichi = [];
+							if(isset($j['children'])){
+								//第三层子权限
+								foreach($j as $s){
+									if(isset($s['children'])){
+										$chichi[] = ['id'=>$s['id'],'catename'=>$s['catename'],'pid'=>$s['pid']];	//子数据的子数据
+									}
+								}
+							}
+							
+						//if($j['level']  < 3){}
+						$children[] = ['id'=>$j['id'],'catename'=>$j['catename'],'pid'=>$j['pid'],'children'=>$chichi];		//子数据
+						}
+					}
+					$data[] = ['id'=>$v['id'],'catename'=>$v['catename'],'pid'=>$v['pid'],'children'=>$children];
+				}
+				
+				//构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
+				$tree['data'][] = ['id'=>0,'catename'=>'顶级','pid'=>0,'children'=>$data];
+			}
+		return json($tree);
+	}
 
 
 

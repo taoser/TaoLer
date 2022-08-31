@@ -1,8 +1,9 @@
 ﻿
-layui.define(['table', 'form'], function(exports){
+layui.define(['table', 'form', 'treeTable'], function(exports){
   var $ = layui.$
   ,table = layui.table
   ,form = layui.form;
+  var treeTable = layui.treeTable;
 
   //帖子管理
 var forms = table.render({
@@ -189,26 +190,39 @@ var forms = table.render({
     }
   });
 
-    //帖子分类管理
-    table.render({
-        elem: '#LAY-app-content-tags'
-        ,url: forumTags //帖子分类接口
-        ,cols: [[
-          {field: 'sort', title: '排序', width: 80, sort: true}
-          ,{field: 'id', title: 'ID',width: 60}
-          ,{field: 'tags', title: '分类名', width: 100}
-          ,{field: 'ename', title: 'EN别名', width: 100}
-          ,{field: 'detpl',title: '模板', align: 'center',width: 100,templet: '#inputSel'}
-          ,{title: '图标', align: 'center',width: 50,templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
-          ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#buttonHot'}
-          ,{field: 'desc', title: '描述', minWidth: 200}
-          ,{title: '操作', width: 100, align: 'center', toolbar: '#layuiadmin-app-cont-tagsbar'}
-        ]]
-        ,text: '对不起，加载出现异常！'
-    });
+    // 渲染分类表格
+    var insTb = treeTable.render({
+      elem: '#Article-cate-list',
+      url: forumTags,
+      //toolbar: 'default',
+      //height: 'full-200',
+      tree: {
+          iconIndex: 2,
+          isPidData: true,
+          idName: 'id',
+          pidName: 'pid'
+      },
+      defaultToolbar: ['filter', 'print', 'exports'],
+      cols: [
+          [
+            {type: 'numbers'},
+            {type: 'checkbox'}
+            ,{field: 'tags', title: '分类名', minWidth: 200}
+            ,{field: 'ename', title: 'EN别名', width: 100}
+            ,{field: 'detpl',title: '模板', align: 'center',width: 100,templet: '#inputSel'}
+            ,{title: '图标', align: 'center',width: 50,templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
+            ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#buttonHot'}
+            ,{field: 'desc', title: '描述', minWidth: 200}
+            ,{field: 'id', title: 'ID',width: 60}
+            ,{field: 'sort', title: '排序', width: 80, sort: true}
+            ,{title: '操作', width: 120, align: 'center', toolbar: '#layuiadmin-app-cont-tagsbar'}
+          ]
+      ],
+      style: 'margin-top:0;'
+  });
 
     //监听工具条
-    table.on('tool(LAY-app-content-tags)', function(obj){
+    treeTable.on('tool(Article-cate-list)', function(obj){
         var data = obj.data;
         if(obj.event === 'del'){
             layer.confirm('确定删除此分类？', function(index){
@@ -249,6 +263,7 @@ var forms = table.render({
                 ,yes: function(index, layero){
                     //获取iframe元素的值
                     var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
+                        ,pid = othis.find('input[name="pid"]').val()
                         ,sort = othis.find('input[name="sort"]').val()
                         ,tags = othis.find('input[name="tags"]').val()
                         ,ename = othis.find('input[name="ename"]').val()
@@ -261,7 +276,7 @@ var forms = table.render({
                     $.ajax({
                         type:"post",
                         url:forumTagsForm,
-                        data:{"id":data.id,"sort":sort,"catename":tags,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
+                        data:{"id":data.id,"pid":pid,"sort":sort,"catename":tags,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
                         daType:"json",
                         success:function (data){
                             if (data.code == 0) {
@@ -288,15 +303,17 @@ var forms = table.render({
                                 ,sort: sort
                               });
                     */
+                    treeTable.reload('Article-cate-list'); //数据刷新
                     layer.close(index);
                 }
                 ,success: function(layero, index){
                     //给iframe元素赋值
                     var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags").click();
-                    othis.find('input[name="sort"]').val(data.sort)
+                        othis.find('input[name="pid"]').val(data.pid)
+                        ,othis.find('input[name="sort"]').val(data.sort)
                         ,othis.find('input[name="tags"]').val(data.tags)
                         ,othis.find('input[name="ename"]').val(data.ename)
-						,othis.find('input[name="icon"]').val(data.icon)
+						            ,othis.find('input[name="icon"]').val(data.icon)
                         ,othis.find('input[name="desc"]').val(data.desc);
                 }
             });

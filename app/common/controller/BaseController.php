@@ -60,8 +60,10 @@ class BaseController extends BaseCtrl
     protected function showNav()
     {
         //1.查询分类表获取所有分类
-		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select();
-		
+		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select()->toArray();
+		$cateList = array2tree($cateList);
+		// $cateList = getTree($cateList);
+		// dump($cateList);
         //2.将catelist变量赋给模板 公共模板nav.html
         View::assign('cateList',$cateList);
 		return $cateList;

@@ -56,6 +56,7 @@ Route::group('art',function () use($detail_as,$cate_as){
 	Route::rule('delete/[:id]','Article/delete');
 	Route::rule('tags','Article/tags')->allowCrossDomain();
 	Route::rule('edit/[:id]','Article/edit');
+	Route::get('article/catetree','Article/getCateTree');
 });
 
 //tag

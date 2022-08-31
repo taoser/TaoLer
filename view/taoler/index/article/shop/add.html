@@ -19,6 +19,12 @@
                 <label class="layui-form-label">{:lang('special column')}</label>
                 <div class="layui-input-block">
                   <div id="CateId" class="xm-select-demo"></div>
+                  <select lay-verify="required" name="cate_id" lay-filter="column">
+                    <option></option>
+                    {volist name="cateList" id="cate"}
+                    <option value="{$cate.id}" {if($Request.param.cate == $cate.ename)} selected {/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
+                    {/volist}
+                  </select>
                 </div>
               </div>
               <div class="layui-col-md8">
@@ -176,7 +182,6 @@
     $(function(){
       //这里模拟ajax
       $.get("{:url('article/getCateTree')}",function(res){
-        var cid = "{$cid}";
         var data = res.data;
             // 渲染下拉树
             xmSelect.render({
@@ -186,7 +191,7 @@
                 layVerify: 'required',
                 layVerType: 'tips',
                 data: data,
-                initValue:  [cid],
+                //initValue:  [cateId],
                 model: {label: {type: 'text'}},
                 prop: {
                     name: 'catename',

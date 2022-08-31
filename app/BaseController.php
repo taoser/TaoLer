@@ -470,7 +470,7 @@ abstract class BaseController
         $uploads = new Uploads();
         switch ($type){
             case 'image':
-                $upRes = $uploads->put('file','article_pic',1024,'image');
+                $upRes = $uploads->put('file','article_pic',2048,'image');
                 break;
             case 'zip':
                 $upRes = $uploads->put('file','article_zip',1024,'application|image');
@@ -482,7 +482,7 @@ abstract class BaseController
                 $upRes = $uploads->put('file','article_audio',102400,'audio');
                 break;
             default:
-                $upRes = $uploads->put('file','article_file',1024,'image');
+                $upRes = $uploads->put('file','article_file',2048,'image');
                 break;
         }
         return $upRes;

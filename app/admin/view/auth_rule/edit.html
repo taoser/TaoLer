@@ -39,9 +39,9 @@
 	<div class="layui-form-item">
       <label class="layui-form-label">类型</label>
       <div class="layui-input-block">
-        <input type="radio" name="ishidden" lay-skin="primary" title="目录" value="-1" {if condition="$rules.ishidden == -1"}checked{/if}>
-		<input type="radio" name="ishidden" lay-skin="primary" title="菜单" value="1" {if condition="$rules.ishidden == 1"}checked{/if}>
-		<input type="radio" name="ishidden" lay-skin="primary" title="按钮" value="0" {if condition="$rules.ishidden == 0"}checked{/if}>
+        <input type="radio" name="ishidden" lay-skin="primary" title="目录" value="-1" {if condition="$rules.ishidden == -1"} checked {/if}>
+		    <input type="radio" name="ishidden" lay-skin="primary" title="菜单" value="1" {if condition="$rules.ishidden == 1"} checked {/if}>
+		    <input type="radio" name="ishidden" lay-skin="primary" title="按钮" value="0" {if condition="$rules.ishidden == 0"} checked {/if}>
       </div>
     </div>
     <div class="layui-form-item layui-hide">
@@ -63,7 +63,7 @@
 	var admin = layui.admin;
 	var xmSelect = layui.xmSelect;
 	var iconPicker = layui.iconPicker;
-	
+	var initPid = "{$rules['pid']}";
 	
 	//初始化图标选择
         iconPicker.render({
@@ -93,7 +93,7 @@
                 layVerify: 'required',
                 layVerType: 'tips',
                 data: data,
-                initValue:  [{$rules['pid']}],
+                initValue:  [initPid],
                 model: {label: {type: 'text'}},
                 prop: {
                     name: 'title',

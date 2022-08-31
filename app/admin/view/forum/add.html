@@ -151,27 +151,31 @@ layui.config({
           var keywords = this.content.join(',');
           $("input[name='keywords']").val(keywords);          
         }
-      })    
-      
+      })
+    
+    // tag标签
+    $(function(){
     //1.渲染标签
     var addTags = xmSelect.render({
-      el: '#tag',
-      name: 'tagid',
-      layVerify: 'required',
-      layVerType: 'msg',
-      paging: true,
-      pageSize: 5,
-      data: []
-    });
-    //2.动态标签赋值
-    $.get("{:url('tag/getAllTag')}",function(res){
-      if(res.code == 0){
-        addTags.update({
-          data: res.data,
-          autoRow: true,
-        })
-      }
-    });
+          el: '#tag',
+          name: 'tagid',
+          layVerify: 'required',
+          layVerType: 'msg',
+          paging: true,
+          pageSize: 5,
+          data: []
+        });
+        //2.动态标签赋值
+        $.get("{:url('tag/getAllTag')}",function(res){
+          if(res.code == 0){
+            addTags.update({
+              data: res.data,
+              autoRow: true,
+            })
+          }
+        });
+    }) 
+    
 
     // 通过接口自动获取tag的内容
     var conf = "{:empty(config('taoler.baidu.client_id'))}";

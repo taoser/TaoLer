@@ -364,7 +364,7 @@ class Article extends Model
             $query->where('delete_time',0)->field('id,catename,ename');
         }])
         ->where(['status'=>1])
-        ->where('article.id', '<>', $id)
+       // ->where('article.id', '<>', $id)
         ->order('pv desc')
         ->limit($limit)
         ->append(['url'])
