@@ -33,10 +33,17 @@ class BaseController extends BaseCtrl
         $this->uid = Session::get('user_id');
 		//系统配置
 		$this->showSystem();
-        //显示分类导航
-        $this->showNav();
-		//用户
-		$this->showUser($this->uid);
+
+		//变量赋给模板
+		View::assign([
+			//显示分类导航
+			'cateList'		=> $this->showNav(),
+			//显示子分类导航
+			'subcatelist'	=> $this->showSubnav(),
+			//当前登录用户
+			'user'			=> $this->showUser($this->uid),
+
+		]);
 
 	}
 
@@ -56,17 +63,46 @@ class BaseController extends BaseCtrl
         }
     }
 
-	// 显示导航
+	// 显示导航nav
     protected function showNav()
     {
         //1.查询分类表获取所有分类
-		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select()->toArray();
+		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order(['id' => 'ASC','sort' => 'ASC'])->cache('catename',3600)->select()->toArray();
 		$cateList = array2tree($cateList);
 		// $cateList = getTree($cateList);
-		// dump($cateList);
-        //2.将catelist变量赋给模板 公共模板nav.html
-        View::assign('cateList',$cateList);
+        
 		return $cateList;
+
+    }
+
+	// 显示子导航subnav
+    protected function showSubnav()
+    {
+		// dump($this->showNav());
+        //1.查询父分类id
+		$pCate = Db::name('cate')->field('id,pid,ename,catename,is_hot')->where(['ename'=>input('ename'),'status'=>1,'delete_time'=>0])->find();
+	
+		if(empty($pCate)) { // 没有点击任何分类，点击首页获取全部分类信息
+			$subCateList = $this->showNav();
+		} else { // 点击分类，获取子分类信息
+			$parentId = $pCate['id'];
+			$subCate = Db::name('cate')->field('id,ename,catename,is_hot,pid')->where(['pid'=>$parentId,'status'=>1,'delete_time'=>0])->order(['id' => 'ASC','sort' => 'ASC'])->select()->toArray();
+			if(!empty($subCate)) { // 有子分类
+				$subCateList = array2tree($subCate);
+			} else { //无子分类
+				if($pCate['pid'] == 0) {
+					//一级菜单
+					$subCateList[] = $pCate;
+				} else {
+					//子菜单下如果无子菜单，则显示全部兄弟分类
+					$parament = Db::name('cate')->field('id,ename,catename,is_hot,pid')->where(['pid'=>$pCate['pid'],'status'=>1,'delete_time'=>0])->order(['sort' => 'asc'])->select()->toArray();
+					$subCateList = array2tree($parament);
+				}
+				
+			}
+		}
+        
+		return $subCateList;
 
     }
 	
@@ -79,9 +115,6 @@ class BaseController extends BaseCtrl
 			$user = Db::name('user')->field('id,name,nickname,user_img,sex,area_id,auth,city,email,active,sign,point,vip,create_time')->find($id);
 			Cache::tag('user')->set('user'.$id,$user,600);
 		}
-        
-		//2.将User变量赋给模板 公共模板nav.html
-		View::assign('user',$user);
 		return $user;
     }
 

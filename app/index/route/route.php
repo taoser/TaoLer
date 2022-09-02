@@ -57,6 +57,8 @@ Route::group('art',function () use($detail_as,$cate_as){
 	Route::rule('tags','Article/tags')->allowCrossDomain();
 	Route::rule('edit/[:id]','Article/edit');
 	Route::get('article/catetree','Article/getCateTree');
+	Route::get('download/[:id]','Article/download');
+
 });
 
 //tag

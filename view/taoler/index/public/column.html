@@ -1,31 +1,21 @@
-<!--
- * @Author: TaoLer <317927823@qq.com>
- * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-07-30 08:27:32
- * @LastEditors: TaoLer
- * @Description: 优化版
- * @FilePath: \github\TaoLer\view\taoler\index\public\column.html
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
--->
 <div class="fly-panel fly-column layui-hide-xs">
   <div class="layui-container">
     <ul class="layui-clear">
       <li class="layui-hide-xs {if ($Request.param.ename =='' && $Request.param.id =='')} layui-this {/if}" >
       <a href="{$Request.domain}">{:lang('home page')}</a>
       </li> 
-      {volist name="cateList" id="cate"}
-      <li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if} >
-      <a href="{$Request.domain}{:url('cate',['ename' => $cate.ename])}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}</a>
+      {volist name="subcatelist" id="vo"}
+      <li {if($vo.ename eq $Request.param.ename)} class="layui-this" {/if} >
+      <a href="{$Request.domain}{:url('cate',['ename' => $vo.ename])}">{:cookie('think_lang') == 'en-us' ? $vo.ename : $vo.catename}{if($vo.is_hot eq 1)}<span class="layui-badge-dot"></span>{/if}</a>
       </li> 
       {/volist}     
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>   
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
       {if session('?user_id')}
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post')}">{:lang('my post')}</a></li> 
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post#collection')}">{:lang('my collection')}</a></li>
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post#collection')}">{:lang('my collection')}</a></li>      
       {/if}
     </ul> 
-    <div class="fly-column-right layui-hide-xs"> 
-      <span class="fly-search" data-url="{:url('user_search')}"><i class="layui-icon">&#xe615;</i></span>
+    <div class="fly-column-right layui-hide-xs">
       <a href="{:url('add_article',['cate'=>$Request.param.ename])}" class="layui-btn" id="add_post">{:lang('add post')}</a>
     </div> 
   </div>

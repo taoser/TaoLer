@@ -1,9 +1,6 @@
 {//管理帖子加精、置顶、编辑、删除模块}
 {if (($article.upzip !== '') || session('?user_name'))}
   <div class="detail-assist">
-    {notempty name="$article.upzip"}
-    <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-    {/notempty}
     <div class="fly-admin-box" data-id="{$article.id}">
       {if ($user.auth ?? '')}
         {if($article.is_top == 0)}

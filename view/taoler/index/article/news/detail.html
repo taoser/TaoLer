@@ -32,6 +32,13 @@
         <hr style="margin-bottom: 25px">
         {// 内容}
         <div class="detail-body photos" style="font-size: 18px;line-height: 200%;" id="content">{$article.content|raw}</div>
+        {if (($article.upzip !== '') || session('?user_name'))}
+          <div class="">
+            {notempty name="$article.upzip"}
+            <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
+            {/notempty}
+          </div>
+        {/if}
         <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
         {notempty name="tags"}
         <div style="margin-top: 15px">标签

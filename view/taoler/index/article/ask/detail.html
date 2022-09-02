@@ -44,7 +44,13 @@
         <div style="margin-top: 15px; font-size: 18px; font-weight: bold; color: rgb(130, 125, 125)">问题描述：</div>
         <hr />
         <div class="detail-body-wenda photos" id="content">{$article.content|raw}</div>
-
+        {if (($article.upzip !== '') || session('?user_name'))}
+          <div class="">
+            {notempty name="$article.upzip"}
+            <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
+            {/notempty}
+          </div>
+        {/if}
         <div style="margin-top: 25px">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
         {notempty name="tags"}
         <div style="margin-top: 15px">标签
@@ -112,7 +118,7 @@
             </div>
             <div style="margin: 5px 0px;">
               <hr width="90%" style="border:1px dotted red;height:1px" />
-              <div style="padding: 10px 0px">{$vo.user.sign|raw}</div>
+              <div>{$vo.user.sign|raw}</div>
             </div>
           </li>
           {/volist}

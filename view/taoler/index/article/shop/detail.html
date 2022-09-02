@@ -14,13 +14,12 @@
 
   <div class="layui-row layui-col-space15">
     {//左栏}
-    <div class="layui-col-md3">
-        
+    <div class="layui-col-md3  layui-hide-xs">
       <dl class="fly-panel fly-list-one">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
           {volist name="artHot" id="vo"}
           <dd>
-            <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
+            <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
             <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
           </dd>
           {/volist}
