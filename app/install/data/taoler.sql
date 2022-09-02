@@ -273,30 +273,31 @@ INSERT INTO `tao_auth_rule` VALUES ('112', 'Tag/index', 'Tag设置', '', '1', '1
 -- Table structure for tao_cate
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_cate`;
-CREATE TABLE `tao_cate` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `catename` varchar(20) NOT NULL COMMENT '导航名称',
-  `ename` varchar(20) NOT NULL DEFAULT '' COMMENT '分类别名',
-  `detpl` varchar(20) NOT NULL COMMENT '详情模板',
-  `icon` varchar(50) DEFAULT NULL COMMENT '图标',
-  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
-  `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '状态1启用0禁用',
-  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0帖子1文章',
-  `desc` varchar(255) NOT NULL,
-  `is_hot` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否是热点',
-  `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `updata_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
-  PRIMARY KEY (`id`),
-  KEY `ename` (`ename`) COMMENT '英文名称索引'
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='分类表';
+CREATE TABLE `tao_cate`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `pid` smallint NOT NULL DEFAULT 0 COMMENT '上级id',
+  `catename` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '导航名称',
+  `ename` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '分类别名',
+  `detpl` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '详情模板',
+  `icon` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图标',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `status` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '状态1启用0禁用',
+  `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0帖子1文章',
+  `desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `is_hot` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否是热点',
+  `create_time` int NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `updata_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `ename`(`ename`) USING BTREE COMMENT '英文名称索引'
+) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '分类表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_cate
 -- ----------------------------
-INSERT INTO `tao_cate` VALUES ('1', '提问', 'ask', 'ask', 'layui-icon-help', '1', '1', '0', 'TaoLer社区提问专栏1', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('2', '分享', 'share', 'posts', 'layui-icon-share', '2', '1', '0', '', '0', '0', '0', '0');
-INSERT INTO `tao_cate` VALUES ('3', '讨论', 'talk', 'posts', 'layui-icon-dialogue', '3', '1', '0', '', '1', '0', '0', '0');
+INSERT INTO `tao_cate` VALUES (1, 0, '提问', 'ask', 'ask', 'layui-icon-help', 1, '1', 0, 'TaoLer社区提问专栏1', 0, 0, 0, 0);
+INSERT INTO `tao_cate` VALUES (2, 0, '分享', 'share', 'posts', 'layui-icon-share', 2, '1', 0, '', 0, 0, 0, 0);
+INSERT INTO `tao_cate` VALUES (3, 0, '讨论', 'talk', 'posts', 'layui-icon-dialogue', 3, '1', 0, '', 1, 0, 0, 0);
 
 -- ----------------------------
 -- Table structure for tao_collection
