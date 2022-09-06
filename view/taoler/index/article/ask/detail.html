@@ -63,23 +63,6 @@
           <p>{$sysInfo.state}</p>
         </div>
       </div>
-
-      {//评论区}
-      {if ( config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}
-      <div class="layui-form layui-form-pane">
-        <div class="layui-form-item layui-form-text">
-          <a name="comment"></a>
-          <div class="layui-input-block">
-            <textarea id="L_content"  name="content" required lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea fly-editor" style="height: 150px"></textarea>
-          </div>
-        </div>
-        <div class="layui-form-item que-comments">
-          <input type="hidden" name="article_id" value="{$article.id}" />
-          <input type="hidden" name="user_id" value="{:session('user_id')}" />
-          <button class="layui-btn layui-btn-danger" lay-filter="user-comment" lay-submit>{:lang('submit comments')}</button>
-        </div>
-      </div>
-      {/if}
       
       {//评论内容}
       <div class="fly-panel detail-box" id="flyReply">
@@ -125,6 +108,24 @@
         </ul>
         <div style="text-align: center" id="pages"></div>
       </div>
+
+      {//评论区}
+      {if ( config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}
+      <div class="layui-form layui-form-pane">
+        <div class="layui-form-item layui-form-text">
+          <a name="comment"></a>
+          <div class="layui-input-block">
+            <textarea id="L_content"  name="content" required lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea fly-editor" style="height: 150px"></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item que-comments">
+          <input type="hidden" name="article_id" value="{$article.id}" />
+          <input type="hidden" name="user_id" value="{:session('user_id')}" />
+          <button class="layui-btn layui-btn-danger" lay-filter="user-comment" lay-submit>{:lang('submit comments')}</button>
+        </div>
+      </div>
+      {/if}
+
     </div>
 
     {// 右栏}
@@ -223,9 +224,7 @@
         othis.html(fly.content(html));
       });
     }
-
-   
-
+    
     //tpl模板给发布时间赋值
     $("div.user-questions").children("span.user-post-time").each(function () {
         var othis = $(this),

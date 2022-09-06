@@ -108,7 +108,7 @@ class Upgrade extends AdminController
 			$res = json(['code'=>$version_code,'msg'=>$versions->msg]);
 		}
 		if($version_code == 1){
-            $res = json(['code'=>$versions->code,'msg'=>$versions->msg,'version'=>$versions->version,'upnum'=>$versions->up_num]);
+            $res = json(['code'=>$versions->code,'msg'=>$versions->msg,'version'=>$versions->version,'upnum'=>$versions->up_num,'info'=>$versions->info]);
 		}
 		if($version_code == 0){
             $res = json(['code'=>$versions->code,'msg'=>$versions->msg]);

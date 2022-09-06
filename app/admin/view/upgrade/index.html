@@ -103,12 +103,12 @@
 				} else if (data.code == 1) {
 					//可升级
 					layer.close(loading);
-					$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.upnum+'</span>个新版本：<span style="color:red">可更新至v'+data.version+'</span></div>');
+					$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.upnum+'</span>个新版本：<span style="color:red">可更新至v' + data.version + ' [!!!重要:' + data.info + ']</span></div>');
 					//$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.upnum+'</span>个新版本：<span style="color:red">可更新至v'+data.version+'</span></div> <button class="layui-btn layui-btn-sm" lay-submit lay-filter="update_system" data-url="{$ver_num.upgrade_url}" id="update_system">确认升级</button>');
 					$('button#upload-check').hide();
 
 					//更新系统
-					layer.confirm('可更新至v'+data.version+' 确定升级？',{icon: 3, title:'升级系统'}, function(index){
+					layer.confirm('更新v' + data.version + ',升级说明：<span style="color:red">[!!!重要：' + data.info + ']</span><br>确定升级？',{icon: 3, title:'升级系统'}, function(index){
 						uploads();	//更新
 						layer.close(index);	//关闭load加载层
 					});

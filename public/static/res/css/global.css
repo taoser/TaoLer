@@ -218,10 +218,10 @@ pre{position: relative; margin: 10px 0; padding: 15px; line-height: 20px; border
 */
 
 /* 搜索 */
-.fly-header .layui-nav .fly-search{display: inline-block; vertical-align: top; width: 50px; height: 50px; padding-top:20px;margin-right: 10px; text-align: center; cursor: pointer; font-size: 20px;}
-.fly-header .layui-nav .fly-search .layui-icon{font-size: 20px;}
-.fly-header .layui-nav .fly-search:hover{color: #5FB878;}
-.fly-header .layui-nav .fly-layer-search input{height: 75px; line-height: 75px; width: 500px; padding: 0 15px; font-size: 20px; border: none 0; background: none;}
+.fly-search{display: inline-block; vertical-align: top; width: 50px; height: 50px; padding-top:20px;margin-right: 10px; text-align: center; cursor: pointer; font-size: 20px;}
+.fly-search .layui-icon{font-size: 20px;}
+.fly-search:hover{color: #5FB878;}
+.fly-layer-search input{height: 75px; line-height: 75px; width: 500px; padding: 0 15px; font-size: 20px; border: none 0; background: none;}
 
 
 /* 底部 */

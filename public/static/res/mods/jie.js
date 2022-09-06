@@ -185,7 +185,7 @@ layui.define('fly', function(exports){
             $('.jieda-accept').remove();
             li.addClass('jieda-daan');
             li.find('.detail-about').append('<i class="iconfont icon-caina" title="最佳答案"></i>');
-			location.reload();
+			      location.reload();
           } else {
             layer.msg(res.msg);
           }
@@ -204,9 +204,9 @@ layui.define('fly', function(exports){
           ,title: '编辑回帖'
           ,area: ['738px', '310px']
           ,success: function(layero){
-            fly.layEditor({
-              elem: layero.find('textarea')
-            });
+              fly.layEditor({
+                elem: layero.find('textarea')
+              });            
           }
         }, function(value, index){
           fly.json(commentUpdateDa, {
@@ -214,7 +214,7 @@ layui.define('fly', function(exports){
             ,content: value
           }, function(res){
             layer.close(index);
-			layer.msg(res.msg);
+			      layer.msg(res.msg);
             li.find('.detail-body').html(fly.content(value));
           });
         });
