@@ -12,7 +12,7 @@
 				{if hook('signstatushook') == 1}
 				<li class="layui-this" lay-id="score">签到规则</li>
 				{/if}
-                <li lay-id="vip" {if hook('signstatushook') == 0}class="layui-this"{/if}>用户等级</li>
+                <li lay-id="vip" class="{if hook('signstatushook') == 0} layui-this {/if}">用户等级</li>
               </ul>
               <div class="layui-tab-content">
 			  {:hook('signadminhook')}

@@ -120,9 +120,10 @@ class Tag extends AdminController
         // halt($artTags);
         foreach($artTags as $v) {
             $tag = Db::name('tag')->find($v['tag_id']);
+            if(!is_null($tag))
             $data[] = ['name'=>$tag['name'],'value'=>$tag['id']];
         }
-        // halt($data);
+        
         return json(['code'=>0,'data'=>$data]);
     }
 

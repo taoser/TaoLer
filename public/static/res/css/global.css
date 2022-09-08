@@ -501,6 +501,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .user-questions{position:relative; margin: 5px 0 15px;}
 .user-questions .user-avatar img{width: 25px; height: 25px; margin-top: 10; border-radius: 100%;}
 
+/*
 .detail-body-wenda{margin: 10px 0 5px; line-height: 26px; font-size: 16px; color: rgb(82, 80, 80); word-wrap: break-word;}
 .detail-body-wenda p{margin-bottom:15px;}
 .detail-body-wenda img{max-width: 100%; cursor: pointer;}
@@ -508,6 +509,8 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-body-wenda .layui-btn a{color: #fff;}
 .detail-body-wenda ul>li{margin-top: 0;}
 .detail-body-wenda .layui-elem-quote{margin: 10px 0; font-size: 14px; line-height: 26px;}
+*/
+
 .layui-form-pane{position:relative; width:100%;}
 .que-comments{position:absolute;right:20px;bottom:5px;}
 

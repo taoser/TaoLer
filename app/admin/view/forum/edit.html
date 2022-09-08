@@ -95,47 +95,49 @@
     taonyUploadAudio = "{:url('forum/uploads')}?type=audio";
     $(mytextareaid).removeClass();
 </script>
-<script src="/addons/taonyeditor/js/taonyeditor.js"></script>
 <script src="/static/xm-select.js"></script>
 <script>
-var artId = "{$article.id}";
-
-//1.渲染标签
-var addTags = xmSelect.render({
-  el: '#tag',
-  name: 'tagid',
-  layVerify: '',
-  layVerType: 'msg',
-  paging: true,
-  pageSize: 5,
-  data: []
-});
-//2.动态赋值
-$.get("{:url('tag/getArticleTag')}",{id:artId},function(res){
-  if(res.code == 0){
-    addTags.setValue(
-      res.data
-    )
-  }
-});
-//3.动态标签赋值
-$.get("{:url('tag/getAllTag')}",function(res){
-  if(res.code == 0){
-    addTags.update({
-      data: res.data,
-      autoRow: true,
-    })
-  }
-});
-</script>
-<script>
-	layui.use(['colorpicker','form','upload', 'editor'], function(){
+	layui.extend({
+    index: 'lib/index' //主入口模块
+    ,editor: '{/}/static/admin/modules/taonyeditor/js/taonyeditor'
+  }).use(['colorpicker','form','upload', 'editor'], function(){
     var $ = layui.jquery
     ,colorpicker = layui.colorpicker
     ,form = layui.form
     ,upload = layui.upload;
-
+    var artId = "{$article.id}";
     var editor = layui.editor;
+
+    $(function(){
+      //1.渲染标签
+      var addTags = xmSelect.render({
+        el: '#tag',
+        name: 'tagid',
+        layVerify: '',
+        layVerType: 'msg',
+        paging: true,
+        pageSize: 5,
+        data: []
+      });
+      //2.动态赋值
+      $.get("{:url('tag/getArticleTag')}",{id:artId},function(res){
+        if(res.code == 0){
+          addTags.setValue(
+            res.data
+          )
+        }
+      });
+      //3.动态标签赋值
+      $.get("{:url('tag/getAllTag')}",function(res){
+        if(res.code == 0){
+          addTags.update({
+            data: res.data,
+            autoRow: true,
+          })
+        }
+      });
+    })
+    
     // 从详情页自动调用端口过滤，获取描述信息
     tinymce.get('L_content').on('mouseleave', function() {
         var content = tinymce.get('L_content').getContent({format: 'text'});

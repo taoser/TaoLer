@@ -36,15 +36,7 @@
 
             <div class="layui-form-item layui-form-text">
               <div class="layui-input-block">
-                <textarea
-                  id="L_content"
-                  name="content"
-                  required
-                  lay-verify="required"
-                  placeholder="{:lang('please input the content')}"
-                  class="layui-textarea fly-editor"
-                  style="height: 260px">
-                </textarea>
+                <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea fly-editor" style="height: 260px"> </textarea>
               </div>
             </div>
             <div class="layui-form-item">
@@ -102,21 +94,20 @@
     taonyUploadAudio = "{:url('forum/uploads')}?type=audio";
     $(mytextareaid).removeClass();
 </script>
-<script src="/addons/taonyeditor/js/taonyeditor.js"></script>
+
 <script src="/static/xm-select.js"></script>
 <script>
 layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(["form", "colorpicker", "upload", 'editor','inputTags'], function () {
+    ,editor: '{/}/static/admin/modules/taonyeditor/js/taonyeditor'
+  }).use(["form", "colorpicker", "upload","editor"], function () {
     var $ = layui.jquery,
       form = layui.form,
       colorpicker = layui.colorpicker,
       upload = layui.upload;
-
-      var editor = layui.editor;
-
+    var editor = layui.editor;
 
     //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
     var taonystatus = "{:hook('taonystatus')}";
@@ -139,19 +130,6 @@ layui.config({
           // var test = tinymce.activeEditor.getContent({format: 'text'});
           $('[name="description"]').val(content);
       });
-
-    var inputTags = layui.inputTags;
-      //关键词
-    inputTags.render({
-        elem:'#inputTags',
-        content: [],
-        aldaBtn: false,
-        done: function(value){
-          //console.log(value)
-          var keywords = this.content.join(',');
-          $("input[name='keywords']").val(keywords);          
-        }
-      })
     
     // tag标签
     $(function(){

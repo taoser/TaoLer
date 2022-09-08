@@ -58,7 +58,7 @@ overflow: visible;
 {/block}
 
 {block name="js"}
-  <script>
+<script>
   var forumList = "{:url('Forum/list')}",
       forumListdel = "{:url('Forum/listdel')}",
       forumListform = "{:url('Forum/listform')}",
@@ -73,10 +73,125 @@ overflow: visible;
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'forum', 'table','form'], function(){
+  }).use(['index','treeTable'], function(){
 
     var table = layui.table, form = layui.form;
-    var $ = layui.$, active = {
+    var $ = layui.$,treeTable = layui.treeTable;
+
+    // 渲染分类表格
+    var insTb = treeTable.render({
+      elem: '#Article-cate-list',
+      url: forumTags,
+      //toolbar: 'default',
+      //height: 'full-200',
+      tree: {
+          iconIndex: 2,
+          isPidData: true,
+          idName: 'id',
+          pidName: 'pid'
+      },
+      defaultToolbar: ['filter', 'print', 'exports'],
+      cols: [
+          [
+            {type: 'numbers'},
+            {type: 'checkbox'}
+            ,{field: 'tags', title: '分类名', minWidth: 200}
+            ,{field: 'ename', title: 'EN别名', width: 100}
+            ,{field: 'detpl',title: '模板', align: 'center',width: 100,templet: '#inputSel'}
+            ,{title: '图标', align: 'center',width: 50,templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
+            ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#buttonHot'}
+            ,{field: 'desc', title: '描述', minWidth: 200}
+            ,{field: 'id', title: 'ID',width: 60}
+            ,{field: 'sort', title: '排序', width: 80, sort: true}
+            ,{title: '操作', width: 120, align: 'center', toolbar: '#layuiadmin-app-cont-tagsbar'}
+          ]
+      ],
+      style: 'margin-top:0;'
+  });
+
+    //监听工具条
+    treeTable.on('tool(Article-cate-list)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('确定删除此分类？', function(index){
+                $.ajax({
+                    type:'post',
+                    url:forumTagsDelete,
+                    data:{id:data.id},
+                    dataType:'json',
+                    success:function(data){
+                        if(data.code == 0){layer.msg(data.msg,{icon:6,time:2000},function(){
+                                location.reload();
+                            });
+                        } else {
+                            layer.open({title:'删除失败',content:data.msg,icon:5,adim:6})
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        } else if(obj.event === 'edit'){
+            var tr = $(obj.tr);
+            layer.open({
+                type: 2
+                ,title: '编辑分类'
+                ,content: forumTagsForm + '?id='+ data.id
+                ,area: ['400px', '450px']
+                ,btn: ['确定', '取消']
+                ,yes: function(index, layero){
+                    //获取iframe元素的值
+                    var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
+                        ,pid = othis.find('input[name="pid"]').val()
+                        ,sort = othis.find('input[name="sort"]').val()
+                        ,tags = othis.find('input[name="tags"]').val()
+                        ,ename = othis.find('input[name="ename"]').val()
+                        ,detpl = othis.find('select[name="detpl"]').val()
+                        ,icon = othis.find('input[name="icon"]').val()
+                        ,desc = othis.find('input[name="desc"]').val();
+
+                    if(!tags.replace(/\s/g, '')) return;
+
+                    $.ajax({
+                        type:"post",
+                        url:forumTagsForm,
+                        data:{"id":data.id,"pid":pid,"sort":sort,"catename":tags,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
+                        daType:"json",
+                        success:function (data){
+                          if(data.code == 0){layer.msg(data.msg,{icon:6,time:2000},function(){
+                                location.reload();
+                            });
+                        } else {
+                            layer.open({title:'修改失败',content:data.msg,icon:5,adim:6})
+                        }
+                        }
+                    });
+                    /*
+                              obj.update({
+                                tags: tags
+                                ,ename: ename
+                                ,sort: sort
+                              });
+                    */
+                    treeTable.reload('Article-cate-list'); //数据刷新
+                    layer.close(index);
+                }
+                ,success: function(layero, index){
+                    //给iframe元素赋值
+                    var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags").click();
+                        othis.find('input[name="pid"]').val(data.pid)
+                        ,othis.find('input[name="sort"]').val(data.sort)
+                        ,othis.find('input[name="tags"]').val(data.tags)
+                        ,othis.find('input[name="ename"]').val(data.ename)
+						            ,othis.find('input[name="icon"]').val(data.icon)
+                        ,othis.find('input[name="desc"]').val(data.desc);
+                }
+            });
+        }
+    });
+    
+    
+    
+    var active = {
       add: function(){
         layer.open({
           type: 2
@@ -116,42 +231,43 @@ overflow: visible;
       }
     }
 	
-	//详情页模板选择控制
-	form.on('select(detpl)', function(data){
-	var detpl = data.value;
-	$.post("{:url('Forum/tplSet')}",{"id":data.elem.id,"detpl":detpl});
-	//执行重载
-      table.reload('LAY-app-content-tags', {
-        where: detpl
+    //详情页模板选择控制
+    form.on('select(detpl)', function(data){
+    var detpl = data.value;
+    $.post("{:url('Forum/tplSet')}",{"id":data.elem.id,"detpl":detpl});
+    //执行重载
+        table.reload('LAY-app-content-tags', {
+          where: detpl
+        });
+    });
+
+
+    //分类热点控制
+    form.on('checkbox(menu-show)', function(data){
+    var data = data.elem;
+    data.value = data.checked ? 1 : 0;
+    $.ajax({
+        type:'post',
+        url:"{:url('Forum/tagshot')}",
+        data:{"id":data.id,"is_hot":data.value,},
+        dataType:'json',
+        success:function(data){
+          if(data.code == 0){
+            layer.msg(data.msg,{icon:6,time:2000});
+          } else {
+            layer.open({title:'修改失败',content:data.msg,icon:5,adim:6});
+          }
+        }
       });
-	});
-
-
-//分类热点控制
-	form.on('checkbox(menu-show)', function(data){
-	var data = data.elem;
-	data.value = data.checked ? 1 : 0;
-	$.ajax({
-			type:'post',
-			url:"{:url('Forum/tagshot')}",
-			data:{"id":data.id,"is_hot":data.value,},
-			dataType:'json',
-			success:function(data){
-				if(data.code == 0){
-					layer.msg(data.msg,{icon:6,time:2000});
-				} else {
-					layer.open({title:'修改失败',content:data.msg,icon:5,adim:6});
-				}
-			}
-		});
-	return false;
-	});
+    return false;
+    });
 
 	
     $('.layui-btn.layuiadmin-btn-tags').on('click', function(){
       var type = $(this).data('type');
       active[type] ? active[type].call(this) : '';
     });
+
   });
-  </script>
+</script>
 {/block}

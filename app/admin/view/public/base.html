@@ -11,24 +11,22 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>{block name="title"}TaoLer后台管理模板系统{/block}</title>
+  <title>{block name="title"}TaoLerCMS后台管理系统{/block}</title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
   <link rel="stylesheet" href="/static/admin/style/admin.css" media="all">
   {block name="css"}{/block}
+  <script src="/static/layui/layui.js"></script>
 </head>
 <body {if($Request.url == url('index/index'))}class="layui-layout-body"{/if}>
 {block name="body"}内容{/block}
-<script src="/static/layui/layui.js"></script>
 <script type="text/javascript" charset="utf-8">
 var AdminLogin = "{:url('Login/index')}",
 	AdminLogout = "{:url('Admin/logout')}",
-	adminClearCache = "{:url('Admin/clearCache')}";
-var sysCy = "{$clevel}";
-	//var c = "{:config('app.domain_bind.www')}";
-	//console.log(c);
+	adminClearCache = "{:url('Admin/clearCache')}",
+  sysCy = "{$clevel}";
 </script>
 {block name="js"}js文件{/block}
 </body>

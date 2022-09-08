@@ -43,7 +43,7 @@
         {//问题内容}
         <div style="margin-top: 15px; font-size: 18px; font-weight: bold; color: rgb(130, 125, 125)">问题描述：</div>
         <hr />
-        <div class="detail-body-wenda photos" id="content">{$article.content|raw}</div>
+        <div class="detail-body photos" id="content">{$article.content|raw}</div>
         {if (($article.upzip !== '') || session('?user_name'))}
           <div class="">
             {notempty name="$article.upzip"}
@@ -215,12 +215,6 @@
     if(isShow) {
       $('.detail-body').each(function(){
         var othis = $(this), html = othis.html();
-        othis.html(fly.content(html));
-      });
-       //问答解析
-      $(".detail-body-wenda").each(function () {
-        var othis = $(this),
-          html = othis.html();
         othis.html(fly.content(html));
       });
     }

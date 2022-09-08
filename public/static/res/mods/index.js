@@ -675,12 +675,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   }; 
 
   //加载扩展模块
-  layui.config({
-    base: fly.dir
-  }).extend({
-    im: 'im'
-    ,face: 'face'
-  });
+  // layui.config({
+  //   base: fly.dir
+  // }).extend({
+  //   im: 'im'
+  //   ,face: 'face'
+  // });
 
   //头像
   if(device.android || device.ios){
