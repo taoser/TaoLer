@@ -3,4 +3,6 @@ Version.php
 TimeLine.php
 Plugins.php
 App.php
+AddonsMarket.php
+ViewsMarket.php
 

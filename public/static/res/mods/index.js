@@ -903,7 +903,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
       var stop = $(window).scrollTop();
 
       if($(window).width() <= 992) return;
-      var bottom = $('.fly-footer').offset().top - $(window).height();
+      var bottom = $('.footer').offset().top - $(window).height();
 
       if(stop > 60){ //211
         if(!main.hasClass('site-fix')){

@@ -4,48 +4,64 @@
   <div class="layui-fluid">
         <div class="layui-card">
 		<div class="layui-card-body">
-			<div class="layui-form layui-card-header  layuiadmin-card-header-auto">
-			<div class="layui-form-item">
-			  <div class="layui-inline">
-				插件分类
-			  </div>
-			  <div class="layui-inline">
-				<select name="id" lay-filter="LAY-user-adminrole-type">
-				  <option value="">全部插件</option>
-				  <option value="">支付</option>
-				  <option value="">第三方登陆</option>
+			<form class="layui-form layui-card-header  layuiadmin-card-header-auto">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						插件分类
+					</div>
+					<div class="layui-inline">
+						<select name="id" lay-filter="LAY-user-adminrole-type">
+						<option value="">全部插件</option>
+						<option value="">支付</option>
+						<option value="">第三方登陆</option>
+						</select>
+					</div>
+				</div>
+				<table id="addons-list" lay-filter="addons-list"></table>
+
+				<script type="text/html" id="toolbar">
+					<div class="layui-btn-group" style="padding-bottom: 10px;">
+						<button type="button" class="layui-btn layui-btn-sm" lay-event="onlineAddons">在线</button>
+						<button type="button" class="layui-btn layui-btn-sm" lay-event="installed">已安装</button>
+						<button type="button" class="layui-btn layui-btn-sm" lay-event="freeAddons">免费</button>
+						<button type="button" class="layui-btn layui-btn-sm" lay-event="payAddons">付费</button>
+					</div>
+					<div class="layui-btn-group" style="padding-bottom: 10px;">
+						<button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="add">离线安装</button>
+					</div>
+				</script>
+
+				<script type="text/html" id="verTpl">
+					<select id="vers{{d.name}}" name="sss" class="layui-border" lay-ignore lay-filter="versSelect">
+						<option value="111">111</option>
+						{{# d.vers.forEach(function(item, index){ }}
+							<option value="{{ item }}">{{ item }}</option>
+						{{# }); }}
+					</select>
+				</script>
+
+				<script type="text/html" id="addons-installed-tool">
+				{{#  if(d.status == 1){ }}
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="shutdown"><i class="layui-icon layui-icon-pause"></i>禁用</a>
+				{{#  } else { }}
+				<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="start"><i class="layui-icon layui-icon-play"></i>启动</a>
+				{{#  } }}
+				<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</a>
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>卸载</a>
+				</script>
+				<script type="text/html" id="addons-tool">
+				<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="install"><i class="layui-icon layui-icon-edit"></i>安装</a>
+				<select id="vers{{d.name}}" name="sss" class="layui-border" lay-ignore lay-filter="versSelect">
+					<option value="111">111</option>
+					{{# d.vers.forEach(function(item, index){ }}
+						<option value="{{ item }}">{{ item }}</option>
+					{{# }); }}
 				</select>
-			  </div>
-			</div>
-			</div>
-			<table id="addons-list" lay-filter="addons-list"></table>
+	
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</a>
+				</script>
+			</form>
 
-			<script type="text/html" id="toolbar">
-				<div class="layui-btn-group" style="padding-bottom: 10px;">
-					<button type="button" class="layui-btn layui-btn-sm" lay-event="onlineAddons">在线</button>
-					<button type="button" class="layui-btn layui-btn-sm" lay-event="installed">已安装</button>
-					<button type="button" class="layui-btn layui-btn-sm" lay-event="freeAddons">免费</button>
-					<button type="button" class="layui-btn layui-btn-sm" lay-event="payAddons">付费</button>
-				</div>
-				<div class="layui-btn-group" style="padding-bottom: 10px;">
-					<button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="add">离线安装</button>
-				</div>
-			</script>
-
-			<script type="text/html" id="addons-installed-tool">
-			{{#  if(d.status == 1){ }}
-			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="shutdown"><i class="layui-icon layui-icon-pause"></i>禁用</a>
-			{{#  } else { }}
-			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="start"><i class="layui-icon layui-icon-play"></i>启动</a>
-			{{#  } }}
-			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</a>
-			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>卸载</a>
-			</script>
-
-			<script type="text/html" id="addons-tool">
-			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="install"><i class="layui-icon layui-icon-edit"></i>安装</a>
-			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</a>
-			</script>
 		</div>
         </div>  
   </div>
@@ -72,7 +88,14 @@
   ,table = layui.table
   ,form = layui.form
   ,upload = layui.upload;
-  
+
+  form.render('select'); // 渲染所在容器内的 select 元素
+  //监听版本选择
+  form.on('select(versSelect)', function(obj){
+	console.log(111)
+    layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+  });
+
   //事件
     var active = {
       add: function(){

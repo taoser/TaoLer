@@ -282,3 +282,21 @@ function getOnepic($str)
 
     return $img;
 }
+
+//判断蜘蛛函数
+function find_spider(){
+    $useragent = strtolower(empty($useragent) ? $_SERVER['HTTP_USER_AGENT'] : '');
+    $spider_arr=array(
+        'bot',
+        'spider',
+        'slurp',
+        'ia_archiver',
+    );	
+    foreach($spider_arr as $spider){
+        $spider = strtolower($spider);
+        if(strstr($useragent,$spider)){
+            return true;
+        }
+    }
+    return false;
+}

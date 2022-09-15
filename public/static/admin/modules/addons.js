@@ -44,6 +44,8 @@ layui.define(["table", "form", "upload"], function (exports) {
     }
   });
 
+  
+
   //监听工具条
   table.on("tool(addons-list)", function (obj) {
     var data = obj.data;
@@ -168,6 +170,7 @@ layui.define(["table", "form", "upload"], function (exports) {
         },
       });
     } else if (obj.event === "install") {
+
 		var index = layer.load(1);
       //安装插件
       $.post(

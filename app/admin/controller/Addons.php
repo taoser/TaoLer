@@ -5,7 +5,6 @@ use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Request;
-use think\facade\Cache;
 use think\facade\Config;
 use app\admin\model\Addons as AddonsModel;
 use taoler\com\Files;
@@ -75,8 +74,9 @@ class Addons extends AdminController
 							['field' => 'price','title'=> '价格(元)'],
 							['field' => 'status','title'=> '状态', 'width'=> 100],
 							['field' => 'install','title'=> '安装', 'width'=> 100],
+							['field' => 'vers','title'=> '版本选择', 'templet'=> '#verTpl', 'exportTemplet' => "function(d, obj){console.log(obj) var td = obj.td(this.field); return td.find('select').val();}"],
 							['field' => 'ctime','title'=> '时间', 'width'=> 150],
-							['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
+							['title' => '操作', 'width'=> 300, 'align'=>'center', 'toolbar'=> '#addons-tool']
 						];
 					} else {
 						$res = ['code'=>-1,'msg'=>'未获取到服务器信息'];

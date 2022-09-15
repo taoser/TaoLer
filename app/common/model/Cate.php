@@ -19,6 +19,12 @@ class Cate extends Model
 	use SoftDelete;
 	protected $deleteTime = 'delete_time';
 	protected $defaultSoftDelete = 0;
+
+	//关联文章
+	public function article()
+    {
+        return $this->hasMany(Article::class);
+    }
 	
 	// 查询类别信息
 	public function getCateInfo(string $ename)
@@ -30,14 +36,19 @@ class Cate extends Model
 	// 删除类别
 	public function del($id)
 	{
-		$cates = $this->find($id);
-		
-		$res = $cates->delete();
-		if($res){
-			return 1;
-		}else{
-			return '删除分类失败';
+		$cates = $this::field('id,pid')->with('article')->find($id);
+		$sonCate = $this::field('id,pid')->where('pid',$cates['id'])->find();
+		if(empty($sonCate)) {
+			$res = $cates->together(['article'])->delete();
+			if($res){
+				return 1;
+			}else{
+				return '删除分类失败';
+			}
+		} else {
+			return '存在子分类，无法删除';
 		}
+		
 		
 	}
 	

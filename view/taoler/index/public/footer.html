@@ -1,16 +1,38 @@
-<div class="fly-footer layui-bg-black html5plus-hide">
-  <div>
-    <span>Copyright &copy; {:date('Y')}{$sysInfo.copyright|raw}</span>
+<footer class="footer">
+  <div class="container">
+      <div class="footer-col footer-col-logo">
+        <img src="{$sysInfo.logo}" alt="{$sysInfo.webname}"></div>
+      <div class="footer-col footer-col-copy">
+        <ul class="footer-nav layui-hide-xs">
+          {volist name="footlinks" id="vo"}
+          <li class="menu-item"><a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a></li>
+          {/volist}
+        </ul>
+        <div class="copyright">
+          {$sysInfo.showlist|raw}
+          <p>Copyright © {:date('Y')} {$sysInfo.copyright|raw}<span class="layui-hide"> v{:config('taoler.version')}</span> 版权所有 <a href="https://beian.miit.gov.cn/" target="blank">{$sysInfo.icp}</a>
+          </p>
+        </div>
+        {//websocket统计脚本}
+        <div style="text-align:center;color:#999;font-size:14px;padding:0 0 10px;" id="online_count"></div>
+      </div>
+      <div class="footer-col footer-col-sns">
+        <div class="footer-sns">
+          <a class="sns-wx" href="javascript:;" aria-label="icon">
+            <i class="layui-icon layui-icon-login-wechat sns-icon"></i>
+            <span style="background-image:url(https://www.aieok.com/static/home/img/wx.png);"></span>
+          </a>
+          <a class="sns-wx" href="javascript:;" aria-label="icon">
+            <i class="layui-icon layui-icon-chat sns-icon"></i>
+            <span style="background-image:url(https://www.aieok.com/static/home/img/qq.png);"></span>
+          </a>
+          <a href="{$Request.domain}" target="_blank" rel="nofollow noopener" aria-label="icon"> 
+            <i class="layui-icon layui-icon-login-qq sns-icon"></i>  
+           </a>
+        </div>
+      </div>
   </div>
-  <div>
-    {$sysInfo.showlist|raw} {volist name="footlinks" id="vo"}
-    <a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a>
-    {/volist}
-    <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">{$sysInfo.icp}</a>
-  </div>
-  {//websocket统计脚本}
-  <div style="text-align:center;color:#999;font-size:14px;padding:0 0 10px;" id="online_count"></div>
-</div>
+</footer>
 
 {:hook('showLeftLayer')}
 <script>

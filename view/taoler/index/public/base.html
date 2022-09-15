@@ -22,7 +22,7 @@
   <meta name="keywords" content="{block name='keywords'}关键词{/block}" />
   <meta name="description" content="{block name='description'}描述{/block}" />
   <meta name="Copyright" content="{$sysInfo.webname}" />
-  {block name="ogtitle"} {/block}
+  {block name="ogtitle"}{/block}
   {block name="ogdescription"} {/block}
   <meta property="og:url" content="{$Request.domain}{$Request.url}" />
   <meta property="og:site_name" content="{$sysInfo.webname}" />
@@ -32,24 +32,19 @@
   <script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
   <!-- 样式 -->
   <link rel="canonical" href="{$Request.domain}{$Request.url}">
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_24081_qs69ykjbea.css" />
   <link rel="stylesheet" href="{$Request.domain}/static/layui/css/layui.css"  charset="utf-8">
   <link rel="stylesheet" href="{$Request.domain}/static/res/css/global.css" charset="utf-8">
   {block name="link"}{/block}
-  <style>  
-  /*5+ 引擎环境下自动隐藏无关元素,适配App*/  
-  .html5plus .html5plus-hide {  
-    display: none  
-  }
-  {if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") !== false}
-  html body{margin-top: 1px;}
-  {/if}	
+  <!-- 5+ 引擎环境下自动隐藏无关元素,适配App --> 
+  <style> 
+  .html5plus .html5plus-hide {display: none}
+  {if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") !== false} html body{margin-top: 1px;} {/if}	
   </style>
   <script src="{$Request.domain}/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body >
-<script>  
-	if(navigator.userAgent.indexOf("Html5Plus") > -1) {document.body.classList.add("html5plus")}  
-</script>
+<script> if(navigator.userAgent.indexOf("Html5Plus") > -1) {document.body.classList.add("html5plus")} </script>
 {if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") === false}
 {include file="public/header" /}
 {/if}
@@ -74,7 +69,7 @@
   }).use('fly');
   var element = layui.element;
 </script>
-{block name="script"} {/block}
+{block name="script"}{/block}
 </body>
 </html>
 

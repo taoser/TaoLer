@@ -265,7 +265,7 @@ class Article extends BaseController
 
 			// 处理内容
 			$data['content'] = $this->downUrlPicsReaplace($data['content']);
-			// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
 			// 获取分类ename
@@ -275,6 +275,7 @@ class Article extends BaseController
 
             $result = $article->add($data);
             if ($result['code'] == 1) {
+				// 获取到的最新ID
 				$aid = $result['data']['id'];
 				//写入taglist表
 				$tagArr = [];
@@ -285,8 +286,6 @@ class Article extends BaseController
 					}
 				}
 				Db::name('taglist')->insertAll($tagArr);
-				// 获取到的最新ID
-				//$aid = Db::name('article')->max('id');
 				
 				// 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();

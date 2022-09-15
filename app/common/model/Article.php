@@ -28,7 +28,7 @@ class Article extends Model
     //文章关联栏目表
     public function cate()
     {
-        return $this->belongsTo('Cate','cate_id','id');
+        return $this->belongsTo(Cate::class);
     }
 	
 	//文章关联评论

@@ -20,7 +20,7 @@
   {block name="css"}{/block}
   <script src="/static/layui/layui.js"></script>
 </head>
-<body {if($Request.url == url('index/index'))}class="layui-layout-body"{/if}>
+<body class="{if($Request.url == url('index/index'))} layui-layout-body {/if}">
 {block name="body"}内容{/block}
 <script type="text/javascript" charset="utf-8">
 var AdminLogin = "{:url('Login/index')}",

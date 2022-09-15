@@ -113,7 +113,7 @@ overflow: visible;
     treeTable.on('tool(Article-cate-list)', function(obj){
         var data = obj.data;
         if(obj.event === 'del'){
-            layer.confirm('确定删除此分类？', function(index){
+            layer.confirm('是否删除此分类及分类下内容？', function(index){
                 $.ajax({
                     type:'post',
                     url:forumTagsDelete,

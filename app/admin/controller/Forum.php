@@ -164,6 +164,7 @@ class Forum extends AdminController
 		$msg = $addOrEdit ? lang('edit') : lang('add');
 		if(Request::isAjax()) {
 			$data = Request::param();
+			if(isset($data['id']) && $data['pid'] == $data['id']) return json(['code'=>-1,'msg'=> $msg.'不能作为自己的子类']);
 			$list = Db::name('cate')->cache('catename')->save($data);
 		
 			if($list){

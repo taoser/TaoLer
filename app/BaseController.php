@@ -488,10 +488,10 @@ abstract class BaseController
         return $upRes;
     }
 
-    //获取artcile所有图片
+    //获取artcile内容所有图片，返回数组
 	protected function getArticleAllpic($str)
 	{
-		// <img src="http://img.com" />
+		//正则匹配<img src="http://img.com" />
 		$pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
 		preg_match_all($pattern,$str,$matchContent);
 		if(isset($matchContent[1])){
@@ -505,7 +505,7 @@ abstract class BaseController
 	}
 
 
-    //下载图片
+    //下载远程图片
 	private function downloadImage($url)
 	{
 		$ch = curl_init();
@@ -520,7 +520,7 @@ abstract class BaseController
 
 	}
 
-	//保存图片
+	//把图片保存到本地
 	private function saveAsImage($url, $file)
 	{
 		$filename = pathinfo($url, PATHINFO_BASENAME);
@@ -561,19 +561,18 @@ abstract class BaseController
 		$images = $this->getArticleAllpic($content);
 		if(count($images)) {
 			foreach($images as $image){
-				//1.网络图片
-				//halt((stripos($image, Request::domain()) === false));
-				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) === false)) { 
-					
-					//2.下载远程图片
-					$newImageUrl = $this->downloadImage($image);
-					
-					$content = str_replace($image,Request::domain().$newImageUrl,$content);
-	
+				//1.带http地址的图片，2.非本站的网络图片 3.非带有？号等参数的图片
+				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) === false) && (stripos($image, '?') === false)) { 
+                    // 如果图片中没有带参数或者加密可下载
+                    //下载远程图片(可下载)
+                    $newImageUrl = $this->downloadImage($image);
+                    //替换图片链接
+                    $content = str_replace($image,Request::domain().$newImageUrl,$content);
 				}
 			}
+            //不可下载的图片，如加密或者带有参数的图片如？type=jpeg,直接返回content
 		}
-		
+				
 		return $content;
 	}
 

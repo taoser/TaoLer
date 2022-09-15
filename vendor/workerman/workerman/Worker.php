@@ -33,7 +33,7 @@ class Worker
      *
      * @var string
      */
-    const VERSION = '4.0.42';
+    const VERSION = '4.1.0';
 
     /**
      * Status starting.
@@ -183,7 +183,7 @@ class Worker
     public $onBufferDrain = null;
 
     /**
-     * Emitted when worker processes stoped.
+     * Emitted when worker processes stopped.
      *
      * @var callable
      */
@@ -1693,11 +1693,9 @@ class Worker
                         // onWorkerExit
                         if ($worker->onWorkerExit) {
                             try {
-                                call_user_func($worker->onWorkerExit, $worker, $status, $pid);
-                            } catch (\Exception $e) {
-                                static::log("worker[{$worker->name}] onWorkerExit $e");
-                            } catch (\Error $e) {
-                                static::log("worker[{$worker->name}] onWorkerExit $e");
+                                ($worker->onWorkerExit)($worker, $status, $pid);
+                            } catch (\Throwable $exception) {
+                                static::log("worker[{$worker->name}] onWorkerExit $exception");
                             }
                         }
 

@@ -53,7 +53,7 @@
         </div>
         <hr>
         {// 内容}
-        <div class="detail-body photos mce-content-body" id="content">{$article.content|raw}</div>
+        <div class="detail-body photos" id="content">{$article.content|raw}</div>
         {//下载}
         {if (($article.upzip !== '') || session('?user_name'))}
           <div class="">
