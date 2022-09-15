@@ -1,4 +1,5 @@
 install.lock
 /home
 /addons
+/sys
 *.xml

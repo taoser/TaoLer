@@ -74,7 +74,7 @@ class Addons extends AdminController
 							['field' => 'price','title'=> '价格(元)'],
 							['field' => 'status','title'=> '状态', 'width'=> 100],
 							['field' => 'install','title'=> '安装', 'width'=> 100],
-							['field' => 'vers','title'=> '版本选择', 'templet'=> '#verTpl', 'exportTemplet' => "function(d, obj){console.log(obj) var td = obj.td(this.field); return td.find('select').val();}"],
+							['field' => 'vers','title'=> '版本选择','exportTemplet' => "function(d, obj){console.log(obj) var td = obj.td(this.field); return td.find('select').val();}"],
 							['field' => 'ctime','title'=> '时间', 'width'=> 150],
 							['title' => '操作', 'width'=> 300, 'align'=>'center', 'toolbar'=> '#addons-tool']
 						];
