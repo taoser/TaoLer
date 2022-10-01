@@ -13,7 +13,7 @@ var forms = table.render({
       ,{field: 'poster', title: '账号',width: 80}
       ,{field: 'avatar', title: '头像', width: 60, templet: '#avatarTpl'}
       ,{field: 'title', title: '标题', minWidth: 180,templet: '<div><a href="{{- d.url }}" target="_blank">{{- d.title }}</a></div>'}
-      ,{field: 'content', title: '内容', templet: '<div>{{= d.content }}</div>', minWidth: 200}
+      ,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
       ,{field: 'posttime', title: '时间',width: 120, sort: true}
       ,{field: 'top', title: '置顶', templet: '#buttonTpl', width: 80, align: 'center'}
       ,{field: 'hot', title: '加精', templet: '#buttonHot', width: 80, align: 'center'}

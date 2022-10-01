@@ -70,7 +70,7 @@ class Uploads
      * @param string $rule 文件命名规则，默认md5,uniqid,date,sha1，为空则取文件上传名称，或者自定义如a.jpg文件名
      * @return \think\response\Json
      */
-    public function put(string $fileName, string $dirName, int $fileSize, string $fileType, string $rule = null)
+    public function put(string $fileName, string $dirName, int $fileSize, string $fileType, string $rule = '')
     {
         if(stripos($fileName,'http') !== false) {
             $file = $fileName;
@@ -90,7 +90,7 @@ class Uploads
 		} catch (ValidateException $e) {
 			return json(['status'=>-1,'msg'=>$e->getMessage()]);
 		}
-        // 解析存储位置
+        // 解析存储位置 SYS_开头为系统位置
         $isSys = stripos($dirName, 'SYS_');
         if($isSys !== false) {
             $disk = 'sys';
@@ -107,9 +107,9 @@ class Uploads
             if(stripos($rule, '.') == false) {
                 $rule = $file->getOriginalName();
             }
-            $savename = \think\facade\Filesystem::disk($disk)->putFileAs($dirName, $file, $rule);
+            $savename = Filesystem::disk($disk)->putFileAs($dirName, $file, $rule);
         } else {
-            $savename = \think\facade\Filesystem::disk($disk)->putFile($dirName, $file, $rule);
+            $savename = Filesystem::disk($disk)->putFile($dirName, $file, $rule);
         }		
 
 		if($savename){

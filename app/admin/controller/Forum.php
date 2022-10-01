@@ -12,6 +12,7 @@ use think\facade\Db;
 use think\facade\Cache;
 use taoler\com\Files;
 use app\common\lib\Msgres;
+use think\response\Json;
 
 class Forum extends AdminController
 {
@@ -103,7 +104,7 @@ class Forum extends AdminController
 		if(Request::isAjax()){
 			$arr = explode(",",$id);
 			foreach($arr as $v){
-				$article =Article::find($v);
+				$article = Article::find($v);
 				$result = $article->together(['comments'])->delete();
 			}
 			
@@ -118,7 +119,7 @@ class Forum extends AdminController
 	/**
 	 * 置顶、加精、评论开关，审核等状态管理
 	 *
-	 * @return void
+	 * @return Json
 	 */
 	public function check()
 	{
@@ -137,18 +138,9 @@ class Forum extends AdminController
 	//帖子分类
 	public function tags()
 	{
+        $cate = new Cate();
 		if(Request::isAjax()){
-			$list = Cate::select();
-			if($list){
-				$res['code'] = 0;
-				$res['msg'] = '';
-				$res['count']= count($list);
-				$res['data'] = [];
-				foreach($list as $k=>$v){
-				$res['data'][] = ['sort'=>$v['sort'],'id' => $v['id'],'pid'=>$v['pid'],'tags'=>$v['catename'],'ename'=>$v['ename'],'detpl'=>$v['detpl'],'icon'=>$v['icon'],'is_hot'=>$v['is_hot'],'desc'=>$v['desc']];
-				}
-			}
-			return json($res);
+            return $cate->getList();
 		}
 		//详情模板
 		$sys = $this->getSystem();
@@ -482,20 +474,19 @@ class Forum extends AdminController
 	/**
 	 * 调用百度关键词
 	 *
-	 * @return void
+	 * @return json
 	 */
     public function getKeywords()
     {
-        $data = Request::only(['tags','flag']);
+        $data = Request::only(['flag','keywords','content']);
 		return $this->setKeywords($data);
 		
     }
 
-	/**
-	 * 标题调用百度关键词词条
-	 *
-	 * @return void
-	 */
+    /**
+     * 标题调用百度关键词词条
+     * @return Json
+     */
 	public function getWordList()
 	{
 		$title = input('title');
@@ -507,7 +498,8 @@ class Forum extends AdminController
 	 * 内容中是否有图片视频音频插入
 	 *
 	 * @param [type] $content
-	 * @return boolean
+	 * @return array
+     *
 	 */
 	public function hasIva($content)
 	{

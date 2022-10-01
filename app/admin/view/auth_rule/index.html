@@ -51,8 +51,8 @@
             defaultToolbar: ['filter', 'print', 'exports'],
             cols: [
                 [
-                    {type: 'numbers'},
                     {type: 'checkbox'},
+                    {field: 'id', title: 'ID',width: 40},
                     {field: 'title', title: '菜单名称', minWidth: 165},
 					{field: 'url', title: '菜单地址', rowspan: 2},
                     {
@@ -60,10 +60,10 @@
                         templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'
                     },
                     {field: 'authority', title: '权限标识'},
-					{field: 'isMenu', title: '类型', templet: type, align: 'center', width: 60},
-                    //{title: '类型', templet: '<p>{{d.isMenu ? "菜单" : "按钮"}}</p>', align: 'center', width: 60},
-					{field: 'sort', title: '排序', align: 'center', width: 60},
-                    {field: 'ctime',title: '创建时间'},
+					{field: 'ismenu', title: '类型', templet: type, align: 'center', width: 60},
+                    {title: '类型', templet: '<p>{{d.ismenu ? "菜单" : "按钮"}}</p>', align: 'center', width: 60},
+					// {field: 'sort', title: '排序', align: 'center', width: 60},
+                    {field: 'create_time',title: '创建时间'},
                     {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
                 ]
             ],
@@ -72,7 +72,7 @@
 		
 		//自定义“状态”列
 		function type(data) {
-			var isMenu = data.isMenu;
+			var isMenu = data.ismenu;
 			var btns = "";
 			if (isMenu == -1) {
 				return "目录";
@@ -149,7 +149,7 @@
 						$.ajax({
 							type:"post",
 							url:"{:url('AuthRule/edit')}",
-							data:{"id":field.id,"pid":field.pid,"title":field.title,"name":field.name,"icon":field.icon,"sort":field.sort,"ishidden":field.ishidden},
+							data: field,
 							daType:"json",
 							success:function (res){
 								if (res.code == 0) {
@@ -207,7 +207,7 @@
 						  $.ajax({
 							type:"post",
 							url:"{:url('AuthRule/add')}",
-							data:{"pid":field.pid,"title":field.title,"name":field.name,"icon":field.icon,"sort":field.sort,"ishidden":field.ishidden},
+							data: field,
 							daType:"json",
 							success:function (data){
 								if (data.code == 0) {

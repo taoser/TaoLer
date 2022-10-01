@@ -252,8 +252,9 @@
     });
     
     // 获取百度分词接口的关键词
-    function getBdiduWords(flag,title,content) {
-        console.log(flag,title,content)
+    function getBdiduWords(flag,title,content)
+    {
+        // console.log(flag,title,content)
         $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
             if (res.code == 0) {
               $("input[name='keywords']").val(res.data.join(','));

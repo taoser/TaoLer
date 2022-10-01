@@ -45,8 +45,7 @@ class AdminController extends \app\BaseController
         $admin_id = $this->aid;
         $auth     = new Auth();
 
-        $auth_rule_list = Db::name('auth_rule')->where('delete_time',0)->where(['status'=> 1,'ishidden'=>1])->order(['sort' => 'asc'])->select();
-        //var_export($auth_rule_list);
+        $auth_rule_list = Db::name('auth_rule')->where(['delete_time'=> 0,'status'=> 1,'ismenu'=>1])->select();
 
         foreach ($auth_rule_list as $value) {
             if ($auth->check($value['name'], $admin_id) || $admin_id == 1) {
@@ -64,7 +63,7 @@ class AdminController extends \app\BaseController
             }
         }
 
-        $menu = !empty($menu) ? array2tree($menu) : [];
+        $menu = !empty($menu) ? getTree($menu) : [];
         View::assign('menu', $menu);
     }
 	
@@ -75,13 +74,13 @@ class AdminController extends \app\BaseController
     protected function getMenus($type)
     {
         $menu     = [];
-        $auth_rule_list = Db::name('auth_rule')->where(['delete_time'=> 0, 'status'=> 1,'type'=> $type])->order(['sort' => 'ASC', 'id' => 'ASC'])->select();
+        $auth_rule_list = Db::name('auth_rule')->where(['delete_time'=> 0, 'status'=> 1,'type'=> $type])->select();
         //var_export($auth_rule_list);
 
         foreach ($auth_rule_list as $value) {
                 $menu[] = $value;  
         }
-        $menus = !empty($menu) ? array2tree($menu) : [];
+        $menus = !empty($menu) ? getTree($menu) : [];
 		//$menu2 = getTree($menu);
 		return $menus;
         //return View::assign('menus', $menus);

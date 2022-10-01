@@ -44,7 +44,7 @@ class Slider extends AdminController
       }
 
       if(count($datas)) {
-        $list = ['code'=>0,'msg'=>'获取数据成功'];
+        $list = ['code'=>0, 'count'=> count($datas), 'msg'=>'获取数据成功'];
         foreach($datas as $k=>$v) {
           $list['data'][] = [
             'id'=>$v['id'],

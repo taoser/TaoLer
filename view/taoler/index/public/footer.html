@@ -9,8 +9,9 @@
           {/volist}
         </ul>
         <div class="copyright">
-          {$sysInfo.showlist|raw}
-          <p>Copyright © {:date('Y')} {$sysInfo.copyright|raw}<span class="layui-hide"> v{:config('taoler.version')}</span> 版权所有 <a href="https://beian.miit.gov.cn/" target="blank">{$sysInfo.icp}</a>
+          <span class="layui-hide"> v{:config('taoler.version')}</span> {$sysInfo.showlist|raw}
+          <p>Copyright © {:date('Y')} {$sysInfo.copyright|raw} <a href="https://www.aieok.com" target="blank" title="TaoLerCMS" class="layui-hide-xs">由TaoLerCMS驱动</a>
+            <a href="https://beian.miit.gov.cn/" target="blank">{$sysInfo.icp}</a>
           </p>
         </div>
         {//websocket统计脚本}

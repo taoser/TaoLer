@@ -2,14 +2,16 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use app\common\lib\SqlFile;
 use think\facade\View;
-use think\facade\Db;
 use think\facade\Request;
 use think\facade\Config;
 use app\admin\model\Addons as AddonsModel;
 use taoler\com\Files;
 use taoler\com\Api;
 use app\common\lib\Zip;
+use think\response\Json;
+use app\admin\model\AuthRule;
 
 class Addons extends AdminController
 {
@@ -20,8 +22,12 @@ class Addons extends AdminController
     {
 		return View::fetch();
     }
-	
-	 public function addonsList()
+
+    /**
+     * 插件列表
+     * @return Json
+     */
+    public function addonsList() :Json
     {
        
 		$type = input('type');
@@ -59,24 +65,21 @@ class Addons extends AdminController
             //在线
             case 'onlineAddons':
                 $url = $this->getSystem()['api_url'].'/v1/addons';
-					$addons = Api::urlGet($url,[]);
+					$addons = Api::urlGet($url);
 					if( $addons->code !== -1){
 						$res['code'] = 0;
 						$res['msg'] = '';
 						$res['data'] = $addons->data;
 						$res['col'] = [
 							['type' => 'numbers'],
-							['field' => 'name','title'=> '插件', 'width'=> 150],
-							['field'=> 'title','title'=> '标题', 'width'=> 100],
-							['field'=> 'version','title'=> '版本', 'width'=> 100],
+							['field' => 'title','title'=> '插件', 'width'=> 200],
+                            ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
 							['field' => 'author','title'=> '作者', 'width'=> 100],
-							['field' => 'description','title'=> '简介', 'minWidth'=> 200],
-							['field' => 'price','title'=> '价格(元)'],
-							['field' => 'status','title'=> '状态', 'width'=> 100],
-							['field' => 'install','title'=> '安装', 'width'=> 100],
-							['field' => 'vers','title'=> '版本选择','exportTemplet' => "function(d, obj){console.log(obj) var td = obj.td(this.field); return td.find('select').val();}"],
-							['field' => 'ctime','title'=> '时间', 'width'=> 150],
-							['title' => '操作', 'width'=> 300, 'align'=>'center', 'toolbar'=> '#addons-tool']
+							['field' => 'price','title'=> '价格(元)','width'=> 80],
+							['field' => 'downloads','title'=> '下载', 'width'=> 70],
+                            ['field' => 'version','title'=> '版本', 'width'=> 70],
+                            ['field' => 'status','title'=> '状态', 'width'=> 70],
+							['title' => '操作', 'width'=> 180, 'align'=>'center', 'toolbar'=> '#addons-tool']
 						];
 					} else {
 						$res = ['code'=>-1,'msg'=>'未获取到服务器信息'];
@@ -112,9 +115,11 @@ class Addons extends AdminController
 
     /**
      * 编辑版本
-     *
-     * @param  int  $id
-     * @return \think\Response
+     * @param $id
+     * @return string|Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function edit($id)
     {
@@ -135,11 +140,8 @@ class Addons extends AdminController
     }
 
     /**
-     * 上传版本的zip资源
-     *
-     * @param
-     * @param  int  $id
-     * @return \think\Response
+     * 上传插件文件zip
+     * @return Json
      */
     public function uploadZip()
     {
@@ -148,88 +150,114 @@ class Addons extends AdminController
 		try {
 			validate(['file'=>'filesize:2048|fileExt:zip,rar,7z'])
             ->check(array($file));
-			$savename = \think\facade\Filesystem::disk('public')->putFile('addons',$file);
+			$saveName = \think\facade\Filesystem::disk('public')->putFile('addons',$file);
 		} catch (\think\exception\ValidateException $e) {
-			echo $e->getMessage();
+            return json(['code' => -1,'msg' => $e->getMessage()]);
 		}
 		$upload = Config::get('filesystem.disks.public.url');
 		
-		if($savename){
-            $name_path =str_replace('\\',"/",$upload.'/'.$savename);
-				$res = ['code'=>0,'msg'=>'插件上传成功','src'=>$name_path];
-			} else {
-				$res = ['code'=>-1,'msg'=>'上传错误'];
-			}
+		if($saveName){
+            $name_path =str_replace('\\',"/",$upload.'/'.$saveName);
+            $res = ['code'=>0,'msg'=>'插件上传成功','src'=>$name_path];
+        } else {
+            $res = ['code'=>-1,'msg'=>'上传错误'];
+        }
 		return json($res);
     }
 
     //安装插件
     public function install()
     {
-        $data = Request::param();
+       $data = Request::param();
+
         $url = $this->getSystem()['api_url'].'/v1/getaddons';
-        $addons = Api::urlPost($url,['name'=>$data['name'],'version'=>$data['version']]);
-        if( $addons->code == -1) {
-            return json(['code'=>$addons->code,'msg'=>$addons->msg]);
+         $addons = Api::urlPost($url,['name'=>$data['name'],'version'=>$data['version']]);
+         if( $addons->code == -1) {
+             return json(['code'=>$addons->code,'msg'=>$addons->msg]);
+         }
+         //是否安装？
+         $addInstalledVersion = get_addons_info($data['name']);
+         if(!empty($addInstalledVersion)){
+             $verRes = version_compare($data['version'],$addInstalledVersion['version'],'>');
+             if(!$verRes){
+                 return json(['code'=>-1,'msg'=>'不能降级，请选择正确版本']);
+             }
+             //$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
+         }
+
+         $file_url = $addons->addons_src;
+         //判断远程文件是否可用存在
+         $header = get_headers($file_url, true);
+         if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
+             return json(['code'=>-1,'msg'=>'获取远程文件失败']);
+         }
+
+         //把远程文件放入本地
+
+         //拼接路径
+         $addons_dir = Files::getDirPath('../runtime/addons/');
+         Files::mkdirs($addons_dir);
+
+         $package_file = $addons_dir . $data['name'] .'.zip';  //升级的压缩包文件
+         $cpfile = copy($file_url,$package_file);
+         if(!$cpfile) return json(['code'=>-1,'msg'=>'下载升级文件失败']);
+
+         $uzip = new Zip();
+         $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
+         $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
+         $unzip_res = $uzip->unzip($package_file,$zipPath,true);
+         if(!$unzip_res) return json(['code'=>-1,'msg'=>'解压失败']);
+
+
+         //升级插件
+
+         //升级前的写入文件权限检查
+         $allUpdateFiles = Files::getAllFile($zipPath);
+
+         if (empty($allUpdateFiles)) return json(['code' => -1, 'msg' => '无可更新文件。']);
+         $checkString    = '';
+         foreach ($allUpdateFiles as $updateFile) {
+             $coverFile  = ltrim(str_replace($zipPath, '', $updateFile), DIRECTORY_SEPARATOR);
+             $dirPath    = dirname('../'.$coverFile);
+             if (file_exists('../'.$coverFile)) {
+                 if (!is_writable('../'.$coverFile)) $checkString .= $coverFile . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
+             } else {
+                 if (!is_dir($dirPath)) @mkdir($dirPath, 0777, true);
+                 if (!is_writable($dirPath)) $checkString .= $dirPath . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
+             }
+         }
+
+         if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
+         $addonsPath = '../';
+         $cpRes = Files::copyDirs($zipPath,$addonsPath);
+         $cpData = $cpRes->getData();
+         //更新失败
+         if($cpData['code'] == -1) return json(['code'=>-1,'msg'=>$cpData['msg']]);
+
+        //添加数据库
+        $sqlInstallFile = root_path().'addons/'.$data['name'].'/install.sql';
+        if(file_exists($sqlInstallFile)) {
+            SqlFile::dbExecute($sqlInstallFile);
         }
-		//是否安装？
-		$addInstalledVersion = get_addons_info($data['name']);
-		if(!empty($addInstalledVersion)){
-			$verRes = version_compare($data['version'],$addInstalledVersion['version'],'>');
-	        if(!$verRes){
-	            return json(['code'=>-1,'msg'=>'不能降级，请选择正确版本']);
-	        }
-			//$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
-		}
+        //安装菜单
+        $menuFile = root_path().'addons/'.$data['name'].'/menu.php';
+        if(file_exists($menuFile)) {
+            include_once $menuFile;
+            $menu = Config::get('menu');
 
-        $file_url = $addons->addons_src;
-        //判断远程文件是否可用存在
-        $header = get_headers($file_url, true);
-        if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
-            return json(['code'=>-1,'msg'=>'获取远程文件失败']);
+            if(!empty($menu)){
+                if(isset($menu['is_nav']) && $menu['is_nav']==1){
+                    $pid = 0;
+                }else{
+                    $pid = AuthRule::where('name','addons')->value('id');
+                }
+                $menu_arr[] = $menu['menu'];
+                $this->addAddonMenu($menu_arr, (int)$pid,1);
+            }
         }
 
-        //把远程文件放入本地
-
-        //拼接路径
-        $addons_dir = Files::getDirPath('../runtime/addons/');
-        Files::mkdirs($addons_dir);
-
-        $package_file = $addons_dir . $data['name'] .'.zip';  //升级的压缩包文件
-        $cpfile = copy($file_url,$package_file);
-        if(!$cpfile) return json(['code'=>-1,'msg'=>'下载升级文件失败']);
-
-        $uzip = new Zip();
-        $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
-        $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
-        $unzip_res = $uzip->unzip($package_file,$zipPath,true);
-        if(!$unzip_res) return json(['code'=>-1,'msg'=>'解压失败']);
 
 
-        //升级插件
-
-		//升级前的写入文件权限检查
-		$allUpdateFiles = Files::getAllFile($zipPath);
-
-		if (empty($allUpdateFiles)) return json(['code' => -1, 'msg' => '无可更新文件。']);
-		$checkString    = '';
-		foreach ($allUpdateFiles as $updateFile) {
-			$coverFile  = ltrim(str_replace($zipPath, '', $updateFile), DIRECTORY_SEPARATOR);
-			$dirPath    = dirname('../'.$coverFile);
-			if (file_exists('../'.$coverFile)) {
-				if (!is_writable('../'.$coverFile)) $checkString .= $coverFile . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
-			} else {
-				if (!is_dir($dirPath)) @mkdir($dirPath, 0777, true);
-				if (!is_writable($dirPath)) $checkString .= $dirPath . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
-			}
-		}
-
-		if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
-		$addonsPath = '../';
-		$cpRes = Files::copyDirs($zipPath,$addonsPath);
-		$cpData = $cpRes->getData();
-		//更新失败
-		if($cpData['code'] == -1) return json(['code'=>-1,'msg'=>$cpData['msg']]);
 		Files::delDirAndFile('../runtime/addons/');
 
 		return json(['code'=>0,'msg'=>'插件安装成功！']);
@@ -244,6 +272,23 @@ class Addons extends AdminController
         $addonsPath = '../addons/'.$name;
         $staticPath = 'addons/'.$name;
 
+        //卸载菜单
+        $menuFile = root_path().'addons/'.$name.'/menu.php';
+        if(file_exists($menuFile)) {
+            include_once $menuFile;
+            $menu = Config::get('menu');
+            if(!empty($menu)){
+                $menu_arr[] = $menu['menu'];
+                $this->delAddonMenu($menu_arr);
+            }
+        }
+
+        //卸载插件数据库
+        $sqlUninstallFile = root_path().'addons/'.$name.'/uninstall.sql';
+        if(file_exists($sqlUninstallFile)) {
+            SqlFile::dbExecute($sqlUninstallFile);
+        }
+
         if (is_dir($staticPath)) {
             Files::delDir($staticPath);
         }
@@ -253,6 +298,7 @@ class Addons extends AdminController
 		} else {
 			return json(['code'=>-1,'msg'=>'卸载失败']);
 		}
+        return json(['code'=>0,'msg'=>'卸载成功']);
     }
 	
 	//启用插件
@@ -317,4 +363,52 @@ class Addons extends AdminController
 		return View::fetch();
 		
 	}
+
+    public function addAddonMenu(array $menu,int $pid = 0, int $type = 1)
+    {
+        foreach ($menu as $v){
+            $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
+            try {
+                $v['pid'] = $pid;
+                $v['name'] = trim($v['name'],'/');
+                $v['type'] = $type;
+                $menu = AuthRule::withTrashed()->where('name',$v['name'])->find();
+                if($menu){
+                    $menu->restore();
+                } else {
+                    $menu = AuthRule::create($v);
+                }
+
+                if ($hasChild) {
+                    $this->addAddonMenu($v['sublist'], $menu->id,$type);
+                }
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
+        }
+
+    }
+
+    //循环删除菜单
+    public function delAddonMenu(array $menu,string $module = 'addon')
+    {
+        foreach ($menu as $k=>$v){
+            $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
+            try {
+                $v['name'] = trim($v['name'],'/');
+                $menu_rule = AuthRule::withTrashed()->where('name',$v['name'])->find();
+                if($menu_rule){
+                    $menu_rule->delete(true);
+                    if ($hasChild) {
+                        $this->delAddonMenu($v['sublist']);
+                    }
+                }
+
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
+        }
+
+    }
+
 }

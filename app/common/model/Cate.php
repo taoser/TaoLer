@@ -30,14 +30,14 @@ class Cate extends Model
 	public function getCateInfo(string $ename)
 	{
 		//
-		return $this::field('ename,catename,detpl,desc')->where('ename',$ename)->cache('cate_'.$ename,600)->find();
+		return $this->field('ename,catename,detpl,desc')->where('ename',$ename)->cache('cate_'.$ename,600)->find();
 	}
 
 	// 删除类别
 	public function del($id)
 	{
-		$cates = $this::field('id,pid')->with('article')->find($id);
-		$sonCate = $this::field('id,pid')->where('pid',$cates['id'])->find();
+		$cates = $this->field('id,pid')->with('article')->find($id);
+		$sonCate = $this->field('id,pid')->where('pid',$cates['id'])->find();
 		if(empty($sonCate)) {
 			$res = $cates->together(['article'])->delete();
 			if($res){
@@ -48,9 +48,21 @@ class Cate extends Model
 		} else {
 			return '存在子分类，无法删除';
 		}
-		
-		
 	}
+
+    // 分类表
+    public function getList()
+    {
+        $data = $this->field('sort,id,pid,catename,ename,detpl,icon,is_hot,desc')->where(['status'=>1])->select()->toArray();
+        // 排序
+        $cmf_arr = array_column($data, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $data);
+        if(count($data)) {
+            return json(['code'=>0,'msg'=>'ok','data'=>$data]);
+        } else {
+            return json(['code'=>-1,'msg'=>'no data','data'=>'']);
+        }
+    }
 	
 	
 }

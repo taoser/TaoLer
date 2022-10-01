@@ -36,7 +36,8 @@
         "yansongda/pay": "~3.1.0",
         "guzzlehttp/guzzle": "7.0",
         "php-di/php-di": "^6.4",
-        "workerman/phpsocket.io": "^1.1"
+        "workerman/phpsocket.io": "^1.1",
+        "jaeger/querylist": "^4.2"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

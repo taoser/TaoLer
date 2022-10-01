@@ -95,7 +95,7 @@ overflow: visible;
           [
             {type: 'numbers'},
             {type: 'checkbox'}
-            ,{field: 'tags', title: '分类名', minWidth: 200}
+            ,{field: 'catename', title: '分类名', minWidth: 200}
             ,{field: 'ename', title: 'EN别名', width: 100}
             ,{field: 'detpl',title: '模板', align: 'center',width: 100,templet: '#inputSel'}
             ,{title: '图标', align: 'center',width: 50,templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
@@ -136,25 +136,25 @@ overflow: visible;
                 type: 2
                 ,title: '编辑分类'
                 ,content: forumTagsForm + '?id='+ data.id
-                ,area: ['400px', '450px']
+                ,area: ['400px', '500px']
                 ,btn: ['确定', '取消']
                 ,yes: function(index, layero){
                     //获取iframe元素的值
                     var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
                         ,pid = othis.find('input[name="pid"]').val()
                         ,sort = othis.find('input[name="sort"]').val()
-                        ,tags = othis.find('input[name="tags"]').val()
+                        ,catename = othis.find('input[name="catename"]').val()
                         ,ename = othis.find('input[name="ename"]').val()
                         ,detpl = othis.find('select[name="detpl"]').val()
                         ,icon = othis.find('input[name="icon"]').val()
                         ,desc = othis.find('input[name="desc"]').val();
 
-                    if(!tags.replace(/\s/g, '')) return;
+                    if(!catename.replace(/\s/g, '')) return;
 
                     $.ajax({
                         type:"post",
                         url:forumTagsForm,
-                        data:{"id":data.id,"pid":pid,"sort":sort,"catename":tags,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
+                        data:{"id":data.id,"pid":pid,"sort":sort,"catename":catename,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
                         daType:"json",
                         success:function (data){
                           if(data.code == 0){layer.msg(data.msg,{icon:6,time:2000},function(){
@@ -180,7 +180,7 @@ overflow: visible;
                     var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags").click();
                         othis.find('input[name="pid"]').val(data.pid)
                         ,othis.find('input[name="sort"]').val(data.sort)
-                        ,othis.find('input[name="tags"]').val(data.tags)
+                        ,othis.find('input[name="catename"]').val(data.catename)
                         ,othis.find('input[name="ename"]').val(data.ename)
 						            ,othis.find('input[name="icon"]').val(data.icon)
                         ,othis.find('input[name="desc"]').val(data.desc);
@@ -201,20 +201,20 @@ overflow: visible;
           ,btn: ['确定', '取消']
           ,yes: function(index, layero){
             var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
-            ,pid = othis.find('input[name="pid"]').val()
-            ,sort = othis.find('input[name="sort"]').val()
-            ,tags = othis.find('input[name="tags"]').val()
-            ,ename = othis.find('input[name="ename"]').val()
-			      ,detpl = othis.find('select[name="detpl"]').val()
-			      ,icon = othis.find('input[name="icon"]').val()
-            ,desc = othis.find('input[name="desc"]').val();
+                    ,pid = othis.find('input[name="pid"]').val()
+                    ,sort = othis.find('input[name="sort"]').val()
+                    ,catename = othis.find('input[name="catename"]').val()
+                    ,ename = othis.find('input[name="ename"]').val()
+                    ,detpl = othis.find('select[name="detpl"]').val()
+                    ,icon = othis.find('input[name="icon"]').val()
+                    ,desc = othis.find('input[name="desc"]').val();
             
-            if(!tags.replace(/\s/g, '')) return;
+            if(!catename.replace(/\s/g, '')) return;
 			
         $.ajax({
 				type:"post",
 				url:"{:url('Forum/tagsform')}",
-				data:{pid:pid,"sort":sort,"catename":tags,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
+				data:{pid:pid,"sort":sort,"catename":catename,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
 				daType:"json",
 				success:function (data){
 					if (data.code == 0) {

@@ -10,8 +10,111 @@
  */
 namespace app\common\lib;
 
+use think\Exception;
+
 class Zip
 {
+    /**
+     * 保持目录结构的压缩方法
+     * @param string $zipFile 压缩输出文件 相对或者绝对路径
+     * @param $folderPaths 要压缩的目录 相对或者绝对路径
+     * @return void
+     */
+    public static function dirZip(string $zipFile, $folderPaths)
+    {
+        //1. $folderPaths 路径为数组
+        // 初始化zip对象
+        $zip = new \ZipArchive();
+        //打开压缩文件
+        $zip->open($zipFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+        if(is_array($folderPaths)) {
+            foreach($folderPaths as $folderPath) {
+                if(self::getDirSize($folderPath) == 0) {
+                    continue;
+                };
+                // 被压缩文件绝对路径
+                $rootPath = realpath($folderPath);
+                // Create recursive directory iterator
+                //获取所有文件数组SplFileInfo[] $files
+                $files = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($rootPath),
+                    \RecursiveIteratorIterator::LEAVES_ONLY
+                );
+
+                foreach ($files as $name => $file) {
+                    //要跳过所有子目录 Skip directories (they would be added automatically)
+                    if (!$file->isDir()) {
+                        // 真实文件路径
+                        $filePath = $file->getRealPath();
+                        // zip文件的相对路径
+                        $relativePath = str_replace(root_path(), '', $filePath);
+                        //添加文件到压缩包
+                        $zip->addFile($filePath, $relativePath);
+                    }
+                }
+            }
+        } else {
+            // 2. $folderPaths 路径为string
+            if(self::getDirSize($folderPaths) == 0) {
+                throw new \Exception("Directory name must not be empty.");
+            };
+            // 被压缩文件绝对路径
+            $rootPath = realpath($folderPaths);
+            // Create recursive directory iterator
+            //获取所有文件数组SplFileInfo[] $files
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($rootPath),
+                \RecursiveIteratorIterator::LEAVES_ONLY
+            );
+
+            foreach ($files as $name => $file) {
+                //要跳过所有子目录 Skip directories (they would be added automatically)
+                if (!$file->isDir()) {
+                    //  要压缩的文件路径
+                    $filePath = $file->getRealPath();
+                    // zip目录内文件的相对路径
+                    $relativePath = str_replace(root_path(), '', $filePath);
+                    //添加文件到压缩包
+                    $zip->addFile($filePath, $relativePath);
+                }
+            }
+        }
+
+        $zip->close();
+    }
+
+    /**
+     * 把目录内所有文件进行压缩输出
+     * @param string $zipFile 压缩文件保存路径 相对路径或者绝对路径
+     * @param string $folderPath 要压缩的目录 相对路径或者绝对路径
+     * @return void
+     */
+    public static function zipDir(string $zipFile, string $folderPath)
+    {
+        // 初始化zip对象
+        $zip = new \ZipArchive();
+        $zip->open($zipFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+        $rootPath = realpath($folderPath);
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($rootPath),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
+        foreach ($files as $name => $file) {
+            if (!$file->isDir()) {
+                // 要压缩的文件路径
+                $filePath = $file->getRealPath();
+                // zip目录内文件的相对路径
+                $relativePath = substr($filePath, strlen($rootPath) + 1);
+                // 添加 文件 到 压缩包
+                $zip->addFile($filePath, $relativePath);
+            }
+        }
+
+        $zip->close();
+    }
+
 	/**
 	 * 压缩文件
 	 * @param array $files 待压缩文件 array('d:/test/1.txt'，'d:/test/2.jpg');【文件地址为绝对路径】
@@ -49,9 +152,7 @@ class Zip
 		if (empty($path) || empty($filePath)) {
 			return false;
 		}
-
 		$zip = new \ZipArchive();
-
 		if ($zip->open($filePath) === true) {
 			$zip->extractTo($path);
 			$zip->close();
@@ -60,5 +161,30 @@ class Zip
 			return false;
 		}
 	}
+
+    /**
+     * 获取文件夹大小
+     * @param $dir 根文件夹路径
+     * @return bool|int
+     */
+    public static function getDirSize($dir)
+    {
+        if(!is_dir($dir)){
+            return false;
+        }
+        $handle = opendir($dir);
+        $sizeResult = 0;
+        while (false !== ($FolderOrFile = readdir($handle))) {
+            if ($FolderOrFile != "." && $FolderOrFile != "..") {
+                if (is_dir("$dir/$FolderOrFile")) {
+                    $sizeResult += self::getDirSize("$dir/$FolderOrFile");
+                } else {
+                    $sizeResult += filesize("$dir/$FolderOrFile");
+                }
+            }
+        }
+
+        closedir($handle);
+        return $sizeResult;
+    }
 }
-?>

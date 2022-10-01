@@ -3,6 +3,7 @@
 namespace taoler\com;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+
 class Files
 {
     /**
@@ -12,7 +13,8 @@ class Files
      */
     public static function getDirPath($path)
     {
-        return substr($path,-1) == '/' ? $path : $path.'/';
+        //去掉path最右侧的/号，再重新组装带/路径
+        return rtrim($path,'/') . '/';
     }
 
     /**
@@ -118,27 +120,22 @@ class Files
 	public static function delDirAndFile(string $dirPath, $nowDir=false )
 	{
 		if(!is_dir($dirPath)) return 'dir not exist';
-		if ( $handle = opendir($dirPath) ) { 
-
-			while ( false !== ( $item = readdir( $handle ) ) ) { 
-				if ( $item != '.' && $item != '..' ) { 
+		if ( $handle = opendir($dirPath) ) {
+			while ( false !== ( $item = readdir( $handle ) ) ) {
+				if ( $item != '.' && $item != '..' ) {
 					$path = $dirPath.$item;
-					if (is_dir($path)) { 
-						self::delDirAndFile($path.'/'); 
+					if (is_dir($path)) {
+						self::delDirAndFile($path.'/');
 						rmdir($path.'/');
-					} else { 
-						unlink($path); 
-					} 
-				} 
-			} 
+					} else {
+						unlink($path);
+					}
+				}
+			}
 			closedir( $handle );
             //删除当前文件夹
 			if($nowDir == true){
-				if(rmdir($dirPath)){
-					return true;
-				} else {
-					return false;
-				}
+				if(!rmdir($dirPath)) return false;
 			}
 		} else {
 			return false;

@@ -207,21 +207,22 @@ class User extends BaseController
 		}
 		
 		$article = new Article();
-		// $commont = new Comment();
 		$arts = $article->getUserArtList((int) $id);
 
-	// 	$reys = $commont->getUserCommentList((int) $id);
-	// dump($reys);
 		//用户回答
+		// $commont = new Comment();
+		// $reys = $commont->getUserCommentList((int) $id);
+
         $reys = Db::name('comment')
 		->alias('c')
 		->join('article a','c.article_id = a.id')
-		->field('a.id,a.title,c.content,c.create_time,c.delete_time,c.status')
+		->join('cate t','a.cate_id = t.id')
+		->field('a.id,a.title,t.ename,c.content,c.create_time,c.delete_time,c.status')
 		->where(['a.delete_time'=>0,'c.delete_time'=>0,'c.status'=>1])
 		->where('c.user_id',$id)
 		->order(['c.create_time'=>'desc'])
 		->cache(3600)->select();
-		
+
 		View::assign(['u'=>$u,'arts'=>$arts,'reys'=>$reys,'jspage'=>'']);
         return View::fetch();
     }

@@ -162,7 +162,7 @@
                     <h5>评论已关闭！</h5>
                 </div>
                 {/if}
-                {if (config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}
+                {if session('?user_id') AND (config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}
                 <div class="comment-respond">
                   <form class="comment-form">
 

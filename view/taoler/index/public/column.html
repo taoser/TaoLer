@@ -5,7 +5,7 @@
       <a href="{$Request.domain}">{:lang('home page')}</a>
       </li> 
       {volist name="subcatelist" id="vo"}
-      <li {if($vo.ename eq $Request.param.ename)} class="layui-this" {/if} >
+      <li  class="{if($vo.ename eq $Request.param.ename)}layui-this{/if}">
       <a href="{$Request.domain}{:url('cate',['ename' => $vo.ename])}">{:cookie('think_lang') == 'en-us' ? $vo.ename : $vo.catename}{if($vo.is_hot eq 1)}<span class="layui-badge-dot"></span>{/if}</a>
       </li> 
       {/volist}     

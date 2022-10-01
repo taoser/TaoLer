@@ -166,7 +166,7 @@ CREATE TABLE `tao_auth_rule` (
   `pid` smallint(5) NOT NULL DEFAULT '0' COMMENT '父级ID',
   `level` tinyint(1) NOT NULL DEFAULT '1' COMMENT '菜单层级',
   `icon` varchar(50) NOT NULL DEFAULT '' COMMENT '图标',
-  `ishidden` enum('1','0','-1') NOT NULL DEFAULT '1' COMMENT '0隐藏,1显示-1其它',
+  `ismenu` tinyint(1) NOT NULL DEFAULT 1 COMMENT '0隐藏,1显示-1其它',
   `sort` tinyint(4) NOT NULL DEFAULT '50' COMMENT '排序',
   `condition` char(100) NOT NULL DEFAULT '',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',

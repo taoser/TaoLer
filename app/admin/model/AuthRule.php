@@ -16,29 +16,26 @@ class AuthRule extends Model
     {
         $query->where('id', $value );      
     }
-	/**
-	 * 权限树
-	 */
-    public function authRuleTree()
+
+    /**
+     * 获取权限列表
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getList()
     {
-		$authRules = $this->order('sort asc')->select();
-		//return $this->sort($authRules);
-		return $authRules;
-	}
-	/**
-	 * id，pid,菜单排序
-	 * @var $data 数据
-	 * @var $pid 父级id
-	 */
-	public function sort($data,$pid=0)
-	{
-		static $arr = array();
-		foreach($data as $k=> $v){
-			if($v['pid']==$pid){
-				$arr[] = $v;
-				$this->sort($data,$v['id']);	
-			}
-		}
-		return $arr;
-	}
+        $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')->select()->toArray();
+        //数组排序
+        $cmf_arr = array_column($authRules, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $authRules);
+
+        if(count($authRules)) {
+            return json(['code'=>0,'msg'=>'ok','data'=>$authRules]);
+        } else {
+            return json(['code'=>0,'msg'=>'no data','data'=>'']);
+        }
+    }
+
 }

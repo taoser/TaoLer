@@ -5,6 +5,7 @@ namespace app;
 
 use think\App;
 use think\exception\ValidateException;
+use think\response\Json;
 use think\Validate;
 use think\Response;
 use think\exception\HttpResponseException;
@@ -410,7 +411,7 @@ abstract class BaseController
     /**
 	 * 标题调用百度关键词词条
 	 *
-	 * @return void
+	 * @return Json
 	 */
 	public function getBdiduSearchWordList($words)
 	{

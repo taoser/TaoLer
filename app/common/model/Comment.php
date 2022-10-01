@@ -80,13 +80,13 @@ class Comment extends Model
      * @param integer $id
      * @return void
      */
-    public function getUserCommentList(int $id) {
-        $userCommList = $this::field('id,user_id,create_time,delete_time,article_id,content')
-        ->with(['article' => function(\think\model\Relation $query){
-            $query->withField('id,title,cate_id,delete_time')->where(['status' => 1]);
+    public function getUserCommentList1(int $id) {
+        $userCommList = $this::field('id,user_id,create_time,article_id,content')
+        ->with(['article' => function($query){
+            $query->withField('id,title,create_time')->where(['delete_time'=>0,'status' => 1]);
         }])
         ->where(['user_id' => $id,'status' => 1])
-        //->append(['url'])
+        ->append(['url'])
         ->order(['create_time' => 'desc'])
         //->cache(3600)
         ->select()
@@ -95,12 +95,39 @@ class Comment extends Model
         return $userCommList;
     }
 
+    /**
+     * 获取用户评论列表
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function getUserCommentList(int $id) {
+        $userCommList = Article::field('Article.id,title,Article.create_time')->hasWhere('comments',['status'=>1,'delete_time'=>0])
+        ->with(['comments' => function($query) use($id){
+            $query->withField('id,content')->where(['user_id'=>$id,'delete_time'=>0,'status' => 1]);
+        }])
+        ->append(['url'])
+        ->order(['create_time' => 'desc'])
+        //->cache(3600)
+        ->select()
+        ->toArray();
+        
+        return $userCommList;
+    }
+
+    
+
     // 获取url
     public function getUrlAttr($value,$data)
     {
+        // dump($data);
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
-            $cate = Cate::field('id,ename')->find($data['article']['cate_id']);
-            return (string) url('detail',['id' => $data['id'],'ename'=>$cate->ename]);
+            
+            $article = Article::field('id,cate_id')->with(['cate' => function($query){
+                $query->withField('id,ename')->where(['status' => 1]);
+            }])->find($data['article_id']);
+            
+            return (string) url('detail',['id' => $data['article_id'],'ename'=>$article->cate->ename]);
         } else {
             return (string) url('detail',['id' => $data['id']]);
         }

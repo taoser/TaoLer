@@ -13,21 +13,22 @@ declare (strict_types = 1);
 namespace app\common\lib;
 
 use think\facade\Lang;
+use think\facade\Db;
 
 class SqlFile
 {
+
+    protected static $path = null;
+
 	/**
 	 * 加载sql文件为分号分割的数组
 	 * <br />支持存储过程和函数提取，自动过滤注释
 	 * <br />例如: var_export(load_sql_file('mysql_routing_example/fn_cdr_parse_accountcode.sql'));
 	 * @param string $path 文件路径
-	 * @return boolean|array
-	 * @since 1.0 <2015-5-27> SoChishun Added.
+	 * @return array
 	 */
-	public function load_sql_file($path, $fn_splitor = ';;') {
-		if (!file_exists($path)) {
-			return false;
-		}
+	public static function loadSqlFile(string $path, $fn_splitor = ';;') : array
+    {
 		$lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		$aout = [];
 		$str = '';
@@ -72,4 +73,26 @@ class SqlFile
 		}
 		return $aout;
 	}
+
+    /**
+     * @param $sqlFile
+     * @return bool|void
+     * @throws \Exception
+     */
+    public static function dbExecute($sqlFile)
+    {
+        if (file_exists($sqlFile)) {
+            $sqlArr = self::loadSqlFile($sqlFile);
+            if(!empty($sqlArr)) {
+                foreach($sqlArr as $v){
+                    try {
+                        Db::execute($v);
+                    } catch (\Exception $e) {
+                        throw new \Exception($e->getMessage());
+                    }
+                }
+            }
+            return true;
+        }
+    }
 }

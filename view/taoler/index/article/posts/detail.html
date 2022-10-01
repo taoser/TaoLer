@@ -130,7 +130,7 @@
         </ul>
 		    <div style="text-align: center" id="pages"></div>
         {//评论}
-        {if ( config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}
+        {if session('?user_id') AND ( config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}
         <div class="layui-form layui-form-pane">
           <div class="layui-form-item layui-form-text">
             <a name="comment"></a>

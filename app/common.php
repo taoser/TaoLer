@@ -7,6 +7,8 @@ use think\facade\Db;
 use think\facade\Session;
 use taoser\think\Auth;
 
+define('DS', DIRECTORY_SEPARATOR);
+
 // 应用公共文件
 function mailto($to,$title,$content)
 {
@@ -210,21 +212,24 @@ function array_child_append($parent, $pid, $child, $child_key_name)
     return $parent;
 }
 
-
-//菜单递归
-function getTree($data)
+//菜单无限极分类
+function getTree($data, $pId='0')
 {
-	$tree = [];
-	foreach ($data as $array) {
-
-		if(isset($data[$array['pid']])) {
-			$data[$array['pid']]['children'][] = &$data[$array['id']];
-			//$tree = $data;
-		} else {
-			$tree[] = &$data[$array['id']];
-		}
-	}
-	return $tree;
+    // 递归
+    $tree = [];
+    foreach ($data as $k => $v) {
+        if ($v['pid'] == $pId) {
+            $child = getTree($data, $v['id']);
+            if(!empty($child)) {
+                $v['children'] = $child;
+            }
+            $tree[] = $v;
+        }
+    }
+    // 排序
+    $cmf_arr = array_column($tree, 'sort');
+    array_multisort($cmf_arr, SORT_ASC, $tree);
+    return $tree;
 }
 
 //按钮权限检查
@@ -300,3 +305,4 @@ function find_spider(){
     }
     return false;
 }
+

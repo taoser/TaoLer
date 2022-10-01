@@ -168,9 +168,7 @@ class Upgrade extends AdminController
 
 		$package_file = $upload_dir.'taoler_'.$version_num.'.zip';  //升级的压缩包文件
 		$cpfile = copy($file_url,$package_file);
-
-        if(!$cpfile)
-        {
+        if(!$cpfile) {
             return json(['code'=>-1,'msg'=>'下载升级文件失败']);  
         }
         //记录下日志
@@ -236,15 +234,12 @@ class Upgrade extends AdminController
     private function execute_update(string $package_file)
     {
         //解压 zip文件有密码的话需要解密
-		//$uzip = new ZipFile();
         $zip = new Zip;
         $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
         $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
-        //$unzip_res = $uzip->unzip($package_file,$zipPath,true);
 		$unzip_res = $zip->unzip($package_file,$zipPath);
 
-        if(!$unzip_res)
-        {
+        if(!$unzip_res) {
             return json(['code'=>-1,'msg'=>'解压失败']);
         }
         //解压成功，得到文件夹
@@ -253,8 +248,7 @@ class Upgrade extends AdminController
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'50%','msg'=>'升级文件解压成功！']);
 		
 		//升级PHP
-        if(is_dir($zipPath))
-        {
+        if(is_dir($zipPath)) {
 			//升级前的写入文件权限检查
 			$allUpdateFiles = Files::getAllFile($zipPath);
 			
@@ -276,8 +270,7 @@ class Upgrade extends AdminController
             $cpRes = Files::copyDirs($zipPath,$this->root_dir);
 			$cpData = $cpRes->getData();
             //更新失败
-            if($cpData['code'] == -1)
-            {
+            if($cpData['code'] == -1) {
                 //数据库回滚
 /*
                 if(file_exists($this->upload_dir.'/'.$package_file.'/mysql/mysql_rockback.sql'))
@@ -297,13 +290,8 @@ class Upgrade extends AdminController
 		
 		//升级sql操作
         $upSql = $zipPath.'runtime/update.sql';
-		if(file_exists($upSql))
-		{
-			$sqlRes = $this->db_update($upSql);
-			$upDate = $sqlRes->getData();
-			if($upDate['code'] == -1){
-				return json(['code'=>-1,'msg'=>$upDate['msg']]);
-			}
+		if(file_exists($upSql)) {
+            SqlFile::dbExecute($upSql);
 			//删除sql语句
 			unlink($upSql);
 		}
@@ -317,7 +305,7 @@ class Upgrade extends AdminController
     }
 
 	/**
-     * 处理升级包上传
+     * 手动处理升级包上传
      */
     public function uploadZip()
     {
@@ -370,38 +358,6 @@ class Upgrade extends AdminController
 		}
 
         return json(['code'=>0,'msg'=>'升级成功']);
-    }
-
-
-    /**
-     * 数据库操作
-     */
-    public function database_operation($file)
-    {
-        $mysqli = new \mysqli('localhost','root','root','test');
-        if($mysqli->connect_errno)
-        {
-            return json(['code'=>0,'msg'=>'Connect failed:'.$mysqli->connect_error]);
-        }
-        $sql = file_get_contents($file);
-        $a = $mysqli->multi_query($sql);
-        return ['code'=>1,'msg'=>'数据库操作OK'];
-    }
-	
-	/**
-     * 执行数据库操作
-     */
-    public function db_update($file)
-    {
-		$sqlf = new SqlFile();
-		$sql_array = $sqlf->load_sql_file($file);
-		foreach($sql_array as $v){
-			$sqlRes = Db::execute($v);
-			if ($sqlRes === false) {
-		        return json(['code'=>-1,'msg'=>'数据库升级失败']);
-		    }
-		}
-        return json(['code'=>0,'msg'=>'数据库升级成功']);
     }
 
 

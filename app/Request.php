@@ -18,6 +18,6 @@ class Request extends \think\Request
 	//protected $filter = ['trim','htmlspecialchars'];
 	//protected $filter = ['trim','strip_tags'];
 	//protected $filter = ['htmlspecialchars'];
-	//protected $filter = ['trim'];
+	protected $filter = ['trim'];
 
 }

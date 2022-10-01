@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace taoser\addons;
 
+use think\facade\Lang;
 use think\helper\Str;
 use think\facade\Event;
 use think\facade\Config;

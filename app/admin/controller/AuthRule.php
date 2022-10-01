@@ -15,21 +15,8 @@ class AuthRule extends AdminController
 	public function index()
 	{
 		if(Request::isAjax()){
-
 			$rule = new AuthRuleModel();
-			$auth_rules = $rule->authRuleTree();
-			$count = count($auth_rules);
-			$res = [];
-			if($auth_rules){
-				$res = ['code'=>0,'msg'=>'ok','count'=>$count];
-				
-				foreach($auth_rules as $k => $v){
-					//$data = $v->getData();
-					$data = ['id'=>$v['id'],'pid'=>$v['pid'],'title'=>$v['title'],'url'=>$v['name'],'icon'=>$v['icon'],'status'=>$v['status'],'isMenu'=>$v['ishidden'],'sort'=>$v['sort'],'ctime'=>$v['create_time']];
-					$res['data'][] = $data; 
-				}
-			}			
-			return json($res);
+            return $rule->getList();
 		}
 		return View::fetch();	
 		
@@ -116,7 +103,7 @@ class AuthRule extends AdminController
 		$rule = new AuthRuleModel();
 		
 		if(Request::isAjax()){
-			$data = Request::param(['id','pid','title','name','icon','sort','ishidden']);
+			$data = Request::param(['id','pid','title','name','icon','sort','ismenu']);
 			$ruId = $rule->find($data['pid']); //查询出上级ID
 			if($ruId){
 				$plevel = $ruId->level; //上级level等级
@@ -143,6 +130,7 @@ class AuthRule extends AdminController
 		
 		$auth_rules = $rule->authRuleTree();
 		$rules = $rule->find(input('id'));
+
 		View::assign(['AuthRule'=>$auth_rules,'rules'=>$rules]);
 		return View::fetch();
 	}
@@ -174,7 +162,7 @@ class AuthRule extends AdminController
 		$data = Request::param();
 		$rules = Db::name('auth_rule')->save($data);
 		if($rules){
-			if($data['ishidden'] == 1){
+			if($data['ismenu'] == 1){
 				return json(['code'=>0,'msg'=>'设置菜单显示','icon'=>6]);
 			} else {
 				return json(['code'=>0,'msg'=>'取消菜单显示','icon'=>5]);

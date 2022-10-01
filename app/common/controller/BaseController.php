@@ -67,12 +67,8 @@ class BaseController extends BaseCtrl
     protected function showNav()
     {
         //1.查询分类表获取所有分类
-		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order(['id' => 'ASC','sort' => 'ASC'])->cache('catename',3600)->select()->toArray();
-		$cateList = array2tree($cateList);
-		// $cateList = getTree($cateList);
-        
-		return $cateList;
-
+		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->cache('catename',3600)->select()->toArray();
+         return getTree($cateList);
     }
 
 	// 显示子导航subnav
@@ -86,7 +82,7 @@ class BaseController extends BaseCtrl
 			$subCateList = $this->showNav();
 		} else { // 点击分类，获取子分类信息
 			$parentId = $pCate['id'];
-			$subCate = Db::name('cate')->field('id,ename,catename,is_hot,pid')->where(['pid'=>$parentId,'status'=>1,'delete_time'=>0])->order(['id' => 'ASC','sort' => 'ASC'])->select()->toArray();
+			$subCate = Db::name('cate')->field('id,ename,catename,is_hot,pid')->where(['pid'=>$parentId,'status'=>1,'delete_time'=>0])->select()->toArray();
 			if(!empty($subCate)) { // 有子分类
 				$subCateList = array2tree($subCate);
 			} else { //无子分类

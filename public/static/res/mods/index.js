@@ -995,7 +995,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   util.fixbar({
     bar1: '&#xe642;'
     ,bgcolor: '#009688'
-    ,css: {right: 10, bottom: 100}
+    ,css: {right: 10, bottom: 50}
     ,click: function(type){
 		//添加文章
       if(type === 'bar1'){

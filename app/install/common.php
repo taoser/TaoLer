@@ -1,12 +1,5 @@
 <?php
 
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
-// +----------------------------------------------------------------------
 // 检测环境是否支持可写
 //define('IS_WRITE', true);
 
@@ -241,7 +234,7 @@ function strReplace($find,$replace,$array){
 
        foreach ($array as $key => $val) {
 
-           if (is_array($val)) $array[$key]=$this->strReplace($find,$replace,$array[$key]);
+           if (is_array($val)) $array[$key] = $this->strReplace($find,$replace,$array[$key]);
 
        }
 
