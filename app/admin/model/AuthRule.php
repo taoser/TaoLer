@@ -24,7 +24,7 @@ class AuthRule extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getList()
+    public function getAuthRuleTree()
     {
         $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')->select()->toArray();
         //数组排序
@@ -35,6 +35,16 @@ class AuthRule extends Model
             return json(['code'=>0,'msg'=>'ok','data'=>$authRules]);
         } else {
             return json(['code'=>0,'msg'=>'no data','data'=>'']);
+        }
+    }
+
+    public function saveRule($data)
+    {
+        $res = $this->save($data);
+        if($res){
+            return json(['code'=>0,'msg'=>'添加权限成功']);
+        }else{
+            return json(['code'=>-1,'msg'=>'添加权限失败']);
         }
     }
 

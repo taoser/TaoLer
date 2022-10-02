@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
+use think\App;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\View;
@@ -9,14 +10,20 @@ use app\admin\model\AuthRule as AuthRuleModel;
 
 class AuthRule extends AdminController
 {
+    //
+    public function __construct(App $app)
+    {
+        parent::__construct($app);
+        $this->model = new AuthRuleModel();
+    }
+
     /**
 	 * 菜单列表
 	 */
 	public function index()
 	{
 		if(Request::isAjax()){
-			$rule = new AuthRuleModel();
-            return $rule->getList();
+            return $this->model->getAuthRuleTree();
 		}
 		return View::fetch();	
 		
@@ -75,24 +82,19 @@ class AuthRule extends AdminController
 	{
 		if(Request::isAjax()){
 			$data = Request::param();
-			$plevel = Db::name('auth_rule')->field('level')->find($data['pid']);
+
+            //层级level
+            $plevel = Db::name('auth_rule')->field('level')->find($data['pid']);
 			if($plevel){
 				$data['level'] = $plevel['level']+1;
 			} else {
 				$data['level'] = 0;
 			}
-			$data['create_time'] = time();
-			$list = Db::name('auth_rule')->save($data);
-		
-			if($list){
-				return json(['code'=>0,'msg'=>'添加权限成功']);
-			}else{
-				return json(['code'=>-1,'msg'=>'添加权限失败']);
-			}
+
+            return $this->model->saveRule($data);
 		}
-		
-		$rule = new AuthRuleModel();
-		$auth_rules = $rule->authRuleTree();
+
+		$auth_rules = $this->model->getAuthRuleTree();
 		View::assign('AuthRule',$auth_rules);
 		return View::fetch();
 	}
@@ -104,32 +106,25 @@ class AuthRule extends AdminController
 		
 		if(Request::isAjax()){
 			$data = Request::param(['id','pid','title','name','icon','sort','ismenu']);
-			$ruId = $rule->find($data['pid']); //查询出上级ID
+			//层级level
+            $ruId = $rule->find($data['pid']); //查询出上级ID
 			if($ruId){
 				$plevel = $ruId->level; //上级level等级
 				$data['level'] = $plevel+1;	
 			} else {
 				$data['level'] = 0;
 			}
-			
-			$zi = $rule->where('pid',$data['id'])->select();//查询出下级
+			$zi = $this->model->where('pid',$data['id'])->select();//查询出下级
+            if(!empty($zi)){
+                $zi->update(['level'=>$data['level']+1]);
+            }
 
-				if($zi){
-					$zi->update(['level'=>$data['level']+1]);
-				}	
-
-			$save = AuthRuleModel::update($data);
-
-			if($save){
-				$res = ['code'=>0,'msg'=>'修改成功'];
-			} else {
-				$res = ['code'=>-1,'msg'=>'修改失败'];
-			}
-			return json($res);
+			$rule = $this->model->find($data['id']);
+            return $rule->saveRule($data);
 		}
 		
-		$auth_rules = $rule->authRuleTree();
-		$rules = $rule->find(input('id'));
+		$auth_rules = $this->model->getAuthRuleTree();
+		$rules = $this->model->find(input('id'));
 
 		View::assign(['AuthRule'=>$auth_rules,'rules'=>$rules]);
 		return View::fetch();

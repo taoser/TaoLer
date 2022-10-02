@@ -17,7 +17,7 @@ class Zip
     /**
      * 保持目录结构的压缩方法
      * @param string $zipFile 压缩输出文件 相对或者绝对路径
-     * @param $folderPaths 要压缩的目录 相对或者绝对路径
+     * @param array|string $folderPaths 要压缩的目录 相对或者绝对路径
      * @return void
      */
     public static function dirZip(string $zipFile, $folderPaths)
@@ -48,7 +48,7 @@ class Zip
                         // 真实文件路径
                         $filePath = $file->getRealPath();
                         // zip文件的相对路径
-                        $relativePath = str_replace(root_path(), '', $filePath);
+                        $relativePath = str_replace('\\','/',str_replace(root_path(), '', $filePath));
                         //添加文件到压缩包
                         $zip->addFile($filePath, $relativePath);
                     }
@@ -74,7 +74,7 @@ class Zip
                     //  要压缩的文件路径
                     $filePath = $file->getRealPath();
                     // zip目录内文件的相对路径
-                    $relativePath = str_replace(root_path(), '', $filePath);
+                    $relativePath = str_replace('\\','/',str_replace(root_path(), '', $filePath));
                     //添加文件到压缩包
                     $zip->addFile($filePath, $relativePath);
                 }

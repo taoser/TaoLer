@@ -177,13 +177,13 @@ class Addons extends AdminController
          }
          //是否安装？
          $addInstalledVersion = get_addons_info($data['name']);
-         if(!empty($addInstalledVersion)){
-             $verRes = version_compare($data['version'],$addInstalledVersion['version'],'>');
-             if(!$verRes){
-                 return json(['code'=>-1,'msg'=>'不能降级，请选择正确版本']);
-             }
-             //$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
-         }
+//         if(!empty($addInstalledVersion)){
+//             $verRes = version_compare($data['version'],$addInstalledVersion['version'],'>');
+//             if(!$verRes){
+//                 return json(['code'=>-1,'msg'=>'不能降级，请选择正确版本']);
+//             }
+//             //$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
+//         }
 
          $file_url = $addons->addons_src;
          //判断远程文件是否可用存在
@@ -207,7 +207,6 @@ class Addons extends AdminController
          $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
          $unzip_res = $uzip->unzip($package_file,$zipPath,true);
          if(!$unzip_res) return json(['code'=>-1,'msg'=>'解压失败']);
-
 
          //升级插件
 

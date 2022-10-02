@@ -17,9 +17,6 @@ use think\facade\Db;
 use app\facade\Article;
 use app\common\model\Slider;
 use app\common\lib\Msgres;
-use think\facade\Config;
-use app\common\lib\Zip;
-use taoler\com\Files;
 
 class Index extends BaseController
 {
