@@ -6,9 +6,7 @@
 		<div class="layui-card-body">
 			<form class="layui-form layui-card-header  layuiadmin-card-header-auto">
 				<div class="layui-form-item">
-					<div class="layui-inline">
-						插件分类
-					</div>
+					<div class="layui-inline">插件分类</div>
 					<div class="layui-inline">
 						<select name="id" lay-filter="LAY-user-adminrole-type">
 						<option value="">全部插件</option>
@@ -28,6 +26,7 @@
 					</div>
 					<div class="layui-btn-group" style="padding-bottom: 10px;">
 						<button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="add">离线安装</button>
+						<button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="user-info">用户信息</button>
 					</div>
 				</script>
 
@@ -47,7 +46,6 @@
 						<option value="{{ item }}">{{ item }}</option>
 					{{# }); }}
 				</select>
-	
 				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</a>
 				</script>
 			</form>
@@ -61,13 +59,12 @@
 <script>
 	var addonsIndex = "{:url('Addons/index')}",
 		addonsList = "{:url('Addons/addonsList')}",
-        addonsDelete = "{:url('Addons/delete')}",
+        addonsDelete = "{:url('Addons/uninstall')}",
         addonsEdit = "{:url('Addons/edit')}";
 	var addonsStart = "{:url('Addons/start')}";
 	var addonsShut = "{:url('Addons/shutDown')}";
 	var addonsInstall =  "{:url('Addons/install')}";
 	var addonsConfig =  "{:url('Addons/config')}";
-
 	
   layui.config({
     base: '/static/admin/' //静态资源所在路径
@@ -82,7 +79,6 @@
   form.render('select'); // 渲染所在容器内的 select 元素
   //监听版本选择
   form.on('select(versSelect)', function(obj){
-	console.log(111)
     layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
   });
 
@@ -112,10 +108,7 @@
 				daType:"json",
 				success:function (data){
 					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						});
+						layer.msg(data.msg,{icon:6,time:2000});
 					} else {
 						layer.open({
 							title:'添加失败',
@@ -125,17 +118,16 @@
 						});
 					}
 				}
-			});
-			  
+			  });
               table.reload('addons-list'); //数据刷新
               layer.close(index); //关闭弹层
-            });  
-            
-            submit.trigger('click');
+            });
+			submit.trigger('click');
           }
         }); 
       }
     }
+
 	$('.layui-btn.layuiadmin-btn-admin').on('click', function(){
       var type = $(this).data('type');
       active[type] ? active[type].call(this) : '';

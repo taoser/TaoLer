@@ -34,7 +34,7 @@
   <p class="fly-home-info">
     <i class="iconfont icon-kiss" title="飞吻"></i><span style="color: #FF7200;">{$u.point} {:lang('accumulate points')}</span>
     <i class="iconfont icon-shijian"></i><span>{$u.create_time|date='Y-m-d'} {:lang('join')}</span>
-    <i class="iconfont icon-chengshi"></i><span>{:session('user_id') ? '来自'.$u.city: lang('log in to view')}</span>
+    <i class="iconfont icon-chengshi"></i>{if session('user_id')}<span>来自</span>{:hook('ipShow',$u.city)} {else /} lang('log in to view') {/if}
   </p>
   <p class="fly-home-sign">（{$u.sign ? $u.sign|raw : lang('it is not signed yet')}）</p>
 </div>

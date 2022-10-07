@@ -2,45 +2,53 @@
 {block name="body"}
 
 <div class="layui-form" lay-filter="layuiadmin-form-addons" id="layuiadmin-form-addons" style="padding: 20px 30px 0 0;">
-    {foreach name="formData" item="vo" key="k"}
-		{php}$name = "params[".$k."]";{/php}
-		{switch name="$vo.type"}
-			{case value="text"}
-			{:form_input($name,'text',['label'=>$vo.title,'tip'=>$vo.tip],$vo.value)}
-			{/case}
-			{case value="textarea"}
-			{:form_textarea($name,['label'=>$vo.title,'tip'=>$vo.tip],$vo.value)}
-			{/case}
-			{case value="password"}
-			{:form_input($name,'password',['label'=>$vo.title,'tip'=>$vo.tip],$vo.value)}
-			{/case}
-			{case value="radio"}
-			{:form_radio($name,$vo.content,['label'=>$vo.title,'tip'=>$vo.tip],$vo.value)}
-			{/case}
-			{case value="select"}
-			{:form_select($name,$vo.content,['label'=>$vo.title,'verify'=>$vo.rule,'tip'=>$vo.tip,'search'=>1] ,[],$vo.value)}
-			{/case}
-			{case value="image"}
-			{:form_upload($name,$vo.value,['label'=>$vo.title,'tip'=>$vo.tip,'verify'=>$vo.rule,'type'=>'radio','num'=>'1','mime'=>'image'])}
-			{/case}
-			{case value="images"}
-			{:form_upload($name,$vo.value,['label'=>$vo.title,'tip'=>$vo.tip,'verify'=>$vo.rule,'type'=>'checkbox','num'=>$vo.num,'mime'=>'image'])}
-			{/case}
-			{case value="file"}
-			{:form_upload($name,$vo.value,['label'=>$vo.title,'tip'=>$vo.tip,'verify'=>$vo.rule,'type'=>'radio','num'=>$vo.num,'mime'=>'*'])}
-			{/case}
-			{case value="files"}
-			{:form_upload($name,$vo.value,['label'=>$vo.title,'tip'=>$vo.tip,'verify'=>$vo.rule,'type'=>'checkbox','num'=>$vo.num,'mime'=>'*'])}
-			{/case}
-			{case value="editor"}
-			{:form_editor($name,$name,2,['label'=>$vo.title,'tip'=>$vo.tip,'verify'=>$vo.rule])}
-			{/case}
-			{case value="array"}
-			{:form_arrays($name,['label'=>$vo.title,'tip'=>$vo.tip,'verify'=>$vo.rule],$vo.value?$vo.value:$vo.content)}
-			{/case}
-		{/switch}
-    {/foreach}
-    
+	{foreach name="formData" item="vo" key="k"}
+	{php}$name = "params[".$k."]";{/php}
+	{switch name="$vo.type"}
+	{case value="text"}
+	{:form_input($name,'text',['label'=>$vo.title,'verify'=>$vo.rule,'tips'=>$vo.tips],$vo.value)}
+	{/case}
+	{case value="textarea"}
+	{:form_textarea($name,['label'=>$vo.title,'tips'=>$vo.tips],$vo.value)}
+	{/case}
+	{case value="password"}
+	{:form_input($name,'password',['label'=>$vo.title,'tips'=>$vo.tips],$vo.value)}
+	{/case}
+	{case value="radio"}
+	{:form_radio($name,$vo.content,['label'=>$vo.title,'tips'=>$vo.tips],$vo.value)}
+	{/case}
+	{case value="checkbox"}
+	{:form_checkbox($name, $vo.content,['label'=>$vo.title, 'verify' =>$vo.rule,'tips'=>$vo.tips,], $vo['value'])};
+	{/case}
+	{case value="switch"}
+	{:form_switch($name, $vo.content,['label'=>$vo.title, 'verify' =>$vo.rule,'tips'=>$vo.tips,], $vo['value'])};
+	{/case}
+	{case value="select"}
+	{:form_select($name,$vo.content,['label'=>$vo.title,'verify'=>$vo.rule,'tips'=>$vo.tips,'search'=>1] ,[],$vo.value)}
+	{/case}
+	{case value="selects"}
+	{:form_select($name,$vo.content,['label'=>$vo.title,'multipsle'=>1.,'verify'=>$vo.rule,'tips'=>$vo.tips,'search'=>1] ,[],$vo.value)}
+	{/case}
+	{case value="image"}
+	{:form_upload($name,$vo.value,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule,'type'=>'radio','num'=>'1','mime'=>'images'])}
+	{/case}
+	{case value="images"}
+	{:form_upload($name,$vo.value,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule,'type'=>'checkbox','num'=>$vo.num,'mime'=>'images'])}
+	{/case}
+	{case value="file"}
+	{:form_upload($name,$vo.value,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule,'type'=>'radio','num'=>$vo.num,'mime'=>'*'])}
+	{/case}
+	{case value="files"}
+	{:form_upload($name,$vo.value,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule,'type'=>'checkbox','num'=>$vo.num,'mime'=>'*'])}
+	{/case}
+	{case value="editor"}
+	{:form_editor($name,2,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule])}
+	{/case}
+	{case value="array"}
+	{:form_arrays($name,$vo.value?$vo.value:$vo.content,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule])}
+	{/case}
+	{/switch}
+	{/foreach}
     <div class="layui-form-item layui-hide">
 	<input type="hidden" name="name" value="{:input('name')}">
     <input type="button" lay-submit lay-filter="LAY-addons-config-submit" id="LAY-addons-config-submit" value="确认">
@@ -48,4 +56,38 @@
 </div>
 {/block}
 {block name="js"}
+<script>
+	layui.config({
+		base: '/static/admin/' //静态资源所在路径
+	}).extend({
+		index: 'lib/index' //主入口模块
+	}).use(['index', 'upload'], function(){
+		var $ = layui.$,upload = layui.upload,form = layui.form;
+		//上传头像
+		upload.render({
+			elem: '.upload-select'
+			,url: 'uploadImg'
+			,data: {type:'image'}
+			,accept: 'images'
+			,method: 'get'
+			,acceptMime: 'image/*'
+			,done: function(res){
+				$(this.item).prev("div").children("input").val(res.src);
+				if(res.code == 0){
+					layer.msg(res.msg,{
+						icon:6,
+						tiye:2000
+					});
+				} else {
+					layer.open({
+						title:"上传失败",
+						content:res.msg,
+						icon:5,
+						anim:6
+					});
+				}
+			}
+		});
+	})
+</script>
 {/block}

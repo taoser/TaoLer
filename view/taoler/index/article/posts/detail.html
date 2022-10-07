@@ -47,8 +47,8 @@
           </div>
           <div class="detail-hits">
             <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
-            <span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>・
-            <span>{$article.user.city}</span>
+            <span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
+            {:hook('ipShow',$article.user.city)}
           </div>
         </div>
         <hr>
@@ -101,7 +101,7 @@
                 </a>
                 {if condition="$article.user.id eq $vo.user.id"}<span>({:lang('poster')})</span>{/if}
               </div>
-              <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span>・<span>{$vo.user.city}</span></div>
+              <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span>{:hook('ipShow',$vo.user.city)}</span></div>
 			        {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
             <div class="detail-body jieda-body photos">{$vo.content|raw}</div>

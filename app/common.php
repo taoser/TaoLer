@@ -1,13 +1,12 @@
 <?php
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
 use taoser\think\Auth;
-
-define('DS', DIRECTORY_SEPARATOR);
 
 // 应用公共文件
 function mailto($to,$title,$content)
@@ -17,6 +16,7 @@ function mailto($to,$title,$content)
 try {
     //Server settings
     $mail->SMTPDebug = 0;                       // Enable verbose debug output
+//    $mail->SMTPDebug = SMTP::DEBUG_SERVER;
     $mail->CharSet = 'utf-8';           //b
     $mail->isSMTP();                                      // Set mailer to use SMTP
     $mail->Host = $mailserver['host'];  // Specify main and backup SMTP servers
@@ -24,6 +24,7 @@ try {
     $mail->Username = $mailserver['mail'];                 // SMTP username
     $mail->Password = $mailserver['password'];                           // SMTP password
     $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+//    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
     $mail->Port = $mailserver['port'];                                    // TCP port to connect to
 
     //Recipients
@@ -305,4 +306,28 @@ function find_spider(){
     }
     return false;
 }
+
+if (!function_exists('__')) {
+
+    /**
+     * 获取语言变量值
+     * @param string $name 语言变量名
+     * @param array  $vars 动态变量值
+     * @param string $lang 语言
+     * @return mixed
+     */
+    function __($name, $vars = [], $lang = '')
+    {
+        if (is_numeric($name) || !$name) {
+            return $name;
+        }
+        if (!is_array($vars)) {
+            $vars = func_get_args();
+            array_shift($vars);
+            $lang = '';
+        }
+        return \think\facade\Lang::get($name, $vars, $lang);
+    }
+}
+
 

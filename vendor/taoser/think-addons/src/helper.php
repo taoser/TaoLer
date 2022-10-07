@@ -10,6 +10,9 @@ use think\facade\Cache;
 use think\helper\{
     Str, Arr
 };
+use Symfony\Component\VarExporter\VarExporter;
+
+define('DS', DIRECTORY_SEPARATOR);
 
 \think\Console::starting(function (\think\Console $console) {
     $console->addCommands([
@@ -22,9 +25,7 @@ spl_autoload_register(function ($class) {
 
     $class = ltrim($class, '\\');
 
-    //$dir = app()->getRootPath();
-	$app = new App();
-    $dir = $app::getRootPath();
+    $dir = App::getRootPath();
     $namespace = 'addons';
 
     if (strpos($class, $namespace) === 0) {
@@ -41,12 +42,9 @@ spl_autoload_register(function ($class) {
             include $dir;
             return true;
         }
-
         return false;
     }
-
     return false;
-
 });
 
 if (!function_exists('hook')) {
@@ -82,49 +80,6 @@ if (!function_exists('get_addons_info')) {
     }
 }
 
-/**
- * 设置基础配置信息
- * @param string $name 插件名
- * @param array $array 配置数据
- * @return boolean
- * @throws Exception
- */
-if (!function_exists('set_addons_info')) {
-
-    function set_addons_info($name, $array)
-    {
-        $service = new Service(App::instance()); // 获取service 服务
-        $addons_path = $service->getAddonsPath();
-        // 插件列表
-        $file = $addons_path . $name . DIRECTORY_SEPARATOR . 'info.ini';
-        $addon = get_addons_instance($name);
-        $array = $addon->setInfo($name, $array);
-        $array['status'] ? $addon->enabled() : $addon->disabled();
-        if (!isset($array['name']) || !isset($array['title']) || !isset($array['version'])) {
-            throw new Exception("Failed to write plugin config");
-        }
-        $res = array();
-        foreach ($array as $key => $val) {
-            if (is_array($val)) {
-                $res[] = "[$key]";
-                foreach ($val as $k => $v)
-                    $res[] = "$k = " . (is_numeric($v) ? $v : $v);
-            } else
-                $res[] = "$key = " . (is_numeric($val) ? $val : $val);
-        }
-
-        if ($handle = fopen($file, 'w')) {
-            fwrite($handle, implode("\n", $res) . "\n");
-            fclose($handle);
-            //清空当前配置缓存
-            Config::set($array, "addon_{$name}_info");
-            Cache::delete('addonslist');
-        } else {
-            throw new Exception("File does not have write permission");
-        }
-        return true;
-    }
-}
 
 if (!function_exists('get_addons_instance')) {
     /**
@@ -181,45 +136,6 @@ if (!function_exists('get_addons_class')) {
     }
 }
 
-if (!function_exists('get_addons_config')) {
-    /**
-     * 获取插件的配置
-     * @param string $name 插件名
-     * @return mixed|null
-     */
-    function get_addons_config($name)
-    {
-        $addon = get_addons_instance($name);
-        if (!$addon) {
-            return [];
-        }
-
-        return $addon->getConfig($name);
-    }
-}
-
-if (!function_exists('set_addons_config')) {
-
-    function set_addons_config($name, $array)
-    {
-        $service = new Service(App::instance()); // 获取service 服务
-        $addons_path = $service->getAddonsPath();
-        // 插件列表
-        $file = $addons_path . $name . DIRECTORY_SEPARATOR . 'config.php';
-        if (!is_writable($file)) {
-            throw new \Exception(lang("addons.php File does not have write permission"));
-        }
-        if ($handle = fopen($file, 'w')) {
-            fwrite($handle, "<?php\n\n" . "return " . var_export($array, TRUE) . ";");
-            fclose($handle);
-        } else {
-            throw new Exception(lang("File does not have write permission"));
-        }
-        return true;
-    }
-}
-
-
 if (!function_exists('addons_url')) {
     /**
      * 插件显示内容里生成访问插件的url
@@ -261,6 +177,110 @@ if (!function_exists('addons_url')) {
         }
 
         return Route::buildUrl("@addons/{$addons}/{$controller}/{$action}", $param)->suffix($suffix)->domain($domain);
+    }
+}
+
+if (!function_exists('set_addons_info')) {
+    /**
+     * 设置基础配置信息
+     * @param string $name 插件名
+     * @param array $array 配置数据
+     * @return boolean
+     * @throws Exception
+     */
+    function set_addons_info($name, $array)
+    {
+        $service = new Service(App::instance()); // 获取service 服务
+        $addons_path = $service->getAddonsPath();
+        // 插件列表
+        $file = $addons_path . $name . DIRECTORY_SEPARATOR . 'info.ini';
+        $addon = get_addons_instance($name);
+        $array = $addon->setInfo($name, $array);
+        $array['status'] ? $addon->enabled() : $addon->disabled();
+        if (!isset($array['name']) || !isset($array['title']) || !isset($array['version'])) {
+            throw new Exception("Failed to write plugin config");
+        }
+        $res = array();
+        foreach ($array as $key => $val) {
+            if (is_array($val)) {
+                $res[] = "[$key]";
+                foreach ($val as $k => $v)
+                    $res[] = "$k = " . (is_numeric($v) ? $v : $v);
+            } else
+                $res[] = "$key = " . (is_numeric($val) ? $val : $val);
+        }
+
+        if ($handle = fopen($file, 'w')) {
+            fwrite($handle, implode("\n", $res) . "\n");
+            fclose($handle);
+            //清空当前配置缓存
+            Config::set($array, "addon_{$name}_info");
+            Cache::delete('addonslist');
+        } else {
+            throw new Exception("File does not have write permission");
+        }
+        return true;
+    }
+}
+
+
+if (!function_exists('get_addons_config')) {
+    /**
+     * 获取插件的配置
+     * @param string $name 插件名
+     * @return mixed|null
+     */
+    function get_addons_config($name)
+    {
+        $addon = get_addons_instance($name);
+        if (!$addon) {
+            return [];
+        }
+
+        return $addon->getConfig($name);
+    }
+}
+
+if (!function_exists('set_addons_config')) {
+    /**
+     * 设置插件配置文件
+     * @param string $name
+     * @param array $array
+     * @return bool
+     * @throws Exception
+     */
+    function set_addons_config(string $name, array $array)
+    {
+        $service = new Service(App::instance()); // 获取service 服务
+        $addons_path = $service->getAddonsPath();
+        // 插件列表
+        $file = $addons_path . $name . DIRECTORY_SEPARATOR . 'config.php';
+        if (!is_writable($file)) {
+            throw new \Exception(lang("addons.php File does not have write permission"));
+        }
+        if ($handle = fopen($file, 'w')) {
+            fwrite($handle, "<?php\n\n" . "return " . VarExporter::export($array) . ";\n");
+            fclose($handle);
+        } else {
+            throw new Exception(lang("File does not have write permission"));
+        }
+        return true;
+    }
+}
+
+if (!function_exists('get_addons_menu')) {
+    /**
+     * 获取插件菜单
+     * @param $name
+     * @return array|mixed
+     */
+    function get_addons_menu($name)
+    {
+        $menu = app()->getRootPath() . 'addons' . DS . $name . DS . 'menu.php';
+        if(file_exists($menu)){
+            return include_once $menu;
+        }
+        return [];
     }
 }
 

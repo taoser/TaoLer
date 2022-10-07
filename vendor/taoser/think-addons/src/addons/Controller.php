@@ -7,6 +7,7 @@ namespace taoser\addons;
 use app\BaseController;
 use think\App;
 use think\helper\Str;
+use think\facade\Lang;
 use think\facade\Config;
 use think\facade\View;
 

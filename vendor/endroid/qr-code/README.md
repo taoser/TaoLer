@@ -51,6 +51,7 @@ $result = Builder::create()
     ->labelText('This is the label')
     ->labelFont(new NotoSans(20))
     ->labelAlignment(new LabelAlignmentCenter())
+    ->validateResult(false)
     ->build();
 ```
 
@@ -65,11 +66,12 @@ use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\ValidationException;
 
 $writer = new PngWriter();
 
 // Create QR code
-$qrCode = QrCode::create('Data')
+$qrCode = QrCode::create('Life is too short to be generating QR codes')
     ->setEncoding(new Encoding('UTF-8'))
     ->setErrorCorrectionLevel(new ErrorCorrectionLevelLow())
     ->setSize(300)
@@ -87,6 +89,9 @@ $label = Label::create('Label')
     ->setTextColor(new Color(255, 0, 0));
 
 $result = $writer->write($qrCode, $logo, $label);
+
+// Validate the result
+$writer->validateResult($result, 'Life is too short to be generating QR codes');
 ```
 
 ## Usage: working with results
@@ -149,13 +154,14 @@ size can result in additional padding to compensate for the rounding difference.
 And finally the encoding (default UTF-8 to support large character sets) can be
 set to `ISO-8859-1` if possible to improve readability.
 
-## Built-in validation reader
+## Validating the generated QR code
 
-You can enable the built-in validation reader (disabled by default) by calling
-setValidateResult(true). This validation reader does not guarantee that the QR
-code will be readable by all readers but it helps you provide a minimum level
-of quality. Take note that the validator can consume quite amount of additional
-resources and it should be installed separately only if you use it.
+If you need to be extra sure the QR code you generated is readable and contains
+the exact data you requested you can enable the validation reader, which is
+disabled by default. You can do this either via the builder or directly on any
+writer that supports validation. See the examples above.
+
+Please note that validation affects performance so only use it in case of problems.
 
 ## Symfony integration
 

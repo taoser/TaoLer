@@ -7,7 +7,7 @@
         "thinkphp",
         "ORM"
     ],
-    "homepage": "http://www.aieok.com/",
+    "homepage": "https://www.aieok.com/",
     "license": "Apache-2.0",
     "authors": [
         {
@@ -37,7 +37,8 @@
         "guzzlehttp/guzzle": "7.0",
         "php-di/php-di": "^6.4",
         "workerman/phpsocket.io": "^1.1",
-        "jaeger/querylist": "^4.2"
+        "jaeger/querylist": "^4.2",
+        "symfony/var-exporter": "^5.4"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

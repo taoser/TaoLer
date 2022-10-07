@@ -14,6 +14,11 @@ use think\Response;
 
 class Api
 {
+    /**
+     * @param $url
+     * @param $data
+     * @return mixed|\think\response\Json
+     */
 	public static function urlPost($url, $data)
 	{
 		if($url == ''){

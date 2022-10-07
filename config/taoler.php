@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '1.9.29',
+    'version'   => '2.0.0',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
@@ -53,7 +53,7 @@ return [
 		// 邮件通知
         'email_notice'   => 0,
 		// 百度词条开关
-		'baidu_title_switch'   => 1,
+		'baidu_title_switch'   => 0,
 	],
 
 	// 百度SEO标签分词

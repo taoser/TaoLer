@@ -135,7 +135,7 @@ class Login extends BaseController
 		
            if ($result['code'] == 1) {
 			   $res = ['code'=>0,'msg'=>$result['msg'],'url'=>(string) url('login/index')];
-			   if(Config::get('taoler.config.email_notice')) mailto($this->showUser(1)['email'],'注册新用户通知','Hi亲爱的管理员:</br>新用户 <b>'.$data['name'].'</b> 刚刚注册了新的账号，请尽快处理。');
+			   if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'注册新用户通知','Hi亲爱的管理员:</br>新用户 <b>'.$data['name'].'</b> 刚刚注册了新的账号，请尽快处理。']);
            }else {
 			   $res = ['code'=>-1,'msg'=>$result];
            }
@@ -164,7 +164,7 @@ class Login extends BaseController
                 Cache::set('code',$code,600);
                 Cache::set('userid',$user['id'],600);
 
-                $result = mailto($data['email'],'重置密码','Hi亲爱的'.$user['name'].':</br>您正在维护您的信息，请在10分钟内验证，您的验证码为:'.$code);
+                $result = hook('mailtohook',[$data['email'],'重置密码','Hi亲爱的'.$user['name'].':</br>您正在维护您的信息，请在10分钟内验证，您的验证码为:'.$code]);
                 if($result){
                     Cache::set('repass','postcode',60);	//设置repass标志为1存入Cache
 					$res = ['code'=>0,'msg'=>'验证码已发送成功，请去邮箱查看！','url'=>(string) url('login/postcode')]; 
@@ -247,7 +247,7 @@ class Login extends BaseController
 			$code = mt_rand('1111','9999');
 			Cache::set($email, $code, 600);
 
-			$result = mailto($email,'注册邮箱验证码','Hi亲爱的新用户:</br>您正在注册我们站点的新账户，请在10分钟内验证，您的验证码为:'.$code);
+			$result = hook('mailtohook',[$email,'注册邮箱验证码','Hi亲爱的新用户:</br>您正在注册我们站点的新账户，请在10分钟内验证，您的验证码为:'.$code]);
 			if($result == 1) {
 				$res = ['code' => 0, 'msg' => '验证码已发送成功，请去邮箱查看！']; 
 			} else {

@@ -12,6 +12,7 @@ use taoler\com\Api;
 use app\common\lib\Zip;
 use think\response\Json;
 use app\admin\model\AuthRule;
+use Symfony\Component\VarExporter\VarExporter;
 
 class Addons extends AdminController
 {
@@ -27,7 +28,7 @@ class Addons extends AdminController
      * 插件列表
      * @return Json
      */
-    public function addonsList() :Json
+    public function addonsList()
     {
        
 		$type = input('type');
@@ -177,13 +178,13 @@ class Addons extends AdminController
          }
          //是否安装？
          $addInstalledVersion = get_addons_info($data['name']);
-//         if(!empty($addInstalledVersion)){
-//             $verRes = version_compare($data['version'],$addInstalledVersion['version'],'>');
-//             if(!$verRes){
-//                 return json(['code'=>-1,'msg'=>'不能降级，请选择正确版本']);
-//             }
-//             //$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
-//         }
+         if(!empty($addInstalledVersion)){
+             $verRes = version_compare($data['version'],$addInstalledVersion['version'],'>');
+             if(!$verRes){
+                 return json(['code'=>-1,'msg'=>'不能降级，请选择正确版本']);
+             }
+             //$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
+         }
 
          $file_url = $addons->addons_src;
          //判断远程文件是否可用存在
@@ -239,25 +240,18 @@ class Addons extends AdminController
             SqlFile::dbExecute($sqlInstallFile);
         }
         //安装菜单
-        $menuFile = root_path().'addons/'.$data['name'].'/menu.php';
-        if(file_exists($menuFile)) {
-            include_once $menuFile;
-            $menu = Config::get('menu');
-
-            if(!empty($menu)){
-                if(isset($menu['is_nav']) && $menu['is_nav']==1){
-                    $pid = 0;
-                }else{
-                    $pid = AuthRule::where('name','addons')->value('id');
-                }
-                $menu_arr[] = $menu['menu'];
-                $this->addAddonMenu($menu_arr, (int)$pid,1);
+        $menu = get_addons_menu($data['name']);
+        if(!empty($menu)){
+            if(isset($menu['is_nav']) && $menu['is_nav']==1){
+                $pid = 0;
+            }else{
+                $pid = AuthRule::where('name','addons')->value('id');
             }
+            $menu_arr[] = $menu['menu'];
+            $this->addAddonMenu($menu_arr, (int)$pid,1);
         }
 
-
-
-		Files::delDirAndFile('../runtime/addons/');
+		Files::delDirAndFile('../runtime/addons/'.$data['name'] . DS);
 
 		return json(['code'=>0,'msg'=>'插件安装成功！']);
 
@@ -265,21 +259,16 @@ class Addons extends AdminController
     /**
      * 卸载插件
      */
-    public function delete()
+    public function uninstall()
     {
         $name = input('name');
-        $addonsPath = '../addons/'.$name;
-        $staticPath = 'addons/'.$name;
 
         //卸载菜单
-        $menuFile = root_path().'addons/'.$name.'/menu.php';
-        if(file_exists($menuFile)) {
-            include_once $menuFile;
-            $menu = Config::get('menu');
-            if(!empty($menu)){
-                $menu_arr[] = $menu['menu'];
-                $this->delAddonMenu($menu_arr);
-            }
+        $menu = get_addons_menu($name);
+        if(!empty($menu)){
+            $menu_arr[] = $menu['menu'];
+//            halt( $menu_arr);
+            $this->delAddonMenu($menu_arr);
         }
 
         //卸载插件数据库
@@ -288,16 +277,30 @@ class Addons extends AdminController
             SqlFile::dbExecute($sqlUninstallFile);
         }
 
-        if (is_dir($staticPath)) {
-            Files::delDir($staticPath);
+
+        // 插件addons下目录
+        $addonsDir = root_path() . 'addons' . DS . $name . DS;
+        // 插件管理后台目录
+        $admin_controller = app_path() . 'controller' . DS . $name . DS;
+        $admin_model = app_path() . 'model' . DS . $name  . DS;
+        $admin_view = app_path() . 'view' . DS . $name . DS;
+        $admin_validate = app_path() . 'validate' . DS . $name . DS;
+        // 插件静态资源目录
+        $addon_public = public_path() . 'addons' . DS . $name . DS;
+
+        try {
+            if(file_exists($addonsDir)) Files::delDir($addonsDir);
+            if(file_exists($admin_controller)) Files::delDir($admin_controller);
+            if(file_exists($admin_model)) Files::delDir($admin_model);
+            if(file_exists($admin_view)) Files::delDir($admin_view);
+            if(file_exists($admin_validate)) Files::delDir($admin_validate);
+            if(file_exists($addon_public)) Files::delDir($addon_public);
+
+        } catch (\Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
-        $res = Files::delDir($addonsPath);
-		if($res){
-			return json(['code'=>0,'msg'=>'卸载成功']);
-		} else {
-			return json(['code'=>-1,'msg'=>'卸载失败']);
-		}
-        return json(['code'=>0,'msg'=>'卸载成功']);
+
+        return json(['code' => 0, 'msg' => '插件卸载成功']);
     }
 	
 	//启用插件
@@ -329,7 +332,7 @@ class Addons extends AdminController
 		$config = get_addons_config($name);
 		if(empty($config)) return json(['code'=>-1,'msg'=>'无配置项！']);
 		if(Request::isAjax()){
-			$params = Request::param('params/a');
+			$params = Request::param('params/a',[],'trim');
 			if ($params) {
                 foreach ($config as $k => &$v) {
                     if (isset($params[$k])) {
@@ -359,7 +362,10 @@ class Addons extends AdminController
 		//模板引擎初始化
         $view = ['formData'=>$config,'title'=>'title'];
 		View::assign($view);
-		return View::fetch();
+        $configFile = root_path() . 'addons' . DS . $name . DS . 'config.html';
+        $viewFile = is_file($configFile) ? $configFile : '';
+
+		return View::fetch($viewFile);
 		
 	}
 
@@ -396,7 +402,7 @@ class Addons extends AdminController
             try {
                 $v['name'] = trim($v['name'],'/');
                 $menu_rule = AuthRule::withTrashed()->where('name',$v['name'])->find();
-                if($menu_rule){
+                if(!is_null($menu_rule)){
                     $menu_rule->delete(true);
                     if ($hasChild) {
                         $this->delAddonMenu($v['sublist']);

@@ -69,7 +69,10 @@
             </dl>
           </dd>
         {else /}
-          <dd><a lay-href="{:url($vo2.name)}">{$vo2.title}</a></dd>
+          <dd><a lay-href="{:url($vo2.name)}">
+            <i class="layui-icon {$vo2.icon}"></i>
+            <cite>{$vo2.title}</cite>
+          </a></dd>
         {/if}	
       {/volist}	
       </dl>

@@ -29,16 +29,14 @@ class Service extends \think\Service
         // 自动载入插件
         $this->autoload();
         // 加载系统语言包
-        Lang::load([
-            $this->app->getRootPath() . '/vendor/taoser/think-addons/src/lang/zh-cn.php'
-        ]);
-        
+        $this->loadLang();
+        // 加载自定义路由
         $this->loadRoutes();
         // 加载插件事件
         $this->loadEvent();
         // 加载插件系统服务
         $this->loadService();
-        //加载配置
+        // 加载配置
         $this->loadConfig();
         
     }
@@ -67,7 +65,7 @@ class Service extends \think\Service
                     foreach ($val['rule'] as $k => $rule) {
                         [$addon, $controller, $action] = explode('/', $rule);
                         $rules[$k] = [
-                            'addons'        => $addon,
+                            'addon'        => $addon,
                             'controller'    => $controller,
                             'action'        => $action,
                             'indomain'      => 1,
@@ -88,13 +86,20 @@ class Service extends \think\Service
                         ->name($key)
                         ->completeMatch(true)
                         ->append([
-                            'addons' => $addon,
+                            'addon' => $addon,
                             'controller' => $controller,
                             'action' => $action
                         ]);
                 }
             }
         });
+    }
+
+    private function loadLang()
+    {
+        Lang::load([
+            $this->app->getRootPath() . '/vendor/taoser/think-addons/src/lang/zh-cn.php'
+        ]);
     }
 
     /**
