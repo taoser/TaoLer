@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 use app\common\lib\SqlFile;
+use think\Exception;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Config;
@@ -302,28 +303,25 @@ class Addons extends AdminController
 
         return json(['code' => 0, 'msg' => '插件卸载成功']);
     }
-	
-	//启用插件
-	public function start()
-	{
-		$name = input('name');
-		$arr = ['status' => 1];
-		//$res = get_addons_info($name);
-		//$res = get_addons_instance($name);
-		$res = set_addons_info($name,$arr);
-		return json(['code'=>0,'msg'=>$name.'插件已启用']);
-		
-	}
-	
-	//暂停插件
-	public function shutDown()
-	{
-		$name = input('name');
-		$arr = ['status' => 0];
-		$res = set_addons_info($name,$arr);
-		return json(['code'=>-1,'msg'=>$name.'插件已禁用']);
-		
-	}
+
+    // 启用禁用插件
+    public function status(){
+        $name = input('name');
+        $info = get_addons_info($name);
+        try{
+            $arr = ['status' => $info['status'] ? 0 :1];
+            set_addons_info($name,$arr);
+            if($arr['status']) {
+                $res = ['code'=>0,'msg'=>'启用成功'];
+            } else {
+                $res = ['code'=>0,'msg'=>'已被禁用'];
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+        return json($res);
+    }
 	
 	//配置插件
 	public function config($name)

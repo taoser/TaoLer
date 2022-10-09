@@ -30,8 +30,6 @@ class AdminController extends \app\BaseController
     {
 		//权限auth检查
         $this->aid = Session::get('admin_id');
-		//$this->checkAuth();
-		$this->getMenu();
 		//系统配置
 		$this->getIndexUrl();
 	}
@@ -63,8 +61,7 @@ class AdminController extends \app\BaseController
             }
         }
 
-        $menu = !empty($menu) ? getTree($menu) : [];
-        View::assign('menu', $menu);
+        return !empty($menu) ? getTree($menu) : [];
     }
 	
 	/**
@@ -80,10 +77,7 @@ class AdminController extends \app\BaseController
         foreach ($auth_rule_list as $value) {
                 $menu[] = $value;  
         }
-        $menus = !empty($menu) ? getTree($menu) : [];
-		//$menu2 = getTree($menu);
-		return $menus;
-        //return View::assign('menus', $menus);
+        return !empty($menu) ? getTree($menu) : [];
     }
 	
 	//清除缓存Cache

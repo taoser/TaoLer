@@ -26,6 +26,7 @@ use \Exception;
  * Worker class
  * A container for listening ports
  */
+#[\AllowDynamicProperties]
 class Worker
 {
     /**
@@ -33,7 +34,7 @@ class Worker
      *
      * @var string
      */
-    const VERSION = '4.1.3';
+    const VERSION = '4.1.4';
 
     /**
      * Status starting.
@@ -637,9 +638,18 @@ class Worker
         if (\DIRECTORY_SEPARATOR !== '/') {
             return;
         }
-        $fd = $fd ?: \fopen(static::$pidFile . '.lock', 'a+');
+        $lock_file = static::$pidFile . '.lock';
+        $fd = $fd ?: \fopen($lock_file, 'a+');
         if ($fd) {
             flock($fd, $flag);
+            if ($flag === \LOCK_UN) {
+                fclose($fd);
+                $fd = null;
+                clearstatcache();
+                if (\is_file($lock_file)) {
+                    unlink($lock_file);
+                }
+            }
         }
     }
 

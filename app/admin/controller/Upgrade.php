@@ -160,10 +160,7 @@ class Upgrade extends AdminController
 		}
 
         //把远程文件放入本地
-
-        //拼接路径
-        //$upload_dir = substr($this->upload_dir,-1) == '/' ? $this->upload_dir : $this->upload_dir.'/';
-        $upload_dir = Files::getDirPath($this->upload_dir);
+        $upload_dir = Files::getDirPath($this->upload_dir); //拼接路径
         Files::mkdirs($upload_dir);
 
 		$package_file = $upload_dir.'taoler_'.$version_num.'.zip';  //升级的压缩包文件
@@ -211,15 +208,12 @@ class Upgrade extends AdminController
 		
 		//清理缓存
 		$this->clearSysCache();
-		
-		//更新版本
-		//Db::name('system')->update(['sys_version_num'=>$version_num,'id'=>1]);
         
         $value = [
             'version'    => $version_num
         ];
 		$res = SetArr::name('taoler')->edit($value);
-		if($res == false){
+		if(!$res){
 			return json(['code'=>-1,'msg'=>'代码更新成功,但版本写入失败']);
 		}
 
@@ -227,9 +221,11 @@ class Upgrade extends AdminController
 		
     }
 
-    /**升级执行
+    /**
+     * 升级执行
      * @param string $package_file
      * @return \think\response\Json
+     * @throws \Exception
      */
     private function execute_update(string $package_file)
     {
@@ -246,7 +242,16 @@ class Upgrade extends AdminController
         //$package_name = str_replace('.zip','',$package_file);
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'50%','msg'=>'升级文件解压成功！']);
-		
+
+        //升级sql操作
+        $upSql = $zipPath.'runtime/update.sql';
+        if(file_exists($upSql)) {
+            SqlFile::dbExecute($upSql);
+            //删除sql语句
+            unlink($upSql);
+        }
+
+
 		//升级PHP
         if(is_dir($zipPath)) {
 			//升级前的写入文件权限检查
@@ -288,13 +293,7 @@ class Upgrade extends AdminController
 			
         }
 		
-		//升级sql操作
-        $upSql = $zipPath.'runtime/update.sql';
-		if(file_exists($upSql)) {
-            SqlFile::dbExecute($upSql);
-			//删除sql语句
-			unlink($upSql);
-		}
+
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'100%','msg'=>'升级成功！']);
         //更新系统的版本号了

@@ -308,7 +308,6 @@ function find_spider(){
 }
 
 if (!function_exists('__')) {
-
     /**
      * 获取语言变量值
      * @param string $name 语言变量名

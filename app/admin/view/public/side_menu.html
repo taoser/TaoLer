@@ -1,92 +1,83 @@
-<!--
- * @Author: TaoLer <alipay_tao@qq.com>
- * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-06-28 10:01:33
- * @LastEditors: TaoLer
- * @Description: 后台菜单结构
- * @FilePath: \TaoLer\app\admin\view\public\side_menu.html
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
--->
 
 <!-- 侧边菜单 -->
 <div class="layui-side layui-side-menu">
-  <div class="layui-side-scroll">
-    <div class="layui-logo" lay-href="home/console.html">
-      <span>TaoLerAdmin</span>
-    </div>
-    
-    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-      <li data-name="home" class="layui-nav-item layui-nav-itemed">
-        <a href="javascript:;" lay-tips="主页" lay-direction="2">
-          <i class="layui-icon layui-icon-home"></i>
-          <cite>主页</cite>
-        </a>
-        <dl class="layui-nav-child">
-          <dd data-name="console" class="layui-this">
-            <a lay-href="{:url('index/home')}">控制台</a>
-          </dd>
-        </dl>
-      </li>
-      
-      <!--li data-name="user" class="layui-nav-item">
-        <a href="javascript:;" lay-tips="用户" lay-direction="2">
-          <i class="layui-icon layui-icon-user"></i>
-          <cite>管理</cite>
-        </a>
-        <dl class="layui-nav-child">
-          <dd>
-            <a lay-href="{:url('User/list')}">网站用户1</a>
-          </dd>
-          <dd>
-            <a lay-href="{:url('adminList')}">后台管理员</a>
-          </dd>
-          <dd>
-            <a lay-href="{:url('authgroup/role')}">角色管理</a>
-          </dd>
-          <dd>
-            <a lay-href="{:url('authrule/index')}">权限管理</a>
-          </dd>
-        </dl>
-      </li-->
+    <div class="layui-side-scroll">
+        <div class="layui-logo" lay-href="home/console.html">
+            <span>TaoLerAdmin</span>
+        </div>
 
-{volist name="menu" id="vo1"}
-  {if condition="isset($vo1['children'])"}
-    <li data-name="set" class="layui-nav-item">
-      <a href="javascript:;" lay-tips="{$vo1.title}" lay-direction="2">
-      <i class="layui-icon {$vo1.icon}"></i>
-      <cite>{$vo1.title}</cite>
-      </a>
-      
-      <dl class="layui-nav-child">  
-      {volist name="vo1['children']" id="vo2"}
-        {if condition="isset($vo2['children'])"}
-          <dd class="layui-nav-itemed">
-            <a href="javascript:;">{$vo2.title}</a>
-            <dl class="layui-nav-child">
-            {volist name="vo2['children']" id="vo3"}
-            <dd><a lay-href="{:url($vo3.name)}">{$vo3.title}</a></dd>
+        <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+            <li data-name="home" class="layui-nav-item layui-nav-itemed">
+                <a href="javascript:;" lay-tips="主页" lay-direction="2">
+                    <i class="layui-icon layui-icon-home"></i>
+                    <cite>主页</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd data-name="console" class="layui-this">
+                        <a lay-href="{:url('index/home')}">控制台</a>
+                    </dd>
+                </dl>
+            </li>
+
+            <li data-name="user" class="layui-nav-item">
+                <a href="javascript:;" lay-tips="用户" lay-direction="2">
+                    <i class="layui-icon layui-icon-user"></i>
+                    <cite>管理</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a lay-href="{:url('User/list')}">网站用户1</a>
+                    </dd>
+                    <dd>
+                        <a lay-href="{:url('adminList')}">后台管理员</a>
+                    </dd>
+                    <dd>
+                        <a lay-href="{:url('authgroup/role')}">角色管理</a>
+                    </dd>
+                    <dd>
+                        <a lay-href="{:url('authrule/index')}">权限管理</a>
+                    </dd>
+                </dl>
+            </li>;
+
+            {volist name="menu" id="vo1"}
+            {if condition="isset($vo1['children'])"}
+            <li data-name="set" class="layui-nav-item">
+                <a href="javascript:;" lay-tips="{$vo1.title}" lay-direction="2">
+                    <i class="layui-icon {$vo1.icon}"></i>
+                    <cite>{$vo1.title}</cite>
+                </a>
+
+                <dl class="layui-nav-child">
+                    {volist name="vo1['children']" id="vo2"}
+                    {if condition="isset($vo2['children'])"}
+                    <dd class="layui-nav-itemed">
+                        <a href="javascript:;">{$vo2.title}</a>
+                        <dl class="layui-nav-child">
+                            {volist name="vo2['children']" id="vo3"}
+                            <dd><a lay-href="{:url($vo3.name)}">{$vo3.title}</a></dd>
+                            {/volist}
+                        </dl>
+                    </dd>
+                    {else /}
+                    <dd><a lay-href="{:url($vo2.name)}">
+                        <i class="layui-icon {$vo2.icon}"></i>
+                        <cite>{$vo2.title}</cite>
+                    </a></dd>
+                    {/if}
+                    {/volist}
+                </dl>
+            </li>
+            {else /}
+            <li data-name="get" class="layui-nav-item">
+                <a href="javascript:;" lay-href="{:url($vo1.name)}" lay-tips="{$vo1.title}" lay-direction="2">
+                    <i class="layui-icon {$vo1.icon}"></i>
+                    <cite>{$vo1.title}</cite>
+                </a>
+            </li>
+            {/if}
             {/volist}
-            </dl>
-          </dd>
-        {else /}
-          <dd><a lay-href="{:url($vo2.name)}">
-            <i class="layui-icon {$vo2.icon}"></i>
-            <cite>{$vo2.title}</cite>
-          </a></dd>
-        {/if}	
-      {/volist}	
-      </dl>
-    </li>
-  {else /}
-    <li data-name="get" class="layui-nav-item">
-      <a href="javascript:;" lay-href="{:url($vo1.name)}" lay-tips="{$vo1.title}" lay-direction="2">
-      <i class="layui-icon {$vo1.icon}"></i>
-      <cite>{$vo1.title}</cite>
-      </a>
-    </li>
-  {/if}
-{/volist}
-
-    </ul>
-  </div>
+        </ul>
+    </div>
 </div>
+
