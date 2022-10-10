@@ -98,8 +98,7 @@ class Index extends AdminController
 		
 		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
 		if($verCheck->code !== -1){
-			$versions = $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
-			return $versions;
+            return $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
 		} else {
 			return lang('No new messages');
 		}

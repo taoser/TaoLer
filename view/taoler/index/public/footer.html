@@ -10,7 +10,7 @@
         </ul>
         <div class="copyright">
           <span class="layui-hide"> v{:config('taoler.version')}</span> {$sysInfo.showlist|raw}
-          <p>Copyright © {:date('Y')} {$sysInfo.copyright|raw} <a href="https://www.aieok.com" target="blank" title="TaoLerCMS" class="layui-hide-xs">由TaoLerCMS驱动</a>
+          <p>Copyright © {:date('Y')} {$sysInfo.copyright|raw} <a href="https://www.aieok.com" target="blank" title="TaoLerCMS" class="layui-hide">TaoLerCMS</a>
             <a href="https://beian.miit.gov.cn/" target="blank">{$sysInfo.icp}</a>
           </p>
         </div>
@@ -21,14 +21,14 @@
         <div class="footer-sns">
           <a class="sns-wx" href="javascript:;" aria-label="icon">
             <i class="layui-icon layui-icon-login-wechat sns-icon"></i>
-            <span style="background-image:url(https://www.aieok.com/static/home/img/wx.png);"></span>
+            <span style="background-image:url({:hook('qqKefu','wxqr')});"></span>
           </a>
           <a class="sns-wx" href="javascript:;" aria-label="icon">
             <i class="layui-icon layui-icon-chat sns-icon"></i>
-            <span style="background-image:url(https://www.aieok.com/static/home/img/qq.png);"></span>
+            <span style="background-image:url({:hook('qqKefu','qqqr')});"></span>
           </a>
-          <a href="{$Request.domain}" target="_blank" rel="nofollow noopener" aria-label="icon"> 
-            <i class="layui-icon layui-icon-login-qq sns-icon"></i>  
+          <a href="{:hook('qqKefu','qq')}" target="_blank" rel="nofollow noopener" aria-label="icon" title="点击跟我聊天">
+            <i class="layui-icon layui-icon-login-qq sns-icon"></i>
            </a>
         </div>
       </div>

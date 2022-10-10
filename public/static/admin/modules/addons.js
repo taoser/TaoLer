@@ -118,7 +118,7 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
                 var field = data.field; //获取提交的字段
                 $.ajax({
                   type: "post",
-                  url: addonsConfig,
+                  url: url,
                   data: field,
                   daType: "json",
                   success: function (res) {
@@ -141,23 +141,23 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
           forms.on("click", "button", function (data) {
             var even = this.getAttribute("lay-event");
             var names = this.dataset.name;
-            if (even == "addInput") {
-              var html = '<div class="layui-form-item">\n' +
-                  '<label class="layui-form-label"></label>\n' +
-                  '<div class="layui-input-inline">\n' +
-                  ' <input type="text" name="'+ names +'[key][]" value="" placeholder="key" autocomplete="off" class="layui-input input-double-width">\n' +
-                  '</div>\n' +
-                  '<div class="layui-input-inline">\n' +
-                  ' <input type="text" name="'+ names +'[value][]" value="" placeholder="value" autocomplete="off" class="layui-input input-double-width">\n' +
-                  '</div>\n' +
-                  '<button data-name="'+ names +'" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">\n' +
-                  ' <i class="layui-icon"></i>\n' +
-                  '</button>\n' +
-                  '</div>';
-              $(this).parent().parent().append(html);
-            } else {
-              $(this).parent().remove();
-            }
+            // if (even == "addInput") {
+            //   var html = '<div class="layui-form-item">\n' +
+            //       '<label class="layui-form-label"></label>\n' +
+            //       '<div class="layui-input-inline">\n' +
+            //       ' <input type="text" name="'+ names +'[key][]" value="" placeholder="key" autocomplete="off" class="layui-input input-double-width">\n' +
+            //       '</div>\n' +
+            //       '<div class="layui-input-inline">\n' +
+            //       ' <input type="text" name="'+ names +'[value][]" value="" placeholder="value" autocomplete="off" class="layui-input input-double-width">\n' +
+            //       '</div>\n' +
+            //       '<button data-name="'+ names +'" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">\n' +
+            //       ' <i class="layui-icon"></i>\n' +
+            //       '</button>\n' +
+            //       '</div>';
+            //   $(this).parent().parent().append(html);
+            // } else {
+            //   $(this).parent().remove();
+            // }
           });
         },
       });

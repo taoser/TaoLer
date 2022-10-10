@@ -1,0 +1,246 @@
+{extend name="public/base" /}
+
+{block name="body"}
+  <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">我的插件</div>
+            <div class="layui-card-body">
+				<div style="padding-bottom: 10px;">
+				  <!--button class="layui-btn layuiadmin-btn-admin" data-type="batchdel">删除</button-->
+				  <button class="layui-btn layuiadmin-btn-admin" data-type="add">创建插件</button>
+				</div>            
+                <table id="app-list" lay-filter="app-list"></table>
+
+                <script type="text/html" id="app-tool">
+                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="zip"><i class="layui-icon layui-icon-android"></i>打包</a>
+<!--                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>-->
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+  </div>
+  
+{/block}
+{block name="js"}
+<script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index','table','form'], function(){
+  var $ = layui.jquery
+  ,table = layui.table
+  ,form = layui.form;
+
+  //版本推送
+	table.render({
+		elem: '#app-list',
+		url: "{:url('addonfactory.index/index')}",
+		limit: 5,
+		cols:[[
+			{type: 'numbers', fixed: 'left'},
+			{field: 'name',title: '插件', width: 150},
+            {field: 'title',title: '标题', width: 150},
+			{field: 'author',title: '作者', width: 100},
+			{field: 'description',title: '简介', minWidth: 200},
+			{field: 'create_time',title: '时间', width: 150},
+			{title: '操作', width: 250, align:'center', toolbar: '#app-tool'}
+		]]
+		,page: true
+		,limit: 10
+		,height: 'full-220'
+		,text: '对不起，加载出现异常！'
+	});
+	
+//监听工具条
+  table.on('tool(app-list)', function(obj){
+    var data = obj.data;
+      if(obj.event === 'zip'){
+              layer.confirm('确定打包文件?', function(index){
+                  //obj.del();
+                  $.ajax({
+                      type:'post',
+                      url:"{:url('addonfactory.index/addonZip')}",
+                      data:{id:data.id, name: data.name, version: data.version},
+                      dataType:'json',
+                      success:function(data){
+                          if(data.code == 0){
+                              layer.msg(data.msg,{
+                                  icon:6,
+                                  time:2000
+                              });
+                          } else {
+                              layer.open({
+                                  title:'删除失败',
+                                  content:data.msg,
+                                  icon:5,
+                                  adim:6
+                              })
+                          }
+                      }
+                  });
+                  table.reload('app-list');
+                  layer.close(index);
+              });
+      } else if(obj.event === 'del'){
+      layer.prompt({
+        formType: 1
+        ,title: '敏感操作，请验证口令'
+      }, function(value, index){
+        layer.close(index);
+        
+        layer.confirm('真的删除行么', function(index){
+          //obj.del();
+		  $.ajax({
+				type:'post',
+				url:"{:url('addonfactory.index/delete')}",
+				data:{id:data.id, name: data.name},
+				dataType:'json',
+				success:function(data){
+					if(data.code == 0){
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							title:'删除失败',
+							content:data.msg,
+							icon:5,
+							adim:6
+						})
+					}
+				}
+			});
+		  table.reload('app-list');
+          layer.close(index);
+        });
+      });
+    } else if(obj.event === 'edit'){
+      var tr = $(obj.tr);
+      layer.open({
+        type: 2
+        ,title: '编辑插件'
+        ,content: "{:url('addonfactory.index/edit')}" + '?id='+ data.id
+        ,maxmin: true
+        ,area: ['400px', '700px']
+        ,btn: ['确定', '取消']
+        ,yes: function(index, layero){
+			
+          var iframeWindow = window['layui-layer-iframe'+ index]
+          ,submitID = 'LAY-app-submit'
+          ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+          //监听提交
+          iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+            var field = data.field; //获取提交的字段
+			
+            //提交 Ajax 成功后，静态更新表格中的数据
+            $.ajax({
+				type:"post",
+				url:"{:url('app/edit')}",
+				data:field,
+				daType:"json",
+				success:function (res){
+					if (res.code == 0) {
+						layer.msg(res.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.open({
+							tiele:'修改失败',
+							content:res.msg,
+							icon:5,
+							anim:6
+						});
+					}
+				}
+			});
+			
+            table.reload('app-list'); //数据刷新
+            layer.close(index); //关闭弹层
+          });  
+          
+          submit.trigger('click');
+        }
+        ,success: function(layero, index){
+          
+        }
+      });
+    }
+  });
+
+  //创建插件事件
+    var active = {
+      add: function(){
+        layer.open({
+          type: 2
+          ,title: '插件生成器'
+          ,content: 'add.html'
+          ,area: ['60%', '80%']
+          ,btn: ['确定', '取消']
+          ,yes: function(index, layero){
+            var iframeWindow = window['layui-layer-iframe'+ index]
+            ,submitID = 'LAY-app-submit'
+            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+            //监听提交
+            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+              var field = data.field; //获取提交的字段
+
+              //提交 Ajax 成功后，静态更新表格中的数据
+              $.ajax({
+				type:"post",
+				url:"{:url('addonfactory.index/add')}",
+				data:field,
+				daType:"json",
+				success:function (data){
+					if (data.code == 0) {
+						layer.msg(data.msg,{icon:6,time:2000});
+					} else {
+						layer.open({title:'添加失败',content:data.msg,icon:5,anim:6});
+					}
+				}
+			});
+			  
+              table.reload('app-list'); //数据刷新
+              layer.close(index); //关闭弹层
+            });  
+            
+            submit.trigger('click');
+          }
+        }); 
+      }
+    }
+	
+	//审核
+	form.on('switch(appcheck)', function(data){
+	var data= data.elem;
+	status = data.checked ? 1 : -1;
+	//执行帖子审核
+		$.ajax({
+			type:'post',
+			url:"{:url('app/check')}",
+			data:{id:data.id,app_status:status},
+			dataType:'json',
+			success:function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{icon:res.icon,time:2000});
+				} else {
+					layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+				}
+			table.reload('app-list');
+			}
+		});
+		return false;
+	}); 
+	
+	$('.layui-btn.layuiadmin-btn-admin').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+
+  });
+</script>
+{/block}

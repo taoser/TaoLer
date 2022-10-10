@@ -50,15 +50,15 @@ class Addons extends AdminController
                         }
                     $res['col'] = [
                         ['type' => 'numbers'],
-                        ['field' => 'name','title'=> '插件', 'width'=> 150],
+                        ['field' => 'name','title'=> '插件', 'width'=> 120],
                         ['field'=> 'title','title'=> '标题', 'width'=> 100],
-                        ['field'=> 'version','title'=> '版本', 'width'=> 100],
-                        ['field' => 'author','title'=> '作者', 'width'=> 100],
+                        ['field'=> 'version','title'=> '版本', 'width'=> 60],
+                        ['field' => 'author','title'=> '作者', 'width'=> 80],
                         ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
                         ['field' => 'show','title'=> '状态', 'width'=> 100],
                         ['field' => 'install','title'=> '安装', 'width'=> 100],
-                        ['field' => 'ctime','title'=> '到期时间', 'width'=> 150],
-                        ['title' => '操作', 'width'=> 220, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
+                        ['field' => 'ctime','title'=> '到期时间', 'width'=> 100],
+                        ['title' => '操作', 'width'=> 200, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
                     ];
                 } else {
 					$res = ['code'=>-1,'msg'=>'没有安装任何插件'];
@@ -81,7 +81,7 @@ class Addons extends AdminController
 							['field' => 'downloads','title'=> '下载', 'width'=> 70],
                             ['field' => 'version','title'=> '版本', 'width'=> 70],
                             ['field' => 'status','title'=> '状态', 'width'=> 70],
-							['title' => '操作', 'width'=> 180, 'align'=>'center', 'toolbar'=> '#addons-tool']
+							['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
 						];
 					} else {
 						$res = ['code'=>-1,'msg'=>'未获取到服务器信息'];
@@ -165,6 +165,17 @@ class Addons extends AdminController
             $res = ['code'=>-1,'msg'=>'上传错误'];
         }
 		return json($res);
+    }
+
+    /**
+     * 上传接口
+     *
+     * @return void
+     */
+    public function uploads()
+    {
+        $type = Request::param('type');
+        return $this->uploadFiles($type);
     }
 
     //安装插件

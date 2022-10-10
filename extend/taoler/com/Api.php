@@ -37,7 +37,7 @@ class Api
 		$res = curl_exec($ch);
 		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
 		curl_close($ch);
-		if($httpCode == '200'){
+		if($httpCode == 200){
 			return json_decode($res);
 		} else {
 			return json_decode('{"code":-1,"msg":"远程服务器失败,稍后重试"}');	//转换为对象
@@ -54,7 +54,7 @@ class Api
 		$data = curl_exec($ch);
 		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
 		curl_close($ch);
-		if($httpCode == '200'){
+		if($httpCode == 200){
 			return json_decode($data);
 		} else {
 			//$status ='{"code":-1,"msg":"远程服务器失败"}';	//字符串
@@ -72,7 +72,7 @@ class Api
 		$data = curl_exec($ch);
 		$httpCode = curl_getinfo($ch,CURLINFO_HTTP_CODE);
 		curl_close($ch);
-		if($httpCode == '200'){
+		if($httpCode == 200){
 			//return json_decode($data);
             return json(['code'=>0, 'data'=>$data]);
 		} else {

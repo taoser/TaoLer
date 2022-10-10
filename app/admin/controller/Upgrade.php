@@ -102,41 +102,24 @@ class Upgrade extends AdminController
             Db::name('system')->cache('system')->update(['clevel'=>$cy->level,'id'=>1]);
         }
         $versions = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
-		//判断服务器状态
+		// 判断服务器状态
 		$version_code = $versions->code;
 		if($version_code == -1){
 			$res = json(['code'=>$version_code,'msg'=>$versions->msg]);
 		}
 		if($version_code == 1){
-            $res = json(['code'=>$versions->code,'msg'=>$versions->msg,'version'=>$versions->version,'upnum'=>$versions->up_num,'info'=>$versions->info]);
+            $res = json(['code'=>$version_code,'msg'=>$versions->msg,'data'=>['version'=>$versions->version,'upnum'=>$versions->up_num,'info'=>$versions->info]]);
 		}
 		if($version_code == 0){
-            $res = json(['code'=>$versions->code,'msg'=>$versions->msg]);
+            $res = json(['code'=>$version_code,'msg'=>$versions->msg]);
 		}
 
         return $res;
 	}
-
-    /**
-     * 备份
-     * @param string $dir
-     * @param string $backDir
-     * @param array $ex
-     * @return \think\response\Json
-     */
-	public function backFile(string $dir,string $backDir,array $ex)
-    {
-        $backRes = Files::copydirs($dir, $backDir, $ex);
-        $backData = $backRes->getData();
-        if($backData['code'] == -1){
-            Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'error','progress'=>'25%','msg'=>'备份失败!']);
-            return json(['code'=>-1,'msg'=>$backRes['msg']]);
-        }
-        Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'30%','msg'=>'执行文件备份成功！']);
-    }
 	
     /**
      * 在线更新
+     * 1.提交接口2.下载数据包3.备份4升级
      */
     public function upload()
     {
@@ -158,21 +141,20 @@ class Upgrade extends AdminController
 		if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
 			return json(['code'=>-1,'msg'=>'获取远程文件失败']);
 		}
-
-        //把远程文件放入本地
-        $upload_dir = Files::getDirPath($this->upload_dir); //拼接路径
+        $upload_dir = Files::getDirPath($this->upload_dir); //拼接升级文件暂存路径
         Files::mkdirs($upload_dir);
 
-		$package_file = $upload_dir.'taoler_'.$version_num.'.zip';  //升级的压缩包文件
-		$cpfile = copy($file_url,$package_file);
+		$package_file = $upload_dir.'taoler_'.$version_num.'.zip';  //本地zip文件
+		$cpfile = copy($file_url,$package_file); //把远程文件放入本地
         if(!$cpfile) {
             return json(['code'=>-1,'msg'=>'下载升级文件失败']);  
         }
+
         //记录下日志
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'20%','msg'=>'上传升级包'.$version_num.'成功！']);
 
         //升级前备份代码
-		$ex = array('.git','.idea','runtime','data','addons','config','extend','mysql','public','vendor','view');  //  排除备份文件夹
+		$ex = array('.git','.idea','runtime','data','addons','config','extend','mysql','public','vendor','view');  //  排除备份目录
         $this->backFile($this->root_dir,$this->backup_dir,$ex);
 
         //执行升级
@@ -186,7 +168,7 @@ class Upgrade extends AdminController
 		Files::delDirAndFile($this->upload_dir);
 		Files::delDirAndFile($this->backup_dir);
 		
-		//清除无用目录和文件
+		//清除废弃目录和文件
 		$delFiles = '../runtime/remove.txt';
 		if(file_exists($delFiles)){
 			$str = file_get_contents($delFiles); //将整个文件内容读入到一个字符串中
@@ -205,10 +187,10 @@ class Upgrade extends AdminController
 			}
 			unlink($delFiles);
 		}
-		
-		//清理缓存
-		$this->clearSysCache();
-        
+
+        //更新系统的版本号了
+        //更新php的版本号了(应该跟svn／git的版本号一致)
+        //更新数据库的版本号了(应该跟svn／git的版本号一致)
         $value = [
             'version'    => $version_num
         ];
@@ -216,7 +198,9 @@ class Upgrade extends AdminController
 		if(!$res){
 			return json(['code'=>-1,'msg'=>'代码更新成功,但版本写入失败']);
 		}
-
+        Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'100%','msg'=>'升级成功！']);
+        //清理缓存
+        $this->clearSysCache();
 		return json(['code'=>0,'msg'=>'升级成功']);
 		
     }
@@ -229,7 +213,7 @@ class Upgrade extends AdminController
      */
     private function execute_update(string $package_file)
     {
-        //解压 zip文件有密码的话需要解密
+        // 1.解压 zip文件有密码的话需要解密
         $zip = new Zip;
         $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
         $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
@@ -243,16 +227,21 @@ class Upgrade extends AdminController
 
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'50%','msg'=>'升级文件解压成功！']);
 
-        //升级sql操作
+        // 2.升级sql操作
         $upSql = $zipPath.'runtime/update.sql';
         if(file_exists($upSql)) {
-            SqlFile::dbExecute($upSql);
+            try{
+                SqlFile::dbExecute($upSql);
+            } catch (\Exception $e){
+                return json(['code'=>-1,'msg'=>$e->getMessage()]);
+            }
+
             //删除sql语句
             unlink($upSql);
         }
 
 
-		//升级PHP
+		// 3.升级PHP
         if(is_dir($zipPath)) {
 			//升级前的写入文件权限检查
 			$allUpdateFiles = Files::getAllFile($zipPath);
@@ -292,13 +281,6 @@ class Upgrade extends AdminController
 			Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'70%','msg'=>'升级文件执行成功！']);
 			
         }
-		
-
-
-        Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'100%','msg'=>'升级成功！']);
-        //更新系统的版本号了
-        //更新php的版本号了(应该跟svn／git的版本号一致)
-        //更新数据库的版本号了(应该跟svn／git的版本号一致)
 
         return json(['code'=>0,'msg'=>'升级文件执行成功']);
     }
@@ -357,6 +339,24 @@ class Upgrade extends AdminController
 		}
 
         return json(['code'=>0,'msg'=>'升级成功']);
+    }
+
+    /**
+     * 备份
+     * @param string $dir
+     * @param string $backDir
+     * @param array $ex
+     * @return \think\response\Json
+     */
+    public function backFile(string $dir,string $backDir,array $ex)
+    {
+        $backRes = Files::copydirs($dir, $backDir, $ex);
+        $backData = $backRes->getData();
+        if($backData['code'] == -1){
+            Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'error','progress'=>'25%','msg'=>'备份失败!']);
+            return json(['code'=>-1,'msg'=>$backRes['msg']]);
+        }
+        Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'30%','msg'=>'执行文件备份成功！']);
     }
 
 

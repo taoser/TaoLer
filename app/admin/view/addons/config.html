@@ -61,30 +61,22 @@
 		base: '/static/admin/' //静态资源所在路径
 	}).extend({
 		index: 'lib/index' //主入口模块
-	}).use(['index', 'upload'], function(){
-		var $ = layui.$,upload = layui.upload,form = layui.form;
+	}).use(['index', 'upload','notify'], function(){
+		var $ = layui.$,upload = layui.upload,form = layui.form,notify=layui.notify;
 		//上传头像
 		upload.render({
 			elem: '.upload-select'
-			,url: 'uploadImg'
+			,url: 'uploads'
 			,data: {type:'image'}
 			,accept: 'images'
 			,method: 'get'
 			,acceptMime: 'image/*'
 			,done: function(res){
-				$(this.item).prev("div").children("input").val(res.src);
-				if(res.code == 0){
-					layer.msg(res.msg,{
-						icon:6,
-						tiye:2000
-					});
+				$(this.item).prevAll("input").val(res.url);
+				if(res.status == 0){
+					notify.success(res.msg);
 				} else {
-					layer.open({
-						title:"上传失败",
-						content:res.msg,
-						icon:5,
-						anim:6
-					});
+					notify.error(res.msg);
 				}
 			}
 		});
