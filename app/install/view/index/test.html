@@ -21,17 +21,106 @@
                 </tr>
                 <tr>
                     <td>php版本</td>
-                    <td>&gt;7.2.5</td>
+                    <td>&gt;7.4.0</td>
                     <td>
                         <?php echo PHP_VERSION ?>
                     </td>
-                    <td class="<?php if(version_compare(PHP_VERSION, '7.2.5', '>='))echo 'yes'; ?>">
-                        <?php if (version_compare(PHP_VERSION, '7.2.5', '>=')): ?> √
-                        <?php else: ?> ×
+                    <td>
+                        <?php if (version_compare(PHP_VERSION, '7.4.0', '>=')): ?>
+                        <span class="yes">√</span>
+                        <?php else: ?>
+                        ×
                         <?php endif ?>
                     </td>
                 </tr>
             </table>
+
+            <h2>扩展检测：</h2>
+            <table width="100%">
+                <tr>
+                    <th width="25%">坏境</th>
+                    <th width="25%">最低配置</th>
+                    <th width="25%">当前配置</th>
+                    <th width="25%">是否符合</th>
+                </tr>
+                <tr>
+                    <td>数据库</td>
+                    <td>Mysqli</td>
+                    <td><?php
+                            $pdo = false;
+                            if(class_exists('PDO', false))
+                            {
+                               if(defined('PDO::MYSQL_ATTR_USE_BUFFERED_QUERY'))
+                                {
+                                    echo 'PDO_MYSQL';
+                                    $pdo = true;
+                                }
+                                else
+                                {
+                                    echo '不支持PDO_MYSQL';
+                                }
+                            }
+                            else
+                            {
+                                echo '不支持PDO_MYSQL';
+                            }
+                            if(!$pdo)
+                            {
+                                if (function_exists('mysqli_close'))
+                                {
+                                    echo 'MySQLi';
+                                    $pdo = true;
+                                }
+                            }
+                        ?>
+                    </td>
+                    <td>
+                        <?php if ($pdo): ?>
+                        <span class="yes">√</span>
+                        <?php else: ?>
+                        ×
+                        <?php endif; ?>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>PDO</td>
+                    <td>支持</td>
+                    <td>
+                        <?php if(extension_loaded('pdo')): ?>
+                        Yes
+                        <?php else: ?>
+                        No
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if(extension_loaded('pdo')): ?>
+                        <span class="yes">√</span>
+                        <?php else: ?>
+                        ×
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>fileinfo</td>
+                    <td>支持</td>
+                    <td>
+                        <?php if(get_extension_funcs('fileinfo')): ?>
+                        Yes
+                        <?php else: ?>
+                        No
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if(get_extension_funcs('fileinfo')): ?>
+                        <span class="yes">√</span>
+                        <?php else: ?>
+                        ×
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
+
             <h2>目录权限：</h2>
             <table width="100%">
                 <tr>
@@ -48,9 +137,11 @@
                         <?php else: ?> 不可写
                         <?php endif ?>
                     </td>
-                    <td class="<?php if(is_writable('../app'))echo 'yes'; ?>">
-                        <?php if (is_writable('../app')): ?> √
-                        <?php else: ?> ×
+                    <td>
+                        <?php if (is_writable('../app')): ?>
+                        <span class="yes">√</span>
+                        <?php else: ?>
+                        ×
                         <?php endif ?>
                     </td>
                 </tr>
@@ -62,8 +153,9 @@
                         <?php else: ?> 不可写
                         <?php endif ?>
                     </td>
-                    <td class="<?php if(is_writable('../config'))echo 'yes'; ?>">
-                        <?php if (is_writable('../config')): ?> √
+                    <td>
+                        <?php if (is_writable('../config')): ?>
+                        <span class="yes">√</span>
                         <?php else: ?> ×
                         <?php endif ?>
                     </td>
@@ -76,9 +168,11 @@
                         <?php else: ?> 不可写
                         <?php endif ?>
                     </td>
-                    <td class="<?php if(is_writable('../public'))echo 'yes'; ?>">
-                        <?php if (is_writable('../public')): ?> √
-                        <?php else: ?> ×
+                    <td>
+                        <?php if (is_writable('../public')): ?>
+                        <span class="yes">√</span>
+                        <?php else: ?>
+                        ×
                         <?php endif ?>
                     </td>
                 </tr>
@@ -90,9 +184,11 @@
                         <?php else: ?> 不可写
                         <?php endif ?>
                     </td>
-                    <td class="<?php if(is_writable('../runtime'))echo 'yes'; ?>">
-                        <?php if (is_writable('../runtime')): ?> √
-                        <?php else: ?> ×
+                    <td>
+                        <?php if (is_writable('../runtime')): ?>
+                        <span class="yes">√</span>
+                        <?php else: ?>
+                        ×
                         <?php endif ?>
                     </td>
                 </tr>
@@ -104,9 +200,11 @@
                         <?php else: ?> 不可写
                         <?php endif ?>
                     </td>
-                    <td class="<?php if(is_writable('../view'))echo 'yes'; ?>">
-                        <?php if (is_writable('../view')): ?> √
-                        <?php else: ?> ×
+                    <td>
+                        <?php if (is_writable('../view')): ?>
+                        <span class="yes">√</span>
+                        <?php else: ?>
+                        ×
                         <?php endif ?>
                     </td>
                 </tr>
@@ -123,12 +221,12 @@
 {/block}
 {block name="script"}
 <script>
-    function testClick() {
-        if ($('.yes').length != 7) {
-            alert('您的配置或权限不符合要求');
-        } else {
-            location.href = "{:url('index/create')}";
+        function testClick() {
+            if ($('.yes').length < 10) {
+                notify.error('您的配置或权限不符合要求',"vcenter");
+            } else {
+                location.href = "{:url('index/create')}";
+            }
         }
-    }
 </script>
 {/block}

@@ -3,7 +3,6 @@ namespace app\install\controller;
 
 use app\common\controller\BaseController;
 use think\facade\View;
-use think\facade\Db;
 use think\facade\Request;
 use think\facade\Session;
 
@@ -12,8 +11,9 @@ class Index extends BaseController
 	// 检测是否安装过
 	protected function initialize(){
         if(file_exists('./install.lock')){
-           echo "<script>alert('已经成功安装了TaoLer社区系统，安装系统已锁定。如需重新安装，请删除根目录下的install.lock文件')</script>";
-		   die();
+            echo '<script src="/static/layui/layui.js"></script>'.
+                '<script>var layer = layui.layer; layer.alert("TaoLer系统已被锁定。<br>如需重新安装，请删除public目录下的install.lock文件")</script>';
+            die();
         }
     }
 
@@ -24,7 +24,7 @@ class Index extends BaseController
         return View::fetch('agreement');
     }
 	
-	//test
+	// 环境检测
     public function test()
 	{
 		if(Session::get('install') == 1){
@@ -35,7 +35,7 @@ class Index extends BaseController
 		} 
     }
 	
-	//create
+	// 数据创建
     public function create(){
 		if(Session::get('install') == 2){
 			Session::set('install',3);
@@ -64,7 +64,6 @@ class Index extends BaseController
 		}
 		if ($data['admin_pass'] != $data['admin_pass2']) {
 			return json(['code'=>-1,'msg'=>'两次输入的密码不一致']);
-			//die("<script>alert('两次输入的密码不一致');history.go(-1)</script>");
 		}
 
 		$email = $data['admin_email'];
@@ -140,7 +139,7 @@ class Index extends BaseController
 			$db = null;
 			
 
-		$db_str = <<<php
+		$db_str = <<<EOV
 <?php
 return [
 	// 默认使用的数据库连接配置
@@ -196,7 +195,7 @@ return [
 		// 更多的数据库配置信息
     ],
 ];
-php;
+EOV;
         // 创建数据库链接配置文件
 			$database = '../config/database.php';
 			if (file_exists($database)) {
@@ -211,7 +210,6 @@ php;
 					$res = json(['code' => -1,'msg'=>'config/database.php 无写入权限']);
 				}
 			}
-
         }
 
 		//安装上锁
