@@ -83,6 +83,8 @@ class Login extends BaseController
 			$user = new User();
 			$res = $user->login($data);
             if ($res == 1) {	//登陆成功
+                $user = $user->getLoggedUser();
+                halt($user);
                 return Msgres::success('login_success',$refer);
             } else {
 				return Msgres::error($res);

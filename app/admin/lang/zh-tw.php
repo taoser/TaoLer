@@ -123,7 +123,17 @@ return [
 	 'in' 				=> '在',
 	 'accumulate points'	=> '積分',
 	 'my post'			=> '我的帖子',
-	 'my auth'			=> '我的授权'
+	 'my auth'			=> '我的授权',
+    'Please log in 10 minutes later' => '请10分钟后再登陆',
+    'Login error 3, Please log in 10 minutes later'	=> '连续登陆错误3次,请10分钟后登录',
+    'Account disabled'	=> '账号被禁用，请联系管理员',
+    'Pending approval'	=> '待审核，请联系管理员',
+
+    'Authorized'	=> '已授权',
+    'Unauthorized'	=> '未授权',
+    'Free version'=> '免费版',
+    'username or email' => '用户名或邮箱',
+    'account or password cannot empty'  => '账号和密码不能为空'
 
 
 ];

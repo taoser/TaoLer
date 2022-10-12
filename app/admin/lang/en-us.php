@@ -122,5 +122,15 @@ return [
 	'in' 				=> 'in',
 	'accumulate points'	=> 'Accumulate points',
 	'my post'			=> 'My post',
-	'my auth'			=> 'My authorize'
+	'my auth'			=> 'My authorize',
+    'Please log in 10 minutes later' => 'Please log in 10 minutes later',
+    'Login error 3, Please log in 10 minutes later'	=> 'Login error 3, Please log in 10 minutes later',
+    'Account disabled'	=> 'Account disabled',
+    'Pending approval'	=> 'Pending approval',
+
+    'Authorized'	=> 'Authorized',
+    'Unauthorized'	=> 'Unauthorized',
+    'Free version'=> 'Free version',
+    'username or email' => 'Username or email',
+    'account or password cannot empty'  => 'Account or password cannot empty'
 ];

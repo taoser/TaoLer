@@ -35,30 +35,33 @@ class UserLogin
 		if($type == 'log'){
 			//$name = $user->user['name'];
 			$ip = request()->ip();
-			//$url = 'http://ip-api.com/json/' . $ip . '?lang=zh-CN&fields=57361';
-			$url = 'http://freeapi.ipip.net/' . $ip;
-			
-			$ipJson = Api::urlGetRespond($url);
-			$respond = $ipJson->getData();
- 
-			if($respond['code'] == 0){
-				//字符串数组["中国","北京","北京"]
-				$data = $respond['data'];
-				//正则去掉[''],保留字符串
-				$str = preg_replace('/(\"|\[|\])/','',$data);
-				//地址数组
-				$arr = explode(',', $str);
-				if($arr[0] !== '本机地址') {
-					$city = $arr[2];
-				} else {
-					$city = 'earth';
-				}
-			}
-			// if($ipJson->status == 'success'){
-			// 	$city = $ipJson->city;
-			// } else {
-			// 	$city ='未知';
-			// }
+
+			$url = 'http://ip-api.com/json/' . $ip . '?lang=zh-CN&fields=57361';
+            $ipJson = Api::urlGetRespond($url);
+            $res = $ipJson->getData();
+
+            $data = json_decode($res['data']);
+            $city ='earth';
+             if($res['code'] == 0 && !$data->status){
+             	$city = $data->city;
+             }
+
+            //国内查询，接口已失效
+//          $url = 'http://freeapi.ipip.net/' . $ip;
+//			$ipJson = Api::urlGetRespond($url);
+//			$respond = $ipJson->getData();
+//			if($respond['code'] == 0){
+//				//字符串数组["中国","北京","北京"]
+//				$data = $respond['data'];
+//				//正则去掉[''],保留字符串
+//				$str = preg_replace('/(\"|\[|\])/','',$data);
+//				//地址数组
+//				$arr = explode(',', $str);
+//                $city = 'earth';
+//				if($arr[0] !== '本机地址') {
+//					$city = $arr[2];
+//				}
+//			}
 			
 			$u->allowField(['city','last_login_ip','last_login_time','login_error_num'])->save(
 				[

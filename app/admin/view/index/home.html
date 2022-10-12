@@ -336,6 +336,7 @@
       
     </div>
   </div>
+{include file="public/user_login" /}
 {/block}
 {block name="js"}
 <script>
@@ -343,12 +344,29 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'console','element', 'layedit','form','table'],function(){
+  }).use(['index', 'console','element', 'layedit','form','table','notify'],function(){
 		var $ = layui.jquery
 		,form = layui.form
 		,layedit = layui.layedit
 		,table = layui.table
 		,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+    var notify = layui.notify;
+
+    var api = {
+      userinfo: {
+        get: function () {
+          var userinfo = localStorage.getItem("taoleradmin_userinfo");
+          return userinfo ? JSON.parse(userinfo) : null;
+        },
+        set: function (data) {
+          if (data) {
+            localStorage.setItem("taoleradmin_userinfo", JSON.stringify(data));
+          } else {
+            localStorage.removeItem("taoleradmin_userinfo");
+          }
+        }
+      }
+    }
 		
 	var index = layedit.build('L_content', {
 		  height: 120 //设置编辑器高度
@@ -374,64 +392,99 @@
 		}
 	});
 
-  // 系统调试
+    // 系统调试
     form.on('switch(sys-sys)',function(data){
       var status = data.elem.checked;
-      console.log(status);
       $.post("{:url('index/sysSys')}",{status:status},function(res){
-        if (res.code == 0) {
-						layer.msg(res.msg,{
-							icon:6,
-							time:2000
-						}, function(){
-							location.reload();
-						});
-					} else {
-						layer.open({
-							content:res.msg,
-							icon:5,
-							anim:6
-						});
-					}
+        if (res.code == 0) { notify.info(res.msg)} else {
+          notify.error(res.msg);
+        }
       })
-    
+    });
+	// 发送反馈
+    form.on('submit(cunsult-add)',function(data){
+      var field = data.field;
+      var userinfo = api.userinfo.get();
+      if(!userinfo) {
+        // 登录
+        layer.confirm('你当前还未登录TaoLer社区账号,请登录后操作!', {
+          title : '温馨提示',
+          btnAlign: 'c',
+          btn: ['立即登录'] //按钮
+        },function (index){
+          layer.close(index);
+          // 登录窗口
+          layer.open({
+            type: 1,
+            shadeClose: true,
+            title: '登录账号',
+            content: $("#user-info").html(),
+            area: ['400px','300px'],
+            btn: ['登录','注册'],
+            yes:function (index, layero) {
+              var url = "{:url('Addons/userLogin')}";
+              var data = {
+                name: $("#username", layero).val(),
+                password: $("#password", layero).val(),
+              };
+              if (!data.name || !data.password) {
+                notify.error('Account Or Password Cannot Empty');
+                return false;
+              }
+              $.ajax({
+                url: url, type: 'post', data: data, dataType: "json", success: function (res) {
+                  if (res.code === 0) {
+                    layer.close(index);
+                    api.userinfo.set(res.data);
+                    notify.success("登录成功", function (){
+                      location.reload();
+                    });
 
+                  } else {
+                    notify.alert(res.msg);
+                  }
+                }, error: function (res) {
+                  notify.error(res.msg);
+                }
+              })
+            },
+            btn2: function () {
+              return false;
+            },
+            success: function (layero, index) {
+              $(".layui-layer-btn1", layero).prop("href", "https://www.aieok.com/article/reg.html").prop("target", "_blank");
+            },
+            end: function () {
+              $("#login").hide();
+            },
+
+          });
+        });
+      } else {
+        field.id = userinfo.uid;
+        $.ajax({
+          type:"post",
+          url:"{:url('Index/cunsult')}",
+          data:field,
+          dataType:"json",
+          success:function (data){
+            if (data.code == 0) {
+              notify.success(data.msg, function(){location.reload()});
+            } else {
+              notify.error(res.msg);
+            }
+          }
+        });
+      }
+
+      return false;
     });
 		
-		form.on('submit(cunsult-add)',function(data){
-		var field = data.field;
-		
-			$.ajax({
-				type:"post",
-				url:"{:url('Index/cunsult')}",
-				data:field,
-				dataType:"json",
-				success:function (data){
-					if (data.code == 0) {
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						}, function(){
-							location.reload();
-						});
-					} else {
-						layer.open({
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-					}
-				}
-			});
-		return false;	
-		});
-		
-		//监听工具条
+    //监听工具条
     table.on('tool(LAY-index-topreply)', function(obj){
         var data = obj.data;
-	
         if(obj.event === 'del'){
-            layer.confirm('确定删除此站点？', function(index){
+            layer.confirm('确定删除？', function(index){
                 $.ajax({
                     type:'post',
                     url:"{:url('Index/delReply')}",
@@ -439,24 +492,16 @@
                     dataType:'json',
                     success:function(data){
                         if(data.code == 0){
-                            layer.msg(data.msg,{
-                                icon:6,
-                                time:2000
-                            },function(){
+                          notify.success(data.msg,function(){
                                 location.reload();
                             });
                         } else {
-                            layer.open({
-                                title:'删除失败',
-                                content:data.msg,
-                                icon:5,
-                                adim:6
-                            })
+                          notify.error(res.msg);
                         }
                     }
                 });
                 //obj.del();
-				        table.reload('LAY-index-topreply');
+                table.reload('LAY-index-topreply');
                 layer.close(index);
             });
         }
@@ -468,8 +513,17 @@
 			$('#up_version').html(data);
 		})
 	})();
-		
-		
+    // 用户信息清理
+    (function (){
+      var time = Date.parse(new Date());
+      var userinfo = api.userinfo.get();
+      if(userinfo) {
+        if(time > userinfo.expiretime *1000) {
+          api.userinfo.set();
+        }
+      }
+    })()
+
 	$('.layui-btn.layuiadmin-btn-oiltank').on('click', function(){
       var type = $(this).data('type');
       active[type] ? active[type].call(this) : '';
@@ -479,8 +533,8 @@
 	var indexForums = "{:url('Index/forums')}",	//帖子
 	    indexReplys = "{:url('Index/replys')}",		//回复
 	    indexNews = "{:url('Index/news')}",	 //动态
-		  indexReply = "{:url('Index/reply')}",	//反馈
+		indexReply = "{:url('Index/reply')}",	//反馈
 	    monthTime = "{$monthTime}",
-		  monthUserCount = "{$monthUserCount}";
+		monthUserCount = "{$monthUserCount}";
   </script>
 {/block}

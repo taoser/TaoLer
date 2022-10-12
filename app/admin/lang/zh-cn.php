@@ -133,5 +133,7 @@ return [
 	 'Authorized'	=> '已授权',
 	 'Unauthorized'	=> '未授权',
 	 'Free version'=> '免费版',
+    'username or email' => '用户名或邮箱',
+    'account or password cannot empty'  => '账号和密码不能为空'
 
 ];

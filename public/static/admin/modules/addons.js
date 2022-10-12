@@ -7,11 +7,11 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
     upload = layui.upload;
   var notify = layui.notify;
 
-  function addList(type) {
+  function getAddonsList(type,selector ) {
     $.ajax({
       type: "post",
       url: addonsList,
-      data: { type: type },
+      data: { type: type, selector: selector },
       dataType: "json",
       success: function (res) {
         //渲染表格
@@ -19,7 +19,7 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
           elem: "#addons-list",
           toolbar: "#toolbar",
           defaultToolbar: [],
-          url: addonsList + "?type=" + type,
+          url: addonsList + "?type=" + type + "&selector=" + selector,
           cols: [res["col"]],
           page: true,
           limit: 10,
@@ -30,17 +30,39 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
     });
   }
 
-  addList("onlineAddons");
+  getAddonsList("onlineAddons","all");
+
+  var api = {
+    userinfo: {
+      get: function () {
+        var userinfo = localStorage.getItem("taoleradmin_userinfo");
+        return userinfo ? JSON.parse(userinfo) : null;
+      },
+      set: function (data) {
+        if (data) {
+          localStorage.setItem("taoleradmin_userinfo", JSON.stringify(data));
+        } else {
+          localStorage.removeItem("taoleradmin_userinfo");
+        }
+      }
+    }
+  }
 
   //头工具栏事件
   table.on("toolbar(addons-list)", function (obj) {
     var checkStatus = table.checkStatus(obj.config.id);
     switch (obj.event) {
       case "installed":
-        addList("installed");
+        getAddonsList("installed",'');
         break;
-      case "onlineAddons":
-        addList("onlineAddons");
+      case "allAddons":
+        getAddonsList("onlineAddons","all");
+        break;
+      case "freeAddons":
+        getAddonsList("onlineAddons","free");
+        break;
+      case "payAddons":
+        getAddonsList("onlineAddons","pay");
         break;
     }
   });
@@ -53,15 +75,78 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
 
     //安装插件
     if (event === "install") {
-      var index = layer.load(1);
-      $.post(url, { name: data.name, version: data.version }, function (res) {
-        if (res.code == 0) {
-          notify.success(res.msg, "topRight");
-        } else {
-          notify.error(res.msg, "topRight");
-        }
+      // 检测权限
+      var userinfo = api.userinfo.get();
+      var userLoginUrl = $(this).data('userlogin');
+      if(userinfo) {
+        notify.confirm("确认安装吗？", "vcenter",function(){
+          var index = layer.load(1);
+          $.post(url, { name: data.name, version: data.version, uid: userinfo.uid, token: userinfo.token }, function (res) {
+            if (res.code == 0) {
+              notify.success(res.msg, "topRight");
+            } else {
+              notify.error(res.msg, "topRight");
+            }
+            layer.close(index);
+          });
+        });
+      } else {
+        // 登录
+        layer.confirm('你当前还未登录TaoLer社区账号,请登录后操作!', {
+          title : '温馨提示',
+          btnAlign: 'c',
+          btn: ['立即登录'] //按钮
+        },function (index){
           layer.close(index);
-      });
+          // 登录窗口
+          layer.open({
+            type: 1,
+            shadeClose: true,
+            title: '登录账号',
+            content: $("#user-info").html(),
+            area: ['400px','300px'],
+            btn: ['登录','注册'],
+            yes:function (index, layero) {
+              var url = userLoginUrl;
+              var data = {
+                name: $("#username", layero).val(),
+                password: $("#password", layero).val(),
+              };
+              if (!data.name || !data.password) {
+                notify.error('Account Or Password Cannot Empty');
+                return false;
+              }
+              $.ajax({
+                url: url, type: 'post', data: data, dataType: "json", success: function (res) {
+                  if (res.code === 0) {
+                    layer.close(index);
+                    api.userinfo.set(res.data);
+                    notify.success("登录成功", function (){
+                      location.reload();
+                    });
+
+                  } else {
+                    notify.alert(res.msg);
+                  }
+                }, error: function (res) {
+                  notify.error(res.msg);
+                }
+              })
+            },
+            btn2: function () {
+              return false;
+            },
+            success: function (layero, index) {
+              $(".layui-layer-btn1", layero).prop("href", "https://www.aieok.com/article/reg.html").prop("target", "_blank");
+            },
+            end: function () {
+              $("#login").hide();
+            },
+
+          });
+        });
+      }
+
     }
 
     // 启用禁用
@@ -74,12 +159,8 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
             notify.error(res.msg, "topRight");
           }
           table.reloadData("addons-list",{},'deep');
-          // addList("installed");
         });
-
       });
-
-
     }
 
     // 卸载插件
@@ -100,67 +181,74 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
 
     // 配置插件
     if (event === "config") {
-      layer.open({
-        type: 2,
-        title: '配置插件',
-        content: url + "?name=" + data.name,
-        maxmin: true,
-        area: ["780px", "90%"],
-        btn: ["确定", "取消"],
-        yes: function (index, layero) {
-          var iframeWindow = window["layui-layer-iframe" + index],
-              submitID = "LAY-addons-config-submit",
-              submit = layero.find("iframe").contents().find("#" + submitID);
-          //监听提交
-          iframeWindow.layui.form.on(
-              "submit(" + submitID + ")",
-              function (data) {
-                var field = data.field; //获取提交的字段
-                $.ajax({
-                  type: "post",
-                  url: url,
-                  data: field,
-                  daType: "json",
-                  success: function (res) {
-                    if (res.code == 0) {
-                      notify.success(res.msg, "topRight");
-                    } else {
-                      notify.error(res.msg, "topRight");
-                    }
-                  },
-                });
-                layer.close(index); //关闭弹层
-              }
-          );
-          submit.trigger("click");
-        },
-        success: function (layero, index) {
-          var forms = layero.find("iframe").contents().find(".layui-form");
-          var button = forms.find("button");
-          //事件委托
-          forms.on("click", "button", function (data) {
-            var even = this.getAttribute("lay-event");
-            var names = this.dataset.name;
-            // if (even == "addInput") {
-            //   var html = '<div class="layui-form-item">\n' +
-            //       '<label class="layui-form-label"></label>\n' +
-            //       '<div class="layui-input-inline">\n' +
-            //       ' <input type="text" name="'+ names +'[key][]" value="" placeholder="key" autocomplete="off" class="layui-input input-double-width">\n' +
-            //       '</div>\n' +
-            //       '<div class="layui-input-inline">\n' +
-            //       ' <input type="text" name="'+ names +'[value][]" value="" placeholder="value" autocomplete="off" class="layui-input input-double-width">\n' +
-            //       '</div>\n' +
-            //       '<button data-name="'+ names +'" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">\n' +
-            //       ' <i class="layui-icon"></i>\n' +
-            //       '</button>\n' +
-            //       '</div>';
-            //   $(this).parent().parent().append(html);
-            // } else {
-            //   $(this).parent().remove();
-            // }
-          });
-        },
+      $.post(url,{name:data.name},function (res){
+        // 无配置项拦截
+        if (res.code == -1) {
+          notify.alert(res.msg);
+          return false;
+        }
+        layer.open({
+          type: 2,
+          title: '配置插件',
+          content: url + "?name=" + data.name,
+          maxmin: true,
+          area: ["780px", "90%"],
+          btn: ["确定", "取消"],
+          yes: function (index, layero) {
+            var iframeWindow = window["layui-layer-iframe" + index],
+                submitID = "LAY-addons-config-submit",
+                submit = layero.find("iframe").contents().find("#" + submitID);
+            //监听提交
+            iframeWindow.layui.form.on("submit(" + submitID + ")",
+                function (data) {
+                  var field = data.field; //获取提交的字段
+                  $.ajax({
+                    type: "post",
+                    url: url,
+                    data: field,
+                    daType: "json",
+                    success: function (res) {
+                      if (res.code == 0) {
+                        notify.success(res.msg, "topRight");
+                      } else {
+                        notify.error(res.msg, "topRight");
+                      }
+                    },
+                  });
+                  layer.close(index); //关闭弹层
+                }
+            );
+            submit.trigger("click");
+          },
+          success: function (layero, index) {
+            var forms = layero.find("iframe").contents().find(".layui-form");
+            var button = forms.find("button");
+            //事件委托
+            forms.on("click", "button", function (data) {
+              var even = this.getAttribute("lay-event");
+              var names = this.dataset.name;
+              // if (even == "addInput") {
+              //   var html = '<div class="layui-form-item">\n' +
+              //       '<label class="layui-form-label"></label>\n' +
+              //       '<div class="layui-input-inline">\n' +
+              //       ' <input type="text" name="'+ names +'[key][]" value="" placeholder="key" autocomplete="off" class="layui-input input-double-width">\n' +
+              //       '</div>\n' +
+              //       '<div class="layui-input-inline">\n' +
+              //       ' <input type="text" name="'+ names +'[value][]" value="" placeholder="value" autocomplete="off" class="layui-input input-double-width">\n' +
+              //       '</div>\n' +
+              //       '<button data-name="'+ names +'" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">\n' +
+              //       ' <i class="layui-icon"></i>\n' +
+              //       '</button>\n' +
+              //       '</div>';
+              //   $(this).parent().parent().append(html);
+              // } else {
+              //   $(this).parent().remove();
+              // }
+            });
+          },
+        });
       });
+
     }
 
     if (event === "edit") {

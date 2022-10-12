@@ -182,9 +182,8 @@ class Index extends AdminController
 	public function cunsult()
 	{
 		$url = $this->api.'/v1/reply';
-		//$mail = Db::name('system')->where('id',1)->value('auth_mail');	//	bug邮件发送
 		if(Request::isAjax()){
-			$data = Request::only(['type','title','content','post']);
+			$data = Request::only(['type','title','content','post','uid']);
 			$apiRes = Api::urlPost($url,$data);
 			$data['poster'] = Session::get('admin_id');
 			unset($data['post']);

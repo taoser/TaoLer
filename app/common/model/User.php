@@ -16,6 +16,7 @@ class User extends Model
     protected $autoWriteTimestamp = true; //开启自动时间戳
     protected $createTime = 'false';
     protected $updateTime = 'update_time';
+    protected $loggedUser;
     //protected $auto = ['password']; //定义自动处理的字段
     //自动对password进行md5加密
     protected function setPasswordAttr($value){
@@ -88,6 +89,7 @@ class User extends Model
                 event(new UserLogin($userInfo));
 
                 //查询结果1表示有用户，用户名密码正确
+                $this->loggedUser = $user;
                 return 1;
             } else {//密码错误登陆错误次数加1
 				$userInfo = ['type'=>'logError','id'=>$user->id];
@@ -181,6 +183,11 @@ class User extends Model
 			return '修改失败,请改换密码';
 		}
 	}
+
+    // 登录用户
+    public function getLoggedUser(){
+        return $this->loggedUser;
+    }
 	
 	
 }

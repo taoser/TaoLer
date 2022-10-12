@@ -284,3 +284,40 @@ if (!function_exists('get_addons_menu')) {
     }
 }
 
+if (!function_exists('get_addons_list')) {
+    /**
+     * 获得插件列表
+     * @return array
+     */
+    function get_addons_list()
+    {
+        $list = Cache::get('addonslist');
+        if (empty($list)) {
+            $addonsPath = app()->getRootPath().'addons'.DS; // 插件列表
+            $results = scandir($addonsPath);
+            $list = [];
+            foreach ($results as $name) {
+                if ($name === '.' or $name === '..')
+                    continue;
+                if (is_file($addonsPath . $name))
+                    continue;
+                $addonDir = $addonsPath . $name . DS;
+                if (!is_dir($addonDir))
+                    continue;
+                if (!is_file($addonDir . 'Plugin' . '.php'))
+                    continue;
+                $info = get_addons_info($name);
+                if (!isset($info['name']))
+                    continue;
+                $info['url'] =isset($info['url']) && $info['url'] ?(string)addons_url($info['url']):'';
+                $list[$name] = $info;
+            }
+            Cache::set('addonslist', $list);
+        }
+        return $list;
+    }
+
+
+
+}
+
