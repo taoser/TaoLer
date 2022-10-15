@@ -1,7 +1,7 @@
 {extend name="public/base" /}
 
 {block name="title"}编辑帖子{/block}
-{block name="link"}<link rel="stylesheet" href="/static/res/css/plyr.css" charset="utf-8">{/block}
+{block name="link"} {/block}
 {block name="column"}{/block}
 {block name="content"}
 <div class="layui-container fly-marginTop">
@@ -140,7 +140,9 @@
 {/block}
 
 {block name="script"}
+
 {:hook('taonyeditor')}
+
 <script src="/static/xm-select.js"></script>
 <script>
 var cateId = "{$article.cate.id}";
@@ -211,13 +213,12 @@ $(function(){
 
 </script>
 <script>
-	layui.use(['fly','plyr'], function(){
+	layui.use(['fly'], function(){
     var $ = layui.jquery
     ,fly = layui.fly
     ,colorpicker = layui.colorpicker
     ,form = layui.form
-    ,upload = layui.upload
-    ,plyr = layui.plyr;
+    ,upload = layui.upload;
 
     //获取百度标签标志，tag或者word;
     var flag = 'word';
@@ -258,15 +259,14 @@ $(function(){
 
   // 获取百度分词接口的关键词
   function getBdiduWords(flag,title,content) {
-        console.log(flag,title,content)
-        $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
-            if (res.code == 0) {
-                console.log(res.data)
-              $("input[name='keywords']").val(res.data.join(','));
-            }
-          },
-        )
-    }
+      $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
+          if (res.code == 0) {
+              console.log(res.data)
+            $("input[name='keywords']").val(res.data.join(','));
+          }
+        },
+      )
+  }
 
     // 百度词条
     (function(){
@@ -326,13 +326,13 @@ $(function(){
 			daType:"json",
 			success:function (data){
 				if (data.code == 0) {
-					layer.msg(data.msg,{icon:6,time:2000}, function(){
-						location.href = data.url;
-					});
+                  notify.success(data.msg, function(){
+                    location.href = data.url;
+                  });
 				} else {
-					layer.open({title:'编辑失败',content:data.msg,icon:5,anim:6});
-					layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-				};
+                  notify.error(data.msg);
+                  layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+				}
 			}
 		});
 		return false;
@@ -344,7 +344,6 @@ $(function(){
       ,color: "{$article.title_color ?? '#333'}"
       ,predefine: true // 开启预定义颜色
       ,done: function(color){
-        //console.log(color);
         //譬如你可以在回调中把得到的 color 赋值给表单
         $('#L_title_color').val(color);
         //改变标题颜色
@@ -354,22 +353,19 @@ $(function(){
 
   //指定允许上传的文件类型
   upload.render({
-			elem: '#zip-button'
-			,url: "{:url('article/uploads')}" //改成您自己的上传接口
-			,data: {type:'zip'}
-			,accept: 'file' //普通文件
-			,done: function(res){
-				if(res.status == 0){
-					$('input[name="upzip"]').val(res.url);
-					layer.msg('上传成功');
-				} else {
-					layer.msg(res.msg);
-				}
-			}
-		});
-
-  //加载播放器
-  plyr.setup();
+    elem: '#zip-button'
+    ,url: "{:url('article/uploads')}" //改成您自己的上传接口
+    ,data: {type:'zip'}
+    ,accept: 'file' //普通文件
+    ,done: function(res){
+        if(res.status == 0){
+            $('input[name="upzip"]').val(res.url);
+            notify.success(res.msg);
+        } else {
+          notify.error(res.msg);
+        }
+    }
+});
 
 });
 </script>

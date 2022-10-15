@@ -317,7 +317,4 @@ if (!function_exists('get_addons_list')) {
         return $list;
     }
 
-
-
 }
-

@@ -73,25 +73,50 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
     var event = obj.event;
     var url = $(this).data('url')
 
-    //安装插件
-    if (event === "install") {
-      // 检测权限
-      var userinfo = api.userinfo.get();
-      var userLoginUrl = $(this).data('userlogin');
+    // 安装
+    var install = function (data,url,userLoginUrl,userIsPayUrl){
+      var userinfo = api.userinfo.get(); // 检测权限
       if(userinfo) {
         notify.confirm("确认安装吗？", "vcenter",function(){
           var index = layer.load(1);
           $.post(url, { name: data.name, version: data.version, uid: userinfo.uid, token: userinfo.token }, function (res) {
-            if (res.code == 0) {
+            // 需要支付
+            if (res.code === -2) {
+              layer.close(index);
+              layer.open({
+                type: 2,
+                area: ['700px', '650px'],
+                fixed: false, //不固定
+                maxmin: true,
+                content: 'pay.html'+ "?id=" + data.id+ "&name=" + data.name + "&version=" + data.version + "&uid=" + userinfo.uid + "&price=" + data.price,
+                success: function (layero, index){
+                  // 订单沦陷
+                  var intervalPay = setInterval(function() {
+                    $.post(userIsPayUrl,{name:data.name, userinfo:userinfo},function (res){
+                      if(res.code === 0) {
+                        layer.close(index);
+                        clearInterval(intervalPay);
+                        install(data,url,userLoginUrl,userIsPayUrl);
+                      }
+                    });
+                  },3000);
+                }
+              });
+            }
+            // 安装成功
+            if (res.code === 0) {
+              layer.close(index);
               notify.success(res.msg, "topRight");
-            } else {
+            }
+            // 安装失败
+            if (res.code === -1) {
+              layer.close(index);
               notify.error(res.msg, "topRight");
             }
-            layer.close(index);
           });
         });
       } else {
-        // 登录
+        // 未登录时
         layer.confirm('你当前还未登录TaoLer社区账号,请登录后操作!', {
           title : '温馨提示',
           btnAlign: 'c',
@@ -146,21 +171,13 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
           });
         });
       }
-
     }
 
-    // 启用禁用
-    if(event == 'status') {
-      notify.confirm("确认框", "vcenter", function(){
-        $.post(url,{ name: data.name },function(res){
-          if (res.code == 0) {
-            notify.success(res.msg, "topRight");
-          } else {
-            notify.error(res.msg, "topRight");
-          }
-          table.reloadData("addons-list",{},'deep');
-        });
-      });
+    //安装插件
+    if (event === "install") {
+      var userLoginUrl = $(this).data('userlogin');
+      var userIsPayUrl = $(this).data('ispay');
+      install(data,url,userLoginUrl,userIsPayUrl);
     }
 
     // 卸载插件
@@ -168,7 +185,7 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
       notify.confirm("确认框", "vcenter",function() {
         var index = layer.load(1);
         $.post(url, { name: data.name }, function (res) {
-          if (res.code == 0) {
+          if (res.code === 0) {
             notify.success(res.msg, "topRight");
           } else {
             notify.error(res.msg, "topRight");
@@ -183,7 +200,7 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
     if (event === "config") {
       $.post(url,{name:data.name},function (res){
         // 无配置项拦截
-        if (res.code == -1) {
+        if (res.code === -1) {
           notify.alert(res.msg);
           return false;
         }
@@ -195,9 +212,7 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
           area: ["780px", "90%"],
           btn: ["确定", "取消"],
           yes: function (index, layero) {
-            var iframeWindow = window["layui-layer-iframe" + index],
-                submitID = "LAY-addons-config-submit",
-                submit = layero.find("iframe").contents().find("#" + submitID);
+            var iframeWindow = window["layui-layer-iframe" + index], submitID = "LAY-addons-config-submit", submit = layero.find("iframe").contents().find("#" + submitID);
             //监听提交
             iframeWindow.layui.form.on("submit(" + submitID + ")",
                 function (data) {
@@ -208,7 +223,7 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
                     data: field,
                     daType: "json",
                     success: function (res) {
-                      if (res.code == 0) {
+                      if (res.code === 0) {
                         notify.success(res.msg, "topRight");
                       } else {
                         notify.error(res.msg, "topRight");
@@ -250,60 +265,6 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
       });
 
     }
-
-    if (event === "edit") {
-    var tr = $(obj.tr);
-    layer.open({
-      type: 2,
-      title: "编辑插件",
-      content: addonsEdit + "?id=" + data.id,
-      maxmin: true,
-      area: ["400px", "620px"],
-      btn: ["确定", "取消"],
-      yes: function (index, layero) {
-        var iframeWindow = window["layui-layer-iframe" + index],
-            submitID = "LAY-addons-submit",
-            submit = layero
-                .find("iframe")
-                .contents()
-                .find("#" + submitID);
-
-        //监听提交
-        iframeWindow.layui.form.on(
-            "submit(" + submitID + ")",
-            function (data) {
-              var field = data.field; //获取提交的字段
-
-              //提交 Ajax 成功后，静态更新表格中的数据
-              $.ajax({
-                type: "post",
-                url: addonsEdit,
-                data: field,
-                daType: "json",
-                success: function (res) {
-                  if (res.code == 0) {
-                    layer.msg(res.msg, { icon: 6, time: 2000 });
-                  } else {
-                    layer.open({
-                      tiele: "修改失败",
-                      content: res.msg,
-                      icon: 5,
-                      anim: 6,
-                    });
-                  }
-                },
-              });
-
-              table.reload("addons-list"); //数据刷新
-              layer.close(index); //关闭弹层
-            }
-        );
-
-        submit.trigger("click");
-      },
-      success: function (layero, index) {},
-    });
-  }
 
   });
 

@@ -184,8 +184,8 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         ),
         'taoser\\' => 
         array (
-            0 => __DIR__ . '/..' . '/taoser/think-addons/src',
-            1 => __DIR__ . '/..' . '/taoser/think-setarr/src',
+            0 => __DIR__ . '/..' . '/taoser/think-setarr/src',
+            1 => __DIR__ . '/..' . '/taoser/think-addons/src',
         ),
         'phpspirit\\databackup\\' => 
         array (

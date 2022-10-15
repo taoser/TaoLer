@@ -10,7 +10,7 @@
 <meta property="bytedance:published_time" content="{$article.create_time|date='c'}" />
 <meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
 {/block}
-{block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
+{block name="link"} {/block}
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
 <div class="layui-container">
@@ -64,7 +64,9 @@
 {/block}
 
 {block name="script"}
+
 {:hook('taonyeditor')}
+
 <script>
   var collectionFind    = "{:url('Collection/find')}",
     collection          = "{:url('collection/')}",
@@ -78,13 +80,12 @@
 	  langCollection      = "{:lang('collection')}",
 	  langCancelCollection = "{:lang('cancel collection')}";
     
-  layui.use(['fly', 'face','colorpicker','plyr', 'laypage'], function(){
+  layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 	var $ = layui.jquery
     ,form = layui.form
     ,fly = layui.fly
     ,colorpicker = layui.colorpicker
-    ,plyr = layui.plyr
-	  ,laytpl = layui.laytpl
+	,laytpl = layui.laytpl
     ,uid = layui.cache.user.uid
     ,laypage = layui.laypage;
 
@@ -201,11 +202,10 @@
         }
       });
     });
-
-  plyr.setup();
-
-});
+ });
 </script>
+
+{:hook('taoplyr')}
 
 {//图片点击放大}
 {include file="/public/images-click" /}

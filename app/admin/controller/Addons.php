@@ -26,7 +26,7 @@ class Addons extends AdminController
     }
 
     /**
-     * 插件列表
+     * 插件动态列表
      * @return Json
      */
     public function addonsList()
@@ -57,10 +57,10 @@ class Addons extends AdminController
                         ['field'=> 'version','title'=> '版本', 'templet' => '<div>{{d.version}}</div>', 'width'=> 60],
                         ['field' => 'author','title'=> '作者', 'width'=> 80],
                         ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
-                        ['field' => 'show','title'=> '状态', 'width'=> 100],
                         ['field' => 'install','title'=> '安装', 'width'=> 100],
                         ['field' => 'ctime','title'=> '到期时间', 'width'=> 100],
-                        ['title' => '操作', 'width'=> 200, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
+                        ['field' => 'status','title'=> '状态', 'width'=> 95, 'templet' => '#buttonStatus'],
+                        ['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
                     ];
                 } else {
 					$res = ['code'=>-1,'msg'=>'没有安装任何插件'];
@@ -119,10 +119,10 @@ class Addons extends AdminController
 							['field' => 'title','title'=> '插件', 'width'=> 200],
                             ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
 							['field' => 'author','title'=> '作者', 'width'=> 100],
-							['field' => 'price','title'=> '价格(元)','width'=> 80],
+							['field' => 'price','title'=> '价格(元)','width'=> 85],
 							['field' => 'downloads','title'=> '下载', 'width'=> 70],
-                            ['field' => 'version','title'=> '版本', 'templet' => '<div>{{d.version}} {{#  if(d.have_newversion == 1){ }}<span class="layui-badge-dot"></span>{{#  } }}</div>','width'=> 70],
-                            ['field' => 'status','title'=> '状态', 'width'=> 70],
+                            ['field' => 'version','title'=> '版本', 'templet' => '<div>{{d.version}} {{#  if(d.have_newversion == 1){ }}<span class="layui-badge-dot"></span>{{#  } }}</div>','width'=> 75],
+                            ['field' => 'status','title'=> '在线', 'width'=> 70],
 							['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
 						];
 					} else {
@@ -151,34 +151,6 @@ class Addons extends AdminController
 			}
 		return json($res);
 		}
-		
-		return View::fetch();
-    }
-
-
-    /**
-     * 编辑版本
-     * @param $id
-     * @return string|Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function edit($id)
-    {
-		$addons = AddonsModel::find($id);
-
-		if(Request::isAjax()){
-			$data = Request::only(['id','addons_name','addons_version','addons_auther','addons_resume','addons_price','addons_src']);
-			$result = $addons->where('id',$id)->save($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'编辑成功'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'编辑失败'];
-			}
-			return json($res);
-		}
-		View::assign('addons',$addons);
 		return View::fetch();
     }
 
@@ -219,17 +191,22 @@ class Addons extends AdminController
         return $this->uploadFiles($type);
     }
 
-    //安装插件
+    /**
+     * 安装插件
+     * @return Json
+     * @throws \Exception
+     */
     public function install()
     {
         $data = Request::param();
         $url = $this->getSystem()['api_url'].'/v1/getaddons';
         $data = ['name'=>$data['name'], 'version'=>$data['version'], 'uid'=>$data['uid'], 'token'=>$data['token']];
          $addons = Api::urlPost($url,$data);
-         if( $addons->code == -1) {
+         if( $addons->code < 0) {
              return json(['code'=>$addons->code,'msg'=>$addons->msg]);
          }
-         //是否安装？
+         //$this->pay($name,$extend);
+         //版本判断，是否能够安装？
          $addInstalledVersion = get_addons_info($data['name']);
          if(!empty($addInstalledVersion)){
              $verRes = version_compare($data['version'],$addInstalledVersion['version'],'>');
@@ -325,7 +302,6 @@ class Addons extends AdminController
         $menu = get_addons_menu($name);
         if(!empty($menu)){
             $menu_arr[] = $menu['menu'];
-//            halt( $menu_arr);
             $this->delAddonMenu($menu_arr);
         }
 
@@ -361,7 +337,11 @@ class Addons extends AdminController
         return json(['code' => 0, 'msg' => '插件卸载成功']);
     }
 
-    // 启用禁用插件
+    /**
+     * 启用禁用插件
+     * @return Json
+     * @throws Exception
+     */
     public function status(){
         $name = input('name');
         $info = get_addons_info($name);
@@ -381,8 +361,13 @@ class Addons extends AdminController
 
         return json($res);
     }
-	
-	//配置插件
+
+    /**
+     * 配置插件
+     * @param $name
+     * @return string|Json
+     * @throws \Exception
+     */
 	public function config($name)
 	{
 		$name = input('name');
@@ -426,6 +411,14 @@ class Addons extends AdminController
 		
 	}
 
+    /**
+     * 添加菜单
+     * @param array $menu
+     * @param int $pid
+     * @param int $type
+     * @return void
+     * @throws \Exception
+     */
     public function addAddonMenu(array $menu,int $pid = 0, int $type = 1)
     {
         foreach ($menu as $v){
@@ -451,7 +444,13 @@ class Addons extends AdminController
 
     }
 
-    //循环删除菜单
+    /**
+     * 循环删除菜单
+     * @param array $menu
+     * @param string $module
+     * @return void
+     * @throws \Exception
+     */
     public function delAddonMenu(array $menu,string $module = 'addon')
     {
         foreach ($menu as $k=>$v){
@@ -473,6 +472,10 @@ class Addons extends AdminController
 
     }
 
+    /**
+     * 用户登录
+     * @return mixed|Json
+     */
     public function userLogin()
     {
         $data = Request::param();
@@ -482,6 +485,46 @@ class Addons extends AdminController
             return $user;
         } else {
             return json(['code'=>-1,'msg'=>$user->msg]);
+        }
+    }
+
+    /**
+     * 订单
+     * @return string|Json
+     */
+    public function pay()
+    {
+        $data = Request::only(['id','name','version','uid','price']);
+        $url = $this->getSystem()['api_url'].'/v1/createOrder';
+        $order = Api::urlPost($url,$data);
+
+        if ($order->code == 0) {
+            $orderData = json_decode(json_encode($order->data),TRUE);
+            View::assign('orderData',$orderData);
+            return View::fetch();
+        } else {
+            return json(['code'=>-1,'msg'=>$order->msg]);
+        }
+    }
+
+    /**
+     * 支付查询
+     * @return Json
+     */
+    public function isPay()
+    {
+        $param = Request::only(['name','userinfo']);
+        //halt($data);
+        $data = [
+            'name'=>$param['name'],
+            'uid'=> $param['userinfo']['uid'],
+        ];
+        $url = $this->getSystem()['api_url'].'/v1/ispay';
+        $res =  Api::urlPost($url,$data);
+        if($res->code == 0) {
+            return json(['code'=>0,'msg'=>'payed']);
+        } else {
+            return json(['code'=>-1,'msg'=>'no pay']);
         }
     }
 

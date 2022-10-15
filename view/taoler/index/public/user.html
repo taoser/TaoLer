@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="{$Request.domain}/static/res/css/global.css">
   {block name="css"}{/block}
   <script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
+  <script src="/static/notify.js"></script>
 </head>
 <body>
 {include file="public/header" /}
@@ -32,6 +33,7 @@
 </div> 
 {include file="public/footer" /}
 <script>
+  var notify = layui.notify;
     layui.cache.page = 'user';
     layui.cache.user = {
         username: "{$user.name ??'游客'}"

@@ -127,7 +127,7 @@ var forumList     = "{:url('Forum/list')}",
 	//监听回贴审核
 	form.on('switch(recheck)', function(data){
 	var data= data.elem;
-	status = data.checked ? 1 : -1;
+	var status = data.checked ? 1 : -1;
 	//执行回帖审核
 		$.ajax({
 			type:'post',
@@ -148,7 +148,6 @@ var forumList     = "{:url('Forum/list')}",
 						adim:6
 					})
 				}
-				
 			table.reload('LAY-app-forumreply-list');
 			}
 		});

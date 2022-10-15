@@ -2130,16 +2130,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v4.4.46",
+            "version": "v4.4.47",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "90425fd98d1ecad98e4b2dca9f54f62069193b15"
+                "reference": "1069c7a3fca74578022fab6f81643248d02f8e63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/90425fd98d1ecad98e4b2dca9f54f62069193b15",
-                "reference": "90425fd98d1ecad98e4b2dca9f54f62069193b15",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/1069c7a3fca74578022fab6f81643248d02f8e63",
+                "reference": "1069c7a3fca74578022fab6f81643248d02f8e63",
                 "shasum": ""
             },
             "require": {
@@ -2199,7 +2199,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v4.4.46"
+                "source": "https://github.com/symfony/var-dumper/tree/v4.4.47"
             },
             "funding": [
                 {
@@ -2215,7 +2215,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-09-03T23:07:25+00:00"
+            "time": "2022-10-03T15:15:11+00:00"
         },
         {
             "name": "symfony/var-exporter",
@@ -2292,16 +2292,16 @@
         },
         {
             "name": "taoser/think-addons",
-            "version": "v1.0.6",
+            "version": "v1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/taoser/think-addons.git",
-                "reference": "e6e35bfd8b93dc469ebb5c5530ba350131bd7541"
+                "reference": "570367e8d4904842625427f132d23c93f5edfc68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/taoser/think-addons/zipball/e6e35bfd8b93dc469ebb5c5530ba350131bd7541",
-                "reference": "e6e35bfd8b93dc469ebb5c5530ba350131bd7541",
+                "url": "https://api.github.com/repos/taoser/think-addons/zipball/570367e8d4904842625427f132d23c93f5edfc68",
+                "reference": "570367e8d4904842625427f132d23c93f5edfc68",
                 "shasum": ""
             },
             "require": {
@@ -2343,9 +2343,9 @@
             "description": "The ThinkPHP6 Addons Package",
             "support": {
                 "issues": "https://github.com/taoser/think-addons/issues",
-                "source": "https://github.com/taoser/think-addons/tree/v1.0.6"
+                "source": "https://github.com/taoser/think-addons/tree/v1.0.8"
             },
-            "time": "2022-10-06T13:11:38+00:00"
+            "time": "2022-10-15T06:21:17+00:00"
         },
         {
             "name": "taoser/think-auth",

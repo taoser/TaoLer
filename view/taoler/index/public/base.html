@@ -30,6 +30,7 @@
   {block name="meta"}{/block}
   <script src="/static/jquery-3.6.0.min.js"></script>
   <script src="{$Request.domain}/static/layui/layui.js" charset="utf-8"></script>
+  <script src="/static/notify.js"></script>
   <!-- 样式 -->
   <link rel="canonical" href="{$Request.domain}{$Request.url}">
   <link rel="stylesheet" href="https://at.alicdn.com/t/font_24081_qs69ykjbea.css" />
@@ -53,6 +54,8 @@
 {include file="public/footer" /}
 {include file="public/js" /}
 <script>
+  var element = layui.element;
+  var notify = layui.notify;
   layui.cache.page = "{$jspage}";
   layui.cache.user = {
     username: "{$user.name ?? '游客'}"
@@ -67,7 +70,6 @@
   }).extend({
     fly: 'index'
   }).use('fly');
-  var element = layui.element;
 </script>
 {block name="script"}{/block}
 </body>

@@ -1,0 +1,71 @@
+{extend name="public/base" /}
+
+{block name="body"}
+<style>
+.layui-container{background-color: #F9F9F9}
+.auth-type{margin: 10px 0px;}
+.order-info{margin:10px 0px; line-height: 30px;}
+.pay-type{line-height: 50px;}
+.soft-info{margin: 10px;}
+.pay-tips{line-height:20px;text-align: center;margin-bottom: 20px;}
+</style>
+
+<div class="layui-container">
+
+    <div class="layui-row">
+        <div class="auth-type">
+            授权
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="order-info">
+            <p>订单标题：<em>{$orderData.subject}</em></p>
+            <p>订单编号：<em>{$orderData.out_trade_no}</em></p>
+            <p>订单价格：<em class="scanpay-price">￥{$orderData.total_amount}</em> 元</p>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-xs6 layui-col-md6">
+            <div class="pay-type">
+                <div style="padding: 5px;"><a ><img src="/static/res/images/alipay.jpg" style="height:80px;"></a></div>
+
+            </div>
+            <div class="soft-info">
+                <div>不支持退款</div>
+                <br />
+                <div>软件协议:本软件为原作者拥有版权权限，购买软件可以商用，禁止第三方出售行为。</div>
+            </div>
+
+        </div>
+        <div class="layui-col-xs6 layui-col-md6">
+            <div class="qrcode" data-text="{$orderData.qr_code_img}">
+                <img src="{$orderData.qr_code_img}">
+            </div>
+            <div class="pay-tips">
+                <p>请使用支付宝扫一扫<br>扫描二维码进行支付</p>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript">
+    var $ = layui.jquery;
+    var out_trade_no = "{$orderData.out_trade_no}";
+    var interval = setInterval(function(){
+        var url = 'https://www.aieok.com/pay/checkstatus.html?out_trade_no=' + out_trade_no;
+        $.ajax({
+            type: "get",
+            url: url,
+            data: {out_trade_no:out_trade_no},
+            dataType:"json",
+            success: function (res) {
+                // 等等支付时，一直轮询
+                if(res.code !== 0) {
+                    clearInterval(interval);
+                }
+            }
+        })
+    },2500);
+</script>
+{/block}

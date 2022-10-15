@@ -81,16 +81,16 @@
         daType:"json",
         success:function (data){
           if (data.code == 0) {
-            layer.msg(data.msg,{icon:6,time:2000}, function(){
+            notify.success(data.msg,function(){
               location.href = data.url;
-            });
+            })
           } else {
-            layer.open({title:'登陆失败',content:data.msg,icon:5,anim:6});
+            notify.error(data.msg);
             layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
           }
         }
       });
-    return false;	
+    return false;
     });
   });
 </script>

@@ -15,7 +15,7 @@ return array(
     'think\\app\\' => array($vendorDir . '/topthink/think-multi-app/src'),
     'think\\' => array($vendorDir . '/topthink/framework/src/think', $vendorDir . '/topthink/think-helper/src', $vendorDir . '/topthink/think-orm/src', $vendorDir . '/topthink/think-template/src'),
     'taoser\\think\\' => array($vendorDir . '/taoser/think-auth/src'),
-    'taoser\\' => array($vendorDir . '/taoser/think-addons/src', $vendorDir . '/taoser/think-setarr/src'),
+    'taoser\\' => array($vendorDir . '/taoser/think-setarr/src', $vendorDir . '/taoser/think-addons/src'),
     'phpspirit\\databackup\\' => array($vendorDir . '/lotofbadcode/phpspirit_databackup/src'),
     'liliuwei\\social\\' => array($vendorDir . '/liliuwei/thinkphp-social/src'),
     'app\\' => array($baseDir . '/app'),
