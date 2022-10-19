@@ -7,30 +7,70 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
     upload = layui.upload;
   var notify = layui.notify;
 
-  function getAddonsList(type,selector ) {
+  //渲染表格
+  table.render({
+    elem: "#addons-list",
+    toolbar: "#toolbar",
+    defaultToolbar: [],
+    url: addonList,
+    cols: [[
+      {type: 'checkbox'},
+      {title: '序号', type: 'numbers'},
+      {field: 'title', title: '插件', width: 200},
+      {field: 'description', title: '简介', minWidth: 200},
+      {field: 'author', title: '作者', width: 100},
+      {field: 'price', title: '价格(元)', width: 85},
+      {field: 'downloads', title: '下载', width: 70},
+      {field: 'version', title: '版本', templet: '<div>{{d.version}} {{#  if(d.have_newversion == 1){ }}<span class="layui-badge-dot"></span>{{#  } }}</div>', width: 75},
+      {field: 'status', title: '在线', width: 70},
+      {title: '操作', width: 165, align: 'center', toolbar: '#addons-tool'}
+    ]],
+    page: true,
+    limit: 15,
+    height: "full-220",
+    text: "对不起，加载出现异常！",
+  });
+
+  // 重载数据
+  var addonReload = function (type,selector) {
     $.ajax({
       type: "post",
-      url: addonsList,
+      url: addonList,
       data: { type: type, selector: selector },
       dataType: "json",
       success: function (res) {
         //渲染表格
-        table.render({
-          elem: "#addons-list",
-          toolbar: "#toolbar",
-          defaultToolbar: [],
-          url: addonsList + "?type=" + type + "&selector=" + selector,
+        table.reload('addons-list',{
+          url: addonList,
+          where: {
+            type: type, selector: selector
+          },
           cols: [res["col"]],
-          page: true,
-          limit: 10,
-          height: "full-220",
-          text: "对不起，加载出现异常！",
         });
       },
     });
   }
 
-  getAddonsList("onlineAddons","all");
+  //头工具栏事件
+  table.on("toolbar(addons-list)", function (obj) {
+    var checkStatus = table.checkStatus(obj.config.id);
+    var url = $(this).data(url);
+
+    switch (obj.event) {
+      case "installed":
+        addonReload("installed","all");
+        break;
+      case "allAddons":
+        addonReload("onlineAddons","all");
+        break;
+      case "freeAddons":
+        addonReload("onlineAddons","free");
+        break;
+      case "payAddons":
+        addonReload("onlineAddons","pay");
+        break;
+    }
+  });
 
   var api = {
     userinfo: {
@@ -47,25 +87,6 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
       }
     }
   }
-
-  //头工具栏事件
-  table.on("toolbar(addons-list)", function (obj) {
-    var checkStatus = table.checkStatus(obj.config.id);
-    switch (obj.event) {
-      case "installed":
-        getAddonsList("installed",'');
-        break;
-      case "allAddons":
-        getAddonsList("onlineAddons","all");
-        break;
-      case "freeAddons":
-        getAddonsList("onlineAddons","free");
-        break;
-      case "payAddons":
-        getAddonsList("onlineAddons","pay");
-        break;
-    }
-  });
 
   //监听工具条
   table.on("tool(addons-list)", function (obj) {
@@ -85,12 +106,12 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
               layer.close(index);
               layer.open({
                 type: 2,
-                area: ['700px', '650px'],
+                area: ['80%', '90%'],
                 fixed: false, //不固定
                 maxmin: true,
                 content: 'pay.html'+ "?id=" + data.id+ "&name=" + data.name + "&version=" + data.version + "&uid=" + userinfo.uid + "&price=" + data.price,
                 success: function (layero, index){
-                  // 订单沦陷
+                  // 订单轮询
                   var intervalPay = setInterval(function() {
                     $.post(userIsPayUrl,{name:data.name, userinfo:userinfo},function (res){
                       if(res.code === 0) {
@@ -113,6 +134,8 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
               layer.close(index);
               notify.error(res.msg, "topRight");
             }
+            // 重载
+            table.reloadData("addons-list",{},'deep');
           });
         });
       } else {
@@ -149,7 +172,6 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
                     notify.success("登录成功", function (){
                       location.reload();
                     });
-
                   } else {
                     notify.alert(res.msg);
                   }
@@ -163,18 +185,14 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
             },
             success: function (layero, index) {
               $(".layui-layer-btn1", layero).prop("href", "https://www.aieok.com/article/reg.html").prop("target", "_blank");
-            },
-            end: function () {
-              $("#login").hide();
-            },
-
+            }
           });
         });
       }
     }
 
     //安装插件
-    if (event === "install") {
+    if (event === "install" || event === "upgrade") {
       var userLoginUrl = $(this).data('userlogin');
       var userIsPayUrl = $(this).data('ispay');
       install(data,url,userLoginUrl,userIsPayUrl);

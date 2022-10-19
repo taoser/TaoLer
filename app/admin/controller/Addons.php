@@ -3,53 +3,52 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 use app\common\lib\SqlFile;
+use app\common\lib\Zip;
 use think\Exception;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Config;
-use app\admin\model\Addons as AddonsModel;
-use taoler\com\Files;
-use taoler\com\Api;
-use app\common\lib\Zip;
-use think\response\Json;
 use app\admin\model\AuthRule;
+use app\admin\model\Addons as AddonsModel;
+use think\response\Json;
 use Symfony\Component\VarExporter\VarExporter;
+use taoler\com\Files;
+use app\common\lib\facade\HttpHelper;
 
 class Addons extends AdminController
 {
     /**
-     * @return string
+     *
      */
     public function index()
     {
+        if(Request::isAjax()) {
+            $data = Request::param();
+            if(!isset($data['type'])) $data['type'] = 'onlineAddons';
+            if(!isset($data['selector'])) $data['selector'] = 'all';
+            return $this->getList($data);
+        }
 		return View::fetch();
     }
 
+
     /**
      * 插件动态列表
+     * @param $data
      * @return Json
      */
-    public function addonsList()
+    public function getList($data)
     {
-		$data = Request::param();
         $res = [];
         //本地插件列表
         $addonsList = Files::getDirName('../addons/');
-        $url = $this->getSystem()['api_url'].'/v1/addons';
-        $addons = Api::urlGet($url);
-
+        $response = HttpHelper::withHost()->get('/v1/addons');
+        $addons = $response->toJson();
         switch($data['type']){
             //已安装
             case 'installed':
                 if($addonsList){
                     $res = ['code'=>0,'msg'=>'','count'=>5];
-                        foreach($addonsList as $v){
-                            $info_file = '../addons/'.$v.'/info.ini';
-                            $info = parse_ini_file($info_file);
-							$info['show'] = $info['status'] ? '启用' : '禁用';
-							$info['install'] = $info['status'] ? '是' : '否';
-                            $res['data'][] = $info;
-                        }
                     $res['col'] = [
                         ['type' => 'numbers'],
                         ['field' => 'name','title'=> '插件', 'width'=> 120],
@@ -62,43 +61,44 @@ class Addons extends AdminController
                         ['field' => 'status','title'=> '状态', 'width'=> 95, 'templet' => '#buttonStatus'],
                         ['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
                     ];
+
+                    // $data数据
+                    foreach($addonsList as $v){
+                        $info_file = '../addons/'.$v.'/info.ini';
+                        $info = parse_ini_file($info_file);
+                        $info['show'] = $info['status'] ? '启用' : '禁用';
+                        $info['install'] = $info['status'] ? '是' : '否';
+                        $res['data'][] = $info;
+                    }
+
                 } else {
-					$res = ['code'=>-1,'msg'=>'没有安装任何插件'];
-				}
+                    $res = ['code'=>-1,'msg'=>'没有安装任何插件'];
+                }
                 break;
             //在线全部
             case 'onlineAddons':
-					if( $addons->code !== -1){
-                        // 与本地文件对比
-                        foreach($addons->data as $v){
-                            switch ($data['selector']) {
-                                case 'free':
-                                    if($v->price == 0) {
-                                        if(in_array($v->name,$addonsList)) {
-                                            $info = get_addons_info($v->name);
-                                            //已安装
-                                            $v->isInstall = 1;
-                                            //判断是否有新版本
-                                            if($v->version > $info['version']) $v->have_newversion = 1;
-                                            $v->price =  $v->price ? $v->price : '免费';
-                                        }
-                                        $res['data'][] = $v;
-                                    }
-                                    break;
-                                case 'pay':
-                                    if($v->price > 0) {
-                                        if(in_array($v->name,$addonsList)) {
-                                            $info = get_addons_info($v->name);
-                                            //已安装
-                                            $v->isInstall = 1;
-                                            //判断是否有新版本
-                                            if($v->version > $info['version']) $v->have_newversion = 1;
-                                            $v->price =  $v->price ? $v->price : '免费';
-                                        }
-                                        $res['data'][] = $v;
-                                    }
-                                    break;
-                                case 'all':
+                if($response->ok()) {
+
+                    $res['code'] = 0;
+                    $res['msg'] = '';
+                    $res['count'] = count($addons->data);
+                    $res['col'] = [
+                        ['type' => 'numbers'],
+                        ['field' => 'title','title'=> '插件', 'width'=> 200],
+                        ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
+                        ['field' => 'author','title'=> '作者', 'width'=> 100],
+                        ['field' => 'price','title'=> '价格(元)','width'=> 85],
+                        ['field' => 'downloads','title'=> '下载', 'width'=> 70],
+                        ['field' => 'version','title'=> '版本', 'templet' => '<div>{{d.version}} {{#  if(d.have_newversion == 1){ }}<span class="layui-badge-dot"></span>{{#  } }}</div>','width'=> 75],
+                        ['field' => 'status','title'=> '在线', 'width'=> 70],
+                        ['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
+                    ];
+
+                    // $data数据 与本地文件对比
+                    foreach($addons->data as $v){
+                        switch ($data['selector']) {
+                            case 'free':
+                                if($v->price == 0) {
                                     if(in_array($v->name,$addonsList)) {
                                         $info = get_addons_info($v->name);
                                         //已安装
@@ -108,29 +108,41 @@ class Addons extends AdminController
                                         $v->price =  $v->price ? $v->price : '免费';
                                     }
                                     $res['data'][] = $v;
-                                    break;
-                            }
-                        };
+                                }
+                                break;
+                            case 'pay':
+                                if($v->price > 0) {
+                                    if(in_array($v->name,$addonsList)) {
+                                        $info = get_addons_info($v->name);
+                                        //已安装
+                                        $v->isInstall = 1;
+                                        //判断是否有新版本
+                                        if($v->version > $info['version']) $v->have_newversion = 1;
+                                        $v->price =  $v->price ? $v->price : '免费';
+                                    }
+                                    $res['data'][] = $v;
+                                }
+                                break;
+                            case 'all':
+                                if(in_array($v->name,$addonsList)) {
+                                    $info = get_addons_info($v->name);
+                                    //已安装
+                                    $v->isInstall = 1;
+                                    //判断是否有新版本
+                                    if($v->version > $info['version']) $v->have_newversion = 1;
+                                    $v->price =  $v->price ? $v->price : '免费';
+                                }
+                                $res['data'][] = $v;
+                                break;
+                        }
+                    };
 
-						$res['code'] = 0;
-						$res['msg'] = '';
-						$res['col'] = [
-							['type' => 'numbers'],
-							['field' => 'title','title'=> '插件', 'width'=> 200],
-                            ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
-							['field' => 'author','title'=> '作者', 'width'=> 100],
-							['field' => 'price','title'=> '价格(元)','width'=> 85],
-							['field' => 'downloads','title'=> '下载', 'width'=> 70],
-                            ['field' => 'version','title'=> '版本', 'templet' => '<div>{{d.version}} {{#  if(d.have_newversion == 1){ }}<span class="layui-badge-dot"></span>{{#  } }}</div>','width'=> 75],
-                            ['field' => 'status','title'=> '在线', 'width'=> 70],
-							['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
-						];
-					} else {
-						$res = ['code'=>-1,'msg'=>'未获取到服务器信息'];
-					}
+                } else {
+                    $res = ['code' => -1, 'msg' => '未获取到服务器信息'];
+                }
                 break;
         }
-		return json($res);
+        return json($res);
     }
 
     /**
@@ -192,20 +204,20 @@ class Addons extends AdminController
     }
 
     /**
-     * 安装插件
+     * 安装&升级，
+     * @param array $data
+     * @param bool $type true执行sql,false升级不执行sql
      * @return Json
-     * @throws \Exception
      */
-    public function install()
+    public function install(array $data = [], bool $type = true)
     {
-        $data = Request::param();
-        $url = $this->getSystem()['api_url'].'/v1/getaddons';
-        $data = ['name'=>$data['name'], 'version'=>$data['version'], 'uid'=>$data['uid'], 'token'=>$data['token']];
-         $addons = Api::urlPost($url,$data);
-         if( $addons->code < 0) {
-             return json(['code'=>$addons->code,'msg'=>$addons->msg]);
-         }
-         //$this->pay($name,$extend);
+        $data = Request::only(['name','version','uid','token']) ?? $data;
+//        $data = ['name' => $name, 'version' => $version, 'uid' => $uid, 'token' => $token];
+
+        // 接口
+        $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
+        if($response->code < 0) return json($response);
+
          //版本判断，是否能够安装？
          $addInstalledVersion = get_addons_info($data['name']);
          if(!empty($addInstalledVersion)){
@@ -216,7 +228,7 @@ class Addons extends AdminController
              //$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
          }
 
-         $file_url = $addons->addons_src;
+         $file_url = $response->addons_src;
          //判断远程文件是否可用存在
          $header = get_headers($file_url, true);
          if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
@@ -265,24 +277,32 @@ class Addons extends AdminController
          if($cpData['code'] == -1) return json(['code'=>-1,'msg'=>$cpData['msg']]);
 
         $class = get_addons_instance($data['name']);
-        //添加数据库
-        $sqlInstallFile = root_path().'addons/'.$data['name'].'/install.sql';
-        if(file_exists($sqlInstallFile)) {
-            SqlFile::dbExecute($sqlInstallFile);
-        }
-        //安装菜单
-        $menu = get_addons_menu($data['name']);
-        if(!empty($menu)){
-            if(isset($menu['is_nav']) && $menu['is_nav']==1){
-                $pid = 0;
-            }else{
-                $pid = AuthRule::where('name','addons')->value('id');
+        try {
+            if($type) {
+                // 执行数据库
+                $sqlInstallFile = root_path().'addons/'.$data['name'].'/install.sql';
+                if(file_exists($sqlInstallFile)) {
+                    SqlFile::dbExecute($sqlInstallFile);
+                }
             }
-            $menu_arr[] = $menu['menu'];
-            $this->addAddonMenu($menu_arr, (int)$pid,1);
+
+            //安装菜单
+            $menu = get_addons_menu($data['name']);
+            if(!empty($menu)){
+                if(isset($menu['is_nav']) && $menu['is_nav'] == 1){
+                    $pid = 0;
+                }else{
+                    $pid = AuthRule::where('name','addons')->value('id');
+                }
+                $menu_arr[] = $menu['menu'];
+                $this->addAddonMenu($menu_arr, (int)$pid,1);
+            }
+            //执行插件安装
+            $class->install();
+            set_addons_info($data['name'],['status' => 1,'install' => 1]);
+        } catch (\Exception $e) {
+            return json(['code'=>-1,'msg'=> $e->getMessage()]);
         }
-        //执行插件安装
-        $class->install();
 
 		Files::delDirAndFile('../runtime/addons/'.$data['name'] . DS);
 
@@ -295,34 +315,33 @@ class Addons extends AdminController
     public function uninstall()
     {
         $name = input('name');
-        //执行插件卸载
+        // 执行插件卸载
         $class = get_addons_instance($name);
         $class->uninstall();
-        //卸载菜单
+        // 卸载菜单
         $menu = get_addons_menu($name);
         if(!empty($menu)){
             $menu_arr[] = $menu['menu'];
             $this->delAddonMenu($menu_arr);
         }
 
-        //卸载插件数据库
-        $sqlUninstallFile = root_path().'addons/'.$name.'/uninstall.sql';
-        if(file_exists($sqlUninstallFile)) {
-            SqlFile::dbExecute($sqlUninstallFile);
-        }
-
-
-        // 插件addons下目录
-        $addonsDir = root_path() . 'addons' . DS . $name . DS;
-        // 插件管理后台目录
-        $admin_controller = app_path() . 'controller' . DS . $name . DS;
-        $admin_model = app_path() . 'model' . DS . $name  . DS;
-        $admin_view = app_path() . 'view' . DS . $name . DS;
-        $admin_validate = app_path() . 'validate' . DS . $name . DS;
-        // 插件静态资源目录
-        $addon_public = public_path() . 'addons' . DS . $name . DS;
-
         try {
+            //卸载插件数据库
+            $sqlUninstallFile = root_path().'addons/'.$name.'/uninstall.sql';
+            if(file_exists($sqlUninstallFile)) {
+                SqlFile::dbExecute($sqlUninstallFile);
+            }
+
+            // 插件addons下目录
+            $addonsDir = root_path() . 'addons' . DS . $name . DS;
+            // 插件管理后台目录
+            $admin_controller = app_path() . 'controller' . DS . $name . DS;
+            $admin_model = app_path() . 'model' . DS . $name  . DS;
+            $admin_view = app_path() . 'view' . DS . $name . DS;
+            $admin_validate = app_path() . 'validate' . DS . $name . DS;
+            // 插件静态资源目录
+            $addon_public = public_path() . 'addons' . DS . $name . DS;
+
             if(file_exists($addonsDir)) Files::delDir($addonsDir);
             if(file_exists($admin_controller)) Files::delDir($admin_controller);
             if(file_exists($admin_model)) Files::delDir($admin_model);
@@ -335,6 +354,43 @@ class Addons extends AdminController
         }
 
         return json(['code' => 0, 'msg' => '插件卸载成功']);
+    }
+
+    /**
+     * 升级插件
+     * @return Json
+     * @throws \Exception
+     */
+    public function upgrade()
+    {
+        $data = Request::only(['name','version','uid','token']);
+        // 获取配置信息
+        $config = get_addons_config($data['name']);
+        // 卸载插件
+        $class = get_addons_instance($data['name']);
+        $class->uninstall();
+        // 卸载菜单
+        $menu = get_addons_menu($data['name']);
+        if(!empty($menu)){
+            $menu_arr[] = $menu['menu'];
+            $this->delAddonMenu($menu_arr);
+        }
+
+        try {
+            // 升级安装，第二个参数为false
+            $this->install($data,false);
+            // 升级sql
+            $sqlUpdateFile = root_path().'addons/'.$data['name'].'/update.sql';
+            if(file_exists($sqlUpdateFile)) {
+                SqlFile::dbExecute($sqlUpdateFile);
+            }
+            // 恢复配置
+            set_addons_config($data['name'],$config);
+        } catch (\Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
+        }
+
+        return json(['code' => 0, 'msg' => '升级成功']);
     }
 
     /**
@@ -478,14 +534,8 @@ class Addons extends AdminController
      */
     public function userLogin()
     {
-        $data = Request::param();
-        $url = $this->getSystem()['api_url'].'/v1/user/login';
-        $user = Api::urlPost($url,$data);
-        if($user->code == 0) {
-            return $user;
-        } else {
-            return json(['code'=>-1,'msg'=>$user->msg]);
-        }
+        $response = HttpHelper::withHost()->post('/v1/user/login', Request::param())->toJson();
+        return json($response);
     }
 
     /**
@@ -495,15 +545,17 @@ class Addons extends AdminController
     public function pay()
     {
         $data = Request::only(['id','name','version','uid','price']);
-        $url = $this->getSystem()['api_url'].'/v1/createOrder';
-        $order = Api::urlPost($url,$data);
+//        $url = $this->getSystem()['api_url'].'/v1/createOrder';
+//        $order = Api::urlPost($url,$data);
 
-        if ($order->code == 0) {
-            $orderData = json_decode(json_encode($order->data),TRUE);
-            View::assign('orderData',$orderData);
+        $response = HttpHelper::withHost()->post('/v1/createOrder', $data);
+
+        if ($response->ok()) {
+//            $orderData = json_decode(json_encode($response->toJson()->data),TRUE);
+            View::assign('orderData',$response->toArray()['data']);
             return View::fetch();
         } else {
-            return json(['code'=>-1,'msg'=>$order->msg]);
+            return json($response->toJson());
         }
     }
 
@@ -514,18 +566,12 @@ class Addons extends AdminController
     public function isPay()
     {
         $param = Request::only(['name','userinfo']);
-        //halt($data);
         $data = [
             'name'=>$param['name'],
             'uid'=> $param['userinfo']['uid'],
         ];
-        $url = $this->getSystem()['api_url'].'/v1/ispay';
-        $res =  Api::urlPost($url,$data);
-        if($res->code == 0) {
-            return json(['code'=>0,'msg'=>'payed']);
-        } else {
-            return json(['code'=>-1,'msg'=>'no pay']);
-        }
+        $response = HttpHelper::withHost()->post('/v1/ispay', $data)->toJson();
+        return json($response);
     }
 
 }

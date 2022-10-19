@@ -12,11 +12,9 @@ declare (strict_types = 1);
 
 namespace app\listener;
 
-use think\facade\Db;
 use think\facade\Log;
 use app\common\model\User;
-use think\facade\Lang;
-use taoler\com\Api;
+use app\common\lib\facade\HttpHelper;
 
 class UserLogin
 {
@@ -35,16 +33,17 @@ class UserLogin
 		if($type == 'log'){
 			//$name = $user->user['name'];
 			$ip = request()->ip();
-
 			$url = 'http://ip-api.com/json/' . $ip . '?lang=zh-CN&fields=57361';
-            $ipJson = Api::urlGetRespond($url);
-            $res = $ipJson->getData();
-
-            $data = json_decode($res['data']);
-            $city ='earth';
-             if($res['code'] == 0 && !$data->status){
-             	$city = $data->city;
-             }
+            $city = 'earth';
+            try{
+                $ipInfo = HttpHelper::get($url)->toJson();
+                if($ipInfo->status == 'success')
+                {
+                    $city = $ipInfo->city;
+                }
+            } catch (\Exception $e) {
+                // echo $e->getMessage();
+            }
 
             //国内查询，接口已失效
 //          $url = 'http://freeapi.ipip.net/' . $ip;
@@ -75,7 +74,7 @@ class UserLogin
 		}
         
 		if($type == 'logError'){	
-			$res = $u->allowField(['login_error_num','login_error_time'])->save(['login_error_num'=>$u->login_error_num+1,'login_error_time'=>time()]);
+			$res = $u->allowField(['login_error_num','login_error_time'])->save(['login_error_num'=>$u->login_error_num + 1,'login_error_time'=>time()]);
 		}
 
     }

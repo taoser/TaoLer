@@ -4,22 +4,24 @@
   <div class="layui-fluid">
         <div class="layui-card">
 			<div class="layui-card-body">
+
 				<table id="addons-list" lay-filter="addons-list"></table>
 
 				<script type="text/html" id="toolbar">
 					<div class="layui-btn-group" style="padding-bottom: 10px;">
-						<a href="#denable"  type="button" class="layui-btn layui-btn-sm" lay-event="allAddons">全部</a>
-						<a type="button" class="layui-btn layui-btn-sm" lay-event="freeAddons">免费</a>
-						<a type="button" class="layui-btn layui-btn-sm" lay-event="payAddons">付费</a>
-						<a href="#enable" type="button" class="layui-btn layui-btn-normal layui-btn-sm" lay-event="installed">已安装</a>
+						<a type="button" class="layui-btn layui-btn-sm" lay-event="allAddons" data-url="{:url('addons/index',['type'=>'onlineAddons','selector'=>'all'])}">全部</a>
+						<a type="button" class="layui-btn layui-btn-sm" lay-event="freeAddons" data-url="{:url('addons/index',['type'=>'onlineAddons','selector'=>'free'])}">免费</a>
+						<a type="button" class="layui-btn layui-btn-sm" lay-event="payAddons" data-url="{:url('addons/index',['type'=>'onlineAddons','selector'=>'pay'])}">付费</a>
+						<a type="button" class="layui-btn layui-btn-normal layui-btn-sm" lay-event="installed" data-url="{:url('addons/index',['type'=>'installed','selector'=>''])}">已安装</a>
 					</div>
 					<div class="layui-btn-group" style="padding-bottom: 10px;">
 						<button class="layui-btn layui-btn-danger layui-btn-sm layuiadmin-btn-admin" data-type="add">离线安装</button>
 					</div>
 				</script>
+
 				<script type="text/html" id="addons-tool">
 					{{#  if(d.have_newversion === 1){ }}
-						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="install" data-url="{:url('Addons/install')}"><i class="layui-icon layui-icon-edit"></i>升级</a>
+						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="install" data-url="{:url('Addons/upgrade')}" data-userlogin="{:url('Addons/userLogin')}" data-ispay="{:url('Addons/isPay')}"><i class="layui-icon layui-icon-edit"></i>升级</a>
 					{{# } else { }}
 						{{# if(d.isInstall ===1) { }}
 							<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="config" data-url="{:url('Addons/config')}"><i class="layui-icon layui-icon-set"></i>设置</a>
@@ -48,8 +50,7 @@
 {block name="js"}
 <script src="/static/notify.js"></script>
 <script>
-	var addonsList = "{:url('Addons/addonsList')}";
-
+	var addonList = "{:url('Addons/index')}";
   layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({

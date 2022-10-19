@@ -15,6 +15,7 @@ use think\facade\Lang;
 use think\facade\View;
 use taoser\SetArr;
 use app\common\lib\Uploads;
+use yzh52521\EasyHttp\Http;
 
 /**
  * 控制器基础类
@@ -576,6 +577,15 @@ abstract class BaseController
 				
 		return $content;
 	}
+
+    /**
+     * api接口
+     * @return \yzh52521\EasyHttp\Request
+     */
+    protected function api(string $url = 'http://api.aieok.com')
+    {
+        return Http::withHost($url);
+    }
 
 
 
