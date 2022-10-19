@@ -95,7 +95,6 @@ class Index extends AdminController
 	
 	//版本检测
 	public function getVersion(){
-		
 		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
 		if($verCheck->code !== -1){
             return $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
