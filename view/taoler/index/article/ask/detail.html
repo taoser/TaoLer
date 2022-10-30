@@ -63,7 +63,7 @@
           <p>{$sysInfo.state}</p>
         </div>
       </div>
-      
+
       {//评论内容}
       <div class="fly-panel detail-box" id="flyReply">
         <span style="font-size: 18px">评论 {$article.comments_count}</span>
@@ -187,6 +187,8 @@
 {block name="script"}
 
 {:hook('taonyeditor')}
+
+{:hook('taoplayer')}
 
 <script>
   var collectionFind = "{:url('Collection/find')}",

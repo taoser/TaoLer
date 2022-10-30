@@ -484,14 +484,14 @@ class Article extends BaseController
 	}
 
     /**
-	 * 关键词
-	 *
-	 * @return void
-	 */
+     * 关键词
+     * @return \think\response\Json
+     */
     public function keywords()
     {
         $data = Request::only(['flag','keywords','content']);
-		return $this->setKeywords($data);
+        $keywords = $this->setKeywords($data);
+        return json(['code'=>0, 'msg' => 'ok', 'data'=> $keywords]);
     }
 
 	// 文章置顶、加精、评论状态

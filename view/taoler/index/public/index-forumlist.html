@@ -2,7 +2,7 @@
 	<a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
 	  <img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
 	</a>
-	<h2><a href="{$Request.domain}{$art.url}" style="color:{$art.title_color};">{$art.title}</a></h2>
+	<h2><a href="{$Request.domain}{$art.url}" style="color:{$art.title_color ?? ''};">{$art.title}</a></h2>
 	<div class="fly-list-info">
 		{if config('taoler.config.cate_show') == 1}
 		<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>

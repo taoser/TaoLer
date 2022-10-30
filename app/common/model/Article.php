@@ -278,7 +278,8 @@ class Article extends Model
             ])->withCount(['comments'])
                 ->where('status',1)
                 ->where($where)
-                ->order(['is_top'=>'desc','create_time'=>'desc'])
+                ->limit(15)
+                ->order(['create_time'=>'desc'])
                 ->paginate([
                     'list_rows' => 15,
                     'page' => $page

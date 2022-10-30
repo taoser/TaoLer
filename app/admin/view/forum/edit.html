@@ -42,7 +42,7 @@
               <div class="layui-inline">
                 <label class="layui-form-label">{:lang('enclosure')}</label>
                 <div class="layui-input-inline" style="width: 190px;">
-                  <input type="text" class="layui-input" name="upzip" value="{$article.upzip}" placeholder="zip,jpg格式" title="上传附件"/>
+                  <input type="text" class="layui-input" name="upzip" value="{$article.upzip ?? ''}" placeholder="zip,jpg格式" title="上传附件"/>
                 </div>
                 <button type="button" class="layui-btn" id="zip-button"><i class="layui-icon"></i>上传文件</button>
               </div>

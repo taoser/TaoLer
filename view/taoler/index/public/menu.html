@@ -33,13 +33,19 @@
         <hr>
         <ul>
 		{volist name="cateList" id="cate"} 
-		<li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if}> 
+		<li {if condition="$cate.ename eq $Request.param.ename"} class="layui-this" {/if} class="layui-menu-item-group layui-menu-item-down" lay-options="{type: 'group'}">
 		<div class="layui-menu-body-title">
 		<a href="{$Request.domain}{:url('cate',['ename' => $cate.ename])}"><i class="layui-icon {$cate.icon}"></i>  {:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}
-		<span class="layui-font-12 layui-font-gray">>> {$cate.ename}</span>
 		{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}
 		</a>
 		</div>
+			{notempty name="cate.children"}
+			<ul>
+				{volist name="cate.children" id="vo2"}
+				<li><a href="{$Request.domain}{:url('cate',['ename' => $vo2.ename])}">{$vo2.catename}</a></li>
+				{/volist}
+			</ul>
+			{/notempty}
 		</li> 
 		{/volist}
         </ul>

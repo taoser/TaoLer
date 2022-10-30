@@ -8,10 +8,11 @@
  */
 
 
-layui.define(['table', 'form'], function(exports){
+layui.define(['table', 'form', 'notify'], function(exports){
   var $ = layui.$
   ,table = layui.table
   ,form = layui.form;
+  var notify = layui.notify;
 
   //用户管理
   table.render({
@@ -97,10 +98,11 @@ layui.define(['table', 'form'], function(exports){
               data:{"id":field.id,"name":field.username,"phone":field.phone,"email":field.email,"user_img":field.avatar,"sex":field.sex},
               daType:"json",
               success:function (res){
-                if(data.code == 0){
+                if(res.code === 0){
+                    notify.success(res.msg);
                   layer.msg(data.msg,{icon:6,time:2000});
                 } else {
-                  layer.open({title:'修改失败',content:data.msg,icon:5,adim:6})
+                    notify.error(res.msg);
                 }
               }
             });

@@ -12,6 +12,8 @@
 return [
     'autoload' => true,
     'hooks' => [],
-    'route' => [],
+    'route' => [
+//       '/taocai/savedata' => 'taocai/Api/saveData',
+    ],
     'service' => [],
 ];

@@ -479,8 +479,8 @@ class Forum extends AdminController
     public function getKeywords()
     {
         $data = Request::only(['flag','keywords','content']);
-		return $this->setKeywords($data);
-		
+        $keywords = $this->setKeywords($data);
+        return json(['code'=>0, 'msg' => 'ok', 'data'=> $keywords]);
     }
 
     /**

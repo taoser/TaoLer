@@ -53,7 +53,12 @@ class HttpHelper
      */
     public function get(string $url, array $data = []): HttpHelper
     {
-        $this->response = $this->http->get($url, $data);
+        try {
+            $this->response = $this->http->get($url, $data);
+        } catch (\Exception $e) {
+            //echo $e->getMessage();
+        }
+//        $this->response = $this->http->get($url, $data);
         return $this;
     }
 
@@ -65,7 +70,12 @@ class HttpHelper
      */
     public function post(string $url, array $data = [])
     {
-        $this->response = $this->http->post($url, $data);
+        try {
+            $this->response = $this->http->post($url, $data);
+        } catch (\Exception $e) {
+            //echo $e->getMessage();
+        }
+//        $this->response = $this->http->post($url, $data);
         return $this;
     }
 
@@ -101,7 +111,14 @@ class HttpHelper
      */
     public function ok() : bool
     {
-        return $this->response->status() === 200;
+//        return $this->response->status() === 200;
+//halt($this->response);
+
+      if($this->response !== null) {
+          return $this->response->status() === 200;
+      }
+      return false;
+
     }
 
 }

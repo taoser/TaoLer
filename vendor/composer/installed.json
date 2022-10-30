@@ -313,17 +313,17 @@
         },
         {
             "name": "endroid/qr-code",
-            "version": "4.6.0",
-            "version_normalized": "4.6.0.0",
+            "version": "4.6.1",
+            "version_normalized": "4.6.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/endroid/qr-code.git",
-                "reference": "b60873b14e2ca7bf3c3746f5e032023095a7e05c"
+                "reference": "a75c913b0e4d6ad275e49a2c1de1cacffc6c2184"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/endroid/qr-code/zipball/b60873b14e2ca7bf3c3746f5e032023095a7e05c",
-                "reference": "b60873b14e2ca7bf3c3746f5e032023095a7e05c",
+                "url": "https://api.github.com/repos/endroid/qr-code/zipball/a75c913b0e4d6ad275e49a2c1de1cacffc6c2184",
+                "reference": "a75c913b0e4d6ad275e49a2c1de1cacffc6c2184",
                 "shasum": ""
             },
             "require": {
@@ -342,7 +342,7 @@
                 "roave/security-advisories": "Makes sure package versions with known security issues are not installed",
                 "setasign/fpdf": "Enables you to use the PDF writer"
             },
-            "time": "2022-10-04T17:13:41+00:00",
+            "time": "2022-10-26T08:48:17+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -376,7 +376,7 @@
             ],
             "support": {
                 "issues": "https://github.com/endroid/qr-code/issues",
-                "source": "https://github.com/endroid/qr-code/tree/4.6.0"
+                "source": "https://github.com/endroid/qr-code/tree/4.6.1"
             },
             "funding": [
                 {
@@ -1056,62 +1056,6 @@
                 }
             ],
             "install-path": "../league/flysystem"
-        },
-        {
-            "name": "league/flysystem-cached-adapter",
-            "version": "1.1.0",
-            "version_normalized": "1.1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/flysystem-cached-adapter.git",
-                "reference": "d1925efb2207ac4be3ad0c40b8277175f99ffaff"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-cached-adapter/zipball/d1925efb2207ac4be3ad0c40b8277175f99ffaff",
-                "reference": "d1925efb2207ac4be3ad0c40b8277175f99ffaff",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "league/flysystem": "~1.0",
-                "psr/cache": "^1.0.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "~0.9",
-                "phpspec/phpspec": "^3.4",
-                "phpunit/phpunit": "^5.7",
-                "predis/predis": "~1.0",
-                "tedivm/stash": "~0.12"
-            },
-            "suggest": {
-                "ext-phpredis": "Pure C implemented extension for PHP"
-            },
-            "time": "2020-07-25T15:56:04+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "League\\Flysystem\\Cached\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "frankdejonge",
-                    "email": "info@frenky.net"
-                }
-            ],
-            "description": "An adapter decorator to enable meta-data caching.",
-            "install-path": "../league/flysystem-cached-adapter"
         },
         {
             "name": "league/mime-type-detection",
@@ -2650,24 +2594,22 @@
         },
         {
             "name": "topthink/framework",
-            "version": "v6.0.13",
-            "version_normalized": "6.0.13.0",
+            "version": "v6.1.1",
+            "version_normalized": "6.1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "126d5b2cbacb73d6e2a85cbc7a2c6ee59d0b3fa6"
+                "reference": "2cb56f3e6f3c479fe90ea5f28d38d3b5ef6c4210"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/framework/zipball/126d5b2cbacb73d6e2a85cbc7a2c6ee59d0b3fa6",
-                "reference": "126d5b2cbacb73d6e2a85cbc7a2c6ee59d0b3fa6",
+                "url": "https://api.github.com/repos/top-think/framework/zipball/2cb56f3e6f3c479fe90ea5f28d38d3b5ef6c4210",
+                "reference": "2cb56f3e6f3c479fe90ea5f28d38d3b5ef6c4210",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "league/flysystem": "^1.1.4",
-                "league/flysystem-cached-adapter": "^1.0",
                 "php": ">=7.2.5",
                 "psr/container": "~1.0",
                 "psr/http-message": "^1.0",
@@ -2682,7 +2624,7 @@
                 "mockery/mockery": "^1.2",
                 "phpunit/phpunit": "^7.0"
             },
-            "time": "2022-07-15T02:52:08+00:00",
+            "time": "2022-10-26T03:48:53+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2714,35 +2656,29 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/framework/issues",
-                "source": "https://github.com/top-think/framework/tree/v6.0.13"
+                "source": "https://github.com/top-think/framework/tree/v6.1.1"
             },
             "install-path": "../topthink/framework"
         },
         {
             "name": "topthink/think-captcha",
-            "version": "v3.0.7",
-            "version_normalized": "3.0.7.0",
+            "version": "v3.0.8",
+            "version_normalized": "3.0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-captcha.git",
-                "reference": "a450602932a5d9ba183e288b79921ba3b9a92331"
+                "reference": "52fba122c953995bec3013c635025172491ae299"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/a450602932a5d9ba183e288b79921ba3b9a92331",
-                "reference": "a450602932a5d9ba183e288b79921ba3b9a92331",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/52fba122c953995bec3013c635025172491ae299",
+                "reference": "52fba122c953995bec3013c635025172491ae299",
+                "shasum": ""
             },
             "require": {
-                "topthink/framework": "^6.0.0"
+                "topthink/framework": "^6.0"
             },
-            "time": "2022-04-23T02:38:14+00:00",
+            "time": "2022-10-26T07:59:42+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2776,7 +2712,7 @@
             "description": "captcha package for thinkphp",
             "support": {
                 "issues": "https://github.com/top-think/think-captcha/issues",
-                "source": "https://github.com/top-think/think-captcha/tree/v3.0.7"
+                "source": "https://github.com/top-think/think-captcha/tree/v3.0.8"
             },
             "install-path": "../topthink/think-captcha"
         },
@@ -2891,21 +2827,21 @@
         },
         {
             "name": "topthink/think-migration",
-            "version": "v3.0.3",
-            "version_normalized": "3.0.3.0",
+            "version": "v3.0.4",
+            "version_normalized": "3.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-migration.git",
-                "reference": "5717d9e5f3ea745f6dbfd1e30b4402aaadff9a79"
+                "reference": "c5880669b277762d5ff935e551bc0d5c71de6811"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-migration/zipball/5717d9e5f3ea745f6dbfd1e30b4402aaadff9a79",
-                "reference": "5717d9e5f3ea745f6dbfd1e30b4402aaadff9a79",
+                "url": "https://api.github.com/repos/top-think/think-migration/zipball/c5880669b277762d5ff935e551bc0d5c71de6811",
+                "reference": "c5880669b277762d5ff935e551bc0d5c71de6811",
                 "shasum": ""
             },
             "require": {
-                "topthink/framework": "^6.0.0",
+                "topthink/framework": "^6.0",
                 "topthink/think-helper": "^3.0.3"
             },
             "require-dev": {
@@ -2914,7 +2850,7 @@
             "suggest": {
                 "fzaninotto/faker": "Required to use the factory builder (^1.8)."
             },
-            "time": "2020-12-07T05:54:22+00:00",
+            "time": "2022-10-26T07:57:54+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2942,36 +2878,30 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-migration/issues",
-                "source": "https://github.com/top-think/think-migration/tree/v3.0.3"
+                "source": "https://github.com/top-think/think-migration/tree/v3.0.4"
             },
             "install-path": "../topthink/think-migration"
         },
         {
             "name": "topthink/think-multi-app",
-            "version": "v1.0.14",
-            "version_normalized": "1.0.14.0",
+            "version": "v1.0.15",
+            "version_normalized": "1.0.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-multi-app.git",
-                "reference": "ccaad7c2d33f42cb1cc2a78d6610aaec02cea4c3"
+                "reference": "387e0dac059c20f92cac5da41a871e10829c1c97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/ccaad7c2d33f42cb1cc2a78d6610aaec02cea4c3",
-                "reference": "ccaad7c2d33f42cb1cc2a78d6610aaec02cea4c3",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/387e0dac059c20f92cac5da41a871e10829c1c97",
+                "reference": "387e0dac059c20f92cac5da41a871e10829c1c97",
+                "shasum": ""
             },
             "require": {
                 "php": ">=7.1.0",
-                "topthink/framework": "^6.0.0"
+                "topthink/framework": "^6.0"
             },
-            "time": "2020-07-12T13:50:37+00:00",
+            "time": "2022-10-26T08:03:06+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2997,21 +2927,25 @@
                 }
             ],
             "description": "thinkphp6 multi app support",
+            "support": {
+                "issues": "https://github.com/top-think/think-multi-app/issues",
+                "source": "https://github.com/top-think/think-multi-app/tree/v1.0.15"
+            },
             "install-path": "../topthink/think-multi-app"
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.54",
-            "version_normalized": "2.0.54.0",
+            "version": "v2.0.55",
+            "version_normalized": "2.0.55.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "97b061b47616301ff29fbd4c35ed9184e1162e4e"
+                "reference": "e1974a4c3b1b4c5b808fcc0863fc254e711dee13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/97b061b47616301ff29fbd4c35ed9184e1162e4e",
-                "reference": "97b061b47616301ff29fbd4c35ed9184e1162e4e",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/e1974a4c3b1b4c5b808fcc0863fc254e711dee13",
+                "reference": "e1974a4c3b1b4c5b808fcc0863fc254e711dee13",
                 "shasum": ""
             },
             "require": {
@@ -3025,7 +2959,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^7|^8|^9.5"
             },
-            "time": "2022-07-05T05:25:51+00:00",
+            "time": "2022-09-27T14:18:43+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3053,7 +2987,7 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v2.0.54"
+                "source": "https://github.com/top-think/think-orm/tree/v2.0.55"
             },
             "install-path": "../topthink/think-orm"
         },
@@ -3109,30 +3043,24 @@
         },
         {
             "name": "topthink/think-trace",
-            "version": "v1.4",
-            "version_normalized": "1.4.0.0",
+            "version": "v1.5",
+            "version_normalized": "1.5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-trace.git",
-                "reference": "9a9fa8f767b6c66c5a133ad21ca1bc96ad329444"
+                "reference": "55027fd79abb744f32a3be8d9e1ccf873a3ca9b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-trace/zipball/9a9fa8f767b6c66c5a133ad21ca1bc96ad329444",
-                "reference": "9a9fa8f767b6c66c5a133ad21ca1bc96ad329444",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/top-think/think-trace/zipball/55027fd79abb744f32a3be8d9e1ccf873a3ca9b7",
+                "reference": "55027fd79abb744f32a3be8d9e1ccf873a3ca9b7",
+                "shasum": ""
             },
             "require": {
                 "php": ">=7.1.0",
-                "topthink/framework": "^6.0.0"
+                "topthink/framework": "^6.0"
             },
-            "time": "2020-06-29T05:27:28+00:00",
+            "time": "2022-10-26T07:56:45+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -3161,6 +3089,10 @@
                 }
             ],
             "description": "thinkphp debug trace",
+            "support": {
+                "issues": "https://github.com/top-think/think-trace/issues",
+                "source": "https://github.com/top-think/think-trace/tree/v1.5"
+            },
             "install-path": "../topthink/think-trace"
         },
         {

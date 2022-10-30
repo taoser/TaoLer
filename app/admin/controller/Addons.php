@@ -14,6 +14,7 @@ use think\response\Json;
 use Symfony\Component\VarExporter\VarExporter;
 use taoler\com\Files;
 use app\common\lib\facade\HttpHelper;
+use app\common\lib\FileHelper;
 
 class Addons extends AdminController
 {
@@ -212,8 +213,6 @@ class Addons extends AdminController
     public function install(array $data = [], bool $type = true)
     {
         $data = Request::only(['name','version','uid','token']) ?? $data;
-//        $data = ['name' => $name, 'version' => $version, 'uid' => $uid, 'token' => $token];
-
         // 接口
         $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
         if($response->code < 0) return json($response);
@@ -238,19 +237,19 @@ class Addons extends AdminController
          //把远程文件放入本地
 
          //拼接路径
-         $addons_dir = Files::getDirPath('../runtime/addons/');
-         Files::mkdirs($addons_dir);
+         $addons_dir = FileHelper::getDirPath(root_path() . 'runtime' . DS . 'addons');
+         if(!is_dir($addons_dir)) Files::mkdirs($addons_dir);
 
-         $package_file = $addons_dir . $data['name'] .'.zip';  //升级的压缩包文件
-         $cpfile = copy($file_url,$package_file);
+         $package_file = $addons_dir . $data['name'] . '.zip';  //升级的压缩包文件路径
+         $cpfile = copy($file_url, $package_file);
          if(!$cpfile) return json(['code'=>-1,'msg'=>'下载升级文件失败']);
 
          $uzip = new Zip();
          $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
-         $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
-         $unzip_res = $uzip->unzip($package_file,$zipPath,true);
+         $zipPath = FileHelper::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
+         $unzip_res = $uzip->unzip($package_file, $zipPath, true);
          if(!$unzip_res) return json(['code'=>-1,'msg'=>'解压失败']);
-
+         unlink($package_file);
          //升级插件
 
          //升级前的写入文件权限检查
@@ -268,19 +267,19 @@ class Addons extends AdminController
                  if (!is_writable($dirPath)) $checkString .= $dirPath . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
              }
          }
-
          if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
-         $addonsPath = '../';
-         $cpRes = Files::copyDirs($zipPath,$addonsPath);
-         $cpData = $cpRes->getData();
-         //更新失败
-         if($cpData['code'] == -1) return json(['code'=>-1,'msg'=>$cpData['msg']]);
+
+         try {
+             FileHelper::copyDir(root_path() . 'runtime' . DS . 'addons' . DS . $data['name'] . DS, root_path());
+         } catch (\Exception $e) {
+             return json(['code'=> -1, 'msg'=> $e->getMessage()]);
+         }
 
         $class = get_addons_instance($data['name']);
         try {
             if($type) {
                 // 执行数据库
-                $sqlInstallFile = root_path().'addons/'.$data['name'].'/install.sql';
+                $sqlInstallFile = root_path(). 'addons' . DS . $data['name'] . DS . 'install.sql';
                 if(file_exists($sqlInstallFile)) {
                     SqlFile::dbExecute($sqlInstallFile);
                 }
@@ -305,16 +304,20 @@ class Addons extends AdminController
         }
 
 		Files::delDirAndFile('../runtime/addons/'.$data['name'] . DS);
-
-		return json(['code'=>0,'msg'=>'插件安装成功！']);
+        $msg = $type ? '插件安装成功！' : '插件升级成功！';
+		return json(['code' => 0, 'msg' => $msg]);
 
     }
+
     /**
      * 卸载插件
+     * @param string $name
+     * @return Json
+     * @throws \Exception
      */
-    public function uninstall()
+    public function uninstall(string $name = '')
     {
-        $name = input('name');
+        $name = input('name') ?? $name;
         // 执行插件卸载
         $class = get_addons_instance($name);
         $class->uninstall();
@@ -369,6 +372,8 @@ class Addons extends AdminController
         // 卸载插件
         $class = get_addons_instance($data['name']);
         $class->uninstall();
+        $this->uninstall($data['name']);
+
         // 卸载菜单
         $menu = get_addons_menu($data['name']);
         if(!empty($menu)){
@@ -378,19 +383,20 @@ class Addons extends AdminController
 
         try {
             // 升级安装，第二个参数为false
-            $this->install($data,false);
+            $res = $this->install($data,false);
             // 升级sql
             $sqlUpdateFile = root_path().'addons/'.$data['name'].'/update.sql';
             if(file_exists($sqlUpdateFile)) {
                 SqlFile::dbExecute($sqlUpdateFile);
             }
             // 恢复配置
-            set_addons_config($data['name'],$config);
+            if(!empty($config)) {
+                set_addons_config($data['name'], $config);
+            }
         } catch (\Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
-
-        return json(['code' => 0, 'msg' => '升级成功']);
+        return $res;
     }
 
     /**

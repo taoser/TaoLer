@@ -32,7 +32,7 @@ class Zip
             foreach($folderPaths as $folderPath) {
                 if(self::getDirSize($folderPath) == 0) {
                     continue;
-                };
+                }
                 // 被压缩文件绝对路径
                 $rootPath = realpath($folderPath);
                 // Create recursive directory iterator

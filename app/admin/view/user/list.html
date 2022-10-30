@@ -114,10 +114,11 @@
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'useradmin', 'table'], function(){
+  }).use(['index', 'useradmin', 'table', 'notify'], function(){
     var $ = layui.$
     ,form = layui.form
     ,table = layui.table;
+    var notify = layui.notify;
     
     //监听搜索
     form.on('submit(LAY-user-front-search)', function(data){

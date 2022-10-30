@@ -296,7 +296,7 @@ abstract class BaseController
      * 通过百度分词接口获取关键词或者标签
      * flag 1.为word时获取分词，2.为tag时获取标签
 	 *
-	 * @return void
+	 * @return array
 	 */
     public function setKeywords($data)
     {
@@ -385,7 +385,7 @@ abstract class BaseController
                 }
             }
         }
-        return json(['code'=>0,'data'=>$keywords]);
+        return $keywords;
     }
 
 	//	api_post接口

@@ -15,14 +15,36 @@ class Controller extends BaseController
 {
     // app 容器
     protected $app;
+    // 当前插件操作
+    protected $addon = null;
     // 请求对象
     protected $request;
     // 当前插件标识
     protected $name;
     // 插件路径
     protected $addon_path;
+    protected $controller = null;
+    protected $action = null;
     // 视图模型
     protected $view;
+
+    /**
+     * 无需登录的方法,同时也就不需要鉴权了
+     * @var array
+     */
+    protected $noNeedLogin = ['*'];
+
+    /**
+     * 无需鉴权的方法,但需要登录
+     * @var array
+     */
+    protected $noNeedRight = ['*'];
+
+    /**
+     * 权限Auth
+     * @var Auth
+     */
+    protected $auth = null;
 
 
     /**
@@ -35,6 +57,8 @@ class Controller extends BaseController
         $this->app = $app;
         $this->request = $app->request;
         $this->name = $this->getName();
+        $this->controller = $this->request->controller();
+        $this->action = $this->request->action();
         $this->addon_path = $app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
         $this->addon_config = "addon_{$this->name}_config";
         $this->addon_info = "addon_{$this->name}_info";
@@ -44,12 +68,17 @@ class Controller extends BaseController
         ]);
 
         // 控制器初始化
-        $this->initialize();
+        $this->_initialize();
+        parent::__construct($app);
+        
     }
 
     // 初始化
-    protected function initialize()
-    {}
+    protected function _initialize()
+    {
+        $controller = $this->controller;
+        $action = $this->action;
+    }
 
     /**
      * 获取插件标识
