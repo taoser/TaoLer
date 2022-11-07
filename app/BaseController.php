@@ -243,8 +243,8 @@ abstract class BaseController
 
     /**
      * 获取文章链接地址
-     *
-     * @param integer $aid
+     * @param int $aid
+     * @param string $ename
      * @return string
      */
     protected function getRouteUrl(int $aid,string $ename = '') : string

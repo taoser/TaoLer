@@ -39,7 +39,8 @@
         "workerman/phpsocket.io": "^1.1",
         "jaeger/querylist": "^4.2",
         "symfony/var-exporter": "^5.4",
-        "yzh52521/easyhttp": "^1.0"
+        "yzh52521/easyhttp": "^1.0",
+        "topthink/think-filesystem": "^2.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

@@ -77,15 +77,13 @@
 {/block}
 
 {block name="js"}
-{:hook('bacimghook')}
   <script>
   layui.config({
     base: '/static/admin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
   }).use(['index', 'user'], function(){
-    var $ = layui.$
-    ,setter = layui.setter
+    setter = layui.setter
     ,admin = layui.admin
     ,form = layui.form
     ,router = layui.router()
@@ -136,6 +134,6 @@
     });
   });
   </script>
-  
+{:hook('bacimghook')}
   
 {/block}

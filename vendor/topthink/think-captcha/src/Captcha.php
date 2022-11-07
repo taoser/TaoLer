@@ -257,7 +257,7 @@ class Captcha
         $px = $py = 0;
 
         // 曲线前部分
-        $A = mt_rand(1, $this->imageH / 2); // 振幅
+        $A = mt_rand(1, intval($this->imageH / 2)); // 振幅
         $b = mt_rand(intval(-$this->imageH / 4), intval($this->imageH / 4)); // Y轴方向偏移量
         $f = mt_rand(intval(-$this->imageH / 4), intval($this->imageH / 4)); // X轴方向偏移量
         $T = mt_rand($this->imageH, $this->imageW * 2); // 周期
@@ -278,7 +278,7 @@ class Captcha
         }
 
         // 曲线后部分
-        $A   = mt_rand(1, $this->imageH / 2); // 振幅
+        $A   = mt_rand(1, intval($this->imageH / 2)); // 振幅
         $f   = mt_rand(intval(-$this->imageH / 4), intval($this->imageH / 4)); // X轴方向偏移量
         $T   = mt_rand($this->imageH, $this->imageW * 2); // 周期
         $w   = (2 * M_PI) / $T;
