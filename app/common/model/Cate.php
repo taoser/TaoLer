@@ -53,7 +53,7 @@ class Cate extends Model
     // 分类表
     public function getList()
     {
-        $data = $this->field('sort,id,pid,catename,ename,detpl,icon,is_hot,desc')->where(['status'=>1])->select()->toArray();
+        $data = $this->field('sort,id,pid,catename,ename,detpl,icon,appname,is_hot,desc')->where(['status'=>1])->select()->toArray();
         // 排序
         $cmf_arr = array_column($data, 'sort');
         array_multisort($cmf_arr, SORT_ASC, $data);

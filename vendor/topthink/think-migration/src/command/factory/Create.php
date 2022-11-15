@@ -26,7 +26,7 @@ class Create extends Command
             ->addArgument('name', InputArgument::REQUIRED, 'What is the name of the model?');
     }
 
-    public function handle()
+    protected function handle()
     {
         $path = $this->getPath();
 

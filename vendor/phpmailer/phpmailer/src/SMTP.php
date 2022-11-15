@@ -35,7 +35,7 @@ class SMTP
      *
      * @var string
      */
-    const VERSION = '6.6.5';
+    const VERSION = '6.6.4';
 
     /**
      * SMTP line break constant.
@@ -682,6 +682,7 @@ class SMTP
      */
     public function close()
     {
+        $this->setError('');
         $this->server_caps = null;
         $this->helo_rply = null;
         if (is_resource($this->smtp_conn)) {

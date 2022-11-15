@@ -19,6 +19,7 @@ use app\facade\Article;
 use app\common\model\Slider;
 use app\common\lib\Msgres;
 use yzh52521\EasyHttp\Http;
+use QL\QueryList;
 
 class Index extends BaseController
 {

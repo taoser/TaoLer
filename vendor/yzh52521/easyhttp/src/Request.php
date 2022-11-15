@@ -594,6 +594,14 @@ class Request
         }
     }
 
+    public function wait()
+    {
+        if (!empty($this->promises)) {
+            Promise\settle($this->promises)->wait();
+        }
+        $this->promises = [];
+    }
+
     protected function response($response)
     {
         return new Response( $response );

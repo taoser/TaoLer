@@ -74,8 +74,6 @@ EOT
                     $status = '     <info>up</info> ';
                 } else {
                     $status = '   <error>down</error> ';
-                    $version = [];
-                    $version['start_time'] = $version['end_time'] = $version['breakpoint'] = '';
                 }
                 $maxNameLength = max($maxNameLength, strlen($migration->getName()));
 

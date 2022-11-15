@@ -148,6 +148,22 @@ class Forum extends AdminController
 		View::assign(['template'=>$template]);
 		return View::fetch();
 	}
+
+    // 应用下article/view模板
+    public function getAppNameView()
+    {
+        $appName = input('appname') ?: 'index';
+        $sys = $this->getSystem();
+        if(is_dir(root_path() . 'app' . DS . $appName . DS . 'view' . DS)){
+            $viewPath = root_path() . 'app' . DS . $appName . DS . 'view' . DS . 'article' . DS;
+        } elseif(is_dir(root_path() . 'view' . DS . $sys['template'] . DS)) {
+            $viewPath = root_path() . 'view' . DS . $sys['template'] . DS . 'index' . DS . 'article' . DS;
+        } else {
+            $viewPath = '';
+        }
+        $template = Files::getDirName($viewPath);
+        return json(['data' => $template]);
+    }
 	
 	//添加和编辑帖子分类
 	public function tagsform()
@@ -169,19 +185,16 @@ class Forum extends AdminController
 		$sys = $this->getSystem();
 		$template = Files::getDirName('../view/'.$sys['template'].'/index/article/');
 		// 如果是新增，pid=0,detpl默认第一个子模块，如果是编辑，查询出cate
-		$cate = $addOrEdit ? Db::name('cate')->field('detpl,pid')->find((int) input('id')) : ['pid'=>0,'detpl'=>$template[0]];
-		View::assign(['template'=>$template,'cate'=>$cate]);
+		$cate = $addOrEdit ? Db::name('cate')->field('detpl,pid,appname')->where(['delete_time' =>0])->find((int) input('id')) : ['pid'=>0,'detpl'=>$template[0],'appname'=>'index'];
+        // app下前台带模板的应用
+        $appArr = [];
+        if(is_dir(root_path() . 'app' . DS . 'home')) {
+            $appArr = ['index','home'];
+        } else {
+            $appArr = ['index'];
+        }
+		View::assign(['template'=>$template,'cate'=>$cate, 'appname' => $appArr]);
 		return View::fetch();
-	}
-	
-	//详情页模板设置
-	public function tplSet()
-	{
-		if(Request::isPost()){
-			$data = Request::only(['id','detpl']);
-			Db::name('cate')->cache('catename')->update($data);
-		}
-		
 	}
 	
 	//删除帖子分类

@@ -17,6 +17,4 @@ class Article extends Facade
 		return 'app\common\model\Article';
 	}
 
-
-
 }

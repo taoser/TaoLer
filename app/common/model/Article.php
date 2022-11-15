@@ -110,8 +110,10 @@ class Article extends Model
     public function getArtTop(int $num)
     {
         $artTop = Cache::get('arttop');
+        // 区分应用分类
+        $appCateIdArr = Cate::where(['appname' => app('http')->getName()])->column('id');
         if (!$artTop) {
-            $artTop = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,jie,upzip,has_img,has_video,has_audio')->where(['is_top' => 1, 'status' => 1])
+            $artTop = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,jie,upzip,has_img,has_video,has_audio')->where([['is_top', '=', 1], ['status', '=', 1], ['cate_id', 'in', $appCateIdArr]])
             ->with([
                 'cate' => function ($query) {
                     $query->where('delete_time', 0)->field('id,catename,ename');
@@ -142,6 +144,8 @@ class Article extends Model
     public function getArtList(int $num)
     {
         $artList = Cache::get('artlist');
+        // 区分应用分类
+        $appCateIdArr = Cate::where(['appname' => app('http')->getName()])->column('id');
 		if(!$artList){
 			$artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio')
             ->with([
@@ -152,7 +156,7 @@ class Article extends Model
                 $query->field('id,name,nickname,user_img,area_id,vip');
 			} ])
             ->withCount(['comments'])
-            ->where(['status'=>1,'is_top'=>0])
+            ->where([['status', '=', 1], ['is_top', '=', 0],['cate_id', 'in', $appCateIdArr]])
             ->order('create_time','desc')
             ->limit($num)
             ->append(['url'])
@@ -237,14 +241,17 @@ class Article extends Model
     public function getCateList(string $ename, string $type, int $page = 1)
     {
         $where = [];
+        // 区分应用分类
+        $appCateIdArr = Cate::where(['appname' => app('http')->getName()])->column('id');
         $cateId = Cate::where('ename',$ename)->value('id');
         if($cateId){
-            $where = ['cate_id' => $cateId];
+            $where[] = ['cate_id' ,'=', $cateId];
         } else {
             if($ename != 'all'){
                 // 抛出 HTTP 异常
                 throw new \think\exception\HttpException(404, '异常消息');
             }
+            $where[] = ['cate_id' ,'in',$appCateIdArr];
         }
 
         $artList = Cache::get('arts'.$ename.$type.$page);
@@ -252,25 +259,23 @@ class Article extends Model
             switch ($type) {
                 //查询文章,15个分1页
                 case 'jie':
-                    $where['jie'] = 1;
+                    $where[] = ['jie','=', 1];
                     break;
                 case 'hot':
-                    $where['is_hot'] = 1;
+                    $where[] = ['is_hot','=', 1];
                     break;
                 case 'top':
-                    $where['is_top'] = 1;
+                    $where[] = ['is_top' ,'=', 1];
                     break;
 				case 'wait':
-                    $where['jie'] = 0;
+                    $where[] = ['jie','=', 0];
                     break;
-                default:
-                   $where = $where;
-                    break;
+
             }
             $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')
             ->with([
-                'cate' => function($query){
-                    $query->where('delete_time',0)->field('id,catename,ename');
+                'cate' => function($query) {
+                    $query->where('delete_time',0)->field('id,catename,ename,appname');
                 },
                 'user' => function($query){
                     $query->field('id,name,nickname,user_img,area_id,vip');

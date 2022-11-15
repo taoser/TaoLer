@@ -16,7 +16,6 @@ namespace Workerman\Connection;
 /**
  * ConnectionInterface.
  */
-#[\AllowDynamicProperties]
 abstract class  ConnectionInterface
 {
     /**

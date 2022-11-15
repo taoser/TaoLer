@@ -9,34 +9,42 @@
 	    <div id="menuSelectBox" class="ew-xmselect-tree"></div>
       </div>
     </div>
+  <label class="layui-form-label">所属应用</label>
+  <div class="layui-input-block">
+      <select name="appname"  lay-filter="appname" lay-verify="required">
+          {volist name="appname" id="vo"}
+          <option value="{$vo}" {if($vo == $cate.appname)} selected {/if}>{$vo}</option>
+          {/volist}
+      </select>
+  </div>
     <div class="layui-form-item">
       <label class="layui-form-label">分类名</label>
-      <div class="layui-input-inline">
+      <div class="layui-input-block">
         <input type="text" name="catename" lay-verify="required" placeholder="分类名*" autocomplete="off" class="layui-input">
       </div>
 	  <label class="layui-form-label">EN别名</label>
-      <div class="layui-input-inline">
+      <div class="layui-input-block">
         <input type="text" name="ename" lay-verify="required" placeholder="英文名*" autocomplete="off" class="layui-input">
       </div>
 	  <label class="layui-form-label">详情页模板</label>
-	  <div class="layui-input-inline">
-      <select name="detpl"  lay-filter="detpl">
-		  {volist name="template" id="vo"}
-			<option value="{$vo}" {if($vo == $cate.detpl)} selected {/if} >{$vo}</option>
-		  {/volist}
+	  <div class="layui-input-block">
+      <select name="detpl" id="tpl" lay-verify="required">
+          {volist name="template" id="vo"}
+          <option value="{$vo}" {if($vo == $cate.detpl)} selected {/if} >{$vo}</option>
+          {/volist}
 	  </select>
 	  </div>
 	  <label class="layui-form-label">图标</label>
-      <div class="layui-input-inline">
+      <div class="layui-input-block">
         <input type="text" name="icon" placeholder="图标*" id="iconPicker" lay-filter="iconPicker" style="display:none;" class="layui-input">
       </div>
 	  <label class="layui-form-label">描述</label>
-      <div class="layui-input-inline">
+      <div class="layui-input-block">
         <input type="text" name="desc" lay-verify="required" placeholder="描述*" autocomplete="off" class="layui-input">
       </div>
     <label class="layui-form-label">排序</label>
-      <div class="layui-input-inline">
-        <input type="text" name="sort" lay-verify="required" placeholder="请填数字" autocomplete="off" class="layui-input">
+      <div class="layui-input-block">
+        <input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input">
       </div>
     </div>
   </div>
@@ -68,6 +76,22 @@
 			//console.log(data);
 		}
 	});
+
+      form.on('select(appname)', function(data){
+          var appName = data.value;
+          $("#tpl").children('option').remove();
+          $.post("{:url('Forum/getAppNameView')}", {appname:appName},function (res){
+            var str = '<option value="" >请选择</option>';
+            for(var i=0; i < res.data.length; i++ ) {
+              str += '<option value="'+ res.data[i] +'" >' + res.data[i] + '</option>';
+              // $("select[name='detpl']").append('<option value="'+ arr[i] +'" >' + arr[i] + '</option>');
+            }
+            $("#tpl").append(str);
+            // 动态select重新渲染
+            form.render('select');
+          })
+
+      });
 
   //分类菜单结构
 	admin.req({

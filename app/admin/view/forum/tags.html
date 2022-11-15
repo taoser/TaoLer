@@ -95,9 +95,10 @@ overflow: visible;
           [
             {type: 'numbers'},
             {type: 'checkbox'}
-            ,{field: 'catename', title: '分类名', minWidth: 200}
+            ,{field: 'catename', title: '分类名', width: 150}
+            ,{field: 'appname', title: '所属应用', width: 90}
             ,{field: 'ename', title: 'EN别名', width: 100}
-            ,{field: 'detpl',title: '模板', align: 'center',width: 100,templet: '#inputSel'}
+            ,{field: 'detpl',title: '模板', align: 'center',width: 100}
             ,{title: '图标', align: 'center',width: 50,templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
             ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#buttonHot'}
             ,{field: 'desc', title: '描述', minWidth: 200}
@@ -189,15 +190,13 @@ overflow: visible;
         }
     });
     
-    
-    
     var active = {
       add: function(){
         layer.open({
           type: 2
           ,title: '添加分类'
           ,content: 'tagsform.html'
-          ,area: ['400px', '550px']
+          ,area: ['450px', '550px']
           ,btn: ['确定', '取消']
           ,yes: function(index, layero){
             var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
@@ -230,17 +229,6 @@ overflow: visible;
         }); 
       }
     }
-	
-    //详情页模板选择控制
-    form.on('select(detpl)', function(data){
-    var detpl = data.value;
-    $.post("{:url('Forum/tplSet')}",{"id":data.elem.id,"detpl":detpl});
-    //执行重载
-        table.reload('LAY-app-content-tags', {
-          where: detpl
-        });
-    });
-
 
     //分类热点控制
     form.on('checkbox(menu-show)', function(data){
