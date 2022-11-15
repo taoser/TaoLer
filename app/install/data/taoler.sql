@@ -282,6 +282,7 @@ CREATE TABLE `tao_cate`  (
   `icon` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图标',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `status` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '状态1启用0禁用',
+  `appname` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'index' COMMENT '所属应用',
   `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0帖子1文章',
   `desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `is_hot` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否是热点',
@@ -295,9 +296,9 @@ CREATE TABLE `tao_cate`  (
 -- ----------------------------
 -- Records of tao_cate
 -- ----------------------------
-INSERT INTO `tao_cate` VALUES (1, 0, '提问', 'ask', 'ask', 'layui-icon-help', 1, '1', 0, 'TaoLer社区提问专栏1', 0, 0, 0, 0);
-INSERT INTO `tao_cate` VALUES (2, 0, '分享', 'share', 'posts', 'layui-icon-share', 2, '1', 0, '', 0, 0, 0, 0);
-INSERT INTO `tao_cate` VALUES (3, 0, '讨论', 'talk', 'posts', 'layui-icon-dialogue', 3, '1', 0, '', 1, 0, 0, 0);
+INSERT INTO `tao_cate` VALUES (1, 0, '提问', 'ask', 'ask', 'layui-icon-help', 50, '1', 'index', 0, 'TaoLer社区提问专栏1', 0, 0, 0, 0);
+INSERT INTO `tao_cate` VALUES (2, 0, '分享', 'share', 'posts', 'layui-icon-share', 2, '1', 'index', 1, '内容分析', 0, 0, 0, 0);
+INSERT INTO `tao_cate` VALUES (3, 0, '讨论', 'talk', 'news', 'layui-icon-dialogue', 3, '1', 'index', 1, '讨论问题', 1, 0, 0, 0);
 
 -- ----------------------------
 -- Table structure for tao_collection
