@@ -144,6 +144,7 @@ overflow: visible;
                     var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
                         ,pid = othis.find('input[name="pid"]').val()
                         ,sort = othis.find('input[name="sort"]').val()
+                        ,appname = othis.find('select[name="appname"]').val()
                         ,catename = othis.find('input[name="catename"]').val()
                         ,ename = othis.find('input[name="ename"]').val()
                         ,detpl = othis.find('select[name="detpl"]').val()
@@ -155,7 +156,7 @@ overflow: visible;
                     $.ajax({
                         type:"post",
                         url:forumTagsForm,
-                        data:{"id":data.id,"pid":pid,"sort":sort,"catename":catename,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
+                        data:{"id":data.id,"pid":pid,"sort":sort,"appname":appname,"catename":catename,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
                         daType:"json",
                         success:function (data){
                           if(data.code == 0){layer.msg(data.msg,{icon:6,time:2000},function(){
@@ -181,6 +182,7 @@ overflow: visible;
                     var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags").click();
                         othis.find('input[name="pid"]').val(data.pid)
                         ,othis.find('input[name="sort"]').val(data.sort)
+                        ,othis.find('select[name="appname"]').val(data.appname)
                         ,othis.find('input[name="catename"]').val(data.catename)
                         ,othis.find('input[name="ename"]').val(data.ename)
                         ,othis.find('input[name="icon"]').val(data.icon)
@@ -202,6 +204,7 @@ overflow: visible;
             var othis = layero.find('iframe').contents().find("#layuiadmin-app-form-tags")
                     ,pid = othis.find('input[name="pid"]').val()
                     ,sort = othis.find('input[name="sort"]').val()
+                    ,appname = othis.find('select[name="appname"]').val()
                     ,catename = othis.find('input[name="catename"]').val()
                     ,ename = othis.find('input[name="ename"]').val()
                     ,detpl = othis.find('select[name="detpl"]').val()
@@ -213,7 +216,7 @@ overflow: visible;
         $.ajax({
 				type:"post",
 				url:"{:url('Forum/tagsform')}",
-				data:{pid:pid,"sort":sort,"catename":catename,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
+				data:{pid:pid,"sort":sort,"appname":appname,"catename":catename,"ename":ename,"detpl":detpl,"icon":icon,"desc":desc},
 				daType:"json",
 				success:function (data){
 					if (data.code == 0) {

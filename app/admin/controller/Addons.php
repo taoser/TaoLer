@@ -233,7 +233,6 @@ class Addons extends AdminController
          if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
              return json(['code'=>-1,'msg'=>'获取远程文件失败']);
          }
-
          //把远程文件放入本地
 
          //拼接路径
@@ -269,24 +268,26 @@ class Addons extends AdminController
          }
          if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
 
-         try {
-             FileHelper::copyDir(root_path() . 'runtime' . DS . 'addons' . DS . $data['name'] . DS, root_path());
-         } catch (\Exception $e) {
-             return json(['code'=> -1, 'msg'=> $e->getMessage()]);
-         }
-
-        $class = get_addons_instance($data['name']);
         try {
+            // 拷贝文件
+            FileHelper::copyDir(root_path() . 'runtime' . DS . 'addons' . DS . $data['name'] . DS, root_path());
+            // $type判断是安装还是升级
             if($type) {
                 // 执行数据库
                 $sqlInstallFile = root_path(). 'addons' . DS . $data['name'] . DS . 'install.sql';
                 if(file_exists($sqlInstallFile)) {
                     SqlFile::dbExecute($sqlInstallFile);
                 }
-            }
 
+            }
             //安装菜单
-            $menu = get_addons_menu($data['name']);
+            //$menu = get_addons_menu($data['name']);
+            $menuFile = app()->getRootPath() . 'addons' . DS . $data['name'] . DS . 'menu.php';
+            if(file_exists($menuFile)){
+                $menu = include $menuFile;
+            } else {
+                $menu = [];
+            }
             if(!empty($menu)){
                 if(isset($menu['is_nav']) && $menu['is_nav'] == 1){
                     $pid = 0;
@@ -296,6 +297,7 @@ class Addons extends AdminController
                 $menu_arr[] = $menu['menu'];
                 $this->addAddonMenu($menu_arr, (int)$pid,1);
             }
+            $class = get_addons_instance($data['name']);
             //执行插件安装
             $class->install();
             set_addons_info($data['name'],['status' => 1,'install' => 1]);
@@ -372,7 +374,7 @@ class Addons extends AdminController
         // 卸载插件
         $class = get_addons_instance($data['name']);
         $class->uninstall();
-        $this->uninstall($data['name']);
+        //$this->uninstall($data['name']);
 
         // 卸载菜单
         $menu = get_addons_menu($data['name']);
@@ -382,7 +384,7 @@ class Addons extends AdminController
         }
 
         try {
-            // 升级安装，第二个参数为false
+            // 升级安装，第二个type参数false为升级，true安装
             $res = $this->install($data,false);
             // 升级sql
             $sqlUpdateFile = root_path().'addons/'.$data['name'].'/update.sql';
@@ -393,6 +395,8 @@ class Addons extends AdminController
             if(!empty($config)) {
                 set_addons_config($data['name'], $config);
             }
+            // 写入版本号
+            set_addons_info($data['name'],['version' =>$data['version']]);
         } catch (\Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }

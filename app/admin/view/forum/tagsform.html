@@ -60,10 +60,10 @@
   }).use(['index', 'form','admin', 'iconPicker', 'xmSelect',], function(){
     var $ = layui.$ 
     ,form = layui.form ;
-  var admin = layui.admin;
+    var admin = layui.admin;
 	var iconPicker = layui.iconPicker;
-  var xmSelect = layui.xmSelect;
-  var initPid = "{$cate.pid}";
+    var xmSelect = layui.xmSelect;
+    var initPid = "{$cate.pid}";
 	
 	//初始化图标选择
 	iconPicker.render({
@@ -77,6 +77,7 @@
 		}
 	});
 
+    // 根据应用名动态选择应用下模板
       form.on('select(appname)', function(data){
           var appName = data.value;
           $("#tpl").children('option').remove();
