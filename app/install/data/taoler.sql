@@ -475,6 +475,26 @@ INSERT INTO `tao_slider` VALUES ('1', 'CODING', '1', '/storage/slider/F1.jpg', '
 INSERT INTO `tao_slider` VALUES ('2', '通用右栏底部广告', '2', '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'https://www.aieok.com', '', '1571155200', '1609344000', '1', '0', '0', '0');
 
 -- ----------------------------
+-- Table structure for tao_station
+-- ----------------------------
+DROP TABLE IF EXISTS `tao_station`;
+CREATE TABLE `tao_station`  (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `city_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+    `city_ename` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+    `master` tinyint(1) NOT NULL DEFAULT 0,
+    `create_time` datetime NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `ename`(`city_ename` ASC) USING BTREE COMMENT 'ename索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tao_station
+-- ----------------------------
+INSERT INTO `tao_station` VALUES (1, '北京', 'beijing', 1, '2011-11-11 00:00:00');
+INSERT INTO `tao_station` VALUES (2, '上海', 'shanghai', 0, '2222-11-21 08:08:08');
+
+-- ----------------------------
 -- Table structure for tao_system
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_system`;
