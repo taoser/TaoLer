@@ -18,7 +18,7 @@
     <div class="layui-col-md12 content detail">
       <div class="fly-panel detail-box">
 		    {//标题}
-        <h1 style="color:{$article.title_color ?? '#333'}; margin:10px 5px 15px 5px;" align="center">{$article.title}</h1>
+        <h1 align="center" style="color:{$article.title_color ?: '#333'}; margin:10px 5px 15px 5px;">{$article.title}</h1>
 
 		    {//作者}
         <div class="detail-about" align="center">
@@ -39,7 +39,7 @@
             {/notempty}
           </div>
         {/if}
-        <div style="margin-top: 25px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
+
         {notempty name="tags"}
         <div style="margin-top: 15px">标签
           {volist name="tags" id="vo" }
@@ -48,8 +48,9 @@
         </div>
         {/notempty}
           <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
-            <p>{$sysInfo.state}</p>    
+            <p style="line-height:200%;">{$sysInfo.state|raw}</p>
           </div>
+        <div style="margin-top: 20px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
       </div>
     </div>
     {//crud管理模块}

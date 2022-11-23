@@ -63,7 +63,7 @@ class Forum extends AdminController
 			->alias('a')
 			->join('user u','a.user_id = u.id')
 			->join('cate c','a.cate_id = c.id')
-			->field('a.id as aid,ename,name,user_img,title,content,a.update_time as update_time,is_top,a.is_hot as is_hot,is_reply,a.status as status')
+			->field('a.id as aid,ename,appname,name,user_img,title,content,a.update_time as update_time,is_top,a.is_hot as is_hot,is_reply,a.status as status')
 			->where('a.delete_time',0)
 			->where($map)
 			->where($where)
@@ -76,24 +76,13 @@ class Forum extends AdminController
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
-					$url = $this->getRouteUrl($v['aid'],$v['ename']);
+					$url = $this->getRouteUrl($v['aid'],$v['ename'],$v['appname']);
 				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'title'=>htmlspecialchars($v['title']),'url'=>$url,'content'=>htmlspecialchars($v['content']),'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
 			}
 			return json($res);
-		}
-		return View::fetch();
-	}
-	
-	//编辑帖子
-	public function listform()
-	{
-		if(Request::isAjax()){
-			$data = Request::param();
-			$form = Db::name('article')->find($data['id']);
-			//halt($form);
 		}
 		return View::fetch();
 	}
@@ -246,7 +235,7 @@ class Forum extends AdminController
 				->join('user u','a.user_id = u.id')
 				->join('article c','a.article_id = c.id')
 				->join('cate ca','c.cate_id = ca.id')
-				->field('a.id as aid,name,ename,title,user_img,a.content as content,a.create_time as create_time,a.status as astatus,c.id as cid')
+				->field('a.id as aid,name,ename,appname,title,user_img,a.content as content,a.create_time as create_time,a.status as astatus,c.id as cid')
 				->where('a.delete_time',0)
 				->where($map)
 				->where($where)
@@ -258,7 +247,7 @@ class Forum extends AdminController
 			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
-					$url = $this->getRouteUrl($v['cid'],$v['ename']);
+					$url = $this->getRouteUrl($v['cid'],$v['ename'], $v['appname']);
 					//$res['data'][] = ['id'=>$v['id'],'replyer'=>$v->user->name,'cardid'=>$v->article->title,'avatar'=>$v->user->user_img,'content'=>$v['content'],'replytime'=>$v['create_time']];
 					$res['data'][] = ['id'=>$v['aid'],'replyer'=>$v['name'],'title'=>htmlspecialchars($v['title']),'avatar'=>$v['user_img'],'content'=>htmlspecialchars($v['content']),'replytime'=>date("Y-m-d",$v['create_time']),'check'=>$v['astatus'],'url'=>$url];
 				}
@@ -364,8 +353,8 @@ class Forum extends AdminController
 			// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
-			// 获取分类ename
-			$cate_ename = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
+            // 获取分类ename,appname
+            $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
 		
             $article = new Article();
             $result = $article->add($data);
@@ -385,7 +374,7 @@ class Forum extends AdminController
 				// 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 
-				$link = $this->getRouteUrl((int)$aid, $cate_ename);
+				$link = $this->getRouteUrl((int)$aid, $cateName['ename'],$cateName['appname']);
 				// 推送给百度收录接口
 				$this->baiduPushUrl($link);
 				    
@@ -463,7 +452,7 @@ class Forum extends AdminController
 					}
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
-					$link = $this->getRouteUrl((int) $id, $article->cate->ename);
+					$link = $this->getRouteUrl((int) $id, $article->cate->ename, $article->cate->appname);
 					// 推送给百度收录接口
 					$this->baiduPushUrl($link);
 					$editRes = Msgres::success('edit_success',$link);

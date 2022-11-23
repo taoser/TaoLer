@@ -243,11 +243,12 @@ abstract class BaseController
 
     /**
      * 获取文章链接地址
-     * @param int $aid
-     * @param string $ename
+     * @param int $aid 文章id
+     * @param string $ename 所属分类ename
+     * @param string $appname 所属应用名
      * @return string
      */
-    protected function getRouteUrl(int $aid,string $ename = '') : string
+    protected function getRouteUrl(int $aid, string $ename = '', string $appname = '') : string
     {
         $indexUrl = $this->getIndexUrl();
         if(config('taoler.url_rewrite.article_as') == '<ename>/'){
@@ -257,37 +258,61 @@ abstract class BaseController
         } else {
             $artUrl = (string) url('article_detail', ['id' => $aid]);
         }
-        //dump($artUrl);
+
+        //多应用时，文章所属应用 2022.11.17
+        $app = app('http')->getName();
+        if(empty($appname)) {
+            // 获取article所属应用的应用名
+            $cid = Db::name('article')->where('id',$aid)->value('cate_id');
+            $appname = Db::name('cate')->where('id',$cid)->value('appname');
+        }
+
+        // 判断index应用是否绑定域名
+        $bind_index = array_search($appname,config('app.domain_bind'));
+        // 判断index应用是否域名映射
+        $map_index = array_search($appname,config('app.app_map'));
+        // article 所属应用名
+        $index = $map_index ?: $appname; // index应用名
 
         // 判断是否开启绑定
         //$domain_bind = array_key_exists('domain_bind',config('app'));
 
         // 判断index应用是否绑定域名
-        $bind_index = array_search('index',config('app.domain_bind'));
+        //$bind_index = array_search('index',config('app.domain_bind'));
         // 判断admin应用是否绑定域名
         $bind_admin = array_search('admin',config('app.domain_bind'));
 
         // 判断index应用是否域名映射
-        $map_index = array_search('index',config('app.app_map'));
+        //$map_index = array_search('index',config('app.app_map'));
         // 判断admin应用是否域名映射
         $map_admin = array_search('admin',config('app.app_map'));
 
-        $index = $map_index ? $map_index : 'index'; // index应用名
-        $admin = $map_admin ? $map_admin : 'admin'; // admin应用名
+//        $index = $map_index ?: 'index'; // index应用名
+        $admin = $map_admin ?: 'admin'; // admin应用名
 
         if($bind_index) {
-            // index绑定域名
-            $url = $indexUrl . str_replace($admin.'/','',$artUrl);
-        } else { // index未绑定域名
-            // admin绑定域名
+//  echo 111;
+            // index或home前端(非admin应用)域名进行了绑定
+            // url = $indexUrl . str_replace($admin . '/','',$artUrl);
+            $url = $indexUrl . $artUrl;
+        } else {
             if($bind_admin) {
+//                echo 222;
+                // admin绑定域名
                 $url =  $indexUrl .'/' . $index . $artUrl;
+            } elseif ($app == 'admin' && isset($map_admin)) {
+//   echo 333;
+//   var_dump($admin, $appname, $artUrl);
+                // admin进行了映射
+                $url =  $indexUrl . str_replace($admin, $appname, $artUrl);
             } else {
-                $url =  $indexUrl . str_replace($admin,$index,$artUrl);
+//                echo 444;
+                // admin未绑定域名
+                $url =  $indexUrl . str_replace($app, $appname, $artUrl);
             }
-            
-        }
 
+        }
+//halt($url);
         return $url;
     }
 

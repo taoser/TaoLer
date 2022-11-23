@@ -492,7 +492,7 @@ CREATE TABLE `tao_system` (
   `copyright` varchar(100) NOT NULL DEFAULT '' COMMENT '版权',
   `keywords` tinytext NOT NULL COMMENT '网站关键字',
   `descript` text NOT NULL COMMENT '网站描述',
-  `state` tinytext CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '网站声明',
+  `state` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '网站声明',
   `is_open` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开启站点1开启0关闭',
   `is_comment` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开启评论1开启0关闭',
   `is_reg` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否开放注册1开启0禁止',

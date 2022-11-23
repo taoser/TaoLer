@@ -36,7 +36,8 @@ class Login extends BaseController
             return redirect((string) url('user/index'));
         }
 		//获取登录前访问页面refer
-		$refer = Request::server('HTTP_REFERER');
+        $refer = str_replace(Request::domain(), '', Request::server('HTTP_REFERER'));
+        Cookie::set('refer', $refer);
         if(Request::isAjax()) {
 			// 检验登录是否开放
 			if(config('taoler.config.is_login') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，网站维护中，暂时不能登录哦！']);
@@ -83,8 +84,7 @@ class Login extends BaseController
 			$user = new User();
 			$res = $user->login($data);
             if ($res == 1) {	//登陆成功
-                $user = $user->getLoggedUser();
-                return Msgres::success('login_success',$refer);
+                return Msgres::success('login_success', Cookie::get('refer'));
             } else {
 				return Msgres::error($res);
             }

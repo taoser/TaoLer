@@ -261,7 +261,6 @@ $(function(){
   function getBdiduWords(flag,title,content) {
       $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
           if (res.code == 0) {
-              console.log(res.data)
             $("input[name='keywords']").val(res.data.join(','));
           }
         },

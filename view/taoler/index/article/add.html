@@ -313,7 +313,6 @@
     // 发布文章
     form.on("submit(article-add)", function (data) {
       var field = data.field;
-      console.log(field)
       var index = layer.load(1);
       $.ajax({
         type: "post",

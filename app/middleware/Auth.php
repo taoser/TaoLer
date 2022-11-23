@@ -17,6 +17,7 @@ use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Config;
+use think\facade\Request;
 
 class Auth
 {
@@ -29,8 +30,11 @@ class Auth
      */
     public function handle($request, \Closure $next)
     {
+//        var_dump(Request::url(),Request::pathinfo(),$request->baseUrl(),$request->controller());
 		//访问路径
-		$path = app('http')->getName().'/'.stristr($request->pathinfo(),".html",true);
+//		$path = app('http')->getName().'/'.stristr($request->pathinfo(),".html",true);
+        $path = stristr($request->pathinfo(),".html",true);
+
 		//登陆前获取加密的Cookie
 		$cooAuth = Cookie::get('adminAuth');
 
@@ -43,7 +47,7 @@ class Auth
 				//验证cookie
 				$salt = Config::get('taoler.salt');
 				$auth = md5($user['username'].$salt).":".$userId;
-				if($auth==$cooAuth){
+				if($auth == $cooAuth){
 					Session::set('admin_name',$user['username']);
 					Session::set('admin_id',$userId);
 				}
@@ -51,19 +55,49 @@ class Auth
 			
 		}
 
-		//没有登录及当前非登录页重定向登录页
-		if(!Session::has('admin_id') && $path !== 'admin/login/index' && !(stristr($request->pathinfo(),"captcha.html") || stristr($request->pathinfo(),"addons")) )
-		{
-			return redirect((string) url('login/index'));
-		}
-		
-		//登陆后无法访问登录页
-		if(Session::has('admin_id') && $path == 'admin/login/index'){
-			return redirect((string) url('index/index'));
-		}
-		
-		// 排除公共权限
-		$not_check = ['admin/','admin/login/index','admin/index/index','admin/index/home','admin/Admin/info','admin/Admin/repass','admin/Admin/logout','admin/Index/news','admin/Index/cunsult','admin/Index/replys','admin/Index/reply','admin/captcha','addons/socail/','admin/addons/social/oauth/login','admin/addons/bacimg/index/getImages'];
+//		//没有登录及当前非登录页重定向登录页
+//		if(!Session::has('admin_id') && $path !== 'admin/login/index' && !(stristr($request->pathinfo(),"captcha.html") || stristr($request->pathinfo(),"addons")) )
+//		{
+//			return redirect((string) url('login/index'));
+//		}
+//		//登陆后无法访问登录页
+//		if(Session::has('admin_id') && $path == 'admin/login/index'){
+//			return redirect((string) url('index/index'));
+//		}
+//		// 排除公共权限
+//		$not_check = ['admin/','index/index', 'admin/menu/getMenuNavbar','admin/login/index','admin/index/index','admin/index/home','admin/Admin/info','admin/Admin/repass','admin/Admin/logout','admin/Index/news','admin/Index/cunsult','admin/Index/replys','admin/Index/reply','admin/captcha','addons/socail/','admin/addons/social/oauth/login','admin/addons/bacimg/index/getImages'];
+
+
+        //没有登录及当前非登录页重定向登录页
+        if(!Session::has('admin_id') && $path !== 'login/index' && !(stristr($request->pathinfo(),"captcha.html") || stristr($request->pathinfo(),"addons")) )
+        {
+            return redirect((string) url('login/index'));
+        }
+        //登陆后无法访问登录页
+        if(Session::has('admin_id') && $path == 'login/index' || $path == ''){
+            return redirect((string) url('index/index'));
+        }
+
+        // 排除公共权限
+        $not_check = [
+            'captcha',
+            'admin/index',
+            'index/index',
+            'menu/getMenuNavbar',
+            'login/index',
+            'index/home',
+            'Admin/info',
+            'Admin/repass',
+            'Admin/logout',
+            'Index/news',
+            'Index/cunsult',
+            'Index/replys',
+            'Index/reply',
+            'admin/captcha',
+            'addons/socail/',
+            'addons/social/oauth/login',
+            'addons/bacimg/index/getImages'
+        ];
 
 		if (!in_array($path, $not_check)) {
 			$auth     = new UserAuth();

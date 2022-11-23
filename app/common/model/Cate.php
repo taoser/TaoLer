@@ -33,6 +33,12 @@ class Cate extends Model
 		return $this->field('ename,catename,detpl,desc')->where('ename',$ename)->cache('cate_'.$ename,600)->find();
 	}
 
+    // 查询子分类
+    public function getSubCate(string $ename)
+    {
+        return $this->field('ename,catename')->where('pid', $this::where('ename', $ename)->value('id'))->select();
+    }
+
 	// 删除类别
 	public function del($id)
 	{

@@ -32,13 +32,6 @@ overflow: visible;
       </div>
 
       <div class="layui-card-body">
-        <script type="text/html" id="inputSel">
-          <select name="detpl"  lay-filter="detpl" id="{{d.id}}" >
-          {volist name="template" id="vo"}
-            <option value="{$vo}" {{# if (d.detpl == "{$vo}"){ }} selected {{# } }}>{$vo}</option>
-          {/volist}
-          </select>
-        </script>
         <script type="text/html" id="buttonHot">
           {if condition="checkRuleButton('Forum/tagshot')"}<input type="checkbox" name="is_hot" lay-skin="primary" lay-filter="menu-show" {{# if(d.is_hot ==1){ }} checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >
           {else /}<input type="checkbox" title="禁用" disabled> {/if}

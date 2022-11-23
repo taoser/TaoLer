@@ -207,11 +207,10 @@ class Article extends BaseController
 			if (Comment::create($data)) {
 				//站内信
 				$article = Db::name('article')->field('id,title,user_id,cate_id')->where('id',$data['article_id'])->find();
-				// 获取分类ename
-				$cate_ename = Db::name('cate')->where('id',$article['cate_id'])->value('ename');
-				$title = $article['title'];
+                // 获取分类ename,appname
+                $cateName = Db::name('cate')->field('ename,appname')->find($article['cate_id']);
 				//$link = (string) url('article_detail',['id'=>$data['article_id']]);
-				$link = $this->getRouteUrl($data['article_id'], $cate_ename);
+                $link = $this->getRouteUrl($data['article_id'], $cateName['ename'], $cateName['appname']);
 
 				//评论中回复@user comment
 				$preg = "/@([^@\s]*)\s/";
@@ -268,9 +267,9 @@ class Article extends BaseController
 			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
-			// 获取分类ename
-			$cate_ename = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
-		
+            // 获取分类ename,appname
+            $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
+
             $article = new ArticleModel();
 
             $result = $article->add($data);
@@ -292,7 +291,7 @@ class Article extends BaseController
 				// 发提醒邮件
 				if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
 
-				$link = $this->getRouteUrl((int)$aid, $cate_ename);
+                $link = $this->getRouteUrl((int)$aid, $cateName['ename'], $cateName['appname']);
 				// 推送给百度收录接口
 				$this->baiduPushUrl($link);
 				    
@@ -393,7 +392,7 @@ class Article extends BaseController
 					
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
-					$link = $this->getRouteUrl((int) $id, $article->cate->ename);
+                    $link = $this->getRouteUrl((int) $id, $article->cate->ename, $article->cate->appname);
 					// 推送给百度收录接口
 					$this->baiduPushUrl($link);
 					$editRes = Msgres::success('edit_success',$link);

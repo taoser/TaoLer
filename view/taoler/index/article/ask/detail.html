@@ -51,7 +51,7 @@
             {/notempty}
           </div>
         {/if}
-        <div style="margin-top: 25px">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
+
         {notempty name="tags"}
         <div style="margin-top: 15px">标签
           {volist name="tags" id="vo" }
@@ -60,8 +60,9 @@
         </div>
         {/notempty}
         <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125)">
-          <p>{$sysInfo.state}</p>
+          <p style="line-height:200%;">{$sysInfo.state|raw}</p>
         </div>
+        <div style="margin-top: 20px">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
       </div>
 
       {//评论内容}

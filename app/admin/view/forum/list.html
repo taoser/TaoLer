@@ -67,10 +67,10 @@
           <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{ d.check == 1 ? 'checked' : '' }}>
         </script>
         <script type="text/html" id="table-forum-list">
-          <a class="layui-btn layui-btn-xs" lay-event="edit" ><i class="layui-icon layui-icon-edit"></i></a>
-		      {if condition="checkRuleButton('forum/listdel')"}
-          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
-		      {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i></a>{/if}
+          <a class="layui-btn layui-btn-xs" lay-event="edit" data-url="{:url('Forum/edit')}"><i class="layui-icon layui-icon-edit"></i></a>
+          {if condition="checkRuleButton('forum/listdel')"}
+          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" data-url="{:url('Forum/listdel')}"><i class="layui-icon layui-icon-delete"></i></a>
+          {else /}<a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-disabled"><i class="layui-icon layui-icon-delete"></i></a>{/if}
         </script>
       </div>
     </div>
@@ -82,15 +82,12 @@
 
 <script>
 var forumList       = "{:url('Forum/list')}",
-    forumListdel    = "{:url('Forum/listdel')}",
-    forumListform   = "{:url('Forum/listform')}",
     forumReplys     = "{:url('Forum/replys')}",
     forumRedel      = "{:url('Forum/redel')}",
     forumReplysform = "{:url('Forum/replysform')}",
     forumTags       = "{:url('Forum/tags')}",
     forumTagsDelete = "{:url('Forum/tagsdelete')}",
     forumTagsForm   = "{:url('Forum/tagsform')}";
-    forumEdit   = "{:url('Forum/edit')}";
 layui.config({
   base: '/static/admin/' //静态资源所在路径
 }).extend({

@@ -42,6 +42,10 @@ class BaseController extends BaseCtrl
 			'subcatelist'	=> $this->showSubnav(),
 			//当前登录用户
 			'user'			=> $this->showUser($this->uid),
+            //多站点
+            'stationList'   => $this->getStationList(),
+            // 当前站点
+            'city' => input('city') ?: Db::name('station')->where('master',1)->value('city_ename')
 
 		]);
 
@@ -160,6 +164,19 @@ class BaseController extends BaseCtrl
 		
         View::assign($assign);
 		return $sysInfo;
+    }
+
+    // 多站点
+    protected function getStationList()
+    {
+        return $stationList = Db::name('station')->select()->toArray();
+    }
+
+    //
+    protected function getCity($cityname)
+    {
+        return Db::name('station')->field('city_name,city_ename')->where('city_ename', $cityname)->find();
+
     }
 
 }

@@ -2238,17 +2238,17 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v4.4.46",
-            "version_normalized": "4.4.46.0",
+            "version": "v4.4.47",
+            "version_normalized": "4.4.47.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "90425fd98d1ecad98e4b2dca9f54f62069193b15"
+                "reference": "1069c7a3fca74578022fab6f81643248d02f8e63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/90425fd98d1ecad98e4b2dca9f54f62069193b15",
-                "reference": "90425fd98d1ecad98e4b2dca9f54f62069193b15",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/1069c7a3fca74578022fab6f81643248d02f8e63",
+                "reference": "1069c7a3fca74578022fab6f81643248d02f8e63",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2278,7 +2278,7 @@
                 "ext-intl": "To show region name in time zone dump",
                 "symfony/console": "To use the ServerDumpCommand and/or the bin/var-dump-server script"
             },
-            "time": "2022-09-03T23:07:25+00:00",
+            "time": "2022-10-03T15:15:11+00:00",
             "bin": [
                 "Resources/bin/var-dump-server"
             ],
@@ -2316,7 +2316,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v4.4.46"
+                "source": "https://github.com/symfony/var-dumper/tree/v4.4.47"
             },
             "funding": [
                 {
@@ -3339,17 +3339,17 @@
         },
         {
             "name": "workerman/workerman",
-            "version": "v4.1.3",
-            "version_normalized": "4.1.3.0",
+            "version": "v4.1.4",
+            "version_normalized": "4.1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/workerman.git",
-                "reference": "01028d8008c5691ec38c5f675fc13d76496a6db9"
+                "reference": "83e007acf936e2233ac92d7368b87716f2bae338"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/workerman/zipball/01028d8008c5691ec38c5f675fc13d76496a6db9",
-                "reference": "01028d8008c5691ec38c5f675fc13d76496a6db9",
+                "url": "https://api.github.com/repos/walkor/workerman/zipball/83e007acf936e2233ac92d7368b87716f2bae338",
+                "reference": "83e007acf936e2233ac92d7368b87716f2bae338",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3364,7 +3364,7 @@
             "suggest": {
                 "ext-event": "For better performance. "
             },
-            "time": "2022-09-23T14:05:12+00:00",
+            "time": "2022-10-09T11:33:14+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {

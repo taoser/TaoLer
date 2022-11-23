@@ -30,16 +30,17 @@ var forms = table.render({
   //监听工具条
   table.on('tool(LAY-app-forum-list)', function(obj){
     var data = obj.data;
+    var url = $(this).data('url');
     if(obj.event === 'del'){
       layer.confirm('确定删除此条帖子？', function(index){
         //obj.del();
         $.ajax({
           type:'post',
-          url:forumListdel,
+          url:url,
           data:{id:data.id},
           dataType:'json',
           success:function(data){
-            if(data.code == 0){
+            if(data.code === 0){
               layer.msg(data.msg,{
                 icon:6,
                 time:2000
@@ -64,7 +65,7 @@ var forms = table.render({
       layer.open({
         type: 2
         ,title: '编辑帖子'
-        ,content: forumEdit + '?id='+ data.id
+        ,content: url + '?id='+ data.id
         ,area: ['100%', '100%']
         ,btn: ['确定', '取消']
         ,resize: false
@@ -85,11 +86,11 @@ var forms = table.render({
 
             $.ajax({
               type:"post",
-              url: forumEdit,
+              url: url,
               data: field,
               daType:"json",
               success:function (data){
-                if (data.code == 0) {
+                if (data.code === 0) {
                   layer.msg(data.msg,{icon:6,time:2000});
                 } else {
                   layer.open({title:'编辑失败',content:data.msg,icon:5,anim:6});
@@ -140,7 +141,7 @@ var forms = table.render({
 				data:{id:data.id},
 				dataType:'json',
 				success:function(data){
-					if(data.code == 0){
+					if(data.code === 0){
 						layer.msg(data.msg,{
 							icon:6,
 							time:2000

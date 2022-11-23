@@ -26,7 +26,7 @@
                                 '<i class="layui-icon layui-icon-down layui-nav-more"></i></a>'+
                                 '<dl class="layui-nav-child">'+
                                 '<dd data-name="console" class="layui-this">'+
-                                    '<a lay-href="/admin/index/home.html">控制台</a>'+
+                                    '<a lay-href="' + menuCOntroller + '">控制台</a>'+
                                 '</dd>'+
                                 '</dl>'+
                             '</li>';

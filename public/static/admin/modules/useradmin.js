@@ -22,17 +22,17 @@ layui.define(['table', 'form', 'notify'], function(exports){
       {type: 'checkbox'}
       ,{field: 'id', width: 60, title: 'ID', sort: true}
       ,{field: 'username', title: '用户名', minWidth: 80}
-	    ,{field: 'nick', title: '昵称',Width: 80}
+	    ,{field: 'nick', title: '昵称',width: 80}
       ,{field: 'avatar', title: '头像', width: 60, templet: '#imgTpl'}
       //,{field: 'phone', title: '手机',width: 80}
       ,{field: 'email', title: '邮箱', minWidth: 120}
       ,{field: 'sex', width: 60, title: '性别',templet: '#sex'}
-      ,{field: 'ip', title: '登录IP', width: 100}
+      ,{field: 'ip', title: '登录IP', width: 120}
 	    ,{field: 'city', title: '城市', width: 80}
 	    ,{field: 'logintime', title: '最后登录',width: 150, sort: true}
       ,{field: 'jointime', title: '注册时间',width: 110, sort: true}
 	    ,{field: 'check', title: '状态', templet: '#buttonCheck', width: 95, align: 'center'}
-	    ,{field: 'auth', title: '超级管理员', templet: '#buttonAuth', width: 80, align: 'center'}
+	    ,{field: 'auth', title: '超管', templet: '#buttonAuth', width: 60, align: 'center'}
       ,{title: '操作', width: 100, align:'center', toolbar: '#table-useradmin-webuser'}
     ]]
     ,page: true

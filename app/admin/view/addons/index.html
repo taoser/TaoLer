@@ -23,7 +23,7 @@
 					{{#  if(d.have_newversion === 1){ }}
 						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="install" data-url="{:url('Addons/upgrade')}" data-userlogin="{:url('Addons/userLogin')}" data-ispay="{:url('Addons/isPay')}"><i class="layui-icon layui-icon-edit"></i>升级</a>
 					{{# } else { }}
-						{{# if(d.isInstall ===1) { }}
+						{{# if(d.isInstall === 1) { }}
 							<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="config" data-url="{:url('Addons/config')}"><i class="layui-icon layui-icon-set"></i>设置</a>
 						{{# } else { }}
 							<a class="layui-btn layui-btn-xs" lay-event="install" data-url="{:url('Addons/install')}" data-userlogin="{:url('Addons/userLogin')}" data-ispay="{:url('Addons/isPay')}"><i class="layui-icon layui-icon-edit"></i>安装</a>
@@ -47,8 +47,8 @@
   </div>
 {include file="public/user_login" /}
 {/block}
-{block name="js"}
 
+{block name="js"}
 <script>
 	var addonList = "{:url('Addons/index')}";
   layui.config({
@@ -93,7 +93,7 @@
 				data:field,
 				daType:"json",
 				success:function (data){
-					if (res.code == 0) {
+					if (res.code === 0) {
 						notify.success(res.msg, "topRight");
 					} else {
 						notify.error(res.msg, "topRight");
@@ -115,7 +115,7 @@
 		  var url = $(this).data('url');
 		  //执行帖子审核
 		  $.post(url,{ name: data.name },function(res){
-				  if(res.code == 0){
+				  if(res.code === 0){
 					  notify.success(res.msg, "topRight");
 				  } else {
 					  notify.error(res.msg, "topRight");

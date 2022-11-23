@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminController;
 use think\facade\Db;
+use taoser\think\Auth;
 
 class Menu extends AdminController
 {
@@ -20,8 +21,11 @@ class Menu extends AdminController
      */
     public function getMenuNavbar()
     {
+        // 用户菜单权限
+        $auth     = new Auth();
+
         $pid = empty(input('id')) ? 0 : input('id');
-        $data = Db::name('auth_rule')->field('id,title,icon,name,sort')->where(['delete_time'=> 0,'status'=> 1,'ismenu'=>1,'pid'=>$pid])->select();
+        $data = Db::name('auth_rule')->field('id,title,icon,name,sort')->where(['pid'=>$pid,'status'=> 1, 'ismenu'=>1, 'delete_time'=> 0])->select();
         $tree = [];
         foreach ($data as $k => $v) {
             $hasChild = $this->hasChildren($v['id']);
@@ -30,7 +34,10 @@ class Menu extends AdminController
             } else {
                 $v['hasChildren'] = 0;
             }
-            $tree[] = ['id'=>$v['id'],'text'=>$v['title'],'icon'=>$v['icon'],'hasChildren'=>$v['hasChildren'],'href'=>(string) url($v['name']),'sort'=>$v['sort']];
+            if ($auth->check($v['name'], session('admin_id')) || session('admin_id') == 1) {
+                $tree[] = ['id'=>$v['id'],'text'=>$v['title'],'icon'=>$v['icon'],'hasChildren'=>$v['hasChildren'],'href'=>(string) url($v['name']),'sort'=>$v['sort']];
+            }
+
         }
         // 排序
         $cmf_arr = array_column($tree, 'sort');

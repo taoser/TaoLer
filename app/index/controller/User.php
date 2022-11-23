@@ -29,21 +29,28 @@ class User extends BaseController
     }
 	
 	
-	// 发帖list
+	// 我的发帖list
 	public function artList()
 	{
-		$article = Article::withCount('comments')->where(['user_id'=>$this->uid])->order('update_time','desc')->paginate(10);
-		$count = $article->total();
+        $param = Request::only(['page','limit']);
+		$myArticle = Article::field('id,cate_id,title,status,pv,create_time')
+            ->withCount(['comments'])
+            ->where(['user_id'=>$this->uid])
+            ->order('update_time','desc')
+            ->paginate([
+                'list_rows' => $param['limit'],
+                'page' => $param['page']
+            ]);
+		$count = $myArticle->total();
 		$res = [];
 		if($count){
 			$res['code'] = 0;
 			$res['count'] = $count;
-			foreach($article as $v){
+			foreach($myArticle as $v){
 				$res['data'][] = ['id'=>$v['id'],
 				'title'	=> htmlspecialchars($v['title']),
-				'url'	=> (string) url('article/detail',['id'=>$v['id']]),
-				'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename),
-				'status'	=> $v['status'] ? '正常':'待审核',
+				'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename, $v->cate->appname),
+				'status'	=> $v['status'] ? '正常':'待审',
 				'ctime'		=> $v['create_time'],
 				'datas'		=> $v['pv'].'阅/'.$v['comments_count'].'答'
 				];

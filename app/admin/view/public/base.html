@@ -24,10 +24,9 @@
 <body class="{if($Request.url == url('index/index'))} layui-layout-body {/if}">
 {block name="body"}内容{/block}
 <script type="text/javascript" charset="utf-8">
-var AdminLogin = "{:url('Login/index')}",
-	AdminLogout = "{:url('Admin/logout')}",
-	adminClearCache = "{:url('Admin/clearCache')}", sysCy = "{$clevel}";
+var AdminLogin = "{:url('Login/index')}", AdminLogout = "{:url('Admin/logout')}", adminClearCache = "{:url('Admin/clearCache')}", sysCy = "{$clevel}";
 var menuNav = "{:url('menu/getMenuNavbar')}";
+var menuCOntroller = "{:url('index/home')}";
 var $ = layui.jquery;
 </script>
 {block name="js"}js文件{/block}

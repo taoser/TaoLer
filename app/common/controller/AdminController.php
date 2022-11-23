@@ -43,8 +43,7 @@ class AdminController extends \app\BaseController
         $admin_id = $this->aid;
         $auth     = new Auth();
 
-        $auth_rule_list = Db::name('auth_rule')->where(['delete_time'=> 0,'status'=> 1,'ismenu'=>1])->select();
-
+        $auth_rule_list = Db::name('auth_rule')->where(['status'=> 1, 'ismenu'=>1, 'delete_time'=> 0])->select();
         foreach ($auth_rule_list as $value) {
             if ($auth->check($value['name'], $admin_id) || $admin_id == 1) {
                 // 查询是否设置映射
