@@ -220,9 +220,9 @@ class Article extends BaseController
 				} else {
 					$receveId = $article['user_id'];
 				}
-				$data = ['title'=>$title,'content'=>'评论通知','link'=>$link,'user_id'=>$sendId,'type'=>2]; //type=2为评论留言
-				Message::sendMsg($sendId,$receveId,$data);
-				if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'评论审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚对 <b>'.$title.'</b> 发表了评论，请尽快处理。']);
+				$data = ['title' => $article['title'], 'content' => '评论通知', 'link' => $link, 'user_id' => $sendId, 'type' => 2]; //type=2为评论留言
+				Message::sendMsg($sendId, $receveId, $data);
+				if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'评论审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚对 <b>' . $article['title'] . '</b> 发表了评论，请尽快处理。']);
 				$res = ['code'=>0, 'msg'=>$msg];
 			} else {
 				$res = ['code'=>-1, 'msg'=>'留言失败'];

@@ -42,12 +42,16 @@ class User extends AdminController
 		//
 		if(Request::isAjax()){
 			$data = Request::param();
-			$result = Db::name('user')->save($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'添加成功'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'添加失败'];
-			}
+            $data['create_time'] = time();
+            $salt = substr(md5($data['create_time']),-6);
+            // 默认手机号为密码
+            $data['password'] = md5(substr_replace(md5($data['phone']),$salt,0,6));
+            try {
+                Db::name('user')->save($data);
+                $res = ['code'=>0,'msg'=>'添加成功'];
+            } catch (\Exception $e) {
+                $res = ['code'=>-1, 'msg'=>$e->getMessage()];
+            }
 		return json($res);
 		}
 		
@@ -59,6 +63,10 @@ class User extends AdminController
 	{
 		if(Request::isAjax()){
 			$data = Request::param();
+            $user = Db::name('user')->field('create_time')->find($data['id']);
+            $salt = substr(md5($user['create_time']),-6);
+            // 默认手机号为密码
+            $data['password'] = md5(substr_replace(md5($data['phone']),$salt,0,6));
 			$result = Db::name('user')->update($data);
 			if($result){
 				$res = ['code'=>0,'msg'=>'编辑成功'];

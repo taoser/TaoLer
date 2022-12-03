@@ -258,7 +258,7 @@ abstract class BaseController
         } else {
             $artUrl = (string) url('article_detail', ['id' => $aid]);
         }
-
+//halt($indexUrl,$artUrl);
         //多应用时，文章所属应用 2022.11.17
         $app = app('http')->getName();
         if(empty($appname)) {
@@ -268,9 +268,9 @@ abstract class BaseController
         }
 
         // 判断index应用是否绑定域名
-        $bind_index = array_search($appname,config('app.domain_bind'));
+        $bind_index = array_search($appname, config('app.domain_bind'));
         // 判断index应用是否域名映射
-        $map_index = array_search($appname,config('app.app_map'));
+        $map_index = array_search($appname, config('app.app_map'));
         // article 所属应用名
         $index = $map_index ?: $appname; // index应用名
 
@@ -293,7 +293,7 @@ abstract class BaseController
         if($bind_index) {
 //  echo 111;
             // index或home前端(非admin应用)域名进行了绑定
-            // url = $indexUrl . str_replace($admin . '/','',$artUrl);
+//             $url = $indexUrl . str_replace($admin . '/','',$artUrl);
             $url = $indexUrl . $artUrl;
         } else {
             if($bind_admin) {
@@ -304,11 +304,11 @@ abstract class BaseController
 //   echo 333;
 //   var_dump($admin, $appname, $artUrl);
                 // admin进行了映射
-                $url =  $indexUrl . str_replace($admin, $appname, $artUrl);
+                $url =  $indexUrl . str_replace($admin, $index, $artUrl);
             } else {
 //                echo 444;
                 // admin未绑定域名
-                $url =  $indexUrl . str_replace($app, $appname, $artUrl);
+                $url =  $indexUrl . str_replace($app, $index, $artUrl);
             }
 
         }

@@ -46,8 +46,8 @@ class Message
 
     /**
      * 接收消息
-     * @param $uid  接收消息用户ID
-     * @return \think\Collection
+     * @param $uid 接收消息用户ID
+     * @return array
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException

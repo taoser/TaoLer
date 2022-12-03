@@ -3288,24 +3288,30 @@
         },
         {
             "name": "workerman/phpsocket.io",
-            "version": "v1.1.14",
-            "version_normalized": "1.1.14.0",
+            "version": "v1.1.16",
+            "version_normalized": "1.1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/phpsocket.io.git",
-                "reference": "a5758da4d55b4744a4cc9c956816d88ce385601e"
+                "reference": "f4dc14e69e9d0d8ce69c6180f93b76b7743f2304"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/a5758da4d55b4744a4cc9c956816d88ce385601e",
-                "reference": "a5758da4d55b4744a4cc9c956816d88ce385601e",
-                "shasum": ""
+                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/f4dc14e69e9d0d8ce69c6180f93b76b7743f2304",
+                "reference": "f4dc14e69e9d0d8ce69c6180f93b76b7743f2304",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "workerman/channel": ">=1.0.0",
-                "workerman/workerman": ">=3.5.16"
+                "workerman/workerman": ">=4.0.0"
             },
-            "time": "2022-02-24T03:33:45+00:00",
+            "time": "2022-11-25T13:00:18+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3323,7 +3329,7 @@
             ],
             "support": {
                 "issues": "https://github.com/walkor/phpsocket.io/issues",
-                "source": "https://github.com/walkor/phpsocket.io/tree/v1.1.14"
+                "source": "https://github.com/walkor/phpsocket.io/tree/v1.1.16"
             },
             "funding": [
                 {

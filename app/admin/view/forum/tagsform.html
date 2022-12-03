@@ -26,18 +26,18 @@
       <div class="layui-input-block">
         <input type="text" name="ename" lay-verify="required" placeholder="英文名*" autocomplete="off" class="layui-input">
       </div>
-	  <label class="layui-form-label">详情页模板</label>
-	  <div class="layui-input-block">
-      <select name="detpl" id="tpl" lay-verify="required">
-          {volist name="template" id="vo"}
-          <option value="{$vo}" {if($vo == $cate.detpl)} selected {/if} >{$vo}</option>
-          {/volist}
-	  </select>
-	  </div>
 	  <label class="layui-form-label">图标</label>
       <div class="layui-input-block">
         <input type="text" name="icon" placeholder="图标*" id="iconPicker" lay-filter="iconPicker" style="display:none;" class="layui-input">
       </div>
+        <label class="layui-form-label">详情页模板</label>
+        <div class="layui-input-block">
+            <select name="detpl" id="tpl" lay-verify="required">
+                {volist name="template" id="vo"}
+                <option value="{$vo}" {if($vo == $cate.detpl)} selected {/if} >{$vo}</option>
+                {/volist}
+            </select>
+        </div>
 	  <label class="layui-form-label">描述</label>
       <div class="layui-input-block">
         <input type="text" name="desc" lay-verify="required" placeholder="描述*" autocomplete="off" class="layui-input">

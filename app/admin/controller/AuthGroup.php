@@ -27,7 +27,7 @@ class AuthGroup extends AdminController
 		if(Request::isAjax()){
 			$data = Request::only(['id']);
 			$map = array_filter($data);
-			$role = Db::name('auth_group')->field('id,title,limits,descr,status')->where('status',1)->where($map)->select();
+			$role = Db::name('auth_group')->field('id,title,limits,descr,status')->where($map)->select();
 			$count = $role->count();
 			$res = [];
 			if($count){
