@@ -106,7 +106,7 @@ layui.define(["table", "form", "upload","notify","hxNav"], function (exports) {
               layer.close(index);
               layer.open({
                 type: 2,
-                area: ['50%', '65%'],
+                area: ['55%', '75%'],
                 fixed: false, //不固定
                 maxmin: true,
                 content: 'pay.html'+ "?id=" + data.id+ "&name=" + data.name + "&version=" + data.version + "&uid=" + userinfo.uid + "&price=" + data.price,

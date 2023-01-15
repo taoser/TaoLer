@@ -12,7 +12,6 @@
       <div class="layui-form layui-form-pane layui-tab-item layui-show">
           <div class="layui-form-item">
             <label for="L_email" class="layui-form-label">邮箱</label>
-            <input type="hidden" name="user_id" value="{:session('user_id')}">
             <div class="layui-input-inline">
               <input type="text" id="L_email" name="email"  lay-verify="email" autocomplete="off" value="{$user.email}" class="layui-input" placeholder="{$user.email}">
             </div>

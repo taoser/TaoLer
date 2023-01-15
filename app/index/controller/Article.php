@@ -241,7 +241,8 @@ class Article extends BaseController
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
 			// 数据
-            $data = Request::only(['cate_id', 'title', 'title_color', 'user_id', 'content', 'upzip', 'keywords', 'description', 'captcha']);
+            $data = Request::only(['cate_id', 'title', 'title_color', 'content', 'upzip', 'keywords', 'description', 'captcha']);
+            $data['user_id'] = $this->uid;
 			$tagId = input('tagid');
 
 			// 验证码
@@ -340,6 +341,7 @@ class Article extends BaseController
 		
 		if(Request::isAjax()){
 			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','keywords','description','captcha']);
+            $data['user_id'] = $this->uid;
 			$tagId = input('tagid');	
 			
 			// 验证码

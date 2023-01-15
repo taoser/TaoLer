@@ -139,7 +139,7 @@ class User extends Model
 	//重置密码
     public function respass($data)
     {	//halt($data);
-		$user = $this->where('id',$data['uid'])->find();
+		$user = $this->where('id', $data['uid'])->find();
 		$salt = substr(md5($user['create_time']),-6);
 		$data['password'] = substr_replace(md5($data['password']),$salt,0,6);
 		$result = $user->save($data);
@@ -153,8 +153,7 @@ class User extends Model
     //更新设置
     public function setNew($data)
     {
-        $userId = $data['user_id'];
-        $user = User::where('id',$userId)->find();
+        $user = User::where('id', session('user_id'))->find();
         $result = $user->allowField(['email','active','nickname','sex','city','area_id','sign'])->save($data);
         if($result){
             return 1;

@@ -557,9 +557,7 @@ class Addons extends AdminController
         $data = Request::only(['id','name','version','uid','price']);
 //        $url = $this->getSystem()['api_url'].'/v1/createOrder';
 //        $order = Api::urlPost($url,$data);
-
         $response = HttpHelper::withHost()->post('/v1/createOrder', $data);
-
         if ($response->ok()) {
 //            $orderData = json_decode(json_encode($response->toJson()->data),TRUE);
             View::assign('orderData',$response->toArray()['data']);

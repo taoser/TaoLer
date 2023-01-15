@@ -34,7 +34,7 @@ class Worker
      *
      * @var string
      */
-    const VERSION = '4.1.4';
+    const VERSION = '4.1.5';
 
     /**
      * Status starting.
@@ -1218,7 +1218,7 @@ class Worker
             case \SIGINT:
             case \SIGTERM:
             case \SIGHUP:
-            case \SIGTSTP;
+            case \SIGTSTP:
                 static::$_gracefulStop = false;
                 static::stopAll();
                 break;
@@ -1304,7 +1304,7 @@ class Worker
             $STDOUT = \fopen(static::$stdoutFile, "a");
             $STDERR = \fopen(static::$stdoutFile, "a");
             // Fix standard output cannot redirect of PHP 8.1.8's bug
-            if (\posix_isatty(2)) {
+            if (\function_exists('posix_isatty') && \posix_isatty(2)) {
                 \ob_start(function ($string) {
                     \file_put_contents(static::$stdoutFile, $string, FILE_APPEND);
                 }, 1);
@@ -1610,7 +1610,7 @@ class Worker
         // Get uid.
         $user_info = \posix_getpwnam($this->user);
         if (!$user_info) {
-            static::log("Warning: User {$this->user} not exsits");
+            static::log("Warning: User {$this->user} not exists");
             return;
         }
         $uid = $user_info['uid'];
@@ -1618,7 +1618,7 @@ class Worker
         if ($this->group) {
             $group_info = \posix_getgrnam($this->group);
             if (!$group_info) {
-                static::log("Warning: Group {$this->group} not exsits");
+                static::log("Warning: Group {$this->group} not exists");
                 return;
             }
             $gid = $group_info['gid'];

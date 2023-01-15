@@ -68,7 +68,7 @@ class Article extends Model
      */
 	public function add(array $data)
 	{
-		$superAdmin = User::where('id',$data['user_id'])->value('auth');
+		$superAdmin = User::where('id', $data['user_id'])->value('auth');
         // 超级管理员无需审核
 		$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
 		$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';

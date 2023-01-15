@@ -119,7 +119,8 @@ class User extends BaseController
 	public function set()
 	{
 		if(Request::isAjax()){
-			$data = Request::only(['user_id','email','nickname','sex','city','area_id','sign']);
+			$data = Request::only(['email','nickname','sex','city','area_id','sign']);
+            $data['user_id'] = $this->uid;
 			// 过滤
 			$sign = strtolower($data['sign']);
 			if(strstr($sign, 'script')) return json(['code'=>-1,'msg'=>'包含有非法字符串script脚本']);

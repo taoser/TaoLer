@@ -291,7 +291,7 @@ class Request
             //请求头
             $requestHeaders = [];
 
-            foreach ( $request->getHeaders() as $k => $vs ) {
+            foreach ( (array)$request->getHeaders() as $k => $vs ) {
                 foreach ( $vs as $v ) {
                     $requestHeaders[] = "$k: $v";
                 }
@@ -300,7 +300,7 @@ class Request
             //响应头
             $responseHeaders = [];
 
-            foreach ( $response->getHeaders() as $k => $vs ) {
+            foreach ( (array)$response->getHeaders() as $k => $vs ) {
                 foreach ( $vs as $v ) {
                     $responseHeaders[] = "$k: $v";
                 }
