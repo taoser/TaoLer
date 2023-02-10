@@ -2,6 +2,7 @@
 
 namespace yzh52521\EasyHttp;
 
+
 /**
  * @method static \yzh52521\EasyHttp\Request asJson()
  * @method static \yzh52521\EasyHttp\Request asForm()
@@ -27,27 +28,27 @@ namespace yzh52521\EasyHttp;
  * @method static \yzh52521\EasyHttp\Request delay(int $seconds)
  * @method static \yzh52521\EasyHttp\Request timeout(int $seconds)
  * @method static \yzh52521\EasyHttp\Request concurrency(int $times)
- * @method static \yzh52521\EasyHttp\Request client(string $method, string $url, array $options = [])
- * @method static \yzh52521\EasyHttp\Request clientAsync(string $method, string $url, array $options = [])
+ * @method static \yzh52521\EasyHttp\Response client(string $method, string $url, array $options = [])
+ * @method static \yzh52521\EasyHttp\Response clientAsync(string $method, string $url, array $options = [])
  * @method static \yzh52521\EasyHttp\Request removeBodyFormat()
  *
- * @method static \yzh52521\EasyHttp\Request get(string $url, array $query = [])
- * @method static \yzh52521\EasyHttp\Request post(string $url, array $data = [])
- * @method static \yzh52521\EasyHttp\Request patch(string $url, array $data = [])
- * @method static \yzh52521\EasyHttp\Request put(string $url, array $data = [])
- * @method static \yzh52521\EasyHttp\Request delete(string $url, array $data = [])
- * @method static \yzh52521\EasyHttp\Request head(string $url, array $data = [])
- * @method static \yzh52521\EasyHttp\Request options(string $url, array $data = [])
+ * @method static \yzh52521\EasyHttp\Response get(string $url, array $query = [])
+ * @method static \yzh52521\EasyHttp\Response post(string $url, array $data = [])
+ * @method static \yzh52521\EasyHttp\Response patch(string $url, array $data = [])
+ * @method static \yzh52521\EasyHttp\Response put(string $url, array $data = [])
+ * @method static \yzh52521\EasyHttp\Response delete(string $url, array $data = [])
+ * @method static \yzh52521\EasyHttp\Response head(string $url, array $data = [])
+ * @method static \yzh52521\EasyHttp\Response options(string $url, array $data = [])
  *
- * @method static \yzh52521\EasyHttp\Request getAsync(string $url, array|null $query = null, callable $success = null, callable $fail = null)
- * @method static \yzh52521\EasyHttp\Request postAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \yzh52521\EasyHttp\Request patchAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \yzh52521\EasyHttp\Request putAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \yzh52521\EasyHttp\Request deleteAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \yzh52521\EasyHttp\Request headAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \yzh52521\EasyHttp\Request optionsAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \yzh52521\EasyHttp\Request multiAsync(array $promises, callable $success = null, callable $fail = null)
- * @method static \yzh52521\EasyHttp\Request wait()
+ * @method static \yzh52521\EasyHttp\Response getAsync(string $url, array|null $query = null, callable $success = null, callable $fail = null)
+ * @method static \yzh52521\EasyHttp\Response postAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \yzh52521\EasyHttp\Response patchAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \yzh52521\EasyHttp\Response putAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \yzh52521\EasyHttp\Response deleteAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \yzh52521\EasyHttp\Response headAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \yzh52521\EasyHttp\Response optionsAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \GuzzleHttp\Pool multiAsync(array $promises, callable $success = null, callable $fail = null)
+ * @method static void wait()
  */
 
 class Http extends Facade

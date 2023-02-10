@@ -2344,17 +2344,17 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v5.4.17",
-            "version_normalized": "5.4.17.0",
+            "version": "v5.4.19",
+            "version_normalized": "5.4.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "2adac0a9b55f9fb40b983b790509581dc3db0fff"
+                "reference": "2a1d06fcf2b30829d6c01dae8e6e188424d1f8f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/2adac0a9b55f9fb40b983b790509581dc3db0fff",
-                "reference": "2adac0a9b55f9fb40b983b790509581dc3db0fff",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/2a1d06fcf2b30829d6c01dae8e6e188424d1f8f6",
+                "reference": "2a1d06fcf2b30829d6c01dae8e6e188424d1f8f6",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2370,7 +2370,7 @@
             "require-dev": {
                 "symfony/var-dumper": "^4.4.9|^5.0.9|^6.0"
             },
-            "time": "2022-12-22T10:10:04+00:00",
+            "time": "2023-01-12T16:39:29+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2406,7 +2406,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v5.4.17"
+                "source": "https://github.com/symfony/var-exporter/tree/v5.4.19"
             },
             "funding": [
                 {
@@ -2593,18 +2593,24 @@
         },
         {
             "name": "tightenco/collect",
-            "version": "v8.83.25",
-            "version_normalized": "8.83.25.0",
+            "version": "v8.83.27",
+            "version_normalized": "8.83.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tighten/collect.git",
-                "reference": "7d2a6fc5e97c5f7209a780bea98f35042c1fd0ea"
+                "reference": "07eed6cf7441c7a69c379fdcb118eec1a1fdd0e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tighten/collect/zipball/7d2a6fc5e97c5f7209a780bea98f35042c1fd0ea",
-                "reference": "7d2a6fc5e97c5f7209a780bea98f35042c1fd0ea",
-                "shasum": ""
+                "url": "https://api.github.com/repos/tighten/collect/zipball/07eed6cf7441c7a69c379fdcb118eec1a1fdd0e6",
+                "reference": "07eed6cf7441c7a69c379fdcb118eec1a1fdd0e6",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "php": "^7.3|^8.0",
@@ -2615,7 +2621,7 @@
                 "nesbot/carbon": "^2.23.0",
                 "phpunit/phpunit": "^8.3"
             },
-            "time": "2022-08-22T17:55:07+00:00",
+            "time": "2023-01-13T18:05:42+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2644,24 +2650,30 @@
             ],
             "support": {
                 "issues": "https://github.com/tighten/collect/issues",
-                "source": "https://github.com/tighten/collect/tree/v8.83.25"
+                "source": "https://github.com/tighten/collect/tree/v8.83.27"
             },
             "install-path": "../tightenco/collect"
         },
         {
             "name": "topthink/framework",
-            "version": "v6.1.1",
-            "version_normalized": "6.1.1.0",
+            "version": "v6.1.2",
+            "version_normalized": "6.1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "2cb56f3e6f3c479fe90ea5f28d38d3b5ef6c4210"
+                "reference": "67235be5b919aaaf1de5aed9839f65d8e766aca3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/framework/zipball/2cb56f3e6f3c479fe90ea5f28d38d3b5ef6c4210",
-                "reference": "2cb56f3e6f3c479fe90ea5f28d38d3b5ef6c4210",
-                "shasum": ""
+                "url": "https://api.github.com/repos/top-think/framework/zipball/67235be5b919aaaf1de5aed9839f65d8e766aca3",
+                "reference": "67235be5b919aaaf1de5aed9839f65d8e766aca3",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "ext-json": "*",
@@ -2672,7 +2684,7 @@
                 "psr/log": "~1.0",
                 "psr/simple-cache": "^1.0",
                 "topthink/think-helper": "^3.1.1",
-                "topthink/think-orm": "^2.0"
+                "topthink/think-orm": "^2.0|^3.0"
             },
             "require-dev": {
                 "guzzlehttp/psr7": "^2.1.0",
@@ -2680,7 +2692,7 @@
                 "mockery/mockery": "^1.2",
                 "phpunit/phpunit": "^7.0"
             },
-            "time": "2022-10-26T03:48:53+00:00",
+            "time": "2023-02-08T02:24:01+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2712,7 +2724,7 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/framework/issues",
-                "source": "https://github.com/top-think/framework/tree/v6.1.1"
+                "source": "https://github.com/top-think/framework/tree/v6.1.2"
             },
             "install-path": "../topthink/framework"
         },
@@ -2997,17 +3009,17 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.56",
-            "version_normalized": "2.0.56.0",
+            "version": "v2.0.57",
+            "version_normalized": "2.0.57.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "75b8512736daaa056d511f42c15bed87c9f3605a"
+                "reference": "b68e3bb15322dc2d977ac62682d6df05c98bd23c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/75b8512736daaa056d511f42c15bed87c9f3605a",
-                "reference": "75b8512736daaa056d511f42c15bed87c9f3605a",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/b68e3bb15322dc2d977ac62682d6df05c98bd23c",
+                "reference": "b68e3bb15322dc2d977ac62682d6df05c98bd23c",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3027,7 +3039,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^7|^8|^9.5"
             },
-            "time": "2022-12-15T02:52:53+00:00",
+            "time": "2023-02-03T11:35:52+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3055,7 +3067,7 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v2.0.56"
+                "source": "https://github.com/top-think/think-orm/tree/v2.0.57"
             },
             "install-path": "../topthink/think-orm"
         },
@@ -3111,24 +3123,30 @@
         },
         {
             "name": "topthink/think-trace",
-            "version": "v1.5",
-            "version_normalized": "1.5.0.0",
+            "version": "v1.6",
+            "version_normalized": "1.6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-trace.git",
-                "reference": "55027fd79abb744f32a3be8d9e1ccf873a3ca9b7"
+                "reference": "136cd5d97e8bdb780e4b5c1637c588ed7ca3e142"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-trace/zipball/55027fd79abb744f32a3be8d9e1ccf873a3ca9b7",
-                "reference": "55027fd79abb744f32a3be8d9e1ccf873a3ca9b7",
-                "shasum": ""
+                "url": "https://api.github.com/repos/top-think/think-trace/zipball/136cd5d97e8bdb780e4b5c1637c588ed7ca3e142",
+                "reference": "136cd5d97e8bdb780e4b5c1637c588ed7ca3e142",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "php": ">=7.1.0",
-                "topthink/framework": "^6.0"
+                "topthink/framework": "^6.0|^8.0"
             },
-            "time": "2022-10-26T07:56:45+00:00",
+            "time": "2023-02-07T08:36:32+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -3159,7 +3177,7 @@
             "description": "thinkphp debug trace",
             "support": {
                 "issues": "https://github.com/top-think/think-trace/issues",
-                "source": "https://github.com/top-think/think-trace/tree/v1.5"
+                "source": "https://github.com/top-think/think-trace/tree/v1.6"
             },
             "install-path": "../topthink/think-trace"
         },
@@ -3359,17 +3377,17 @@
         },
         {
             "name": "workerman/workerman",
-            "version": "v4.1.5",
-            "version_normalized": "4.1.5.0",
+            "version": "v4.1.6",
+            "version_normalized": "4.1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/workerman.git",
-                "reference": "16bcfc2c7574feea46cdadaaa8ae73f14d464b21"
+                "reference": "a278ddcc78040e5d1e25ca2022eeb7ccfdccc86b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/workerman/zipball/16bcfc2c7574feea46cdadaaa8ae73f14d464b21",
-                "reference": "16bcfc2c7574feea46cdadaaa8ae73f14d464b21",
+                "url": "https://api.github.com/repos/walkor/workerman/zipball/a278ddcc78040e5d1e25ca2022eeb7ccfdccc86b",
+                "reference": "a278ddcc78040e5d1e25ca2022eeb7ccfdccc86b",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3384,7 +3402,7 @@
             "suggest": {
                 "ext-event": "For better performance. "
             },
-            "time": "2022-12-14T11:58:06+00:00",
+            "time": "2023-01-13T02:17:21+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3575,17 +3593,17 @@
         },
         {
             "name": "yzh52521/easyhttp",
-            "version": "v1.0.5",
-            "version_normalized": "1.0.5.0",
+            "version": "v1.0.6",
+            "version_normalized": "1.0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yzh52521/easyhttp.git",
-                "reference": "a74fa5a1d4f701bd20e581b0731e885aac3daf9f"
+                "reference": "6c4795316e6847ba691ecad9c9f5fd9f073b33e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yzh52521/easyhttp/zipball/a74fa5a1d4f701bd20e581b0731e885aac3daf9f",
-                "reference": "a74fa5a1d4f701bd20e581b0731e885aac3daf9f",
+                "url": "https://api.github.com/repos/yzh52521/easyhttp/zipball/6c4795316e6847ba691ecad9c9f5fd9f073b33e2",
+                "reference": "6c4795316e6847ba691ecad9c9f5fd9f073b33e2",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3599,7 +3617,7 @@
                 "php": "^7.2.5|^8.0",
                 "psr/log": "^1.0|^2.0|^3.0"
             },
-            "time": "2022-12-05T12:18:34+00:00",
+            "time": "2023-02-08T09:24:06+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3630,7 +3648,7 @@
             ],
             "support": {
                 "issues": "https://github.com/yzh52521/easyhttp/issues",
-                "source": "https://github.com/yzh52521/easyhttp/tree/v1.0.5"
+                "source": "https://github.com/yzh52521/easyhttp/tree/v1.0.6"
             },
             "install-path": "../yzh52521/easyhttp"
         }
