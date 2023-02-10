@@ -33,6 +33,9 @@ class Upgrade extends AdminController
     protected $backup_dir = "../runtime/update/backup_dir/";	//备份目录
     protected $upload_dir = "../runtime/update/upload_dir/";	//升级包目录
     protected $sys_version_num;	//当前系统的版本
+	protected $sys_version = '';
+    protected $pn = '';
+    protected $sys = '';
 	
 	public function __construct()
 	{

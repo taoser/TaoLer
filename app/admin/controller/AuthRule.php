@@ -10,6 +10,9 @@ use app\admin\model\AuthRule as AuthRuleModel;
 
 class AuthRule extends AdminController
 {
+
+	protected $model = '';
+
     //
     public function __construct(App $app)
     {

@@ -25,6 +25,9 @@ use app\BaseController as BaseCtrl;
  */
 class BaseController extends BaseCtrl
 {
+
+	protected $uid = '';
+
     /**
 	 * 初始化系统，导航，用户
 	 */

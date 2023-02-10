@@ -27,6 +27,9 @@ use think\response\Json;
 
 class Set extends AdminController
 {
+
+	protected $sysInfo = '';
+	
 	protected function initialize()
     {
         parent::initialize();

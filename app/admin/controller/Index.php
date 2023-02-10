@@ -17,6 +17,13 @@ use taoser\SetArr;
 
 class Index extends AdminController
 {
+
+	protected $sys_version = '';
+    protected $pn = '';
+    protected $sys = '';
+    protected $domain = '';
+    protected $api = '';
+	
 /*	
 	protected function initialize()
     {

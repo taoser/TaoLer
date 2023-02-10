@@ -23,6 +23,9 @@ use taoler\com\Files;
  */
 class AdminController extends \app\BaseController
 {
+
+    protected $aid = '';
+
     /**
      * 初始化菜单
      */
