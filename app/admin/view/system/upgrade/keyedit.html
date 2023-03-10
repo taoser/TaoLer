@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>修改页面</title>
+		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+	</head>
+	<body>
+		<form class="layui-form" action="">
+			<div class="mainBox">
+				<div class="main-container">
+					<div class="layui-form-item">
+						<label class="layui-form-label">配置Key</label>
+						<div class="layui-input-block">
+							<input type="text" name="key" value="{$key.key}" required class="layui-input" autocomplete="off" placeholder="填写申请得到在Key">
+						</div>				
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">检测api</label>
+						<div class="layui-input-block">
+							<input type="text" name="upcheck_url" value="{$key.upcheck_url}" required class="layui-input" autocomplete="off" placeholder="没换官网服务器情况下不要改">
+						</div>				
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">升级api</label>
+						<div class="layui-input-block">
+						<input type="text" name="upgrade_url" value="{$key.upgrade_url}" required class="layui-input" autocomplete="off" placeholder="没换官网服务器情况下不要改">
+						</div>				
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">申请key?</label>
+						<div class="layui-input-block">
+							<div class="layui-form-mid layui-word-aux " ><a href="https://www.aieok.com/article/user/key.html" target="_blank">更换网址,请去官网重新申请key</a></div>
+							<div class="layui-form-mid layui-word-aux " ><span>未通知api接口变更,请不要私自更改api，否则无法升级</span></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bottom">
+				<div class="button-container">
+					<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+						lay-filter="key-save">
+						<i class="layui-icon layui-icon-ok"></i>
+						提交
+					</button>
+					<button type="reset" class="pear-btn pear-btn-sm">
+						<i class="layui-icon layui-icon-refresh"></i>
+						重置
+					</button>
+				</div>
+			</div>
+		</form>
+	
+		<script src="/static/component/layui/layui.js"></script>
+		<script src="/static/component/pear/pear.js"></script>
+  
+		<script>
+			layui.use(['form', 'jquery'], function() {
+				let form = layui.form;
+				let $ = layui.jquery;
+
+				form.on('submit(key-save)', function(data) {
+					$.ajax({
+						url: "{:url('system.upgrade/keyedit')}",
+						data: JSON.stringify(data.field),
+						dataType: 'json',
+						contentType: 'application/json',
+						type: 'post',
+						success: function(result) {
+							if (result.code === 0) {
+								layer.msg(result.msg, {
+									icon: 1,
+									time: 1000
+								}, function() {
+									parent.layer.close(parent.layer.getFrameIndex(window
+										.name)); //关闭当前页
+									parent.layui.table.reload("user-table");
+								});
+							} else {
+								layer.msg(result.msg, {
+									icon: 2,
+									time: 1000
+								});
+							}
+						}
+					})
+					return false;
+				});
+			})
+		</script>
+		<script>
+		</script>
+	</body>
+</html>

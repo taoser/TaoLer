@@ -18,18 +18,12 @@ use taoser\SetArr;
 class Index extends AdminController
 {
 
-	protected $sys_version = '';
-    protected $pn = '';
-    protected $sys = '';
-    protected $domain = '';
-    protected $api = '';
-	
-/*	
-	protected function initialize()
-    {
-        parent::initialize();
-    }
-*/	
+	protected $sys_version;
+    protected $pn;
+    protected $sys;
+    protected $domain;
+    protected $api;
+
 	public function __construct()
 	{
         //控制器初始化显示左侧导航菜单
@@ -47,12 +41,30 @@ class Index extends AdminController
 
 	}
     
-
     public function index()
 	{
         return View::fetch('index');
     }
+
+	public function console1()
+	{
+        return View::fetch('console1');
+    }
 	
+	public function console2()
+	{
+        // 评论、帖子状态
+        $comm = Db::name('comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+        $forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+        $user = Db::name('user')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+
+        View::assign([
+            'pendComms'     => count($comm),
+            'pendForums'    => count($forum),
+            'pendUser'      => count($user),
+        ]);
+        return View::fetch('console2');
+    }
 
     public function set()
 	{
@@ -101,7 +113,8 @@ class Index extends AdminController
     }
 	
 	//版本检测
-	public function getVersion(){
+	public function getVersion()
+    {
 		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
 		if($verCheck->code !== -1){
             return $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
@@ -109,6 +122,16 @@ class Index extends AdminController
 			return lang('No new messages');
 		}
 	}
+
+    public function checkeVersion()
+    {
+        $verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
+        if($verCheck->code !== -1){
+            return $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
+        } else {
+            return lang('No new messages');
+        }
+    }
 	
 	//本周发帖
 	public function forums()

@@ -33,8 +33,8 @@ class Auth
 //        var_dump(Request::url(),Request::pathinfo(),$request->baseUrl(),$request->controller());
 		//访问路径
 //		$path = app('http')->getName().'/'.stristr($request->pathinfo(),".html",true);
-        $path = stristr($request->pathinfo(),".html",true);
-
+        $path = stristr($request->pathinfo(),".html",true) ?: Request::pathinfo();
+//    var_dump($path);
 		//登陆前获取加密的Cookie
 		$cooAuth = Cookie::get('adminAuth');
 
@@ -81,15 +81,18 @@ class Auth
         // 排除公共权限
         $not_check = [
             'captcha',
-            'admin/index',
-            'index/index',
-            'menu/getMenuNavbar',
             'login/index',
+            'admin/index',
+            'system.menu/getnav',
+            'index/index',
+            'index/console1',
+            'index/console2',
+            'index/news',
+            'menu/getMenuNavbar',
             'index/home',
             'Admin/info',
-            'Admin/repass',
-            'Admin/logout',
-            'Index/news',
+            'system.admin/repass',
+            'system.admin/logout',
             'Index/cunsult',
             'Index/replys',
             'Index/reply',

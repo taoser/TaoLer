@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>新增管理员</title>
+		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+	</head>
+	<body>
+	<form class="layui-form" action="">
+		<div class="mainBox">
+			<div class="main-container">
+
+				<div class="layui-form-item" id="test">
+					<label class="layui-form-label">{$role.title}</label>             
+						{volist name="admin" id="vo"}
+						<ul class="layui-input-block" style="margin-top: 10px ;">
+							<li>
+								<input type="checkbox" name="uid" class="parent"  lay-skin="primary" value="{$vo.id}" title="{$vo.username}" {if (in_array($vo.id, $uidAccess))} checked {/if}>
+							</li>
+						</ul>
+						{/volist}
+				</div>
+  			</div>
+		</div>
+		<div class="bottom">
+			<div class="button-container">
+				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+					lay-filter="auth-save">
+					<i class="layui-icon layui-icon-ok"></i>
+					提交
+				</button>
+				<button type="reset" class="pear-btn pear-btn-sm">
+					<i class="layui-icon layui-icon-refresh"></i>
+					重置
+				</button>
+			</div>
+		</div>
+	</form>
+
+	<script src="/static/component/layui/layui.js"></script>
+	<script src="/static/component/pear/pear.js"></script>
+
+	<script>
+		// 数据接口
+		const AUTHGROUP_EDIT = "{:url('system.AuthGroup/auth')}";
+
+		layui.use(['form', 'jquery'], function() {
+			let form = layui.form;
+			let $ = layui.jquery;
+			// 编辑
+			form.on('submit(auth-save)', function(data) {
+
+				//checkbox 父子级级联或取id
+				var mId = "";
+				var e = $(":checkbox");
+				e.each(function () {
+				if($(this).next().hasClass("layui-form-checked")){
+					mId+=$(this).val()+",";
+				};
+				})
+				data.field.uid = mId.substring(0,mId.length-1);	
+				data.field.group_id = "{$role.id}";
+
+				$.ajax({
+					url: AUTHGROUP_EDIT,
+					data: JSON.stringify(data.field),
+					// data:{"rules":rules,"title":field.title,"descr":field.descr},
+					dataType: 'json',
+					contentType: 'application/json',
+					type: 'post',
+					success: function(result) {
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								parent.layer.close(parent.layer.getFrameIndex(window
+									.name)); //关闭当前页
+								parent.layui.table.reload("role-table");
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+				return false;
+			});
+
+		})
+	</script>
+ 
+</body>
+</html>

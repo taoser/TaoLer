@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>管理员管理</title>
+		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+	</head>
+	<body class="pear-container">
+		<div class="layui-card">
+			<div class="layui-card-body">
+				<div class="layui-card-header">升级服务</div>
+				<div class="layui-card-body">
+					<div class="layui-form" wid100 lay-filter="">
+						{if ($ver_num.key == '')}
+						<div class="layui-form-item">
+							<label class="layui-form-label">配置Key</label>
+							<div class="layui-input-inline">
+							<input type="text" name="key" value="{$ver_num.key}" required class="layui-input" placeholder="填写申请得到在Key">
+							</div>
+							<div class="layui-input-inline layui-input-company"><button style="float: left;" type="button" class="layui-btn layui-btn-sm" id="upgrade-key">保存</button></div>
+							<div class="layui-form-mid layui-word-aux" >无Key不能升级</div>
+							<div class="layui-form-mid layui-word-aux " ><a href="https://www.aieok.com/article/user/key.html" target="_blank">去官网申请Key</a></div>
+						</div>
+						{else /}
+						<div class="layui-form-item">
+							<label class="layui-form-label">升级Key</label>
+							<div class="layui-form-item layui-hide">
+							<input  type="text" name="key" value="{$ver_num.key}"  class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux " ><span style="color:red">{$ver_num.key}</span></div>
+							<div class="layui-input-inline layui-input-company">
+							{if condition="checkRuleButton('Upgrade/keyedit')"}
+							<a class="pear-btn pear-btn-primary pear-btn-xs" lay-event="edit" id-data="{:url('upgrade/keyedit')}" ><i class="layui-icon layui-icon-edit"></i>修改？</a>
+							{else /}<a class="pear-btn pear-btn-primary pear-btn-xm layui-btn-disabled" ><i class="layui-icon layui-icon-edit"></i>修改？</a>{/if}
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">在线升级</label>
+							<div class="layui-input-inline layui-input-company" id="ver_nums" >当前版本：Taoler v_{:config('taoler.version')}</div>
+							<div class="layui-upload">
+							{if condition="checkRuleButton('Upgrade/check')"}
+							<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" data-url="{$ver_num.upcheck_url}" id="upload-check">检查更新</button>
+							{else /}<button type="button" class="pear-btn pear-btn-primary pear-btn-sm layui-btn-disabled">检查更新</button>{/if}
+							</div>
+						</div>				
+						<div class="layui-form-item">
+							<label class="layui-form-label">手动更新</label>
+							<div class="layui-upload">
+							{if condition="checkRuleButton('Upgrade/uploadzip')"}
+							<button type="button" class="layui-btn layui-btn-sm" id="select-file">选择文件</button>
+							<button type="button" class="layui-btn layui-btn-sm" id="upgrade-sys-button">开始升级</button>
+							{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">无权限</button>{/if}
+							</div>
+						</div>
+						
+						{/if}
+						
+						<div  style="margin-top: 10px;">
+							<div class="layui-form-item">
+								<div class="layui-card-header">升级说明</div>
+								<div style="padding-left: 20px;">1.升级服务需要去官网申请key配置文件</div>
+								<div style="padding-left: 20px;">2.多个版本需要升级时,会自行判断依次序升级</div>
+								<div style="padding-left: 20px;">3.升级过程尽管会自动备份文件，但为了安全起见可以自行备份文件</div>
+								<div style="padding-left: 20px;">4.在某些特殊场合，可能需要手动升级</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+  
+		<script src="/static/component/layui/layui.js"></script>
+		<script src="/static/component/pear/pear.js"></script>
+  		<script>
+  			layui.use(['toast','notify','layer','form','upload'], function(){
+				var $ = layui.jquery
+				,layer = layui.layer
+				,form = layui.form
+				,upload = layui.upload;
+				var notify = layui.notify;
+				var toast = layui.toast;
+
+				//检测并更新系统
+				$('#upload-check').on('click',function(){
+        			var loading = layer.load(2, {
+                    shade: [0.2, '#000'],
+					//time: 2000,
+                	});
+				
+					$.get("{:url('system.upgrade/check')}",function (data){
+						if (data.code == 0) {
+							//已件最新版本
+							layer.close(loading);
+							toast.info({title:"通知消息", message: data.msg ,position: 'topRight'})
+						} else if (data.code == 1) {
+							//可升级
+							layer.close(loading);
+							$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.data.upnum+'</span>个新版本：<span style="color:red">可更新至v' + data.data.version + ' [!重要:' + data.data.info + ']</span></div>');
+							$('button#upload-check').hide();
+							//更新系统
+							layer.confirm('更新v' + data.data.version + ',升级说明：<span style="color:red">[!重要：' + data.data.info + ']</span><br>确定升级？',{icon: 3, title:'升级系统'}, function(index){
+								uploads();	//更新
+								layer.close(index);	//关闭load加载层
+							});
+						} else {
+							//服务器错误
+							layer.close(loading);
+							toast.error({title:"服务器错误",message:data.msg});
+							//notify.error(data.msg);
+						}
+					});
+					return false;	
+				});
+
+				//更新
+				function uploads(){
+					var load = layer.load();
+					$.get("{:url('system.upgrade/upload')}",function (data){
+							if (data.code == 0) {
+								layer.close(load);
+								layer.msg(data.msg,{
+									icon:6,
+									time:2000
+								},function(){
+									location.reload();
+								});
+							} else {
+								layer.close(load);
+								toast.error({title:"服务器错误", message:data.msg})
+								//notify.error(data.msg);
+								return false;
+							}
+						}
+					);
+				}
+
+				//手动更新，选完文件后不自动上传
+				upload.render({
+					elem: '#select-file'
+					,url: "{:url('system.upgrade/uploadzip')}"
+					,data: {type:'zip'}
+					,accept: 'file'
+					,acceptMime: 'application/zip'
+					,field: 'file'
+					,auto: false
+					,exts: 'zip|rar|7z'
+					,size: 10000
+					//,multiple: true
+					,bindAction: '#upgrade-sys-button'
+					,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+						layer.load(); //上传loading
+					}
+					,done: function(res){
+						layer.closeAll('loading'); //关闭loading
+						if(res.code == 0){
+							layer.msg(res.msg,{
+								icon:6,
+								tiye:2000
+							},function(){
+								location.reload();
+							});
+						} else {
+							layer.open({
+								title:"上传失败",
+								content:res.msg,
+								icon:5,
+								anim:6
+							});
+						}
+					}
+				});
+
+				//确定升级操作
+				$(document).on('click','#update_system',function(){
+				//var url = $(this).attr('data-url'),
+				//	key = $('input[name=key]').attr("value"),
+					uploads();
+					return false;
+				}); 
+
+				//设置key 
+				$('#upgrade-key').on('click',function(){
+					var key = $('input[name=key]').val(); 
+
+					$.ajax({
+						type:"post",
+						url:"{:url('system.upgrade/key')}",
+						data:{"key":key},
+						daType:"json",
+						success:function (data){
+							if (data.code == 0) {
+								layer.msg(data.msg,{
+									icon:6,
+									time:2000
+								},function(){
+									location.reload();
+								});
+							} else {
+								layer.open({
+									title:'保存失败',
+									content:data.msg,
+									icon:5,
+									anim:6
+								});
+							}
+						}
+						});
+
+					return false;	
+				});
+	  
+	
+				//修改key
+				$('a[lay-event=edit]').on('click', function(){
+					layer.open({
+						type: 2,
+						title: '修改key',
+						shade: 0.1,
+						area: ['500px', '400px'],
+						content: 'keyedit.html'
+					});
+				});
+		
+			})
+		</script>
+	</body>
+</html>

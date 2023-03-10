@@ -10,6 +10,7 @@
  */
 namespace app\common\model;
 
+use think\facade\Lang;
 use think\Model;
 use think\model\concern\SoftDelete;
 
@@ -59,12 +60,13 @@ class Cate extends Model
     // 分类表
     public function getList()
     {
-        $data = $this->field('sort,id,pid,catename,ename,detpl,icon,appname,is_hot,desc')->where(['status'=>1])->select()->toArray();
-        // 排序
-        $cmf_arr = array_column($data, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $data);
+        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,appname,is_hot,desc')->where(['status'=>1])->select()->toArray();
+
         if(count($data)) {
-            return json(['code'=>0,'msg'=>'ok','data'=>$data]);
+            // 排序
+            $cmf_arr = array_column($data, 'sort');
+            array_multisort($cmf_arr, SORT_ASC, $data);
+            return json(['code'=>0,'msg'=>'ok', 'count' => count($data),'data'=>$data]);
         } else {
             return json(['code'=>-1,'msg'=>'no data','data'=>'']);
         }

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>用户管理</title>
+  <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+</head>
+  <body class="pear-container">
+    <div class="layui-card">
+      <div class="layui-card-body">
+        <form class="layui-form" action="">
+          <div class="layui-form-item">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">帖子ID</label>
+                <div class="layui-input-block">
+                  <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">发帖人</label>
+                <div class="layui-input-block">
+                  <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">标题</label>
+                <div class="layui-input-block">
+                  <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                  <select name="sec">
+                        <option value="">选择状态</option>
+                        <option value="1">正常</option>
+                        <option value="5">禁止</option>
+                        <option value="6">待审</option>
+                        <option value="2">置顶</option>
+                        <option value="3">加精</option>
+                        <option value="4">禁评</option>
+                  </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
+                  <i class="layui-icon layui-icon-search"></i>
+                  查询
+                </button>
+                <button type="reset" class="pear-btn pear-btn-md">
+                  <i class="layui-icon layui-icon-refresh"></i>
+                  重置
+                </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table id="forum-table" lay-filter="forum-table" ></table>
+          </div>
+        </div>
+
+        <script type="text/html" id="forum-toolbar">
+          <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+            <i class="layui-icon layui-icon-add-1"></i>
+            新增
+          </button>
+          <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+            <i class="layui-icon layui-icon-delete"></i>
+            删除
+          </button>
+        </script>
+
+
+        <script type="text/html" id="avatarTpl">
+          <div><img style="width: 25px; height: 25px;" src= "{{ d.avatar }}"></div>
+        </script>
+        <script type="text/html" id="forum-istop">
+          <input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.top == 1 ? 'checked' : '' }}>
+        </script>
+        <script type="text/html" id="buttonHot">
+          <input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isHot" {{ d.hot == 1 ? 'checked' : '' }}>
+        </script>
+        <script type="text/html" id="buttonReply">
+          <input type="checkbox" name="is_reply" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isReply" {{ d.reply == 0 ? 'checked' : '' }}>
+        </script>
+        <script type="text/html" id="buttonCheck">
+          <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{ d.check == 1 ? 'checked' : '' }}>
+        </script>
+
+        <script type="text/html" id="forum-table-bar">
+            <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+            <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+        </script>
+
+    </div>
+  </div>
+
+        <script src="/static/component/layui/layui.js"></script>
+        <script src="/static/component/pear/pear.js"></script>
+
+        <script>
+        const FORUM_List       = "{:url('content.forum/list')}";
+              var forumReplys     = "{:url('Forum/replys')}",
+              forumRedel      = "{:url('Forum/redel')}",
+              forumReplysform = "{:url('Forum/replysform')}",
+              forumTags       = "{:url('Forum/tags')}",
+              forumTagsDelete = "{:url('Forum/tagsdelete')}",
+              forumTagsForm   = "{:url('Forum/tagsform')}";
+                var forumList      = "{:url('content.forum/list')}";
+              layui.use(['jquery','form', 'table','common'], function(){
+                var $ = layui.jquery
+                ,form = layui.form
+                ,table = layui.table;
+                let common = layui.common;
+
+                let cols = [
+                  [
+                    {type: 'checkbox'}
+                    ,{field: 'id', width: 60, title: 'ID', sort: true}
+                    ,{field: 'poster', title: '账号',width: 80}
+                    ,{field: 'avatar', title: '头像', width: 60, templet: '#avatarTpl'}
+                    ,{field: 'title', title: '标题', minWidth: 180,templet: '<div><a href="{{- d.url }}" target="_blank">{{- d.title }}</a></div>'}
+                    ,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
+                    ,{field: 'posttime', title: '时间',width: 120, sort: true}
+                    ,{field: 'top', title: '置顶', templet: '#forum-istop', width: 80, align: 'center'}
+                    ,{field: 'hot', title: '加精', templet: '#buttonHot', width: 80, align: 'center'}
+                    ,{field: 'reply', title: '禁评', templet: '#buttonReply', width: 80, align: 'center'}
+                    ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 95, align: 'center'}
+                    ,{title: '操作', width: 110, align: 'center', toolbar: '#forum-table-bar'}
+                  ]
+                ];
+
+              table.render({
+                elem: '#forum-table',
+                url: FORUM_List,
+                page: true,
+                cols: cols,
+                skin: 'line',
+                toolbar: '#forum-toolbar',
+                defaultToolbar: [{
+                  title: '刷新',
+                  layEvent: 'refresh',
+                  icon: 'layui-icon-refresh',
+                }, 'filter', 'print', 'exports']
+              });
+
+              table.on('tool(forum-table)', function(obj) {
+                if (obj.event === 'remove') {
+                  window.remove(obj);
+                } else if (obj.event === 'edit') {
+                  window.edit(obj);
+                }
+              });
+
+              table.on('toolbar(forum-table)', function(obj) {
+                if (obj.event === 'add') {
+                  window.add();
+                } else if (obj.event === 'refresh') {
+                  window.refresh();
+                } else if (obj.event === 'batchRemove') {
+                  window.batchRemove(obj);
+                }
+              });
+
+              form.on('submit(forum-query)', function(data) {
+                table.reload('forum-table', {
+                  where: data.field
+                })
+                return false;
+              });
+
+               // 监听置顶
+               form.on('switch(isTop)', function(obj){
+                $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value:obj.elem.checked ? 1 : 0},function(res){
+                  layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+                });
+              });
+
+              // 监听加精
+              form.on('switch(isHot)', function(obj){
+                $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
+                  layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+                });
+              });
+
+              // 监听回复
+              form.on('switch(isReply)', function(obj){
+                $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
+                  layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+                });
+              });
+
+              // 监听审贴
+              form.on('switch(artStatus)', function(obj){
+                //layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+                $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
+                  if(res.code == 0){
+                                layer.msg(res.msg,{icon:res.icon,time:2000})
+                        } else {
+                                layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+                  }
+                });
+              });
+
+              window.add = function() {
+                layer.open({
+                  type: 2,
+                  title: '新增',
+                  shade: 0.1,
+                  area: [common.isModile()?'100%':'100%', common.isModile()?'100%':'100%'],
+                  content: 'add.html'
+                });
+              }
+
+              window.edit = function(obj) {
+                layer.open({
+                  type: 2,
+                  title: '修改',
+                  shade: 0.1,
+                  area: ['100%', '100%'],
+                  content: 'edit.html?id=' + obj.data.id
+                });
+              }
+
+              //   $(document).on('focusin', function(e) {
+              //   if ($(e.target).closest(".tox-tinymce, .tox-tinymce-aux, .moxman-window, .tam-assetmanager-root").length) {
+              //     e.stopImmediatePropagation();
+              //   }
+              // });
+
+                window.remove = function(obj) {
+
+                  layer.confirm('确定要删除该用户', {
+                      icon: 3,
+                      title: '提示'
+                    }, function(index) {
+                      layer.close(index);
+                      let loading = layer.load();
+                      $.ajax({
+                          url: "{:url('content.forum/delete')}?id=" + obj.data['id'],
+                          dataType: 'json',
+                          type: 'delete',
+                          success: function(result) {
+                              layer.close(loading);
+                              if (result.code === 0) {
+                                  layer.msg(result.msg, {
+                                      icon: 1,
+                                      time: 1000
+                                  }, function() {
+                                      obj.del();
+                                  });
+                              } else {
+                                  layer.msg(result.msg, {
+                                      icon: 2,
+                                      time: 1000
+                                  });
+                              }
+                          }
+                      })
+                  });
+              }
+
+                window.batchRemove = function(obj) {
+
+                  var checkIds = common.checkField(obj,'id');
+
+                  if (checkIds === "") {
+                      layer.msg("未选中数据", {
+                          icon: 3,
+                          time: 1000
+                      });
+                      return false;
+                  }
+
+                  layer.confirm('确定要删除这些用户', {
+                      icon: 3,
+                      title: '提示'
+                  }, function(index) {
+                      layer.close(index);
+                      let loading = layer.load();
+                      $.ajax({
+                          url: "{:url('system.admin/delete')}",
+                          dataType: 'json',
+                          type: 'delete',
+                          data:{"id":checkIds},
+                          success: function(result) {
+                              layer.close(loading);
+                              if (result.success) {
+                                  layer.msg(result.msg, {
+                                      icon: 1,
+                                      time: 1000
+                                  }, function() {
+                                      table.reload('user-table');
+                                  });
+                              } else {
+                                  layer.msg(result.msg, {
+                                      icon: 2,
+                                      time: 1000
+                                  });
+                              }
+                          }
+                      })
+                  });
+              }
+
+                window.refresh = function(param) {
+                  table.reload('user-table');
+                }
+
+            });
+        </script>
+    </body>
+</html>

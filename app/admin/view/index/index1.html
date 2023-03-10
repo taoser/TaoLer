@@ -1,0 +1,50 @@
+{extend name="public:base" /}
+
+{block name="body"}  
+  <div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+        {include file="public/header" /}
+        <!-- 侧边菜单 -->
+        <div id="hxNavbar" data-url="{:url('menu/getMenuNavbar')}"></div>
+        {include file="public/page_tabs" /}
+  
+	  <!-- 主体内容 -->
+      <div class="layui-body" id="LAY_app_body">
+        <div class="layadmin-tabsbody-item layui-show">
+          <iframe src="{:url('index/home')}" frameborder="0" class="layadmin-iframe"></iframe>
+        </div>
+      </div>
+     {include file="public/footer" /} 
+      <!-- 辅助元素，一般用于移动设备下遮罩 -->
+      <div class="layadmin-body-shade" layadmin-event="shade"></div>
+	  
+    </div>
+  </div>
+{/block}
+
+{block name="js"}
+  <script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index','hxNav'],function (){
+
+      // 动态菜单
+      layui.hxNav({
+          element: '#hxNavbar',        // 必须，指定ID
+          url: "{:url('menu/getMenuNavbar')}",  // 请求后台数据的接口
+          type: 'post',
+          shrink: false,
+          onSelect: function(v) {
+              //console.log(v);
+          }
+      });
+
+  });
+
+ </script>
+ {/block}
+  
+  
+

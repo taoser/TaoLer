@@ -4,6 +4,7 @@ namespace app\admin\model;
 
 use think\Model;
 use think\model\concern\SoftDelete;
+use think\facade\Lang;
 
 class AuthRule extends Model
 {
@@ -42,9 +43,45 @@ class AuthRule extends Model
     {
         $res = $this->save($data);
         if($res){
-            return json(['code'=>0,'msg'=>'添加权限成功']);
+            return json(['code'=>0,'msg'=>'权限成功']);
         }else{
-            return json(['code'=>-1,'msg'=>'添加权限失败']);
+            return json(['code'=>-1,'msg'=>'权限失败']);
+        }
+    }
+
+    /**
+     * 获取权限菜单数组
+     *
+     * @return void
+     */
+    public function getAuthRuleArray()
+    {
+        $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')->select()->toArray();
+        $ruls = [];
+        foreach($authRules as $v) {
+            $ruls[] = [
+                'powerId'   => $v['id'],
+                'powerName' => Lang::get($v['title']),
+                'powerType' => $v['ismenu'],
+                'powerCode' => '',
+                "powerUrl"  => $v['name'],
+                "openType"  => null,
+                "parentId"  => $v['pid'],
+                "icon"      => $v['icon'],
+                "sort"      => $v['sort'],
+                "enable"    => $v['status'],
+                "checkArr"  => "0"
+
+            ];
+        }
+        //数组排序
+        $cmf_arr = array_column($ruls, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $ruls);
+
+        if(count($ruls)) {
+            return json(['code' => 0, 'msg' => 'ok', 'count' => count($ruls), 'data'=>$ruls]);
+        } else {
+            return json(['code' => 0, 'msg' => 'no data','count' => null,'data'=>'']);
         }
     }
 

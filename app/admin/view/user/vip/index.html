@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>用户VIP</title>
+		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+		<script src="/static/component/layui/layui.js"></script>
+	</head>
+	<body class="pear-container">
+		<div class="layui-fluid" id="component-tabs">
+				<div class="layui-card">
+					<div class="layui-card-body">
+						<div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief">
+						<ul class="layui-tab-title">
+							{if hook('signstatushook') == 1}
+							<li class="layui-this" lay-id="score">签到规则</li>
+							{/if}
+							<li lay-id="vip" class="{if hook('signstatushook') == 0} layui-this {/if}">用户等级</li>
+						</ul>
+						<div class="layui-tab-content">
+
+							{:hook('signadminhook')}
+
+							<div class="layui-tab-item {if hook('signstatushook') == 0}layui-show{/if}">
+								<div class="layui-tab-content" style="padding: 20px 0;">
+									<div class="layui-form">
+										<div class="layui-form-item">
+											<div class="layui-inline">
+											<label class="layui-form-label">用户积分</label>
+												<div class="layui-input-inline" style="width: 120px;">
+													<select name="vip">
+													<option value="0">普通</option>
+													<option value="1">VIP1</option>
+													<option value="2">VIP2</option>
+													<option value="3">VIP3</option>
+													<option value="4">VIP4</option>
+													<option value="5">VIP5</option>
+													
+													</select>
+												</div>
+												<div class="layui-input-inline">
+													<input type="tel" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input">
+												</div>
+												<div class="layui-input-inline">
+													<input type="tel" name="nick" lay-verify="required" placeholder="认证名称" autocomplete="off" class="layui-input">
+												</div>
+												<div class="layui-input-inline">
+												<input type="submit" class="pear-btn  pear-btn-primary" lay-submit lay-filter="vip-rule-submit" id="vip-rule-submit" value="立即提交">								
+												</div>
+											</div>	
+										</div>
+									</div>	
+									<div class="layui-form-item">
+										<table id="vip-rule" lay-filter="vip-rule"></table>
+										<script type="text/html" id="vip-rule-bar">
+											<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+											<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+										</script>
+									</div>	
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+  
+		<script src="/static/component/pear/pear.js"></script>
+		<script>
+		layui.use(['element','jquery','table','form'], function(){
+			var $ = layui.jquery
+			,element = layui.element
+			,table = layui.table
+			,form = layui.form;
+
+			let VIP_RULE = "{:url('user.vip/list')}";
+
+			//Vip规则
+			table.render({
+				elem: '#vip-rule',
+				url: VIP_RULE,
+				cols:[[
+					{type: 'numbers', fixed: 'left'},
+					{field: 'vip',title: '等级'},
+					{field: 'score',title: '积分'},
+					{field: 'nick',title: '认证'},
+					{field: 'rules',title: '权限'},
+					{field: 'ctime',title: '时间'},
+					{title: '操作', width: 150, align:'center', toolbar: '#vip-rule-bar'}
+					
+				]]
+				,page: true
+				,limit: 10
+				,height: 'full-220'
+				,text: '对不起，加载出现异常！'
+			});
+
+			table.on('tool(vip-rule)', function(obj) {
+				if (obj.event === 'remove') {
+					window.remove(obj);
+				} else if (obj.event === 'edit') {
+					window.edit(obj);
+				}
+			});
+			
+			//添加VIP规则
+			form.on('submit(vip-rule-submit)',function(data){
+				var field = data.field;
+					$.ajax({
+						type:"post",
+						url:"{:url('user.vip/add')}",
+						data:field,
+						daType:"json",
+						success:function (data){
+								if (data.code == 0) {
+									layer.msg(data.msg,{
+										icon:6,
+										time:2000
+									}, function(){
+									table.reload('vip-rule'); //数据刷新
+									});
+								} else {
+									layer.open({
+										title:'添加失败',
+										content:data.msg,
+										icon:5,
+										anim:6
+									});
+								}
+							}
+					});
+				return false;
+			});
+
+
+			window.edit = function(obj) {
+				console.log(obj)
+				layer.open({
+					type: 2,
+					title: '修改',
+					shade: 0.1,
+					area: ['450px', '400px'],
+					content: 'edit.html?id=' + obj.data.id
+				});
+			}
+
+			window.remove = function(obj) {
+				
+				layer.confirm('确定要删除?', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					layer.close(index);
+					let loading = layer.load();
+					$.ajax({
+						url: "{:url('user.vip/delete')}?id=" + obj.data['id'],
+						dataType: 'json',
+						type: 'delete',
+						success: function(result) {
+							layer.close(loading);
+							if (result.code === 0) {
+								layer.msg(result.msg, {
+									icon: 1,
+									time: 1000
+								}, function() {
+									obj.del();
+								});
+							} else {
+								layer.msg(result.msg, {
+									icon: 2,
+									time: 1000
+								});
+							}
+						}
+					})
+				});
+			}
+				
+		});
+		</script>
+	</body>
+</html>

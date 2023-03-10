@@ -215,22 +215,24 @@ function array_child_append($parent, $pid, $child, $child_key_name)
 }
 
 //菜单无限极分类
-function getTree($data, $pId='0')
+function getTree($data, $pId = 0)
 {
     // 递归
     $tree = [];
     foreach ($data as $k => $v) {
-        if ($v['pid'] == $pId) {
+        if ((int) $v['pid'] == $pId) {
             $child = getTree($data, $v['id']);
             if(!empty($child)) {
                 $v['children'] = $child;
             }
             $tree[] = $v;
+            //把这个节点从数组中移除,减少后续递归消耗
+            unset($data[$k]);
         }
     }
-    // 排序
-    $cmf_arr = array_column($tree, 'sort');
-    array_multisort($cmf_arr, SORT_ASC, $tree);
+    // 包含sort字段才能排序
+    // $cmf_arr = array_column($tree, 'sort');
+    // array_multisort($cmf_arr, SORT_ASC, $tree);
     return $tree;
 }
 

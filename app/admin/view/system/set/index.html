@@ -1,0 +1,558 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>权限管理</title>
+    <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+</head>
+<body class="pear-container">
+<div class="layui-fluid" id="component-tabs">
+	<div class="layui-row">
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-body">
+
+					<div class="layui-tab layui-tab-brief" lay-filter="website-tabs-brief">
+						<ul class="layui-tab-title">
+							<li class="layui-this" lay-id="website">网站设置</li>{if hook('mailstatushook') ==1 }<li lay-id="email">邮箱服务</li>{/if}
+							<li lay-id="config">服务配置</li>
+							<li lay-id="domain">域名绑定</li>
+							<li lay-id="bind_map">应用映射</li>
+							<li lay-id="url_rewrite">URL美化</li>
+						</ul>
+						<div class="layui-tab-content">
+							<div class="layui-tab-item layui-show">
+								<div class="layui-form" wid100 lay-filter="website">
+									<div class="layui-form-item">
+										<label class="layui-form-label">网站名称</label>
+										<div class="layui-input-block">
+											<input type="text" name="webname" value="{$sysInfo.webname}" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">网站域名</label>
+										<div class="layui-input-block">
+											<input type="text" name="domain" value="{$sysInfo.domain}" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">模板切换</label>
+										<div class="layui-input-block">
+											<select name="template" lay-verify="required">
+												<option value=""></option>
+												{volist name="template" id="vo"}
+												<option {if condition="$sysInfo.template eq $vo"} selected {/if} value="{$vo}">{$vo}</option>
+												{/volist}
+											</select>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">Logo</label>
+										<div class="layui-input-block">
+											<span><img src="{$sysInfo.logo}" hight="40" width="50" ></span>
+											{if condition="checkRuleButton('set/upload')"}
+											<button type="button" class="layui-btn layui-btn-sm" id="logo-img">选择文件</button>
+											<button type="button" class="layui-btn layui-btn-sm" id="logo-upload-button">开始上传</button>
+											{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">选择文件</button>{/if}
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">M-logo</label>
+										<div class="layui-input-block">
+											<span><img src="{$sysInfo.m_logo}" hight="40" width="50" ></span>
+											{if condition="checkRuleButton('set/upload')"}
+											<button type="button" class="layui-btn layui-btn-sm" id="m-logo-img">选择文件</button>
+											<button type="button" class="layui-btn layui-btn-sm" id="m-logo-upload-button">开始上传</button>
+											{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">选择文件</button>{/if}
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">缓存时间</label>
+										<div class="layui-input-inline" style="width: 80px;">
+											<input type="text" name="cache" lay-verify="number" value="{$sysInfo.cache}" class="layui-input">
+										</div>
+										<div class="layui-input-inline layui-input-company">分钟</div>
+										<div class="layui-form-mid layui-word-aux">本地开发一般推荐设置为 0，线上环境建议设置为 10。</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">最大文件上传</label>
+										<div class="layui-input-inline" style="width: 80px;">
+											<input type="text" name="upsize" lay-verify="number" value="{$sysInfo.upsize}" class="layui-input">
+										</div>
+										<div class="layui-input-inline layui-input-company">KB</div>
+										<div class="layui-form-mid layui-word-aux">提示：1 M = 1024 KB</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">上传文件类型</label>
+										<div class="layui-input-block">
+											<input type="text" name="uptype" value="{$sysInfo.uptype}" placeholder="请依照格式image:jgp|png,多个组合用,分开" class="layui-input">
+										</div>
+									</div>
+
+									<div class="layui-form-item">
+										<label class="layui-form-label">禁止注册名</label>
+										<div class="layui-input-block">
+											<input type="text" name="blackname" value="{$sysInfo.blackname}" class="layui-input">
+										</div>
+									</div>
+
+									<div class="layui-form-item">
+										<label class="layui-form-label">首页标题</label>
+										<div class="layui-input-block">
+											<input type="text" name="webtitle" value="{$sysInfo.webtitle}" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item layui-form-text">
+										<label class="layui-form-label">META关键词</label>
+										<div class="layui-input-block">
+											<textarea name="keywords" class="layui-textarea" placeholder="多个关键词在英文状态下用,分开">{$sysInfo.keywords}</textarea>
+										</div>
+									</div>
+									<div class="layui-form-item layui-form-text">
+										<label class="layui-form-label">META描述</label>
+										<div class="layui-input-block">
+											<textarea name="descript" class="layui-textarea">{$sysInfo.descript}</textarea>
+										</div>
+									</div>
+									<div class="layui-form-item layui-form-text">
+										<label class="layui-form-label">网站声明</label>
+										<div class="layui-input-block">
+											<textarea name="state" class="layui-textarea">{$sysInfo.state}</textarea>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">备案号</label>
+										<div class="layui-input-inline">
+											<input type="text" name="icp" value="{$sysInfo.icp}" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">访问统计</label>
+										<div class="layui-input-block">
+											<input type="text" name="showlist" value="{$sysInfo.showlist}" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">版权信息</label>
+										<div class="layui-input-inline" style="width: 400px;">
+											<input type="text" name="copyright" value="{$sysInfo.copyright}" class="layui-input">
+										</div>
+										<div class="layui-input-inline layui-input-company">提示</div>
+										<div class="layui-form-mid layui-word-aux">未授权版本，不限制功能，但严禁私自改写此处版权脚本，一旦发现，永久关闭升级服务！！</div>
+										<div class="layui-form-mid layui-word-aux"></div>
+									</div>
+									<div class="layui-form-item">
+										<div class="layui-input-block">
+											{if condition="checkRuleButton('Set/website')"}
+											<button class="layui-btn" lay-submit lay-filter="set_website">确认保存</button>
+											{else /}<button class="layui-btn layui-btn-disabled">确认保存</button>{/if}
+										</div>
+									</div>
+								</div>
+							</div>
+							{:hook('mailsethook')}
+							<div class="layui-tab-item">
+								<div class="layui-form" wid100 lay-filter="config">
+									<div class="layui-form-item">
+										<label class="layui-form-label">注册开关：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="is_regist" lay-skin="primary" value=1 {if config('taoler.config.is_regist') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选可注册</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">登录开关：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="is_login" lay-skin="primary" value=1 {if config('taoler.config.is_login') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选可登录</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">发帖开关：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="is_post" lay-skin="primary" value=1 {if config('taoler.config.is_post') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选可发贴</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">评论开关：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="is_reply" lay-skin="primary" value=1 {if config('taoler.config.is_reply') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选可评论</div>
+									</div>
+									<hr>
+									<div class="layui-form-item">
+										<label class="layui-form-label">注册审核：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="regist_check" lay-skin="primary" value=0 {if config('taoler.config.regist_check') == 0} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选需审核</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">发帖审核：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="posts_check" lay-skin="primary" value=0 {if config('taoler.config.posts_check') == 0} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选需审核</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">评论审核：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="commnets_check" lay-skin="primary" value=0 {if config('taoler.config.commnets_check') == 0} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选需审核</div>
+									</div>
+									<hr>
+									<div class="layui-form-item">
+										<label class="layui-form-label">注册验证：</label>
+										<div class="layui-input-block">
+											<input type="radio" name="regist_type" value=1 title="验证码" {if config('taoler.config.regist_type') == 1} checked {/if}>
+											<input type="radio" name="regist_type" value=2 title="邮箱验证" {if config('taoler.config.regist_type') == 2} checked {/if}>
+											<input type="radio" name="regist_type" value=3 title="手机短信" {if config('taoler.config.regist_type') == 3} checked {/if}>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">登录验证码：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="login_captcha" lay-skin="primary" value=1 {if config('taoler.config.login_captcha') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选需验证</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">发帖验证码：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="post_captcha" lay-skin="primary" value=1 {if config('taoler.config.post_captcha') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选需验证</div>
+									</div>
+									<hr>
+									<div class="layui-form-item">
+										<label class="layui-form-label">分类显示：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="cate_show" lay-skin="primary" value=1 {if config('taoler.config.cate_show') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选显示文章所属类别</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">区域简称：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="area_show" lay-skin="primary" value=1 {if config('taoler.config.area_show') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选显示归属地简称</div>
+									</div>
+									<hr>
+									<div class="layui-form-item">
+										<label class="layui-form-label">百度词条：</label>
+										<div class="layui-input-inline" style="width: 60px;">
+											<input type="checkbox" name="baidu_title_switch" lay-skin="switch" lay-text="开启|关闭" value=1 {if config('taoler.config.baidu_title_switch') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">发文章标题引用百度词条</div>
+									</div>
+									<hr>
+									{if hook('mailserveractivehook')}
+									<div class="layui-form-item">
+										<label class="layui-form-label">邮件通知：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="email_notice" lay-skin="primary" value=1 {if config('taoler.config.email_notice') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">发帖及评论等邮件提醒（邮箱服务未激活无法设置）</div>
+									</div>
+									{/if}
+									<div class="layui-form-item">
+										<div class="layui-input-block">
+											<button class="layui-btn" lay-submit lay-filter="set_system_config">确认保存</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="layui-tab-item">
+								<div class="layui-form" wid100 lay-filter="domain">
+
+									<div class="layui-form-item">
+										<label class="layui-form-label">多域名开关</label>
+										<div class="layui-input-inline">
+											<input type="checkbox" name="domain_check" lay-skin="switch" lay-filter="domain_check" lay-text="开启|关闭" {if empty(config('app.domain_bind')) == false} checked {/if}>
+										</div>
+									</div>
+									<div id="set_domain" class="{if empty(config('app.domain_bind')) == true} layui-hide {/if}">
+										<div class="layui-form-item">
+											<label class="layui-form-label">Index前端</label>
+											<div class="layui-input-inline">
+												<input type="text" name="index" required lay-verify="required" placeholder="只需填写子域如www" value="{$index}" class="layui-input">
+											</div>
+											<div class="layui-form-mid layui-word-aux">访问则为www.aieok.com</div>
+										</div>
+										<div class="layui-form-item">
+											<label class="layui-form-label">Admin后端</label>
+											<div class="layui-input-inline">
+												<input type="text" name="admin" required lay-verify="required" placeholder="只需填写子域如admin" value="{$admin}" class="layui-input">
+											</div>
+											<div class="layui-form-mid layui-word-aux">访问则为admin.aieok.com</div>
+										</div>
+
+										<div class="layui-form-item">
+											<div class="layui-input-block">
+												{if condition="checkRuleButton('Set/email')"}
+												<button class="layui-btn" lay-submit lay-filter="set_system_domain">确认保存</button>
+												{else /}<button class="layui-btn layui-btn-disabled">确认保存</button>{/if}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="layui-tab-item">
+								<div class="layui-form" wid100 lay-filter="bind_map">
+									<div class="layui-form-item">
+										<label class="layui-form-label">Index应用</label>
+										<div class="layui-input-inline">
+											<input type="text" name="index_map" required value="{$index_map}" class="layui-input">
+										</div>
+										<div class="layui-form-mid layui-word-aux">改变后原路径访问无效</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">Admin应用</label>
+										<div class="layui-input-inline">
+											<input type="text" name="admin_map" required value="{$admin_map}" class="layui-input">
+										</div>
+										<div class="layui-form-mid layui-word-aux">设置后需要使用新路径</div>
+									</div>
+									<div class="layui-form-item">
+										<div class="layui-input-block">
+											<button class="layui-btn" lay-submit lay-filter="set_bind_map">确认保存</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="layui-tab-item">
+								<div class="layui-form" wid100 lay-filter="url_rewrite">
+									<div class="layui-form-item">
+										<label class="layui-form-label">帖子url字段</label>
+										<div class="layui-input-inline">
+											<input type="text" name="article_as" required value="{$url_re['article_as']}" class="layui-input">
+										</div>
+										<div id="artdesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/article/1.html</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">分类url字段</label>
+										<div class="layui-input-inline">
+											<input type="text" name="cate_as" required value="{$url_re['cate_as']}" class="layui-input">
+										</div>
+										<div id="catedesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/cate/ask.html</div>
+									</div>
+									<div class="layui-form-item">
+										<div class="layui-input-block">
+											<button class="layui-btn" lay-submit lay-filter="set_url_rewrite">确认保存</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="/static/component/layui/layui.js"></script>
+<script src="/static/component/pear/pear.js"></script>
+
+<script>
+	var setWebSite ="{:url('system.set/website')}";
+	var setEmail ="{:url('system.set/email')}";
+	layui.use(['jquery', 'upload'], function(){
+		var $ = layui.jquery;
+		var form = layui.form;
+		var upload = layui.upload;
+		var element  =layui.element ;
+
+		//LOGO选完文件后不自动上传
+		upload.render({
+			elem: '#logo-img'
+			,url: "{:url('system.set/upload')}"
+			,data: {type:'image',field:'logo'}
+			,auto: false
+			,exts: 'jpg|png|gif|bmp|jpeg'
+			,size: 1000
+			//,multiple: true
+			,bindAction: '#logo-upload-button'
+			,done: function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{icon:6,tiye:2000},function(){
+						location.reload();
+					});
+				} else {
+					layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+				}
+			}
+		});
+
+		//移动端logo
+		upload.render({
+			elem: '#m-logo-img'
+			,url: "{:url('system.set/upload')}"
+			,data: {type:'image',field:'mlogo'}
+			,auto: false
+			,exts: 'jpg|png|gif|bmp|jpeg'
+			,size: 1000
+			//,multiple: true
+			,bindAction: '#m-logo-upload-button'
+			,done: function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{icon:6,tiye:2000},function(){
+						location.reload();
+					});
+				} else {
+					layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+				}
+			}
+		});
+
+		//网站设置
+		form.on('submit(set_website)', function(obj){
+			//layer.msg(JSON.stringify(obj.field));
+			loading = layer.load(2, {
+						shade: [0.2, '#000']
+					});
+			//提交修改
+			
+			$.ajax({
+			type: "post"
+			,url: setWebSite
+			,data: obj.field
+			,success: function(data){
+				if (data.code == 0) {
+					layer.close(loading);
+						layer.msg(data.msg,{
+							icon:6,
+							time:2000
+						});
+					} else {
+						layer.close(loading);
+						layer.open({
+							tiele:'设置失败',
+							content:data.msg,
+							icon:5,
+							anim:6
+						});
+					}
+			}
+			});
+			
+			return false;
+		});
+
+		//网站配置
+		form.on('submit(set_system_config)', function(data){
+			var field = data.field;
+			$.post("{:url('system.set/config')}",field,function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{icon:6,tiye:2000},function(){
+						location.reload();
+					});
+				} else {
+					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+				}
+			});
+			return false;
+		});
+
+		//网站配置
+		form.on('submit(set_system_domain)', function(data){
+			var field = data.field;
+			$.post("{:url('system.set/setDomain')}",field,function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{icon:6,tiye:2000},function(){
+						location.reload();
+					});
+				} else {
+					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+				}
+			});
+			return false;
+		});
+
+		// URL美化
+		form.on('submit(set_url_rewrite)', function(data){
+			var field = data.field;
+			$.post("{:url('system.set/setUrl')}",field,function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{icon:6,tiye:2000},function(){
+						location.reload();
+					});
+				} else {
+					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+				}
+			});
+			return false;
+		});
+
+		// 获取描述的内容
+		$("input[name='article_as']").bind('input propertychange', function(){
+			var content = $(this).val()
+			$('#artdesc').html('如：www.aieok.com/'+  content +'/1.html');
+		})
+		$("input[name='cate_as']").bind('input propertychange', function(){
+			var content = $(this).val()
+			$('#catedesc').html('如：www.aieok.com/'+  content +'/ask.html');
+		})
+
+		// 域名绑定
+		form.on('switch(domain_check)', function(data){
+			var data = data.elem;
+			status = data.checked ? 'on' : 'off';
+			if(status == 'on'){
+				$('#set_domain').removeClass('layui-hide');
+			} else {
+				$('#set_domain').addClass('layui-hide');
+				$.post("{:url('system.set/setDomain')}",{"domain_check":status},function(res){
+					if(res.code == 0){
+						layer.msg(res.msg,{icon:6,tiye:2000},function(){
+							location.reload();
+						});
+					} else {
+						layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+					}
+				});
+			}
+			return false;
+		});
+
+		// 应用映射
+		form.on('submit(set_bind_map)', function(data){
+			var field = data.field;
+			$.post("{:url('system.set/bindMap')}",field,function(res){
+				if(res.code == 0){
+					layer.msg(res.msg,{icon:6,tiye:2000},function(){
+						window.location.reload();
+					});
+				} else {
+					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
+				}
+			});
+			return false;
+		});
+
+
+		//显示当前tab
+		if(location.hash){
+			element.tabChange('website-tabs-brief', location.hash.replace(/^#/, ''));
+		}
+		element.on('tab(website-tabs-brief)', function(){
+			var othis = $(this), layid = othis.attr('lay-id');
+			if(layid){
+				location.hash = layid;
+			}
+		});
+
+
+	});
+</script>
+</body>
+</html>

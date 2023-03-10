@@ -1,5 +1,8 @@
-install.lock
+/addon
+/addons
+/static/home
 /home
 /addons
 /sys
 *.xml
+install.lock

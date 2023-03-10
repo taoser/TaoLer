@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>新增管理员</title>
+		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+	</head>
+	<body>
+	<form class="layui-form" action="">
+		<div class="mainBox">
+			<div class="main-container">
+
+          <div class="layui-form-item">
+            <label class="layui-form-label">上级菜单</label>
+            <div class="layui-input-block">
+              <div id="menuSelectBox" class="ew-xmselect-tree"></div>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">菜单名称</label>
+            <div class="layui-input-inline">
+              <input type="text" name="title" lay-verify="required" placeholder="请输入菜单名" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">权限地址</label>
+            <div class="layui-input-inline">
+              <input type="text" name="name" lay-verify="required" placeholder="请输入权限地址" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+        
+          <div class="layui-form-item">
+            <label class="layui-form-label">图标</label>
+            <div class="layui-input-inline">
+          <input type="text" name="icon" id="iconPicker" lay-filter="iconPicker" style="display:none;">
+            </div>
+          </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-inline">
+              <input type="text" name="sort" lay-verify="" placeholder="排序序号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">类型</label>
+            <div class="layui-input-block">
+              <input type="radio" name="ismenu" lay-skin="primary" title="目录" value="0">
+              <input type="radio" name="ismenu" lay-skin="primary" title="菜单" value="1"  checked>
+              <input type="radio" name="ismenu" lay-skin="primary" title="按钮" value="2">
+            </div>
+        </div>
+
+      </div>
+		</div>
+		<div class="bottom">
+			<div class="button-container">
+				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+					lay-filter="rule-save">
+					<i class="layui-icon layui-icon-ok"></i>
+					提交
+				</button>
+				<button type="reset" class="pear-btn pear-btn-sm">
+					<i class="layui-icon layui-icon-refresh"></i>
+					重置
+				</button>
+			</div>
+		</div>
+	</form>
+
+  <script src="/static/component/layui/layui.js"></script>
+	<script src="/static/component/pear/pear.js"></script>
+ 
+  <script>
+    const RULE_ADD = "{:url('system.AuthRule/add')}";
+
+    layui.use(['form','jquery', 'xmSelect', 'iconPicker'], function(){
+    let $ = layui.jquery;
+    let form = layui.form;
+    var xmSelect = layui.xmSelect;
+    var iconPicker = layui.iconPicker;
+	
+	
+	//初始化图标选择
+    iconPicker.render({
+        elem: '#iconPicker',
+        type: 'fontClass',
+        search: false,
+        page: true,
+        limit: 12,
+        click: function (data) {
+    //console.log(data);
+        }
+    });
+
+
+    (function(){
+      $.ajax({
+          type: "get",
+          url: "{:url('system.AuthRule/ruleTree')}", 
+          success: function(res){
+            var data = res.data;
+            console.log(data);
+              // 渲染下拉树
+              xmSelect.render({
+                el: '#menuSelectBox',
+                name: 'pid',
+                height: '250px',
+                layVerify: 'required',
+                layVerType: 'tips',
+                data: data,
+                initValue:  [],
+                model: {label: {type: 'text'}},
+                prop: {
+                    name: 'title',
+                    value: 'id'
+                },
+                radio: true,
+                clickClose: true,
+                tree: {
+                    show: true,
+                    indent: 15,
+                    strict: false,
+                    expandedKeys: true
+                },
+                tips: '请选择上级菜单'
+            });
+          }
+
+        })
+        return false;
+      })();
+
+
+      form.on('submit(rule-save)', function(data) {
+					$.ajax({
+						url: RULE_ADD,
+						data: JSON.stringify(data.field),
+						dataType: 'json',
+						contentType: 'application/json',
+						type: 'post',
+						success: function(result) {
+							if (result.code === 0) {
+								layer.msg(result.msg, {
+									icon: 1,
+									time: 1000
+								}, function() {
+									parent.layer.close(parent.layer.getFrameIndex(window
+										.name)); //关闭当前页
+									parent.layui.table.reload("power-table");
+								});
+							} else {
+								layer.msg(result.msg, {
+									icon: 2,
+									time: 1000
+								});
+							}
+						}
+					})
+					return false;
+				});
+
+  });
+  </script>
+</body>
+</html>
