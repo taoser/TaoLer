@@ -1,10 +1,17 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\model\System.php
+ * @Description: System
+ * @LastEditTime: 2023-03-14 16:52:00
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\admin\model;
 
 use think\Model;
 use think\facade\Cache;
-
 
 class System extends Model
 {

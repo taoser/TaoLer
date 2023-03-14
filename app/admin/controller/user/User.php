@@ -1,14 +1,22 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/11
+ * @FilePath: app\admin\controller\user\User.php
+ * @Description: User用户管理
+ * @LastEditTime: 2023-03-11 10:20:47
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\admin\controller\user;
 
 use app\common\controller\AdminController;
-use app\admin\validate\Admin;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\common\model\User as UserModel;
 use app\common\lib\Uploads;
+
 
 class User extends AdminController
 {
@@ -29,7 +37,10 @@ class User extends AdminController
 		if(Request::isAjax()){
 			$datas = Request::only(['id','name','email','sex','status']);
 			$map = array_filter($datas,[$this,'filtrArr']);
-			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->paginate(30);
+			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->paginate([
+                'list_rows' => input('limit'),
+                'page' => input('page')
+            ]);
 			$count = $user->total();
 			$res = [];
 			if($count){

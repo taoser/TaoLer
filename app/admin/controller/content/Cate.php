@@ -1,16 +1,26 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\content\Cate.php
+ * @Description: Cate
+ * @LastEditTime: 2023-03-14 15:40:53
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\admin\controller\content;
 
 use app\common\controller\AdminController;
-use app\common\model\Cate as CateModel;
-use app\common\model\Article;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
 use taoler\com\Files;
 use app\common\lib\Msgres;
+use app\common\model\Article;
+use app\common\model\Cate as CateModel;
+
+
 
 class Cate extends AdminController
 {

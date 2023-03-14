@@ -1,4 +1,12 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\model\AuthRule.php
+ * @Description: AuthRule
+ * @LastEditTime: 2023-03-14 16:51:30
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\admin\model;
 

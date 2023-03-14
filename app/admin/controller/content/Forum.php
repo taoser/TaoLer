@@ -1,10 +1,16 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\content\Forum.php
+ * @Description: Forum
+ * @LastEditTime: 2023-03-14 15:42:00
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\admin\controller\content;
 
 use app\common\controller\AdminController;
-use app\common\model\Cate;
-use app\common\model\Comment;
 use app\common\model\Article;
 use think\facade\View;
 use think\facade\Request;
@@ -13,6 +19,7 @@ use think\facade\Cache;
 use taoler\com\Files;
 use app\common\lib\Msgres;
 use think\response\Json;
+
 
 class Forum extends AdminController
 {
@@ -86,7 +93,19 @@ class Forum extends AdminController
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
 					$url = $this->getRouteUrl($v['aid'],$v['ename'],$v['appname']);
-				$res['data'][]= ['id'=>$v['aid'],'poster'=>$v['name'],'avatar'=>$v['user_img'],'title'=>htmlspecialchars($v['title']),'url'=>$url,'content'=>htmlspecialchars($v['content']),'posttime'=>date("Y-m-d",$v['update_time']),'top'=>$v['is_top'],'hot'=>$v['is_hot'],'reply'=>$v['is_reply'],'check'=>$v['status']];
+                    $res['data'][]= [
+                        'id'=>$v['aid'],
+                        'poster'=>$v['name'],
+                        'avatar'=>$v['user_img'],
+                        'title'=>htmlspecialchars($v['title']),
+                        'url' => $url,
+                        'content' => strip_tags($v['content']),
+                        'posttime'=>date("Y-m-d",$v['update_time']),
+                        'top'=>$v['is_top'],
+                        'hot'=>$v['is_hot'],
+                        'reply'=>$v['is_reply'],
+                        'check'=>$v['status']
+                    ];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'没有查询结果！'];

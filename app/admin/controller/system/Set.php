@@ -4,10 +4,11 @@
  * @Date: 2021-12-06 16:04:50
  * @LastEditTime: 2022-07-24 11:06:14
  * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
+ * @Description: 设置
  * @FilePath: \TaoLer\app\admin\controller\Set.php
  * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
  */
+
 namespace app\admin\controller\system;
 
 use app\common\controller\AdminController;
@@ -32,6 +33,7 @@ class Set extends AdminController
 	
 	public function __construct()
 	{
+        parent::initialize();
 		$this->sysInfo = $this->getSystem();
 	}
 

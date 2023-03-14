@@ -1,17 +1,11 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : taotao
- Source Server Type    : MySQL
- Source Server Version : 80020 (8.0.20)
- Source Host           : localhost:3306
- Source Schema         : taotao2023
-
  Target Server Type    : MySQL
  Target Server Version : 80020 (8.0.20)
  File Encoding         : 65001
 
- Date: 10/03/2023 12:40:34
+ Date: 14/03/2023 19:57:43
 */
 
 SET NAMES utf8mb4;
@@ -44,49 +38,8 @@ CREATE TABLE `tao_admin`  (
 -- ----------------------------
 -- Records of tao_admin
 -- ----------------------------
-INSERT INTO `tao_admin` VALUES (1, 'admin', '管理员', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'taoler@qq.com', '13812345678', 1, 'static/admin/images/avatar.jpg', 1, 1, '2021 TaoLer！', '127.0.0.1', 1678419562, 1579053025, 1578986600, 0);
-INSERT INTO `tao_admin` VALUES (2, 'test', '测试账号', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'test1@qq.com', '13012345678', 0, 'static/admin/images/avatar.jpg', 1, 0, '', '127.0.0.1', 1678419132, 1579053025, 1678418924, 0);
-
--- ----------------------------
--- Table structure for tao_app
--- ----------------------------
-DROP TABLE IF EXISTS `tao_app`;
-CREATE TABLE `tao_app`  (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '应用ID',
-  `app_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '应用名',
-  `app_title` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标题',
-  `app_author` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '作者',
-  `app_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '描述',
-  `app_price` decimal(6, 2) UNSIGNED ZEROFILL NOT NULL COMMENT '价格',
-  `app_type` tinyint(1) NOT NULL COMMENT '应用类型1应用2插件3模板',
-  `app_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '图片',
-  `app_comment_id` int NULL DEFAULT NULL COMMENT '评论id',
-  `app_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态',
-  `create_time` int NOT NULL DEFAULT 0,
-  `update_time` int NOT NULL DEFAULT 0,
-  `delete_time` int NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `ix_app_name_type`(`app_name` ASC, `app_type` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '应用插件管理' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of tao_app
--- ----------------------------
-INSERT INTO `tao_app` VALUES (2, 'TaoLer', 'TaoLerCMS', 'Taoler', 'TaoLer应用系统', 0000.00, 1, '/sys/app/20220910/5764922e903b0c0809f272a595ff1a18.png', NULL, 1, 1662798324, 1662798324, 0);
-INSERT INTO `tao_app` VALUES (3, 'sign', '每日签到', 'Taoler', '签到插件', 0000.00, 2, '/sys/app/20220910/dcd75e99f96f60178cea9bca7f1be0ab.png', NULL, 1, 1662798938, 1662798938, 0);
-INSERT INTO `tao_app` VALUES (4, 'bacimg', '随机背景图', 'Taoler', '后台登录随机背景图', 0000.00, 2, '/sys/app/20220910/17be3fbb9bc6845fa0db3532686fbfbc.jpg', NULL, 1, 1662799035, 1662799035, 0);
-INSERT INTO `tao_app` VALUES (5, 'leftlayer', '左悬浮', 'Taoler', '网页左侧悬浮信息，显示资源数据', 0000.00, 2, '/sys/app/20220910/2b68fca1b1bb9d5616df6d7a1f4f9ed8.png', NULL, 1, 1662799148, 1662799148, 0);
-INSERT INTO `tao_app` VALUES (6, 'taonyeditor', '富文本编辑器', 'Taoler', '富文本编辑器', 0000.00, 2, '/sys/app/20220910/0c226743c414cc813bef83c16ed60289.png', NULL, 1, 1662799263, 1662799263, 0);
-INSERT INTO `tao_app` VALUES (7, 'markdown', 'MarkDown', 'Taoler', 'MarkDown编辑器插件', 0000.00, 2, '/sys/app/20220910/c58d53de1c416c55b4977149cadb8ce9.png', NULL, -1, 1662805383, 1662805383, 0);
-INSERT INTO `tao_app` VALUES (8, 'social', '社会化登录', 'Taoler', '社会化登录插件，qq,微信，微博', 0000.00, 2, '/sys/app/20220910/9719237b9e4c0153140528c53894d4fe.png', NULL, 0, 1662805528, 1662805528, 0);
-INSERT INTO `tao_app` VALUES (9, 'addonfactory', '插件工厂', 'Taoler', '插件生成构架系统', 0000.00, 2, '/sys/app/20220929/cd0e06b9c470a1cc436aebc998cba7c0.gif', NULL, 1, 1664440304, 1664440304, 0);
-INSERT INTO `tao_app` VALUES (10, 'mailserver', '邮件消息服务', 'Taoler', '邮箱发送邮件消息', 0000.10, 2, '/sys/app/bac.jpg', NULL, 1, 1665148194, 1665148194, 0);
-INSERT INTO `tao_app` VALUES (11, 'ipshow', 'ip归属地', 'Taoler', '用户ip信息显示归属地', 0001.00, 2, '/sys/app/ss2.jpg', NULL, 1, 1665148393, 1665148393, 0);
-INSERT INTO `tao_app` VALUES (12, 'qq', 'QQ微信客服', 'Taoler', 'QQ做为网站客服,qq,微信二维码', 0000.00, 2, '/sys/app/bac.jpg', NULL, 1, 1665391257, 1665391257, 0);
-INSERT INTO `tao_app` VALUES (13, 'taoplyr', 'taoplyr播放器', 'Taoler', '一款网页播放器', 0000.00, 2, '/sys/app/bac.jpg', NULL, 1, 1665638202, 1665638202, 0);
-INSERT INTO `tao_app` VALUES (14, 'reptiles', '爬山虎插件管理器', 'Taoler', '插件管理器', 0100.00, 2, '/sys/app/bac.jpg', NULL, 1, 1666599229, 1666599229, 0);
-INSERT INTO `tao_app` VALUES (15, 'taocai', '爬山虎', 'Taoler', '互联网的海洋里，快乐简单的寻找你的Data', 0010.00, 2, '/sys/app/bac.jpg', NULL, 1, 1666599430, 1666599430, 0);
-INSERT INTO `tao_app` VALUES (16, 'pay', '支付插件', 'Taoler', '支付宝当面付', 0029.00, 2, '/sys/app/bac.jpg', NULL, 1, 1667113935, 1667113935, 0);
+INSERT INTO `tao_admin` VALUES (1, 'admin', '管理员', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'taoler@qq.com', '13812345678', 1, 'static/admin/images/avatar.jpg', 1, 1, '2021 TaoLer！', '127.0.0.1', 1678677599, 1579053025, 1578986600, 0);
+INSERT INTO `tao_admin` VALUES (2, 'test', '测试账号', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'test1@qq.com', '13012345678', 0, 'static/admin/images/avatar.jpg', 1, 0, '', '127.0.0.1', 1678428810, 1579053025, 1678418924, 0);
 
 -- ----------------------------
 -- Table structure for tao_article
@@ -122,12 +75,7 @@ CREATE TABLE `tao_article`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id`) USING BTREE COMMENT '文章的用户索引',
   INDEX `cate_id`(`cate_id`) USING BTREE COMMENT '文章分类索引'
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of tao_article
--- ----------------------------
-INSERT INTO `tao_article` VALUES (1, '测试帖子', '测试', '1', 1, 1, NULL, '0', '0', '1', '0', '0', '0', 7, '0', '', 0, '', '测试...', 0, NULL, '', NULL, 1677847332, 1677893663, 0);
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_auth_group
@@ -170,7 +118,7 @@ CREATE TABLE `tao_auth_group_access`  (
   INDEX `uid`(`uid`) USING BTREE,
   INDEX `group_id`(`group_id`) USING BTREE,
   INDEX `uid_group_id`(`uid`, `group_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户组明细表' ROW_FORMAT = Fixed;
+) ENGINE = MyISAM AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户组明细表' ROW_FORMAT = Fixed;
 
 -- ----------------------------
 -- Records of tao_auth_group_access
@@ -198,103 +146,104 @@ CREATE TABLE `tao_auth_rule`  (
   `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `name`(`name`) USING BTREE
+  UNIQUE INDEX `name`(`name`) USING BTREE,
+  INDEX `pid`(`pid`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 124 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_auth_rule
 -- ----------------------------
-INSERT INTO `tao_auth_rule` VALUES (1, 'System', 'System', 1, 1, 0, 0, 'layui-icon-user', 1, 1, '', 0, 1635757559, 0);
-INSERT INTO `tao_auth_rule` VALUES (2, 'Account', 'Account', 1, 1, 0, 0, 'layui-icon-set', 1, 1, '', 0, 1635757571, 0);
-INSERT INTO `tao_auth_rule` VALUES (3, 'Addon', 'Addon', 1, 1, 0, 0, 'layui-icon-username', 1, 3, '', 0, 1635757594, 0);
-INSERT INTO `tao_auth_rule` VALUES (4, 'Content', 'Content', 1, 1, 0, 0, 'layui-icon-app', 1, 4, '', 0, 1635757536, 0);
-INSERT INTO `tao_auth_rule` VALUES (5, 'Set', 'Set', 1, -1, 0, 0, 'layui-icon-read', 1, 5, '', 0, 1635757294, 0);
-INSERT INTO `tao_auth_rule` VALUES (6, 'Server', 'Server', 1, -1, 0, 0, '', 1, 6, '', 0, 1578901015, 0);
-INSERT INTO `tao_auth_rule` VALUES (7, 'Apps', 'Apps', 1, -1, 0, 0, '', 1, 7, '', 0, 1578901133, 0);
-INSERT INTO `tao_auth_rule` VALUES (8, 'ID8', 'ID8', 1, -1, 0, 0, '', 1, 8, '', 0, 1578901282, 0);
-INSERT INTO `tao_auth_rule` VALUES (9, 'ID9', 'ID9', 1, -1, 0, 0, '', 1, 9, '', 0, 1611998671, 0);
-INSERT INTO `tao_auth_rule` VALUES (10, 'ID10', 'ID10', 1, -1, 0, 0, '', 1, 10, '', 0, 1678019257, 0);
+INSERT INTO `tao_auth_rule` VALUES (1, 'System', 'System', 1, 1, 0, 0, 'layui-icon-user', 0, 1, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (2, 'Account', 'Account', 1, 1, 0, 0, 'layui-icon-set', 0, 1, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (3, 'Addon', 'Addon', 1, 1, 0, 0, 'layui-icon-component', 0, 3, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (4, 'Content', 'Content', 1, 1, 0, 0, 'layui-icon-app', 0, 4, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (5, 'Set', 'Set', 1, -1, 0, 0, 'layui-icon-read', 0, 5, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (6, 'Server', 'Server', 1, -1, 0, 0, '', 0, 6, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (7, 'Apps', 'Apps', 1, -1, 0, 0, '', 0, 7, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (8, 'ID8', 'ID8', 1, -1, 0, 0, '', 0, 8, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (9, 'ID9', 'ID9', 1, -1, 0, 0, '', 0, 9, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (10, 'apps/index', 'ID10', 1, -1, 0, 0, '', 0, 10, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (11, 'system.admin/index', 'Account management', 1, 1, 1, 1, '', 1, 1, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (12, 'system.admin/list', 'Account list', 1, 1, 11, 2, '', 2, 51, '', 0, 1578980034, 0);
-INSERT INTO `tao_auth_rule` VALUES (13, 'system.admin/add', 'Add account', 1, 1, 11, 2, '', 2, 52, '', 0, 1578980034, 0);
-INSERT INTO `tao_auth_rule` VALUES (14, 'system.admin/edit', 'Edit account', 1, 1, 11, 2, '', 2, 51, '', 0, 1578902605, 0);
-INSERT INTO `tao_auth_rule` VALUES (16, 'system.admin/check', 'Check account', 1, 1, 11, 2, '', 2, 54, '', 0, 1578904950, 0);
-INSERT INTO `tao_auth_rule` VALUES (17, 'system.admin/info', 'Account info', 1, 1, 11, 2, '', 2, 55, '', 0, 1578904590, 0);
-INSERT INTO `tao_auth_rule` VALUES (18, 'system.admin/infoEdit', 'Edit account info', 1, 1, 11, 2, '', 2, 56, '', 0, 1611999603, 0);
-INSERT INTO `tao_auth_rule` VALUES (19, 'system.admin/infoSet', 'Set account info', 1, 1, 11, 2, '', 2, 57, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (20, 'system.admin/repass', 'View admin password', 1, 1, 11, 2, '', 2, 58, '', 0, 1611997428, 0);
-INSERT INTO `tao_auth_rule` VALUES (21, 'system.admin/repassSet', 'Reset admin password', 1, 1, 11, 2, '', 2, 59, '', 0, 1611997448, 0);
-INSERT INTO `tao_auth_rule` VALUES (22, 'system.admin/clearCache', 'Clear cache', 1, 1, 11, 2, '', 2, 60, '', 0, 1611997474, 0);
-INSERT INTO `tao_auth_rule` VALUES (23, 'system.admin/logout', 'Logout', 1, 1, 11, 2, '', 2, 61, '', 0, 1611997513, 0);
-INSERT INTO `tao_auth_rule` VALUES (24, 'system.AuthGroup/index', 'Role management', 1, 1, 1, 1, '', 1, 2, '', 0, 1611997535, 0);
-INSERT INTO `tao_auth_rule` VALUES (25, 'system.AuthGroup/list', 'Role list', 1, 1, 25, 2, '', 2, 50, '', 0, 1611997523, 0);
-INSERT INTO `tao_auth_rule` VALUES (26, 'system.AuthGroup/add', 'Add role', 1, 1, 25, 2, '', 2, 51, '', 0, 1611997484, 0);
-INSERT INTO `tao_auth_rule` VALUES (27, 'system.AuthGroup/edit', 'Edit role', 1, 1, 25, 2, '', 2, 52, '', 0, 1611997494, 0);
-INSERT INTO `tao_auth_rule` VALUES (28, 'system.AuthGroup/check', 'Check role', 1, 1, 25, 2, '', 2, 53, '', 0, 1611997673, 0);
-INSERT INTO `tao_auth_rule` VALUES (29, 'system.AuthGroup/auth', 'Auth role', 1, 1, 25, 2, '', 2, 54, '', 0, 1611997690, 0);
-INSERT INTO `tao_auth_rule` VALUES (30, 'system.AuthGroup/delete', 'Delete role', 1, 1, 25, 2, '', 2, 55, '', 0, 1611997701, 0);
-INSERT INTO `tao_auth_rule` VALUES (31, 'system.AuthRule/index', 'Rule management', 1, 1, 1, 1, '', 1, 3, '', 0, 1611997713, 0);
-INSERT INTO `tao_auth_rule` VALUES (32, 'system.AuthRule/list', 'Rule list', 1, 1, 31, 2, '', 2, 50, '', 0, 1611997732, 0);
-INSERT INTO `tao_auth_rule` VALUES (33, 'system.AuthRule/add', 'Add rule', 1, 1, 31, 2, '', 2, 51, '', 0, 1611997747, 0);
-INSERT INTO `tao_auth_rule` VALUES (34, 'system.AuthRule/edit', 'Edit rule', 1, 1, 31, 2, '', 2, 52, '', 0, 1611997760, 0);
-INSERT INTO `tao_auth_rule` VALUES (35, 'system.AuthRule/delete', 'Delete rule', 1, 1, 31, 2, '', 2, 53, '', 0, 1611997772, 0);
-INSERT INTO `tao_auth_rule` VALUES (36, 'system.AuthRule/check', 'Check rule', 1, 1, 31, 2, '', 2, 54, '', 0, 1611997790, 0);
-INSERT INTO `tao_auth_rule` VALUES (37, 'system.AuthRule/ruleTree', 'Rule tree', 1, 1, 31, 2, '', 2, 55, '', 0, 1611997805, 0);
-INSERT INTO `tao_auth_rule` VALUES (38, 'system.AuthRule/sort', 'Rule sort', 1, 1, 31, 2, '', 2, 56, '', 0, 1611997820, 0);
-INSERT INTO `tao_auth_rule` VALUES (39, 'system.upgrade/index', 'Upgrade', 1, 1, 1, 1, '', 1, 4, '', 0, 1611997901, 0);
-INSERT INTO `tao_auth_rule` VALUES (40, 'system.upgrade/key', 'Upgrade key', 1, 1, 39, 2, '', 2, 50, '', 0, 1611997849, 0);
-INSERT INTO `tao_auth_rule` VALUES (41, 'system.upgrade/check', 'Upgrade check', 1, 1, 39, 2, '', 2, 51, '', 0, 1611997869, 0);
-INSERT INTO `tao_auth_rule` VALUES (42, 'system.upgrade/keyedit', 'Eidt key', 1, 1, 39, 2, '', 2, 52, '', 0, 1611997884, 0);
-INSERT INTO `tao_auth_rule` VALUES (43, 'system.upgrade/upload', 'Upgrade system', 1, 1, 39, 2, '', 2, 53, '', 0, 1611997929, 0);
-INSERT INTO `tao_auth_rule` VALUES (44, 'system.upgrade/uploadZip', 'Upload zip', 1, 1, 39, 2, '', 2, 54, '', 0, 1611998097, 0);
-INSERT INTO `tao_auth_rule` VALUES (45, 'system.upgrade/backFile', 'Back file', 1, 1, 39, 2, '', 2, 55, '', 0, 1611998128, 0);
-INSERT INTO `tao_auth_rule` VALUES (53, 'system.set/index', 'Web', 1, 1, 1, 1, '', 1, 5, '', 0, 1611998263, 0);
-INSERT INTO `tao_auth_rule` VALUES (54, 'system.set/website', 'Website', 1, 1, 53, 2, '', 2, 50, '', 0, 1611998141, 0);
-INSERT INTO `tao_auth_rule` VALUES (55, 'system.set/config', 'Web config', 1, 1, 53, 2, '', 2, 51, '', 0, 1611998156, 0);
-INSERT INTO `tao_auth_rule` VALUES (56, 'system.set/setDomain', 'Set domain', 1, 1, 53, 2, '', 2, 52, '', 0, 1611998178, 0);
-INSERT INTO `tao_auth_rule` VALUES (57, 'system.set/bindMap', 'Bind map', 1, 1, 53, 2, '', 2, 53, '', 0, 1611998192, 0);
-INSERT INTO `tao_auth_rule` VALUES (58, 'system.set/setUrl', 'Set url', 1, 1, 53, 2, '', 2, 54, '', 0, 1611998214, 0);
-INSERT INTO `tao_auth_rule` VALUES (59, 'system.set/upload', 'web upload', 1, 1, 53, 2, '', 2, 55, '', 0, 1611998230, 0);
-INSERT INTO `tao_auth_rule` VALUES (60, 'user.user/index', 'User management', 1, 1, 2, 1, '', 1, 1, '', 0, 1611998245, 0);
-INSERT INTO `tao_auth_rule` VALUES (62, 'user.user/list', 'User list', 1, 1, 60, 2, '', 2, 51, '', 0, 1611997455, 0);
-INSERT INTO `tao_auth_rule` VALUES (63, 'user.user/add', 'Add user', 1, 1, 60, 2, '', 2, 52, '', 0, 1611997465, 0);
-INSERT INTO `tao_auth_rule` VALUES (64, 'user.user/edit', 'Edit user', 1, 1, 60, 2, '', 2, 53, '', 0, 1611997503, 0);
-INSERT INTO `tao_auth_rule` VALUES (65, 'user.user/delete', 'Delete user', 1, 1, 60, 2, '', 2, 54, '', 0, 1611997661, 0);
-INSERT INTO `tao_auth_rule` VALUES (66, 'user.user/check', 'Check user', 1, 1, 60, 2, '', 2, 55, '', 0, 1611997835, 0);
-INSERT INTO `tao_auth_rule` VALUES (67, 'user.user/auth', 'Superuser', 1, 1, 60, 2, '', 2, 56, '', 1585547595, 1611998427, 0);
-INSERT INTO `tao_auth_rule` VALUES (61, 'user.user/uploadImg', 'Upload avatar', 1, 1, 60, 2, '', 2, 50, '', 1585547705, 1611998444, 0);
-INSERT INTO `tao_auth_rule` VALUES (68, 'user.vip/index', '用户vip', 1, 1, 2, 1, '', 1, 2, '', 1585547774, 1611998457, 0);
-INSERT INTO `tao_auth_rule` VALUES (70, 'user.vip/add', '添加vip', 1, 1, 68, 2, '', 2, 51, '', 1585547817, 1611998470, 0);
-INSERT INTO `tao_auth_rule` VALUES (71, 'user.vip/edit', '编辑vip', 1, 1, 68, 2, '', 2, 52, '', 1585547921, 1611998481, 0);
-INSERT INTO `tao_auth_rule` VALUES (72, 'user.vip/delete', '删除vip', 1, 1, 68, 2, '', 2, 53, '', 1585547981, 1611998492, 0);
-INSERT INTO `tao_auth_rule` VALUES (73, 'addon.addons/index', '插件市场', 1, 1, 3, 1, '', 1, 1, '', 1585548029, 1611998556, 0);
-INSERT INTO `tao_auth_rule` VALUES (74, 'addon.addons/getList', '插件列表', 1, 1, 73, 2, '', 2, 50, '', 1585548077, 1611998503, 0);
-INSERT INTO `tao_auth_rule` VALUES (75, 'addon.addons/install', '安装插件', 1, 1, 73, 2, '', 2, 51, '', 1585548143, 1611998372, 0);
-INSERT INTO `tao_auth_rule` VALUES (76, 'addon.addons/uninstall', '卸载插件', 1, 1, 73, 2, '', 2, 52, '', 1585618141, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (77, 'addon.addons/upgrade', '升级插件', 1, 1, 73, 2, '', 2, 53, '', 1585663336, 1611997580, 0);
-INSERT INTO `tao_auth_rule` VALUES (78, 'addon.addons/check', '插件开关', 1, 1, 73, 2, '', 2, 54, '', 1585663366, 1611997590, 0);
-INSERT INTO `tao_auth_rule` VALUES (79, 'addon.addons/config', '配置插件', 1, 1, 73, 2, '', 2, 55, '', 1585663412, 1611997601, 0);
-INSERT INTO `tao_auth_rule` VALUES (80, 'addon.addons/addAddonMenu', '添加插件菜单', 1, 1, 73, 2, '', 2, 56, '', 1585794015, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (81, 'addon.addons/delAddonMenu', '卸载插件菜单', 1, 1, 73, 2, '', 2, 57, '', 1585806544, 1611998012, 0);
-INSERT INTO `tao_auth_rule` VALUES (82, 'addon.addons/userLogin', '用户登录', 1, 1, 73, 2, '', 2, 58, '', 1585806592, 1611998030, 0);
-INSERT INTO `tao_auth_rule` VALUES (83, 'addon.addons/pay', '购买插件', 1, 1, 73, 2, '', 2, 59, '', 1585806620, 1611998046, 0);
-INSERT INTO `tao_auth_rule` VALUES (84, 'addon.addons/isPay', '支付检测', 1, 1, 73, 2, '', 2, 60, '', 1585806653, 1611998060, 0);
-INSERT INTO `tao_auth_rule` VALUES (88, 'addon.addons/add', '离线安装', 1, 1, 73, 2, '', 2, 61, '', 1585819936, 1611998395, 0);
-INSERT INTO `tao_auth_rule` VALUES (89, 'addon.addons/uploadZip', '上传插件', 1, 1, 73, 2, '', 2, 62, '', 1578984801, 1611997990, 0);
-INSERT INTO `tao_auth_rule` VALUES (90, 'addon.addons/uploads', '上传接口', 1, 1, 73, 2, '', 2, 63, '', 1585841826, 1611997546, 0);
-INSERT INTO `tao_auth_rule` VALUES (91, 'addon.template/index', '模板市场', 1, 1, 3, 1, '', 1, 2, '', 1586245669, 1611998517, 0);
-INSERT INTO `tao_auth_rule` VALUES (92, 'addon.template/install', '模板安装', 1, 1, 91, 2, '', 2, 50, '', 1586245727, 1611998534, 0);
-INSERT INTO `tao_auth_rule` VALUES (93, 'addon.template/uninstall', '模板卸载', 1, 1, 91, 2, 'layui-icon-cols', 2, 51, '', 1611286515, 1635757525, 0);
-INSERT INTO `tao_auth_rule` VALUES (94, 'addon.template/upgrade', '模板升级', 1, 1, 91, 2, '', 2, 52, '', 1611897141, 1611902589, 0);
-INSERT INTO `tao_auth_rule` VALUES (95, 'addon.template/list', '模板列表', 1, 1, 91, 2, '', 2, 53, '', 1611897285, 1611902610, 0);
-INSERT INTO `tao_auth_rule` VALUES (96, 'addon.template/info', '模板信息', 1, 1, 91, 2, '', 2, 54, '', 1611902429, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (97, 'addon.template/pay', '模板支付', 1, 1, 91, 2, 'layui-icon-flag', 2, 55, '', 1635757328, 1635757632, 0);
-INSERT INTO `tao_auth_rule` VALUES (98, 'addon.template/isPay', '支付检测', 1, 1, 91, 2, '', 2, 56, '', 1635757426, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (99, 'addon.template/check', '模板状态', 1, 1, 91, 2, '', 2, 57, '', 1638775199, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (100, 'content.forum/index', '帖子管理', 1, 1, 4, 1, 'layui-icon-component', 1, 1, '', 1649829142, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (101, 'content.forum/list', '帖子列表', 1, 1, 100, 2, '', 2, 50, '', 1652053762, 1652053830, 0);
-INSERT INTO `tao_auth_rule` VALUES (15, 'system.admin/delete', 'Delete account', 1, 1, 11, 2, '', 2, 50, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (69, 'user.vip/list', 'vip列表', 1, 1, 68, 2, '', 2, 50, '', 1677812884, 1677812895, 0);
+INSERT INTO `tao_auth_rule` VALUES (12, 'system.admin/list', 'Account list', 1, 1, 11, 2, '', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (13, 'system.admin/add', 'Add account', 1, 1, 11, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (14, 'system.admin/edit', 'Edit account', 1, 1, 11, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (15, 'system.admin/delete', 'Delete account', 1, 1, 11, 2, '', 2, 54, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (16, 'system.admin/check', 'Check account', 1, 1, 11, 2, '', 2, 55, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (17, 'system.admin/info', 'Account info', 1, 1, 11, 2, '', 2, 56, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (18, 'system.admin/infoEdit', 'Edit account info', 1, 1, 11, 2, '', 2, 57, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (19, 'system.admin/infoSet', 'Set account info', 1, 1, 11, 2, '', 2, 58, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (20, 'system.admin/repass', 'View admin password', 1, 1, 11, 2, '', 2, 59, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (21, 'system.admin/repassSet', 'Reset admin password', 1, 1, 11, 2, '', 2, 60, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (22, 'system.admin/clearCache', 'Clear cache', 1, 1, 11, 2, '', 2, 61, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (23, 'system.admin/logout', 'Logout', 1, 1, 11, 2, '', 2, 62, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (24, 'system.AuthGroup/index', 'Role management', 1, 1, 1, 1, '', 1, 2, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (25, 'system.AuthGroup/list', 'Role list', 1, 1, 24, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (26, 'system.AuthGroup/add', 'Add role', 1, 1, 24, 2, '', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (27, 'system.AuthGroup/edit', 'Edit role', 1, 1, 24, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (28, 'system.AuthGroup/check', 'Check role', 1, 1, 24, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (29, 'system.AuthGroup/auth', 'Auth role', 1, 1, 24, 2, '', 2, 54, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (30, 'system.AuthGroup/delete', 'Delete role', 1, 1, 24, 2, '', 2, 55, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (31, 'system.AuthRule/index', 'Rule management', 1, 1, 1, 1, '', 1, 3, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (32, 'system.AuthRule/list', 'Rule list', 1, 1, 31, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (33, 'system.AuthRule/add', 'Add rule', 1, 1, 31, 2, '', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (34, 'system.AuthRule/edit', 'Edit rule', 1, 1, 31, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (35, 'system.AuthRule/delete', 'Delete rule', 1, 1, 31, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (36, 'system.AuthRule/check', 'Check rule', 1, 1, 31, 2, '', 2, 54, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (37, 'system.AuthRule/ruleTree', 'Rule tree', 1, 1, 31, 2, '', 2, 55, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (38, 'system.AuthRule/sort', 'Rule sort', 1, 1, 31, 2, '', 2, 56, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (39, 'system.upgrade/index', 'Upgrade', 1, 1, 1, 1, '', 1, 4, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (40, 'system.upgrade/key', 'Upgrade key', 1, 1, 39, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (41, 'system.upgrade/check', 'Upgrade check', 1, 1, 39, 2, '', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (42, 'system.upgrade/keyedit', 'Eidt key', 1, 1, 39, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (43, 'system.upgrade/upload', 'Upgrade system', 1, 1, 39, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (44, 'system.upgrade/uploadZip', 'Upload zip', 1, 1, 39, 2, '', 2, 54, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (45, 'system.upgrade/backFile', 'Back file', 1, 1, 39, 2, '', 2, 55, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (53, 'system.set/index', 'Web', 1, 1, 1, 1, '', 1, 5, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (54, 'system.set/website', 'Website', 1, 1, 53, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (55, 'system.set/config', 'Web config', 1, 1, 53, 2, '', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (56, 'system.set/setDomain', 'Set domain', 1, 1, 53, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (57, 'system.set/bindMap', 'Bind map', 1, 1, 53, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (58, 'system.set/setUrl', 'Set url', 1, 1, 53, 2, '', 2, 54, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (59, 'system.set/upload', 'web upload', 1, 1, 53, 2, '', 2, 55, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (60, 'user.user/index', 'User management', 1, 1, 2, 1, '', 1, 1, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (61, 'user.user/uploadImg', 'Upload avatar', 1, 1, 60, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (62, 'user.user/list', 'User list', 1, 1, 60, 2, '', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (63, 'user.user/add', 'Add user', 1, 1, 60, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (64, 'user.user/edit', 'Edit user', 1, 1, 60, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (65, 'user.user/delete', 'Delete user', 1, 1, 60, 2, '', 2, 54, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (66, 'user.user/check', 'Check user', 1, 1, 60, 2, '', 2, 55, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (67, 'user.user/auth', 'Superuser', 1, 1, 60, 2, '', 2, 56, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (68, 'user.vip/index', '用户vip', 1, 1, 2, 1, '', 1, 2, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (69, 'user.vip/list', 'vip列表', 1, 1, 68, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (70, 'user.vip/add', '添加vip', 1, 1, 68, 2, '', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (71, 'user.vip/edit', '编辑vip', 1, 1, 68, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (72, 'user.vip/delete', '删除vip', 1, 1, 68, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (73, 'addon.addons/index', '插件市场', 1, 1, 3, 1, '', 1, 1, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (74, 'addon.addons/getList', '插件列表', 1, 1, 73, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (75, 'addon.addons/install', '安装插件', 1, 1, 73, 2, '', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (76, 'addon.addons/uninstall', '卸载插件', 1, 1, 73, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (77, 'addon.addons/upgrade', '升级插件', 1, 1, 73, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (78, 'addon.addons/check', '插件开关', 1, 1, 73, 2, '', 2, 54, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (79, 'addon.addons/config', '配置插件', 1, 1, 73, 2, '', 2, 55, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (80, 'addon.addons/addAddonMenu', '添加插件菜单', 1, 1, 73, 2, '', 2, 56, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (81, 'addon.addons/delAddonMenu', '卸载插件菜单', 1, 1, 73, 2, '', 2, 57, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (82, 'addon.addons/userLogin', '用户登录', 1, 1, 73, 2, '', 2, 58, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (83, 'addon.addons/pay', '购买插件', 1, 1, 73, 2, '', 2, 59, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (84, 'addon.addons/isPay', '支付检测', 1, 1, 73, 2, '', 2, 60, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (88, 'addon.addons/add', '离线安装', 1, 1, 73, 2, '', 2, 61, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (89, 'addon.addons/uploadZip', '上传插件', 1, 1, 73, 2, '', 2, 62, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (90, 'addon.addons/uploads', '上传接口', 1, 1, 73, 2, '', 2, 63, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (91, 'addon.template/index', '模板市场', 1, 1, 3, 1, '', 1, 2, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (92, 'addon.template/install', '模板安装', 1, 1, 91, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (93, 'addon.template/uninstall', '模板卸载', 1, 1, 91, 2, 'layui-icon-cols', 2, 51, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (94, 'addon.template/upgrade', '模板升级', 1, 1, 91, 2, '', 2, 52, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (95, 'addon.template/list', '模板列表', 1, 1, 91, 2, '', 2, 53, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (96, 'addon.template/info', '模板信息', 1, 1, 91, 2, '', 2, 54, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (97, 'addon.template/pay', '模板支付', 1, 1, 91, 2, 'layui-icon-flag', 2, 55, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (98, 'addon.template/isPay', '支付检测', 1, 1, 91, 2, '', 2, 56, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (99, 'addon.template/check', '模板状态', 1, 1, 91, 2, '', 2, 57, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (100, 'content.forum/index', '帖子管理', 1, 1, 4, 1, 'layui-icon-component', 1, 1, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (101, 'content.forum/list', '帖子列表', 1, 1, 100, 2, '', 2, 50, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (102, 'content.forum/add', '添加帖子', 1, 1, 100, 2, '', 2, 50, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (103, 'content.forum/edit', '编辑帖子', 1, 1, 100, 2, '', 2, 50, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (104, 'content.forum/delete', '删除帖子', 1, 1, 100, 2, '', 2, 50, '', 0, 0, 0);
@@ -345,7 +294,7 @@ CREATE TABLE `tao_cate`  (
 -- ----------------------------
 -- Records of tao_cate
 -- ----------------------------
-INSERT INTO `tao_cate` VALUES (1, 2, '提问', 'ask2', 'ask', 'layui-icon-help', 50, '1', 'index', 0, 'TaoLer社区提问专栏1', 0, 0, 0, 0);
+INSERT INTO `tao_cate` VALUES (1, 0, '提问', 'ask2', 'ask', 'layui-icon-help', 50, '1', 'index', 0, 'TaoLer社区提问专栏1', 0, 0, 0, 0);
 INSERT INTO `tao_cate` VALUES (2, 0, '分享', 'share', 'posts', 'layui-icon-share', 2, '1', 'index', 1, '内容分析', 0, 0, 0, 0);
 INSERT INTO `tao_cate` VALUES (3, 0, '讨论', 'talk', 'news', 'layui-icon-dialogue', 3, '1', 'index', 1, '讨论问题', 1, 0, 0, 0);
 
@@ -549,26 +498,6 @@ INSERT INTO `tao_slider` VALUES (1, 'CODING', 1, '/storage/slider/F1.jpg', '#', 
 INSERT INTO `tao_slider` VALUES (2, '通用右栏底部广告', 2, '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'https://www.aieok.com', '', 1571155200, 1609344000, '1', 0, 0, 0);
 
 -- ----------------------------
--- Table structure for tao_station
--- ----------------------------
-DROP TABLE IF EXISTS `tao_station`;
-CREATE TABLE `tao_station`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `city_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `city_ename` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `master` tinyint(1) NOT NULL DEFAULT 0,
-  `create_time` datetime NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `ename`(`city_ename` ASC) USING BTREE COMMENT 'ename索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of tao_station
--- ----------------------------
-INSERT INTO `tao_station` VALUES (1, '北京', 'beijing', 1, '2011-11-11 00:00:00');
-INSERT INTO `tao_station` VALUES (2, '上海', 'shanghai', 0, '2222-11-21 08:08:08');
-
--- ----------------------------
 -- Table structure for tao_system
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_system`;
@@ -608,7 +537,7 @@ CREATE TABLE `tao_system`  (
 -- ----------------------------
 -- Records of tao_system
 -- ----------------------------
-INSERT INTO `tao_system` VALUES (1, 'TaoLer', 'TaoLer社区-www.aieok.com', 'www.tp6.com', 'taoler', '/storage/logo/logo.png', '/static/res/images/logo-m.png', 10, 2048, 'image:png|gif|jpg|jpeg,application:zip|rar|docx,video:mp4,audio:mp3|m4a|mp4|mpeg,zip:zip,application/msword:docx', '<a href=\"https://www.aieok.com\" target=\"_blank\">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统.', '网站声明：<br>\n1.本站使用TaoLerCMS驱动，简单好用，深度SEO。<br>\n2.内容为用户提供如有侵权，请联系本站管理员删除。<br>\n3.原创内容转载请注明出处，否则一切后果自行承担。<br>', '1', '1', '1', '0.0.0.0-1', '', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 0, 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', 1641004619, 1678421242);
+INSERT INTO `tao_system` VALUES (1, 'TaoLer', 'TaoLer社区-www.aieok.com', '', 'taoler', '/storage/logo/logo.png', '/static/res/images/logo-m.png', 10, 2048, 'image:png|gif|jpg|jpeg,application:zip|rar|docx,video:mp4,audio:mp3|m4a|mp4|mpeg,zip:zip,application/msword:docx', '<a href=\"https://www.aieok.com\" target=\"_blank\">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统.', '网站声明：<br>\n1.本站使用TaoLerCMS驱动，简单好用，深度SEO。<br>\n2.内容为用户提供如有侵权，请联系本站管理员删除。<br>\n3.原创内容转载请注明出处，否则一切后果自行承担。<br>', '1', '1', '1', '0.0.0.0-1', '', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 0, 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', 1641004619, 1678515271);
 
 -- ----------------------------
 -- Table structure for tao_tag
@@ -766,7 +695,7 @@ CREATE TABLE `tao_user_viprule`  (
   `update_time` int NOT NULL DEFAULT 0 COMMENT '升级时间',
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user_viprule
@@ -776,7 +705,7 @@ INSERT INTO `tao_user_viprule` VALUES (2, '100-299', 1, '富农', '1', 158547655
 INSERT INTO `tao_user_viprule` VALUES (3, '300-500', 2, '地主', '0', 1585545450, 1585546241, 0);
 INSERT INTO `tao_user_viprule` VALUES (4, '501-699', 3, '土豪', '0', 1585545542, 1585569657, 0);
 INSERT INTO `tao_user_viprule` VALUES (5, '700-899', 4, '霸主', '0', 1677824242, 1677824242, 0);
-INSERT INTO `tao_user_viprule` VALUES (8, '900-1000', 5, '王爷', '0', 1677824859, 1677824859, 0);
+INSERT INTO `tao_user_viprule` VALUES (6, '900-1000', 5, '王爷', '0', 1677824859, 1677824859, 0);
 
 -- ----------------------------
 -- Table structure for tao_user_zan

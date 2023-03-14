@@ -1,4 +1,13 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/11
+ * @FilePath: app\admin\controller\index.php
+ * @Description: Index.php 管理后台首页
+ * @LastEditTime: 2023-03-11 10:15:35
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
+
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
@@ -13,7 +22,7 @@ use app\admin\model\Article;
 use app\admin\model\Cunsult;
 use think\facade\Config;
 use taoler\com\Api;
-use taoser\SetArr;
+use app\common\lib\facade\HttpHelper;
 
 class Index extends AdminController
 {
@@ -113,23 +122,42 @@ class Index extends AdminController
     }
 	
 	//版本检测
-	public function getVersion()
-    {
-		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
-		if($verCheck->code !== -1){
-            return $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
-		} else {
-			return lang('No new messages');
-		}
-	}
+//	public function getVersion()
+//    {
+//		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
+//		if($verCheck->code !== -1){
+//            return $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
+//		} else {
+//			return lang('No new messages');
+//		}
+//	}
 
-    public function checkeVersion()
+    public function checkVersion()
     {
-        $verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
-        if($verCheck->code !== -1){
-            return $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
+        $data = ['pn'=>$this->pn,'ver'=>$this->sys_version];
+        $response = HttpHelper::withHost()->get('/v1/upload/check', $data)->toJson();
+        if($response->code !== -1){
+            return $response->code ? "<span style='color:#b2aeae'>有{$response->up_num}个版本需更新,当前可更新至{$response->version}</span>" : $response->msg;
         } else {
             return lang('No new messages');
+        }
+    }
+
+    /**
+     * 检测
+     * @return mixed|string
+     */
+    public function check()
+    {
+        if(empty($this->sys['key'])) return json(['code' => -1, 'msg' => '请配置网站KEY']);
+        $data = ['u'=>$this->sys['domain'],'key'=>$this->sys['key']];
+        $response = HttpHelper::withHost()->get('/v1/cy', $data)->toJson();
+
+        if($response->code == 0){
+            Db::name('system')->save(['id' => 1, 'clevel' => $response->data->level]);
+            return json(['code' => 0, 'msg' => $response->data->info, 'data' => $response->data]);
+        } else {
+            return json(['code' => -1, 'msg' => $response->msg]);
         }
     }
 	

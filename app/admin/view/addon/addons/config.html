@@ -1,5 +1,11 @@
-{extend name="public/base" /}
-{block name="body"}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>新增管理员</title>
+	<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+</head>
+<body>
 
 <div class="layui-form" lay-filter="layuiadmin-form-addons" id="layuiadmin-form-addons" style="padding: 20px 30px 0 0;">
 	{foreach name="formData" item="vo" key="k"}
@@ -54,32 +60,30 @@
     <input type="button" lay-submit lay-filter="LAY-addons-config-submit" id="LAY-addons-config-submit" value="确认">
     </div>
 </div>
-{/block}
-{block name="js"}
+<script src="/static/component/layui/layui.js"></script>
+<script src="/static/component/pear/pear.js"></script>
+
 <script>
-	layui.config({
-		base: '/static/admin/' //静态资源所在路径
-	}).extend({
-		index: 'lib/index' //主入口模块
-	}).use(['index', 'upload','notify'], function(){
+	layui.use(['upload','toast'], function(){
 		var $ = layui.$,upload = layui.upload,form = layui.form,notify=layui.notify;
 		//上传头像
 		upload.render({
 			elem: '.upload-select'
-			,url: "{:url('Addons/uploads')}"
+			,url: "{:url('addon.addons/uploads')}"
 			,data: {type:'image'}
 			,accept: 'images'
 			,method: 'get'
 			,acceptMime: 'image/*'
 			,done: function(res){
 				$(this.item).prevAll("input").val(res.url);
-				if(res.status == 0){
-					notify.success(res.msg);
+				if(res.status === 0){
+					toast.success({title:"成功",message:res.msg,position: 'topRight'});
 				} else {
-					notify.error(res.msg);
+					toast.error({title:"失败",message:res.msg,position: 'topRight'});
 				}
 			}
 		});
 	})
 </script>
-{/block}
+</body>
+</html>

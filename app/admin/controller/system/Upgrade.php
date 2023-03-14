@@ -1,5 +1,11 @@
 <?php
 /**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\system\Upgrade.php
+ * @Description: Upgrade
+ * @LastEditTime: 2023-03-14 16:47:27
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  *  升级包规定的目录结构
  *  xxx_版本号.zip(如：xxx_1.0.0.zip)
  *   |
@@ -26,6 +32,7 @@ use think\facade\Log;
 use app\common\lib\SqlFile;
 use app\common\lib\Zip;
 use taoser\SetArr;
+
 
 class Upgrade extends AdminController
 {

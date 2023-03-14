@@ -1,23 +1,29 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\content\Comment.php
+ * @Description: Comment
+ * @LastEditTime: 2023-03-14 15:38:55
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\admin\controller\content;
 
 use app\common\controller\AdminController;
-use app\common\model\Cate;
-use app\common\model\Comment as CommentModel;
-use app\common\model\Article;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use think\facade\Cache;
-use taoler\com\Files;
-use app\common\lib\Msgres;
-use think\response\Json;
+use app\common\model\Comment as CommentModel;
+
+
 
 class Comment extends AdminController
 {
-
-
+    /**
+     * 浏览
+     * @return string
+     */
 	public function index()
     {
         return View::fetch();
@@ -68,7 +74,16 @@ class Comment extends AdminController
 				foreach($replys as $k => $v){
 					$url = $this->getRouteUrl($v['cid'],$v['ename'], $v['appname']);
 					//$res['data'][] = ['id'=>$v['id'],'replyer'=>$v->user->name,'cardid'=>$v->article->title,'avatar'=>$v->user->user_img,'content'=>$v['content'],'replytime'=>$v['create_time']];
-					$res['data'][] = ['id'=>$v['aid'],'replyer'=>$v['name'],'title'=>htmlspecialchars($v['title']),'avatar'=>$v['user_img'],'content'=>htmlspecialchars($v['content']),'replytime'=>date("Y-m-d",$v['create_time']),'check'=>$v['astatus'],'url'=>$url];
+					$res['data'][] = [
+                        'id'=>$v['aid'],
+                        'replyer'=>$v['name'],
+                        'title'=>htmlspecialchars($v['title']),
+                        'avatar'=>$v['user_img'],
+                        'content'=>htmlspecialchars($v['content']),
+                        'replytime'=>date("Y-m-d",$v['create_time']),
+                        'check'=>$v['astatus'],
+                        'url'=>$url
+                    ];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'没有查询结果！'];

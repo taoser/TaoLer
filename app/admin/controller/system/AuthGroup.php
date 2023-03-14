@@ -1,8 +1,16 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\system\AuthGroup.php
+ * @Description: AuthGroup
+ * @LastEditTime: 2023-03-14 16:43:59
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
+
 namespace app\admin\controller\system;
 
 use app\common\controller\AdminController;
-use app\admin\model\Admin as adminModel;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -10,8 +18,10 @@ use think\exception\ValidateException;
 use app\admin\model\AuthGroup as AuthGroupModel;
 use app\admin\model\AuthGroupAccess;
 use app\admin\model\AuthRule as AuthRuleModel;
+use app\admin\model\Admin as adminModel;
 use LDAP\Result;
 use think\Response;
+
 
 class AuthGroup extends AdminController
 {

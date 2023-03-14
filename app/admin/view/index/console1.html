@@ -282,7 +282,10 @@
 								<tr>
 									<td>授权</td>
 									<td>
-										{$syscy}
+										<span id="cy">{$syscy}</span>
+										<button class="pear-btn pear-btn-primary pear-btn-sm" id="check">
+											<i class="layui-icon layui-icon-refresh-1"></i>
+										</button>
 									</td>
 								</tr>
 								</tbody>
@@ -583,6 +586,16 @@
 					$.post("{:url('index/sysSys')}",{status:status},function(res){
 						if (res.code == 0) { toast.info({title:"通知消息",message:res.msg})} else {
 							toast.error({title:"错误消息",message:res.msg});
+						}
+					})
+				});
+
+				//系统检测
+				$("#check").click(function (){
+					$.get("{:url('index/check')}", function (res){
+						if(res.code === 0) {
+							toast.info({title:"提示消息",message:res.msg});
+							$("#cy").html(res.data.info);
 						}
 					})
 				});

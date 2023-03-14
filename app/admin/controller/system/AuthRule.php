@@ -1,4 +1,13 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\system\AuthRule.php
+ * @Description: AuthRule
+ * @LastEditTime: 2023-03-14 16:45:34
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
+
 namespace app\admin\controller\system;
 
 use app\common\controller\AdminController;

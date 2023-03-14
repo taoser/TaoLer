@@ -136,7 +136,7 @@
 									<div class="layui-form-item">
 										<label class="layui-form-label">版权信息</label>
 										<div class="layui-input-inline" style="width: 400px;">
-											<input type="text" name="copyright" value="{$sysInfo.copyright}" class="layui-input">
+											<input type="text" name="copyright" value="{$sysInfo.copyright}" data-level="{$clevel}" class="layui-input">
 										</div>
 										<div class="layui-input-inline layui-input-company">提示</div>
 										<div class="layui-form-mid layui-word-aux">未授权版本，不限制功能，但严禁私自改写此处版权脚本，一旦发现，永久关闭升级服务！！</div>
@@ -144,9 +144,7 @@
 									</div>
 									<div class="layui-form-item">
 										<div class="layui-input-block">
-											{if condition="checkRuleButton('Set/website')"}
-											<button class="layui-btn" lay-submit lay-filter="set_website">确认保存</button>
-											{else /}<button class="layui-btn layui-btn-disabled">确认保存</button>{/if}
+											<button class="pear-btn pear-btn-primary" lay-submit lay-filter="set_website" data-url="{:url('system.set/website')}">确认保存</button>
 										</div>
 									</div>
 								</div>
@@ -262,7 +260,7 @@
 									{/if}
 									<div class="layui-form-item">
 										<div class="layui-input-block">
-											<button class="layui-btn" lay-submit lay-filter="set_system_config">确认保存</button>
+											<button class="pear-btn pear-btn-primary" lay-submit lay-filter="set_system_config" data-url="{:url('system.set/config')}">确认保存</button>
 										</div>
 									</div>
 								</div>
@@ -274,7 +272,7 @@
 									<div class="layui-form-item">
 										<label class="layui-form-label">多域名开关</label>
 										<div class="layui-input-inline">
-											<input type="checkbox" name="domain_check" lay-skin="switch" lay-filter="domain_check" lay-text="开启|关闭" {if empty(config('app.domain_bind')) == false} checked {/if}>
+											<input type="checkbox" name="domain_check" lay-skin="switch" lay-filter="domain_check" lay-text="开启|关闭" data-rul="{:url('system.set/setDomain')}" {if empty(config('app.domain_bind')) == false} checked {/if}>
 										</div>
 									</div>
 									<div id="set_domain" class="{if empty(config('app.domain_bind')) == true} layui-hide {/if}">
@@ -295,9 +293,7 @@
 
 										<div class="layui-form-item">
 											<div class="layui-input-block">
-												{if condition="checkRuleButton('Set/email')"}
-												<button class="layui-btn" lay-submit lay-filter="set_system_domain">确认保存</button>
-												{else /}<button class="layui-btn layui-btn-disabled">确认保存</button>{/if}
+												<button class="pear-btn pear-btn-primary" lay-submit lay-filter="set_system_domain" data-url="{:url('system.set/setDomain')}">确认保存</button>
 											</div>
 										</div>
 									</div>
@@ -321,7 +317,7 @@
 									</div>
 									<div class="layui-form-item">
 										<div class="layui-input-block">
-											<button class="layui-btn" lay-submit lay-filter="set_bind_map">确认保存</button>
+											<button class="pear-btn pear-btn-primary" lay-submit lay-filter="set_bind_map" data-url="{:url('system.set/bindMap')}">确认保存</button>
 										</div>
 									</div>
 								</div>
@@ -345,7 +341,7 @@
 									</div>
 									<div class="layui-form-item">
 										<div class="layui-input-block">
-											<button class="layui-btn" lay-submit lay-filter="set_url_rewrite">确认保存</button>
+											<button class="pear-btn pear-btn-primary" lay-submit lay-filter="set_url_rewrite" data-url="{:url('system.set/setUrl')}">确认保存</button>
 										</div>
 									</div>
 								</div>
@@ -364,9 +360,10 @@
 <script src="/static/component/pear/pear.js"></script>
 
 <script>
-	var setWebSite ="{:url('system.set/website')}";
+	
 	var setEmail ="{:url('system.set/email')}";
-	layui.use(['jquery', 'upload'], function(){
+
+	layui.use(['jquery', 'upload','set'], function(){
 		var $ = layui.jquery;
 		var form = layui.form;
 		var upload = layui.upload;
@@ -414,84 +411,7 @@
 			}
 		});
 
-		//网站设置
-		form.on('submit(set_website)', function(obj){
-			//layer.msg(JSON.stringify(obj.field));
-			loading = layer.load(2, {
-						shade: [0.2, '#000']
-					});
-			//提交修改
-			
-			$.ajax({
-			type: "post"
-			,url: setWebSite
-			,data: obj.field
-			,success: function(data){
-				if (data.code == 0) {
-					layer.close(loading);
-						layer.msg(data.msg,{
-							icon:6,
-							time:2000
-						});
-					} else {
-						layer.close(loading);
-						layer.open({
-							tiele:'设置失败',
-							content:data.msg,
-							icon:5,
-							anim:6
-						});
-					}
-			}
-			});
-			
-			return false;
-		});
-
-		//网站配置
-		form.on('submit(set_system_config)', function(data){
-			var field = data.field;
-			$.post("{:url('system.set/config')}",field,function(res){
-				if(res.code == 0){
-					layer.msg(res.msg,{icon:6,tiye:2000},function(){
-						location.reload();
-					});
-				} else {
-					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
-				}
-			});
-			return false;
-		});
-
-		//网站配置
-		form.on('submit(set_system_domain)', function(data){
-			var field = data.field;
-			$.post("{:url('system.set/setDomain')}",field,function(res){
-				if(res.code == 0){
-					layer.msg(res.msg,{icon:6,tiye:2000},function(){
-						location.reload();
-					});
-				} else {
-					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
-				}
-			});
-			return false;
-		});
-
-		// URL美化
-		form.on('submit(set_url_rewrite)', function(data){
-			var field = data.field;
-			$.post("{:url('system.set/setUrl')}",field,function(res){
-				if(res.code == 0){
-					layer.msg(res.msg,{icon:6,tiye:2000},function(){
-						location.reload();
-					});
-				} else {
-					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
-				}
-			});
-			return false;
-		});
+		
 
 		// 获取描述的内容
 		$("input[name='article_as']").bind('input propertychange', function(){
@@ -503,43 +423,7 @@
 			$('#catedesc').html('如：www.aieok.com/'+  content +'/ask.html');
 		})
 
-		// 域名绑定
-		form.on('switch(domain_check)', function(data){
-			var data = data.elem;
-			status = data.checked ? 'on' : 'off';
-			if(status == 'on'){
-				$('#set_domain').removeClass('layui-hide');
-			} else {
-				$('#set_domain').addClass('layui-hide');
-				$.post("{:url('system.set/setDomain')}",{"domain_check":status},function(res){
-					if(res.code == 0){
-						layer.msg(res.msg,{icon:6,tiye:2000},function(){
-							location.reload();
-						});
-					} else {
-						layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
-					}
-				});
-			}
-			return false;
-		});
-
-		// 应用映射
-		form.on('submit(set_bind_map)', function(data){
-			var field = data.field;
-			$.post("{:url('system.set/bindMap')}",field,function(res){
-				if(res.code == 0){
-					layer.msg(res.msg,{icon:6,tiye:2000},function(){
-						window.location.reload();
-					});
-				} else {
-					layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
-				}
-			});
-			return false;
-		});
-
-
+		
 		//显示当前tab
 		if(location.hash){
 			element.tabChange('website-tabs-brief', location.hash.replace(/^#/, ''));

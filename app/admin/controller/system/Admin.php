@@ -165,7 +165,6 @@ class Admin extends AdminController
 		if(Request::isAjax()){
 			$user = $this->model->select($ids);
 			$result = $user->delete();
-			
 				if($result){
 					return json(['code'=>0,'msg'=>'删除成功']);
 				}else{

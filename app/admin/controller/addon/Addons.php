@@ -19,17 +19,76 @@ use app\common\lib\FileHelper;
 class Addons extends AdminController
 {
     /**
+     * 浏览插件
      *
      */
     public function index()
     {
-        if(Request::isAjax()) {
-            $data = Request::param();
-            if(!isset($data['type'])) $data['type'] = 'onlineAddons';
-            if(!isset($data['selector'])) $data['selector'] = 'all';
-            return $this->getList($data);
-        }
+//        if(Request::isAjax()) {
+//            $data = Request::param();
+//            if(!isset($data['type'])) $data['type'] = 'onlineAddons';
+//            if(!isset($data['selector'])) $data['selector'] = 'all';
+//            return $this->getList($data);
+//        }
         return View::fetch();
+    }
+
+    /**
+     * 插件动态列表
+     * @param $data
+     * @return Json
+     */
+    public function list()
+    {
+        $param = Request::param();
+        $data = ['page' => $param['page'] ?? 1, 'limit' => $param['limit'] ?? 10, 'type' => $param['type'] ?? 'all'];
+        $res = [];
+        //本地插件列表
+        $localAddons = Files::getDirName('../addons/');
+
+        if($data['type'] == 'installed') {
+            $count = count($localAddons); // 安装总数
+            // 已安装
+            if ($count) {
+                $res = ['code' => 0, 'msg' => 'ok', 'count' => $count];
+                // 数组分组
+                $arr = array_chunk($localAddons, $data['limit']);
+                // 选中的页码数组
+                $arrAddon = $arr[$data['page'] - 1];
+                // $data数据
+                foreach ($arrAddon as $k => $v) {
+                    $info_file = '../addons/' . $v . '/info.ini';
+                    $info = parse_ini_file($info_file);
+                    $info['show'] = $info['status'] ? '启用' : '禁用';
+                    $info['install'] = $info['status'] ? '是' : '否';
+                    $res['data'][] = $info;
+                }
+                return json($res);
+            }
+            return json(['code' => -1, 'msg' => '没有安装任何插件']);
+        }
+
+        // 在线插件
+        $response = HttpHelper::withHost()->get('/v1/addonlist', $data);
+        $addons = $response->toJson();
+
+        if($response->ok()) {
+            $res = ['code' => 0, 'msg' => 'ok', 'count' => $addons->count];
+            // $data数据 与本地文件对比
+            foreach($addons->data as $v){
+                if(in_array($v->name, $localAddons)) {
+                    $info = get_addons_info($v->name);
+                    //已安装
+                    $v->isInstall = 1;
+                    //判断是否有新版本
+                    if($v->version > $info['version']) $v->have_newversion = 1;
+                    $v->price =  $v->price ? $v->price : '免费';
+                }
+                $res['data'][] = $v;
+            };
+            return json($res);
+        }
+        return json(['code' => -1, 'msg' => '未获取到服务器信息']);
     }
 
 
@@ -38,8 +97,11 @@ class Addons extends AdminController
      * @param $data
      * @return Json
      */
-    public function getList($data)
+    public function getList()
     {
+        $data = Request::param();
+        if(!isset($data['type'])) $data['type'] = 'onlineAddons';
+        if(!isset($data['selector'])) $data['selector'] = 'all';
         $res = [];
         //本地插件列表
         $addonsList = Files::getDirName('../addons/');

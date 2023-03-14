@@ -1,4 +1,13 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\system\Menu.php
+ * @Description: Menu
+ * @LastEditTime: 2023-03-14 16:46:37
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
+
 namespace app\admin\controller\system;
 
 use app\common\controller\AdminController;
@@ -21,7 +30,7 @@ class Menu extends AdminController
         $auth     = new Auth();
         $menu     = [];
         $rule = Session::has('ruleTable') ? Session::get('ruleTable') : 'auth_rule';
-        $auth_rule_list = Db::name($rule)->field('id,pid,title,icon,name,sort,ismenu')->where(['status'=> 1, 'ismenu'=>1, 'delete_time'=> 0])->select();
+        $auth_rule_list = Db::name($rule)->field('id,pid,title,icon,name,sort,ismenu')->where(['status'=> 1, 'delete_time'=> 0])->select();
         foreach ($auth_rule_list as $v) {
             if ($auth->check($v['name'], $this->aid) || $this->aid == 1) {
                 $menu[] = [
@@ -30,12 +39,14 @@ class Menu extends AdminController
                     'icon'  => 'layui-icon ' . $v['icon'],
                     'href'  => (string) url($v['name']),
                     'pid'   => $v['pid'],
-                    'sort'  => $v['sort']
+                    'sort'  => $v['sort'],
+                    'ismenu' => $v['ismenu']
                 ];
             }
         }
 
         $nav = $this->getTrees($menu);
+
         // 初始化控制台
         $nav[] = [
             'id'    => 500,
@@ -106,7 +117,7 @@ class Menu extends AdminController
                     //     //$v['children'][$m]['type'] = 1;
                     //     //$v['children'][$m]['openType'] = '_iframe';
                     // }
-                    $v['type'] = $v['pid'] == 0 ? 0 : $v['ismenu'];
+                    $v['type'] = $v['ismenu'];
                     $v['children'] = $child;
                 } else {
                     // 没有子菜单type=1

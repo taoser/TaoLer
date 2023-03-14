@@ -1,4 +1,12 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\model\Admin.php
+ * @Description: Admin
+ * @LastEditTime: 2023-03-14 16:50:41
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\admin\model;
 

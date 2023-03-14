@@ -1,4 +1,13 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\user\Vip.php
+ * @Description: Vip
+ * @LastEditTime: 2023-03-14 16:48:31
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
+
 namespace app\admin\controller\user;
 
 use app\common\controller\AdminController;
@@ -15,7 +24,7 @@ class Vip extends AdminController
 		return View::fetch();
 	}
 
-	//显示VIP规则
+	// VIP列表
 	public function list()
 	{
 		$keys = UserViprule::select();

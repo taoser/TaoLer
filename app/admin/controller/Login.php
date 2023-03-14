@@ -1,4 +1,13 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/11
+ * @FilePath: app\admin\controller\login.php
+ * @Description: 管理后台登录页
+ * @LastEditTime: 2023-03-11 10:16:42
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
+
 namespace app\admin\controller;
 
 use think\facade\View;
@@ -8,10 +17,9 @@ use app\admin\validate\Admin;
 use think\exception\ValidateException;
 use app\common\controller\AdminController;
 
-
 class Login extends AdminController
 {
-	//登录
+	// 登录
 	public function index()
 	{	
 		if(Request::isAjax()){
@@ -37,7 +45,7 @@ class Login extends AdminController
 	public function reg()
 	{
 		if(Session::has('admin_id')){
-			return redirect('/admin/index/index');
+			return redirect('index/index');
 		}
 		
 		return View::fetch('reg');
@@ -47,7 +55,7 @@ class Login extends AdminController
 	public function forget()
 	{
 		if(Session::has('admin_id')){
-			return redirect('/admin/index/index');
+			return redirect('index/index');
 		}
 		
 		return View::fetch('forget');

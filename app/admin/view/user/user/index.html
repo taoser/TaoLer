@@ -235,7 +235,8 @@
 						title: '刷新',
 						layEvent: 'refresh',
 						icon: 'layui-icon-refresh',
-					}, 'filter', 'print', 'exports']
+					}, 'filter', 'print', 'exports'],
+					limit: 10
 				});
 
 				table.on('tool(user-table)', function(obj) {
@@ -303,7 +304,7 @@
 						data:{"id":data.id,"auth":auth},
 						dataType:'json',
 						success:function(data){
-							if(data.code == 0){
+							if(data.code === 0){
 								layer.msg(data.msg,{
 									icon:6,
 									time:2000
