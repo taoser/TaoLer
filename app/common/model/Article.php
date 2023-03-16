@@ -64,7 +64,7 @@ class Article extends Model
     /**
      * 添加
      * @param array $data
-     * @return int|string
+     * @return int|string|array
      */
 	public function add(array $data)
 	{
@@ -336,7 +336,7 @@ class Article extends Model
      *
      * @param [type] $tagId 标签id
      * @param [type] $limit 输出数量
-     * @return void
+     * @return array
      */
     public function getAllTags($tagId)
     {
@@ -386,7 +386,7 @@ class Article extends Model
      *
      * @param [type] $id 当前文章ID
      * @param [type] $cid 当前分类ID
-     * @return void
+     * @return void|array
      */
     public function getPrevNextArticle($id,$cid)
     {

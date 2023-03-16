@@ -269,24 +269,33 @@
         },
         {
             "name": "dasprid/enum",
-            "version": "1.0.3",
-            "version_normalized": "1.0.3.0",
+            "version": "1.0.4",
+            "version_normalized": "1.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DASPRiD/Enum.git",
-                "reference": "5abf82f213618696dda8e3bf6f64dd042d8542b2"
+                "reference": "8e6b6ea76eabbf19ea2bf5b67b98e1860474012f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DASPRiD/Enum/zipball/5abf82f213618696dda8e3bf6f64dd042d8542b2",
-                "reference": "5abf82f213618696dda8e3bf6f64dd042d8542b2",
-                "shasum": ""
+                "url": "https://api.github.com/repos/DASPRiD/Enum/zipball/8e6b6ea76eabbf19ea2bf5b67b98e1860474012f",
+                "reference": "8e6b6ea76eabbf19ea2bf5b67b98e1860474012f",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=7.1 <9.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^7 | ^8 | ^9",
-                "squizlabs/php_codesniffer": "^3.4"
+                "squizlabs/php_codesniffer": "*"
             },
-            "time": "2020-10-02T16:03:48+00:00",
+            "time": "2023-03-01T18:44:03+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -313,7 +322,7 @@
             ],
             "support": {
                 "issues": "https://github.com/DASPRiD/Enum/issues",
-                "source": "https://github.com/DASPRiD/Enum/tree/1.0.3"
+                "source": "https://github.com/DASPRiD/Enum/tree/1.0.4"
             },
             "install-path": "../dasprid/enum"
         },
@@ -2344,17 +2353,17 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v5.4.19",
-            "version_normalized": "5.4.19.0",
+            "version": "v5.4.21",
+            "version_normalized": "5.4.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "2a1d06fcf2b30829d6c01dae8e6e188424d1f8f6"
+                "reference": "be74908a6942fdd331554b3cec27ff41b45ccad4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/2a1d06fcf2b30829d6c01dae8e6e188424d1f8f6",
-                "reference": "2a1d06fcf2b30829d6c01dae8e6e188424d1f8f6",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/be74908a6942fdd331554b3cec27ff41b45ccad4",
+                "reference": "be74908a6942fdd331554b3cec27ff41b45ccad4",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2370,7 +2379,7 @@
             "require-dev": {
                 "symfony/var-dumper": "^4.4.9|^5.0.9|^6.0"
             },
-            "time": "2023-01-12T16:39:29+00:00",
+            "time": "2023-02-21T19:46:44+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2406,7 +2415,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v5.4.19"
+                "source": "https://github.com/symfony/var-exporter/tree/v5.4.21"
             },
             "funding": [
                 {
@@ -2492,17 +2501,17 @@
         },
         {
             "name": "taoser/think-auth",
-            "version": "v1.0.0",
-            "version_normalized": "1.0.0.0",
+            "version": "v1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/taoser/think-auth.git",
-                "reference": "19bb04e4fb957a95ff3fdc142939922c19167b43"
+                "reference": "d3aa853b7d2a34624bcc566150105f2815e68ad0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/taoser/think-auth/zipball/19bb04e4fb957a95ff3fdc142939922c19167b43",
-                "reference": "19bb04e4fb957a95ff3fdc142939922c19167b43",
+                "url": "https://api.github.com/repos/taoser/think-auth/zipball/d3aa853b7d2a34624bcc566150105f2815e68ad0",
+                "reference": "d3aa853b7d2a34624bcc566150105f2815e68ad0",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2515,7 +2524,7 @@
                 "php": ">=7.1.0",
                 "topthink/framework": "^6.0"
             },
-            "time": "2020-02-11T06:16:10+00:00",
+            "time": "2023-02-26T03:08:39+00:00",
             "type": "think-extend",
             "extra": {
                 "think": {
@@ -2546,6 +2555,10 @@
                 "think-auth",
                 "thinkphp6"
             ],
+            "support": {
+                "issues": "https://github.com/taoser/think-auth/issues",
+                "source": "https://github.com/taoser/think-auth/tree/v1.0.1"
+            },
             "install-path": "../taoser/think-auth"
         },
         {
@@ -2895,17 +2908,17 @@
         },
         {
             "name": "topthink/think-migration",
-            "version": "v3.0.3",
-            "version_normalized": "3.0.3.0",
+            "version": "v3.0.4",
+            "version_normalized": "3.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-migration.git",
-                "reference": "5717d9e5f3ea745f6dbfd1e30b4402aaadff9a79"
+                "reference": "c5880669b277762d5ff935e551bc0d5c71de6811"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-migration/zipball/5717d9e5f3ea745f6dbfd1e30b4402aaadff9a79",
-                "reference": "5717d9e5f3ea745f6dbfd1e30b4402aaadff9a79",
+                "url": "https://api.github.com/repos/top-think/think-migration/zipball/c5880669b277762d5ff935e551bc0d5c71de6811",
+                "reference": "c5880669b277762d5ff935e551bc0d5c71de6811",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2915,7 +2928,7 @@
                 ]
             },
             "require": {
-                "topthink/framework": "^6.0.0",
+                "topthink/framework": "^6.0",
                 "topthink/think-helper": "^3.0.3"
             },
             "require-dev": {
@@ -2924,7 +2937,7 @@
             "suggest": {
                 "fzaninotto/faker": "Required to use the factory builder (^1.8)."
             },
-            "time": "2020-12-07T05:54:22+00:00",
+            "time": "2022-10-26T07:57:54+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2952,30 +2965,36 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-migration/issues",
-                "source": "https://github.com/top-think/think-migration/tree/v3.0.3"
+                "source": "https://github.com/top-think/think-migration/tree/v3.0.4"
             },
             "install-path": "../topthink/think-migration"
         },
         {
             "name": "topthink/think-multi-app",
-            "version": "v1.0.15",
-            "version_normalized": "1.0.15.0",
+            "version": "v1.0.16",
+            "version_normalized": "1.0.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-multi-app.git",
-                "reference": "387e0dac059c20f92cac5da41a871e10829c1c97"
+                "reference": "07b9183855150455e1f76f8cbe9d77d6d1bc399f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/387e0dac059c20f92cac5da41a871e10829c1c97",
-                "reference": "387e0dac059c20f92cac5da41a871e10829c1c97",
-                "shasum": ""
+                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/07b9183855150455e1f76f8cbe9d77d6d1bc399f",
+                "reference": "07b9183855150455e1f76f8cbe9d77d6d1bc399f",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "php": ">=7.1.0",
-                "topthink/framework": "^6.0"
+                "topthink/framework": "^6.0|^8.0"
             },
-            "time": "2022-10-26T08:03:06+00:00",
+            "time": "2023-02-07T08:40:09+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -3003,23 +3022,23 @@
             "description": "thinkphp6 multi app support",
             "support": {
                 "issues": "https://github.com/top-think/think-multi-app/issues",
-                "source": "https://github.com/top-think/think-multi-app/tree/v1.0.15"
+                "source": "https://github.com/top-think/think-multi-app/tree/v1.0.16"
             },
             "install-path": "../topthink/think-multi-app"
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.57",
-            "version_normalized": "2.0.57.0",
+            "version": "v2.0.59",
+            "version_normalized": "2.0.59.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "b68e3bb15322dc2d977ac62682d6df05c98bd23c"
+                "reference": "ac0f18bc3063ca924ed5b4af6e405d74f44d2870"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/b68e3bb15322dc2d977ac62682d6df05c98bd23c",
-                "reference": "b68e3bb15322dc2d977ac62682d6df05c98bd23c",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/ac0f18bc3063ca924ed5b4af6e405d74f44d2870",
+                "reference": "ac0f18bc3063ca924ed5b4af6e405d74f44d2870",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3039,7 +3058,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^7|^8|^9.5"
             },
-            "time": "2023-02-03T11:35:52+00:00",
+            "time": "2023-03-06T10:12:41+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3067,23 +3086,23 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v2.0.57"
+                "source": "https://github.com/top-think/think-orm/tree/v2.0.59"
             },
             "install-path": "../topthink/think-orm"
         },
         {
             "name": "topthink/think-template",
-            "version": "v2.0.8",
-            "version_normalized": "2.0.8.0",
+            "version": "v2.0.9",
+            "version_normalized": "2.0.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-template.git",
-                "reference": "abfc293f74f9ef5127b5c416310a01fe42e59368"
+                "reference": "6d25642ae0e306166742fd7073dc7a159e18073c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-template/zipball/abfc293f74f9ef5127b5c416310a01fe42e59368",
-                "reference": "abfc293f74f9ef5127b5c416310a01fe42e59368",
+                "url": "https://api.github.com/repos/top-think/think-template/zipball/6d25642ae0e306166742fd7073dc7a159e18073c",
+                "reference": "6d25642ae0e306166742fd7073dc7a159e18073c",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3096,7 +3115,7 @@
                 "php": ">=7.1.0",
                 "psr/simple-cache": "^1.0"
             },
-            "time": "2020-12-10T07:52:03+00:00",
+            "time": "2023-02-14T10:50:39+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3117,7 +3136,7 @@
             "description": "the php template engine",
             "support": {
                 "issues": "https://github.com/top-think/think-template/issues",
-                "source": "https://github.com/top-think/think-template/tree/v2.0.8"
+                "source": "https://github.com/top-think/think-template/tree/v2.0.9"
             },
             "install-path": "../topthink/think-template"
         },
@@ -3377,17 +3396,17 @@
         },
         {
             "name": "workerman/workerman",
-            "version": "v4.1.6",
-            "version_normalized": "4.1.6.0",
+            "version": "v4.1.9",
+            "version_normalized": "4.1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/workerman.git",
-                "reference": "a278ddcc78040e5d1e25ca2022eeb7ccfdccc86b"
+                "reference": "1f92d02c26106b5fbe6f61ea776198aad6e426f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/workerman/zipball/a278ddcc78040e5d1e25ca2022eeb7ccfdccc86b",
-                "reference": "a278ddcc78040e5d1e25ca2022eeb7ccfdccc86b",
+                "url": "https://api.github.com/repos/walkor/workerman/zipball/1f92d02c26106b5fbe6f61ea776198aad6e426f7",
+                "reference": "1f92d02c26106b5fbe6f61ea776198aad6e426f7",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3402,7 +3421,7 @@
             "suggest": {
                 "ext-event": "For better performance. "
             },
-            "time": "2023-01-13T02:17:21+00:00",
+            "time": "2023-03-10T13:59:12+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3593,17 +3612,17 @@
         },
         {
             "name": "yzh52521/easyhttp",
-            "version": "v1.0.6",
-            "version_normalized": "1.0.6.0",
+            "version": "v1.0.7",
+            "version_normalized": "1.0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yzh52521/easyhttp.git",
-                "reference": "6c4795316e6847ba691ecad9c9f5fd9f073b33e2"
+                "reference": "52cb9aba60a725bef77acd9c4c48ecc78931af9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yzh52521/easyhttp/zipball/6c4795316e6847ba691ecad9c9f5fd9f073b33e2",
-                "reference": "6c4795316e6847ba691ecad9c9f5fd9f073b33e2",
+                "url": "https://api.github.com/repos/yzh52521/easyhttp/zipball/52cb9aba60a725bef77acd9c4c48ecc78931af9e",
+                "reference": "52cb9aba60a725bef77acd9c4c48ecc78931af9e",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3617,7 +3636,7 @@
                 "php": "^7.2.5|^8.0",
                 "psr/log": "^1.0|^2.0|^3.0"
             },
-            "time": "2023-02-08T09:24:06+00:00",
+            "time": "2023-02-16T03:04:02+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3648,7 +3667,7 @@
             ],
             "support": {
                 "issues": "https://github.com/yzh52521/easyhttp/issues",
-                "source": "https://github.com/yzh52521/easyhttp/tree/v1.0.6"
+                "source": "https://github.com/yzh52521/easyhttp/tree/v1.0.7"
             },
             "install-path": "../yzh52521/easyhttp"
         }

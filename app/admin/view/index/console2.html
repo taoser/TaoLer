@@ -16,7 +16,7 @@
 
 					<div class="layui-col-md12">
 						<div class="layui-card">
-							<div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a id="up_version" lay-href="{:url('system.upgrade/index')}"></a></div>
+							<div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a href="{:url('system.upgrade/index')}" id="up_version" lay-href="{:url('system.upgrade/index')}"></a></div>
 						</div>
 					</div>
 					<div class="layui-col-md6">
@@ -518,7 +518,7 @@
 
 				//加载版本检测
 				(function(){
-					$.get("{:url('Index/checkVersion')}",function(data){
+					$.get("{:url('Index/sysUpgradeCheck')}",function(data){
 						$('#up_version').html(data);
 					})
 				})();

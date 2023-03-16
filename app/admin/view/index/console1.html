@@ -600,6 +600,30 @@
 					})
 				});
 
+				// 升级提醒
+				$(function (){
+					console.log(123)
+					$.get("{:url('system.upgrade/check')}",function (data){
+						if (data.code === 1) {
+							//可升级
+							layer.confirm('发现新版本V' + data.data.version + '，确定升级？',{icon: 3, title:'系统检测'}, function(index){
+								//更新
+								$.get("{:url('system.upgrade/upload')}",function (res){
+									if (res.code === 0) {
+										layer.close(index);
+										toast.info({title:"通知消息", message: res.msg ,position: 'topRight'})
+									} else {
+										layer.close(index);
+										toast.error({title:"服务器错误", message:res.msg})
+									}
+									return false;
+								});
+								//关闭load加载层
+							});
+						}
+					});
+				});
+
 			});
 		</script>
 	</body>

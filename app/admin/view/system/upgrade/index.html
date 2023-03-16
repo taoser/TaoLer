@@ -89,11 +89,11 @@
                 	});
 				
 					$.get("{:url('system.upgrade/check')}",function (data){
-						if (data.code == 0) {
+						if (data.code === 0) {
 							//已件最新版本
 							layer.close(loading);
 							toast.info({title:"通知消息", message: data.msg ,position: 'topRight'})
-						} else if (data.code == 1) {
+						} else if (data.code === 1) {
 							//可升级
 							layer.close(loading);
 							$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.data.upnum+'</span>个新版本：<span style="color:red">可更新至v' + data.data.version + ' [!重要:' + data.data.info + ']</span></div>');
@@ -107,7 +107,6 @@
 							//服务器错误
 							layer.close(loading);
 							toast.error({title:"服务器错误",message:data.msg});
-							//notify.error(data.msg);
 						}
 					});
 					return false;	
@@ -128,7 +127,6 @@
 							} else {
 								layer.close(load);
 								toast.error({title:"服务器错误", message:data.msg})
-								//notify.error(data.msg);
 								return false;
 							}
 						}

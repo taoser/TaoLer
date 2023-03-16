@@ -10,6 +10,9 @@
  */
 namespace app\common\model;
 
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\facade\Lang;
 use think\Model;
 use think\model\concern\SoftDelete;
@@ -70,6 +73,34 @@ class Cate extends Model
         } else {
             return json(['code'=>-1,'msg'=>'no data','data'=>'']);
         }
+    }
+
+    // 如果菜单下无内容，URl不能点击
+    public function menu()
+    {
+        $appname = app('http')->getName();
+        try {
+            $cateList = $this->where(['status' => 1, 'appname' => $appname])
+                ->cache('catename' . $appname, 3600)
+                ->append(['url'])
+                ->select()
+                ->toArray();
+            return $cateList;
+        } catch (DbException $e) {
+            return $e->getMessage();
+        }
+
+    }
+
+    // 获取url
+    public function getUrlAttr($value,$data)
+    {
+        // 栏目下存在帖子，则返回正常url,否则为死链
+        $articleArr = Article::where('cate_id',$data['id'])->column('id');
+        if(empty($articleArr)) {
+            return 'javascript:void(0);';
+        }
+        return (string) url('cate',['ename' => $data['ename']]);;
     }
 	
 	

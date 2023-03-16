@@ -37,7 +37,7 @@ class Comment extends AdminController
 			$map = array_filter($data);
 			$where = array();
 			if(!empty($map['content'])){
-				$where[] = ['a.content','like','%'.$map['content'].'%'];
+				$where[] = ['a.content','like', $map['content'].'%'];
 				unset($map['content']);
 			}
 			if(isset($data['status']) && $data['status'] !== '' ){
@@ -75,14 +75,14 @@ class Comment extends AdminController
 					$url = $this->getRouteUrl($v['cid'],$v['ename'], $v['appname']);
 					//$res['data'][] = ['id'=>$v['id'],'replyer'=>$v->user->name,'cardid'=>$v->article->title,'avatar'=>$v->user->user_img,'content'=>$v['content'],'replytime'=>$v['create_time']];
 					$res['data'][] = [
-                        'id'=>$v['aid'],
-                        'replyer'=>$v['name'],
-                        'title'=>htmlspecialchars($v['title']),
-                        'avatar'=>$v['user_img'],
-                        'content'=>htmlspecialchars($v['content']),
-                        'replytime'=>date("Y-m-d",$v['create_time']),
-                        'check'=>$v['astatus'],
-                        'url'=>$url
+                        'id'        => $v['aid'],
+                        'replyer'   => $v['name'],
+                        'title'     => htmlspecialchars($v['title']),
+                        'avatar'    => $v['user_img'],
+                        'content'   => strip_tags($v['content']),
+                        'replytime' => date("Y-m-d",$v['create_time']),
+                        'check'     => $v['astatus'],
+                        'url'       => $url
                     ];
 				}
 			} else {
@@ -116,6 +116,7 @@ class Comment extends AdminController
         }
 
 	}
+
 	//评论审核
 	public function check()
 	{
@@ -124,24 +125,19 @@ class Comment extends AdminController
 		//获取状态
 		$res = Db::name('comment')->where('id',$data['id'])->save(['status' => $data['status']]);
 		if($res){
-			if($data['status'] == 1){
-				return json(['code'=>0,'msg'=>'评论审核通过','icon'=>6]);
-			} else {
-				return json(['code'=>0,'msg'=>'评论被禁止','icon'=>5]);
-			}
-			
-		}else {
-			return json(['code'=>-1,'msg'=>'审核出错']);
+			if($data['status'] == 1) return json(['code'=>0,'msg'=>'评论审核通过','icon'=>6]);
+            return json(['code'=>0,'msg'=>'评论被禁止','icon'=>5]);
 		}
+        return json(['code'=>-1,'msg'=>'审核出错']);
+
 	}
 	
 
 	
 	//array_filter过滤函数
-	public function  filtr($arr){
-			if($arr === '' || $arr === null){
-				return false;
-			}
+	public function  filtr($arr)
+    {
+        if($arr === '' || $arr === null) return false;
         return true;
 	}
 

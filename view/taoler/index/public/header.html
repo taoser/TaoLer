@@ -1,60 +1,62 @@
 <div class="fly-header layui-bg-black">
-<div class="layui-container">
-    <a class="fly-logo layui-hide-xs" href="{$Request.domain}"><img src="{$Request.domain}{$sysInfo.logo}" alt="{$sysInfo.webname}logo" width="135" height="37"></a>
-	<!--头部伸缩侧边栏-->
-	<div class="site-tree-mobile-top layui-hide"><i class="layui-icon layui-icon-spread-left"></i></div>
-	<div class="site-mobile-shade-top"></div>
-	{//移动端LOGO}
-	<a class="layui-hide-md layui-hide-sm" href="{$Request.domain}" ><img class="fly-logo-m" src="{$Request.domain}{$sysInfo.m_logo}" alt="logo"></a>
-	<ul class="layui-nav fly-nav layui-hide-xs">
-	{//导航nav}
-	{volist name="cateList" id="cate"}
-	<li class="layui-nav-item {if($cate.ename eq $Request.param.ename)} layui-this {/if}" >
-		<a href="{$Request.domain}{:url('cate',['ename' => $cate.ename])}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}{if condition="$cate.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}</a>
-		{notempty name="cate.children"}
-		<dl class="layui-nav-child"> <!-- 二级菜单 -->
-			{volist name="cate.children" id="vo2"}
-			<dd><a href="{$Request.domain}{:url('cate',['ename' => $vo2.ename])}">{$vo2.catename}</a></dd>
-			{/volist}
-		</dl>
-		{/notempty}
-	</li> 
-	{/volist}
-	{// 后台自定义头部链接}
-	{volist name="headlinks" id="vo"}
-	<li class="layui-nav-item"><a href="{$vo.slid_href}" target="_blank"><i class="layui-icon {$vo.slid_img}"></i>{$vo.slid_name}</a></li>
-	{/volist}
-    </ul>
+	<div class="layui-container">
+		<a class="fly-logo layui-hide-xs" href="{$Request.domain}"><img src="{$Request.domain}{$sysInfo.logo}" alt="{$sysInfo.webname}logo" width="135" height="37"></a>
+		<!--头部伸缩侧边栏-->
+		<div class="site-tree-mobile-top layui-hide"><i class="layui-icon layui-icon-spread-left"></i></div>
+		<div class="site-mobile-shade-top"></div>
+		{//移动端LOGO}
+		<a class="layui-hide-md layui-hide-sm" href="{$Request.domain}" ><img class="fly-logo-m" src="{$Request.domain}{$sysInfo.m_logo}" alt="logo"></a>
+		<ul class="layui-nav fly-nav layui-hide-xs">
+		{//导航nav}
+		{volist name="cateList" id="cate"}
+			<li class="layui-nav-item {if($cate.ename eq $Request.param.ename)} layui-this {/if}" >
+				<a href="{$cate.url}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</a> {if condition="$cate.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}
+				{notempty name="cate.children"}
+				<dl class="layui-nav-child"> <!-- 二级菜单 -->
+					{volist name="cate.children" id="vo2"}
+					<dd><a href="{$vo2.url}">{$vo2.catename}</a></dd>
+					{/volist}
+				</dl>
+				{/notempty}
+			</li>
+		{/volist}
+		{// 后台自定义头部链接}
+		{volist name="headlinks" id="vo"}
+			<li class="layui-nav-item"><a href="{$vo.slid_href}" target="_blank"><i class="layui-icon {$vo.slid_img}"></i>{$vo.slid_name}</a></li>
+		{/volist}
+		</ul>
 
-    {//头部右栏}
-    <ul class="layui-nav fly-nav-user" msg-url="{:url('message/nums')}" readMsg-url="{:url('Message/read')}" userlogin="{:url('user_login')}">
-		<span class="fly-search layui-hide-xs" data-url="{:url('user_search')}"><i class="layui-icon">&#xe615;</i></span>
-	<!-- 登录 -->
-	{if session('?user_id')}
-		{if ($Request.action=='user')}<li class="layui-nav-item"><a href="{$Request.domain}">{:lang('home page')}</a></li>{/if}
-		<li class="layui-nav-item"><a class="fly-nav-avatar" href="javascript:;"><cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}{$user.user_img}"></a>
-			<dl class="layui-nav-child">
-				<dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
-				<dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>
-				<hr>
-				<dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
-				<dd><a href="{:url('user/home',['id'=>$user.id])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
-				<hr style="margin: 5px 0;">
-				<dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
-			</dl>
-		</li>
-	<!-- 未登入的状态 -->
-	{else /}<li class="layui-nav-item"><a class="iconfont icon-touxiang" href="{:url('user_login')}"></a></li>
-		<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_login')}">{:lang('login')}</a></li>
-		<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_reg')}">{:lang('register')}</a></li>
-		<li class="layui-nav-item layui-hide-xs layui-hide">
-		<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
-			<option value="cn" {if cookie('think_lang') == 'zh-cn'} selected {/if} >{:lang('chinese')}</option>
-			<option value="tw" {if cookie('think_lang') == 'zh-tw'} selected {/if} >{:lang('tChinese')}</option>
-			<option value="en" {if cookie('think_lang') == 'en-us'} selected {/if} >{:lang('english')}</option>
-		</select>
-		</li>
-	{/if}
-</ul>
-</div>
+		{//头部右栏}
+		<ul class="layui-nav fly-nav-user" msg-url="{:url('message/nums')}" readMsg-url="{:url('Message/read')}" userlogin="{:url('user_login')}">
+			<span class="fly-search layui-hide-xs" data-url="{:url('user_search')}"><i class="layui-icon">&#xe615;</i></span>
+			<!-- 登录 -->
+			{if session('?user_id')}
+				{if ($Request.action=='user')}<li class="layui-nav-item"><a href="{$Request.domain}">{:lang('home page')}</a></li>{/if}
+				<li class="layui-nav-item">
+					<a class="fly-nav-avatar" href="javascript:;"><cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}{$user.user_img}"></a>
+					<dl class="layui-nav-child">
+						<dd><a href="{:url('user/index')}"><i class="layui-icon">&#xe612;</i>{:lang('user center')}</a></dd>
+						<dd><a href="{:url('user/set')}"><i class="layui-icon">&#xe620;</i>{:lang('set info')}</a></dd>
+						<hr>
+						<dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>{:lang('my message')}</a></dd>
+						<dd><a href="{:url('user/home',['id'=>$user.id])}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>{:lang('my page')}</a></dd>
+						<hr style="margin: 5px 0;">
+						<dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" class="logi_logout" style="text-align: center;">{:lang('logout')}</a></dd>
+					</dl>
+				</li>
+			<!-- 未登入的状态 -->
+			{else /}
+				<li class="layui-nav-item"><a class="iconfont icon-touxiang" href="{:url('user_login')}"></a></li>
+				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_login')}">{:lang('login')}</a></li>
+				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_reg')}">{:lang('register')}</a></li>
+				<li class="layui-nav-item layui-hide-xs layui-hide">
+				<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
+					<option value="cn" {if cookie('think_lang') == 'zh-cn'} selected {/if} >{:lang('chinese')}</option>
+					<option value="tw" {if cookie('think_lang') == 'zh-tw'} selected {/if} >{:lang('tChinese')}</option>
+					<option value="en" {if cookie('think_lang') == 'en-us'} selected {/if} >{:lang('english')}</option>
+				</select>
+				</li>
+			{/if}
+		</ul>
+	</div>
 </div>

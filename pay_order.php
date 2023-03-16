@@ -4,7 +4,7 @@ use Workerman\Timer;
 use think\App;
 use addons\pay\controller\Index;
 use app\common\lib\HttpHelper;
-use use yzh52521\EasyHttp\Request;
+use yzh52521\EasyHttp\Request;
 use yzh52521\EasyHttp\Http;
 
 

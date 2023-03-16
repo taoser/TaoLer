@@ -163,27 +163,11 @@ layui.define(['form', 'upload'], function(exports){
 
   var  othis = $("input[name='copyright']");
   var sysCy = othis.data('level');
-  console.log(sysCy)
-  if(sysCy == 0){
+  if(sysCy === 0){
 	  othis.addClass('layui-disabled');
 	  othis.attr("disabled");
   }
 
-  //上传头像
-  var avatarSrc = $('#LAY_avatarSrc');
-  upload.render({
-    url: '/api/upload/'
-    ,elem: '#LAY_avatarUpload'
-    ,done: function(res){
-      if(res.status == 0){
-        avatarSrc.val(res.url);
-      } else {
-        layer.msg(res.msg, {icon: 5});
-      }
-    }
-  });
-  
-  
   //对外暴露的接口
   exports('set', {});
 });

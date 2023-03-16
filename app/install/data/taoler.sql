@@ -219,7 +219,7 @@ INSERT INTO `tao_auth_rule` VALUES (70, 'user.vip/add', '添加vip', 1, 1, 68, 2
 INSERT INTO `tao_auth_rule` VALUES (71, 'user.vip/edit', '编辑vip', 1, 1, 68, 2, '', 2, 52, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (72, 'user.vip/delete', '删除vip', 1, 1, 68, 2, '', 2, 53, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (73, 'addon.addons/index', '插件市场', 1, 1, 3, 1, '', 1, 1, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (74, 'addon.addons/getList', '插件列表', 1, 1, 73, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (74, 'addon.addons/list', '插件列表', 1, 1, 73, 2, '', 2, 50, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (75, 'addon.addons/install', '安装插件', 1, 1, 73, 2, '', 2, 51, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (76, 'addon.addons/uninstall', '卸载插件', 1, 1, 73, 2, '', 2, 52, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (77, 'addon.addons/upgrade', '升级插件', 1, 1, 73, 2, '', 2, 53, '', 0, 0, 0);

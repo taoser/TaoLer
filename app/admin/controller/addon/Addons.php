@@ -1,4 +1,13 @@
 <?php
+/**
+ * @Program: TaoLer 2023/3/15
+ * @FilePath: app\admin\controller\addon\Addons.php
+ * @Description: Addons
+ * @LastEditTime: 2023-03-15 22:40:04
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
+
 namespace app\admin\controller\addon;
 
 use app\common\controller\AdminController;
@@ -15,6 +24,7 @@ use Symfony\Component\VarExporter\VarExporter;
 use taoler\com\Files;
 use app\common\lib\facade\HttpHelper;
 use app\common\lib\FileHelper;
+
 
 class Addons extends AdminController
 {
@@ -293,10 +303,11 @@ class Addons extends AdminController
                 $menu = [];
             }
             if(!empty($menu)){
-                if(isset($menu['is_nav']) && $menu['is_nav'] == 1){
-                    $pid = 0;
-                }else{
-                    $pid = AuthRule::where('name','addons')->value('id');
+                if(isset($menu['is_nav']) && $menu['is_nav'] < 8){
+                    $pid = $menu['is_nav'];
+                } else {
+                    //$pid = AuthRule::where('name','addons')->value('id');
+                    return json(['code'=>-1,'msg'=> 'is_nav菜单项目设置错误']);
                 }
                 $menu_arr[] = $menu['menu'];
                 $this->addAddonMenu($menu_arr, (int)$pid,1);

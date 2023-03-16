@@ -197,12 +197,11 @@ class TagLib
      */
     public function getRegex($tags, bool $close): string
     {
-        //$begin   = $this->tpl->getConfig('taglib_begin');
-        $begin = '{';
-        // $end     = $this->tpl->getConfig('taglib_end');
-        $end ='}';
+        $begin   = $this->tpl->getConfig('taglib_begin');
+        $end     = $this->tpl->getConfig('taglib_end');
         $single  = strlen(ltrim($begin, '\\')) == 1 && strlen(ltrim($end, '\\')) == 1 ? true : false;
         $tagName = is_array($tags) ? implode('|', $tags) : $tags;
+
         if ($single) {
             if ($close) {
                 // 如果是闭合标签
@@ -218,6 +217,7 @@ class TagLib
                 $regex = $begin . '(' . $tagName . ')\b(?>(?:(?!' . $end . ').)*)' . $end;
             }
         }
+
         return '/' . $regex . '/is';
     }
 

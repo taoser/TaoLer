@@ -524,7 +524,7 @@ class Request
     }
 
     /**
-     * 原生异常请求
+     * 原生异步请求
      * @param string $method
      * @param string $url
      * @param array $options

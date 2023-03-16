@@ -17,8 +17,6 @@ use think\facade\Session;
 use think\facade\Request;
 use think\facade\Cache;
 use think\facade\Lang;
-use app\admin\model\Admin;
-use app\admin\model\Article;
 use app\admin\model\Cunsult;
 use think\facade\Config;
 use taoler\com\Api;
@@ -120,19 +118,12 @@ class Index extends AdminController
 		View::assign(['comms'=>$comms,'forums'=>$forums,'monthTime'=>$monthTime,'monthUserCount'=>Cache::get('monthUserCount')]);
         return View::fetch();
     }
-	
-	//版本检测
-//	public function getVersion()
-//    {
-//		$verCheck = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
-//		if($verCheck->code !== -1){
-//            return $verCheck->code ? "<span style='color:red'>有{$verCheck->up_num}个版本需更新,当前可更新至{$verCheck->version}</span>" : $verCheck->msg;
-//		} else {
-//			return lang('No new messages');
-//		}
-//	}
 
-    public function checkVersion()
+    /**
+     * 系统升级检测
+     * @return mixed|string
+     */
+    public function sysUpgradeCheck()
     {
         $data = ['pn'=>$this->pn,'ver'=>$this->sys_version];
         $response = HttpHelper::withHost()->get('/v1/upload/check', $data)->toJson();

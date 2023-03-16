@@ -19,6 +19,7 @@ use think\facade\Session;
 use think\facade\Cache;
 use app\facade\Article;
 use app\BaseController as BaseCtrl;
+use app\common\model\Cate;
 
 /**
  * 控制器基础类
@@ -75,7 +76,9 @@ class BaseController extends BaseCtrl
     {
         $appname = app('http')->getName();
         //1.查询分类表获取所有分类
-		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0, 'appname' => $appname])->cache('catename' . $appname,3600)->select()->toArray();
+//		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0, 'appname' => $appname])->cache('catename' . $appname,3600)->select()->toArray();
+        $cate = new Cate();
+        $cateList = $cate->menu();
          return getTree($cateList);
     }
 

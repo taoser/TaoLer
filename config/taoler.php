@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '2.2.1',
+    'version'   => '2.2.2',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
@@ -29,7 +29,7 @@ return [
 		// 注册开关
 		'is_regist'   => 0,
 		// 登录开关
-		'is_login'   => 0,
+		'is_login'   => 1,
 		// 发帖开关
 		'is_post'   => 0,
 		// 评论开关

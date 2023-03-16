@@ -75,9 +75,11 @@
 				let $ = layui.jquery;
 				let upload = layui.upload;
 
+				let ADD_URL = "{:url('user.user/add')}";
+
 				form.on('submit(user-save)', function(data) {
 					$.ajax({
-						url: "{:url('user.user/add')}",
+						url: ADD_URL,
 						data: JSON.stringify(data.field),
 						dataType: 'json',
 						contentType: 'application/json',
@@ -88,8 +90,7 @@
 									icon: 1,
 									time: 1000
 								}, function() {
-									parent.layer.close(parent.layer.getFrameIndex(window
-										.name)); //关闭当前页
+									parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
 									parent.layui.table.reload("user-table");
 								});
 							} else {
