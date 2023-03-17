@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>新增管理员</title>
+  <title>新增帖子</title>
   <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 </head>
 <body>
@@ -17,7 +17,7 @@
                   <select lay-verify="required" name="cate_id" lay-filter="column">
                     <option></option>
                     {volist name="cateList" id="cate"}
-                    <option value="{$cate.id}" {if($Request.param.cate == $cate.ename)} selected {/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
+                    <option value="{$cate.id}" {if ($Request.param.cate == $cate.ename)} selected {/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
                     {/volist}
                   </select>
                 </div>
@@ -92,8 +92,8 @@
     <script src="/static/component/pear/pear.js"></script>
 
     <script src="/static/jquery-3.6.0.min.js"></script>
-    <script src="/addons/taonyeditor/tinymce/tinymce.min.js"></script>
-    <script src="/addons/taonyeditor/tinymce/tinymce-jquery.min.js"></script>
+    <script src="/static/addons/taonyeditor/tinymce/tinymce.min.js"></script>
+    <script src="/static/addons/taonyeditor/tinymce/tinymce-jquery.min.js"></script>
     <script>
         //定义选择器
         var mytextareaid = 'textarea#L_content';
@@ -110,48 +110,18 @@
     <script src="/static/xm-select.js"></script>
     <script>
     layui.extend({
-        editor: '{/}/static/admin/modules/taonyeditor/js/taonyeditor'
-      }).use(["form", "colorpicker", "upload",'tinymce','editor','xmSelect'], function () {
+        editor: '{/}/static/addons/taonyeditor/js/taonyeditor'
+      }).use(["form", "colorpicker", "upload",'editor','xmSelect'], function () {
         var $ = layui.jquery, form = layui.form, colorpicker = layui.colorpicker, upload = layui.upload;
         var editor = layui.editor;
         var xmSelect = layui.xmSelect;
+        
 
-        var tinymce = layui.tinymce
+        // var tinymce = layui.tinymce
         // var edit = tinymce.render({
         //   elem: "#L_content",
         //   height: 400
         // });
-
-
-      form.on('submit(forum-save)', function(data) {
-        $.ajax({
-          url: "{:url('content.forum/add')}",
-          data: JSON.stringify(data.field),
-          dataType: 'json',
-          contentType: 'application/json',
-          type: 'post',
-          success: function(result) {
-            if (result.code === 0) {
-              layer.msg(result.msg, {
-                icon: 1,
-                time: 1000
-              }, function() {
-                parent.layer.close(parent.layer.getFrameIndex(window
-                        .name)); //关闭当前页
-                parent.layui.table.reload("user-table");
-              });
-            } else {
-              layer.msg(result.msg, {
-                icon: 2,
-                time: 1000
-              });
-            }
-          }
-        })
-        return false;
-      });
-
-
 
       //获取百度标签标志，tag或者word;
       var flag = 'word';
@@ -184,15 +154,15 @@
     var addTags = xmSelect.render({
           el: '#tag',
           name: 'tagid',
-          layVerify: 'required',
+          layVerify: '',
           layVerType: 'msg',
           paging: true,
           pageSize: 5,
           data: []
         });
         //2.动态标签赋值
-        $.get("{:url('tag/getAllTag')}",function(res){
-          if(res.code == 0){
+        $.get("{:url('content.tag/getAllTag')}",function(res){
+          if(res.code === 0){
             addTags.update({
               data: res.data,
               autoRow: true,
@@ -210,11 +180,11 @@
         var content = $("#L_content").val();
         $.ajax({
         type: "post",
-        url: "{:url('Forum/getKeywords')}",
+        url: "{:url('content.forum/getKeywords')}",
         data: { keywords: title, content:content, flag: flag  },
         daType: "json",
         success: function (data) {
-          if (data.code == 0) {
+          if (data.code === 0) {
             $("input[name='keywords']").val(data.data.join(','));
           }
         },
@@ -224,14 +194,14 @@
 
     // 百度词条
     var baidu_title_switch = "{:config('taoler.config.baidu_title_switch')}";
-    if(baidu_title_switch == 1) {
+    if(baidu_title_switch === 1) {
       $("#L_title").bind('input propertychange',function () {
           var title = $(this).val();
           var str = '';
           if(title.length > 0 ) {
-            $.post("{:url('forum/getWordList')}",{title:title},function(res){
+            $.post("{:url('content.forum/getWordList')}",{title:title},function(res){
               // 动态生成ur>li内容
-              if (res.code == 0) {
+              if (res.code === 0) {
                 // 显示动态框
                 $(".bdsug").removeClass('layui-hide');
                 for (var i = 0; i < res.data.length; i++) {
@@ -261,11 +231,11 @@
     //上传附件
     upload.render({
       elem: "#zip-button",
-      url: "{:url('forum/uploads')}", //改成您自己的上传接口
+      url: "{:url('content.forum/uploads')}", //改成您自己的上传接口
       data: { type: "zip" },
       accept: "file", //普通文件
       done: function (res) {
-        if (res.status == 0) {
+        if (res.status === 0) {
           $('input[name="upzip"]').val(res.url);
           layer.msg("上传成功");
         } else {
@@ -286,8 +256,35 @@
       },
     });
 
-  });
+    form.on('submit(forum-save)', function(data) {
+        $.ajax({
+          url: "{:url('content.forum/add')}",
+          data: JSON.stringify(data.field),
+          dataType: 'json',
+          contentType: 'application/json',
+          type: 'post',
+          success: function(result) {
+            if (result.code === 0) {
+              layer.msg(result.msg, {
+                icon: 1,
+                time: 1000
+              }, function() {
+                parent.layer.close(parent.layer.getFrameIndex(window
+                        .name)); //关闭当前页
+                parent.layui.table.reload("user-table");
+              });
+            } else {
+              layer.msg(result.msg, {
+                icon: 2,
+                time: 1000
+              });
+            }
+          }
+        })
+        return false;
+      });
 
+  });
 </script>
 </body>
 </html>

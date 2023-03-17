@@ -42,7 +42,7 @@
   .html5plus .html5plus-hide {display: none}
   {if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") !== false} html body{margin-top: 1px;} {/if}	
   </style>
-  <script src="{$Request.domain}/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body >
 <script> if(navigator.userAgent.indexOf("Html5Plus") > -1) {document.body.classList.add("html5plus")} </script>
@@ -66,7 +66,7 @@
   };
   layui.config({
     version: "3.0.0"
-    ,base: "{$Request.domain}/static/res/mods/"
+    ,base: "/static/res/mods/"
   }).extend({
     fly: 'index'
   }).use('fly');

@@ -148,18 +148,18 @@ CREATE TABLE `tao_auth_rule`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name`(`name`) USING BTREE,
   INDEX `pid`(`pid`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 124 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 200 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_auth_rule
 -- ----------------------------
-INSERT INTO `tao_auth_rule` VALUES (1, 'System', 'System', 1, 1, 0, 0, 'layui-icon-user', 0, 1, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (2, 'Account', 'Account', 1, 1, 0, 0, 'layui-icon-set', 0, 1, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (1, 'System', 'System', 1, 1, 0, 0, 'layui-icon-template', 0, 1, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (2, 'Account', 'Account', 1, 1, 0, 0, 'layui-icon-user', 0, 1, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (3, 'Addon', 'Addon', 1, 1, 0, 0, 'layui-icon-component', 0, 3, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (4, 'Content', 'Content', 1, 1, 0, 0, 'layui-icon-app', 0, 4, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (5, 'Set', 'Set', 1, -1, 0, 0, 'layui-icon-read', 0, 5, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (6, 'Server', 'Server', 1, -1, 0, 0, '', 0, 6, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (7, 'Apps', 'Apps', 1, -1, 0, 0, '', 0, 7, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (4, 'Content', 'Content', 1, 1, 0, 0, 'layui-icon-template-1', 0, 4, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (5, 'Set', 'Set', 1, -1, 0, 0, 'layui-icon-set', 0, 5, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (6, 'Server', 'Server', 1, -1, 0, 0, 'layui-icon-senior', 0, 6, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (7, 'Apps', 'Apps', 1, -1, 0, 0, 'layui-icon-app', 0, 7, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (8, 'ID8', 'ID8', 1, -1, 0, 0, '', 0, 8, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (9, 'ID9', 'ID9', 1, -1, 0, 0, '', 0, 9, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (10, 'apps/index', 'ID10', 1, -1, 0, 0, '', 0, 10, '', 0, 0, 0);

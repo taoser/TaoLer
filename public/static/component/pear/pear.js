@@ -10,6 +10,7 @@ layui.config({
 	version: "3.30.0"
 }).extend({
 	admin: "admin", 	// 框架布局组件
+	common: "common",   // 公共方法封装
 	menu: "menu",		// 数据菜单组件
 	frame: "frame", 	// 内容页面组件
 	tab: "tab",			// 多选项卡组件

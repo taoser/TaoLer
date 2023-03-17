@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @Program: TaoLer 2023/3/14
  * @FilePath: app\admin\controller\content\Forum.php
  * @Description: Forum
@@ -125,7 +125,6 @@ class Forum extends AdminController
             $data = Request::only(['cate_id', 'title', 'title_color', 'tiny_content', 'content', 'upzip', 'keywords', 'description', 'captcha']);
             $tagId = input('tagid');
             $data['user_id'] = 1; //管理员ID
-halt($data);
             // 调用验证器
             $validate = new \app\common\validate\Article;
             $result = $validate->scene('Artadd')->check($data);

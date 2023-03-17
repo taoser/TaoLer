@@ -98,6 +98,7 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 			}
 
 			$.each(item.children, function (i, note) {
+				count++;
 				noticeContent += '<div class="pear-notice-item" notice-form="' + note.form + '" notice-context="' + note.context +
 					'" notice-title="' + note.title + '" notice-id="' + note.id + '">' ;
                     
@@ -116,9 +117,16 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 			noticeContent += '</div>';
 		})
 
-		var notice = '<li class="layui-nav-item" lay-unselect="">' +
-			'<a href="#" class="notice layui-icon layui-icon-notice"><span class="layui-badge-dot"></div></a>' +
-			'<div class="layui-nav-child layui-tab pear-notice" style="margin-top: 0px;left: -200px;padding:0px;">';
+		var notice;
+		if (count > 0){
+			notice = '<li class="layui-nav-item" lay-unselect="">' +
+				'<a href="#" class="notice layui-icon layui-icon-notice"><span class="layui-badge-dot"></span></a>' +
+				'<div class="layui-nav-child layui-tab pear-notice" style="margin-top: 0px;left: -200px;padding:0px;">';
+		}else {
+			notice = '<li class="layui-nav-item" lay-unselect="">' +
+				'<a href="#" class="notice layui-icon layui-icon-notice"></a>' +
+				'<div class="layui-nav-child layui-tab pear-notice" style="margin-top: 0px;left: -200px;padding:0px;">';
+		}
 
 		noticeTitle += '</ul>';
 		noticeContent += '</div>';

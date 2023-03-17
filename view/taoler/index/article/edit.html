@@ -145,8 +145,32 @@
 
 <script src="/static/xm-select.js"></script>
 <script>
-var cateId = "{$article.cate.id}";
-var artId = "{$article.id}";
+	layui.use(['fly'], function(){
+    var $ = layui.jquery
+    ,fly = layui.fly
+    ,colorpicker = layui.colorpicker
+    ,form = layui.form
+    ,upload = layui.upload;
+
+    //获取百度标签标志，tag或者word;
+    var flag = 'word';
+
+    var cateId = "{$article.cate.id}";
+    var artId = "{$article.id}";
+
+
+    //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+    var taonystatus = "{:hook('taonystatus')}";
+    // 编辑器插件启用状态
+    var isShow = taonystatus ? false : true;
+    if(isShow) {
+      $('.layui-textarea').each(function(){
+        var othis = $(this), html = othis.html();
+        othis.attr(fly.content(html));
+      })
+    }
+
+
 // 分类选择
 $(function(){
       //这里模拟ajax
@@ -211,29 +235,6 @@ $(function(){
       });
     })
 
-</script>
-<script>
-	layui.use(['fly'], function(){
-    var $ = layui.jquery
-    ,fly = layui.fly
-    ,colorpicker = layui.colorpicker
-    ,form = layui.form
-    ,upload = layui.upload;
-
-    //获取百度标签标志，tag或者word;
-    var flag = 'word';
-
-
-    //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-    var taonystatus = "{:hook('taonystatus')}";
-    // 编辑器插件启用状态
-    var isShow = taonystatus ? false : true;
-    if(isShow) {
-      $('.layui-textarea').each(function(){
-        var othis = $(this), html = othis.html();
-        othis.attr(fly.content(html));
-      })
-    }
 
   // 通过标题内容自动获取tag的内容
 	var conf = "{:empty(config('taoler.baidu.client_id'))}";
