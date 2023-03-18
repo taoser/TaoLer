@@ -602,7 +602,6 @@
 
 				// 升级提醒
 				$(function (){
-					console.log(123)
 					$.get("{:url('system.upgrade/check')}",function (data){
 						if (data.code === 1) {
 							//可升级

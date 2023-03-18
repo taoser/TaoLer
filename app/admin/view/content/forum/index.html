@@ -104,18 +104,19 @@
 
         <script>
         const FORUM_List       = "{:url('content.forum/list')}";
-              var forumReplys     = "{:url('Forum/replys')}",
-              forumRedel      = "{:url('Forum/redel')}",
-              forumReplysform = "{:url('Forum/replysform')}",
-              forumTags       = "{:url('Forum/tags')}",
-              forumTagsDelete = "{:url('Forum/tagsdelete')}",
-              forumTagsForm   = "{:url('Forum/tagsform')}";
-                var forumList      = "{:url('content.forum/list')}";
-              layui.use(['jquery','form', 'table','common'], function(){
+
+        layui.use(['toast','jquery','form', 'table','common'], function(){
                 var $ = layui.jquery
                 ,form = layui.form
                 ,table = layui.table;
                 let common = layui.common;
+                var toast = layui.toast;
+
+                  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+                  var taonystatus = "{:hook('taonystatus')}";
+                  // 编辑器插件启用状态
+                  var isShow = taonystatus ? false : true;
+
 
                 let cols = [
                   [
@@ -207,6 +208,10 @@
               });
 
               window.add = function() {
+                  if(isShow) {
+                      toast.info({title: '信息',message: '编辑器插件未开启或未安装',position: 'topRight'});
+                      return false;
+                  }
                 layer.open({
                   type: 2,
                   title: '新增',
@@ -217,6 +222,10 @@
               }
 
               window.edit = function(obj) {
+                  if(isShow) {
+                      toast.info({title: '信息',message: '编辑器插件未开启或未安装',position: 'topRight'});
+                      return false;
+                  }
                 layer.open({
                   type: 2,
                   title: '修改',
