@@ -73,7 +73,7 @@ class Article extends Model
 		$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
 		$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
 		$result = $this->save($data);
-		if($result == true) {
+		if($result) {
 			return ['code' => 1, 'msg' => $msg, 'data' => ['status' => $data['status'], 'id'=> $this->id]];
 		} else {
 			return ['code' => -1, 'msg'=> '添加文章失败'];

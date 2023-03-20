@@ -3028,17 +3028,17 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.59",
-            "version_normalized": "2.0.59.0",
+            "version": "v2.0.60",
+            "version_normalized": "2.0.60.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "ac0f18bc3063ca924ed5b4af6e405d74f44d2870"
+                "reference": "8bc34a4307fa27186c0e96a9b3de3cb23aa1ed46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/ac0f18bc3063ca924ed5b4af6e405d74f44d2870",
-                "reference": "ac0f18bc3063ca924ed5b4af6e405d74f44d2870",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/8bc34a4307fa27186c0e96a9b3de3cb23aa1ed46",
+                "reference": "8bc34a4307fa27186c0e96a9b3de3cb23aa1ed46",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3058,7 +3058,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^7|^8|^9.5"
             },
-            "time": "2023-03-06T10:12:41+00:00",
+            "time": "2023-03-19T04:51:56+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3086,7 +3086,7 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v2.0.59"
+                "source": "https://github.com/top-think/think-orm/tree/v2.0.60"
             },
             "install-path": "../topthink/think-orm"
         },

@@ -39,7 +39,7 @@
 
                 <div class="layui-form-item layui-form-text">
                   <div class="layui-input-block">
-                    <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea fly-editor" style="height: 260px"> </textarea>
+                    <textarea id="L_content" name="content" required lay-verify="" placeholder="{:lang('please input the content')}" class="layui-textarea"> </textarea>
                   </div>
                 </div>
                 <div class="layui-form-item layui-inline">
@@ -85,12 +85,14 @@
             </div>
           </div>
         </form>
+
             <script src="/static/component/layui/layui.js"></script>
             <script src="/static/component/pear/pear.js"></script>
             <script src="/static/addons/taonyeditor/tinymce/tinymce.min.js"></script>
             <script src="/static/xm-select.js"></script>
 
             <script>
+
             layui.extend({
                 editor: '{/}/static/addons/taonyeditor/js/taonyeditor'
               }).use(["form", "colorpicker", "upload",'editor','xmSelect'], function () {
@@ -227,6 +229,7 @@
             });
 
             form.on('submit(forum-save)', function(data) {
+                console.log(data)
                 $.ajax({
                   url: "{:url('content.forum/add')}",
                   data: JSON.stringify(data.field),

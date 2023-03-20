@@ -309,9 +309,9 @@ class Addons extends AdminController
                     //$pid = AuthRule::where('name','addons')->value('id');
                     return json(['code'=>-1,'msg'=> 'is_nav菜单项目设置错误']);
                 }
-                // 开启关闭的父ID状态
+                // 父ID状态为0时打开
                 $pidStatus = AuthRule::where('id', $pid)->value('status');
-                if(!$pidStatus) {
+                if($pidStatus < 1) {
                     AuthRule::update(['status' => 1, 'id' => $pid]);
                 }
                 // 安装菜单
