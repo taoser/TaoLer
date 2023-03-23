@@ -390,6 +390,9 @@ class Addons extends AdminController
     public function upgrade()
     {
         $data = Request::only(['name','version','uid','token']);
+        // 接口
+        $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
+        if($response->code < 0) return json($response);
         // 获取配置信息
         $config = get_addons_config($data['name']);
         // 卸载插件

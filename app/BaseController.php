@@ -213,6 +213,11 @@ abstract class BaseController
 		return  $htpw;
 	}
 
+    protected function getDomain()
+    {
+        return $this->getHttpUrl($this->getSystem()['domain']);
+    }
+
     /**
      * 运行时间计算
      * @return string
@@ -242,7 +247,7 @@ abstract class BaseController
      */
     protected function getRouteUrl(int $aid, $ename = '')
     {
-        $domain = $this->getHttpUrl($this->getSystem()['domain']);
+        $domain = $this->getDomain();
         $appName = app('http')->getName();
         $articleUrl = (string) url('article_detail', ['id' => $aid]);
         // 详情动态路由，$aid, $ename

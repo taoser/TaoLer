@@ -38,10 +38,9 @@ class AdminController extends \app\BaseController
         $this->aid = Session::get('admin_id');
 		//系统配置
         $sys = $this->getSystem();
-        $domain = $this->getHttpUrl($sys['domain']);
         $syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
         $runTime = $this->getRunTime();
-        View::assign(['domain'=>$domain,'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime]);
+        View::assign(['domain'=>$this->getDomain(),'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime]);
 	}
 
      /**
@@ -180,28 +179,28 @@ class AdminController extends \app\BaseController
         if($bind_admin) {
             // 1.应用绑定了域名
             if($app_bind) {
-                return $this->getIndexUrl() . $articleUrl;
+                return $this->getDomain() . $articleUrl;
             }
             // 2.应用进行了映射
             if($app_map){
-                return $this->getIndexUrl() . '/' . $appName . $articleUrl;
+                return $this->getDomain() . '/' . $appName . $articleUrl;
             }
             // 3.应用未绑定域名也未进行映射
-            return $this->getIndexUrl() . '/' . $appName . $articleUrl;
+            return $this->getDomain() . '/' . $appName . $articleUrl;
         }
 
         //2.admin进行了映射
         if($map_admin) {
             // 1.应用绑定了域名
             if($app_bind) {
-                return $this->getIndexUrl() . str_replace($map_admin, '', $articleUrl);;
+                return $this->getDomain() . str_replace($map_admin, '', $articleUrl);;
             }
             // 2.应用进行了映射
             if($app_map){
-                return $this->getIndexUrl() . str_replace($map_admin, $app_map, $articleUrl);
+                return $this->getDomain() . str_replace($map_admin, $app_map, $articleUrl);
             }
             // 3.应用未绑定域名也未进行映射
-            return  $this->getIndexUrl() . str_replace($map_admin, $appName, $articleUrl);
+            return  $this->getDomain() . str_replace($map_admin, $appName, $articleUrl);
         }
         //3.admin未绑定域名也未映射
         return str_replace('admin', $appName, $articleUrl);
