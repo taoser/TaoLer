@@ -10,7 +10,7 @@
 		{//导航nav}
 		{volist name="cateList" id="cate"}
 			<li class="layui-nav-item {if($cate.ename eq $Request.param.ename)} layui-this {/if}" >
-				<a href="{$cate.url}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</a> {if condition="$cate.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}
+				<a href="{$cate.url}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename} {if condition="$cate.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
 				{notempty name="cate.children"}
 				<dl class="layui-nav-child"> <!-- 二级菜单 -->
 					{volist name="cate.children" id="vo2"}

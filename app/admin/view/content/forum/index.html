@@ -199,7 +199,7 @@
               form.on('switch(artStatus)', function(obj){
                 //layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
                 $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
-                  if(res.code == 0){
+                  if(res.code === 0){
                                 layer.msg(res.msg,{icon:res.icon,time:2000})
                         } else {
                                 layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})

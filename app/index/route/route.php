@@ -65,7 +65,7 @@ Route::group('art',function () use($detail_as,$cate_as){
 Route::get('tag','tag/getAllTag')->name('get_all_tag');
 Route::get('arttag','tag/getArticleTag')->name('get_art_tag');
 
-Route::group(function () use($detail_as,$cate_as){
+Route::group(function () use($detail_as, $cate_as){
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
 	Route::get($detail_as . ':id$', 'article/detail')->name('article_detail');
 	Route::get($cate_as . '<ename>$','article/cate')->name('cate');

@@ -40,7 +40,6 @@
           </a>
           <div class="fly-detail-user">
             <a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
-            {if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="">{:getAsing($article.user.area_id) ?: '无'}</i>{/if}
             <cite>{$article.user.nickname ?: $article.user.name}</cite>
             </a>
             <span class="layui-btn layui-btn-xs guanzhu" >关注</span>
@@ -97,7 +96,6 @@
               </a>
               <div class="fly-detail-user">
                 <a href="{$Request.domain}{:url('user/home',['id'=>$vo.user.id])}" class="fly-link">
-				          {if config('taoler.config.area_show') == 1}<i class="layui-badge layui-bg-green " title="">{:getAsing($vo.user.area_id) ?: '无'}</i>{/if}
                   <cite>{$vo.user.nickname ?: $vo.user.name}</cite>     
                 </a>
                 {if condition="$article.user.id eq $vo.user.id"}<span>({:lang('poster')})</span>{/if}
@@ -221,6 +219,7 @@ var collectionFind = "{:url('Collection/find')}",
     commentJiedaDelete = "{:url('Comment/jiedaDelete')}",
     langCollection = "{:lang('collection')}",
     langCancelCollection = "{:lang('cancel collection')}";
+  let taonystatus = "{:hook('taonystatus') ? 1 : 0} ";
 	  
 layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 	var $ = layui.jquery
@@ -235,8 +234,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
   //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
   var taonystatus = "{:hook('taonystatus')}";
   // 编辑器插件启用状态
-  var isShow = taonystatus ? false : true;
-  if(isShow) {
+  if(taonystatus == 0) {
     $('.detail-body').each(function(){
       var othis = $(this), html = othis.html();
       othis.html(fly.content(html));

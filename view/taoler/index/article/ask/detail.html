@@ -89,7 +89,7 @@
             
             <div class="jieda-reply">
               <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan"><i class="iconfont icon-zan"></i><em>{$vo.zan}</em>赞</span>
-              <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
+              <span type="reply" id="user-reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
               {//评论 编辑/删除/采纳/权限}
               <div class="jieda-admin">
                 {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth ?? '')}
@@ -101,7 +101,7 @@
               </div>
             </div>
             <div style="margin: 5px 0px;">
-              <hr width="90%" style="border:1px dotted red;height:1px" />
+              <hr style="border:1px dotted red;height:1px;width:90%" />
               <div>{$vo.user.sign|raw}</div>
             </div>
           </li>
@@ -203,6 +203,7 @@
       commentJiedaDelete = "{:url('Comment/jiedaDelete')}",
       langCollection = "{:lang('collection')}",
       langCancelCollection = "{:lang('cancel collection')}";
+  let taonystatus = "{:hook('taonystatus') ? 1 : 0} ";
 
   layui.use(["fly", "face", "colorpicker", "laypage"], function () {
     var $ = layui.jquery,
@@ -214,10 +215,9 @@
       laypage = layui.laypage;
 
     //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-    var taonystatus = "{:hook('taonystatus')}";
-    // 编辑器插件启用状态
-    var isShow = taonystatus ? false : true;
-    if(isShow) {
+
+    // 编辑器插件禁用状态,用原方式解析网页
+    if(taonystatus == 0) {
       $('.detail-body').each(function(){
         var othis = $(this), html = othis.html();
         othis.html(fly.content(html));
@@ -282,7 +282,7 @@
     form.on("submit(user-comment)", function (data) {
       var index = layer.load(1);
       var filed = data.field;
-      if (uid == -1) {
+      if (uid === -1) {
         layer.msg("请先登陆", { icon: 5, time: 2000 }, function () {
           location.href = "{:url('login/index')}";
         });
@@ -348,7 +348,7 @@
 {include file="/public/images-click" /}
 {:hook('markdownhook')}
 {include file="/public/qr-read" /}
- 
+
 {volist name="push_js" id="vo"} {$vo.jscode|raw} {/volist}
 {/block}
 

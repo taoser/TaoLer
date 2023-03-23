@@ -27,6 +27,8 @@ class AdminController extends \app\BaseController
 
     protected $aid = '';
 
+    protected $appName = '';
+
     /**
      * 初始化菜单
      */
@@ -35,7 +37,11 @@ class AdminController extends \app\BaseController
 		//权限auth检查
         $this->aid = Session::get('admin_id');
 		//系统配置
-		$this->getIndexUrl();
+        $sys = $this->getSystem();
+        $domain = $this->getHttpUrl($sys['domain']);
+        $syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
+        $runTime = $this->getRunTime();
+        View::assign(['domain'=>$domain,'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime]);
 	}
 
      /**
@@ -140,6 +146,65 @@ class AdminController extends \app\BaseController
 		Files::delDirAndFile($itemp);
         Files::delDirAndFile($cache);
 		return true;
+    }
+
+    /**
+     * 获取路由
+     * @param int $aid
+     * @param string $appName
+     * @param string $ename
+     * @return string|void
+     */
+    protected function getArticleUrl(int $aid, string $appName = 'index', string $ename = '' )
+    {
+        // admin管理后台 解析非admin应用路由
+        //$appName = app('http')->getName();
+
+        $articleUrl = (string) url('article_detail', ['id' => $aid]);
+        // 详情动态路由，$aid, $ename
+        if(config('taoler.url_rewrite.article_as') == '<ename>/'){
+            $articleUrl = (string) url('article_detail', ['id' => (int) $aid, 'ename'=> $ename]);
+        }
+
+        // 判断应用是否绑定域名
+        $app_bind = array_search($appName, config('app.domain_bind'));
+        // 判断应用是否域名映射
+        $app_map = array_search($appName, config('app.app_map'));
+
+        // 判断admin应用是否绑定域名
+        $bind_admin = array_search('admin',config('app.domain_bind'));
+        // 判断admin应用是否域名映射
+        $map_admin = array_search('admin',config('app.app_map'));
+
+        //1.admin绑定了域名
+        if($bind_admin) {
+            // 1.应用绑定了域名
+            if($app_bind) {
+                return $this->getIndexUrl() . $articleUrl;
+            }
+            // 2.应用进行了映射
+            if($app_map){
+                return $this->getIndexUrl() . '/' . $appName . $articleUrl;
+            }
+            // 3.应用未绑定域名也未进行映射
+            return $this->getIndexUrl() . '/' . $appName . $articleUrl;
+        }
+
+        //2.admin进行了映射
+        if($map_admin) {
+            // 1.应用绑定了域名
+            if($app_bind) {
+                return $this->getIndexUrl() . str_replace($map_admin, '', $articleUrl);;
+            }
+            // 2.应用进行了映射
+            if($app_map){
+                return $this->getIndexUrl() . str_replace($map_admin, $app_map, $articleUrl);
+            }
+            // 3.应用未绑定域名也未进行映射
+            return  $this->getIndexUrl() . str_replace($map_admin, $appName, $articleUrl);
+        }
+        //3.admin未绑定域名也未映射
+        return str_replace('admin', $appName, $articleUrl);
     }
 
 

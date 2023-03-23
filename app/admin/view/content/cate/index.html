@@ -36,8 +36,11 @@
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
 
-<script type="text/html" id="cate-enable">
-    <input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="primary" lay-filter="cate-enable"  {{ d.is_hot == 1 ? 'checked' : '' }} />
+<script type="text/html" id="cate-hot">
+    <input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="primary" lay-filter="cate-hot"  {{ d.is_hot == 1 ? 'checked' : '' }} />
+</script>
+<script type="text/html" id="cate-check">
+    <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="cate-check" {{ d.status== 1 ? 'checked' : '' }} />
 </script>
 
 <script type="text/html" id="icon">
@@ -49,7 +52,7 @@
 <script>
     const CATE = "{:url('content.cate/list')}";
     const DELETE = "{:url('content.cate/delete')}";
-    const ENABLE = "{:url('content.cate/hot')}";
+    const CHECK = "{:url('content.cate/check')}";
 
     layui.use(['table','form','jquery','treetable'],function () {
         let $ = layui.jquery;
@@ -57,19 +60,16 @@
         let form = layui.form;
         let treetable = layui.treetable;
 
-
-        let MODULE_PATH = "operate/";
-
         let cols = [
             [
                 {type: 'checkbox'}
                 ,{field: 'catename', title: '分类名', width: 150}
-                ,{field: 'appname', title: '所属应用', width: 90}
                 ,{field: 'ename', title: 'EN别名', width: 100}
                 ,{field: 'detpl',title: '模板', align: 'center',width: 100}
                 ,{field: 'icon', title: '图标', align: 'center',width: 50, templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
-                ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#cate-enable'}
+                ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#cate-hot'}
                 ,{field: 'desc', title: '描述', minWidth: 200}
+                ,{field: 'status', title: '状态', width: 80,templet:'#cate-check'}
                 ,{field: 'id', title: 'ID',width: 60}
                 ,{field: 'sort', title: '排序', width: 80, sort: true}
                 ,{title: '操作', width: 120, align: 'center', toolbar: '#cate-bar'}
@@ -83,7 +83,7 @@
                 treeIdName: 'id',
                 treePidName: 'pid',
                 skin:'line',
-                treeDefaultClose: true,
+                treeDefaultClose: false,
                 toolbar:'#cate-toolbar',
                 elem: '#cate-table',
                 url: CATE,
@@ -117,35 +117,29 @@
 			}
         });
 
-        form.on('checkbox(cate-enable)', function(obj) {
-					layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
-					var status = obj.elem.checked ? 1 : 0;
-					//执行用户审核
-						$.ajax({
-							type:'post',
-							url: ENABLE,
-							data:{"id":this.value,"is_hot":status},
-							dataType:'json',
-							success:function(res){
-								if(res.code === 0){
-									layer.msg(res.msg,{
-										icon:res.icon,
-										time:2000
-									}
-									//,function(){location.reload();}
-									);
-								} else {
-									layer.open({
-										title:'审核失败',
-										content:res.msg,
-										icon:5,
-										adim:6
-									})
-								}
-							}
-						});
-						return false;
-				});
+        form.on('checkbox(cate-hot)', function(obj){
+            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+            var status = obj.elem.checked ? 1 : 0;
+            $.post(CHECK,{id:this.value, name:this.name, value: status},function(res){
+                if(res.code === 0){
+                    layer.msg(res.msg,{icon:res.icon,time:2000})
+                } else {
+                    layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+                }
+            });
+        });
+
+        form.on('switch(cate-check)', function(obj){
+            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+            var status = obj.elem.checked ? 1 : 0;
+            $.post(CHECK,{id:this.value, name:this.name, value: status},function(res){
+                if(res.code === 0){
+                    layer.msg(res.msg,{icon:res.icon,time:2000})
+                } else {
+                    layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+                }
+            });
+        });
 
         window.add = function(){
             layer.open({
@@ -153,7 +147,7 @@
                 title: '新增',
                 shade: 0.1,
                 area: ['450px', '500px'],
-                content: 'add.html'
+                content: 'addEdit.html'
             });
         }
 
@@ -163,7 +157,7 @@
                 title: '修改',
                 shade: 0.1,
                 area: ['450px', '500px'],
-                content: 'edit.html?id=' + obj.data.id
+                content: 'addEdit.html?id=' + obj.data.id
             });
         }
         window.remove = function(obj){

@@ -109,28 +109,24 @@ class Article extends Model
      */
     public function getArtTop(int $num)
     {
-        $artTop = Cache::get('arttop');
-        // 区分应用分类
-        $appCateIdArr = Cate::where(['appname' => app('http')->getName()])->column('id');
-        if (!$artTop) {
-            $artTop = $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,jie,upzip,has_img,has_video,has_audio')->where([['is_top', '=', 1], ['status', '=', 1], ['cate_id', 'in', $appCateIdArr]])
-            ->with([
-                'cate' => function ($query) {
-                    $query->where('delete_time', 0)->field('id,catename,ename');
-                },
-                'user' => function ($query) {
-                    $query->field('id,name,nickname,user_img,area_id,vip');
-                }
-            ])->withCount(['comments'])
-            ->order('create_time', 'desc')
-            ->limit($num)
-            ->append(['url'])
-            ->select()
-            ->toArray();
-			
-            Cache::tag('tagArtDetail')->set('arttop', $artTop, 60);
-        }
-        return $artTop;
+
+        return Cache::remember('topArticle', function() use($num){
+             return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,upzip,has_img,has_video,has_audio')
+                ->where([['is_top', '=', 1], ['status', '=', 1]])
+                ->with([
+                    'cate' => function ($query) {
+                        $query->where('delete_time', 0)->field('id,catename,ename');
+                    },
+                    'user' => function ($query) {
+                        $query->field('id,name,nickname,user_img');
+                    }
+                ])->withCount(['comments'])
+                ->order('create_time', 'desc')
+                ->limit($num)
+                ->append(['url'])
+                ->select()
+                ->toArray();
+        },60);
     }
 
     /**
@@ -143,29 +139,24 @@ class Article extends Model
      */
     public function getArtList(int $num)
     {
-        $artList = Cache::get('artlist');
-        // 区分应用分类
-        $appCateIdArr = Cate::where(['appname' => app('http')->getName()])->column('id');
-		if(!$artList){
-			$artList = $this::field('id,title,title_color,cate_id,user_id,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio')
+        return Cache::remember('indexArticle', function() use($num){
+            return $this::field('id,title,title_color,cate_id,user_id,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio')
             ->with([
             'cate' => function($query){
                 $query->where('delete_time',0)->field('id,catename,ename,detpl');
             },
 			'user' => function($query){
-                $query->field('id,name,nickname,user_img,area_id,vip');
+                $query->field('id,name,nickname,user_img');
 			} ])
             ->withCount(['comments'])
-            ->where([['status', '=', 1], ['is_top', '=', 0],['cate_id', 'in', $appCateIdArr]])
+            ->where('status', '=', 1)
             ->order('create_time','desc')
             ->limit($num)
             ->append(['url'])
             ->select()
             ->toArray();
+		},30);
 
-			Cache::tag('tagArt')->set('artlist',$artList,60);
-		}
-		return $artList;
     }
 
     /**
@@ -197,17 +188,14 @@ class Article extends Model
     /**
      * 获取详情
      * @param int $id 文章id
-     * @return array|mixed|Model|null
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return mixed
+     * @throws \Throwable
      */
     public function getArtDetail(int $id)
     {
-        $article = Cache::get('article_'.$id);
-        if(!$article){
+        return Cache::remember('article_'.$id, function() use($id){
             //查询文章
-            $article = $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,keywords,description,title_color,create_time,update_time')
+            return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,keywords,description,title_color,create_time,update_time')
             ->where(['status'=>1])
             ->with([
                 'cate' => function($query){
@@ -220,68 +208,54 @@ class Article extends Model
             ->withCount(['comments'])
             ->append(['url'])
             ->find($id);
-            if (!is_null($article)) {
-                Cache::tag('tagArtDetail')->set('article_'.$id, $article->toArray(), 3600);
-            } else {
-                return null;
-            }
             
-        }
-        return $article;
+        }, 600);
+
     }
 
     /**
-     * 获取分类列表
-     * @param string $ename 分类英文名
+     * 分类数据
+     * @param string $ename
      * @param string $type  all\top\hot\jie 分类类型
-     * @param int $page 页面
-     * @return mixed|\think\Paginator
-     * @throws \think\db\exception\DbException
+     * @param int $page
+     * @return mixed
+     * @throws \Throwable
      */
     public function getCateList(string $ename, string $type, int $page = 1)
     {
         $where = [];
-        // 区分应用分类
-        $appCateIdArr = Cate::where(['appname' => app('http')->getName()])->column('id');
         $cateId = Cate::where('ename',$ename)->value('id');
         if($cateId){
             $where[] = ['cate_id' ,'=', $cateId];
-        } else {
-            if($ename != 'all'){
-                // 抛出 HTTP 异常
-                throw new \think\exception\HttpException(404, '异常消息');
-            }
-            $where[] = ['cate_id' ,'in',$appCateIdArr];
         }
 
-        $artList = Cache::get('arts'.$ename.$type.$page);
-        if(!$artList){
-            switch ($type) {
-                //查询文章,15个分1页
-                case 'jie':
-                    $where[] = ['jie','=', 1];
-                    break;
-                case 'hot':
-                    $where[] = ['is_hot','=', 1];
-                    break;
-                case 'top':
-                    $where[] = ['is_top' ,'=', 1];
-                    break;
-				case 'wait':
-                    $where[] = ['jie','=', 0];
-                    break;
+        switch ($type) {
+            //查询文章,15个分1页
+            case 'jie':
+                $where[] = ['jie','=', 1];
+                break;
+            case 'hot':
+                $where[] = ['is_hot','=', 1];
+                break;
+            case 'top':
+                $where[] = ['is_top' ,'=', 1];
+                break;
+            case 'wait':
+                $where[] = ['jie','=', 0];
+                break;
+        }
+        $where[] = ['status', '=', 1];
 
-            }
-            $artList = $this::field('id,title,content,title_color,cate_id,user_id,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')
+        return Cache::remember('cate_list_'.$ename.$type.$page, function() use($where,$page){
+            return $this::field('id,cate_id,user_id,title,content,title_color,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio')
             ->with([
                 'cate' => function($query) {
-                    $query->where('delete_time',0)->field('id,catename,ename,appname');
+                    $query->field('id,catename,ename');
                 },
                 'user' => function($query){
-                    $query->field('id,name,nickname,user_img,area_id,vip');
+                    $query->field('id,name,nickname,user_img,vip');
                 }
             ])->withCount(['comments'])
-                ->where('status',1)
                 ->where($where)
                 ->limit(15)
                 ->order(['create_time'=>'desc'])
@@ -289,10 +263,7 @@ class Article extends Model
                     'list_rows' => 15,
                     'page' => $page
                 ])->append(['url'])->toArray();
-
-            Cache::tag('tagArtDetail')->set('arts'.$ename.$type.$page,$artList,600);
-        }
-        return $artList;
+        }, 600);
     }
 
     // 获取用户发帖列表
@@ -409,15 +380,30 @@ class Article extends Model
         return ['previous' => $previous, 'next' => $next];
     }
 
+    // 获取所有帖子内容
+    public function getList($limit,$page)
+    {
+        return $this::field('id,user_id,cate_id,title,content,is_top,is_hot,is_reply,status,update_time')->with([
+            'user' => function($query){
+                $query->field('id,name,user_img');
+            },
+            'cate' => function($query){
+                $query->field('id,ename');
+            }
+        ])->paginate([
+            'list_rows' => $limit,
+            'page' => $page
+        ])->toArray();
+    }
+
     // 获取url
     public function getUrlAttr($value,$data)
     {
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
-            $cate = Cate::field('id,ename')->find($data['cate_id']);
-            return (string) url('article_detail',['id' => $data['id'],'ename' => $cate->ename]);
-        } else {
-            return (string) url('article_detail',['id' => $data['id']]);
+            //$cate = Cate::field('id,ename')->find($data['cate_id']);
+            return (string) url('article_detail',['id' => $data['id'],'ename' => $this->cate->ename]);
         }
+        return (string) url('article_detail',['id' => $data['id']]);
     }
 
 

@@ -32,9 +32,6 @@
               <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
               {/if}
               <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
-                {if config('taoler.config.area_show') == 1}
-                <span class="layui-badge layui-bg-green " title="来自哪简称">{:getAsing($art.user.area_id) ?: '无'}</span>
-                {/if}
                 <cite>{$art.user.nickname ?: $art.user.name}</cite>
                 <i>{$art.create_time|date='Y-m-d'}</i>
               </a>

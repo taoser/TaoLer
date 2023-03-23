@@ -12,7 +12,9 @@ layui.define('fly', function(exports){
   var laytpl = layui.laytpl;
   var form = layui.form;
   var fly = layui.fly;
-  
+
+  var uid = layui.cache.user.uid;
+
   var gather = {}, dom = {
     jieda: $('#jieda')
     ,content: $('#L_content')
@@ -82,7 +84,7 @@ layui.define('fly', function(exports){
           data:{id: div.data('id')},
           dataType:'json',
           success:function(data){
-            if(data.code == 0){
+            if(data.code === 0){
               layer.msg(data.msg,{
                 icon:6,
                 time:2000
@@ -163,16 +165,26 @@ layui.define('fly', function(exports){
           othis[ok ? 'removeClass' : 'addClass']('zanok');
           othis.find('em').html(ok ? (--zans) : (++zans));
         } else {
-          layer.msg(res.msg);
+          layer.msg(res.msg, {icon: 6});
         }
       });
     }
     ,reply: function(li){ //回复
+      //判断登陆
+      if(uid == -1){
+        layer.msg('请登录再回复', {icon: 6})
+        return false;
+      }
       var val = dom.content.val();
       var aite = '@'+ li.find('.fly-detail-user cite').text().replace(/\s/g, '');
       dom.content.focus()
       if(val.indexOf(aite) !== -1) return;
-      dom.content.val(aite +' ' + val);
+      // 切换编辑器 回复@赋值
+      if(taonystatus == 0) {
+        dom.content.val(aite +' ' + val);
+      } else { //编辑器插件赋值
+        tinymce.activeEditor.setContent(aite + ' .' + val);
+      }
     }
     ,accept: function(li){ //采纳
       var othis = $(this);
@@ -204,9 +216,14 @@ layui.define('fly', function(exports){
           ,title: '编辑回帖'
           ,area: ['738px', '310px']
           ,success: function(layero){
+
+            if(taonystatus == 0) {
               fly.layEditor({
                 elem: layero.find('textarea')
-              });            
+              });
+            } else {
+              // 编辑器
+            }
           }
         }, function(value, index){
           fly.json(commentUpdateDa, {

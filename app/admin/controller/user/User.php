@@ -37,6 +37,7 @@ class User extends AdminController
 		if(Request::isAjax()){
 			$datas = Request::only(['id','name','email','sex','status']);
 			$map = array_filter($datas,[$this,'filtrArr']);
+            halt($map);
 			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->paginate([
                 'list_rows' => input('limit'),
                 'page' => input('page')
@@ -98,7 +99,7 @@ class User extends AdminController
 	public function edit()
 	{
 		if(Request::isAjax()){
-			$data = Request::only(['name','email','user_img','password','phone','sex']);
+			$data = Request::only(['id','name','email','user_img','password','phone','sex']);
             $user = Db::name('user')->field('create_time')->find($data['id']);
             $salt = substr(md5($user['create_time']),-6);
             // 密码

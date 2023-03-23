@@ -10,10 +10,7 @@
  */
 namespace app\common\model;
 
-use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\facade\Lang;
 use think\Model;
 use think\model\concern\SoftDelete;
 
@@ -37,42 +34,48 @@ class Cate extends Model
 		return $this->field('ename,catename,detpl,desc')->where('ename',$ename)->cache('cate_'.$ename,600)->find();
 	}
 
+    // ID查询类别信息
+    public function getCateInfoById(int $id)
+    {
+        return $this->field('id,catename,ename,detpl,pid,icon,sort,desc')->find($id);
+    }
+
     // 查询子分类
     public function getSubCate(string $ename)
     {
         return $this->field('ename,catename')->where('pid', $this::where('ename', $ename)->value('id'))->select();
     }
 
-	// 删除类别
+    /**
+     * 删除分类
+     * @param $id
+     * @return int|string
+     * @throws DbException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
 	public function del($id)
 	{
 		$cates = $this->field('id,pid')->with('article')->find($id);
 		$sonCate = $this->field('id,pid')->where('pid',$cates['id'])->find();
 		if(empty($sonCate)) {
 			$res = $cates->together(['article'])->delete();
-			if($res){
-				return 1;
-			}else{
-				return '删除分类失败';
-			}
-		} else {
-			return '存在子分类，无法删除';
+            return $res ? 1 : '删除失败';
 		}
+        return '存在子分类，无法删除';
 	}
 
     // 分类表
     public function getList()
     {
-        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,appname,is_hot,desc')->where(['status'=>1])->select()->toArray();
-
+        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,status,is_hot,desc')->select()->toArray();
         if(count($data)) {
             // 排序
             $cmf_arr = array_column($data, 'sort');
             array_multisort($cmf_arr, SORT_ASC, $data);
             return json(['code'=>0,'msg'=>'ok', 'count' => count($data),'data'=>$data]);
-        } else {
-            return json(['code'=>-1,'msg'=>'no data','data'=>'']);
         }
+        return json(['code'=>-1,'msg'=>'no data','data'=>'']);
     }
 
     // 如果菜单下无内容，URl不能点击
@@ -80,12 +83,11 @@ class Cate extends Model
     {
         $appname = app('http')->getName();
         try {
-            $cateList = $this->where(['status' => 1, 'appname' => $appname])
+            return $this->where(['status' => 1, 'appname' => $appname])
                 ->cache('catename' . $appname, 3600)
                 ->append(['url'])
                 ->select()
                 ->toArray();
-            return $cateList;
         } catch (DbException $e) {
             return $e->getMessage();
         }
@@ -96,7 +98,7 @@ class Cate extends Model
     public function getUrlAttr($value,$data)
     {
         // 栏目下存在帖子，则返回正常url,否则为死链
-        $articleArr = Article::where('cate_id',$data['id'])->column('id');
+        $articleArr = Article::field('id')->where('cate_id', $data['id'])->find();
         if(empty($articleArr)) {
             return 'javascript:void(0);';
         }

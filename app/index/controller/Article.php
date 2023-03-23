@@ -292,16 +292,14 @@ class Article extends BaseController
 				// 发提醒邮件
 				if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
 
-                $link = $this->getRouteUrl((int)$aid, $cateName['ename'], $cateName['appname']);
-				// 推送给百度收录接口
-				$this->baiduPushUrl($link);
+                $link = $this->getRouteUrl((int)$aid, $cateName['ename']);
+
+                hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 				    
 				$url = $result['data']['status'] ? $link : (string)url('index/');
-				$res = Msgres::success($result['msg'], $url);
-            } else {
-                $res = Msgres::error('add_error');
+				return Msgres::success($result['msg'], $url);
             }
-            return $res;
+            return Msgres::error('add_error');
         }
 
 		
@@ -394,14 +392,12 @@ class Article extends BaseController
 					
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
-                    $link = $this->getRouteUrl((int) $id, $article->cate->ename, $article->cate->appname);
-					// 推送给百度收录接口
-					$this->baiduPushUrl($link);
-					$editRes = Msgres::success('edit_success',$link);
-				} else {
-                    $editRes = Msgres::error($result);
+                    $link = $this->getRouteUrl((int) $id, $article->cate->ename);
+
+                    hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+					return Msgres::success('edit_success',$link);
 				}
-				return $editRes;
+                return Msgres::error($result);
 			}
 		}
 			
@@ -427,11 +423,9 @@ class Article extends BaseController
 		$article = ArticleModel::find(input('id'));
 		$result = $article->together(['comments'])->delete();
 		if($result) {
-		    $res = Msgres::success('delete_success');
-		} else {
-			$res = Msgres::error('delete_error');
+            return  Msgres::success('delete_success');
 		}
-		return $res;
+        return  Msgres::error('delete_error');
 	}
 
 	/**

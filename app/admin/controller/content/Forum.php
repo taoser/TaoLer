@@ -12,6 +12,7 @@ namespace app\admin\controller\content;
 
 use app\common\controller\AdminController;
 use app\common\model\Article;
+use think\App;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -23,6 +24,14 @@ use think\response\Json;
 
 class Forum extends AdminController
 {
+    protected $model;
+
+    public function __construct(App $app)
+    {
+        parent::__construct($app);
+        $this->model = new Article();
+    }
+
     /**
      * 浏览
      * @return string
@@ -32,87 +41,31 @@ class Forum extends AdminController
 		return View::fetch();
 	}
 
-    //帖子列表
-	public function list()
-	{
-		if(Request::isAjax()){	
-		$data = Request::only(['id','name','title','sec']);
-		$where =array();
-		if (!empty($data['sec'])) {
-			switch ($data['sec']) {
-			case '1':
-			$data['a.status'] = 1;
-			break;
-			case '2':
-			$data['is_top'] = 1;
-			break;
-			case '3':
-			$data['is_hot'] = 1;
-			break;
-			case '4':
-			$data['is_reply'] = 0;
-			break;
-			case '5':
-			$data['a.status'] = -1;
-			break;
-			case '6':
-			$data['a.status'] = 0;
-			break;
-			}
-		}
-		unset($data['sec']);
-		unset($data['status']);
+    public function list()
+    {
+        $list = $this->model->getList(input('limit'),input('page'));
+        $res = [];
+        if($list['total']){
+            foreach($list['data'] as $v) {
+                $res['data'][] = [
+                    'id'        => $v['id'],
+                    'poster'    => $v['user']['name'],
+                    'avatar'    => $v['user']['user_img'],
+                    'title'     => htmlspecialchars($v['title']),
+                    'url'       => $this->getArticleUrl($v['id'], 'index', $v['cate']['ename']),
+                    'content'   => strip_tags($v['content']),
+                    'posttime'  => $v['update_time'],
+                    'top'       => $v['is_top'],
+                    'hot'       => $v['is_hot'],
+                    'reply'     => $v['is_reply'],
+                    'check'     => $v['status']
+                ];
 
-		if(!empty($data['id'])){
-			$data['a.id'] = $data['id'];
-			unset($data['id']);
-		}
-		
-		if(!empty($data['title'])){
-			$where[] = ['title', 'like', '%'.$data['title'].'%'];
-			unset($data['title']);
-		}
-
-		$map = array_filter($data,[$this,"filtr"]);
-
-			$forumList = Db::name('article')
-			->alias('a')
-			->join('user u','a.user_id = u.id')
-			->join('cate c','a.cate_id = c.id')
-			->field('a.id as aid,ename,appname,name,user_img,title,content,a.update_time as update_time,is_top,a.is_hot as is_hot,is_reply,a.status as status')
-			->where('a.delete_time',0)
-			->where($map)
-			->where($where)
-			->order('a.create_time', 'desc')
-			->paginate(15);
-			$res = [];
-			$count = $forumList->total();
-			if($count){
-				$res['code'] = 0;
-				$res['msg'] = '';
-				$res['count'] = $count;
-				foreach($forumList as $k=>$v){
-					$url = $this->getRouteUrl($v['aid'],$v['ename'],$v['appname']);
-                    $res['data'][]= [
-                        'id'=>$v['aid'],
-                        'poster'=>$v['name'],
-                        'avatar'=>$v['user_img'],
-                        'title'=>htmlspecialchars($v['title']),
-                        'url' => $url,
-                        'content' => strip_tags($v['content']),
-                        'posttime'=>date("Y-m-d",$v['update_time']),
-                        'top'=>$v['is_top'],
-                        'hot'=>$v['is_hot'],
-                        'reply'=>$v['is_reply'],
-                        'check'=>$v['status']
-                    ];
-				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
-			}
-			return json($res);
-		}
-	}
+            }
+            return json(['code' =>0, 'msg' => 'ok', 'count' => $list['total'], 'data' => $res['data']]);
+        }
+        return json(['code' =>-1, 'msg' => 'no data']);
+    }
 
     /**
      * 添加帖子文章
@@ -142,10 +95,9 @@ class Forum extends AdminController
             $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
             // 获取分类ename,appname
-            $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
+            $cateName = $this->model->field('ename,appname')->find($data['cate_id']);
 
-            $article = new Article();
-            $result = $article->add($data);
+            $result = $this->model->add($data);
             if ($result['code'] == 1) {
                 // 获取到的最新ID
                 $aid = $result['data']['id'];
@@ -162,9 +114,9 @@ class Forum extends AdminController
                 // 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 
-                $link = $this->getRouteUrl((int)$aid, $cateName['ename'],$cateName['appname']);
-                // 推送给百度收录接口
-                $this->baiduPushUrl($link);
+                $link = $this->getArticleUrl((int)$aid, 'index', $cateName['ename']);
+
+                hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 
                 $url = $result['data']['status'] ? $link : (string)url('index/');
                 $res = Msgres::success($result['msg'], $url);
@@ -202,53 +154,47 @@ class Forum extends AdminController
             $validate = new \app\common\validate\Article();
             $res = $validate->scene('Artadd')->check($data);
 
-            if(true !== $res){
-                return Msgres::error($validate->getError());
-            } else {
-                //获取内容图片音视频标识
-                $iva= $this->hasIva($data['content']);
-                $data = array_merge($data,$iva);
+            if(!$res) return Msgres::error($validate->getError());
+            //获取内容图片音视频标识
+            $iva= $this->hasIva($data['content']);
+            $data = array_merge($data,$iva);
 
-                // 处理内容
-                $data['content'] = $this->downUrlPicsReaplace($data['content']);
-                // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-                $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+            // 处理内容
+            $data['content'] = $this->downUrlPicsReaplace($data['content']);
+            // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+            $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
-                $result = $article->edit($data);
-                if($result == 1) {
-                    //处理标签
-                    $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
-                    if(isset($tagId)) {
-                        $tagIdArr = explode(',',$tagId);
-                        foreach($artTags as $aid => $tid) {
-                            if(!in_array($tid,$tagIdArr)){
-                                //删除被取消的tag
-                                Db::name('taglist')->delete($aid);
-                            }
+            $result = $article->edit($data);
+            if($result == 1) {
+                //处理标签
+                $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
+                if(isset($tagId)) {
+                    $tagIdArr = explode(',',$tagId);
+                    foreach($artTags as $aid => $tid) {
+                        if(!in_array($tid,$tagIdArr)){
+                            //删除被取消的tag
+                            Db::name('taglist')->delete($aid);
                         }
-                        //查询保留的标签
-                        $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
-                        $tagArr = [];
-                        foreach($tagIdArr as $tid) {
-                            if(!in_array($tid, $artTags)){
-                                //新标签
-                                $tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
-                            }
-                        }
-                        //更新新标签
-                        Db::name('taglist')->insertAll($tagArr);
                     }
-                    //删除原有缓存显示编辑后内容
-                    Cache::delete('article_'.$id);
-                    $link = $this->getRouteUrl((int) $id, $article->cate->ename, $article->cate->appname);
-                    // 推送给百度收录接口
-                    $this->baiduPushUrl($link);
-                    $editRes = Msgres::success('edit_success',$link);
-                } else {
-                    $editRes = Msgres::error($result);
+                    //查询保留的标签
+                    $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
+                    $tagArr = [];
+                    foreach($tagIdArr as $tid) {
+                        if(!in_array($tid, $artTags)){
+                            //新标签
+                            $tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
+                        }
+                    }
+                    //更新新标签
+                    Db::name('taglist')->insertAll($tagArr);
                 }
-                return $editRes;
+                //删除原有缓存显示编辑后内容
+                Cache::delete('article_'.$id);
+                $link = $this->getRouteUrl((int) $id, $article->cate->ename, $article->cate->appname);
+                hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+                return Msgres::success('edit_success',$link);
             }
+            return Msgres::error($result);
         }
 
         View::assign(['article'=>$article]);

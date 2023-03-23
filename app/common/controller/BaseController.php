@@ -46,11 +46,6 @@ class BaseController extends BaseCtrl
 			'subcatelist'	=> $this->showSubnav(),
 			//当前登录用户
 			'user'			=> $this->showUser($this->uid),
-            //多站点
-            'stationList'   => $this->getStationList(),
-            // 当前站点
-            'city' => input('city') ?: Db::name('station')->where('master',1)->value('city_ename')
-
 		]);
 
 	}
@@ -76,10 +71,13 @@ class BaseController extends BaseCtrl
     {
         $appname = app('http')->getName();
         //1.查询分类表获取所有分类
-//		$cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0, 'appname' => $appname])->cache('catename' . $appname,3600)->select()->toArray();
         $cate = new Cate();
         $cateList = $cate->menu();
-         return getTree($cateList);
+         $list =  getTree($cateList);
+        // 排序
+        $cmf_arr = array_column($list, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $list);
+        return $list;
     }
 
 	// 显示子导航subnav
@@ -170,19 +168,6 @@ class BaseController extends BaseCtrl
 		
         View::assign($assign);
 		return $sysInfo;
-    }
-
-    // 多站点
-    protected function getStationList()
-    {
-        return $stationList = Db::name('station')->select()->toArray();
-    }
-
-    //
-    protected function getCity($cityname)
-    {
-        return Db::name('station')->field('city_name,city_ename')->where('city_ename', $cityname)->find();
-
     }
 
 }

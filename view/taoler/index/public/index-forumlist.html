@@ -7,9 +7,6 @@
 		{if config('taoler.config.cate_show') == 1}
 		<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
 		{/if}
-		{if config('taoler.config.area_show') == 1}
-		<i class="layui-badge layui-bg-green" title="归属地简称">{:getAsing($art.user.area_id) ?: '无'}</i>
-		{/if}
 		<a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
 		<cite>{$art.user.nickname ?: $art.user.name}</cite>
 		</a>
