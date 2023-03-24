@@ -137,6 +137,7 @@ class Article extends BaseController
 
 		//评论
 		$comments = $this->getComments($id, $page);
+        //halt($comments);
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->max('update_time',false) ?? time();
 		//	热议文章
@@ -149,7 +150,7 @@ class Article extends BaseController
         $ad_comm = $ad->getSliderList(7);
 		//push
 		$push_js = Db::name('push_jscode')->where(['delete_time'=>0,'type'=>1])->cache(true)->select();
-		
+
 		View::assign([
 			'article'	=> $artDetail,
 			'pv'		=> $pv,

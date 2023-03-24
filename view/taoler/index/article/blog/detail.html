@@ -48,6 +48,7 @@
                 </div>
                 <div class="border-theme bg-primary"></div>
               </div>
+              {:hook('taoplayerdiv')}
               <article class="post-content detail-body" itemprop="articleBody" view-image>
               {$article.content|raw}
               </article>
@@ -117,7 +118,7 @@
                 <div class="mb-3" id="flyReply">
                   文章评论 <small class="font-theme text-muted">({$article.comments_count})</small>
                   <ul class="jieda" id="jieda">
-                    {volist name="comments" id="vo" empty= ""}
+                    {volist name="comments['data']" id="vo" empty= ""}
                     <li data-id="{$vo.id}" class="jieda-daan">
                       <a name="item-1111111111"></a>
                       <div class="detail-about detail-about-reply">
@@ -289,6 +290,7 @@
 {block name="script"}
 
 {:hook('taonyeditor')}
+{:hook('taoplayer')}
 
 <script type='text/javascript' src="{$Request.domain}/view/common/blog/js/theme.js"></script>
 <script>

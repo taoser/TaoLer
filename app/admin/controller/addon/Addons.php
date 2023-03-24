@@ -409,7 +409,9 @@ class Addons extends AdminController
 
         try {
             // 升级安装，第二个type参数false为升级，true安装
-            $res = $this->install($data,false);
+            $installRes = $this->install($data,false);
+            $res = $installRes->getData();
+            if($res['code'] == -1) return json(['code' => -1, 'msg' => $res['msg']]);
             // 升级sql
             $sqlUpdateFile = root_path().'addons/'.$data['name'].'/update.sql';
             if(file_exists($sqlUpdateFile)) {

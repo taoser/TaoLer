@@ -43,6 +43,7 @@
         {//问题内容}
         <div style="margin-top: 15px; font-size: 18px; font-weight: bold; color: rgb(130, 125, 125)">问题描述：</div>
         <hr />
+        {:hook('taoplayerdiv')}
         <div class="detail-body photos" id="content">{$article.content|raw}</div>
         {if (($article.upzip !== '') || session('?user_name'))}
           <div class="">
@@ -69,7 +70,7 @@
       <div class="fly-panel detail-box" id="flyReply">
         <span style="font-size: 18px">评论 {$article.comments_count}</span>
         <ul class="jieda" id="jieda">
-          {volist name="comments" id="vo" empty= ""}
+          {volist name="comments['data']" id="vo" empty= ""}
           <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
@@ -268,7 +269,7 @@
           data: { id: id, title_color: color },
           dataType: "json",
           success: function (data) {
-            if (data.code == 0) {
+            if (data.code === 0) {
               layer.msg(data.msg, { icon: 6, time: 2000 });
             } else {
               layer.open({ content: data.msg, icon: 5, adim: 6 });
@@ -293,7 +294,7 @@
           data: filed,
           dataType: "json",
           success: function (data) {
-            if (data.code == 0) {
+            if (data.code === 0) {
               layer.msg(data.msg, { icon: 6, time: 2000 }, function () {
                 location.reload(true);
               });
@@ -306,22 +307,22 @@
       return false;
     });
 
-    //执行一个laypage实例
+    // 评论分页
     laypage.render({
       elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
       count: "{$article.comments_count}", //数据总数，从服务端得到
       limit: 10,
-      curr: {$page},
-
+      curr: "{$page}",
       //获取起始页
       jump: function (obj, first) {
+        var page = obj.curr;
+        var limit = obj.limit;
+        var  url = "{:url('article_detail',['id' => $article.id ,'ename' =>$article['cate']['ename']])}";
+        var id = "{$article.id}";
         //首次不执行
         if (!first) {
-          var page = obj.curr;
-          var url = "{:url('article/detail',['id'=>$article.id])}";
-          var id = "{$article.id}";
           $.post("{:url('article/detail')}", { id: id, page: page }, function () {
-            window.location.href = url + "?page=" + page + "#flyReply";
+              location.href = url + '?page=' + page;
           });
         }
       },

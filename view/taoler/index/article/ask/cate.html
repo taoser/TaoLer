@@ -121,12 +121,11 @@
 		
 		 //获取起始页
 		,jump: function(obj, first){
-		
-		//首次不执行
-		if(!first){
-		var page = obj.curr;
-		 location.href ="{$path}/"+page+'.html';
-		 }
+			var page = obj.curr;
+			//首次不执行
+			if(!first){
+			 location.href ="{$path}/"+page+'.html';
+			 }
 	  	}
 	  });
 	});

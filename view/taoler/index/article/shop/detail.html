@@ -40,6 +40,7 @@
             <div class="layui-tab-item layui-show">
               <div class="fly-panel detail-box">              
                 {// 内容}
+                {:hook('taoplayerdiv')}
                 <div class="detail-body photos" id="content">{$article.content|raw}</div>
                   <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
                     <p>{$sysInfo.state}</p>    
@@ -51,7 +52,7 @@
               <div class="fly-panel detail-box" id="flyReply">
                 <span style="font-size:18px;">评论 {$article.comments_count}</span>
                 <ul class="jieda" id="jieda">
-                  {volist name="comments" id="vo" empty= ""}
+                  {volist name="comments['data']" id="vo" empty= ""}
                   <li data-id="{$vo.id}" class="jieda-daan">
                     <a name="item-1111111111"></a>
                     <div class="detail-about detail-about-reply">
@@ -126,7 +127,10 @@
 </div>
 {include file="public/menu" /}
 {/block}
+
 {block name="script"}
+{:hook('taoplayer')}
+
 <script>
 var collectionFind = "{:url('Collection/find')}",
     collection = "{:url('collection/')}",

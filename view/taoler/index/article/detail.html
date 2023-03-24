@@ -49,6 +49,7 @@
 			</div>
 			
         </div>
+          {:hook('taoplayerdiv')}
         <div class="detail-body photos">{$article.content|raw}</div>
 		{//管理}
 		{if (($article.upzip !== '') || session('?user_name'))}
@@ -84,7 +85,7 @@
       <div class="fly-panel detail-box" id="flyReply">
         <span style="font-size:18px;">评论 {$comments->count()}</span>
         <ul class="jieda" id="jieda">
-		{volist name="comments" id="vo" empty= ""}
+		{volist name="comments['data']" id="vo" empty= ""}
           <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
@@ -173,6 +174,9 @@
 {include file="public/menu" /}
 {/block}
 {block name="script"}
+
+{:hook('taoplayer')}
+
 <script>
 var collectionFind = "{:url('Collection/find')}",
     articleJieset = "{:url('Article/jieset')}",
