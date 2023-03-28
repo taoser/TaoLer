@@ -34,12 +34,6 @@ class Addons extends AdminController
      */
     public function index()
     {
-//        if(Request::isAjax()) {
-//            $data = Request::param();
-//            if(!isset($data['type'])) $data['type'] = 'onlineAddons';
-//            if(!isset($data['selector'])) $data['selector'] = 'all';
-//            return $this->getList($data);
-//        }
         return View::fetch();
     }
 
@@ -99,123 +93,6 @@ class Addons extends AdminController
             return json($res);
         }
         return json(['code' => -1, 'msg' => '未获取到服务器信息']);
-    }
-
-
-    /**
-     * 插件动态列表
-     * @param $data
-     * @return Json
-     */
-    public function getList()
-    {
-        $data = Request::param();
-        if(!isset($data['type'])) $data['type'] = 'onlineAddons';
-        if(!isset($data['selector'])) $data['selector'] = 'all';
-        $res = [];
-        //本地插件列表
-        $addonsList = Files::getDirName('../addons/');
-        $response = HttpHelper::withHost()->get('/v1/addons');
-        $addons = $response->toJson();
-        switch($data['type']){
-            //已安装
-            case 'installed':
-                if($addonsList){
-                    $res = ['code'=>0,'msg'=>'','count'=>5];
-                    $res['col'] = [
-                        ['type' => 'numbers'],
-                        ['field' => 'name','title'=> '插件', 'width'=> 120],
-                        ['field'=> 'title','title'=> '标题', 'width'=> 100],
-                        ['field'=> 'version','title'=> '版本', 'templet' => '<div>{{d.version}}</div>', 'width'=> 60],
-                        ['field' => 'author','title'=> '作者', 'width'=> 80],
-                        ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
-                        ['field' => 'install','title'=> '安装', 'width'=> 100],
-                        ['field' => 'ctime','title'=> '到期时间', 'width'=> 100],
-                        ['field' => 'status','title'=> '状态', 'width'=> 95, 'templet' => '#buttonStatus'],
-                        ['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-installed-tool']
-                    ];
-
-                    // $data数据
-                    foreach($addonsList as $v){
-                        $info_file = '../addons/'.$v.'/info.ini';
-                        $info = parse_ini_file($info_file);
-                        $info['show'] = $info['status'] ? '启用' : '禁用';
-                        $info['install'] = $info['status'] ? '是' : '否';
-                        $res['data'][] = $info;
-                    }
-
-                } else {
-                    $res = ['code'=>-1,'msg'=>'没有安装任何插件'];
-                }
-                break;
-            //在线全部
-            case 'onlineAddons':
-                if($response->ok()) {
-
-                    $res['code'] = 0;
-                    $res['msg'] = '';
-                    $res['count'] = count($addons->data);
-                    $res['col'] = [
-                        ['type' => 'numbers'],
-                        ['field' => 'title','title'=> '插件', 'width'=> 200],
-                        ['field' => 'description','title'=> '简介', 'minWidth'=> 200],
-                        ['field' => 'author','title'=> '作者', 'width'=> 100],
-                        ['field' => 'price','title'=> '价格(元)','width'=> 85],
-                        ['field' => 'downloads','title'=> '下载', 'width'=> 70],
-                        ['field' => 'version','title'=> '版本', 'templet' => '<div>{{d.version}} {{#  if(d.have_newversion == 1){ }}<span class="layui-badge-dot"></span>{{#  } }}</div>','width'=> 75],
-                        ['field' => 'status','title'=> '在线', 'width'=> 70],
-                        ['title' => '操作', 'width'=> 150, 'align'=>'center', 'toolbar'=> '#addons-tool']
-                    ];
-
-                    // $data数据 与本地文件对比
-                    foreach($addons->data as $v){
-                        switch ($data['selector']) {
-                            case 'free':
-                                if($v->price == 0) {
-                                    if(in_array($v->name,$addonsList)) {
-                                        $info = get_addons_info($v->name);
-                                        //已安装
-                                        $v->isInstall = 1;
-                                        //判断是否有新版本
-                                        if($v->version > $info['version']) $v->have_newversion = 1;
-                                        $v->price =  $v->price ? $v->price : '免费';
-                                    }
-                                    $res['data'][] = $v;
-                                }
-                                break;
-                            case 'pay':
-                                if($v->price > 0) {
-                                    if(in_array($v->name,$addonsList)) {
-                                        $info = get_addons_info($v->name);
-                                        //已安装
-                                        $v->isInstall = 1;
-                                        //判断是否有新版本
-                                        if($v->version > $info['version']) $v->have_newversion = 1;
-                                        $v->price =  $v->price ? $v->price : '免费';
-                                    }
-                                    $res['data'][] = $v;
-                                }
-                                break;
-                            case 'all':
-                                if(in_array($v->name,$addonsList)) {
-                                    $info = get_addons_info($v->name);
-                                    //已安装
-                                    $v->isInstall = 1;
-                                    //判断是否有新版本
-                                    if($v->version > $info['version']) $v->have_newversion = 1;
-                                    $v->price =  $v->price ? $v->price : '免费';
-                                }
-                                $res['data'][] = $v;
-                                break;
-                        }
-                    };
-
-                } else {
-                    $res = ['code' => -1, 'msg' => '未获取到服务器信息'];
-                }
-                break;
-        }
-        return json($res);
     }
 
     /**
@@ -423,10 +300,10 @@ class Addons extends AdminController
             }
             // 写入版本号
             set_addons_info($data['name'],['version' =>$data['version']]);
+            return $installRes;
         } catch (\Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
-        return $res;
     }
 
     /**
@@ -664,6 +541,22 @@ class Addons extends AdminController
     {
         $type = Request::param('type');
         return $this->uploadFiles($type);
+    }
+
+
+    /**
+     * 检测已安装插件是否有新的插件版本
+     * @param string $addons_name
+     * @param string $local_version
+     * @return bool
+     */
+    public function checkHasNewVer(string $addons_name, string $local_version) :bool
+    {
+        // 在线插件
+        $response = HttpHelper::withHost()->get('/v1/checkNewVersion', ['name' => $addons_name, 'version' => $local_version]);
+        $addons = $response->toJson();
+        if($addons->code === 0) return true;
+        return false;
     }
 
 
