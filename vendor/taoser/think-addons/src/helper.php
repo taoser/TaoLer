@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 use think\facade\Event;
+use think\facade\App;
 use think\facade\Route;
 use taoser\addons\Service;
-use think\facade\App;
 use think\facade\Config;
 use think\facade\Cache;
 use think\helper\{
@@ -24,8 +24,11 @@ define('DS', DIRECTORY_SEPARATOR);
 spl_autoload_register(function ($class) {
 
     $class = ltrim($class, '\\');
-
-    $dir = App::getRootPath();
+//    $app = new think\App();
+//    $dir = $app->getRootPath();
+//    $dir = App::getRootPath();
+    $dir =  app()->getRootPath();
+//    halt($dir);
     $namespace = 'addons';
 
     if (strpos($class, $namespace) === 0) {

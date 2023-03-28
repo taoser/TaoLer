@@ -43,7 +43,46 @@ class Forum extends AdminController
 
     public function list()
     {
-        $list = $this->model->getList(input('limit'),input('page'));
+        $data = Request::only(['id','name','title','sec']);
+        $where = [];
+        if (!empty($data['sec'])) {
+            switch ($data['sec']) {
+                case '1':
+                    $where[] = ['status', '=', 1];
+                    break;
+                case '2':
+                    $where[] = ['is_top', '=', 1];
+                    break;
+                case '3':
+                    $where[] = ['is_hot', '=', 1];
+                    break;
+                case '4':
+                    $where[] = ['is_reply', '=', 1];
+                    break;
+                case '5':
+                    $where[] = ['status', '=', -1];
+                    break;
+                case '6':
+                    $where[] = ['status', '=', 0];
+                    break;
+            }
+        }
+        unset($data['sec']);
+
+        if(!empty($data['id'])){
+            $where[] = ['id', '=', $data['id']];
+        }
+
+        if(!empty($data['name'])){
+            $userId = Db::name('user')->where('name',$data['name'])->value('id');
+            $where[] = ['user_id', '=', $userId];
+        }
+
+        if(!empty($data['title'])){
+            $where[] = ['title', 'like', $data['title'].'%'];
+        }
+
+        $list = $this->model->getList($where, input('limit'), input('page'));
         $res = [];
         if($list['total']){
             foreach($list['data'] as $v) {

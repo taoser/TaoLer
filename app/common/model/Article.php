@@ -381,7 +381,7 @@ class Article extends Model
     }
 
     // 获取所有帖子内容
-    public function getList($limit,$page)
+    public function getList(array $where, int $limit, int $page)
     {
         return $this::field('id,user_id,cate_id,title,content,is_top,is_hot,is_reply,status,update_time')->with([
             'user' => function($query){
@@ -390,7 +390,9 @@ class Article extends Model
             'cate' => function($query){
                 $query->field('id,ename');
             }
-        ])->paginate([
+        ])->where($where)
+        ->order('create_time', 'desc')
+        ->paginate([
             'list_rows' => $limit,
             'page' => $page
         ])->toArray();

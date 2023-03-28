@@ -70,71 +70,70 @@ layui.define(["table", "form",'toast','common'], function (exports) {
   // });
 
   var api = {
-    userinfo: {
-      get: function () {
-        var userinfo = localStorage.getItem("taoleradmin_userinfo");
-        return userinfo ? JSON.parse(userinfo) : null;
-      },
-      set: function (data) {
-        if (data) {
-          localStorage.setItem("taoleradmin_userinfo", JSON.stringify(data));
-        } else {
-          localStorage.removeItem("taoleradmin_userinfo");
-        }
+      userinfo: {
+          get: function () {
+              var userinfo = localStorage.getItem("taoleradmin_userinfo");
+              return userinfo ? JSON.parse(userinfo) : null;
+          },
+          set: function (data) {
+              if (data) {
+                  localStorage.setItem("taoleradmin_userinfo", JSON.stringify(data));
+              } else {
+                  localStorage.removeItem("taoleradmin_userinfo");
+              }
+          }
       }
-    }
   }
 
   //监听工具条
   table.on("tool(addons-list)", function (obj) {
+      var data = obj.data;
+      var event = obj.event;
+      var url = $(this).data('url')
 
-    var data = obj.data;
-    var event = obj.event;
-    var url = $(this).data('url')
-
-    // 安装
-    var install = function (data,url,userLoginUrl,userIsPayUrl){
+      // 安装
+      var install = function (data,url,userLoginUrl,userIsPayUrl){
       var userinfo = api.userinfo.get(); // 检测权限
       if(userinfo) {
-        layer.confirm("确认安装吗？", "vcenter",function(index){
-          $.post(url, { name: data.name, version: data.version, uid: userinfo.uid, token: userinfo.token }, function (res) {
-            // 需要支付
-            if (res.code === -2) {
-              layer.close(index);
-              layer.open({
-                type: 2,
-                area: [common.isModile()?'100%':'800px', common.isModile()?'100%':'600px'],
-                fixed: false, //不固定
-                maxmin: true,
-                content: 'pay.html'+ "?id=" + data.id+ "&name=" + data.name + "&version=" + data.version + "&uid=" + userinfo.uid + "&price=" + data.price,
-                success: function (layero, index){
-                  // 订单轮询
-                  var intervalPay = setInterval(function() {
-                    $.post(userIsPayUrl,{name:data.name, userinfo:userinfo},function (res){
-                      if(res.code === 0) {
-                        layer.close(index);
-                        clearInterval(intervalPay);
-                        install(data,url,userLoginUrl,userIsPayUrl);
-                      }
+          layer.confirm("确认安装吗？", "vcenter",function(index){
+          layer.close(index);
+          let loading = layer.load();
+              $.post(url, { name: data.name, version: data.version, uid: userinfo.uid, token: userinfo.token }, function (res) {
+                  layer.close(loading);
+                // 需要支付
+                if (res.code === -2) {
+                    layer.open({
+                        type: 2,
+                        area: [common.isModile()?'100%':'800px', common.isModile()?'100%':'600px'],
+                        fixed: false, //不固定
+                        maxmin: true,
+                        content: 'pay.html'+ "?id=" + data.id+ "&name=" + data.name + "&version=" + data.version + "&uid=" + userinfo.uid + "&price=" + data.price,
+                        success: function (layero, index){
+                          // 订单轮询
+                          var intervalPay = setInterval(function() {
+                              $.post(userIsPayUrl,{name:data.name, userinfo:userinfo},function (res){
+                                  if(res.code === 0) {
+                                      layer.close(index);
+                                      clearInterval(intervalPay);
+                                      install(data,url,userLoginUrl,userIsPayUrl);
+                                  }
+                              });
+                          },3000);
+                        }
                     });
-                  },3000);
                 }
+                // 安装成功
+                if (res.code === 0) {
+                    toast.success({title:"安装成功",message:res.msg,position: 'topRight'});
+                }
+                // 安装失败
+                if (res.code === -1) {
+                    toast.error({title:"安装失败",message:res.msg,position: 'topRight'});
+                }
+                // 重载
+                table.reloadData("addons-list",{},'deep');
               });
-            }
-            // 安装成功
-            if (res.code === 0) {
-              layer.close(index);
-              toast.success({title:"安装成功",message:res.msg,position: 'topRight'});
-            }
-            // 安装失败
-            if (res.code === -1) {
-              layer.close(index);
-              toast.error({title:"安装失败",message:res.msg,position: 'topRight'});
-            }
-            // 重载
-            table.reloadData("addons-list",{},'deep');
           });
-        });
       } else {
         // 未登录时
         layer.confirm('你当前还未登录TaoLer社区账号,请登录后操作!', {
@@ -189,15 +188,15 @@ layui.define(["table", "form",'toast','common'], function (exports) {
       }
     }
 
-    //安装插件
-    if (event === "install" || event === "upgrade") {
+      //安装插件
+      if (event === "install" || event === "upgrade") {
       var userLoginUrl = $(this).data('userlogin');
       var userIsPayUrl = $(this).data('ispay');
       install(data,url,userLoginUrl,userIsPayUrl);
     }
 
-    // 卸载插件
-    if (event === "uninstall") {
+      // 卸载插件
+      if (event === "uninstall") {
       layer.confirm("是否卸载？", "vcenter",function(index) {
         $.post(url, { name: data.name }, function (res) {
           if (res.code === 0) {
@@ -212,8 +211,8 @@ layui.define(["table", "form",'toast','common'], function (exports) {
       });
     }
 
-    // 配置插件
-    if (event === "config") {
+      // 配置插件
+      if (event === "config") {
       $.post(url,{name:data.name},function (res){
         // 无配置项拦截
         if (res.code === -1) {

@@ -284,7 +284,7 @@
     {//crud管理模块}
     {include file="/public/crud" /}
   </main>
-  {include file="public/menu" /}
+
 {/block}
 
 {block name="script"}
@@ -413,27 +413,27 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
     }
     return false;
   });
-	
-	//执行一个laypage实例
-	laypage.render({
-    elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
-    ,count: "{$article.comments_count}" //数据总数，从服务端得到
-    ,limit: 10
-    ,curr : {$page}
-      
-    //获取起始页
-    ,jump: function(obj, first){
-      //首次不执行
-      if(!first){
+
+    // 评论分页
+    laypage.render({
+      elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
+      count: "{$article.comments_count}", //数据总数，从服务端得到
+      limit: 10,
+      curr: "{$page}",
+      //获取起始页
+      jump: function (obj, first) {
         var page = obj.curr;
-        var url = "{:url('article/detail',['id'=>$article.id])}";
+        var limit = obj.limit;
+        var  url = "{:url('article_detail',['id' => $article.id ,'ename' =>$article['cate']['ename']])}";
         var id = "{$article.id}";
-        $.post("{:url('article/detail')}",{"id":id,"page":page},function(){
-          window.location.href = url + '?page=' + page + '#flyReply';
-        });
-      }
-    }
-	});
+        //首次不执行
+        if (!first) {
+          $.post("{:url('article/detail')}", { id: id, page: page }, function () {
+            location.href = url + '?page=' + page + '#flyReply';
+          });
+        }
+      },
+    });
 	
 	//下载
     $('#zip-download').click(function (){
@@ -453,12 +453,6 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 
 {:hook('taoplyr')}
 
-{:hook('markdownhook')}
-
 {include file="/public/qr-read" /}
-
-{volist name="push_js" id="vo"}
-{$vo.jscode|raw}
-{/volist}
 
 {/block}
