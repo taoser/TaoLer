@@ -81,10 +81,9 @@ class Cate extends Model
     // 如果菜单下无内容，URl不能点击
     public function menu()
     {
-        $appname = app('http')->getName();
         try {
-            return $this->where(['status' => 1, 'appname' => $appname])
-                ->cache('catename' . $appname, 3600)
+            return $this->where(['status' => 1])
+                ->cache('catename', 3600)
                 ->append(['url'])
                 ->select()
                 ->toArray();

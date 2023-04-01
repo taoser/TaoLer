@@ -229,7 +229,6 @@
             });
 
             form.on('submit(forum-save)', function(data) {
-                console.log(data)
                 $.ajax({
                   url: "{:url('content.forum/add')}",
                   data: JSON.stringify(data.field),

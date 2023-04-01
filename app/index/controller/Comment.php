@@ -2,11 +2,14 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
+use think\facade\View;
+use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cache;
 use app\common\model\Comment as CommentModel;
 use app\common\model\Article;
 use app\common\model\UserZan;
+
 
 class Comment extends BaseController
 {
@@ -76,6 +79,24 @@ class Comment extends BaseController
 		}
 		return json($res);
 	}
+
+    //更新评论
+    public function edit()
+    {
+        if(Request::isAjax()) {
+            $param = Request::param();
+//            halt($param);
+            $result = CommentModel::update($param);
+            if($result) {
+                return json(['code' => 0, 'msg' => '编辑成功']);
+            }
+            return json(['code' => 0, 'msg' => '编辑失败']);
+        }
+        $comms = CommentModel::find(input('id'));
+        View::assign(['comment' => $comms, 'jspage' => '']);
+        return View::fetch();
+
+    }
 	
 	//评论点赞
 	public function jiedaZan()

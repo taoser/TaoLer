@@ -148,7 +148,7 @@ class AdminController extends \app\BaseController
     }
 
     /**
-     * 获取路由
+     * 把后台管理文章或帖子的路由转换为实际应用的路由
      * @param int $aid
      * @param string $appName
      * @param string $ename
@@ -203,6 +203,14 @@ class AdminController extends \app\BaseController
             return  $this->getDomain() . str_replace($map_admin, $appName, $articleUrl);
         }
         //3.admin未绑定域名也未映射
+        // 1.应用绑定了域名
+        if($app_bind) {
+            return $this->getDomain() . $articleUrl;
+        }
+        // 2.应用进行了映射
+        if($app_map){
+            return $this->getDomain() . str_replace('admin', $app_map, $articleUrl);
+        }
         return str_replace('admin', $appName, $articleUrl);
     }
 

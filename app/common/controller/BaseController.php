@@ -69,7 +69,6 @@ class BaseController extends BaseCtrl
 	// 显示导航nav
     protected function showNav()
     {
-        $appname = app('http')->getName();
         //1.查询分类表获取所有分类
         $cate = new Cate();
         $cateList = $cate->menu();

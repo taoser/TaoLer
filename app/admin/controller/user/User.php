@@ -102,16 +102,13 @@ class User extends AdminController
 			$data = Request::only(['id','name','email','user_img','password','phone','sex']);
             $user = Db::name('user')->field('create_time')->find($data['id']);
             $salt = substr(md5($user['create_time']),-6);
-            // 密码
-            $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
-			
-			$result = Db::name('user')->update($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'编辑成功'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'编辑失败'];
-			}
-			return json($res);
+            $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6)); // 密码
+			try{
+                Db::name('user')->update($data);
+                return json(['code'=>0,'msg'=>'编辑成功']);
+            } catch (\Exception $e) {
+                return json(['code'=> -1,'msg'=>$e->getMessage()]);
+            }
 		}
 		$user = Db::name('user')->find(input('id'));
 		View::assign('user',$user);

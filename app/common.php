@@ -58,11 +58,6 @@ try {
     return 1;
 }
 
-//根据user area_id查询区域简称
-function getAsing($area_id){
-	return Db::name('user_area')->where('id',$area_id)->cache(3600)->value('asing');
-}
-
 //根据用户主键ID，查询用户名称
 if(!function_exists('getUserName'))
 {

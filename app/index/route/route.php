@@ -50,6 +50,9 @@ Route::group(function () {
 		->middleware(\app\middleware\CheckRegister::class);
 });
 
+// comment
+Route::rule('comment/edit/[:id]','comment/edit');
+
 // article
 Route::group('art',function () use($detail_as,$cate_as){
 	Route::rule('add/[:cate]','Article/add')->name('add_article');

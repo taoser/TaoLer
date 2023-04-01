@@ -42,12 +42,11 @@ class AuthRule extends AdminController
 	{
 		return $this->model->getAuthRuleArray();
 	}
-	
-	/**
-	 * 无限极权限树
-	 *
-	 * @return void
-	 */
+
+    /**
+     * 无限极权限树
+     * @return \think\response\Json
+     */
 	public function ruleTree()
 	{
 		$data = $this->getRoleMenu(1);

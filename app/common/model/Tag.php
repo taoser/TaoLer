@@ -42,20 +42,16 @@ class Tag extends Model
 
     /**
      * 删除数据
-     *
-     * @param [type] $id
-     * @return void
+     * @param $id
+     * @return bool
      */
     public function delTag($id)
     {
-        //
         $res = $this::destroy($id);
-
-       if($res == true) {
+       if($res) {
            return true;
-       } else {
-           return false;
        }
+       return false;
     }
 
 }

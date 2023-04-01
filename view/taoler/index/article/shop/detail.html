@@ -77,7 +77,7 @@
                       {//评论编辑删除采纳权限}
                       <div class="jieda-admin">
                         {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
-                        <span type="edit">{:lang('edit')}</span>
+                        <span type="edit" id="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
                         <span type="del">{:lang('delete')}</span>				
                         {/if}
                         {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth  ?? '')) /}
@@ -144,6 +144,7 @@ var collectionFind = "{:url('Collection/find')}",
     commentJiedaDelete = "{:url('Comment/jiedaDelete')}",
     langCollection = "{:lang('collection')}",
     langCancelCollection = "{:lang('cancel collection')}";
+let taonystatus = "{:hook('taonystatus') ? 1 : 0} ";
 	  
 layui.use(['fly','colorpicker','plyr', 'laypage'], function(){
 	var $ = layui.jquery
@@ -157,13 +158,22 @@ layui.use(['fly','colorpicker','plyr', 'laypage'], function(){
 	var laypage = layui.laypage;
 	
 	//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  var taonystatus = "{:hook('taonystatus')}";
   // 编辑器插件启用状态
-  var isShow = taonystatus ? false : true;
-  if(isShow) {
+  if(taonystatus == 0) {
     $('.detail-body').each(function(){
       var othis = $(this), html = othis.html();
       othis.html(fly.content(html));
+    });
+  } else {
+    $("#comment-edit").on('click',function (){
+      var id = $(this).data('id');
+      layer.open({
+        type: 2,
+        title: '修改',
+        shade: 0.1,
+        area: ['600px', '500px'],
+        content: "{:url('comment/edit')}" + '?id=' + id
+      });
     });
   }
   
@@ -194,7 +204,7 @@ layui.use(['fly','colorpicker','plyr', 'laypage'], function(){
         data:{id: id,title_color: color},
         dataType:'json',
         success:function(data){
-          if(data.code == 0){
+          if(data.code === 0){
             layer.msg(data.msg,{icon:6,time:2000
             });
           } else {

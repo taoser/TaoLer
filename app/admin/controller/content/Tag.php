@@ -74,27 +74,32 @@ class Tag extends AdminController
             $data = Request::only(['name','ename','id','keywords','description','title']);
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-
-            $res =$tagModel::update($data);
-            if($res == true){
+            try{
+                $tagModel::update($data);
                 return json(['code'=>0,'msg'=>'设置成功']);
+            } catch(\Exception $e) {
+                return json(['code'=>-1,'msg'=>$e->getMessage()]);
             }
         }
+
         $tag = $tagModel->getTag(input('id'));
 
         View::assign('tag',$tag);
         return view();
     }
 
+    /**
+     * 删除
+     * @return \think\response\Json
+     */
     public function delete()
     {
-        if(Request::isPost()) {
-            $tagModel = new TagModel;
-            $res = $tagModel->delTag(input('id'));
-            if($res == true){
-                return json(['code'=>0,'msg'=>'删除成功']);
-            }
+        $tagModel = new TagModel;
+        $res = $tagModel->delTag(input('id'));
+        if($res){
+            return json(['code'=>0,'msg'=>'删除成功']);
         }
+        return json(['code'=>-1,'msg'=>'删除失败']);
     }
 
     /**

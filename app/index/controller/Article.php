@@ -3,10 +3,12 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
+use think\App;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
+use think\facade\Session;
 use think\facade\Config;
 use app\common\model\Cate;
 use app\common\model\Comment;
@@ -22,8 +24,16 @@ class Article extends BaseController
 	protected $middleware = [ 
     	'logincheck' => ['except' 	=> ['cate','detail','download'] ],
     ];
-	
-	//文章分类
+
+    protected $model;
+
+    public function __construct(App $app)
+    {
+        parent::__construct($app);
+        $this->model = new ArticleModel();
+    }
+
+    //文章分类
     public function cate()
 	{
 		$cate = new Cate();
@@ -75,13 +85,19 @@ class Article extends BaseController
 		$page = input('page',1);
 		//输出内容
         $article = new ArticleModel();
-        $artDetail = $article->getArtDetail($id);
+        $artDetail = $this->model->getArtDetail($id);
+
+        if($artDetail['read_type'] == 1 && session('art_pass_'.$id) != $artDetail['art_pass'])
+        {
+            $artDetail['content'] = '加密文件！请正确输入密码查看！';
+        }
+
 		if(is_null($artDetail)){
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '无内容');
 		}
 		//用户个人tag标签
-		$userTags = $article->where(['user_id'=>$artDetail['user_id'],'status'=>1])->where('keywords','<>','')->column('keywords');
+		$userTags = $this->model->where(['user_id'=>$artDetail['user_id'],'status'=>1])->where('keywords','<>','')->column('keywords');
 		//转换为字符串
 		$tagStr = implode(",",$userTags);
 		//转换为数组并去重
@@ -137,7 +153,6 @@ class Article extends BaseController
 
 		//评论
 		$comments = $this->getComments($id, $page);
-        //halt($comments);
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->max('update_time',false) ?? time();
 		//	热议文章
@@ -169,6 +184,7 @@ class Article extends BaseController
 			'userZanList' => $userZanList,
 			'userTagCount'=> $userTagCount,
 			'jspage'	=> 'jie',
+            'passJieMi'     => session('art_pass_'.$id),
 			$download,
 		]);
 	
@@ -242,7 +258,7 @@ class Article extends BaseController
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
 			// 数据
-            $data = Request::only(['cate_id', 'title', 'title_color', 'content', 'upzip', 'keywords', 'description', 'captcha']);
+            $data = Request::only(['cate_id', 'title', 'title_color','read_type','art_pass', 'content', 'upzip', 'keywords', 'description', 'captcha']);
             $data['user_id'] = $this->uid;
 			$tagId = input('tagid');
 
@@ -339,7 +355,7 @@ class Article extends BaseController
 		$article = ArticleModel::find($id);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id','cate_id','title','title_color','user_id','content','upzip','keywords','description','captcha']);
+			$data = Request::only(['id','cate_id','title','title_color','read_type','art_pass','user_id','content','upzip','keywords','description','captcha']);
             $data['user_id'] = $this->uid;
 			$tagId = input('tagid');	
 			
@@ -393,6 +409,8 @@ class Article extends BaseController
 					
                     //删除原有缓存显示编辑后内容
                     Cache::delete('article_'.$id);
+                    Session::delete('art_pass_'.$id);
+
                     $link = $this->getRouteUrl((int) $id, $article->cate->ename);
 
                     hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
@@ -618,49 +636,32 @@ class Article extends BaseController
 		
 	}
 
-	public function getCateTree()
-	{
-		//
-		$cate = Db::name('cate')->order(['id' => 'ASC','sort' => 'ASC'])->where(['delete_time'=>0])->select()->toArray();
-		
-		$cateTree = array2tree($cate);
+    /**
+     * 分类树
+     * @return \think\response\Json
+     */
+    public function getCateTree()
+    {
+        $data = $this->showNav();
+        $count = count($data);
+        $tree = [];
+        if($count){
+            $tree = ['code'=>0, 'msg'=>'ok','count'=>$count];
+            $tree['data'] = $data;
+        }
 
-		$count = count($cateTree);
-			$tree = [];			
-			if($cateTree){
-				$tree = ['code'=>0,'msg'=>'','count'=>$count];
-				
-				$res = [];	//auth_rule储存数据表中的表结构
-				foreach($cateTree as $k => $v){
-					//第一层子权限
-					$children = [];
-					if(isset($v['children'])){
-						
-						foreach($v['children'] as $m => $j){
-							//第二层子权限
-							$chichi = [];
-							if(isset($j['children'])){
-								//第三层子权限
-								foreach($j as $s){
-									if(isset($s['children'])){
-										$chichi[] = ['id'=>$s['id'],'catename'=>$s['catename'],'pid'=>$s['pid']];	//子数据的子数据
-									}
-								}
-							}
-							
-						//if($j['level']  < 3){}
-						$children[] = ['id'=>$j['id'],'catename'=>$j['catename'],'pid'=>$j['pid'],'children'=>$chichi];		//子数据
-						}
-					}
-					$data[] = ['id'=>$v['id'],'catename'=>$v['catename'],'pid'=>$v['pid'],'children'=>$children];
-				}
-				
-				//构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
-				//$tree['data'][] = ['id'=>0,'catename'=>'顶级','pid'=>0,'children'=>$data];
-				$tree['data'] = $data;
-			}
-		return json($tree);
-	}
-	
+        return json($tree);
+    }
+
+    public function jiemi()
+    {
+        $param = Request::param();
+        $article = $this->model->find($param['id']);
+        if($article['art_pass'] == $param['art_pass']) {
+            session('art_pass_'.$param['id'], $param['art_pass']);
+            return json(['code' => 0, 'msg' => '解密成功']);
+        }
+        return json(['code' => -1, 'msg' => '解密失败']);
+    }
 	
 }

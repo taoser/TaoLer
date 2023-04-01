@@ -61,6 +61,13 @@
                 </div>
               {/if}
 
+              {//解密文件}
+              {empty name="passJieMi"}
+                {if($article.read_type == 1)}
+                <div id="jiemi"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #1E9FFF;"></i> 阅读请解密 </div>
+                {/if}
+              {/empty}
+
               {notempty name="tags"}
               <div style="margin-top: 15px">标签
                 {volist name="tags" id="vo" }
@@ -142,7 +149,7 @@
                         {//评论 编辑/删除/采纳/权限}
                         <div class="jieda-admin">
                           {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth ?? '')}
-                          <span type="edit" id="comment-edit">{:lang('edit')}</span>
+                          <span type="edit" id="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
                           <span type="del">{:lang('delete')}</span>
                           {/if} {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth ?? '')) && ($article.jie == 0)/}
                           <span class="jieda-accept" type="accept">{:lang('accept')}</span>
@@ -325,6 +332,17 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
       var othis = $(this), html = othis.html();
       othis.html(fly.content(html));
     });
+  } else {
+    $("#comment-edit").on('click',function (){
+      var id = $(this).data('id');
+      layer.open({
+        type: 2,
+        title: '修改',
+        shade: 0.1,
+        area: ['600px', '500px'],
+        content: "{:url('comment/edit')}" + '?id=' + id
+      });
+    });
   }
 
   //加载评论编辑器
@@ -445,6 +463,28 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
         success:function (data) {
           location.href = "{:url('article/download',['id'=>$article.id])}"; 
         }
+      });
+    });
+
+    $("#jiemi").click(function (){
+      //判断登陆
+      if(uid == -1){
+        layer.msg('请先登录再查看', {icon: 6}, function(){location.href = login})
+        return false;
+      }
+      var id = "{$article.id}";
+      layer.prompt(function(value, index, elem){
+        // alert(value); //得到value
+        $.post("{:url('article/jiemi')}",{id:id, art_pass:value},function (res){
+          if(res.code === 0){
+            layer.msg(res.msg,{icon:6,time:2000},function () {
+              parent.location.reload(); //刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+            });
+          } else {
+            layer.msg(res.msg,{icon:5,adim:6});
+          }
+        });
+        layer.close(index);
       });
     });
 

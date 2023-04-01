@@ -5,58 +5,57 @@
   <title>用户管理</title>
   <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 </head>
-  <body class="pear-container">
-    <div class="layui-card">
-      <div class="layui-card-body">
-        <form class="layui-form" action="">
-          <div class="layui-form-item">
-            <div class="layui-form-item layui-inline">
-                <label class="layui-form-label">帖子ID</label>
-                <div class="layui-input-block">
-                  <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+    <body class="pear-container">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <form class="layui-form" action="">
+              <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">帖子ID</label>
+                    <div class="layui-input-block">
+                      <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item layui-inline">
-                <label class="layui-form-label">发帖人</label>
-                <div class="layui-input-block">
-                  <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">发帖人</label>
+                    <div class="layui-input-block">
+                      <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item layui-inline">
-                <label class="layui-form-label">标题</label>
-                <div class="layui-input-block">
-                  <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block">
+                      <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item layui-inline">
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-block">
-                  <select name="sec">
-                        <option value="">选择状态</option>
-                        <option value="1">正常</option>
-                        <option value="5">禁止</option>
-                        <option value="6">待审</option>
-                        <option value="2">置顶</option>
-                        <option value="3">加精</option>
-                        <option value="4">禁评</option>
-                  </select>
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                      <select name="sec">
+                            <option value="">选择状态</option>
+                            <option value="1">正常</option>
+                            <option value="5">禁止</option>
+                            <option value="6">待审</option>
+                            <option value="2">置顶</option>
+                            <option value="3">加精</option>
+                            <option value="4">禁评</option>
+                      </select>
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item layui-inline">
-                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
-                  <i class="layui-icon layui-icon-search"></i>
-                  查询
-                </button>
-                <button type="reset" class="pear-btn pear-btn-md">
-                  <i class="layui-icon layui-icon-refresh"></i>
-                  重置
-                </button>
-            </div>
+                <div class="layui-form-item layui-inline">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
+                      <i class="layui-icon layui-icon-search"></i>
+                      查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                      <i class="layui-icon layui-icon-refresh"></i>
+                      重置
+                    </button>
+                </div>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
-    </div>
-
+        </div>
         <div class="layui-card">
           <div class="layui-card-body">
             <table id="forum-table" lay-filter="forum-table" ></table>
@@ -73,7 +72,6 @@
             删除
           </button>
         </script>
-
 
         <script type="text/html" id="avatarTpl">
           <div><img style="width: 25px; height: 25px;" src= "{{ d.avatar }}"></div>
@@ -95,9 +93,6 @@
             <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
             <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
         </script>
-
-    </div>
-  </div>
 
         <script src="/static/component/layui/layui.js"></script>
         <script src="/static/component/pear/pear.js"></script>

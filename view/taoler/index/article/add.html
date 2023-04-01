@@ -39,33 +39,33 @@
               </div>
               {/if}
             </div>
-            <!-- <div class="layui-row layui-col-space15 layui-form-item layui-hide" id="LAY_quiz">
+
+            <div class="layui-row layui-col-space15 layui-form-item" id="LAY_quiz">
               <div class="layui-col-md3">
-                <label class="layui-form-label">所属产品</label>
+                <label class="layui-form-label">阅读权限</label>
                 <div class="layui-input-block">
-                  <select name="project">
-                    <option></option>
-                    <option value="layui">layui</option>
-                    <option value="独立版layer">独立版layer</option>
-                    <option value="独立版layDate">独立版layDate</option>
-                    <option value="LayIM">LayIM</option>
-                    <option value="Fly社区模板">Fly社区模板</option>
+                  <select name="read_type">
+                    <option value="0">开放阅读</option>
+                    <option value="1">密码加密</option>
+                    <option value="2">回帖阅读</option>
+                    <option value="3">购买阅读</option>
                   </select>
                 </div>
               </div>
               <div class="layui-col-md3">
-                <label class="layui-form-label" for="L_version">版本号</label>
+                <label class="layui-form-label" for="L_version">密码</label>
                 <div class="layui-input-block">
-                  <input type="text" id="L_version" value="" name="version" autocomplete="off" class="layui-input" />
+                  <input type="text" id="L_version" value="" name="art_pass" autocomplete="off" class="layui-input" />
                 </div>
               </div>
-              <div class="layui-col-md6">
+              <div class="layui-col-md6 layui-hide">
                 <label class="layui-form-label" for="L_browser">浏览器</label>
                 <div class="layui-input-block">
                   <input type="text" id="L_browser" value="" name="browser" placeholder="浏览器名称及版本，如：IE 11" autocomplete="off" class="layui-input" />
                 </div>
               </div>
-            </div> -->
+            </div>
+
             <div class="layui-form-item layui-form-text">
               <div class="layui-input-block">
                 <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea fly-editor"></textarea>
@@ -150,6 +150,7 @@
 <script src="/static/xm-select.js"></script>
 <script>
   let taonystatus = "{:hook('taonystatus') ? 1 : 0} ";
+
   layui.use(["fly"], function () {
     var $ = layui.jquery,
       fly = layui.fly,
@@ -162,9 +163,7 @@
 
 
     //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-
     // 编辑器插件启用状态
-
     if(taonystatus == 0) {
       $('.layui-textarea').each(function(){
         var othis = $(this), html = othis.html();
@@ -173,11 +172,8 @@
     }
 
     // 分类选择
-    $(function(){
-      //这里模拟ajax
       $.get("{:url('article/getCateTree')}",function(res){
         var cid = "{$cid}";
-        var data = res.data;
             // 渲染下拉树
             xmSelect.render({
                 el: '#CateId',
@@ -185,7 +181,7 @@
                 height: '250px',
                 layVerify: 'required',
                 layVerType: 'tips',
-                data: data,
+                data: res.data,
                 initValue:  [cid],
                 model: {label: {type: 'text'}},
                 prop: {
@@ -202,9 +198,7 @@
                 },
                 tips: '请选择'
             });
-  
       });
-    });
     
     // tag标签
     $(function(){
@@ -220,7 +214,7 @@
       });
       //2.动态标签赋值
       $.get("{:url('get_all_tag')}",function(res){
-        if(res.code == 0){
+        if(res.code === 0){
           addTags.update({
             data: res.data,
             autoRow: true,
@@ -256,7 +250,7 @@
     {
         // console.log(flag,title,content)
         $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
-            if (res.code == 0) {
+            if (res.code === 0) {
               $("input[name='keywords']").val(res.data.join(','));
             }
           },
@@ -273,7 +267,7 @@
             if(title.length > 0 ) {
               $.post("{:url('article/getWordList')}",{title:title},function(res){
                 // 动态生成ur>li内容
-                if (res.code == 0) {
+                if (res.code === 0) {
                   // 显示动态框
                   $(".bdsug").removeClass('layui-hide');
                   for (var i = 0; i < res.data.length; i++) {
@@ -321,8 +315,7 @@
         data: field,
         dataType: "json",
         success: function (data) {
-          if (data.code == 0) {
-
+          if (data.code === 0) {
             notify.success(data.msg, function () {
               location.href = data.url;
             });

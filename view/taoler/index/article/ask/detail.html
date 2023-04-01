@@ -53,6 +53,13 @@
             </div>
           {/if}
 
+          {//解密文件}
+          {empty name="passJieMi"}
+          {if($article.read_type == 1)}
+          <div id="jiemi"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #1E9FFF;"></i> 阅读请解密 </div>
+          {/if}
+          {/empty}
+
           {notempty name="tags"}
           <div style="margin-top: 15px">标签
             {volist name="tags" id="vo" }
@@ -94,7 +101,7 @@
                 {//评论 编辑/删除/采纳/权限}
                 <div class="jieda-admin">
                   {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth ?? '')}
-                  <span type="edit">{:lang('edit')}</span>
+                  <span type="edit" id="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
                   <span type="del">{:lang('delete')}</span>
                   {/if} {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth ?? '')) && ($article.jie == 0)/}
                   <span class="jieda-accept" type="accept">{:lang('accept')}</span>
@@ -193,6 +200,7 @@
 {:hook('taoplayer')}
 
 <script>
+
   var collectionFind = "{:url('Collection/find')}",
       collection = "{:url('collection/')}",
       articleJieset = "{:url('Article/jieset')}",
@@ -216,41 +224,43 @@
       laypage = layui.laypage;
 
     //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-
     // 编辑器插件禁用状态,用原方式解析网页
     if(taonystatus == 0) {
       $('.detail-body').each(function(){
         var othis = $(this), html = othis.html();
         othis.html(fly.content(html));
       });
+    } else {
+      $("#comment-edit").on('click',function (){
+        var id = $(this).data('id');
+        layer.open({
+          type: 2,
+          title: '修改',
+          shade: 0.1,
+          area: ['600px', '500px'],
+          content: "{:url('comment/edit')}" + '?id=' + id
+        });
+      });
     }
     
     //tpl模板给发布时间赋值
     $("div.user-questions").children("span.user-post-time").each(function () {
-        var othis = $(this),
-          html = othis.html();
+        var othis = $(this);
         var string = laytpl("{{ d.time }}").render({
-          //time: html
           time: othis.attr("data"),
         });
-
         var posttime = layui.util.timeAgo(string, 1);
         othis.text(posttime);
-        //console.log(othis.attr('data'));
       });
 
     //tpl模板给发布时间赋值
     $("div.detail-hits").children("span.post-time").each(function () {
-        var othis = $(this),
-          html = othis.html();
+        var othis = $(this);
         var string = laytpl("{{ d.time }}").render({
-          //time: html
           time: othis.attr("data"),
         });
-
         var posttime = layui.util.timeAgo(string, 1);
         othis.text(posttime);
-        //console.log(othis.attr('data'));
       });
 
     //预定义颜色项
@@ -340,6 +350,29 @@
         },
       });
     });
+
+    $("#jiemi").click(function (){
+      //判断登陆
+      if(uid == -1){
+        layer.msg('请先登录再查看', {icon: 6}, function(){location.href = login})
+        return false;
+      }
+      var id = "{$article.id}";
+      layer.prompt(function(value, index, elem){
+        // alert(value); //得到value
+        $.post("{:url('article/jiemi')}",{id:id, art_pass:value},function (res){
+          if(res.code === 0){
+            layer.msg(res.msg,{icon:6,time:2000},function () {
+              parent.location.reload(); //刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+            });
+          } else {
+            layer.msg(res.msg,{icon:5,adim:6});
+          }
+        });
+        layer.close(index);
+      });
+    });
+
   });
 </script>
 

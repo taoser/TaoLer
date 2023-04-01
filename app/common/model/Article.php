@@ -195,7 +195,7 @@ class Article extends Model
     {
         return Cache::remember('article_'.$id, function() use($id){
             //查询文章
-            return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,keywords,description,title_color,create_time,update_time')
+            return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,keywords,description,read_type,art_pass,title_color,create_time,update_time')
             ->where(['status'=>1])
             ->with([
                 'cate' => function($query){

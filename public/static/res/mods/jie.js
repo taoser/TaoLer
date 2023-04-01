@@ -205,37 +205,36 @@ layui.define('fly', function(exports){
       });
     }
     ,edit: function(li){ //编辑评论
-      fly.json(commentGetDa, {
-        id: li.data('id')
-      }, function(res){
-        var data = res.rows;
-        layer.prompt({
-          formType: 2
-          ,value: data.content
-          ,maxlength: 100000
-          ,title: '编辑回帖'
-          ,area: ['738px', '310px']
-          ,success: function(layero){
+      if(taonystatus == 0) {
 
-            if(taonystatus == 0) {
-              fly.layEditor({
-                elem: layero.find('textarea')
-              });
-            } else {
-              // 编辑器
+        fly.json(commentGetDa, {
+          id: li.data('id')
+        }, function (res) {
+          var data = res.rows;
+          layer.prompt({
+            formType: 2
+            , value: data.content
+            , maxlength: 100000
+            , title: '编辑回帖'
+            , area: ['738px', '310px']
+            , success: function (layero) {
+                fly.layEditor({
+                  elem: layero.find('textarea')
+                });
             }
-          }
-        }, function(value, index){
-          fly.json(commentUpdateDa, {
-            id: li.data('id')
-            ,content: value
-          }, function(res){
-            layer.close(index);
-			      layer.msg(res.msg);
-            li.find('.detail-body').html(fly.content(value));
+          }, function (value, index) {
+            fly.json(commentUpdateDa, {
+              id: li.data('id')
+              , content: value
+            }, function (res) {
+              layer.close(index);
+              layer.msg(res.msg);
+              li.find('.detail-body').html(fly.content(value));
+            });
           });
         });
-      });
+      }
+
     }
     ,del: function(li){ //删除评论
       layer.confirm('确认删除该回答么？', function(index){

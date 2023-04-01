@@ -6,7 +6,7 @@
       </li> 
       {volist name="subcatelist" id="vo"}
       <li  class="{if($vo.ename eq $Request.param.ename)}layui-this{/if}">
-      <a href="{$Request.domain}{:url('cate',['ename' => $vo.ename])}">{:cookie('think_lang') == 'en-us' ? $vo.ename : $vo.catename}{if($vo.is_hot eq 1)}<span class="layui-badge-dot"></span>{/if}</a>
+      <a href="{$Request.domain}{:url('cate',['ename' => $vo.ename])}">{:cookie('think_lang') == 'en-us' ? $vo.ename : $vo.catename}</a>
       </li> 
       {/volist}     
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
