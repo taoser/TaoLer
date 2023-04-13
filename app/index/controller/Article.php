@@ -87,9 +87,8 @@ class Article extends BaseController
         $article = new ArticleModel();
         $artDetail = $this->model->getArtDetail($id);
 
-        if($artDetail['read_type'] == 1 && session('art_pass_'.$id) != $artDetail['art_pass'])
-        {
-            $artDetail['content'] = '加密文件！请正确输入密码查看！';
+        if($artDetail['read_type'] == 1 && session('art_pass_'.$id) != $artDetail['art_pass']) {
+            $artDetail['content'] = '本文已加密！请输入正确密码查看！';
         }
 
 		if(is_null($artDetail)){
@@ -355,8 +354,7 @@ class Article extends BaseController
 		$article = ArticleModel::find($id);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id','cate_id','title','title_color','read_type','art_pass','user_id','content','upzip','keywords','description','captcha']);
-            $data['user_id'] = $this->uid;
+			$data = Request::only(['id','cate_id','title','title_color','read_type','art_pass','content','upzip','keywords','description','captcha']);
 			$tagId = input('tagid');	
 			
 			// 验证码

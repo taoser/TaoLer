@@ -119,7 +119,26 @@ class Comment extends Model
         return $userCommList;
     }
 
-    
+    public function getCommentList(array $where, int $page = 1, int$limit = 10)
+    {
+        return $this->field('id,article_id,user_id,content,status,create_time')
+            ->with([
+                'user'=> function($query){
+                    $query->field('id,name,user_img');
+                },
+                'article' => function($query) {
+                $query->field('id,title');
+                }
+            ])
+            ->where($where)
+            ->order(['create_time' => 'desc'])
+            ->paginate([
+                    'list_rows' => $limit,
+                    'page' => $page
+                ])
+            ->toArray();
+
+    }
 
     // 获取url
     public function getUrlAttr($value,$data)

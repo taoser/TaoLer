@@ -80,7 +80,7 @@ class Client
      * Ping interval.
      * @var int
      */
-    public static $pingInterval = 25;
+    public static $pingInterval = 55;
 
     /**
      * Connect to channel server
@@ -274,11 +274,12 @@ class Client
      * @param string $events
      * @param mixed $data
      */
-    public static function publish($events, $data)
+    public static function publish($events, $data , $is_loop = false)
     {
-        self::sendAnyway(array('type' => 'publish', 'channels' => (array)$events, 'data' => $data));
+        $type = $is_loop == true ? 'publishLoop' : 'publish';
+        self::sendAnyway(array('type' => $type, 'channels' => (array)$events, 'data' => $data));
     }
-
+    
     /**
      * Watch a channel of queue
      * @param string|array $channels

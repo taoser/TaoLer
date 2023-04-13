@@ -177,7 +177,7 @@ layui.define(['table', 'laypage','jquery', 'element'], function(exports) {
 	function createCard(elem, linenum, item, no) {
 		var line = 12 / linenum;
 		var card =
-			'<div id=' + item.id + ' onclick="cardTableCheckedCard(' + elem + ',this)" class="layui-col-md' + line + ' ew-datagrid-item" data-index="' + no+'" data-number="1"> <div class="project-list-item"> <div class="project-list-item-cover" style="background-image: url(' +item.image + ');"></div> <div class="project-list-item-body"> <h2 class="layui-elip">' + item.title + '</h2> <div class="project-list-item-text layui-text">' + item.remark + '</div> <div class="project-list-item-desc"> <span class="time">' +item.time + '</span> <div class="ew-head-list"></div> </div> </div > </div > </div > '
+			'<div id=' + item.id + ' onclick="cardTableCheckedCard(' + elem + ',this)" class="layui-col-md' + line + ' ew-datagrid-item" data-index="' + no+'" data-number="1"> <div class="project-list-item"> <img class="project-list-item-cover" src="' + item.image + '"> <div class="project-list-item-body"> <h2 class="layui-elip">' + item.title + '</h2> <div class="project-list-item-text layui-text">' + item.remark + '</div> <div class="project-list-item-desc"> <span class="time">' +item.time + '</span> <div class="ew-head-list"></div> </div> </div > </div > </div > '
 		return card;
 	}
 	

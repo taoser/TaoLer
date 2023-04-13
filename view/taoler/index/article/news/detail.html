@@ -44,7 +44,9 @@
         {//解密文件}
         {empty name="passJieMi"}
         {if($article.read_type == 1)}
-        <div id="jiemi"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #1E9FFF;"></i> 阅读请解密 </div>
+        <div id="jiemi" style="text-align:center">
+          <button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
+        </div>
         {/if}
         {/empty}
 

@@ -11,15 +11,12 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
-use app\common\lib\facade\HttpHelper;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\facade\Article;
 use app\common\model\Slider;
 use app\common\lib\Msgres;
-use yzh52521\EasyHttp\Http;
-use QL\QueryList;
 
 class Index extends BaseController
 {

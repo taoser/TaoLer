@@ -55,6 +55,14 @@
 	font-size: 15px !important;
 }
 
+.layui-table-cell .pear-btn {
+	margin-right: 5px;
+}
+
+.layui-table-cell .pear-btn:last-child {
+	margin-right: 0px;
+}
+
 .layui-table-page {
 	height: 45px !important;
 	padding-top: 10px !important;

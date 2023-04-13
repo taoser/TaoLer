@@ -447,7 +447,12 @@ abstract class BaseController
      */
     public function getParamFilter(array $array) :array
     {
-        return array_filter($array, "filter");
+        return array_filter($array, function($arr){
+            if($arr === '' || $arr === null){
+                return false;
+            }
+            return true;
+        });
     }
 
     /**

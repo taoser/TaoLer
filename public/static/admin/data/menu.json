@@ -1,6 +1,6 @@
 [{
 		"id": 1,
-		"title": "主页",
+		"title": "工作空间",
 		"icon": "layui-icon layui-icon-console",
 		"type": 0,
 		"href": "",
@@ -10,14 +10,14 @@
 			"icon": "layui-icon layui-icon-console",
 			"type": 1,
 			"openType": "_iframe",
-			"href": "/admin/index/console1.html"
+			"href": "view/console/console1.html"
 		}, {
 			"id": 13,
 			"title": "数据分析",
 			"icon": "layui-icon layui-icon-console",
 			"type": 1,
 			"openType": "_iframe",
-			"href": "/admin/index/console2.html"
+			"href": "view/console/console2.html"
 		}, {
 			"id": 14,
 			"title": "百度一下",
@@ -39,42 +39,6 @@
 			"type": 1,
 			"openType": "_iframe",
 			"href": "view/document/core.html"
-		}]
-	},
-	{
-		"id": "100",
-		"title": "管理",
-		"icon": "layui-icon layui-icon-console",
-		"type": 0,
-		"href": "",
-		"children": [{
-			"id": 101,
-			"title": "用户管理",
-			"icon": "layui-icon layui-icon-console",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "/admin/user/list.html"
-		}, {
-			"id": 103,
-			"title": "管理员",
-			"icon": "layui-icon layui-icon-console",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "/admin/admin/index.html"
-		}, {
-			"id": 104,
-			"title": "角色管理",
-			"icon": "layui-icon layui-icon-console",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "/admin/AuthGroup/list.html"
-		}, {
-			"id": 105,
-			"title": "权限分配",
-			"icon": "layui-icon layui-icon-console",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "/admin/AuthAccess/indexhtml"
 		}]
 	},
 	{

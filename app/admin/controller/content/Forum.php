@@ -99,7 +99,6 @@ class Forum extends AdminController
                     'reply'     => $v['is_reply'],
                     'check'     => $v['status']
                 ];
-
             }
             return json(['code' =>0, 'msg' => 'ok', 'count' => $list['total'], 'data' => $res['data']]);
         }

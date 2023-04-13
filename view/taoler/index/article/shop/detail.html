@@ -68,6 +68,9 @@
                       <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span></div>
                       {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
                     </div>
+
+                    {//加密未解密评论不可查看}
+                    {if($article.read_type == 0 || (($article.read_type == 1) && $passJieMi))}
                     <div class="detail-body jieda-body photos">{$vo.content}</div>
                     <div class="jieda-reply">
                       <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
@@ -77,7 +80,7 @@
                       {//评论编辑删除采纳权限}
                       <div class="jieda-admin">
                         {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
-                        <span type="edit" id="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
+                        <span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
                         <span type="del">{:lang('delete')}</span>				
                         {/if}
                         {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth  ?? '')) /}
@@ -85,6 +88,10 @@
                         {/if}
                       </div>
                     </div>
+                    {else /}
+                    <div class="detail-body jieda-body photos"><i class="layui-icon layui-icon-password" style="font-size: 24px; color: #FF5722;"></i> 评论解密后查看 </div>
+                    {/if}
+
                   </li>
                   {/volist} 
                 </ul>
@@ -165,7 +172,7 @@ layui.use(['fly','colorpicker','plyr', 'laypage'], function(){
       othis.html(fly.content(html));
     });
   } else {
-    $("#comment-edit").on('click',function (){
+    $(".comment-edit").on('click',function (){
       var id = $(this).data('id');
       layer.open({
         type: 2,

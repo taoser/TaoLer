@@ -58,6 +58,11 @@
 							</div>
 							<div class="d-inline-block">
 							<a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="text-muted" title="发布于{$art.user.name}" rel="category">{$art.user.nickname ?: $art.user.name}</a>
+								{$art.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+								{$art.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+								{$art.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+								{$art.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
+								{$art.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
 							</div>
 							<div class="flex-fill"></div>
 							<div class="mx-1">

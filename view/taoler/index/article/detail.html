@@ -110,7 +110,7 @@
 			{//评论编辑删除采纳权限}
               <div class="jieda-admin">
 				{if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
-                  <span type="edit" id="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
+                  <span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
 					<span type="del">{:lang('delete')}</span>				
 				{/if}
 				{if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth  ?? '')) /}<span class="jieda-accept" type="accept">{:lang('accept')}</span>{/if}

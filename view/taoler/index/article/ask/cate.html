@@ -50,6 +50,11 @@
 					  <cite>{$art.user.nickname ?: $art.user.name}</cite>
 				  </a>
 				  {$art.create_time|date='Y-m-d'}
+				  {$art.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+				  {$art.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+				  {$art.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+				  {$art.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
+				  {$art.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
 				  <span ><i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}</span>
 			  </div>
 			</div>

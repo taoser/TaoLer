@@ -63,9 +63,11 @@
 
               {//解密文件}
               {empty name="passJieMi"}
-                {if($article.read_type == 1)}
-                <div id="jiemi"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #1E9FFF;"></i> 阅读请解密 </div>
-                {/if}
+              {if($article.read_type == 1)}
+              <div id="jiemi" style="text-align:center">
+                <button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
+              </div>
+              {/if}
               {/empty}
 
               {notempty name="tags"}
@@ -141,22 +143,26 @@
                         <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span>{:hook('ipShow',$vo.user.city)}</div>
                         {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
                       </div>
+                      {//加密未解密评论不可查看}
+                      {if($article.read_type == 0 || (($article.read_type == 1) && $passJieMi))}
                       <div class="detail-body jieda-body photos">{$vo.content|raw}</div>
-                      
                       <div class="jieda-reply">
                         <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan"><i class="iconfont icon-zan"></i><em>{$vo.zan}</em>赞</span>
                         <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
                         {//评论 编辑/删除/采纳/权限}
                         <div class="jieda-admin">
                           {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth ?? '')}
-                          <span type="edit" id="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
+                          <span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
                           <span type="del">{:lang('delete')}</span>
                           {/if} {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth ?? '')) && ($article.jie == 0)/}
                           <span class="jieda-accept" type="accept">{:lang('accept')}</span>
                           {/if}
                         </div>
                       </div>
-                      <hr width="90%" style="border:1px dotted red;height:1px;margin:5px 0px;"; />
+                      {else /}
+                      <div class="detail-body jieda-body photos"><i class="layui-icon layui-icon-password" style="font-size: 24px; color: #FF5722;"></i> 评论解密后查看 </div>
+                      {/if}
+                      <hr style="width:90%;border:1px dotted red;height:1px;margin:5px 0px;"; />
                       <div>{$vo.user.sign|raw}</div>
                   
                     </li>
@@ -333,7 +339,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
       othis.html(fly.content(html));
     });
   } else {
-    $("#comment-edit").on('click',function (){
+    $(".comment-edit").on('click',function (){
       var id = $(this).data('id');
       layer.open({
         type: 2,
@@ -347,7 +353,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 
   //加载评论编辑器
   if(taonystatus == 1) {
-    $("#comment-edit").attr('type','');
+    $(".comment-edit").attr('type','');
   }
 
   //tpl模板给发布时间赋值
