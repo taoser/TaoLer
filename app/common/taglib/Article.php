@@ -21,70 +21,116 @@ class Article extends TagLib
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
         'id'            => ['attr' => '', 'close' => 0],
-        'title'         => ['attr' => 'cid', 'close' => 0], 
-        'content'       => ['attr' => 'name', 'close' => 0],
-        'istop'         => ['attr' => '', 'close' => 0],
-        'aname'         => ['attr' => 'name', 'close' => 0],
-        'commentnum'    => ['attr' => 'name', 'close' => 0],
+        'title'         => ['attr' => '', 'close' => 0],
+        'content'       => ['attr' => '', 'close' => 0],
+        'auther'        => ['attr' => '', 'close' => 0],
+        'pv'            => ['attr' => '', 'close' => 0],
+        'title_color'   => ['attr' => '', 'close' => 0],
+        'comment_num'   => ['attr' => '', 'close' => 0],
+        'keywords'      => ['attr' => '', 'close' => 0],
+        'description'   => ['attr' => '', 'close' => 0],
+
+        'cate'          => ['attr' => 'name', 'close' => 0],
+        'user'          => ['attr' => 'name', 'close' => 0],
+
+
         'comment'       => ['attr' => '', 'close' => 1],
+
+        'istop'         => ['attr' => '', 'close' => 0],
+
+        'detail'      => ['attr' => 'name', 'close' => 0],
         
     ];
 
-    // public function __construct($a)
-    // {
-    //     $id = (int) input('id');
-    //     $this->id = $id;
-    //     $page = input('page') ? (int) input('page') : 1;
-    //     //parent::__construct();
-    //     if(request()->action() == 'detail') {
-    //         $article = new ArticleModel();
-    //         $this->article = $article->getArtDetail($id);
-    //        // dump($this->article);
-    //     }
-        
-    // }
-
-    public function tagId($tag): string
+    // id
+    public function tagId(): string
     {
-        //dump($tag);
-       $parseStr = $this->article;
-        //return $parseStr;
-        return '<?php echo "' . $parseStr['id'] . '"; ?>';
+        return '{$article.id}';
     }
 
-    public function tagTitle(array $tag, string $content): string
+    public function tagTitle(): string
     {
-        $cid = (int) $this->tpl->get('cid');
-        $article = new ArticleModel();
-        $art = $article->getArtDetail($cid);
-        //dump($art);
-        $parseStr = $art['title'];
-        //$parseStr = 123;
-        //return $parseStr;
-        return '<?php echo "' . $parseStr . '"; ?>';
+        return '{$article.title}';
     }
 
-    public function tagContent($tag): string
+    public function tagContent(): string
     {
-        $parseStr = $this->article['content'];
-        //return $parseStr;
-        return '<?php echo "' . $parseStr . '"; ?>';
+        return '{$article.content|raw}';
     }
 
-    public function tagAname($tag): string
+    public function tagAuther(): string
     {
-        $parseStr = $this->article['user']['nickname'] ?: $this->article['user']['name'];
-        // dump($parseStr);
-        return $parseStr;
-        
+        return '{$article.user.nickname ?: $article.user.name}';
     }
 
-    public function tagCommentnum($tag): string
+    public function tagPv()
     {
-        $parseStr = $this->article['comments_count'];
-        // dump($parseStr);
-        return $parseStr;
-        
+        return '{$article.pv}';
+    }
+
+    public function tagComment_num(): string
+    {
+        return '{$article.comments_count}';
+    }
+
+    public function tagTitle_color(): string
+    {
+        return '{$article.title_color  ?: "#333"}';
+    }
+
+    public function tagKeywords(): string
+    {
+        return '{$article.keywords ?: $article.title}';
+    }
+
+    public function tagDescription(): string
+    {
+        return '{$article.description}';
+    }
+
+    // 详情分类
+    public function tagCate($tag): string
+    {
+        if($tag['name'] == 'name')
+        {
+            return '{$article.cate.catename}';
+        }
+
+        if($tag['name'] == 'ename')
+        {
+            return '{$article.cate.ename}';
+        }
+
+        if($tag['name'] == 'id')
+        {
+            return '{$article.cate_id}';
+        }
+
+        return '';
+    }
+
+    public function tagUser($tag)
+    {
+        if($tag['name'] == 'user_link') {
+            return '{:url("user/home",["id"=>'.'$'.'article.user.id'.'])->domain(true)}';
+        }
+        return '{$article.user.' . $tag['name'] . '}';
+    }
+
+    public function tagCateName()
+    {
+        return '{$article.cate.catename}';
+    }
+
+    public function tagCateename()
+    {
+        return '{$article.cate.id}';
+    }
+
+    // 详情
+    public function tagDetail($tag)
+    {
+        return '{$article.' . $tag['name'] . '}';
     }
 
     public function tagIstop($tag): string
@@ -98,18 +144,15 @@ class Article extends TagLib
         return $parseStr;
     }
 
-    // public function tagComment($tag, $content): string
-    // {
-    //     //
-    //     //$arr   = $this->getComments($this->id, $this->page);
-    //     $parse = '<?php ';
-    //     $parse .= '$comment_arr=[[1,3,5,7,9],[2,4,6,8,10]];'; // 这里是模拟数据
-    //     $parse .= '$__LIST__ = $comment_arr[' . $type . '];';
-    /**      $parse .= ' ?>';*/
-    //     $parse .= '{volist name="__LIST__" id="' . $name . '"}';
-    //     $parse .= $content;
-    //     $parse .= '{/volist}';
-    //     return $parse;
-    // }
+    // 评论
+     public function tagComment($tag, $content): string
+     {
+         $parse = '<?php ';
+         $parse .= ' ?>';
+         $parse .= '{volist name="comments['.'\'data\''.']" id="comment" empty= "还没有内容"}';
+         $parse .= $content;
+         $parse .= '{/volist}';
+         return $parse;
+     }
 
 }

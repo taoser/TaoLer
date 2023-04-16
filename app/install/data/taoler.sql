@@ -48,7 +48,7 @@ DROP TABLE IF EXISTS `tao_article`;
 CREATE TABLE `tao_article`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `title` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
-  `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '内容',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
   `status` enum('0','-1','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '状态1显示0待审-1禁止',
   `cate_id` int NOT NULL COMMENT '分类id',
   `user_id` int NOT NULL COMMENT '用户id',
@@ -714,7 +714,7 @@ DROP TABLE IF EXISTS `tao_user_zan`;
 CREATE TABLE `tao_user_zan`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '点赞主键id',
   `article_id` int NULL DEFAULT NULL COMMENT '文章id',
-  `comment_id` int NOT NULL COMMENT '评论id',
+  `comment_id` int NULL DEFAULT NULL COMMENT '评论id',
   `user_id` int NOT NULL COMMENT '用户id',
   `type` tinyint NOT NULL DEFAULT 2 COMMENT '1文章点赞2评论点赞',
   `create_time` int NOT NULL DEFAULT 0 COMMENT '点赞时间',

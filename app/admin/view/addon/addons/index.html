@@ -24,7 +24,7 @@
 
 		<script type="text/html" id="addons-bar">
 			{{#  if(d.have_newversion === 1){ }}
-				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="install" data-url="{:url('addon.addons/upgrade')}" data-userlogin="{:url('addon.addons/userLogin')}" data-ispay="{:url('addon.addons/isPay')}"><i class="layui-icon layui-icon-edit"></i>升级</a>
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="install" data-url="{:url('addon.addons/upgrade')}" data-userlogin="{:url('addon.addons/userLogin')}" data-ispay="{:url('addon.addons/isPay')}"><i class="layui-icon layui-icon-upload-circle"></i>升级</a>
 			{{# } else { }}
 				{{# if(d.isInstall === 1) { }}
 					<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="config" data-url="{:url('addon.addons/config')}"><i class="layui-icon layui-icon-set"></i>设置</a>
@@ -100,7 +100,7 @@
 					url: LIST_URL,
 					cols: cols,
 					page: true,
-					limit: 10,
+					limit: 15,
 					text: "对不起，加载出现异常！",
 				});
 

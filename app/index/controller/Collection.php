@@ -10,10 +10,6 @@ use think\facade\Db;
 
 class Collection extends BaseController
 {
-//	protected $type = [
-//        'cid'    =>  'integer',
-//    ];
-
 	//文章收藏
 	public function add(){
 		//$data = Request::param();

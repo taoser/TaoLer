@@ -119,10 +119,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
-        'F' => 
-        array (
-            'Firebase\\JWT\\' => 13,
-        ),
         'E' => 
         array (
             'Endroid\\QrCode\\' => 15,
@@ -321,10 +317,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
-        ),
-        'Firebase\\JWT\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Endroid\\QrCode\\' => 
         array (

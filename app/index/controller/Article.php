@@ -84,11 +84,10 @@ class Article extends BaseController
 		$id = input('id');
 		$page = input('page',1);
 		//输出内容
-        $article = new ArticleModel();
         $artDetail = $this->model->getArtDetail($id);
 
-        if($artDetail['read_type'] == 1 && session('art_pass_'.$id) != $artDetail['art_pass']) {
-            $artDetail['content'] = '本文已加密！请输入正确密码查看！';
+        if($artDetail->read_type == 1 && session('art_pass_'.$id) != $artDetail->art_pass) {
+            $artDetail->content = '本文已加密！请输入正确密码查看！';
         }
 
 		if(is_null($artDetail)){
@@ -96,7 +95,7 @@ class Article extends BaseController
 			throw new \think\exception\HttpException(404, '无内容');
 		}
 		//用户个人tag标签
-		$userTags = $this->model->where(['user_id'=>$artDetail['user_id'],'status'=>1])->where('keywords','<>','')->column('keywords');
+		$userTags = $this->model->where(['user_id' => $artDetail['user_id'],'status'=>1])->where('keywords','<>','')->column('keywords');
 		//转换为字符串
 		$tagStr = implode(",",$userTags);
 		//转换为数组并去重
@@ -111,10 +110,9 @@ class Article extends BaseController
 				$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
 			}
 		}
-		
-	
+
 		// 设置内容的tag内链
-		$artDetail['content'] = $this->setArtTagLink($artDetail['content']);
+		$artDetail->content = $this->setArtTagLink($artDetail->content);
 
 		// 标签
 		$tags = [];
@@ -127,7 +125,7 @@ class Article extends BaseController
 				$tags[] = ['name'=>$tag['name'],'url'=> (string) url('tag_list',['ename'=>$tag['ename']])];
 			}
 			//相关帖子
-			$relationArticle = $article->getRelationTags($artTags[0]['tag_id'],$id,5);
+			$relationArticle =  $this->model->getRelationTags($artTags[0]['tag_id'],$id,5);
 		}
 
 		$tpl = Db::name('cate')->where('id', $artDetail['cate_id'])->value('detpl');
@@ -136,9 +134,10 @@ class Article extends BaseController
 		//浏览pv
 		Db::name('article')->where('id',$id)->inc('pv')->update();
 		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
+        $artDetail->pv = $pv;
 
 		//上一篇下一篇
-		$upDownArt = $article->getPrevNextArticle($id,$artDetail['cate_id']);
+		$upDownArt =  $this->model->getPrevNextArticle($id,$artDetail['cate_id']);
 		if(empty($upDownArt['previous'][0])) {
             $previous = '前面已经没有了！';
         } else {
@@ -155,7 +154,7 @@ class Article extends BaseController
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->max('update_time',false) ?? time();
 		//	热议文章
-		$artHot = $article->getArtHot(10);
+		$artHot =  $this->model->getArtHot(10);
         //广告
         $ad = new Slider();
         //分类图片

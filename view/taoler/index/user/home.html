@@ -11,10 +11,9 @@
 
 {block name="title"}{$u.nickname ?: $u.name}的主页-{$sysInfo.webname}{/block}
 {block name="description"}{$u.sign}{/block}
-{block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}{/block}
 {block name="content"}
-<div class="fly-home fly-panel" style="background-image: url();">
+<div class="fly-home fly-panel" >
   <img src="{$Request.domain}{$u.user_img}" alt="{$u.name}">
   {if($u.vip > 0)}<i class="iconfont icon-renzheng" title="Fly社区认证"></i>{/if}
   <h1>
@@ -70,7 +69,7 @@
           <span>{$vo.create_time|date='Y-m-d H-m'}</span>
           {:lang('in')}<a href="{:url('article/detail',['id'=>$vo.id,'ename'=>$vo.ename])}">{$vo.title}</a>{:lang('reply')}：
           </p>
-          <div class="home-dacontent detail-body jieda-body photos" >{$vo.content}</div>
+          <div class="home-dacontent detail-body jieda-body photos" >{$vo.content|strip_tags}</div>
         </li>
 		    {/volist}
           <!-- <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>没有回答任何问题</span></div> -->
@@ -84,19 +83,16 @@
 
 {block name="script"}
 <script>
-  layui.use(['fly','face','plyr'], function(){
+  layui.use(['fly','face'], function(){
   var $ = layui.$;
   var fly = layui.fly;
-  var face = layui.face
-  ,plyr = layui.plyr;
+  var face = layui.face;
   
   //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
   $('.detail-body').each(function(){
     var othis = $(this), html = othis.html();
     othis.html(fly.content(html));
   });
-  //加载播放器
-  plyr.setup();
 });
 </script>
 {/block}

@@ -40,7 +40,6 @@ class Comment extends Model
             ->order(['cai'=>'asc','create_time'=>'asc'])
             ->paginate(['list_rows'=>10, 'page'=>$page])
             ->toArray();
-
     }
 
     //回帖榜

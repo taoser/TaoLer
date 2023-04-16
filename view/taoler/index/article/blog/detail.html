@@ -92,8 +92,8 @@
             </section>
 
             <div class="card-footer text-center mt-4">
-              <a href="javascript:" style="color: #FFF !important;" data-img="/zb_users/cache/theme/rongkeji/qr/cachee3a78f5d7639da99c9226ec504c2fcc6.png" data-title="手机扫一扫继续阅读" data-desc="微信或浏览器均可" class="single-popup shangzan mr-3 text-muted text-xs">手机浏览</a>
-              <a href="javascript:" style="color: #FFF !important;" data-img="/zb_users/theme/rongkeji/image/wxpay.png" data-title="赞赏支持一下站长" data-desc="微信赞赏扫码" class="single-popup shangzan text-muted text-xs">赞赏支持</a>
+              <a href="javascript:" style="color: #FFF !important;" data-img="/qrcode/?text={$Request.domain}{$Request.url}&size=200" data-title="手机扫一扫继续阅读" data-desc="微信或浏览器均可" class="single-popup shangzan mr-3 text-muted text-xs">手机浏览</a>
+              <a href="javascript:" style="color: #FFF !important;" data-img="{:hook('qqKefu','dashang')}" data-title="赞赏支持一下站长" data-desc="微信赞赏扫码" class="single-popup shangzan text-muted text-xs">赞赏支持</a>
               <div class="text-center text-muted text-xs" style="margin-top: 30px;">
                 "作者已被打赏 0 次"
               </div>
@@ -297,12 +297,13 @@
     {//crud管理模块}
     {include file="/public/crud" /}
   </main>
-
+{include file="public/menu" /}
 {/block}
 
 {block name="script"}
 
 {:hook('taonyeditor')}
+
 {:hook('taoplayer')}
 
 <script type='text/javascript' src="{$Request.domain}/view/common/blog/js/theme.js"></script>
@@ -498,7 +499,5 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 </script>
 
 {:hook('taoplyr')}
-
-{include file="/public/qr-read" /}
 
 {/block}
