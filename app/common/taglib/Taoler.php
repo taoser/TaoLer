@@ -16,15 +16,17 @@ class Taoler extends TagLib
 {
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
-        'nav'      => ['attr' => '', 'close' => 1],
-        'snav'      => ['attr' => '', 'close' => 1],
-        'gnav'      => ['attr' => '', 'close' => 1],
+        'nav'      => ['attr' => 'id', 'close' => 1],
+        'snav'      => ['attr' => 'id', 'close' => 1],
+        'gnav'      => ['attr' => 'id', 'close' => 1],
+        'if'        => ['condition', 'expression' => true, 'close' => 1],
 
     ];
 
     public function tagNav($tag, $content): string
     {
-        $parse = '{volist name="cateList" id="nav"}';
+        $id = $tag['id'] ?? 'nav';
+        $parse = '{volist name="cateList" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;
@@ -32,7 +34,8 @@ class Taoler extends TagLib
 
     public function tagSnav($tag, $content): string
     {
-        $parse = '{volist name="nav.children" id="snav"}';
+        $id = $tag['id'] ?? 'snav';
+        $parse = '{volist name="nav.children" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;
@@ -40,9 +43,25 @@ class Taoler extends TagLib
 
     public function tagGnav($tag, $content): string
     {
-        $parse = '{volist name="snav.children" id="gnav"}';
+        $id = $tag['id'] ?? 'gnav';
+        $parse = '{volist name="snav.children" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;
     }
+
+    public function tagIf($tag, $content): string
+    {
+
+        $condition = !empty($tag['expression']) ? $tag['expression'] : $tag['condition'];
+        $condition = $this->parseCondition($condition);
+        $parseStr  = '<?php if(' . $condition . '): ?>' . $content . '<?php endif; ?>';
+
+        return $parseStr;
+
+//        return '{if'.$tag.'}} '.$content.' {/if}';
+
+    }
+
+
 }

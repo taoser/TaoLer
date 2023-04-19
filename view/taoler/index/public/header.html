@@ -9,7 +9,7 @@
 		<ul class="layui-nav fly-nav layui-hide-xs">
 			{//导航nav}
 			{taoler:nav}
-				<li class="layui-nav-item {if($nav.ename eq $Request.param.ename)} layui-this {/if}" >
+				<li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
 					<a href="{nav:link}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
 					{notempty name="nav.children"}
 					<dl class="layui-nav-child"> <!-- 二级菜单 -->
