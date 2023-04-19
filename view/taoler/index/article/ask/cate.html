@@ -25,55 +25,50 @@
 			<li {if condition="$type eq 'wait'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'wait',])}">{:lang('未解决')}</a>	</li>
 		  </ul>
 		</div>
-		<ul class="question-list">
-		  {volist name="artList['data']" id="art"}
-		  <li>
-			{if ($art.jie == 1)}
-			<div class="que-sta-jie">
-			<span  >已解</span>
-			<span  >&radic;</span>
-			</div>
-			{else /}
-			<div class="que-sta-ask">
-			<span>未解</span>
-			<span >？</span>
-			</div>
-			{/if}
-			<div class="que-sta-view layui-hide-xs">
-				<span>{$art.pv}</span>
-				<span >阅读</span>
-			</div>
-			<div class="que-body">
-			  <h2><a href="{$Request.domain}{$art.url}"  style="color:{$art.title_color ?? '#333'};">{$art.title}</a></h2>
-			  <div class="que-user-info">
-				  <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="que-avatar">
-					  <cite>{$art.user.nickname ?: $art.user.name}</cite>
-				  </a>
-				  {$art.create_time|date='Y-m-d'}
-				  {$art.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
-				  {$art.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
-				  {$art.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
-				  {$art.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
-				  {$art.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
-				  <span ><i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}</span>
-			  </div>
-			</div>
-		  </li>
-		  {/volist}
-		</ul>
+
+		  <ul class="question-list">
+			  {article:list}
+			  <li>
+				  {if ($article.jie == 1)}
+				  <div class="que-sta-jie">
+					  <span  >已解</span>
+					  <span  >&radic;</span>
+				  </div>
+				  {else /}
+				  <div class="que-sta-ask">
+					  <span>未解</span>
+					  <span >？</span>
+				  </div>
+				  {/if}
+				  <div class="que-sta-view layui-hide-xs">
+					  <span>{article:pv /}</span>
+					  <span >阅读</span>
+				  </div>
+				  <div class="que-body">
+					  <h2><a href="{article:link}"  style="color:{article:title_color};">{article:title}</a></h2>
+					  <div class="que-user-info">
+						  <a href="{article:user name='link'}" class="que-avatar">
+							  <cite>{article:auther /}</cite>
+						  </a>
+						  {$article.create_time|date='Y-m-d'}
+						  {$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+						  {$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+						  {$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+						  {$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
+						  {$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+						  <span ><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num /}</span>
+					  </div>
+				  </div>
+			  </li>
+			  {/article:list}
+		  </ul>
 		<div style="text-align: center" id="pages"></div>
       </div>
     </div>
     <div class="layui-col-md4">
-		{if showSlider(3)}
-        <div class="fly-panel">
-            <div class="fly-panel" style="padding: 5px 0; text-align: center;">
-                {volist name="ad_cateImg" id="vo"}
-                <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
-                {/volist}
-            </div>
-        </div>
-		{/if}
+		<!--列表广告图片位-->
+		{:hook('ads_cate_rimg')}
+
         <dl class="fly-panel fly-list-one layui-hide-xs">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
@@ -94,18 +89,9 @@
 				</ul>
 			</div>
 		</div>
-		{if showSlider(6)}
-		<div class="fly-panel">
-		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
-		<a href="" class="fly-link fly-joinad">{:lang('i want to join')}</a>
-		</div>
-		<div class="fly-panel-main">
-		{volist name="ad_comm" id="vo"}
-			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color};'">{$vo.slid_name}</a>
-		{/volist}
-		</div>
-		</div>
-		{/if}
+		<!--列表广告赞助位-->
+		{:hook('ads_cate_support')}
+
     </div>
   </div>
 </div>
@@ -129,7 +115,7 @@
 			var page = obj.curr;
 			//首次不执行
 			if(!first){
-			 location.href ="{$path}/"+page+'.html';
+			 	location.href ="{$path}/"+page+'.html';
 			 }
 	  	}
 	  });

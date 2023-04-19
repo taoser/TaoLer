@@ -102,6 +102,7 @@
 	,laytpl = layui.laytpl
     ,uid = layui.cache.user.uid
     ,laypage = layui.laypage;
+    let LOGIN_URL = "{:url('login/index')}";
 
   //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
 
@@ -230,7 +231,7 @@
     $("#jiemi").click(function (){
       //判断登陆
       if(uid == -1){
-        layer.msg('请先登录再查看', {icon: 6}, function(){location.href = login})
+        layer.msg('请先登录再查看', {icon: 6}, function(){location.href = LOGIN_URL})
         return false;
       }
       var id = "{$article.id}";

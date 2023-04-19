@@ -29,20 +29,22 @@
   <main class="py-2 py-md-2 pb-3" style="transform: none">
     <div class="container" style="transform: none">
       <div class="row" style="transform: none">
-        <div class="col-lg-8" itemscope itemType="http://schema.org/BlogPosting">
+        <div class="col-lg-8" itemscope itemType="">
           <div class="post card">
             <section class="card-body">
               <div class="post-header border-bottom mb-4 pb-4">
-                <h1 class="h3 mb-3" itemprop="headline">{$article.title}</h1>
+                <h1 class="h3 mb-3" itemprop="headline">{article:title /}</h1>
                 <div class="meta d-flex align-items-center text-xs text-muted">
                 <div>
-                  <div class="d-inline-block" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
-                    Posted by <a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">{$article.user.name}</span></a>，<a href="{:url('cate',['ename'=>$article.cate.ename])}" target="_blank" class="text-muted" rel="category">{$article.cate.catename}</a>，<time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d h:m:s'}" itemprop="datePublished">{$article.create_time}</time> 
+                  <div class="d-inline-block" itemprop="author" itemscope="" itemtype="">
+                    Posted by <a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url">
+                    <span itemprop="name">{article:auther}</span></a>，
+                    <a href="{article:cate name='link'}" target="_blank" class="text-muted" rel="category">{article:cate name="catename"}</a>，<time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d h:m:s'}" itemprop="datePublished">{article:time}</time>
                   </div>
                 </div>
                 <div class="ml-auto text-sm yincang">
                   <span class="mx-1">
-                    <small>已阅读 {$pv} 次</small>
+                    <small>已阅读 {article:pv /} 次</small>
                   </span>
                 </div>
                 </div>
@@ -50,7 +52,7 @@
               </div>
               {:hook('taoplayerdiv')}
               <article class="post-content detail-body" itemprop="articleBody" view-image>
-              {$article.content|raw}
+              {article:content}
               </article>
               {//文章末尾}
               {if (($article.upzip !== '') || session('?user_name'))}
@@ -125,48 +127,44 @@
               <div class="card-body pt-4">
                 {//评论内容}
                 <div class="mb-3" id="flyReply">
-                  文章评论 <small class="font-theme text-muted">({$article.comments_count})</small>
+                  文章评论 <small class="font-theme text-muted">({article:comment_num})</small>
                   <ul class="jieda" id="jieda">
-                    {volist name="comments['data']" id="vo" empty= ""}
+                    {article:comment}
                     <li data-id="{$vo.id}" class="jieda-daan">
                       <a name="item-1111111111"></a>
                       <div class="detail-about detail-about-reply">
-                        <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$vo.user.id])}">
-                          <img src="{$Request.domain}{$vo.user.user_img}" alt=" " />{if($vo.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
+                        <a class="fly-avatar" href="{comment:ulink /}">
+                          <img src="{comment:uimg /}" alt=" " />{if($comment.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
                         </a>
                         <div class="fly-detail-user">
-                          <a href="{$Request.domain}{:url('user/home',['id'=>$vo.user.id])}" class="fly-link">
-                            <cite>{$vo.user.nickname ?: $vo.user.name}</cite>
+                          <a href="{comment:ulink /}" class="fly-link">
+                            <cite>{comment:uname /}</cite>
                           </a>
-                          {if condition="$article.user.id eq $vo.user.id"}<span>({:lang('poster')})</span>{/if}
+                          {if condition="$article.user.id eq $comment.user_id"}<span>({:lang('poster')})</span>{/if}
                         </div>
-                        <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span>{:hook('ipShow',$vo.user.city)}</div>
-                        {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
+                        <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span>{:hook('ipShow',$comment.user.city)}</div>
                       </div>
                       {//加密未解密评论不可查看}
                       {if($article.read_type == 0 || (($article.read_type == 1) && $passJieMi))}
-                      <div class="detail-body jieda-body photos">{$vo.content|raw}</div>
-                      <div class="jieda-reply">
-                        <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan"><i class="iconfont icon-zan"></i><em>{$vo.zan}</em>赞</span>
-                        <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
-                        {//评论 编辑/删除/采纳/权限}
-                        <div class="jieda-admin">
-                          {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth ?? '')}
-                          <span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
-                          <span type="del">{:lang('delete')}</span>
-                          {/if} {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth ?? '')) && ($article.jie == 0)/}
-                          <span class="jieda-accept" type="accept">{:lang('accept')}</span>
-                          {/if}
+                        <div class="detail-body jieda-body photos">{comment:content}</div>
+                        <div class="jieda-reply">
+                          <span class="jieda-zan {if($comment.zan != 0)}zanok{/if}" type="zan"><i class="iconfont icon-zan"></i><em>{comment:zan /}</em>赞</span>
+                          <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
+                          {//评论 编辑/删除/采纳/权限}
+                          <div class="jieda-admin">
+                            {if ((session('user_id') == $comment.user_id) && (getLimtTime($comment.create_time) < 2)) OR ($user.auth ?? '')}
+                              <span type="edit" class="comment-edit" data-id="{comment:id /}">{:lang('edit')}</span>
+                              <span type="del">{:lang('delete')}</span>
+                            {/if}
+                          </div>
                         </div>
-                      </div>
                       {else /}
-                      <div class="detail-body jieda-body photos"><i class="layui-icon layui-icon-password" style="font-size: 24px; color: #FF5722;"></i> 评论解密后查看 </div>
+                        <div class="detail-body jieda-body photos"><i class="layui-icon layui-icon-password" style="font-size: 24px; color: #FF5722;"></i> 评论解密后查看 </div>
                       {/if}
                       <hr style="width:90%;border:1px dotted red;height:1px;margin:5px 0px;"; />
-                      <div>{$vo.user.sign|raw}</div>
-                  
+                      <div>{comment:usign /}</div>
                     </li>
-                    {/volist}
+                    {/article:comment}
                   </ul>
                   <div style="text-align: center" id="pages"></div>
                 </div>
@@ -214,7 +212,7 @@
                     </div>
                   </div>
                   <div class="widget-author-avatar">
-                    <div class="flex-avatar w-80"><img alt="{$article.user.name}" src="{$article.user.user_img}" class="avatar" height="80" width="80">
+                    <div class="flex-avatar w-80"><img alt="{$article.user.name}" src="{article:user name='user_img'}" class="avatar" height="80" width="80">
                     </div>
                   </div>
                 </div>
@@ -233,18 +231,9 @@
               </dd>
             </dl>
             {//广告}
-            {if showSlider(4)}
-            <dl class="function" id="rongkeji_tuwenad">
-            <dt style="display:none;"></dt>
-            {volist name="ad_art" id="vo"}
-            <dd class="function_c">
-              <div>
-                <a href="{$vo.slid_href}" target="_blank" rel="nofollow"><img src="{$Request.domain}/{$vo.slid_img}" width="350" height="350" alt="图文广告"></a>
-              </div>
-            </dd>
-            {/volist}
-            </dl>
-            {/if}
+            <!--博客详情广告赞助位-->
+            {:hook('ads_blog_detail_rimg')}
+
             {//热门文章}
             <dl class="function" id="rongkeji_remenwenzhang">
               <dt class="function_t">热门文章</dt>
@@ -278,18 +267,9 @@
             </dl>
             {/if}
             {//友情链接}
-            {if count($flinks) > 0}
-            <dl class="function" id="divLinkage">
-              <dt class="function_t">友情链接</dt>
-              <dd class="function_c">
-              <ul>
-                {volist name="flinks" id="vo"}
-                  <li class="link-item"><a href="{$vo.slid_href}" target="_blank" title="{$vo.slid_name}">{$vo.slid_name}</a></li>
-                {/volist}
-              </ul>
-              </dd>
-            </dl>
-            {/if}
+            <!--博客详情友链-->
+            {:hook('ads_blog_detail_flink')}
+
           </div>
         </div>
       </div>
@@ -330,6 +310,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 	,uid = layui.cache.user.uid
 	,laypage = layui.laypage;
   var id = "{$article.id}";
+  let LOGIN_URL = "{:url('login/index')}";
 
   //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
 
@@ -476,7 +457,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
     $("#jiemi").click(function (){
       //判断登陆
       if(uid == -1){
-        layer.msg('请先登录再查看', {icon: 6}, function(){location.href = login})
+        layer.msg('请先登录再查看', {icon: 6}, function(){location.href = LOGIN_URL})
         return false;
       }
       var id = "{$article.id}";

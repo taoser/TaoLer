@@ -15,7 +15,6 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\facade\Article;
-use app\common\model\Slider;
 use app\common\lib\Msgres;
 
 class Index extends BaseController
@@ -30,39 +29,19 @@ class Index extends BaseController
     public function index()
     {
 		$types = input('type');
-
-        $slider = new Slider();
-		//幻灯
-        $sliders = Request::isMobile() ? $slider->getSliderList(12) : $slider->getSliderList(1);
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示20个
         $artList = Article::getArtList(22);
         //热议文章
         $artHot = Article::getArtHot(10);
-		//首页广告
-		$indexAd = $slider->getSliderList(13);
-        //温馨通道
-        $fast_links = $slider->getSliderList(8);
-		//首页赞助
-		$ad_index =  $slider->getSliderList(5);
-		//首页右栏图片
-		$ad_comm = $slider->getSliderList(2);
 
-		//友情链接申请
-		$adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
 		
 		$vs = [
-			'slider'	=>	$sliders,
 			'artTop'	=>	$artTop,
 			'artList'	=>	$artList,
 			'artHot'	=>	$artHot,
-			'ad_index_r'=>  $indexAd,
 			'type'		=>	$types,
-			'ad_index'	=>	$ad_index,
-			'ad_comm'	=>	$ad_comm,
-			'fastlinks' =>	$fast_links,
-			'adminEmail' => $adminEmail,
 			'jspage'	=>	'',
 		];
 		View::assign($vs);

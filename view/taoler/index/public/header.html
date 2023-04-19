@@ -7,23 +7,22 @@
 		{//移动端LOGO}
 		<a class="layui-hide-md layui-hide-sm" href="{$Request.domain}" ><img class="fly-logo-m" src="{$Request.domain}{$sysInfo.m_logo}" alt="logo"></a>
 		<ul class="layui-nav fly-nav layui-hide-xs">
-		{//导航nav}
-		{volist name="cateList" id="cate"}
-			<li class="layui-nav-item {if($cate.ename eq $Request.param.ename)} layui-this {/if}" >
-				<a href="{$cate.url}">{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename} {if condition="$cate.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
-				{notempty name="cate.children"}
-				<dl class="layui-nav-child"> <!-- 二级菜单 -->
-					{volist name="cate.children" id="vo2"}
-					<dd><a href="{$vo2.url}">{$vo2.catename}</a></dd>
-					{/volist}
-				</dl>
-				{/notempty}
-			</li>
-		{/volist}
-		{// 后台自定义头部链接}
-		{volist name="headlinks" id="vo"}
-			<li class="layui-nav-item"><a href="{$vo.slid_href}" target="_blank"><i class="layui-icon {$vo.slid_img}"></i>{$vo.slid_name}</a></li>
-		{/volist}
+			{//导航nav}
+			{taoler:nav}
+				<li class="layui-nav-item {if($nav.ename eq $Request.param.ename)} layui-this {/if}" >
+					<a href="{nav:link}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
+					{notempty name="nav.children"}
+					<dl class="layui-nav-child"> <!-- 二级菜单 -->
+						{taoler:snav}
+						<dd><a href="{snav:link}">{snav:name}</a></dd>
+						{/taoler:snav}
+					</dl>
+					{/notempty}
+				</li>
+			{/taoler:nav}
+
+			{// 后台自定义头部链接}
+			{:hook('ads_header_link')}
 		</ul>
 
 		{//头部右栏}

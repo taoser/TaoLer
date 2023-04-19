@@ -28,9 +28,10 @@ class Files
 			$arr = array();
 			$data = scandir($path);
 			foreach ($data as $value){
-				if($value !='.' && $value != '..' && !stripos($value,".") && $value != '.gitignore'){
-				  $arr[] = strtolower($value);
-				}
+                if (in_array($value, ['.', '..','.gitignore'])) continue;
+				if(!stripos($value,".")) {
+                    $arr[] = strtolower($value);
+                }
 			  }
 			 //return array_merge(array_diff($arr, array('install')));
 			 return $arr;

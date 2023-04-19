@@ -17,7 +17,6 @@ use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cache;
-use app\facade\Article;
 use app\BaseController as BaseCtrl;
 use app\common\model\Cate;
 
@@ -146,21 +145,11 @@ class BaseController extends BaseCtrl
     {
         //1.查询分类表获取所有分类
 		$sysInfo = $this->getSystem();
-		$slider = new \app\common\model\Slider();
-		//头部链接
-		$head_links = $slider->getSliderList(10);
-		//页脚链接
-		$foot_links = $slider->getSliderList(11);
-		//友情链接
-		$friend_links = $slider->getSliderList(9);
 		//获取热门标签
 		$hotTag = $this->getHotTag();
 
 		$assign = [
 			'sysInfo'	=> $sysInfo,
-			'headlinks'	=> $head_links,
-			'footlinks'	=> $foot_links,
-			'flinks'	=> $friend_links,
 			'hotTag'	=> $hotTag,
 			'host'		=> Request::domain() . '/'
 		];

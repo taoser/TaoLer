@@ -3,13 +3,9 @@
       <div class="footer-col footer-col-logo">
         <img src="{$sysInfo.logo}" alt="{$sysInfo.webname}"></div>
       <div class="footer-col footer-col-copy">
-        <ul class="footer-nav layui-hide-xs">
-          {volist name="footlinks" id="vo"}
-          <li class="menu-item"><a href="{$vo.slid_href}" target="_blank">{$vo.slid_name}</a></li>
-          {/volist}
-        </ul>
+        {:hook('ads_footer_link')}
         <div class="copyright">
-          <span class="layui-hide"> v{:config('taoler.version')}</span> {$sysInfo.showlist|raw}
+          <span class="layui-hide"> v{:config('taoler.version')}</span>
           <p>Copyright © {:date('Y')} {$sysInfo.copyright|raw} <a href="https://www.aieok.com" target="blank" title="TaoLerCMS" class="layui-hide">TaoLerCMS</a>
             <a href="https://beian.miit.gov.cn/" target="blank">{$sysInfo.icp}</a>
           </p>

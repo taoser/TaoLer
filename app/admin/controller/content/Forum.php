@@ -131,9 +131,9 @@ class Forum extends AdminController
             $data['content'] = $this->downUrlPicsReaplace($data['content']);
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
             $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-
+            $data['description'] = strip_tags($this->filterEmoji($data['description']));
             // 获取分类ename,appname
-            $cateName = $this->model->field('ename,appname')->find($data['cate_id']);
+            $cateEname = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
 
             $result = $this->model->add($data);
             if ($result['code'] == 1) {
@@ -152,7 +152,7 @@ class Forum extends AdminController
                 // 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 
-                $link = $this->getArticleUrl((int)$aid, 'index', $cateName['ename']);
+                $link = $this->getArticleUrl((int)$aid, 'index', $cateEname);
 
                 hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 
@@ -201,7 +201,7 @@ class Forum extends AdminController
             $data['content'] = $this->downUrlPicsReaplace($data['content']);
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
             $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-
+            $data['description'] = strip_tags($this->filterEmoji($data['description']));
             $result = $article->edit($data);
             if($result == 1) {
                 //处理标签
@@ -228,7 +228,7 @@ class Forum extends AdminController
                 }
                 //删除原有缓存显示编辑后内容
                 Cache::delete('article_'.$id);
-                $link = $this->getRouteUrl((int) $id, $article->cate->ename, $article->cate->appname);
+                $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
                 hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
                 return Msgres::success('edit_success',$link);
             }

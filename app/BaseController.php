@@ -470,4 +470,17 @@ abstract class BaseController
         return $array;
     }
 
+    /**
+     * 过滤字符串中表情
+     * @param $str string 字符串内容
+     * @return string
+     */
+    public function filterEmoji(string $str): string
+    {
+        $str = preg_replace_callback('/./u', function (array $match) {
+            return strlen($match[0]) >= 4 ? '' : $match[0];
+        }, $str);
+        return $str;
+    }
+
 }

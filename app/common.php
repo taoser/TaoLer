@@ -251,18 +251,6 @@ function getSpaceNmu($level)
 	return str_repeat('---',$level);
 }
 
-//链接投放开关，有设置则打开
-function showSlider($type)
-{
-    $sliders = new \app\common\model\Slider();
-    $sliderArr = $sliders->getSliderList($type);
-    if(!empty($sliderArr)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 //提取内容第一张图片
 function getOnepic($str)
 {

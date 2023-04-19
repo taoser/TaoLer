@@ -11,124 +11,76 @@
 {block name="column"}{include file="public/column" /}{/block}
 {block name="content"}
 <div class="layui-container">
-  <div class="layui-row layui-col-space15">
-    <div class="layui-col-md8">
-		<!--首页幻灯-->
-		{if showSlider(1)}
-		<div class="fly-panel"> 
-		  {include file="public/index-slider" /}
-		 </div>
-		 {/if}
-		<!--置顶文章-->
-		  <div class="fly-panel">
-			<div class="fly-panel-title fly-filter">
-			  <a>{:lang('top')}</a>
-			  <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">{:lang('go sign')}</a>
-			</div>
-			<ul class="fly-list">
-			{volist name="artTop" id="top"}
-			  {include file="public/index-topforum" /}
-			{/volist}
-			</ul>
-		  </div>
-		<!--文章列表-->
-		  <div class="fly-panel" style="margin-bottom: 0;">
-			<ul class="fly-list">   
-			{volist name="artList" id="art"}
-			  {include file="public/index-forumlist" /}
-			{/volist}  
-			</ul>
-			<div style="text-align: center">
-			  <div class="laypage-main">
-				<a href="{$Request.domain}{:url('cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md8">
+			<!--首页幻灯-->
+			{:hook('ads_slider')}
+			<!--置顶文章-->
+			  <div class="fly-panel">
+				<div class="fly-panel-title fly-filter">
+				  <a>{:lang('top')}</a>
+				  <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">{:lang('go sign')}</a>
+				</div>
+				<ul class="fly-list">
+				{volist name="artTop" id="top"}
+				  {include file="public/index-topforum" /}
+				{/volist}
+				</ul>
 			  </div>
+			<!--文章列表-->
+			  <div class="fly-panel" style="margin-bottom: 0;">
+				<ul class="fly-list">
+				{volist name="artList" id="art"}
+				  {include file="public/index-forumlist" /}
+				{/volist}
+				</ul>
+				<div style="text-align: center">
+				  <div class="laypage-main">
+					<a href="{$Request.domain}{:url('cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
+				  </div>
+				</div>
+			  </div>
+		</div>
+		{//右栏}
+		<div class="layui-col-md4">
+			<!--签到-->
+			{:hook('signhook', ['id'=>1])}
+			<!--排名-->
+			{:hook('ranking')}
+			<!--首页图片广告-->
+			{:hook('ads_index_rimg')}
+			<!--温馨通道-->
+			{:hook('ads_index_fastlinks')}
+			<!--广告赞助-->
+			{:hook('ads_index_support')}
+			<!--回帖榜-->
+			<div class="fly-panel fly-rank fly-rank-reply layui-hide-xs" id="LAY_replyRank" data-url="{:url('user_reply')}">
+				<h3 class="fly-panel-title">{:lang('reviewers list')}</h3>
+				<dl>
+				  <i class="layui-icon fly-loading">&#xe63d;</i>
+				</dl>
 			</div>
-		  </div>
-    </div>
-	{//右栏}
-    <div class="layui-col-md4">
-		{:hook('live')}
-		{:hook('ranking')}
-		{:hook('kankan')}
-		{:hook('signhook', ['id'=>1])}
-
-		<!--首页图片广告-->
-		{if showSlider(13)}
-		<div class="fly-panel" style="padding: 5px 0; text-align: center;">
-			{volist name="ad_index_r" id="vo"}		
-			  <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
-			{/volist}
-		</div>
-		{/if}
-		<!--温馨通道-->
-		{if showSlider(8)}
-		<div class="fly-panel layui-hide-xs">
-		<h3 class="fly-panel-title">{:lang('links list')}</h3>
-		{include file="public/index-static" /}
-		</div>
-		{/if}
-		
-		<!--广告赞助-->
-		{if showSlider(5)}
-		<div class="fly-panel"> 
-			<div class="fly-panel-title">{:lang('sponsor')}<span class="fly-mid"></span> 
-				<a href="/" class="fly-link fly-joinad">{:lang('i want to join')}</a> 
-			</div> 
-			<div class="fly-panel-main" style="padding: 13px 15px;"> 
-			{volist name="ad_index" id="vo"}
-				<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
-			{/volist}
-			</div>
-		</div>
-		{/if}
-		<!--回帖榜-->
-		<div class="fly-panel fly-rank fly-rank-reply layui-hide-xs" id="LAY_replyRank" data-url="{:url('user_reply')}">
-			<h3 class="fly-panel-title">{:lang('reviewers list')}</h3>
-			<dl>
-			  <i class="layui-icon fly-loading">&#xe63d;</i>
+			<!--热帖榜-->
+			<dl class="fly-panel fly-list-one layui-hide-xs">
+				<dt class="fly-panel-title">{:lang('hot post list')}</dt>
+				{volist name="artHot" id="vo"}
+				<dd>
+				  <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
+				  <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+				</dd>
+				{/volist}
 			</dl>
+			<!--首页图片广告-->
+			{:hook('ads_index_rfimg')}
+			<!--友情链接-->
+			{:hook('ads_index_flink')}
+
 		</div>
-		<!--热帖榜-->
-		<dl class="fly-panel fly-list-one layui-hide-xs">
-			<dt class="fly-panel-title">{:lang('hot post list')}</dt>
-			{volist name="artHot" id="vo"}
-			<dd>
-			  <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
-			  <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-			</dd>
-			{/volist}
-		</dl>
-		<!--首页图片广告-->
-		{if showSlider(2)}
-		<div class="fly-panel" style="padding: 5px 0; text-align: center;">
-		{volist name="ad_comm" id="vo"}		
-		  <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
-		{/volist}
-        </div>
-		{/if}
-		<!--友情链接-->
-		{if showSlider(9)}
-		<div class="fly-panel fly-link html5plus-hide layui-hide-xs">		
-		{include file="public/flink" /}
-		</div>
-		{/if}
-    </div>
-  </div>
+	</div>
 </div>
+
 {include file="public/menu" /}
+
 {/block}
 
-{block name="script"}
-<script>
-	$('#friend-link').on('click', function(){
-		layer.open({
-			title: '申请友链',
-			content: '发送邮件至：{$adminEmail} ',
-			yes: function(index, layero){
-				layer.close(index);
-			}
-		});
-	return false;
-});
-</script>
-{/block}
+{block name="script"}{/block}

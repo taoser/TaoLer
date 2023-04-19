@@ -235,7 +235,7 @@ layui.use(['fly','colorpicker','plyr', 'laypage'], function(){
         data: filed,
         dataType: "json",
         success:function (data) {
-          if (data.code == 0) {
+          if (data.code === 0) {
             layer.msg(data.msg,{icon:6,time:2000},function () {
                 location.reload(true);
             });

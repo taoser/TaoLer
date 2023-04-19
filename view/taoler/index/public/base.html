@@ -43,6 +43,7 @@
   {if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") !== false} html body{margin-top: 1px;} {/if}	
   </style>
   <script src="/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
+  {$sysInfo.showlist|raw}
 </head>
 <body >
 <script> if(navigator.userAgent.indexOf("Html5Plus") > -1) {document.body.classList.add("html5plus")} </script>

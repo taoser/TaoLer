@@ -12,8 +12,6 @@ use think\facade\Session;
 use think\facade\Config;
 use app\common\model\Cate;
 use app\common\model\Comment;
-use app\common\model\Article as ArticleModel;
-use app\common\model\Slider;
 use app\common\model\UserZan;
 use app\common\model\PushJscode;
 use taoler\com\Message;
@@ -30,15 +28,13 @@ class Article extends BaseController
     public function __construct(App $app)
     {
         parent::__construct($app);
-        $this->model = new ArticleModel();
+        $this->model = new \app\common\model\Article();
     }
 
     //文章分类
     public function cate()
 	{
 		$cate = new Cate();
-		$ad = new Slider();
-		$article = new ArticleModel();
 		//动态参数
 		$ename = Request::param('ename');
 		$type = Request::param('type','all');
@@ -53,13 +49,10 @@ class Article extends BaseController
 		$path = substr($url,0,strrpos($url,"/"));
 		
         //分类列表
-		$artList = $article->getCateList($ename,$type,$page);
+		$artList = $this->model->getCateList($ename,$type,$page);
 		//	热议文章
-		$artHot = $article->getArtHot(10);
-        //分类图片
-        $ad_cateImg = $ad->getSliderList(3);
-        //分类钻展赞助
-        $ad_comm = $ad->getSliderList(6);
+		$artHot = $this->model->getArtHot(10);
+
 
 		$assignArr = [
 			'ename'=>$ename,
@@ -67,8 +60,6 @@ class Article extends BaseController
 			'type'=>$type,
 			'artList'=>$artList,
 			'artHot'=>$artHot,
-			'ad_cateImg'=>$ad_cateImg,
-			'ad_comm'=>$ad_comm,
 			'path'=>$path,
 			'jspage'=>'jie'
 		];
@@ -155,12 +146,6 @@ class Article extends BaseController
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->max('update_time',false) ?? time();
 		//	热议文章
 		$artHot =  $this->model->getArtHot(10);
-        //广告
-        $ad = new Slider();
-        //分类图片
-        $ad_artImg = $ad->getSliderList(4);
-        //分类钻展赞助
-        $ad_comm = $ad->getSliderList(7);
 		//push
 		$push_js = Db::name('push_jscode')->where(['delete_time'=>0,'type'=>1])->cache(true)->select();
 
@@ -168,8 +153,6 @@ class Article extends BaseController
 			'article'	=> $artDetail,
 			'pv'		=> $pv,
 			'artHot'	=> $artHot,
-			'ad_art'	=> $ad_artImg,
-			'ad_comm'	=> $ad_comm,
 			'tags'		=> $tags,
 			'relationArticle' => $relationArticle,
 			'previous'	=> $previous,
@@ -282,13 +265,11 @@ class Article extends BaseController
 			$data['content'] = $this->downUrlPicsReaplace($data['content']);
 			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-
+            $data['description'] = strip_tags($this->filterEmoji($data['description']));
             // 获取分类ename,appname
             $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
 
-            $article = new ArticleModel();
-
-            $result = $article->add($data);
+            $result = $this->model->add($data);
             if ($result['code'] == 1) {
 				// 获取到的最新ID
 				$aid = $result['data']['id'];
@@ -350,7 +331,7 @@ class Article extends BaseController
      */
     public function edit($id)
     {
-		$article = ArticleModel::find($id);
+		$article = $this->model->find($id);
 		
 		if(Request::isAjax()){
 			$data = Request::only(['id','cate_id','title','title_color','read_type','art_pass','content','upzip','keywords','description','captcha']);
@@ -377,8 +358,8 @@ class Article extends BaseController
 				$data['content'] = $this->downUrlPicsReaplace($data['content']);
 				// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 				$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+                $data['description'] = strip_tags($this->filterEmoji($data['description']));
 
-				
 				$result = $article->edit($data);
 				if($result == 1) {
 					//处理标签
@@ -436,7 +417,7 @@ class Article extends BaseController
 	 */
     public function delete()
 	{
-		$article = ArticleModel::find(input('id'));
+		$article = $this->model->find(input('id'));
 		$result = $article->together(['comments'])->delete();
 		if($result) {
             return  Msgres::success('delete_success');
@@ -509,7 +490,7 @@ class Article extends BaseController
 	public function jieset()
 	{
 		$data = Request::param();
-		$article = ArticleModel::field('id,is_top,is_hot,is_reply')->find($data['id']);
+		$article = $this->model->field('id,is_top,is_hot,is_reply')->find($data['id']);
 		switch ($data['field']){
             case  'top':
                 if($data['rank']==1){
@@ -549,7 +530,7 @@ class Article extends BaseController
 	public function titleColor()
 	{
 		$data = Request::param();
-		$result = ArticleModel::update($data);
+		$result = $this->model->update($data);
 		if($result){
 			//清除文章缓存
 			Cache::tag(['tagArt','tagArtDetail'])->clear();

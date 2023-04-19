@@ -13,7 +13,6 @@
 namespace app\common\taglib;
 
 use think\template\TagLib;
-use app\common\model\Article as ArticleModel;
 
 class Article extends TagLib
 {
@@ -29,9 +28,13 @@ class Article extends TagLib
         'comment_num'   => ['attr' => '', 'close' => 0],
         'keywords'      => ['attr' => '', 'close' => 0],
         'description'   => ['attr' => '', 'close' => 0],
+        'link'          => ['attr' => '', 'close' => 0],
+        'time'          => ['attr' => '', 'close' => 0],
 
         'cate'          => ['attr' => 'name', 'close' => 0],
         'user'          => ['attr' => 'name', 'close' => 0],
+
+        'list'          => ['attr' => '', 'close' => 1],
 
 
         'comment'       => ['attr' => '', 'close' => 1],
@@ -88,6 +91,16 @@ class Article extends TagLib
         return '{$article.description}';
     }
 
+    public function tagLink(): string
+    {
+        return '{$article.url}';
+    }
+
+    public function tagTime(): string
+    {
+        return '{$article.create_time}';
+    }
+
     // 详情分类
     public function tagCate($tag): string
     {
@@ -106,12 +119,17 @@ class Article extends TagLib
             return '{$article.cate_id}';
         }
 
+        if($tag['name'] == 'link')
+        {
+            return '{:url(\'cate\',[\'ename\'=>$article.cate.ename])}';
+        }
+
         return '';
     }
 
     public function tagUser($tag)
     {
-        if($tag['name'] == 'user_link') {
+        if($tag['name'] == 'link') {
             return '{:url("user/home",["id"=>'.'$'.'article.user.id'.'])->domain(true)}';
         }
         return '{$article.user.' . $tag['name'] . '}';
@@ -154,5 +172,14 @@ class Article extends TagLib
          $parse .= '{/volist}';
          return $parse;
      }
+
+    // 分类列表
+    public function tagList($tag, $content): string
+    {
+        $parse = '{volist name="artList['.'\'data\''.']" id="article" empty= "还没有内容"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        return $parse;
+    }
 
 }

@@ -16,12 +16,33 @@ class Taoler extends TagLib
 {
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
-        'content'      => ['attr' => 'name', 'close' => 0],
+        'nav'      => ['attr' => '', 'close' => 1],
+        'snav'      => ['attr' => '', 'close' => 1],
+        'gnav'      => ['attr' => '', 'close' => 1],
 
     ];
 
-    public function tagContent($tag)
+    public function tagNav($tag, $content): string
     {
-        return '{$article.' . $tag['name'] . '}';
+        $parse = '{volist name="cateList" id="nav"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        return $parse;
+    }
+
+    public function tagSnav($tag, $content): string
+    {
+        $parse = '{volist name="nav.children" id="snav"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        return $parse;
+    }
+
+    public function tagGnav($tag, $content): string
+    {
+        $parse = '{volist name="snav.children" id="gnav"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        return $parse;
     }
 }

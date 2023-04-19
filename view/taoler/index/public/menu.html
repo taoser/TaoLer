@@ -55,13 +55,7 @@
         <div class="layui-menu-body-title">菜单</div>
         <hr>
         <ul>
-			{volist name="headlinks" id="vo"}
-			<li class="">
-				<div class="layui-menu-body-title">
-					<a href="{$vo.slid_href}"><i class="layui-icon {$vo.slid_img}"></i><span> {$vo.slid_name} </span></a>
-				</div>
-			</li>
-			{/volist}
+			{:hook('ads_mobile_link')}
 		  <li class="">
             <div class="layui-menu-body-title">
               <a href="/">

@@ -16,7 +16,7 @@
 {block name="content"}
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
-    <div class="layui-col-md9">
+    <div class="layui-col-md8">
       <div class="fly-panel" style="margin-bottom: 0;">
 	  
 	    {include file="public/filter" /}
@@ -62,16 +62,9 @@
 		<div style="text-align: center" id="pages"></div>
       </div>
     </div>
-    <div class="layui-col-md3">
-      {if showSlider(3)}
-        <div class="fly-panel">
-            <div class="fly-panel" style="padding: 5px 0; text-align: center;">
-                {volist name="ad_cateImg" id="vo"}
-                <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
-                {/volist}
-            </div>
-        </div>
-      {/if}
+    <div class="layui-col-md4">
+        <!--列表广告图片位-->
+        {:hook('ads_cate_rimg')}
         <dl class="fly-panel fly-list-one layui-hide-xs">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
         {volist name="artHot" id="vo"}
@@ -81,18 +74,8 @@
         </dd>
 		    {/volist} 
       </dl>
-      {if showSlider(6)}
-		<div class="fly-panel">
-		<div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
-		<a href="" class="fly-link fly-joinad    ">{:lang('i want to join')}</a>
-		</div>  
-		<div class="fly-panel-main">
-		{volist name="ad_comm" id="vo"}
-			<a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
-		{/volist}
-		</div>
-		</div>
-    {/if}
+        <!--列表广告赞助位-->
+        {:hook('ads_cate_support')}
     </div>
   </div>
 </div>

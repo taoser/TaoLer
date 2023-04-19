@@ -41,12 +41,12 @@
         </div>
         {//作者}
         <div class="detail-about">
-          <a class="fly-avatar" href="{article:user name='user_link' /}">
+          <a class="fly-avatar" href="{article:user name='link' /}">
             <img src="{article:user name='user_img' /}" alt="{article:user name='name' /}">
             {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
           </a>
           <div class="fly-detail-user">
-            <a href="{article:user name='user_link' /}" class="fly-link">
+            <a href="{article:user name='link' /}" class="fly-link">
             <cite>{article:auther}</cite>
             </a>
             <span class="layui-btn layui-btn-xs guanzhu" >关注</span>
@@ -115,7 +115,7 @@
                     <a href="{comment:ulink /}" class="fly-link">
                       <cite>{comment:uname /}</cite>
                     </a>
-                    {if condition="$article.user.id eq $comment.user.id"}<span>({:lang('poster')})</span>{/if}
+                    {if condition="$article.user_id eq $comment.user_id"}<span>({:lang('poster')})</span>{/if}
                     <span>{comment:usign /}</span>
                   </div>
                   <div class="detail-hits"><span class="post-time" data="{comment:time}"></span>{:hook('ipShow',$comment.user.city)}</span>
@@ -132,7 +132,7 @@
                     <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
                     {//评论编辑删除采纳权限}
                     <div class="jieda-admin">
-                      {if ((session('user_id') == $comment.user.id) && (getLimtTime($comment.create_time) < 2)) OR ($user.auth  ?? '')}
+                      {if ((session('user_id') == $comment.user_id) && (getLimtTime($comment.create_time) < 2)) OR ($user.auth  ?? '')}
                         <span type="edit" class="comment-edit" data-id="{comment:id /}">{:lang('edit')}</span>
                         <span type="del">{:lang('delete')}</span>
                       {/if}
@@ -148,6 +148,7 @@
           {/article:comment}
         </ul>
         <div style="text-align: center" id="pages"></div>
+
         {//评论}
         {if session('?user_id') AND ( config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}
         <div class="layui-form layui-form-pane">
@@ -182,18 +183,8 @@
           </div>
         </div>
       </div>
-      {if showSlider(7)}
-      <div class="fly-panel">
-        <div class="fly-panel-title">{:lang('sponsor')}<span style="padding: 0 3px;">-</span>
-          <a href="" class="fly-link fly-joinad">{:lang('i want to join')}</a>
-        </div>
-        <div class="fly-panel-main">
-          {volist name="ad_comm" id="vo"}
-          <a href="{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: {$vo.slid_color};">{$vo.slid_name}</a>
-          {/volist}
-        </div>
-      </div>
-      {/if}
+      <!--详情广告赞助位-->
+      {:hook('ads_detail_support')}
       <dl class="fly-panel fly-list-one">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
           {volist name="artHot" id="vo"}
@@ -203,13 +194,8 @@
           </dd>
           {/volist}
       </dl>
-      {if showSlider(4)}
-      <div class="fly-panel" style="padding: 5px 0; text-align: center;">
-      {volist name="ad_art" id="vo"}
-        <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
-      {/volist}
-      </div>
-      {/if}
+      <!--详情广告图片位-->
+      {:hook('ads_detail_rimg')}
     </div>
     {//crud管理模块}
     {include file="/public/crud" /}
@@ -247,6 +233,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 	,uid = layui.cache.user.uid
 	,laypage = layui.laypage;
   var id = "{$article.id}";
+  let LOGIN_URL = "{:url('login/index')}";
 
   //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
   // 编辑器插件启用状态
@@ -387,7 +374,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
   $("#jiemi").click(function (){
     //判断登陆
     if(uid == -1){
-      layer.msg('请先登录再查看', {icon: 6}, function(){location.href = login})
+      layer.msg('请先登录再查看', {icon: 6}, function(){location.href = LOGIN_URL})
       return false;
     }
     var id = "{$article.id}";
