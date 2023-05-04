@@ -16,9 +16,9 @@ class Taoler extends TagLib
 {
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
-        'nav'      => ['attr' => 'id', 'close' => 1],
-        'snav'      => ['attr' => 'id', 'close' => 1],
-        'gnav'      => ['attr' => 'id', 'close' => 1],
+        'nav'      => ['attr' => '', 'close' => 1],
+        'snav'      => ['attr' => '', 'close' => 1],
+        'gnav'      => ['attr' => '', 'close' => 1],
         'if'        => ['condition', 'expression' => true, 'close' => 1],
 
     ];

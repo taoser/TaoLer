@@ -15,7 +15,6 @@ use app\common\controller\BaseController;
 use think\facade\View;
 use think\facade\Request;
 use app\facade\Article;
-use app\common\model\Slider;
 
 class Search extends BaseController
 {
@@ -25,9 +24,6 @@ class Search extends BaseController
         $ser = Request::only(['keywords']);
 		$artList = Article::getSearchKeyWord($ser['keywords']);
         $counts = $artList->count();
-        $slider = new Slider();
-        //首页右栏
-        $ad_comm = $slider->getSliderList(2);
         //	查询热议
         $artHot = Article::getArtHot(10);
 
@@ -35,7 +31,6 @@ class Search extends BaseController
             'artList' => $artList,
             'keywords' => $ser['keywords'],
             'counts' => $counts,
-            'ad_comm'=>$ad_comm,
             'artHot'=>$artHot,
             'jspage'=>''
         ];

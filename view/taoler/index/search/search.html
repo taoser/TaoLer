@@ -52,12 +52,8 @@
         </dd>
         {/volist}
       </dl>
-      <!--自定义-->
-      <div class="fly-panel" style="padding: 5px 0; text-align: center;">
-      {volist name="ad_comm" id="vo"}		
-        <a href="{$Request.domain}{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
-      {/volist}
-      </div>
+      <!--自定义广告-->
+      {:hook('ads_index_rimg')}
     </div>
   </div>
 </div>

@@ -704,7 +704,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
       var ins = carousel.render({
         elem: '#FLY_topline'
         ,width: '100%'
-        ,height: '172px'
+        ,height: '250px'
         ,anim: 'fade'
       });
 
@@ -712,11 +712,11 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
         var width = $(this).prop('innerWidth');
         if(width >= 1200){
           ins.reload({
-            height: '172px'
+            height: '250px'
           });
         } else if(width >= 992){
           ins.reload({
-            height: '141px'
+            height: '250px'
           });
         } else if(width >= 768){
           ins.reload({

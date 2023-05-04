@@ -1,14 +1,15 @@
 <div class="fly-panel fly-column layui-hide-xs">
-  <div class="layui-container">
+  <div class="layui-container fly-nav-sub">
     <ul class="layui-clear">
       <li class="layui-hide-xs {if ($Request.param.ename =='' && $Request.param.id =='')} layui-this {/if}" >
-      <a href="{$Request.domain}">{:lang('home page')}</a>
-      </li> 
+        <a href="{$Request.domain}">{:lang('home page')}</a>
+      </li>
       {volist name="subcatelist" id="vo"}
-      <li  class="{if($vo.ename eq $Request.param.ename)}layui-this{/if}">
-      <a href="{$Request.domain}{:url('cate',['ename' => $vo.ename])}">{:cookie('think_lang') == 'en-us' ? $vo.ename : $vo.catename}</a>
-      </li> 
-      {/volist}     
+        <li  {if($vo.ename eq $Request.param.ename)} class='layui-this' {/if}>
+        <span style="color: #8d8d8d">></span>
+        <a href="{$Request.domain}{:url('cate',['ename' => $vo.ename])}">{:cookie('think_lang') == 'en-us' ? $vo.ename : $vo.catename}</a>
+        </li>
+      {/volist}
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
       {if session('?user_id')}
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post')}">{:lang('my post')}</a></li> 

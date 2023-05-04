@@ -7,7 +7,10 @@
 {block name="ogdescription"}<meta property="og:description" content="{$sysInfo.descript}" />{/block}
 {block name="ogimage"}<meta property="og:image" content="{$Request.domain}{$sysInfo.logo}" />{/block}
 {block name="meta"}{/block}
+{block name="link"}
+<!-- 特效丶样式 -->
 
+{/block}
 {block name="column"}{include file="public/column" /}{/block}
 {block name="content"}
 <div class="layui-container">
@@ -16,24 +19,66 @@
 			<!--首页幻灯-->
 			{:hook('ads_slider')}
 			<!--置顶文章-->
-			  <div class="fly-panel">
+
+			<div class="fly-panel">
 				<div class="fly-panel-title fly-filter">
-				  <a>{:lang('top')}</a>
-				  <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">{:lang('go sign')}</a>
+					<a>{:lang('top')}</a>
+					<a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">{:lang('go sign')}</a>
 				</div>
 				<ul class="fly-list">
-				{volist name="artTop" id="top"}
-				  {include file="public/index-topforum" /}
-				{/volist}
+					{volist name="artTop" id="top"}
+					{include file="public/index-topforum" /}
+					{/volist}
 				</ul>
-			  </div>
+			</div>
 			<!--文章列表-->
-			  <div class="fly-panel" style="margin-bottom: 0;">
-				<ul class="fly-list">
-				{volist name="artList" id="art"}
-				  {include file="public/index-forumlist" /}
+
+			<section id="main" class="list-home list-grid list-grid-padding">
+				{volist name="artList" id="article"}
+				<article class="list-item block card-plain">
+					{if getOnepic($article.content)}
+					<figure class="media media-3x2 col-4 col-md-4 d-none d-md-block">
+						<a class="media-content" href="{article:link /}" title="{article:title /}">
+							<img src="{:getOnepic($article.content)}" alt="{article:title /}">
+						</a>
+					</figure>
+					{/if}
+					<div class="list-width list-content">
+						<div class="list-body">
+							<h3>
+								<a href="{article:link /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
+							</h3>
+							<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
+								<p class="h-3x">{:getArtContent($article.content)}</p>
+							</div>
+						</div>
+						<div class="list-footer">
+							<div class="d-flex flex-fill align-items-center text-muted text-xs">
+								<time class="d-inline-block" datetime="{$article.create_time}">{$article.create_time|date='Y-m-d'}</time>
+								<div class="d-inline-block mx-1 mx-md-2">
+									<a href="{:url('cate',['ename'=>$article.cate.ename])}" class="text-muted">{$article.cate.catename}</a>
+								</div>
+								<div class="d-inline-block">
+									<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:auther /}</a>
+									{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+									{$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+									{$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+									{$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
+									{$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+								</div>
+								<div class="flex-fill"></div>
+								<div class="mx-1">
+									<span class="text-muted"><i class="iconfont icon-pinglun1" title="回答"></i> {$article.comments_count}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</article>
 				{/volist}
-				</ul>
+			</section>
+
+
+			  <div class="fly-panel" style="margin-bottom: 0;">
 				<div style="text-align: center">
 				  <div class="laypage-main">
 					<a href="{$Request.domain}{:url('cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
@@ -83,4 +128,18 @@
 
 {/block}
 
-{block name="script"}{/block}
+{block name="script"}
+<script>
+	layui.use(['util','laytpl'], function(){
+		let util = layui.util;
+
+		//tpl模板给发布时间赋值
+		$("time").each(function () {
+			var othis = $(this);
+			var datetime = othis.attr("datetime");
+			var posttime = layui.util.timeAgo(datetime, 30);
+			othis.text(posttime);
+		});
+	});
+</script>
+{/block}

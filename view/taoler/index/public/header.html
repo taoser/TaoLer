@@ -10,11 +10,11 @@
 			{//导航nav}
 			{taoler:nav}
 				<li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
-					<a href="{nav:link}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
+					<a href="{nav:link /}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
 					{notempty name="nav.children"}
 					<dl class="layui-nav-child"> <!-- 二级菜单 -->
 						{taoler:snav}
-						<dd><a href="{snav:link}">{snav:name}</a></dd>
+						<dd><a href="{snav:link /}">{snav:name /}</a></dd>
 						{/taoler:snav}
 					</dl>
 					{/notempty}
@@ -27,10 +27,14 @@
 
 		{//头部右栏}
 		<ul class="layui-nav fly-nav-user" msg-url="{:url('message/nums')}" readMsg-url="{:url('Message/read')}" userlogin="{:url('user_login')}">
-			<span class="fly-search layui-hide-xs" data-url="{:url('user_search')}"><i class="layui-icon">&#xe615;</i></span>
+			<li class="layui-nav-item">
+				<span class="fly-search layui-hide-xs" data-url="{:url('user_search')}"><i class="layui-icon">&#xe615;</i></span>
+			</li>
 			<!-- 登录 -->
 			{if session('?user_id')}
-				{if ($Request.action=='user')}<li class="layui-nav-item"><a href="{$Request.domain}">{:lang('home page')}</a></li>{/if}
+				{if ($Request.action=='user')}
+					<li class="layui-nav-item"><a href="{$Request.domain}">{:lang('home page')}</a></li>
+				{/if}
 				<li class="layui-nav-item">
 					<a class="fly-nav-avatar" href="javascript:;"><cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}{$user.user_img}"></a>
 					<dl class="layui-nav-child">

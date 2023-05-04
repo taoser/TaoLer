@@ -1,9 +1,4 @@
-﻿/**
- @Name: Fly社区
- @Author: 贤心
- @Site: fly.layui.com
- */
-
+﻿
 /* 全局 */
 html,body{overflow-x: hidden;}
 html body{margin-top: 61px;}
@@ -185,9 +180,10 @@ pre{overflow-y: auto;
 
 /* 头部 */
 .fly-header{position: fixed; left: 0; top: 0; z-index: 10000; width: 100%; height: 60px; border-bottom: 1px solid #404553; border-right: 1px solid #404553; border-radius: 0;}
-.fly-logo{position: absolute; left: 15px; top: 11px;}
-.fly-logo-m{position: absolute; left:calc(50% - 45px); top: 11px;}
-.fly-nav{margin-left: 200px;}
+.fly-header .layui-container{position: relative; height: 100%; line-height: 60px; text-align: center;}
+.fly-logo{position: absolute; left: 15px;}
+.fly-logo-m{width: 91px;}
+.fly-nav{position: absolute; left: 200px;}
 .fly-nav a i{position: absolute; left: 15px; top: 0; padding-right: 10px; font-size: 22px;}
 .fly-nav a .icon-shouye, .nav a .icon-shezhi{top: 2px;}
 
@@ -198,7 +194,7 @@ pre{overflow-y: auto;
 .fly-nav-avatar .fly-badge-vip{position: relative; margin-left: 10px;}
 .fly-nav-user .layui-nav-child a i{position: relative; top: 2px; margin-right: 10px; font-size: 26px;}
 
-.fly-nav-msg{position:absolute; top: 50%; right: 5px; height: 20px; line-height: 20px; margin-top: -10px; padding:0 6px; background-color: #FF7200; color: #fff; border-radius: 2px;}
+.fly-nav-msg{position:absolute; top: 10px; right: 1px; width:16px; height: 16px; line-height: 16px;  background-color: #FF7200; color: #fff; font-size:12px; border-radius: 10px;}
 .fly-nav-msg:hover{color:#fff;}
 
 .fly-header .layui-nav{padding: 0; background: none;}
@@ -212,19 +208,9 @@ pre{overflow-y: auto;
 .fly-header .layui-nav .layui-nav-bar,
 .fly-header .fly-nav-user .layui-nav-more{display: none !important;}
 .fly-header .fly-nav-user .layui-nav-child{left: auto; right: 0; width: 120px; min-width: 0;}
-/*
-.fly-html-layui .fly-nav-avatar .layui-nav-more{display: none !important;}
-.fly-header .fly-nav-user .layui-nav-child{left: auto; right: 0; width: 120px; min-width: 0;}
-.fly-html-layui .fly-nav-msg{left: -30px;}
-.fly-html-layui .layui-header .layui-nav-child dd{text-align: center;}
-.fly-html-layui .layui-header .layui-nav-item a cite{padding: 0 0 0 10px;}
-.fly-html-layui .layui-header .layui-nav .fly-layui-user{margin: 0; margin-left: 40px;}
-.fly-html-layui .layui-header .layui-nav .fly-layui-user a{padding: 0;}
-.fly-layui-user .layui-nav-child{left: auto; right: 0; min-width: 0; width: 120px;}
-*/
 
-/* 搜索 */
-.fly-search{display: inline-block; vertical-align: top; width: 50px; height: 50px; padding-top:20px;margin-right: 10px; text-align: center; cursor: pointer; font-size: 20px;}
+  /* 搜索 */
+.fly-search{display: inline-block; width: 50px; margin-right: 10px; cursor: pointer; font-size: 20px;}
 .fly-search .layui-icon{font-size: 20px;}
 .fly-search:hover{color: #5FB878;}
 .fly-layer-search input{height: 75px; line-height: 75px; width: 500px; padding: 0 15px; font-size: 20px; border: none 0; background: none;}
@@ -883,3 +869,181 @@ blockquote {
 .layui-fixbar li {
   border-radius:100%;
 }
+
+/*列表新增*/
+.section {
+  display: block;
+}
+
+.list-grid.list-grid-padding .list-item {
+  padding: 1rem;
+}
+.list-grid .list-item {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+.list-item {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+}
+
+.list-grid .list-item .media {
+  border-radius: inherit;
+}
+.media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  padding: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  border-radius: inherit;
+}
+.media-content img{
+  width: 233px;
+  height: 155px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+.d-none {
+  display: none !important;
+}
+.media {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+.col-4 {
+  -ms-flex: 0 0 33.333333%;
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+}
+
+.card, .block {
+  background: #fff;
+  border-width: 0;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 0 10px -2px rgba(158,158,158,.2);
+  box-shadow: 0 0 10px -2px rgba(158,158,158,.2);
+}
+
+.list-grid.list-grid-padding .list-content {
+  padding: 0 0 0 1rem;
+}
+
+.list-width {
+  width: 100%;
+}
+
+.list-content {
+  padding: 1rem 0;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  -webkit-box-flex: 1;
+  flex: 1 1 auto;
+  -webkit-box-pack: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.list-body {
+  -webkit-box-flex: 1;
+  flex: 1 1 auto;
+}
+
+.text-secondary {
+  color: #5e646d !important;
+}
+.text-sm {
+  font-size: .875rem !important;
+}
+.text-secondary {
+  color: #6c757d !important;
+}
+.mb-3, .my-3 {
+  margin-bottom: 1rem !important;
+}
+.mt-3, .my-3 {
+  margin-top: 1rem !important;
+}
+@media (min-width: 768px) {
+  .d-md-block {
+    display: block !important;
+  }
+}
+
+  figure {
+    margin: 0;
+  }
+
+@media (min-width: 768px){
+  .ml-md-2, .mx-md-2 {
+    margin-left: .5rem !important;
+  }
+}
+
+  @media (min-width: 768px){
+    .mr-md-2, .mx-md-2 {
+      margin-right: .5rem !important;
+    }
+  }
+
+
+    .ml-1, .mx-1 {
+      margin-left: .25rem !important;
+    }
+    .mr-1, .mx-1 {
+      margin-right: .25rem !important;
+    }
+
+.d-inline-block {
+  display: inline-block !important;
+}
+  .text-muted {
+    color: #9ca0ad !important;
+  }
+  .text-xs {
+    font-size: .75rem !important;
+  }
+  .text-muted {
+    color: #6c757d !important;
+  }
+  .align-items-center {
+    -ms-flex-align: center !important;
+    align-items: center !important;
+  }
+  .flex-fill {
+    -ms-flex: 1 1 auto !important;
+    flex: 1 1 auto !important;
+  }
+
+.list-footer {
+  margin-top: .5rem;
+}
+  .d-flex {
+    display: -ms-flexbox !important;
+    display: flex !important;
+  }
+
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .card, .block {margin-bottom: 1rem;}
+  }
+
+

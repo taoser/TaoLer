@@ -84,9 +84,9 @@ class BaseController extends BaseCtrl
 		// dump($this->showNav());
         //1.查询父分类id
 		$pCate = Db::name('cate')->field('id,pid,ename,catename,is_hot')->where(['ename'=>input('ename'),'status'=>1,'delete_time'=>0])->find();
-	
+
 		if(empty($pCate)) { // 没有点击任何分类，点击首页获取全部分类信息
-			$subCateList = $this->showNav();
+			$subCateList = [];
 		} else { // 点击分类，获取子分类信息
 			$parentId = $pCate['id'];
 			$subCate = Db::name('cate')->field('id,ename,catename,is_hot,pid')->where(['pid'=>$parentId,'status'=>1,'delete_time'=>0])->select()->toArray();

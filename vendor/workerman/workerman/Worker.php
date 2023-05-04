@@ -34,7 +34,7 @@ class Worker
      *
      * @var string
      */
-    const VERSION = '4.1.9';
+    const VERSION = '4.1.10';
 
     /**
      * Status starting.
@@ -1473,7 +1473,7 @@ class Worker
             \restore_error_handler();
 
             // Display UI.
-            static::safeEcho(\str_pad($worker->name, 21) . \str_pad($worker->getSocketName(), 36) . \str_pad((string)$worker->count, 10) . "[ok]\n");
+            static::safeEcho(\str_pad($worker->name, 21) . \str_pad($worker->getSocketName(), 36) . \str_pad('1', 10) . "[ok]\n");
             $worker->listen();
             $worker->run();
             static::$globalEvent->loop();

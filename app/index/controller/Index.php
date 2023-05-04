@@ -32,7 +32,7 @@ class Index extends BaseController
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示20个
-        $artList = Article::getArtList(22);
+        $artList = Article::getArtList(15);
         //热议文章
         $artHot = Article::getArtHot(10);
 

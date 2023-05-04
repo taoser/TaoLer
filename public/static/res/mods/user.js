@@ -294,7 +294,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
 //我的消息
     gather.minemsg = function(){
         var delAll = $('#LAY_delallmsg')
-            ,tpl = '{{# var len = d.rows.length;\
+        ,tpl = '{{# var len = d.rows.length;\
     if(len === 0){ }}\
       <div class="fly-none">您暂时没有最新消息</div>\
     {{# } else { }}\

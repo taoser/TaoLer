@@ -2687,16 +2687,16 @@
         },
         {
             "name": "topthink/think-captcha",
-            "version": "v3.0.8",
+            "version": "v3.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-captcha.git",
-                "reference": "52fba122c953995bec3013c635025172491ae299"
+                "reference": "b1ef360670578214edeebcf824aaf6ab7ee0528b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/52fba122c953995bec3013c635025172491ae299",
-                "reference": "52fba122c953995bec3013c635025172491ae299",
+                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/b1ef360670578214edeebcf824aaf6ab7ee0528b",
+                "reference": "b1ef360670578214edeebcf824aaf6ab7ee0528b",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2706,7 +2706,7 @@
                 ]
             },
             "require": {
-                "topthink/framework": "^6.0"
+                "topthink/framework": "^6.0|^8.0"
             },
             "type": "library",
             "extra": {
@@ -2740,9 +2740,9 @@
             "description": "captcha package for thinkphp",
             "support": {
                 "issues": "https://github.com/top-think/think-captcha/issues",
-                "source": "https://github.com/top-think/think-captcha/tree/v3.0.8"
+                "source": "https://github.com/top-think/think-captcha/tree/v3.0.9"
             },
-            "time": "2022-10-26T07:59:42+00:00"
+            "time": "2023-04-27T07:18:40+00:00"
         },
         {
             "name": "topthink/think-helper",
@@ -2963,16 +2963,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.60",
+            "version": "v2.0.61",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "8bc34a4307fa27186c0e96a9b3de3cb23aa1ed46"
+                "reference": "10528ebf4a5106b19c3bac9c6deae7a67ff49de6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/8bc34a4307fa27186c0e96a9b3de3cb23aa1ed46",
-                "reference": "8bc34a4307fa27186c0e96a9b3de3cb23aa1ed46",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/10528ebf4a5106b19c3bac9c6deae7a67ff49de6",
+                "reference": "10528ebf4a5106b19c3bac9c6deae7a67ff49de6",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3018,9 +3018,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v2.0.60"
+                "source": "https://github.com/top-think/think-orm/tree/v2.0.61"
             },
-            "time": "2023-03-19T04:51:56+00:00"
+            "time": "2023-04-20T14:27:51+00:00"
         },
         {
             "name": "topthink/think-template",
@@ -3263,16 +3263,16 @@
         },
         {
             "name": "workerman/workerman",
-            "version": "v4.1.9",
+            "version": "v4.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/workerman.git",
-                "reference": "1f92d02c26106b5fbe6f61ea776198aad6e426f7"
+                "reference": "e967b79f95b9251a72acb971be05623ec1a51e83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/workerman/zipball/1f92d02c26106b5fbe6f61ea776198aad6e426f7",
-                "reference": "1f92d02c26106b5fbe6f61ea776198aad6e426f7",
+                "url": "https://api.github.com/repos/walkor/workerman/zipball/e967b79f95b9251a72acb971be05623ec1a51e83",
+                "reference": "e967b79f95b9251a72acb971be05623ec1a51e83",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3328,7 +3328,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-03-10T13:59:12+00:00"
+            "time": "2023-05-01T02:12:20+00:00"
         },
         {
             "name": "yansongda/pay",

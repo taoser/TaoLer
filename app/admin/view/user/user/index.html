@@ -13,13 +13,13 @@
 						<div class="layui-form-item layui-inline">
 							<label class="layui-form-label">ID</label>
 							<div class="layui-input-block">
-							  <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+							  <input type="text" name="id" placeholder="请输入ID号" autocomplete="off" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item layui-inline">
-							<label class="layui-form-label">用户名</label>
+							<label class="layui-form-label">用户</label>
 							<div class="layui-input-inline">
-								<input type="text" name="name" placeholder="" class="layui-input">
+								<input type="text" name="name" placeholder="用户名" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item layui-inline">
@@ -35,7 +35,7 @@
 						<div class="layui-form-item layui-inline">
 							<label class="layui-form-label">邮箱</label>
 							<div class="layui-input-inline">
-								<input type="text" name="email" placeholder="" class="layui-input">
+								<input type="text" name="email" placeholder="邮箱" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item layui-inline">
@@ -100,9 +100,9 @@
 		</script>
 
 		<script type="text/html" id="user-sex">
-			{{#if (d.sex == 1) { }}
+			{{#if (d.sex == 0) { }}
 		    <span>男</span>
-		    {{# }else if(d.sex == 2){ }}
+		    {{# }else if(d.sex == 1){ }}
 		    <span>女</span>
 		    {{# } }}
 		</script>
@@ -148,7 +148,7 @@
 							templet: '#imgTpl'
 						},
 						{
-							title: '账号',
+							title: '用户',
 							field: 'username',
 							align: 'center',
 							width: 100
@@ -191,7 +191,7 @@
 							align: 'center'
 						},
 						{
-							title: '启用',
+							title: '状态',
 							field: 'check',
 							align: 'center',
 							width: 95,

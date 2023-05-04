@@ -318,22 +318,23 @@ abstract class BaseController
 	 */
 	public function uploadFiles($type)
     {
+        $max_file_seze = $this->getSystem()['upsize'];
         $uploads = new Uploads();
         switch ($type){
             case 'image':
-                $upRes = $uploads->put('file','article_pic',2048,'image');
+                $upRes = $uploads->put('file','article_pic',$max_file_seze,'image');
                 break;
             case 'zip':
-                $upRes = $uploads->put('file','article_zip',1024,'application|image');
+                $upRes = $uploads->put('file','article_zip',$max_file_seze,'application|image');
                 break;
             case 'video':
-                $upRes = $uploads->put('file','article_video',102400,'video|audio');
+                $upRes = $uploads->put('file','article_video',$max_file_seze,'video|audio');
                 break;
             case 'audio':
-                $upRes = $uploads->put('file','article_audio',102400,'audio');
+                $upRes = $uploads->put('file','article_audio',$max_file_seze,'audio');
                 break;
             default:
-                $upRes = $uploads->put('file','article_file',2048,'image');
+                $upRes = $uploads->put('file','article_file',$max_file_seze,'image');
                 break;
         }
         return $upRes;

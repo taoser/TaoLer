@@ -111,7 +111,7 @@ class Article extends Model
     {
 
         return Cache::remember('topArticle', function() use($num){
-             return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,upzip,has_img,has_video,has_audio')
+             return $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_top,pv,upzip,has_img,has_video,has_audio')
                 ->where([['is_top', '=', 1], ['status', '=', 1]])
                 ->with([
                     'cate' => function ($query) {
@@ -140,7 +140,7 @@ class Article extends Model
     public function getArtList(int $num)
     {
         return Cache::remember('indexArticle', function() use($num){
-            return $this::field('id,title,title_color,cate_id,user_id,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type')
+            return $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type')
             ->with([
             'cate' => function($query){
                 $query->where('delete_time',0)->field('id,catename,ename,detpl');
