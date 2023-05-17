@@ -76,7 +76,6 @@ class Article extends BaseController
 		$page = input('page',1);
 		//输出内容
         $artDetail = $this->model->getArtDetail($id);
-
         if($artDetail->read_type == 1 && session('art_pass_'.$id) != $artDetail->art_pass) {
             $artDetail->content = '本文已加密！请输入正确密码查看！';
         }

@@ -209,6 +209,27 @@ pre{overflow-y: auto;
 .fly-header .fly-nav-user .layui-nav-more{display: none !important;}
 .fly-header .fly-nav-user .layui-nav-child{left: auto; right: 0; width: 120px; min-width: 0;}
 
+/*第二排导航*/
+.layui-nav.layui-bg-white {
+  background-color: #FFFFFF !important;
+  color: #2F363C !important;
+}
+.layui-nav.layui-bg-white li a {
+  height: 50px;
+  color: #0A0E11;
+}
+.layui-nav.layui-bg-white li a:hover {
+  color: #0A0E11;
+}
+.layui-nav.layui-bg-white .layui-this:after {
+  content: none !important;
+}
+.layui-nav.layui-bg-white .layui-nav-item {
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+}
+
   /* 搜索 */
 .fly-search{display: inline-block; width: 50px; margin-right: 10px; cursor: pointer; font-size: 20px;}
 .fly-search .layui-icon{font-size: 20px;}
@@ -870,7 +891,7 @@ blockquote {
   border-radius:100%;
 }
 
-/*列表新增*/
+/*首页列表新增*/
 .section {
   display: block;
 }
@@ -968,6 +989,14 @@ blockquote {
   flex: 1 1 auto;
 }
 
+.h-3x {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-height: 1.7;
+}
+
 .text-secondary {
   color: #5e646d !important;
 }
@@ -1006,12 +1035,12 @@ blockquote {
   }
 
 
-    .ml-1, .mx-1 {
-      margin-left: .25rem !important;
-    }
-    .mr-1, .mx-1 {
-      margin-right: .25rem !important;
-    }
+.ml-1, .mx-1 {
+  margin-left: .25rem !important;
+}
+.mr-1, .mx-1 {
+  margin-right: .25rem !important;
+}
 
 .d-inline-block {
   display: inline-block !important;

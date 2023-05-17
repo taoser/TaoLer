@@ -383,14 +383,16 @@ class Article extends Model
     // 获取所有帖子内容
     public function getList(array $where, int $limit, int $page)
     {
-        return $this::field('id,user_id,cate_id,title,content,is_top,is_hot,is_reply,status,update_time')->with([
+        return $this::field('id,user_id,cate_id,title,content,is_top,is_hot,is_reply,status,update_time')
+        ->with([
             'user' => function($query){
                 $query->field('id,name,user_img');
             },
             'cate' => function($query){
                 $query->field('id,ename');
             }
-        ])->where($where)
+        ])
+        ->where($where)
         ->order('create_time', 'desc')
         ->paginate([
             'list_rows' => $limit,

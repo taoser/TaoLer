@@ -1186,12 +1186,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/lotofbadcode/phpspirit_databackup.git",
-                "reference": "1835cf8230531840ada1ed2b25eba23de5ad32c5"
+                "reference": "77c2421f8461392c044cf8c29918f495c22a5612"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lotofbadcode/phpspirit_databackup/zipball/1835cf8230531840ada1ed2b25eba23de5ad32c5",
-                "reference": "1835cf8230531840ada1ed2b25eba23de5ad32c5",
+                "url": "https://api.github.com/repos/lotofbadcode/phpspirit_databackup/zipball/77c2421f8461392c044cf8c29918f495c22a5612",
+                "reference": "77c2421f8461392c044cf8c29918f495c22a5612",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1228,7 +1228,7 @@
                 "issues": "https://github.com/lotofbadcode/phpspirit_databackup/issues",
                 "source": "https://github.com/lotofbadcode/phpspirit_databackup/tree/v1.2"
             },
-            "time": "2022-06-18T12:21:57+00:00"
+            "time": "2023-05-12T12:02:05+00:00"
         },
         {
             "name": "php-di/invoker",

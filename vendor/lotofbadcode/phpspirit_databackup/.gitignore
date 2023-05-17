@@ -1,0 +1,10 @@
+/.idea
+/.vscode
+/vendor
+*.log
+.env
+*.sql
+*.rar
+*.zip
+*.7z
+/demo/backup

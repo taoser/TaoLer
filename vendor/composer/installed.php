@@ -3,7 +3,7 @@
         'name' => 'taoser/taoler',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '9aa322951582e14aae897adf5a3551f26cbf75a9',
+        'reference' => '3f1e60a9976d29a84fa29d28bdfe68dea0c89c26',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -157,7 +157,7 @@
         'lotofbadcode/phpspirit_databackup' => array(
             'pretty_version' => 'v1.2',
             'version' => '1.2.0.0',
-            'reference' => '1835cf8230531840ada1ed2b25eba23de5ad32c5',
+            'reference' => '77c2421f8461392c044cf8c29918f495c22a5612',
             'type' => 'library',
             'install_path' => __DIR__ . '/../lotofbadcode/phpspirit_databackup',
             'aliases' => array(),
@@ -349,7 +349,7 @@
         'taoser/taoler' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '9aa322951582e14aae897adf5a3551f26cbf75a9',
+            'reference' => '3f1e60a9976d29a84fa29d28bdfe68dea0c89c26',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

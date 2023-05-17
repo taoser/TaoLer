@@ -256,23 +256,59 @@ function getOnepic($str)
 {
     //匹配格式为 <img src="http://img.com" />
     $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
-        preg_match_all($pattern,$str,$matchContent);
-        if(isset($matchContent[1][0])){
-            $img = $matchContent[1][0];
-        } else {
-            //$temp="./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
+    preg_match($pattern,$str,$matchContent);
+    if(isset($matchContent[1])){
+        $img = $matchContent[1];
+    } else {
+        //$temp="./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
 
-            //匹配格式为 img[/storage/1/article_pic/20220428/6c2647d24d5ca2c179e4a5b76990c00c.jpg]
-            $pattern = "/(?<=img\[)[^\]]*(?=\])/";
-            preg_match($pattern,$str,$matchContent);
-            if(isset($matchContent[0])){
-                $img = $matchContent[0];
-            }else{
-                return false;
-            }
+        //匹配格式为 img[/storage/1/article_pic/20220428/6c2647d24d5ca2c179e4a5b76990c00c.jpg]
+        $pattern = "/(?<=img\[)[^\]]*(?=\])/";
+        preg_match($pattern,$str,$matchContent);
+
+        if(isset($matchContent[0])){
+            $img = $matchContent[0];
+        }else{
+            return false;
         }
-
+    }
     return $img;
+}
+
+if (!function_exists('get_all_img')) {
+    /**
+     * 提取字符串中所有图片
+     * @param $str
+     * @return array
+     */
+    function get_all_img($str)
+    {
+        //匹配格式为 <img src="http://img.com" />的图片
+        $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
+        preg_match_all($pattern, $str,$matchContent);
+        if(isset($matchContent[1][0])) {
+            return array_unique($matchContent[1]);
+        }
+        return [];
+    }
+}
+
+if (!function_exists('get_all_video')) {
+    /**
+     * 提取字符串中所有图片
+     * @param $str
+     * @return array
+     */
+    function get_all_video($str)
+    {
+        //匹配格式为 <video src="http://img.com" > </video> 的视频
+        $pattern = "/<[video|VIDEO][\s\S]*src=[\'|\"](.*?(?:[\.mp4|\.mkv|\.flv|\.avi]))[\'|\"].*?[<\/video]>/";
+        preg_match_all($pattern, $str,$matchs);
+        if(isset($matchs[1][0])) {
+            return array_unique($matchs[1]);
+        }
+        return [];
+    }
 }
 
 //判断蜘蛛函数

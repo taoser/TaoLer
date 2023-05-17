@@ -69,17 +69,8 @@
         </div>
       </div>
 
-	<div class="fly-panel"> 
-		<div class="fly-panel-title"> 钻级赞助商 <span class="fly-mid"></span> 
-			<a href="/" class="fly-link fly-joinad">我要加入</a> 
-		</div> 
-	<div class="fly-panel-main" style="padding: 13px 15px;"> 
-	{volist name="ad_index" id="vo"}
-		<a href="{$Request.domain}{$vo.slid_href}" target="_blank" rel="nofollow" class="fly-zanzhu" style="background-color: '{$vo.slid_color}';">{$vo.slid_name}</a>
-	{/volist}
-	<!--a href="/" target="_blank" rel="nofollow" class="fly-zanzhu  fly-zanzhu-img" ><img src="//11886.png" alt="topjui"></a--> 
-	</div>
-	</div>
+		<!--广告赞助-->
+		{:hook('ads_index_support')}
 
       <dl class="fly-panel fly-list-one">
         <dt class="fly-panel-title">本周热议</dt>
@@ -104,13 +95,10 @@
           <a href="http://www.aieok.com" target="_blank" class="fly-zanzhu" style="background-color: #5FB878;">TaoLer 1.0 - 旗舰之作</a>
         </div>
       </div>
-	  <div class="fly-panel" style="padding: 20px 0; text-align: center;">
-		{volist name="ad_comm" id="vo"}		
-		  <a href="{$Request.domain}{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
-		{/volist}
-       </div>
-	  
-	{include file="public/flink" /}
+    <!--首页图片广告-->
+	{:hook('ads_index_rfimg')}
+    <!--友情链接-->
+    {:hook('ads_index_flink')}
     </div>
 	
   </div>

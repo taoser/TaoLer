@@ -241,9 +241,8 @@
                         icon: 1,
                         time: 1000
                       }, function() {
-                        parent.layer.close(parent.layer.getFrameIndex(window
-                                .name)); //关闭当前页
-                        parent.layui.table.reload("user-table");
+                          parent.layui.table.reload("forum-table");
+                          parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
                       });
                     } else {
                       layer.msg(result.msg, {

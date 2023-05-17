@@ -12,10 +12,10 @@
       {/volist}
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
       {if session('?user_id')}
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post')}">{:lang('my post')}</a></li> 
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post#collection')}">{:lang('my collection')}</a></li>      
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post')}">{:lang('my post')}</a></li>
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post#collection')}">{:lang('my collection')}</a></li>
       {/if}
-    </ul> 
+    </ul>
     <div class="fly-column-right layui-hide-xs">
       <a href="{:url('add_article',['cate'=>$Request.param.ename])}" class="layui-btn" id="add_post">{:lang('add post')}</a>
     </div> 

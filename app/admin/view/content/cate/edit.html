@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>修改页面</title>
-    <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-</head>
-<body>
+{extend name="public:admin_form" /}
+
+{block name="body"}
 <form class="layui-form" action="">
     <div class="mainBox">
         <div class="main-container">
@@ -74,8 +69,9 @@
         </div>
     </div>
 </form>
-<script src="/static/component/layui/layui.js"></script>
-<script src="/static/component/pear/pear.js"></script>
+{/block}
+
+{block name="js"}
   <script>
   layui.use(['form', 'iconPicker', 'xmSelect',], function(){
     var $ = layui.jquery
@@ -83,8 +79,7 @@
 	var iconPicker = layui.iconPicker;
     var xmSelect = layui.xmSelect;
     var initPid = "{$cate.pid}";
-
-      let ADD_EDIT = "{:url('content.cate/addEdit')}";
+    let ADD_EDIT = "{:url('content.cate/addEdit')}";
 	
 	//初始化图标选择
 	iconPicker.render({
@@ -111,9 +106,8 @@
                           icon: 1,
                           time: 1000
                       }, function() {
-                          parent.layer.close(parent.layer.getFrameIndex(window
-                              .name)); //关闭当前页
-                          parent.layui.table.reload("cate-table");
+                          parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+                          window.parent.location.reload();
                       });
                   } else {
                       layer.msg(result.msg, {
@@ -166,5 +160,4 @@
 
   })
   </script>
-</body>
-</html>
+{/block}

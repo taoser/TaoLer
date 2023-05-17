@@ -142,7 +142,7 @@ return [
 		// 数据库连接参数
 		'params'            => [],
 		// 数据库编码默认采用utf8
-		'charset'           => 'utf8',
+		'charset'           => 'utf8mb4',
 		// 数据库表前缀
 		'prefix'            => env('database.prefix', '{$data['DB_PREFIX']}'),
 		// 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
@@ -168,20 +168,38 @@ return [
     ],
 ];
 EOV;
-            // 创建数据库链接配置文件
-                $database = '../config/database.php';
-                if (file_exists($database)) {
-                    if(is_writable($database)){
-                        $fp = fopen($database,"w");
-                        $resf = fwrite($fp, $db_str);
-                        fclose($fp);
-                        if(!$resf){
-                            return json(['code' => -1,'msg'=>'数据库配置文件创建失败！']);
-                        }
-                    }
+                // 创建数据库链接配置文件
+                $database = config_path() . 'database.php';
+                if (file_exists($database) && is_writable($database)) {
+                    $fp = fopen($database,"w");
+                    $resf = fwrite($fp, $db_str);
+                    fclose($fp);
+                    if(!$resf) return json(['code' => -1,'msg'=>'数据库配置文件创建失败！']);
+                } else {
                     return json(['code' => -1,'msg'=>'config/database.php 无写入权限']);
                 }
             }
+
+            $env = <<<ENV
+APP_DEBUG = false
+
+[APP]
+DEFAULT_TIMEZONE = Asia/Shanghai
+
+[DATABASE]
+TYPE = mysql
+HOSTNAME = {$data['DB_HOST']}
+DATABASE = {$data['DB_NAME']}
+USERNAME = {$data['DB_USER']}
+PASSWORD = {$data['DB_PWD']}
+HOSTPORT = {$data['DB_PORT']}
+CHARSET = utf8mb4
+DEBUG = false
+
+[LANG]
+default_lang = zh-cn
+ENV;
+            file_put_contents(root_path() . '.env', $env);
 
             //安装上锁
             file_put_contents('./install.lock', 'lock');

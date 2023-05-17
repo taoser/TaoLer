@@ -26,9 +26,12 @@
 					<a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">{:lang('go sign')}</a>
 				</div>
 				<ul class="fly-list">
-					{volist name="artTop" id="top"}
-					{include file="public/index-topforum" /}
-					{/volist}
+					<marquee scrollAmount=2 width=500 height="80px" direction=up direction=up scrolldelay="1000" scrollamount="60px" onMouseOver="this.stop()" onMouseOut="this.start()" >
+						{volist name="artTop" id="top"}
+						{include file="public/index-topforum" /}
+						{/volist}
+					</marquee>
+
 				</ul>
 			</div>
 			<!--文章列表-->
