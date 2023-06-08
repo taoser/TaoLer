@@ -696,42 +696,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
       //console.log(othis.attr('src'));
   });
 
-  //头条轮播
-  if($('#FLY_topline')[0]){
-    layui.use('carousel', function(){
-      var carousel = layui.carousel;
-      
-      var ins = carousel.render({
-        elem: '#FLY_topline'
-        ,width: '100%'
-        ,height: '250px'
-        ,anim: 'fade'
-      });
-
-      var resizeTopline = function(){
-        var width = $(this).prop('innerWidth');
-        if(width >= 1200){
-          ins.reload({
-            height: '250px'
-          });
-        } else if(width >= 992){
-          ins.reload({
-            height: '250px'
-          });
-        } else if(width >= 768){
-          ins.reload({
-            height: '166px'
-          });
-        }
-      };
-
-      resizeTopline()
-
-      $(window).on('resize', resizeTopline);
-
-    });
-  }
-
   //签到
 
   //活跃榜

@@ -1,19 +1,23 @@
 <div class="fly-panel fly-column layui-hide-xs">
   <div class="layui-container fly-nav-sub">
-    <ul class="layui-clear">
-      <li class="layui-hide-xs {if ($Request.param.ename =='' && $Request.param.id =='')} layui-this {/if}" >
+    <ul class="layui-nav layui-bg-white layui-hide-xs">
+      <li class="layui-nav-item  layui-hide-xs {if ($Request.param.ename =='' && $Request.param.id =='')} layui-this {/if}" >
         <a href="{$Request.domain}">{:lang('home page')}</a>
       </li>
-      {volist name="subcatelist" id="vo"}
-        <li  {if($vo.ename eq $Request.param.ename)} class='layui-this' {/if}>
-        <span style="color: #8d8d8d">></span>
-        <a href="{$Request.domain}{:url('cate',['ename' => $vo.ename])}">{:cookie('think_lang') == 'en-us' ? $vo.ename : $vo.catename}</a>
+      {//导航nav}
+      {if config('taoler.config.nav_top')  == 0}
+        {taoler:nav}
+        <li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
+          <a href="{nav:link /}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
+          {notempty name="nav.children"}
+          <dl class="layui-nav-child"> <!-- 二级菜单 -->
+            {taoler:snav}
+            <dd><a href="{snav:link /}">{snav:name /}</a></dd>
+            {/taoler:snav}
+          </dl>
+          {/notempty}
         </li>
-      {/volist}
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
-      {if session('?user_id')}
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post')}">{:lang('my post')}</a></li>
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="{:url('user/post#collection')}">{:lang('my collection')}</a></li>
+        {/taoler:nav}
       {/if}
     </ul>
     <div class="fly-column-right layui-hide-xs">

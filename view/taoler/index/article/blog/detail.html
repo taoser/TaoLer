@@ -27,9 +27,9 @@
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
   <main class="py-2 py-md-2 pb-3" style="transform: none">
-    <div class="container" style="transform: none">
-      <div class="row" style="transform: none">
-        <div class="col-lg-8" itemscope itemType="">
+    <div class="layui-container" style="transform: none">
+      <div class="layui-row layui-col-space15" style="transform: none">
+        <div class="layui-col-md8" itemscope itemType="">
           <div class="post card">
             <section class="card-body">
               <div class="post-header border-bottom mb-4 pb-4">
@@ -199,7 +199,7 @@
             </div>
           </section>
         </div>
-        <div class="sidebar col-lg-4 d-none d-lg-block">
+        <div class="sidebar layui-col-md4 d-none d-lg-block">
           <div class="theiaStickySidebar">
             {//作者}
             <dl class="function" id="rongkeji_User">
@@ -223,7 +223,7 @@
                     <div class="row g-0 text-center">
                       <div class="col"><div class="font-theme h5">{$article.user.article_count}</div><div class="text-xs text-muted">文章</div></div>
                       <div class="col"><div class="font-theme h5">{$article.user.comments_count}</div><div class="text-xs text-muted">评论</div></div>
-                      <div class="col"><div class="font-theme h5">{$userTagCount}</div><div class="text-xs text-muted">标签</div></div>
+                      <div class="col"><div class="font-theme h5">{$zanCount}</div><div class="text-xs text-muted">被赞</div></div>
                     </div>
                     </div>
                   </div>

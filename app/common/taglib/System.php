@@ -35,7 +35,7 @@ class System extends TagLib
         'icp'           => ['attr' => '', 'close' => 0],
         'showlist'      => ['attr' => '', 'close' => 0],
         'blackname'     => ['attr' => '', 'close' => 0],
-        'sys_version_num'   => ['attr' => '', 'close' => 0],
+        'sys_version_num'=> ['attr' => '', 'close' => 0],
         'key'           => ['attr' => '', 'close' => 0],
         'clevel'        => ['attr' => '', 'close' => 0],
         'api_url'       => ['attr' => '', 'close' => 0],

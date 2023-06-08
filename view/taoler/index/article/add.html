@@ -346,9 +346,13 @@
       elem: "#zip-button",
       url: "{:url('article/uploads')}",
       data: { type: "zip" },
-      accept: "file", //普通文件
+      accept: "file",
+      before: function(obj){
+        layer.load();
+      },
       done: function (res) {
-        if (res.status == 0) {
+        layer.closeAll('loading');
+        if (res.status === 0) {
           $('input[name="upzip"]').val(res.url);
           layer.msg("上传成功");
         } else {

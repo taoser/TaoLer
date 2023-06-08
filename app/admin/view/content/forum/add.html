@@ -13,12 +13,7 @@
                   <div class="layui-col-md3">
                     <label class="layui-form-label">{:lang('special column')}</label>
                     <div class="layui-input-block">
-                      <select lay-verify="required" name="cate_id" lay-filter="column">
-                        <option></option>
-                        {volist name="cateList" id="cate"}
-                        <option value="{$cate.id}" {if ($Request.param.cate == $cate.ename)} selected {/if}>{:cookie('think_lang') == 'en-us' ? $cate.ename : $cate.catename}</option>
-                        {/volist}
-                      </select>
+                        <div id="CateId" class="xm-select-demo"></div>
                     </div>
                   </div>
                   <div class="layui-col-md8">
@@ -89,10 +84,8 @@
             <script src="/static/component/layui/layui.js"></script>
             <script src="/static/component/pear/pear.js"></script>
             <script src="/static/addons/taonyeditor/tinymce/tinymce.min.js"></script>
-            <script src="/static/xm-select.js"></script>
 
             <script>
-
             layui.extend({
                 editor: '{/}/static/addons/taonyeditor/js/taonyeditor'
               }).use(["form", "colorpicker", "upload",'editor','xmSelect'], function () {
@@ -119,6 +112,34 @@
                   // var test = tinymce.activeEditor.getContent({format: 'text'});
                   $('[name="description"]').val(content);
               });
+
+                // 分类选择
+                $.get("{:url('content.forum/getCateList')}",function(res){
+                    // 渲染下拉树
+                    xmSelect.render({
+                        el: '#CateId',
+                        name: 'cate_id',
+                        height: '250px',
+                        layVerify: 'required',
+                        layVerType: 'tips',
+                        data: res.data,
+                        initValue:  [res.data[0].id],
+                        model: {label: {type: 'text'}},
+                        prop: {
+                            name: 'catename',
+                            value: 'id'
+                        },
+                        radio: true,
+                        clickClose: true,
+                        tree: {
+                            show: true,
+                            indent: 15,
+                            strict: false,
+                            expandedKeys: true
+                        },
+                        tips: '请选择'
+                    });
+                });
 
             // tag标签
             $(function(){
@@ -205,8 +226,12 @@
               elem: "#zip-button",
               url: "{:url('content.forum/uploads')}", //改成您自己的上传接口
               data: { type: "zip" },
-              accept: "file", //普通文件
+              accept: "file",
+                before: function(obj){
+                    layer.load();
+                },
               done: function (res) {
+                  layer.closeAll('loading');
                 if (res.status === 0) {
                   $('input[name="upzip"]').val(res.url);
                   layer.msg("上传成功");

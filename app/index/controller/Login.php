@@ -54,8 +54,24 @@ class Login extends BaseController
 			
 			//邮箱正则表达式
 			$pattern = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
-			//判断输入的是邮箱还是用户名
-		   if (preg_match($pattern, $data['name'])){
+
+            if(preg_match("/^1[34578]\d{9}$/",$data['name']))
+            {
+                //手机验证登录
+                $data['phone'] = $data['name'];
+                unset($data['name']);
+                try{
+                    validate(userValidate::class)
+                        ->scene('loginPhone')
+                        ->check($data);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return json(['code'=>-1,'msg'=>$e->getError()]);
+                }
+                $data['name'] = $data['phone'];
+                unset($data['phone']);
+
+            } elseif (preg_match($pattern, $data['name'])){
                //输入邮箱email登陆验证
                $data['email'] = $data['name'];
 			   unset($data['name']);
@@ -89,7 +105,7 @@ class Login extends BaseController
 				return Msgres::error($res);
             }
         }
-		
+
         return View::fetch('login');
 	}
 

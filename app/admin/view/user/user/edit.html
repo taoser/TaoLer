@@ -76,6 +76,7 @@
 			layui.use(['form', 'jquery'], function() {
 				let form = layui.form;
 				let $ = layui.jquery;
+				let upload = layui.upload;
 
 				form.on('submit(user-save)', function(data) {
 					$.ajax({
@@ -103,6 +104,33 @@
 					})
 					return false;
 				});
+
+				//上传头像
+				upload.render({
+					elem: '#layuiadmin-upload-useradmin'
+					,url: "{:url('user.user/uploadImg')}"
+					,data: {type:'image'}
+					,accept: 'images'
+					,method: 'get'
+					,acceptMime: 'image/*'
+					,done: function(res){
+						$(this.item).prev("div").children("input").val(res.src);
+						if(res.code === 0){
+							layer.msg(res.msg,{
+								icon:6,
+								tiye:2000
+							});
+						} else {
+							layer.open({
+								title:"上传失败",
+								content:res.msg,
+								icon:5,
+								anim:6
+							});
+						}
+					}
+				});
+
 			})
 		</script>
 		<script>

@@ -31,8 +31,8 @@ class Index extends BaseController
 		$types = input('type');
 		//置顶文章
 		$artTop = Article::getArtTop(5);
-        //首页文章列表,显示20个
-        $artList = Article::getArtList(15);
+        //首页文章列表,显示10个
+        $artList = Article::getArtList(10);
         //热议文章
         $artHot = Article::getArtHot(10);
 

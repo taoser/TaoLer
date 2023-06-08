@@ -18,7 +18,6 @@ use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cache;
 use app\BaseController as BaseCtrl;
-use app\common\model\Cate;
 
 /**
  * 控制器基础类
@@ -39,8 +38,6 @@ class BaseController extends BaseCtrl
 
 		//变量赋给模板
 		View::assign([
-			//显示分类导航
-			'cateList'		=> $this->showNav(),
 			//显示子分类导航
 			'subcatelist'	=> $this->showSubnav(),
 			//当前登录用户
@@ -65,23 +62,9 @@ class BaseController extends BaseCtrl
         }
     }
 
-	// 显示导航nav
-    protected function showNav()
-    {
-        //1.查询分类表获取所有分类
-        $cate = new Cate();
-        $cateList = $cate->menu();
-         $list =  getTree($cateList);
-        // 排序
-        $cmf_arr = array_column($list, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $list);
-        return $list;
-    }
-
 	// 显示子导航subnav
     protected function showSubnav()
     {
-		// dump($this->showNav());
         //1.查询父分类id
 		$pCate = Db::name('cate')->field('id,pid,ename,catename,is_hot')->where(['ename'=>input('ename'),'status'=>1,'delete_time'=>0])->find();
 

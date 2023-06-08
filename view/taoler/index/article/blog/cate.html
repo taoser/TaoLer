@@ -27,9 +27,9 @@
 
 {block name="content"}
 	<main class="py-2 py-md-2 pb-3">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8">
+		<div class="layui-container">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-md8">
 				<div class="post"><h1>{$sysInfo.webname}</h1></div>
 				<section id="main" class="list-home list-grid list-grid-padding">
 					{article:list}
@@ -83,31 +83,31 @@
 					</div>		
 				</nav>
 				</div>
-				<div class="sidebar col-lg-4 d-none d-lg-block">
-				<div class="theiaStickySidebar">
-					<!--博客列表广告赞助位-->
-					{:hook('ads_blog_cate_rimg')}
+				<div class="sidebar layui-col-md4 d-none d-lg-block">
+					<div class="theiaStickySidebar">
+						<!--博客列表广告赞助位-->
+						{:hook('ads_blog_cate_rimg')}
 
-					<dl class="function" id="rongkeji_remenwenzhang">
-						<dt class="function_t">热门文章</dt>
-						<dd class="function_c">
-							<ul>
-								{volist name="artHot" id="vo"}
-								<li style="display: block;">
-									<div class="list-body fanpian">
-										<a href="{$Request.domain}{$vo.url}" target="_blank">{$vo.title}</a>
-									</div>
-									<div class="list-footer">
-										<div class="text-muted text-xs"><time class="d-inline-block">{$vo.create_time|date='Y-m-d'}</time></div>
-									</div>
-								</li>
-								{/volist}
-							</ul>
-						</dd>
-					</dl>
-					<!--博客列表友情链接-->
-					{:hook('ads_blog_cate_flink')}
-				</div>
+						<dl class="function" id="rongkeji_remenwenzhang">
+							<dt class="function_t">热门文章</dt>
+							<dd class="function_c">
+								<ul>
+									{volist name="artHot" id="vo"}
+									<li style="display: block;">
+										<div class="list-body fanpian">
+											<a href="{$Request.domain}{$vo.url}" target="_blank">{$vo.title}</a>
+										</div>
+										<div class="list-footer">
+											<div class="text-muted text-xs"><time class="d-inline-block">{$vo.create_time|date='Y-m-d'}</time></div>
+										</div>
+									</li>
+									{/volist}
+								</ul>
+							</dd>
+						</dl>
+						<!--博客列表友情链接-->
+						{:hook('ads_blog_cate_flink')}
+					</div>
 				</div>
 			</div>
 		</div>

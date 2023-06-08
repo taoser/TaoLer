@@ -79,12 +79,14 @@ if(!function_exists('getUserImg'))
 function getArtContent($content)
 {
     //过滤html标签
-    $content = strip_tags($content);
+    // $content = strip_tags($content);
+    // 去除所有& nbsp和html标签
+    $content = preg_replace("/(\s|\&nbsp\;|\&ldquo\;|\&rdquo\;| |\xc2\xa0)/", "", strip_tags($content));
     // 过滤音视频图片
     $content = preg_replace('/(?:img|audio|video)(\(\S+\))?\[\S+\]/','',$content);
     $content = preg_replace('/\s*/','',$content);
     $content = preg_replace('/\[[^\]]+\]/','',$content);
-    return mb_substr(strip_tags($content),0,150).'...';
+    return mb_substr($content,0,150).'...';
 }
 
 //根据帖子收藏主键ID，查询帖子名称

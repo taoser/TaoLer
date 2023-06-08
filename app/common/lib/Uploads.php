@@ -93,7 +93,7 @@ class Uploads
 		}
         // 解析存储位置 SYS_开头为系统位置
         $isSys = stripos($dirName, 'SYS_');
-        if($isSys !== false) {
+        if($isSys) {
             $disk = 'sys';
             $dirName = substr($dirName,4);
             $uploadDir = Config::get('filesystem.disks.sys.url');
@@ -105,7 +105,7 @@ class Uploads
         $rules = ['md5','date','sha1','uniqid'];
         // 解析是否自定义文件名
         if(!in_array($rule, $rules) && !is_null($rule)) {
-            if(stripos($rule, '.') == false) {
+            if(!stripos($rule, '.')) {
                 $rule = $file->getOriginalName();
             }
             $savename = Filesystem::disk($disk)->putFileAs($dirName, $file, $rule);
@@ -160,7 +160,7 @@ class Uploads
 
         // 解析存储位置 SYS_开头为系统位置
         $isSys = stripos($dirName, 'SYS_');
-        if($isSys !== false) {
+        if($isSys) {
             $disk = 'sys';
             $dirName = substr($dirName,4);
             $uploadDir = Config::get('filesystem.disks.sys.url');

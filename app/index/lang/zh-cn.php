@@ -30,7 +30,7 @@ return [
      'index'			=> 'index',
      'home page'		=> '首页',
 	 'user center'		=> '用户中心',
-	 'set info'			=> '设置',
+	 'set info'			=> '个人设置',
 	 'my message'		=> '我的消息',
 	 'my page'			=> '我的主页',
 

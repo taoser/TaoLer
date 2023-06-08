@@ -491,18 +491,24 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "1.5.2",
-            "version_normalized": "1.5.2.0",
+            "version": "1.5.3",
+            "version_normalized": "1.5.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "b94b2807d85443f9719887892882d0329d1e2598"
+                "reference": "67ab6e18aaa14d753cc148911d273f6e6cb6721e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/b94b2807d85443f9719887892882d0329d1e2598",
-                "reference": "b94b2807d85443f9719887892882d0329d1e2598",
-                "shasum": ""
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/67ab6e18aaa14d753cc148911d273f6e6cb6721e",
+                "reference": "67ab6e18aaa14d753cc148911d273f6e6cb6721e",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "php": ">=5.5"
@@ -510,13 +516,8 @@
             "require-dev": {
                 "symfony/phpunit-bridge": "^4.4 || ^5.1"
             },
-            "time": "2022-08-28T14:55:35+00:00",
+            "time": "2023-05-21T12:31:43+00:00",
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.5-dev"
-                }
-            },
             "installation-source": "dist",
             "autoload": {
                 "files": [
@@ -558,7 +559,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/1.5.2"
+                "source": "https://github.com/guzzle/promises/tree/1.5.3"
             },
             "funding": [
                 {
@@ -2610,17 +2611,17 @@
         },
         {
             "name": "topthink/framework",
-            "version": "v6.1.2",
-            "version_normalized": "6.1.2.0",
+            "version": "v6.1.3",
+            "version_normalized": "6.1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "67235be5b919aaaf1de5aed9839f65d8e766aca3"
+                "reference": "7c324e7011246f0064b055b62ab9c3921cf0a041"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/framework/zipball/67235be5b919aaaf1de5aed9839f65d8e766aca3",
-                "reference": "67235be5b919aaaf1de5aed9839f65d8e766aca3",
+                "url": "https://api.github.com/repos/top-think/framework/zipball/7c324e7011246f0064b055b62ab9c3921cf0a041",
+                "reference": "7c324e7011246f0064b055b62ab9c3921cf0a041",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2646,7 +2647,7 @@
                 "mockery/mockery": "^1.2",
                 "phpunit/phpunit": "^7.0"
             },
-            "time": "2023-02-08T02:24:01+00:00",
+            "time": "2023-05-22T03:02:08+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2678,7 +2679,7 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/framework/issues",
-                "source": "https://github.com/top-think/framework/tree/v6.1.2"
+                "source": "https://github.com/top-think/framework/tree/v6.1.3"
             },
             "install-path": "../topthink/framework"
         },
@@ -2918,17 +2919,17 @@
         },
         {
             "name": "topthink/think-multi-app",
-            "version": "v1.0.16",
-            "version_normalized": "1.0.16.0",
+            "version": "v1.0.17",
+            "version_normalized": "1.0.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-multi-app.git",
-                "reference": "07b9183855150455e1f76f8cbe9d77d6d1bc399f"
+                "reference": "4055a6187296ac16c0bc7bbab4ed5d92f82f791c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/07b9183855150455e1f76f8cbe9d77d6d1bc399f",
-                "reference": "07b9183855150455e1f76f8cbe9d77d6d1bc399f",
+                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/4055a6187296ac16c0bc7bbab4ed5d92f82f791c",
+                "reference": "4055a6187296ac16c0bc7bbab4ed5d92f82f791c",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2941,7 +2942,7 @@
                 "php": ">=7.1.0",
                 "topthink/framework": "^6.0|^8.0"
             },
-            "time": "2023-02-07T08:40:09+00:00",
+            "time": "2023-03-29T02:04:29+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2966,10 +2967,10 @@
                     "email": "liu21st@gmail.com"
                 }
             ],
-            "description": "thinkphp6 multi app support",
+            "description": "thinkphp multi app support",
             "support": {
                 "issues": "https://github.com/top-think/think-multi-app/issues",
-                "source": "https://github.com/top-think/think-multi-app/tree/v1.0.16"
+                "source": "https://github.com/top-think/think-multi-app/tree/v1.0.17"
             },
             "install-path": "../topthink/think-multi-app"
         },

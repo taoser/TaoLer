@@ -148,7 +148,7 @@
                 data:{id:data.id,status:status},
                 dataType:'json',
                 success:function(res){
-                    if(res.code == 0){
+                    if(res.code === 0){
                         layer.msg(res.msg,{
                             icon:res.icon,
                             time:2000
@@ -225,7 +225,7 @@
               data:{"id":checkIds},
               success: function(result) {
                 layer.close(loading);
-                if (result.success) {
+                if (result.code === 0) {
                   layer.msg(result.msg, {
                     icon: 1,
                     time: 1000
@@ -244,7 +244,7 @@
         }
 
         window.refresh = function(param) {
-          table.reload('user-table');
+          table.reload('comment-table');
         }
 
 

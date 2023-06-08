@@ -54,6 +54,8 @@ return [
         'email_notice'   => 0,
 		// 百度词条开关
 		'baidu_title_switch'   => 0,
+        // 菜单位置
+        'nav_top' => 1,
 	],
 
 	// 百度SEO标签分词

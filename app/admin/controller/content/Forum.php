@@ -12,6 +12,7 @@ namespace app\admin\controller\content;
 
 use app\common\controller\AdminController;
 use app\common\model\Article;
+use app\facade\Cate;
 use think\App;
 use think\facade\View;
 use think\facade\Request;
@@ -43,7 +44,7 @@ class Forum extends AdminController
 
     public function list()
     {
-        $data = Request::only(['id','name','title','sec']);
+        $data = Request::only(['id','name','title','sec','cate_id']);
         $where = [];
         if (!empty($data['sec'])) {
             switch ($data['sec']) {
@@ -73,13 +74,17 @@ class Forum extends AdminController
             $where[] = ['id', '=', $data['id']];
         }
 
+        if(!empty($data['cate_id'])){
+            $where[] = ['cate_id', '=', $data['cate_id']];
+        }
+
         if(!empty($data['name'])){
             $userId = Db::name('user')->where('name',$data['name'])->value('id');
             $where[] = ['user_id', '=', $userId];
         }
 
         if(!empty($data['title'])){
-            $where[] = ['title', 'like', $data['title'].'%'];
+            $where[] = ['title', 'like', '%'.$data['title'].'%'];
         }
 
         $list = $this->model->getList($where, input('limit'), input('page'));
@@ -91,6 +96,7 @@ class Forum extends AdminController
                     'poster'    => $v['user']['name'],
                     'avatar'    => $v['user']['user_img'],
                     'title'     => htmlspecialchars($v['title']),
+                    'cate'      => $v['cate']['catename'],
                     'url'       => $this->getArticleUrl($v['id'], 'index', $v['cate']['ename']),
                     'content'   => strip_tags($v['content']),
                     'posttime'  => $v['update_time'],
@@ -163,11 +169,6 @@ class Forum extends AdminController
             }
             return $res;
         }
-        //1.查询分类表获取所有分类
-        $cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select();
-
-        //2.将catelist变量赋给模板 公共模板nav.html
-        View::assign('cateList',$cateList);
 
         return View::fetch('add');
     }
@@ -236,31 +237,24 @@ class Forum extends AdminController
         }
 
         View::assign(['article'=>$article]);
-        //1.查询分类表获取所有分类
-        $cateList = Db::name('cate')->where(['status'=>1,'delete_time'=>0])->order('sort','asc')->cache('catename',3600)->select();
-
-        //2.将catelist变量赋给模板 公共模板nav.html
-        View::assign('cateList',$cateList);
-
         return View::fetch();
     }
 
 
-    //删除帖子
+    //删除帖子 多选和单独
 	public function delete($id)
 	{
 		if(Request::isAjax()){
-			$arr = explode(",",$id);
-			foreach($arr as $v){
-				$article = Article::find($v);
-				$result = $article->together(['comments'])->delete();
-			}
-			
-			if($result){
-				return json(['code'=>0,'msg'=>'删除成功']);
-			}else{
-				return json(['code'=>-1,'msg'=>'删除失败']);
-			}
+            try {
+                $arr = explode(",",$id);
+                foreach($arr as $v){
+                    $article = Article::find($v);
+                    $article->together(['comments'])->delete();
+                }
+                return json(['code'=>0,'msg'=>'删除成功']);
+            } catch (\Exception $e) {
+                return json(['code'=>-1,'msg'=>'删除失败']);
+            }
 		}
 	}
 
@@ -352,7 +346,7 @@ class Forum extends AdminController
 
 
     /**
-     * 分类
+     * 分类树
      * @return Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
@@ -373,6 +367,28 @@ class Forum extends AdminController
         }
 		return json($tree);
 	}
+
+    /**
+     * 分类
+     * @return \think\response\Json
+     */
+    public function getCateList()
+    {
+        $cateList = Cate::field('id,pid,catename,sort')->where(['status' => 1])->select()->toArray();
+        // 排序
+        $cmf_arr = array_column($cateList, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $cateList);
+
+        $list =  getTree($cateList);
+        $count = count($list);
+        $tree = [];
+        if($count){
+            $tree = ['code'=>0, 'msg'=>'ok','count'=>$count];
+            $tree['data'] = $list;
+        }
+
+        return json($tree);
+    }
 
     //array_filter过滤函数
     protected function  filtr($arr){

@@ -140,14 +140,14 @@ class Comment extends AdminController
 	public function delete($id)
 	{
 		if(Request::isAjax()){
-            $arr = explode(",",$id);
-            foreach($arr as $v){
-                $comm = CommentModel::find($v);
-                $result = $comm->delete();
-            }
-            if($result){
+            try {
+                $arr = explode(",",$id);
+                foreach($arr as $v){
+                    $comm = CommentModel::find($v);
+                    $comm->delete();
+                }
                 return json(['code'=>0,'msg'=>'删除成功']);
-            }else{
+            } catch (\Exception $e) {
                 return json(['code'=>-1,'msg'=>'删除失败']);
             }
         }

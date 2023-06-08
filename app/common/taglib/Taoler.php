@@ -16,7 +16,7 @@ class Taoler extends TagLib
 {
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
-        'nav'      => ['attr' => '', 'close' => 1],
+        'nav'       => ['attr' => '', 'close' => 1],
         'snav'      => ['attr' => '', 'close' => 1],
         'gnav'      => ['attr' => '', 'close' => 1],
         'if'        => ['condition', 'expression' => true, 'close' => 1],
@@ -26,7 +26,8 @@ class Taoler extends TagLib
     public function tagNav($tag, $content): string
     {
         $id = $tag['id'] ?? 'nav';
-        $parse = '{volist name="cateList" id="'.$id.'"}';
+        $parse = '{php}$__cate__ = \app\facade\Cate::getNav();{/php}';
+        $parse .= '{volist name="__cate__" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;
@@ -35,18 +36,22 @@ class Taoler extends TagLib
     public function tagSnav($tag, $content): string
     {
         $id = $tag['id'] ?? 'snav';
-        $parse = '{volist name="nav.children" id="'.$id.'"}';
+        $parse = '{notempty name="nav.children"}';
+        $parse .= '{volist name="nav.children" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';
+        $parse .= '{/notempty}';
         return $parse;
     }
 
     public function tagGnav($tag, $content): string
     {
         $id = $tag['id'] ?? 'gnav';
-        $parse = '{volist name="snav.children" id="'.$id.'"}';
+        $parse = '{notempty name="snav.children"}';
+        $parse .= '{volist name="snav.children" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';
+        $parse .= '{/notempty}';
         return $parse;
     }
 

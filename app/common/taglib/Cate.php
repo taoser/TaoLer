@@ -14,8 +14,45 @@ use think\template\TagLib;
 
 class Cate extends TagLib
 {
-    protected $tag = [
-
+    protected $tags = [
+        'brother'       => ['attr' => '', 'close' => 1],
+        'bro_name'      => ['attr' => '', 'close' => 0],
+        'bro_ename'     => ['attr' => '', 'close' => 0],
+        'bro_url'       => ['attr' => '', 'close' => 0],
+        'list'          => ['attr' => '', 'close' => 1]
     ];
+
+
+    public function tagBrother($tag, $content): string
+    {
+        $parse = '{assign name="ename" value="$Request.param.ename" /}';
+        $parse .= '{php}$__brotherCate__ = \app\facade\Cate::getBrotherCate($ename);{/php}';
+        $parse .= '{volist name="__brotherCate__" id="brother"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        return $parse;
+
+    }
+
+    public function tagBro_name($tag): string
+    {
+        return '{$brother.catename}';
+    }
+
+    public function tagBro_ename($tag): string
+    {
+        return '{$brother.ename}';
+    }
+
+    public function tagBro_url($tag): string
+    {
+        return '{$brother.url}';
+    }
+
+    public function tagList($tag, $content): string
+    {
+        //$paras = ;
+    }
+
 
 }

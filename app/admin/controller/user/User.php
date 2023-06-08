@@ -16,6 +16,8 @@ use think\facade\Request;
 use think\facade\Db;
 use app\common\model\User as UserModel;
 use app\common\lib\Uploads;
+use app\common\validate\User as userValidate;
+use think\exception\ValidateException;
 
 
 class User extends AdminController
@@ -79,6 +81,14 @@ class User extends AdminController
 		//
 		if(Request::isAjax()){
 			$data = Request::only(['name','email','user_img','password','phone','sex']);
+            try{
+                validate(userValidate::class)
+                    ->scene('userReg')
+                    ->check($data);
+            } catch (ValidateException $e) {
+                // 验证失败 输出错误信息
+                return json(['code'=>-1,'msg'=>$e->getError()]);
+            }
             $data['create_time'] = time();
             $salt = substr(md5($data['create_time']),-6);
             // 密码
@@ -100,9 +110,13 @@ class User extends AdminController
 	{
 		if(Request::isAjax()){
 			$data = Request::only(['id','name','email','user_img','password','phone','sex']);
-            $user = Db::name('user')->field('create_time')->find($data['id']);
-            $salt = substr(md5($user['create_time']),-6);
-            $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6)); // 密码
+            if(empty($data['password'])) {
+                unset($data['password']);
+            } else {
+                $user = Db::name('user')->field('create_time')->find($data['id']);
+                $salt = substr(md5($user['create_time']),-6);
+                $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6)); // 密码
+            }
 			try{
                 Db::name('user')->update($data);
                 return json(['code'=>0,'msg'=>'编辑成功']);

@@ -389,7 +389,7 @@ class Article extends Model
                 $query->field('id,name,user_img');
             },
             'cate' => function($query){
-                $query->field('id,ename');
+                $query->field('id,ename,catename');
             }
         ])
         ->where($where)

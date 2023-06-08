@@ -5,7 +5,7 @@
  Target Server Version : 80020 (8.0.20)
  File Encoding         : 65001
 
- Date: 14/03/2023 19:57:43
+ Date: 8/06/2023 19:57:43
 */
 
 SET NAMES utf8mb4;
@@ -314,35 +314,28 @@ CREATE TABLE `tao_collection`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章收藏表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of tao_collection
--- ----------------------------
-
--- ----------------------------
 -- Table structure for tao_comment
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_comment`;
+
 CREATE TABLE `tao_comment`  (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT '评论id',
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论',
-  `article_id` int NOT NULL COMMENT '文章id',
-  `user_id` int NOT NULL COMMENT '评论用户',
-  `zan` tinyint NOT NULL DEFAULT 0 COMMENT '赞',
-  `cai` enum('1','0') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '0求解1采纳',
-  `status` enum('0','-1','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '1通过0待审-1禁止',
-  `create_time` int NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
+    `id` int NOT NULL AUTO_INCREMENT COMMENT '评论id',
+    `pid` int NOT NULL DEFAULT 0 COMMENT '父id',
+    `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论',
+    `article_id` int NOT NULL COMMENT '文章id',
+    `user_id` int NOT NULL COMMENT '评论用户',
+    `to_user_id` int NULL DEFAULT NULL COMMENT '给用户留言',
+    `zan` tinyint NOT NULL DEFAULT 0 COMMENT '赞',
+    `cai` enum('1','0') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '0求解1采纳',
+    `status` enum('0','-1','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '1通过0待审-1禁止',
+    `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '评论类型1帖子2其它',
+    `create_time` int NOT NULL DEFAULT 0 COMMENT '创建时间',
+    `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
+    `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `aiticle_id`(`article_id` ASC) USING BTREE COMMENT '文章评论索引',
   INDEX `user_id`(`user_id` ASC) USING BTREE COMMENT '评论用户索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of tao_comment
--- ----------------------------
-INSERT INTO `tao_comment` VALUES (1, 'https://www.aieok.com', 1, 1, 0, '0', '1', 1555127897, 1578977505, 0);
-INSERT INTO `tao_comment` VALUES (2, 'face[嘻嘻] ddddd', 1, 1, 0, '0', '1', 1677900207, 1677975943, 1677975943);
-INSERT INTO `tao_comment` VALUES (3, 'ddddfdfd', 1, 1, 0, '0', '1', 1677900215, 1677975943, 1677975943);
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_cunsult
@@ -360,10 +353,6 @@ CREATE TABLE `tao_cunsult`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '反馈表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of tao_cunsult
--- ----------------------------
-
--- ----------------------------
 -- Table structure for tao_friend_link
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_friend_link`;
@@ -376,14 +365,12 @@ CREATE TABLE `tao_friend_link`  (
   `update_time` int NOT NULL COMMENT '更新时间',
   `delete_time` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '友情链接' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '友情链接' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_friend_link
 -- ----------------------------
-INSERT INTO `tao_friend_link` VALUES (1, 'taobao', 'https://www.taobao.com', '', 0, 0, 0);
-INSERT INTO `tao_friend_link` VALUES (2, 'baidu', 'https://www.baidu.com', '', 0, 0, 0);
-INSERT INTO `tao_friend_link` VALUES (3, 'tensent', 'https://www.qq.com', '', 0, 0, 0);
+INSERT INTO `tao_friend_link` VALUES (1, 'taoler', 'https://www.aieok.com', '', 0, 0, 0);
 
 -- ----------------------------
 -- Table structure for tao_mail_server
@@ -421,13 +408,7 @@ CREATE TABLE `tao_message`  (
   `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of tao_message
--- ----------------------------
-INSERT INTO `tao_message` VALUES (1, '测试后台帖子', '评论通知', 1, 'http://www.tp6.com/index/ask/1.html', 2, 1677900207, 1677900207, 0);
-INSERT INTO `tao_message` VALUES (2, '测试后台帖子', '评论通知', 1, 'http://www.tp6.com/index/ask/1.html', 2, 1677900215, 1677900215, 0);
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_message_to
@@ -444,13 +425,7 @@ CREATE TABLE `tao_message_to`  (
   `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息详细表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of tao_message_to
--- ----------------------------
-INSERT INTO `tao_message_to` VALUES (1, 1, 1, '1', 2, 0, 1677900207, 1677900207, 0);
-INSERT INTO `tao_message_to` VALUES (2, 1, 1, '2', 2, 0, 1677900215, 1677900215, 0);
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息详细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_push_jscode
@@ -466,10 +441,6 @@ CREATE TABLE `tao_push_jscode`  (
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '站长平台自动推送js代码' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of tao_push_jscode
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for tao_slider
@@ -489,13 +460,7 @@ CREATE TABLE `tao_slider`  (
   `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of tao_slider
--- ----------------------------
-INSERT INTO `tao_slider` VALUES (1, 'CODING', 1, '/storage/slider/F1.jpg', '#', '', 1574870400, 1575043200, '1', 0, 0, 0);
-INSERT INTO `tao_slider` VALUES (2, '通用右栏底部广告', 2, '/storage/slider/20200101/851c0b88a72590293bcb45454bdce056.jpg', 'https://www.aieok.com', '', 1571155200, 1609344000, '1', 0, 0, 0);
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_system
@@ -555,10 +520,6 @@ CREATE TABLE `tao_tag`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `ename`(`ename` ASC) USING BTREE COMMENT 'ename查询tag索引'
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章tag表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of tao_tag
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for tao_taglist
@@ -656,10 +617,6 @@ CREATE TABLE `tao_user_sign`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户签到表' ROW_FORMAT = Fixed;
 
 -- ----------------------------
--- Records of tao_user_sign
--- ----------------------------
-
--- ----------------------------
 -- Table structure for tao_user_signrule
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_user_signrule`;
@@ -720,9 +677,5 @@ CREATE TABLE `tao_user_zan`  (
   `create_time` int NOT NULL DEFAULT 0 COMMENT '点赞时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Fixed;
-
--- ----------------------------
--- Records of tao_user_zan
--- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

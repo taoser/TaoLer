@@ -46,6 +46,12 @@ class Cate extends Model
         return $this->field('ename,catename')->where('pid', $this::where('ename', $ename)->value('id'))->select();
     }
 
+    // 查询兄弟分类
+    public function getBrotherCate(string $ename)
+    {
+        return $this->field('id,ename,catename')->where('pid', $this::where('ename', $ename)->value('pid'))->append(['url'])->order('sort asc')->select();
+    }
+
     /**
      * 删除分类
      * @param $id
@@ -91,6 +97,24 @@ class Cate extends Model
             return $e->getMessage();
         }
 
+    }
+
+    // 分类导航菜单
+    public function getNav()
+    {
+        try {
+            $cateList = $this->where(['status' => 1])
+                ->cache('catename', 3600)
+                ->append(['url'])
+                ->select()
+                ->toArray();
+            // 排序
+            $cmf_arr = array_column($cateList, 'sort');
+            array_multisort($cmf_arr, SORT_ASC, $cateList);
+            return getTree($cateList);
+        } catch (DbException $e) {
+            return $e->getMessage();
+        }
     }
 
     // 获取url

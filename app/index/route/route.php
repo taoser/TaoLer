@@ -9,6 +9,7 @@
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 use think\facade\Route;
+use think\facade\Request;
 
 //详情页URL别称
 $detail_as = config('taoler.url_rewrite.article_as');
@@ -68,19 +69,24 @@ Route::group('art',function () use($detail_as,$cate_as){
 Route::get('tag','tag/getAllTag')->name('get_all_tag');
 Route::get('arttag','tag/getArticleTag')->name('get_art_tag');
 
+Route::rule('search/[:keywords]', 'index/search'); // 搜索
+
+
+// article分类和详情路由 ！放到最后！
 Route::group(function () use($detail_as, $cate_as){
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
 	Route::get($detail_as . ':id$', 'article/detail')->name('article_detail');
     Route::get($detail_as . '<id>/<page>$', 'article/detail')->name('article_comment');
+    //分类
 	Route::get($cate_as . '<ename>$','article/cate')->name('cate');
 	Route::get($cate_as . '<ename>/<type>$', 'article/cate')->name('cate_type');
 	Route::get($cate_as . '<ename>/<type>/<page>$', 'article/cate')->name('cate_page');
 	})->pattern([
-		'ename' => '\w+',
+		'ename' => '[\w|\-]+',
 		'type' => '\w+',
 		'page'   => '\d+',
 		'id'   => '\d+',
 	]);
 			
-Route::rule('search/[:keywords]', 'index/search'); // 搜索
+
 	

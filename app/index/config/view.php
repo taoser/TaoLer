@@ -43,6 +43,8 @@ return [
     'view_dir_name' => 'view' . DIRECTORY_SEPARATOR . $template,
     // 模板后缀
     'view_suffix'   => 'html',
+    // 定义内置标签
+    //'taglib_build_in'    =>    'app\common\taglib\Article',
     // 预先加载的标签库
     'taglib_pre_load' => $taglib_pre_load,
     // 模板文件名分隔符

@@ -76,21 +76,16 @@ class Article extends BaseController
 		$page = input('page',1);
 		//输出内容
         $artDetail = $this->model->getArtDetail($id);
+        if(is_null($artDetail)){
+            throw new \think\exception\HttpException(404, '无内容');
+        }
+
+        //加密
         if($artDetail->read_type == 1 && session('art_pass_'.$id) != $artDetail->art_pass) {
             $artDetail->content = '本文已加密！请输入正确密码查看！';
         }
-
-		if(is_null($artDetail)){
-			// 抛出 HTTP 异常
-			throw new \think\exception\HttpException(404, '无内容');
-		}
-		//用户个人tag标签
-		$userTags = $this->model->where(['user_id' => $artDetail['user_id'],'status'=>1])->where('keywords','<>','')->column('keywords');
-		//转换为字符串
-		$tagStr = implode(",",$userTags);
-		//转换为数组并去重
-		$tagArr = array_unique(explode(",",$tagStr));
-		$userTagCount = count($tagArr);
+        //被赞
+        $zanCount = Db::name('user_zan')->where('user_id', $artDetail['user_id'])->count('id');
 
 		//赞列表
 		$userZanList = [];
@@ -162,9 +157,9 @@ class Article extends BaseController
 			'cid' 		=> $id,
 			'lrDate_time' => $lrDate_time,
 			'userZanList' => $userZanList,
-			'userTagCount'=> $userTagCount,
-			'jspage'	=> 'jie',
-            'passJieMi'     => session('art_pass_'.$id),
+			'zanCount'    => $zanCount,
+			'jspage'	  => 'jie',
+            'passJieMi'   => session('art_pass_'.$id),
 			$download,
 		]);
 	
@@ -186,8 +181,10 @@ class Article extends BaseController
 
 		if (Request::isAjax()){
 			//获取评论
-			$data = Request::only(['content','article_id','user_id']);
+			$data = Request::only(['content','article_id','pid','to_user_id']);
+            $data['user_id'] = $this->uid;
 			$sendId = $data['user_id'];
+//            halt($data);
 			$art = Db::name('article')->field('id,status,is_reply,delete_time')->find($data['article_id']);
 
 			if($art['delete_time'] != 0 || $art['status'] != 1 || $art['is_reply'] != 1){
@@ -616,15 +613,22 @@ class Article extends BaseController
     /**
      * 分类树
      * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function getCateTree()
     {
-        $data = $this->showNav();
-        $count = count($data);
+        $cateList = Cate::field('id,pid,catename,sort')->where(['status' => 1])->select()->toArray();
+        $list =  getTree($cateList);
+        // 排序
+        $cmf_arr = array_column($list, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $list);
+        $count = count($list);
         $tree = [];
         if($count){
             $tree = ['code'=>0, 'msg'=>'ok','count'=>$count];
-            $tree['data'] = $data;
+            $tree['data'] = $list;
         }
 
         return json($tree);

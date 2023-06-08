@@ -1,11 +1,11 @@
 {extend name="public:base" /}
 
-{block name="title"}{$sysInfo.webtitle}{/block}
-{block name="keywords"}{$sysInfo.keywords}{/block}
-{block name="description"}{$sysInfo.descript}{/block}
-{block name="ogtitle"}<meta property="og:title" content="{$sysInfo.webtitle}" />{/block}
-{block name="ogdescription"}<meta property="og:description" content="{$sysInfo.descript}" />{/block}
-{block name="ogimage"}<meta property="og:image" content="{$Request.domain}{$sysInfo.logo}" />{/block}
+{block name="title"}{system:webtitle /}{/block}
+{block name="keywords"}{system:keywords /}{/block}
+{block name="description"}{system:descript}{/block}
+{block name="ogtitle"}<meta property="og:title" content="{system:webtitle /}" >{/block}
+{block name="ogdescription"}<meta property="og:description" content="{system:descript /}" >{/block}
+{block name="ogimage"}<meta property="og:image" content="{$Request.domain}{system:logo /}" >{/block}
 {block name="meta"}{/block}
 {block name="link"}
 <!-- 特效丶样式 -->
@@ -15,32 +15,35 @@
 {block name="content"}
 <div class="layui-container">
 	<div class="layui-row layui-col-space15">
+		<!--左栏-->
 		<div class="layui-col-md8">
+
 			<!--首页幻灯-->
 			{:hook('ads_slider')}
-			<!--置顶文章-->
 
+			<!--置顶文章-->
 			<div class="fly-panel">
 				<div class="fly-panel-title fly-filter">
-					<a>{:lang('top')}</a>
-					<a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">{:lang('go sign')}</a>
+					<span>{:lang('top')}</span>
+					<a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin">{:lang('go sign')}</a>
 				</div>
 				<ul class="fly-list">
-					<marquee scrollAmount=2 width=500 height="80px" direction=up direction=up scrolldelay="1000" scrollamount="60px" onMouseOver="this.stop()" onMouseOut="this.start()" >
-						{volist name="artTop" id="top"}
-						{include file="public/index-topforum" /}
-						{/volist}
-					</marquee>
-
+					<div class="layui-carousel" id="ID-carousel">
+						<div carousel-item>
+							{volist name="artTop" id="top"}
+							{include file="public/index-topforum" /}
+							{/volist}
+						</div>
+					</div>
 				</ul>
 			</div>
-			<!--文章列表-->
 
+			<!--文章列表-->
 			<section id="main" class="list-home list-grid list-grid-padding">
 				{volist name="artList" id="article"}
 				<article class="list-item block card-plain">
 					{if getOnepic($article.content)}
-					<figure class="media media-3x2 col-4 col-md-4 d-none d-md-block">
+					<figure class="media media-3x2  d-none d-md-block">
 						<a class="media-content" href="{article:link /}" title="{article:title /}">
 							<img src="{:getOnepic($article.content)}" alt="{article:title /}">
 						</a>
@@ -80,15 +83,17 @@
 				{/volist}
 			</section>
 
-
-			  <div class="fly-panel" style="margin-bottom: 0;">
+			<!--更多帖子-->
+			<div class="fly-panel" style="margin-bottom: 0;">
 				<div style="text-align: center">
-				  <div class="laypage-main">
+					<div class="laypage-main">
 					<a href="{$Request.domain}{:url('cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
-				  </div>
+					</div>
 				</div>
-			  </div>
+			</div>
+
 		</div>
+
 		{//右栏}
 		<div class="layui-col-md4">
 			<!--签到-->
@@ -122,27 +127,40 @@
 			{:hook('ads_index_rfimg')}
 			<!--友情链接-->
 			{:hook('ads_index_flink')}
-
 		</div>
 	</div>
 </div>
-
+<!--移动端菜单-->
 {include file="public/menu" /}
 
 {/block}
 
 {block name="script"}
 <script>
-	layui.use(['util','laytpl'], function(){
+	layui.use(['util'], function(){
 		let util = layui.util;
+		let carousel = layui.carousel;
 
+		// 置顶文章
 		//tpl模板给发布时间赋值
 		$("time").each(function () {
 			var othis = $(this);
 			var datetime = othis.attr("datetime");
-			var posttime = layui.util.timeAgo(datetime, 30);
+			var posttime = util.timeAgo(datetime, 30);
 			othis.text(posttime);
 		});
+
+		// 渲染 - 设置时间间隔、动画类型、宽高度等属性
+		carousel.render({
+			elem: '#ID-carousel',
+			interval: 2000,
+			anim: 'updown',
+			arrow: 'none',
+			indicator: 'none',
+			width: 'auto',
+			height: '80px'
+		});
+
 	});
 </script>
 {/block}

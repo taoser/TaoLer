@@ -9,26 +9,32 @@
         <div class="layui-card">
           <div class="layui-card-body">
             <form class="layui-form" action="">
-              <div class="layui-form-item">
-                <div class="layui-form-item layui-inline">
+                <div class="layui-row layui-col-space15 ">
+                  <div class="layui-col-md3">
+                      <label class="layui-form-label">选择类目</label>
+                      <div class="layui-input-block">
+                          <div id="CateId" class="xm-select-demo"></div>
+                      </div>
+                  </div>
+                <div class="layui-col-md3">
                     <label class="layui-form-label">帖子ID</label>
                     <div class="layui-input-block">
                       <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
                     </div>
                 </div>
-                <div class="layui-form-item layui-inline">
+                <div class="layui-col-md3">
                     <label class="layui-form-label">发帖人</label>
                     <div class="layui-input-block">
                       <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
                     </div>
                 </div>
-                <div class="layui-form-item layui-inline">
+                <div class="layui-col-md3">
                     <label class="layui-form-label">标题</label>
                     <div class="layui-input-block">
                       <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
                     </div>
                 </div>
-                <div class="layui-form-item layui-inline">
+                <div class="layui-col-md3">
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-block">
                       <select name="sec">
@@ -42,7 +48,7 @@
                       </select>
                     </div>
                 </div>
-                <div class="layui-form-item layui-inline">
+                <div class="layui-col-md3">
                     <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
                       <i class="layui-icon layui-icon-search"></i>
                       查询
@@ -100,12 +106,13 @@
         <script>
         const FORUM_List       = "{:url('content.forum/list')}";
 
-        layui.use(['toast','jquery','form', 'table','common'], function(){
+        layui.use(['toast','jquery','form', 'table','common','xmSelect'], function(){
                 var $ = layui.jquery
                 ,form = layui.form
                 ,table = layui.table;
                 let common = layui.common;
                 var toast = layui.toast;
+                var xmSelect = layui.xmSelect;
 
                   //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
                   var taonystatus = "{:hook('taonystatus')}";
@@ -120,6 +127,7 @@
                     ,{field: 'avatar', title: '头像', width: 60, templet: '#avatarTpl'}
                     ,{field: 'poster', title: '账号',width: 80}
                     ,{field: 'title', title: '标题', minWidth: 180,templet: '<div><a href="{{- d.url }}" target="_blank">{{- d.title }}</a></div>'}
+                    ,{field: 'cate', title: '类别', width: 120}
                     ,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
                     ,{field: 'posttime', title: '时间',width: 120, sort: true}
                     ,{field: 'top', title: '置顶', templet: '#forum-istop', width: 80, align: 'center'}
@@ -143,6 +151,38 @@
                   icon: 'layui-icon-refresh',
                 }, 'filter', 'print', 'exports']
               });
+
+            // 动态分类
+            function getSelectCate() {
+                // 分类选择
+                $.get("{:url('content.forum/getCateList')}", function(res){
+                    // 渲染下拉树
+                    xmSelect.render({
+                        el: '#CateId',
+                        name: 'cate_id',
+                        height: '250px',
+                        layVerify: 'required',
+                        layVerType: 'tips',
+                        data: res.data,
+                        initValue:  [res.data[0].id],
+                        model: {label: {type: 'text'}},
+                        prop: {
+                            name: 'catename',
+                            value: 'id'
+                        },
+                        radio: true,
+                        clickClose: true,
+                        tree: {
+                            show: true,
+                            indent: 15,
+                            strict: false,
+                            expandedKeys: true
+                        },
+                        tips: '请选择'
+                    });
+                });
+            }
+            getSelectCate();
 
               table.on('tool(forum-table)', function(obj) {
                 if (obj.event === 'remove') {
@@ -269,9 +309,7 @@
               }
 
                 window.batchRemove = function(obj) {
-
                   var checkIds = common.checkField(obj,'id');
-
                   if (checkIds === "") {
                       layer.msg("未选中数据", {
                           icon: 3,
@@ -280,25 +318,25 @@
                       return false;
                   }
 
-                  layer.confirm('确定要删除这些用户', {
+                  layer.confirm('确定要删除?', {
                       icon: 3,
                       title: '提示'
                   }, function(index) {
                       layer.close(index);
                       let loading = layer.load();
                       $.ajax({
-                          url: "{:url('system.admin/delete')}",
+                          url: "{:url('content.forum/delete')}?id=" + checkIds,
                           dataType: 'json',
                           type: 'delete',
                           data:{"id":checkIds},
                           success: function(result) {
                               layer.close(loading);
-                              if (result.success) {
+                              if (result.code === 0) {
                                   layer.msg(result.msg, {
                                       icon: 1,
                                       time: 1000
                                   }, function() {
-                                      table.reload('user-table');
+                                      table.reload('forum-table');
                                   });
                               } else {
                                   layer.msg(result.msg, {
@@ -312,7 +350,7 @@
               }
 
                 window.refresh = function(param) {
-                  table.reload('user-table');
+                  table.reload('forum-table');
                 }
 
             });

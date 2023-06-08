@@ -8,7 +8,7 @@
  * @FilePath: \TaoLer\app\common\taglib\Article.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
-//declare (strict_types = 1);
+declare (strict_types = 1);
 
 namespace app\common\taglib;
 
@@ -42,6 +42,7 @@ class Article extends TagLib
         'istop'         => ['attr' => '', 'close' => 0],
 
         'detail'      => ['attr' => 'name', 'close' => 0],
+//        'detail'      => ['attr' => '', 'close' => 0],
         
     ];
 
@@ -146,10 +147,22 @@ class Article extends TagLib
     }
 
     // 详情
+//    public function tagDetail($tag)
+//    {
+//        return '{$article.' . $tag['name'] . '}';
+//    }
+
+    // 详情
     public function tagDetail($tag)
     {
-        return '{$article.' . $tag['name'] . '}';
+        $parseStr = '{assign name="id" value="$Request.param.id" /}';
+        $parseStr .= '<?php ';
+        $parseStr .= '$__article__ = \app\facade\Article::find($id);';
+        $parseStr .= ' ?>';
+        $parseStr .= '{$__article__.'. $tag['name'] .'}';
+        return $parseStr;
     }
+
 
     public function tagIstop($tag): string
     {
@@ -163,15 +176,26 @@ class Article extends TagLib
     }
 
     // 评论
-     public function tagComment($tag, $content): string
+     public function tagComment2($tag, $content): string
      {
          $parse = '<?php ';
          $parse .= ' ?>';
-         $parse .= '{volist name="comments['.'\'data\''.']" id="comment" empty= "还没有内容"}';
+         $parse .= '{volist name="comments" id="comment" empty= "还没有内容"}';
          $parse .= $content;
          $parse .= '{/volist}';
          return $parse;
      }
+
+    // 评论
+    public function tagComment($tag, $content): string
+    {
+        $parse = '<?php ';
+        $parse .= ' ?>';
+        $parse .= '{volist name="comments['.'\'data\''.']" id="comment" empty= "还没有内容"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        return $parse;
+    }
 
     // 分类列表
     public function tagList($tag, $content): string

@@ -37,19 +37,11 @@
   <link rel="stylesheet" href="{$Request.domain}/static/layui/css/layui.css">
   <link rel="stylesheet" href="{$Request.domain}/static/res/css/global.css">
   {block name="link"}{/block}
-  <!-- 5+ 引擎环境下自动隐藏无关元素,适配App --> 
-  <style> 
-  .html5plus .html5plus-hide {display: none}
-  {if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") !== false} html body{margin-top: 1px;} {/if}	
-  </style>
   <script src="/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
   {$sysInfo.showlist|raw}
 </head>
 <body >
-<script> if(navigator.userAgent.indexOf("Html5Plus") > -1) {document.body.classList.add("html5plus")} </script>
-{if strpos($Request.SERVER.HTTP_USER_AGENT,"Html5Plus") === false}
 {include file="public/header" /}
-{/if}
 {block name="column"}导航{/block}
 {block name="content"}内容{/block}
 {include file="public/footer" /}

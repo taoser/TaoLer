@@ -18,7 +18,7 @@
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md8">
       <div class="fly-panel" style="margin-bottom: 0;">
-		<div class="layui-tab-card">
+		<div class="layui-tab layui-tab-card">
 		  <ul class="layui-tab-title">
 			<li {if condition="$type eq 'all'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} "  >{:lang('all')}</a></li>
 			<li {if condition="$type eq 'jie'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} ">{:lang('end')}</a></li>
@@ -31,8 +31,8 @@
 			  <li>
 				  {if ($article.jie == 1)}
 				  <div class="que-sta-jie">
-					  <span  >已解</span>
-					  <span  >&radic;</span>
+					  <span>已解</span>
+					  <span>&radic;</span>
 				  </div>
 				  {else /}
 				  <div class="que-sta-ask">

@@ -17,6 +17,7 @@ class User extends Validate
     protected $rule = [
         'name|用户名' => 'require|min:2|max:18|chsDash|unique:user',
 		'email|邮箱' => 'require|email|unique:user',
+        'phone|手机号' => 'require|mobile|unique:user',
         'password|密码' => 'require|min:6|max:20',
         'repassword|确认密码'=>'require|confirm:password',
         'nickname|昵称' => 'require|min:2|max:20',      
@@ -48,11 +49,23 @@ class User extends Validate
 			->remove('email', 'unique');
     }
 
-        //注册验证场景
+    //phone登陆验证场景
+    public function sceneLoginPhone()
+    {
+        return $this->only(['phone','password'])
+            ->remove('phone', 'unique');
+    }
+
+    //注册验证场景
     public function sceneReg()
     {
         return $this->only(['name','email','password','repassword']);
-            
+    }
+
+    //后台注册验证场景
+    public function sceneUserReg()
+    {
+        return $this->only(['name','email','phone','password']);
     }
 	
 	//密码找回

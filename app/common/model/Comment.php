@@ -35,11 +35,28 @@ class Comment extends Model
 	//获取评论
     public function getComment($id, $page)
     {
-        return $this::with(['user'])
+        $comment = $this::withTrashed()->with(['user'=>function($query){
+            $query->field('id,name,user_img,sign,city,vip');
+        }])
             ->where(['article_id'=>(int)$id,'status'=>1])
             ->order(['cai'=>'asc','create_time'=>'asc'])
-            ->paginate(['list_rows'=>10, 'page'=>$page])
+//            ->paginate(['list_rows'=>10, 'page'=>$page])
+            ->append(['touser'])
+            ->select()
             ->toArray();
+//        halt($comment);
+        if(count($comment)) {
+            $data['data'] = getTree($comment);
+            $data['total'] = count($data['data']);
+
+            $arr = array_chunk($data['data'], 10);
+            //当前页
+            $page = $page - 1;
+            return ['total' => $data['total'], 'data' => $arr[$page]];
+        } else {
+            return ['total' => 0, 'data' => ''];
+        }
+
     }
 
     //回帖榜
@@ -153,6 +170,31 @@ class Comment extends Model
         } else {
             return (string) url('detail',['id' => $data['id']]);
         }
+    }
+
+    // 获取to_user_id
+    public function getTouserAttr($value,$data)
+    {
+        if(isset($data['to_user_id'])) {
+            return User::where('id', $data['to_user_id'])->value('name');
+        }
+        return '';
+    }
+
+    /**
+     * 评论下有评论且自身已删除，会显示为 评论已删除，评论下无评论且已删除则不显示
+     * @param $value
+     * @param $data
+     * @return string
+     */
+    public function getContentAttr($value,$data)
+    {
+        if($data['delete_time'] !== 0) {
+            if($this::getByPid($data['id'])) {
+                return '<span style="text-decoration:line-through;">评论已删除</span>';
+            }
+        }
+        return $value;
     }
 	
 }

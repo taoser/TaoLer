@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace app\common\lib;
 
 use think\facade\Lang;
+use think\Response;
 
 class Msgres
 {
@@ -66,13 +67,13 @@ class Msgres
 	}
 
     /**
-     * 成功提示
      * @param string $strMsg
      * @param string|null $url
-     * @param string $data
-     * @return string|\think\response\Json
+     * @param array|$data
+     * @return Response
      */
-	public static function success(string $strMsg = '',string $url = null, $data = '') {
+	public static function success(string $strMsg = '',string $url = null, array $data = []): Response
+    {
 		$result = [
             'code' => self::getCode('success'),
             'msg' => self::getMsg($strMsg),

@@ -51,9 +51,9 @@ class User extends Model
     public function login($data)
     {	
         //查询使用邮箱或者用户名登陆
-        $user = $this::whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
+        $user = $this::whereOr('phone',$data['name'])->whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
 
-        if(!($user->isEmpty())){
+        if(!$user->isEmpty()){
 			//被禁用和待审核
 			if($user['status'] == -1){
 				return Lang::get('Account disabled');
