@@ -80,7 +80,7 @@ layui.define(['form', 'upload'], function(exports){
     var field = data.field;
     var URL = $(this).data('url');
     $.post(URL, field,function(res){
-      if(res.code == 0){
+      if(res.code === 0){
         layer.msg(res.msg,{icon:6,tiye:2000},function(){
           location.reload();
         });

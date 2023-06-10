@@ -161,10 +161,10 @@
                         el: '#CateId',
                         name: 'cate_id',
                         height: '250px',
-                        layVerify: 'required',
+                        layVerify: '',
                         layVerType: 'tips',
                         data: res.data,
-                        initValue:  [res.data[0].id],
+                        initValue:  [],
                         model: {label: {type: 'text'}},
                         prop: {
                             name: 'catename',
@@ -204,7 +204,10 @@
 
               form.on('submit(forum-query)', function(data) {
                 table.reload('forum-table', {
-                  where: data.field
+                  where: data.field,
+                    page: {
+                      curr: 1 //重新从第 1 页开始
+                  }
                 })
                 return false;
               });

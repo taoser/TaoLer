@@ -282,7 +282,7 @@ class FormHlp
         $switchStr = $switchArr ? lang($switchArr[1]) . '|' . lang($switchArr[0]) : lang('open') . '|' . 'close';
         $str = '<div class="layui-form-item">' .$this->label($label,$options) . '
         <div class="layui-input-block">
-        <input ' . $this->addextend($options) . '  ' . $this->addstyle($options) . '  class="' . $this->addClass($options) . '" type="checkbox" value="' . $value . '" checked="" name="' . $name . '" ' . $this->verify($options) . $this->filter($options) . $this->readonlyOrdisabled($options) . ' lay-skin="switch" lay-text="' . $switchStr . '"  data-text="' . lang($value) . '"/>
+        <input ' . $this->addextend($options) . '  ' . $this->addstyle($options) . '  class="' . $this->addClass($options) . '" type="checkbox" value="' . $value . '" checked="'.$checked.'" name="' . $name . '" ' . $this->verify($options) . $this->filter($options) . $this->readonlyOrdisabled($options) . ' lay-skin="switch" lay-text="' . $switchStr . '"  data-text="' . lang($value) . '"/>
         ' . $this->tips($options) . '
         </div>
         </div>';

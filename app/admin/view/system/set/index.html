@@ -243,11 +243,18 @@
 									</div>
 									<hr>
 									<div class="layui-form-item">
-										<label class="layui-form-label">百度词条：</label>
+										<label class="layui-form-label">菜单位置：</label>
 										<div class="layui-input-inline" style="width: 60px;">
-											<input type="checkbox" name="baidu_title_switch" lay-skin="switch" lay-text="开启|关闭" value=1 {if config('taoler.config.baidu_title_switch') == 1} checked {/if}>
+											<input type="checkbox" name="nav_top" lay-skin="switch" lay-text="顶部|子栏" value=1 {if config('taoler.config.nav_top') == 1} checked {/if}>
 										</div>
-										<div class="layui-form-mid layui-word-aux">发文章标题引用百度词条</div>
+										<div class="layui-form-mid layui-word-aux">导航菜单在顶部或第二栏显示</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">置顶模式：</label>
+										<div class="layui-input-inline" style="width: 60px;">
+											<input type="checkbox" name="top_show" lay-skin="switch" lay-text="列表|滚动" value=1 {if config('taoler.config.top_show') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">置顶帖子列表或滚动显示</div>
 									</div>
 									<hr>
 									{if hook('mailserveractivehook')}
@@ -411,8 +418,6 @@
 				}
 			}
 		});
-
-		
 
 		// 获取描述的内容
 		$("input[name='article_as']").bind('input propertychange', function(){

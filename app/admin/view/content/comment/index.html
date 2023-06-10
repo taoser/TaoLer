@@ -130,7 +130,10 @@
 
         form.on('submit(comment-query)', function(data) {
           table.reload('comment-table', {
-            where: data.field
+            where: data.field,
+            page: {
+            curr: 1 //重新从第 1 页开始
+          }
           })
           return false;
         });

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>新增管理员</title>
+	<title>表单配置</title>
 	<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 </head>
 <body>
@@ -24,10 +24,10 @@
 	{:form_radio($name,$vo.content,['label'=>$vo.title,'tips'=>$vo.tips],$vo.value)}
 	{/case}
 	{case value="checkbox"}
-	{:form_checkbox($name, $vo.content,['label'=>$vo.title, 'verify' =>$vo.rule,'tips'=>$vo.tips,], $vo['value'])};
+	{:form_checkbox($name, $vo.content,['label'=>$vo.title, 'verify' =>$vo.rule,'tips'=>$vo.tips,], $vo['value'])}
 	{/case}
 	{case value="switch"}
-	{:form_switch($name, $vo.content,['label'=>$vo.title, 'verify' =>$vo.rule,'tips'=>$vo.tips,], $vo['value'])};
+	{:form_switch($name, $vo.content,['label'=>$vo.title, 'verify' =>$vo.rule,'tips'=>$vo.tips,], $vo['value'])}
 	{/case}
 	{case value="select"}
 	{:form_select($name,$vo.content,['label'=>$vo.title,'verify'=>$vo.rule,'tips'=>$vo.tips,'search'=>1] ,[],$vo.value)}
@@ -66,7 +66,7 @@
 <script>
 	layui.use(['upload','toast'], function(){
 		var $ = layui.$,upload = layui.upload,form = layui.form,notify=layui.notify;
-		//上传头像
+		//上传
 		upload.render({
 			elem: '.upload-select'
 			,url: "{:url('addon.addons/uploads')}"

@@ -183,6 +183,7 @@ pre{overflow-y: auto;
 .fly-header{position: fixed; left: 0; top: 0; z-index: 10000; width: 100%; height: 60px; border-bottom: 1px solid #404553; border-right: 1px solid #404553; border-radius: 0;}
 .fly-header .layui-container{position: relative; height: 100%; line-height: 60px; text-align: center;}
 .fly-logo{position: absolute; left: 15px;}
+.fly-logo img {width:135px; height: 37px;}
 .fly-logo-m{width: 91px;}
 .fly-nav{position: absolute; left: 200px;}
 .fly-nav a i{position: absolute; left: 15px; top: 0; padding-right: 10px; font-size: 22px;}

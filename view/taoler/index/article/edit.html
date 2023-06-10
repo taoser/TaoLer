@@ -56,32 +56,11 @@
                   <input type="text" value="{$article.art_pass ?? ''}" name="art_pass" autocomplete="off" class="layui-input" />
                 </div>
               </div>
-              <div class="layui-col-md6 layui-hide">
-                <label class="layui-form-label" for="L_browser">浏览器</label>
-                <div class="layui-input-block">
-                  <input type="text" id="L_browser" value="" name="browser" placeholder="浏览器名称及版本，如：IE 11" autocomplete="off" class="layui-input" />
-                </div>
-              </div>
             </div>
 
             <div class="layui-form-item layui-form-text">
               <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="详细内容"  class="layui-textarea fly-editor" style="height: 260px;">{$article.content}</textarea>
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <div class="layui-inline">
-                <label class="layui-form-label">悬赏飞吻</label>
-                <div class="layui-input-inline" style="width: 190px;">
-                  <select name="experience">
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
-                    <option value="60">60</option>
-                    <option value="80">80</option>
-                  </select>
-                </div>
-                <div class="layui-form-mid layui-word-aux">发表后无法更改飞吻</div>
+                <textarea id="L_content" name="content" required lay-verify="required" placeholder="详细内容"  class="layui-textarea fly-editor taonyeditor" style="height: 260px;">{$article.content}</textarea>
               </div>
             </div>
             <div class="layui-form-item">
@@ -138,9 +117,6 @@
 {/block}
 
 {block name="script"}
-
-{:hook('taonyeditor')}
-
 <script src="/static/xm-select.js"></script>
 <script>
   let taonystatus = "{:hook('taonystatus') ? 1 : 0} ";
@@ -151,9 +127,6 @@
     ,colorpicker = layui.colorpicker
     ,form = layui.form
     ,upload = layui.upload;
-
-    //获取百度标签标志，tag或者word;
-    var flag = 'word';
 
     var cateId = "{$article.cate.id}";
     var artId = "{$article.id}";
@@ -227,87 +200,6 @@
       });
     })
 
-
-    // 通过标题内容自动获取tag的内容
-	var conf = "{:empty(config('taoler.baidu.client_id'))}";
-      if(conf !== '1'){
-        $("#L_title").on('blur', function(){
-          var title = $(this).val();
-          var content = $("#L_content").val();
-          getBdiduWords(flag,title,content);
-        })
-	  }
-
-    // 从详情页自动调用端口过滤，获取描述信息
-    $("#L_content").bind('input propertychange', function(){
-      var content = $(this).val()
-      var title = $("#L_title").val();
-        $.post("{:url('article/getDescription')}", { content: content }, function(data){
-          if (data.code == 0) {
-            $('[name="description"]').val(data.data);
-          }
-        });
-        getBdiduWords(flag,title,content);
-      })
-
-    // 获取百度分词接口的关键词
-    function getBdiduWords(flag,title,content) {
-        $.post("{:url('article/keywords')}",{  keywords: title, content:content, flag: flag }, function (res) {
-            if (res.code == 0) {
-              $("input[name='keywords']").val(res.data.join(','));
-            }
-          },
-        )
-    }
-
-    // 百度词条
-    (function(){
-      var baidu_title_switch = "{:config('taoler.config.baidu_title_switch')}";
-      if(baidu_title_switch == 1) {
-        $("#L_title").bind('input propertychange',function () {
-            var title = $(this).val();
-            var str = '';
-            if(title.length > 0 ) {
-              $.post("{:url('article/getWordList')}",{title:title},function(res){
-                // 动态生成ur>li内容
-                if (res.code == 0) {
-                  // 显示动态框
-                  $(".bdsug").removeClass('layui-hide');
-                  for (var i = 0; i < res.data.length; i++) {
-                    //str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q.replace(title,'') + '</b></li>';
-                    str += '<li data-key=' + res.data[i].q + '><b>' + res.data[i].q + '</b></li>';
-                  }
-                  // 清空ul并追加li
-                  $('.wordlist').empty().append(str);
-                  // 点击李获取li值并复制给#L_title input的value
-                  $(".bdsug li").on('click',function(){
-                    var word = $(this).attr('data-key');
-                    var words = title + '(' + word + ')';
-                    $("#L_title").val(words);
-                    // 关闭动态框
-                    $(".bdsug").addClass('layui-hide');
-                  });
-                } else {
-                  $(".bdsug").addClass('layui-hide');
-                }
-              });
-            } else {
-              $(".bdsug").addClass('layui-hide');
-            }
-        });
-      }
-    }())
-
-    //关闭百度词条
-    $(function(){
-        $(".bdsug").mouseleave(function(){
-            $(this).addClass('layui-hide');
-            // $("#LAY_ucm").click(function(){
-            //   $(this).addClass('layui-hide');
-            // });
-        });
-    });
-
   //编辑文章
 	form.on('submit(article-edit)', function(data){
 		var field = data.field;
@@ -365,4 +257,10 @@
 
   });
 </script>
+{:hook('taonyeditor')}
+{// 百度标题词条}
+{:hook('seoBaiduTitle')}
+{// 百度关键词}
+{:hook('seoBaiduKeywords')}
+
 {/block}

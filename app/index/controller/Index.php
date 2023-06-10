@@ -36,7 +36,6 @@ class Index extends BaseController
         //热议文章
         $artHot = Article::getArtHot(10);
 
-		
 		$vs = [
 			'artTop'	=>	$artTop,
 			'artList'	=>	$artList,

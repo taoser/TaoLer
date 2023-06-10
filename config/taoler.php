@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '2.3.6',
+    'version'   => '2.3.7',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
@@ -52,29 +52,10 @@ return [
         'area_show'   => 0,
 		// 邮件通知
         'email_notice'   => 0,
-		// 百度词条开关
-		'baidu_title_switch'   => 0,
         // 菜单位置
-        'nav_top' => 1,
-	],
-
-	// 百度SEO标签分词
-	'baidu'	=> [
-		'grant_type'   => 'client_credentials',
-		'client_id'   => '',
-		'client_secret'   => '',
-		'access_token'	=> '',
-		'push_api'   => '',
-	],
-
-	// sitemap
-	'sitemap' => [
-		// 单文件记录数
-		'map_num'   => '2000',
-		'map_time'	=> 'daily',
-		'map_level'	=> '0.5',
-		// 已写id位标记
-		'write_id'   => 0,
+        'nav_top'   => 0,
+        // 置顶文章显示方式1列表0滑动
+        'top_show'   => 1,
 
 	],
 

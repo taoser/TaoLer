@@ -392,6 +392,7 @@ class Article extends Model
                 $query->field('id,ename,catename');
             }
         ])
+        ->where(['status' => 1])
         ->where($where)
         ->order('create_time', 'desc')
         ->paginate([

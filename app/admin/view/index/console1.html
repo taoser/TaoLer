@@ -267,10 +267,7 @@
 								</tr>
 								<tr>
 									<td>UI</td>
-									<td> Layui 2.8.5
-										<script type="text/html" template>
-											Layui-v {{ layui.v }}
-										</script>
+									<td class="UI"> Layui
 									</td>
 								</tr>
 								<tr>
@@ -327,6 +324,8 @@
 			const indexReplys = "{:url('Index/replys')}";		//回复
 			const NEWS = "{:url('index/news')}";	 //动态
 			const indexReply = "{:url('Index/reply')}";	//反馈
+			const v = layui.v;
+
 
 			layui.use(['form','layer', 'echarts', 'element', 'count','toast'], function() {
 				let $ = layui.jquery, form = layui.form,
@@ -336,6 +335,9 @@
 					echarts = layui.echarts;
 				let toast = layui.toast;
 				let table = layui.table;
+
+				$('.UI').append(v);
+
 
 				count.up("value1", {
 					time: 4000,

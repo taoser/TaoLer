@@ -448,40 +448,6 @@ class Article extends BaseController
         return download($zip,'my');
     }
 
-	/**
-	 * 获取描述，过滤html
-	 *
-	 * @return void
-	 */
-	public function getDescription()
-	{
-		$data = Request::only(['content']);
-		$description = getArtContent($data['content']);
-		return json(['code'=>0,'data'=>$description]);
-	}
-
-	/**
-	 * 标题调用百度关键词词条
-	 *
-	 * @return void
-	 */
-	public function getWordList()
-	{
-		$title = input('title');
-		return $this->getBdiduSearchWordList($title);
-	}
-
-    /**
-     * 关键词
-     * @return \think\response\Json
-     */
-    public function keywords()
-    {
-        $data = Request::only(['flag','keywords','content']);
-        $keywords = $this->setKeywords($data);
-        return json(['code'=>0, 'msg' => 'ok', 'data'=> $keywords]);
-    }
-
 	// 文章置顶、加精、评论状态
 	public function jieset()
 	{

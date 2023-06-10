@@ -44,7 +44,7 @@ class Comment extends Model
             ->append(['touser'])
             ->select()
             ->toArray();
-//        halt($comment);
+
         if(count($comment)) {
             $data['data'] = getTree($comment);
             $data['total'] = count($data['data']);

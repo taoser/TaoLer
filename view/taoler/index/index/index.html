@@ -28,13 +28,21 @@
 					<a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin">{:lang('go sign')}</a>
 				</div>
 				<ul class="fly-list">
-					<div class="layui-carousel" id="ID-carousel">
-						<div carousel-item>
-							{volist name="artTop" id="top"}
-							{include file="public/index-topforum" /}
-							{/volist}
+					{if config('taoler.config.top_show') == 1}
+						{// 列表}
+						{volist name="artTop" id="top"}
+						{include file="public/index-topforum" /}
+						{/volist}
+					{else /}
+						{// 滚动}
+						<div class="layui-carousel" id="ID-carousel">
+							<div carousel-item>
+								{volist name="artTop" id="top"}
+								{include file="public/index-topforum" /}
+								{/volist}
+							</div>
 						</div>
-					</div>
+					{/if}
 				</ul>
 			</div>
 

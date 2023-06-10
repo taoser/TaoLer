@@ -289,29 +289,6 @@ class Forum extends AdminController
     }
 
 	/**
-	 * 调用百度关键词
-	 *
-	 * @return json
-	 */
-    public function getKeywords()
-    {
-        $data = Request::only(['flag','keywords','content']);
-        $keywords = $this->setKeywords($data);
-        return json(['code'=>0, 'msg' => 'ok', 'data'=> $keywords]);
-    }
-
-    /**
-     * 标题调用百度关键词词条
-     * @return Json
-     */
-	public function getWordList()
-	{
-		$title = input('title');
-		return $this->getBdiduSearchWordList($title);
-	}
-
-
-	/**
 	 * 内容中是否有图片视频音频插入
 	 *
 	 * @param [type] $content
@@ -332,18 +309,6 @@ class Forum extends AdminController
 		
 		return $data;
 	}
-	/**
-	 * 获取描述，过滤html
-	 *
-	 * @return void
-	 */
-	public function getDescription()
-	{
-		$data = Request::only(['content']);
-		$description = getArtContent($data['content']);
-		return json(['code'=>0,'data'=>$description]);
-	}
-
 
     /**
      * 分类树

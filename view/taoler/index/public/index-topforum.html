@@ -3,7 +3,7 @@
 		<a href="{$Request.domain}{:url('user/home',['id'=>$top.user_id])}" class="fly-avatar">
 		  <img src="{$Request.domain}{$top.user.user_img}" alt="{$top.user.name}">
 		</a>
-		<h2><a href="{$Request.domain}{$top.url}" style="color:red;">{$top.title}</a></h2>
+		<h2><a href="{$Request.domain}{$top.url}" style="color: {$top.title_color ?? ''}">{$top.title}</a></h2>
 		<div class="fly-list-info">
 			{if config('taoler.config.cate_show') == 1}
 			<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $top.cate.ename : $top.cate.catename}</a>
@@ -21,7 +21,7 @@
 		</div>
 		<div class="fly-list-badge">
 		{if ($top.is_top == 1)}
-		<i class="layui-icon layui-icon-top layui-hide-md" style="font-size: 25px; color: #000000;"></i> <span class="layui-badge layui-bg-black layui-hide-xs" >{:lang('top')}</span>
+		<span class="layui-badge layui-bg-black layui-hide-xs" >{:lang('top')}</span>
 		{/if}
 		</div>
 	</li>

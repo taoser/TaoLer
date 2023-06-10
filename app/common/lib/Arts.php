@@ -69,8 +69,14 @@ class Arts
     public function setKeywords(string $flag,string $title,string $content) :array
     {
         $keywords = [];
+
+        // seo插件配置
+        $addon = get_addons_instance('seo');
+        $config = $addon->getConfig();
+        $seo_token = $config['baidufenci']['access_token'];
+
         // 百度分词自动生成关键词
-        if(!empty(config('taoler.baidu.client_id'))) {
+        if(!empty($seo_token)) {
             //headers数组内的格式
             $headers = [];
             $headers[] = "Content-Type:application/json";
@@ -78,16 +84,16 @@ class Arts
             switch($flag) {
                 //分词
                 case 'word':
-                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.$seo_token;
                     $body = ["text" => $title];
                     break;
                 //标签
                 case 'tag':
-                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8&access_token='.$seo_token;
                     $body = ['title' => $title, 'content' => $content];
                     break;
                 default:
-                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.config('taoler.baidu.access_token');
+                    $url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token='.$seo_token;
                     $body = ["text" => $title];
             }
 
@@ -131,9 +137,9 @@ class Arts
                 } else {
                     // 接口正常但获取数据失败，可能参数错误，重新获取token
                     $url = 'https://aip.baidubce.com/oauth/2.0/token';
-                    $post_data['grant_type']     = config('taoler.baidu.grant_type');;
-                    $post_data['client_id']      = config('taoler.baidu.client_id');
-                    $post_data['client_secret']  = config('taoler.baidu.client_secret');
+                    $post_data['grant_type']     = $config['baidufenci']['grant_type'];;
+                    $post_data['client_id']      = $config['baidufenci']['client_id'];
+                    $post_data['client_secret']  = $config['baidufenci']['client_secret'];
 
                     $o = "";
                     foreach ( $post_data as $k => $v )
@@ -210,8 +216,11 @@ class Arts
      */
     public function baiduPushUrl(string $link)
     {
+        // seo插件配置
+        $addon = get_addons_instance('seo');
+        $config = $addon->getConfig();
         // baidu 接口
-        $api = config('taoler.baidu.push_api');
+        $api = $config['baidupush']['push_api'];
         if(!empty($api)) {
             $url[] = $link;
             $ch = curl_init();

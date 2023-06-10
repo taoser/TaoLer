@@ -14,6 +14,7 @@ use think\Response;
 
 class Api
 {
+    public $code;
     /**
      * @param $url
      * @param $data

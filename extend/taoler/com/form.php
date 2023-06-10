@@ -32,9 +32,9 @@ if (!function_exists('form_switch')) {
      * @param $value
      * @return string
      */
-    function form_switch($name,$switch=[] , $option=[],$value='')
+    function form_switch($name, $switch=[], $option=[], $value='')
     {
-        return FormHelper::switchs($name,$switch , $option,$value);
+        return FormHelper::switchs($name, $switch, $option, $value);
     }
 }
 if (!function_exists('form_checkbox')) {
