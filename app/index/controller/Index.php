@@ -36,26 +36,7 @@ class Index extends BaseController
         $artList = Article::getArtList(15);
         //热议文章
         $artHot = Article::getArtHot(10);
-
-
-        $config = get_addons_config('ads');
-        $config['ads'] = [
-            "name" => "ads",
-            "title" => "广告设置",
-            "type" => "radio",
-            "content" => [
-            ],
-            "value" => "1",
-            "rule" => "required",
-            "msg" => "",
-            "tips" => "",
-            "ok" => "激活成功",
-            "extend" => "",
-        ];
-//        halt($config);
-        set_addons_config('ads', $config);
-
-
+        
 		$vs = [
 			'artTop'	=>	$artTop,
 			'artList'	=>	$artList,
