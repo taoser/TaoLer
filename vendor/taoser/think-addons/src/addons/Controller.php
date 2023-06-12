@@ -23,6 +23,10 @@ class Controller extends BaseController
     protected $addon_path;
     // 视图模型
     protected $view;
+    // 插件配置
+    protected $addon_config = '';
+    // 插件信息
+    protected $addon_info = '';
 
 
     /**

@@ -68,6 +68,9 @@ class Arts
      */
     public function setKeywords(string $flag,string $title,string $content) :array
     {
+        // 获取seo插件配置
+        $conf = get_addons_config('seo');
+
         $keywords = [];
 
         // seo插件配置
@@ -148,12 +151,11 @@ class Arts
                     }
                     $post_data = substr($o,0,-1);
                     $res = $this->request_post($url, $post_data);
-                    // 写入token
-                    SetArr::name('taoler')->edit([
-                        'baidu'=> [
-                            'access_token'	=> json_decode($res)->access_token,
-                        ]
-                    ]);
+
+                    // 保存token
+                    $conf['baidufenci']['value']['access_token'] = json_decode($res)->access_token;
+                    set_addons_config('seo', $conf);
+
                     echo 'api接口数据错误 - ';
                     echo $dataItem->error_msg;
                 }

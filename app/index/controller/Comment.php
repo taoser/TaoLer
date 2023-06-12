@@ -35,9 +35,8 @@ class Comment extends BaseController
     //删除评论
     public function jiedaDelete()
     {
+        if(!session('?user_id')) return json(['code'=>-1,'msg'=>'未登录']);
 		$id = input('id');
-        //$arid = intval($id);
-
         $comms = CommentModel::find($id);
 		$result = $comms->delete();
         if($result){
@@ -52,7 +51,7 @@ class Comment extends BaseController
 	public function getDa()
 	{
 	    //获取原评论
-		$this->isLogin();
+        if(!session('?user_id')) return json(['code'=>-1,'msg'=>'未登录']);
 		$id = input('id');
 		$comms = CommentModel::find($id);
 		$res['rows'] = [];
@@ -66,7 +65,7 @@ class Comment extends BaseController
 	//更新评论
 	public function updateDa()
 	{
-		$this->isLogin();
+        if(!session('?user_id')) return json(['code'=>-1,'msg'=>'未登录']);
 		$id = input('id');
 		$content = input('content');
 		$comms = CommentModel::find($id);
@@ -83,6 +82,7 @@ class Comment extends BaseController
     //更新评论
     public function edit()
     {
+        if(!session('?user_id')) return json(['code'=>-1,'msg'=>'未登录']);
         if(Request::isAjax()) {
             $param = Request::param();
 //            halt($param);
@@ -101,7 +101,7 @@ class Comment extends BaseController
 	//评论点赞
 	public function jiedaZan()
 	{
-		$this->isLogin();
+        if(!session('?user_id')) return json(['code'=>-1,'msg'=>'未登录']);
 		$data['comment_id'] = input('post.id');
 		$data['user_id'] = session('user_id');
 		//查询是否已存在点赞

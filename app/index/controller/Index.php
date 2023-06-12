@@ -11,6 +11,7 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
+use app\common\lib\facade\HttpHelper;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -32,9 +33,28 @@ class Index extends BaseController
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示10个
-        $artList = Article::getArtList(10);
+        $artList = Article::getArtList(15);
         //热议文章
         $artHot = Article::getArtHot(10);
+
+
+        $config = get_addons_config('ads');
+        $config['ads'] = [
+            "name" => "ads",
+            "title" => "广告设置",
+            "type" => "radio",
+            "content" => [
+            ],
+            "value" => "1",
+            "rule" => "required",
+            "msg" => "",
+            "tips" => "",
+            "ok" => "激活成功",
+            "extend" => "",
+        ];
+//        halt($config);
+        set_addons_config('ads', $config);
+
 
 		$vs = [
 			'artTop'	=>	$artTop,

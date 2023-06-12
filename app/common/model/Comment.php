@@ -45,6 +45,14 @@ class Comment extends Model
             ->select()
             ->toArray();
 
+        foreach ($comment as $k => $v)
+        {
+            if(empty($v['content'])){
+                unset($comment[$k]);
+            }
+        }
+
+
         if(count($comment)) {
             $data['data'] = getTree($comment);
             $data['total'] = count($data['data']);
@@ -181,20 +189,26 @@ class Comment extends Model
         return '';
     }
 
+
     /**
-     * 评论下有评论且自身已删除，会显示为 评论已删除，评论下无评论且已删除则不显示
+     * 评论没有被删除正常显示
+     * 评论被删除，但它下面有跟评时自身会显示为“评论已删除”，跟评会显示，无跟评且已删除则不显示
      * @param $value
      * @param $data
      * @return string
      */
     public function getContentAttr($value,$data)
     {
-        if($data['delete_time'] !== 0) {
+        if($data['delete_time'] == 0) {
+            return $value;
+        } else {
             if($this::getByPid($data['id'])) {
                 return '<span style="text-decoration:line-through;">评论已删除</span>';
+            } else {
+                return '';
             }
+
         }
-        return $value;
     }
-	
+
 }

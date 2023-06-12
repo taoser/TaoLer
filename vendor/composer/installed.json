@@ -850,17 +850,17 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.2.2",
-            "version_normalized": "1.2.2.0",
+            "version": "v1.3.0",
+            "version_normalized": "1.3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "47afb7fae28ed29057fdca37e16a84f90cc62fae"
+                "reference": "f23fe9d4e95255dacee1bf3525e0810d1a1b0f37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/47afb7fae28ed29057fdca37e16a84f90cc62fae",
-                "reference": "47afb7fae28ed29057fdca37e16a84f90cc62fae",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/f23fe9d4e95255dacee1bf3525e0810d1a1b0f37",
+                "reference": "f23fe9d4e95255dacee1bf3525e0810d1a1b0f37",
                 "shasum": ""
             },
             "require": {
@@ -872,7 +872,7 @@
                 "phpstan/phpstan": "^1.8.2",
                 "symfony/var-dumper": "^5.4.11"
             },
-            "time": "2022-09-08T13:45:54+00:00",
+            "time": "2023-01-30T18:31:20+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1394,24 +1394,18 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v6.7.1",
-            "version_normalized": "6.7.1.0",
+            "version": "v6.8.0",
+            "version_normalized": "6.8.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "49cd7ea3d2563f028d7811f06864a53b1f15ff55"
+                "reference": "df16b615e371d81fb79e506277faea67a1be18f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/49cd7ea3d2563f028d7811f06864a53b1f15ff55",
-                "reference": "49cd7ea3d2563f028d7811f06864a53b1f15ff55",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/df16b615e371d81fb79e506277faea67a1be18f1",
+                "reference": "df16b615e371d81fb79e506277faea67a1be18f1",
+                "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
@@ -1439,7 +1433,7 @@
                 "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)",
                 "thenetworg/oauth2-azure": "Needed for Microsoft XOAUTH2 authentication"
             },
-            "time": "2022-12-08T13:30:06+00:00",
+            "time": "2023-03-06T14:43:22+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1471,7 +1465,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.7.1"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.8.0"
             },
             "funding": [
                 {
@@ -1648,24 +1642,24 @@
         },
         {
             "name": "psr/http-client",
-            "version": "1.0.1",
-            "version_normalized": "1.0.1.0",
+            "version": "1.0.2",
+            "version_normalized": "1.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-client.git",
-                "reference": "2dfb5f6c5eff0e91e20e913f8c5452ed95b86621"
+                "reference": "0955afe48220520692d2d09f7ab7e0f93ffd6a31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-client/zipball/2dfb5f6c5eff0e91e20e913f8c5452ed95b86621",
-                "reference": "2dfb5f6c5eff0e91e20e913f8c5452ed95b86621",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/0955afe48220520692d2d09f7ab7e0f93ffd6a31",
+                "reference": "0955afe48220520692d2d09f7ab7e0f93ffd6a31",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.0 || ^8.0",
-                "psr/http-message": "^1.0"
+                "psr/http-message": "^1.0 || ^2.0"
             },
-            "time": "2020-06-29T06:28:15+00:00",
+            "time": "2023-04-10T20:12:12+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1685,7 +1679,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for HTTP clients",
@@ -1697,7 +1691,7 @@
                 "psr-18"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-client/tree/master"
+                "source": "https://github.com/php-fig/http-client/tree/1.0.2"
             },
             "install-path": "../psr/http-client"
         },
@@ -2377,24 +2371,18 @@
         },
         {
             "name": "taoser/think-addons",
-            "version": "v1.0.6",
-            "version_normalized": "1.0.6.0",
+            "version": "v1.0.9",
+            "version_normalized": "1.0.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/taoser/think-addons.git",
-                "reference": "e6e35bfd8b93dc469ebb5c5530ba350131bd7541"
+                "reference": "00112adf200b897deecbd1bbabc33ad22377b008"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/taoser/think-addons/zipball/e6e35bfd8b93dc469ebb5c5530ba350131bd7541",
-                "reference": "e6e35bfd8b93dc469ebb5c5530ba350131bd7541",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/taoser/think-addons/zipball/00112adf200b897deecbd1bbabc33ad22377b008",
+                "reference": "00112adf200b897deecbd1bbabc33ad22377b008",
+                "shasum": ""
             },
             "require": {
                 "php": ">=7.1.0",
@@ -2403,7 +2391,7 @@
                 "topthink/think-helper": "^3.0.0",
                 "topthink/think-view": "^1.0"
             },
-            "time": "2022-10-06T13:11:38+00:00",
+            "time": "2023-06-10T05:08:45+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2437,7 +2425,7 @@
             "description": "The ThinkPHP6 Addons Package",
             "support": {
                 "issues": "https://github.com/taoser/think-addons/issues",
-                "source": "https://github.com/taoser/think-addons/tree/v1.0.6"
+                "source": "https://github.com/taoser/think-addons/tree/v1.0.9"
             },
             "install-path": "../taoser/think-addons"
         },
@@ -2856,24 +2844,18 @@
         },
         {
             "name": "topthink/think-migration",
-            "version": "v3.0.4",
-            "version_normalized": "3.0.4.0",
+            "version": "v3.0.5",
+            "version_normalized": "3.0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-migration.git",
-                "reference": "c5880669b277762d5ff935e551bc0d5c71de6811"
+                "reference": "7a5ec3952ea97bf1a5d8872e1bd10f2abf6294ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-migration/zipball/c5880669b277762d5ff935e551bc0d5c71de6811",
-                "reference": "c5880669b277762d5ff935e551bc0d5c71de6811",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/top-think/think-migration/zipball/7a5ec3952ea97bf1a5d8872e1bd10f2abf6294ca",
+                "reference": "7a5ec3952ea97bf1a5d8872e1bd10f2abf6294ca",
+                "shasum": ""
             },
             "require": {
                 "topthink/framework": "^6.0",
@@ -2885,7 +2867,7 @@
             "suggest": {
                 "fzaninotto/faker": "Required to use the factory builder (^1.8)."
             },
-            "time": "2022-10-26T07:57:54+00:00",
+            "time": "2023-02-26T13:16:22+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2913,7 +2895,7 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-migration/issues",
-                "source": "https://github.com/top-think/think-migration/tree/v3.0.4"
+                "source": "https://github.com/top-think/think-migration/tree/v3.0.5"
             },
             "install-path": "../topthink/think-migration"
         },
@@ -3293,30 +3275,24 @@
         },
         {
             "name": "workerman/phpsocket.io",
-            "version": "v1.1.16",
-            "version_normalized": "1.1.16.0",
+            "version": "v1.1.17",
+            "version_normalized": "1.1.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/phpsocket.io.git",
-                "reference": "f4dc14e69e9d0d8ce69c6180f93b76b7743f2304"
+                "reference": "fb51151fd86414548e7cd9321c066c7b60983f8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/f4dc14e69e9d0d8ce69c6180f93b76b7743f2304",
-                "reference": "f4dc14e69e9d0d8ce69c6180f93b76b7743f2304",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/fb51151fd86414548e7cd9321c066c7b60983f8c",
+                "reference": "fb51151fd86414548e7cd9321c066c7b60983f8c",
+                "shasum": ""
             },
             "require": {
                 "workerman/channel": ">=1.0.0",
                 "workerman/workerman": ">=4.0.0"
             },
-            "time": "2022-11-25T13:00:18+00:00",
+            "time": "2023-06-08T06:07:20+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3334,7 +3310,7 @@
             ],
             "support": {
                 "issues": "https://github.com/walkor/phpsocket.io/issues",
-                "source": "https://github.com/walkor/phpsocket.io/tree/v1.1.16"
+                "source": "https://github.com/walkor/phpsocket.io/tree/v1.1.17"
             },
             "funding": [
                 {

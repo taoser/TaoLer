@@ -74,18 +74,19 @@
 <script>
   $(function() {
     $('#login').click(function() {
+      var loadIndex = layer.load(2);
       $.ajax({
         type:"post",
         url:"{:url('login/index')}",
         data:$('form').serialize(),
         daType:"json",
-        success:function (data){
-          if (data.code == 0) {
-            notify.success(data.msg,function(){
-              location.href = data.url;
-            })
+        success:function (res){
+          layer.close(loadIndex);
+          if (res.code === 0) {
+            toast.success({title:"成功消息",message: res.msg});
+            location.href = res.url;
           } else {
-            notify.error(data.msg);
+            toast.error({title:"失败消息",message:res.msg});
             layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
           }
         }

@@ -48,15 +48,15 @@
 				</li>
 			<!-- 未登入的状态 -->
 			{else /}
-				<li class="layui-nav-item"><a class="iconfont icon-touxiang" href="{:url('user_login')}"></a></li>
+				<li class="layui-nav-item"><a class="layui-icon layui-icon-username" style="font-size: 20px;" href="{:url('user_login')}"></a></li>
 				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_login')}">{:lang('login')}</a></li>
 				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_reg')}">{:lang('register')}</a></li>
 				<li class="layui-nav-item layui-hide-xs layui-hide">
-				<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
-					<option value="cn" {if cookie('think_lang') == 'zh-cn'} selected {/if} >{:lang('chinese')}</option>
-					<option value="tw" {if cookie('think_lang') == 'zh-tw'} selected {/if} >{:lang('tChinese')}</option>
-					<option value="en" {if cookie('think_lang') == 'en-us'} selected {/if} >{:lang('english')}</option>
-				</select>
+					<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
+						<option value="cn" {if cookie('think_lang') == 'zh-cn'} selected {/if} >{:lang('chinese')}</option>
+						<option value="tw" {if cookie('think_lang') == 'zh-tw'} selected {/if} >{:lang('tChinese')}</option>
+						<option value="en" {if cookie('think_lang') == 'en-us'} selected {/if} >{:lang('english')}</option>
+					</select>
 				</li>
 			{/if}
 		</ul>

@@ -525,7 +525,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 */
 
 .layui-form-pane{position:relative; width:100%;}
-.que-comments{position:absolute;right:20px;bottom:5px;}
+.que-comments{position:absolute; right:15px; bottom:15px;}
 
 .wenda-user{height:200px; margin: 0,auto; text-align: center; pardding-top:20px;}
 .wenda-user .user-img{posation:relative; width:100%;}
@@ -538,7 +538,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-zan span{padding-right:5px; color:#999; cursor:pointer;}
 .detail-zan span:hover{color:#666;}
 .detail-zan span .icon-zan{font-size: 22px;}
-.detail-zan span img{height: 25px; border-radius: 100%;}
+.detail-zan span img{height: 25px; width:25px; border-radius: 100%; object-fit: cover;}
 
 
 /* 详情页的底部操作条 */
@@ -599,6 +599,10 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .fly-user-main>.fly-panel{min-height: 575px; margin: 0 0 10px 215px;}
 .fly-user-main .fly-none{min-height: 0;}
 .fly-panel-user[pad20]{padding-top: 5px;}
+
+@media screen and (min-width: 768px) {
+  .fly-panel-user{height: calc(100vh - 280px)}
+}
 
 .fly-form-app{margin-top:30px;}
 .fly-form-app .iconfont{font-size:26px; padding: 0 5px;}

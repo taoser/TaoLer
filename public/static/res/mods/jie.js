@@ -234,27 +234,29 @@ layui.define('fly', function(exports){
           });
         });
       }
-
     }
-    ,del: function(li){ //删除评论
-      layer.confirm('确认删除该回答么？', function(index){
-        layer.close(index);
-        fly.json(commentJiedaDelete, {
-          id: li.data('id')
-        }, function(res){
-          if(res.status === 0){
-            var count = dom.jiedaCount.text()|0;
-            dom.jiedaCount.html(--count);
-            li.remove();
-            //如果删除了最佳答案
-            if(li.hasClass('jieda-daan')){
-              $('.jie-status').removeClass('jie-status-ok').text('求解中');
+    ,del: function(span){ //删除评论
+      if(taonystatus == 0) {
+        layer.confirm('确认删除该回答么？', function(index){
+          layer.close(index);
+          fly.json(commentJiedaDelete, {
+            id: li.data('id')
+          }, function(res){
+            if(res.status === 0){
+              var count = dom.jiedaCount.text()|0;
+              dom.jiedaCount.html(--count);
+              li.remove();
+              //如果删除了最佳答案
+              if(li.hasClass('jieda-daan')){
+                $('.jie-status').removeClass('jie-status-ok').text('求解中');
+              }
+            } else {
+              layer.msg(res.msg);
             }
-          } else {
-            layer.msg(res.msg);
-          }
+          });
         });
-      });    
+      }
+
     }
   };
 

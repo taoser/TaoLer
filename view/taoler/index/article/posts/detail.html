@@ -52,7 +52,6 @@
             <span class="layui-btn layui-btn-xs guanzhu" >关注</span>
           </div>
           <div class="detail-hits">
-            <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
             <span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
             {:hook('ipShow',$article.user.city)}
           </div>
@@ -107,7 +106,7 @@
           <div class="layui-form-item layui-form-text">
             <a name="comment"></a>
             <div class="layui-input-block">
-              <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}"  class="layui-textarea fly-editor"></textarea>
+              <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}"  class="layui-textarea fly-editor taonyeditor"></textarea>
             </div>
           </div>
           <div class="layui-form-item">
@@ -145,6 +144,7 @@
 
                       <div class="detail-body jieda-body photos">{comment:content /}</div>
                       <div class="jieda-reply">
+                        {eq name="comment.delete_time" value="0"}
                         <span class="jieda-zan {if($comment.zan != 0)}zanok{/if}" type="zan">
                           <i class="iconfont icon-zan"></i><em>{comment:zan /}</em>
                         </span>
@@ -153,9 +153,10 @@
                         <div class="jieda-admin">
                           {if ((session('user_id') == $comment.user_id) && (getLimtTime($comment.create_time) < 2)) OR ($user.auth  ?? '')}
                           <span type="edit" class="comment-edit" data-id="{comment:id /}">{:lang('edit')}</span>
-                          <span type="del">{:lang('delete')}</span>
+                          <span type="del" class="comment-del" data-id="{comment:id /}">{:lang('delete')}</span>
                           {/if}
                         </div>
+                        {/eq}
 
                         {// 第二层回复}
                         {notempty name="$comment.children"}
@@ -167,17 +168,19 @@
                             <div>{$vo.user.name} {$vo.create_time|date='Y-m-d H:i'}</div>
                             <div class="detail-body jieda-body photos">{$vo.content|raw}</div>
                             <div class="jieda-reply">
+                              {eq name="vo.delete_time" value="0"}
                                   <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
                                     <i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
                                   </span>
-                              <span type="reply" data-pid="{$vo.id}" data-tid="{$vo.user.id}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
-                              {//评论编辑删除采纳权限}
-                              <div class="jieda-admin">
-                                {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
-                                <span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
-                                <span type="del">{:lang('delete')}</span>
-                                {/if}
-                              </div>
+                                  <span type="reply" data-pid="{$vo.id}" data-tid="{$vo.user.id}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
+                                  {//评论编辑删除采纳权限}
+                                  <div class="jieda-admin">
+                                    {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
+                                    <span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
+                                    <span type="del" class="comment-del" data-id="{$vo.id}" >{:lang('delete')}</span>
+                                    {/if}
+                                  </div>
+                              {/eq}
 
                             </div>
                           </div>
@@ -192,17 +195,19 @@
                             <div>{$voo.user.name} 回复 {$voo.touser} {$voo.create_time|date='Y-m-d H:i'}</div>
                             <div class="detail-body jieda-body photos">{$voo.content|raw}</div>
                             <div class="jieda-reply">
-                                        <span class="jieda-zan {if($voo.zan != 0)}zanok{/if}" type="zan">
-                                          <i class="iconfont icon-zan"></i><em>{$voo.zan}</em>
-                                        </span>
-                              <span type="reply" data-pid="{$vo.id}" data-tid="{$voo.user.id}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
-                              {//评论编辑删除采纳权限}
-                              <div class="jieda-admin">
-                                {if ((session('user_id') == $voo.user.id) && (getLimtTime($voo.create_time) < 2)) OR ($user.auth  ?? '')}
-                                <span type="edit" class="comment-edit" data-id="{$voo.id}">{:lang('edit')}</span>
-                                <span type="del">{:lang('delete')}</span>
-                                {/if}
-                              </div>
+                              {eq name="voo.delete_time" value="0"}
+                                  <span class="jieda-zan {if($voo.zan != 0)}zanok{/if}" type="zan">
+                                    <i class="iconfont icon-zan"></i><em>{$voo.zan}</em>
+                                  </span>
+                                  <span type="reply" data-pid="{$vo.id}" data-tid="{$voo.user.id}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
+                                  {//评论编辑删除采纳权限}
+                                  <div class="jieda-admin">
+                                    {if ((session('user_id') == $voo.user.id) && (getLimtTime($voo.create_time) < 2)) OR ($user.auth  ?? '')}
+                                    <span type="edit" class="comment-edit" data-id="{$voo.id}">{:lang('edit')}</span>
+                                    <span type="del" class="comment-del" data-id="{$voo.id}">{:lang('delete')}</span>
+                                    {/if}
+                                  </div>
+                              {/eq}
                             </div>
                           </div>
                         </div>
@@ -213,17 +218,19 @@
                         {/notempty}
                       </div>
                       {else /}
-                      <div class="detail-body jieda-body photos">
-                        <i class="layui-icon layui-icon-password" style="font-size: 24px; color: #FF5722;"></i>
-                        评论解密后查看
-                      </div>
+                        <div class="detail-body jieda-body photos">
+                          <i class="layui-icon layui-icon-password" style="font-size: 24px; color: #FF5722;"></i>
+                          评论解密后查看
+                        </div>
                       {/if}
                 </div>
               </li>
           {/article:comment}
         </ul>
+
         <div style="text-align: center" id="pages"></div>
       </div>
+
     </div>
 
     {//右栏}
@@ -294,36 +301,14 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
   var id = "{$article.id}";
   let LOGIN_URL = "{:url('login/index')}";
 
-  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  // 编辑器插件启用状态
-  if(taonystatus == 0) {
-    $('.detail-body').each(function(){
-      var othis = $(this), html = othis.html();
-      othis.html(fly.content(html));
-    });
-  } else {
-    $(".comment-edit").on('click',function (){
-      var id = $(this).data('id');
-      layer.open({
-        type: 2,
-        title: '修改',
-        shade: 0.1,
-        area: ['600px', '500px'],
-        content: "{:url('comment/edit')}" + '?id=' + id
-      });
-    });
-  }
-
   //tpl模板给发布时间赋值
   $('div.detail-hits').children('span.post-time').each(function(){
     var othis = $(this), html = othis.html();
 	  var string =  laytpl('{{ d.time }}').render({
-		//time: html
 		time: othis.attr('data')
 	});
 	var posttime = layui.util.timeAgo(string, 1);
 	othis.text(posttime);
-    //console.log(othis.attr('data'));
   });
 
   //文章点赞
@@ -334,7 +319,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
           return false;
         }
     $.post("{:url('article/userZanArticle')}",{article_id:id,type:1},function(data){
-      if(data.code == 0){
+      if(data.code === 0){
           layer.msg(data.msg,{icon:6,time:2000},function () {
                 location.reload(true);
             });
@@ -359,7 +344,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
         data:{id: id,title_color: color},
         dataType:'json',
         success:function(data){
-          if(data.code == 0){
+          if(data.code === 0){
             layer.msg(data.msg,{icon:6,time:2000
             });
           } else {
@@ -392,11 +377,6 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
             }
         });
     }
-  
-  // 评论
-  form.on('submit(user-comment)',function (data){
-      comment(data.field);
-  });
 
   // 回复用户
   $("span[type='reply']").on('click',function (){
@@ -420,11 +400,51 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
       $(this).next().after(html);
     }
   })
+  
+  // 评论
+  form.on('submit(user-comment)',function (data){
+      comment(data.field);
+  });
   //提交回复
   form.on('submit(submit-user-comment)', function(data){
     comment(data.field);
     return false;
   })
+
+  // 编辑器插件启用状态
+  if(taonystatus == 0) {
+    //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+    $('.detail-body').each(function(){
+      var othis = $(this), html = othis.html();
+      othis.html(fly.content(html));
+    });
+  } else {
+    // 编辑评论
+    $(".comment-edit").on('click', function () {
+      var id = $(this).data('id');
+      layer.open({
+        type: 2,
+        title: '修改',
+        shade: 0.1,
+        area: ['600px', '500px'],
+        content: "{:url('comment/edit')}" + '?id=' + id
+      });
+    });
+    // 删除评论
+    $(".comment-del").on('click', function () {
+      var id = $(this).data('id');
+      layer.confirm('需要删除吗？', {icon: 3}, function (){
+        $.post("{:url('comment/jiedaDelete')}", {id: id}, function (res) {
+          if (res.status === 0) {
+            toast.success({title: "成功消息", message: res.msg});
+            location.reload(true);
+          } else {
+            toast.error({title: "失败消息", message: res.msg});
+          }
+        })
+      })
+    });
+  }
 
   // 评论分页
   laypage.render({

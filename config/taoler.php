@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '2.3.7',
+    'version'   => '2.3.8',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
@@ -53,7 +53,7 @@ return [
 		// 邮件通知
         'email_notice'   => 0,
         // 菜单位置
-        'nav_top'   => 0,
+        'nav_top'   => 1,
         // 置顶文章显示方式1列表0滑动
         'top_show'   => 1,
 

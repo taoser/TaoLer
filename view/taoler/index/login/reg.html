@@ -87,9 +87,9 @@
 {block name="script"}
 <script>
 layui.use(['form','layer'],function(){
-var $ = layui.jquery;
-var form = layui.form;
-var layer = layui.layer;
+    var $ = layui.jquery;
+    var form = layui.form;
+    var layer = layui.layer;
 	//注册
 	form.on('submit(user-register)', function(data){
 		var field = data.field;
@@ -101,39 +101,33 @@ var layer = layui.layer;
 		url:"{:url('Login/reg')}",
 		data:field,
 		dataType:"json",
-		success:function(data){
-			if(data.code == 0){
-			layer.close(loading);
-				layer.msg(data.msg,{icon:6,tiye:2000},function(){
-						location.href = data.url;
-				});
+		success:function(res){
+          layer.close(loading);
+			if(res.code === 0){
+              toast.success({title:"成功消息",message: res.msg});
+              location.href = res.url;
 			} else {
-			layer.close(loading);
 				layer.open({title:"注册失败",content:data.msg,icon:5,anim:6});
-				layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+				$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 			}}
 		});
 	return false;
 	});
 
   //表单取值
-  layui.$('#LAY-component-form-getval').on('click', function(){
+  $('#LAY-component-form-getval').on('click', function(){
+    var loadIndex = layer.load(2);
     var data = form.val('register');
-    //console.log(data);
-    // var email = $("#L_email").val();
-    // console.log(email);
     //alert(JSON.stringify(data));
     $.post("{:url('Login/sentMailCode')}",{"email": data.email},  function(res){
-      if(res.code == 0){
-        layer.msg(res.msg,{icon:6,tiye:2000});
+      layer.close(loadIndex);
+      if(res.code === 0){
+        toast.success({title:"成功消息",message: res.msg});
       } else {
         layer.open({title:"发送失败",content:res.msg,icon:5,anim:6});
       }
     })
-
   });
-
-
 
 });
 </script>
