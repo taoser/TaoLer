@@ -266,6 +266,11 @@ INSERT INTO `tao_auth_rule` VALUES (120, 'content.cate/edit', '编辑分类', 1,
 INSERT INTO `tao_auth_rule` VALUES (121, 'content.cate/delete', '删除分类', 1, 1, 117, 2, '', 2, 50, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (122, 'content.cate/hot', '热点分类', 1, 1, 117, 2, '', 2, 50, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (123, 'content.cate/getAppNameView', '分类应用模板', 1, 1, 117, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (124, 'content.tag/index', '标签管理', 1, 1, 4, 1, '', 1, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (125, 'content.tag/list', '标签列表', 1, 1, 124, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (126, 'content.tag/add', '添加标签', 1, 1, 124, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (127, 'content.tag/edit', '编辑标签', 1, 1, 124, 2, '', 2, 50, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (128, 'content.tag/delete', '删除标签', 1, 1, 124, 2, '', 2, 50, '', 0, 0, 0);
 
 -- ----------------------------
 -- Table structure for tao_cate

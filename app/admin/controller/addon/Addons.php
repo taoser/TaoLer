@@ -337,13 +337,15 @@ class Addons extends AdminController
      * @return string|Json
      * @throws \Exception
      */
-    public function config($name)
+    public function config()
     {
         $name = input('name');
         $config = get_addons_config($name);
+//        halt($config);
         if(empty($config)) return json(['code'=>-1,'msg'=>'无配置项！无需操作']);
         if(Request::isAjax()){
             $params = Request::param('params/a',[],'trim');
+//            halt($params);
             if ($params) {
                 foreach ($config as $k => &$v) {
                     if (isset($params[$k])) {
@@ -369,7 +371,7 @@ class Addons extends AdminController
             }
             return json(['code'=>0,'msg'=>'配置成功！']);
         }
-
+//halt($config);
         //模板引擎初始化
         $view = ['formData'=>$config,'title'=>'title'];
         View::assign($view);

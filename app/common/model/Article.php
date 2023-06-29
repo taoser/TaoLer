@@ -111,7 +111,7 @@ class Article extends Model
     {
 
         return Cache::remember('topArticle', function() use($num){
-             return $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_top,pv,upzip,has_img,has_video,has_audio')
+             return $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_top,pv,upzip,has_img,has_video,has_audio,read_type,art_pass')
                 ->where([['is_top', '=', 1], ['status', '=', 1]])
                 ->with([
                     'cate' => function ($query) {
@@ -140,7 +140,7 @@ class Article extends Model
     public function getArtList(int $num)
     {
         return Cache::remember('indexArticle', function() use($num){
-            return $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type')
+            return $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
             ->with([
             'cate' => function($query){
                 $query->where('delete_time',0)->field('id,catename,ename,detpl');
@@ -247,7 +247,7 @@ class Article extends Model
         $where[] = ['status', '=', 1];
 
         return Cache::remember('cate_list_'.$ename.$type.$page, function() use($where,$page){
-            return $this::field('id,cate_id,user_id,title,content,title_color,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type')
+            return $this::field('id,cate_id,user_id,title,content,title_color,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
             ->with([
                 'cate' => function($query) {
                     $query->field('id,catename,ename');
@@ -383,7 +383,7 @@ class Article extends Model
     // 获取所有帖子内容
     public function getList(array $where, int $limit, int $page)
     {
-        return $this::field('id,user_id,cate_id,title,content,is_top,is_hot,is_reply,status,update_time')
+        return $this::field('id,user_id,cate_id,title,content,is_top,is_hot,is_reply,status,update_time,read_type,art_pass')
         ->with([
             'user' => function($query){
                 $query->field('id,name,user_img');
@@ -409,6 +409,16 @@ class Article extends Model
             return (string) url('article_detail',['id' => $data['id'],'ename' => $this->cate->ename]);
         }
         return (string) url('article_detail',['id' => $data['id']]);
+    }
+
+    // 内容是否加密
+    public function getContentAttr($value, $data)
+    {
+        //解密
+        if($data['read_type'] == 1 && (session('art_pass_'.$data['id']) !== $data['art_pass'])) {
+            return '内容已加密！请输入正确密码查看！';
+        }
+        return $value;
     }
 
 

@@ -3275,24 +3275,24 @@
         },
         {
             "name": "workerman/phpsocket.io",
-            "version": "v1.1.17",
-            "version_normalized": "1.1.17.0",
+            "version": "v1.1.18",
+            "version_normalized": "1.1.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/phpsocket.io.git",
-                "reference": "fb51151fd86414548e7cd9321c066c7b60983f8c"
+                "reference": "b89b3f2ed44f6f79fd9895e2d198b52b3fb4783b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/fb51151fd86414548e7cd9321c066c7b60983f8c",
-                "reference": "fb51151fd86414548e7cd9321c066c7b60983f8c",
+                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/b89b3f2ed44f6f79fd9895e2d198b52b3fb4783b",
+                "reference": "b89b3f2ed44f6f79fd9895e2d198b52b3fb4783b",
                 "shasum": ""
             },
             "require": {
                 "workerman/channel": ">=1.0.0",
-                "workerman/workerman": ">=4.0.0"
+                "workerman/workerman": "^4.0.0"
             },
-            "time": "2023-06-08T06:07:20+00:00",
+            "time": "2023-06-16T01:41:34+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3310,7 +3310,7 @@
             ],
             "support": {
                 "issues": "https://github.com/walkor/phpsocket.io/issues",
-                "source": "https://github.com/walkor/phpsocket.io/tree/v1.1.17"
+                "source": "https://github.com/walkor/phpsocket.io/tree/v1.1.18"
             },
             "funding": [
                 {

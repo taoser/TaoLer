@@ -94,5 +94,9 @@
     return false;
     });
   });
+// 更新验证码
+  layui.jquery('#captcha').on('click',function(){
+    layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+  })
 </script>
 {/block}

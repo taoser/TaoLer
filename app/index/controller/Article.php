@@ -79,11 +79,6 @@ class Article extends BaseController
         if(is_null($artDetail)){
             throw new \think\exception\HttpException(404, '无内容');
         }
-
-        //加密
-        if($artDetail->read_type == 1 && session('art_pass_'.$id) != $artDetail->art_pass) {
-            $artDetail->content = '本文已加密！请输入正确密码查看！';
-        }
         //被赞
         $zanCount = Db::name('user_zan')->where('user_id', $artDetail['user_id'])->count('id');
 

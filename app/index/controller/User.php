@@ -133,7 +133,7 @@ class User extends BaseController
 			$validate = new userValidate;
 			$result = $validate->scene('Set')->check($data);
 			if(!$result){
-				$this->error($validate->getError());
+				return json(['code'=>-1,'msg' =>$validate->getError()]);
 			} else {
 				//防止重复的email
 				$resEmail = Db::name('user')->where('email',$data['email'])->where('id','<>',$this->uid)->find();
@@ -151,7 +151,7 @@ class User extends BaseController
 					Cache::tag('user')->clear();
 				    return json(['code'=>0,'msg'=>'资料更新成功']);
 				} else {
-					$this->error($result);
+                    return json(['code'=>-1,'msg' =>$result]);
 				}
 			}
 		}
@@ -275,7 +275,8 @@ class User extends BaseController
 			$validate = new userValidate;
 			$res = $validate->scene('setPass')->check($data);
 			if(!$res){
-				return $this->error($validate->getError());
+                return json(['code'=>-1,'msg' =>$validate->getError()]);
+
 			}
 		$user = new userModel;
 		$result = $user->setpass($data);
@@ -284,7 +285,7 @@ class User extends BaseController
 				Cookie::delete('auth');
 				return $this->success('密码修改成功 请登录', (string) url('login/index'));
 			} else {
-				return $this->error($result);
+                return json(['code'=>-1,'msg' =>$result]);
 			}
 		}
 	}
@@ -298,9 +299,8 @@ class User extends BaseController
 		//Cookie::delete('user_id');
 		if(Session::has('user_id')){
 			return json(['code' => -1, 'msg' => '退出失败']);
-		} else {
-			return json(['code' => 200, 'msg' => '退出成功', 'url' => '/']);	
 		}
+        return json(['code' => 200, 'msg' => '退出成功', 'url' => '/']);
 	}
 
 }
