@@ -34,7 +34,7 @@ class Worker
      *
      * @var string
      */
-    const VERSION = '4.1.10';
+    const VERSION = '4.1.13';
 
     /**
      * Status starting.
@@ -272,7 +272,7 @@ class Worker
      * @var string
      */
     public static $statusFile = '';
-    
+
     /**
      * Log file.
      *
@@ -663,7 +663,7 @@ class Worker
         if (static::$_OS !== \OS_TYPE_LINUX) {
             return;
         }
-        
+
         static::$_statisticsFile =  static::$statusFile ? static::$statusFile : __DIR__ . '/../workerman-' .posix_getpid().'.status';
 
         foreach (static::$_workers as $worker) {
@@ -782,10 +782,10 @@ class Worker
             return;
         }
         if (static::$_OS !== \OS_TYPE_LINUX) {
-            static::safeEcho("----------------------- WORKERMAN -----------------------------\r\n");
+            static::safeEcho("---------------------------------------------- WORKERMAN -----------------------------------------------\r\n");
             static::safeEcho('Workerman version:'. static::VERSION. '          PHP version:'. \PHP_VERSION. "\r\n");
-            static::safeEcho("------------------------ WORKERS -------------------------------\r\n");
-            static::safeEcho("worker                        listen                              processes status\r\n");
+            static::safeEcho("----------------------------------------------- WORKERS ------------------------------------------------\r\n");
+            static::safeEcho("worker                                          listen                              processes   status\r\n");
             return;
         }
 
@@ -1060,8 +1060,11 @@ class Worker
         }
         $status_str = '';
         $current_total_request = array();
-        $worker_info = \unserialize($info[0]);
-        \ksort($worker_info, SORT_NUMERIC);
+        $workerInfo = [];
+        try {
+            $workerInfo = unserialize($info[0], ['allowed_classes' => false]);
+        } catch (Throwable $exception) {}
+        \ksort($workerInfo, SORT_NUMERIC);
         unset($info[0]);
         $data_waiting_sort = array();
         $read_process_status = false;
@@ -1096,7 +1099,7 @@ class Worker
                 }
             }
         }
-        foreach($worker_info as $pid => $info) {
+        foreach($workerInfo as $pid => $info) {
             if (!isset($data_waiting_sort[$pid])) {
                 $status_str .= "$pid\t" . \str_pad('N/A', 7) . " "
                     . \str_pad($info['listen'], static::$_maxSocketNameLength) . " "
@@ -1472,8 +1475,11 @@ class Worker
 
             \restore_error_handler();
 
+            // Add an empty timer to prevent the event-loop from exiting.
+            Timer::add(1000000, function (){});
+
             // Display UI.
-            static::safeEcho(\str_pad($worker->name, 21) . \str_pad($worker->getSocketName(), 36) . \str_pad('1', 10) . "[ok]\n");
+            static::safeEcho(\str_pad($worker->name, 48) . \str_pad($worker->getSocketName(), 36) . \str_pad('1', 10) . "  [ok]\n");
             $worker->listen();
             $worker->run();
             static::$globalEvent->loop();
