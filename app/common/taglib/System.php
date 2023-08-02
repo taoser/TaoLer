@@ -71,6 +71,11 @@ class System extends TagLib
         return '{$sysInfo.logo}';
     }
 
+    public function tagM_logo(): string
+    {
+        return '{$sysInfo.m_logo}';
+    }
+
     public function tagMlogo(): string
     {
         return '{$sysInfo.m_logo}';

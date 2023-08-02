@@ -156,8 +156,8 @@ class Arts
                     $conf['baidufenci']['value']['access_token'] = json_decode($res)->access_token;
                     set_addons_config('seo', $conf);
 
-                    echo 'api接口数据错误 - ';
-                    echo $dataItem->error_msg;
+//                    echo 'api接口数据错误 - ';
+//                    echo $dataItem->error_msg;
                 }
             }
         }

@@ -3,6 +3,30 @@
 // | 模板设置
 // +----------------------------------------------------------------------
 
+use taoler\com\Files;
+use think\facade\Cache;
+
+    $taglib_pre_load = Cache::remember('taglib', function(){
+        $tagsArr = [];
+        //获取应用公共标签app/common/taglib
+        $common_taglib = Files::getAllFile(root_path().'app/common/taglib');
+        foreach ($common_taglib as $t) {
+            $tagsArr[] = str_replace('/','\\',strstr(strstr($t, 'app/'), '.php', true));
+        }
+
+        //获取插件下标签 addons/taglib文件
+        $localAddons = Files::getDirName('../addons/');
+        foreach($localAddons as $v) {
+            $dir = root_path(). 'addons'. DIRECTORY_SEPARATOR . $v . DIRECTORY_SEPARATOR .'taglib';
+            if(!file_exists($dir)) continue;
+            $addons_taglib = Files::getAllFile($dir);
+            foreach ($addons_taglib as $a) {
+                $tagsArr[] = str_replace('/','\\',strstr(strstr($a, 'addons'), '.php', true));
+            }
+        }
+        return implode(',', $tagsArr);
+    });
+
 return [
     // 模板引擎类型使用Think
     'type'          => 'Think',
@@ -22,7 +46,8 @@ return [
     'taglib_end'    => '}',
 	
 	'default_filter' => 'htmlspecialchars',
-    
+    // 预先加载的标签库
+    'taglib_pre_load' => $taglib_pre_load,
 
 	//模板输出替换
 	'tpl_replace_string'  =>  [

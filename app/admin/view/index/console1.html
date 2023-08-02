@@ -589,7 +589,7 @@
 		form.on('switch(sys-sys)',function(data){
 			var status = data.elem.checked;
 			$.post("{:url('index/sysSys')}",{status:status},function(res){
-				if (res.code == 0) { toast.info({title:"通知消息",message:res.msg})} else {
+				if (res.code === 0) { toast.info({title:"通知消息",message:res.msg})} else {
 					toast.error({title:"错误消息",message:res.msg});
 				}
 			})
@@ -611,13 +611,14 @@
 				if (data.code === 1) {
 					//可升级
 					layer.confirm('发现新版本V' + data.data.version + '，确定升级？',{icon: 3, title:'系统检测'}, function(index){
+						var loading = layer.load(0);
 						//更新
 						$.get("{:url('system.upgrade/upload')}",function (res){
+							layer.close(index);
+							layer.close(loading);
 							if (res.code === 0) {
-								layer.close(index);
 								toast.info({title:"通知消息", message: res.msg ,position: 'topRight'})
 							} else {
-								layer.close(index);
 								toast.error({title:"服务器错误", message:res.msg})
 							}
 							return false;
