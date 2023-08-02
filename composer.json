@@ -16,33 +16,17 @@
         }       
     ],
     "require": {
-        "php": ">=7.1.0",
-        "topthink/framework": "^6.0.0",
-        "topthink/think-orm": "^2.0",
+        "php": ">=8.0.0",
+        "topthink/framework": "^8.0.1",
+        "topthink/think-orm": "^3.0",
         "topthink/think-multi-app": "^1.0",
-        "taoser/think-auth": "^1.0",
-        "topthink/think-view": "^1.0",
+        "topthink/think-view": "^2.0",
         "topthink/think-captcha": "^3.0",
-        "phpmailer/phpmailer": "^6.1",
-        "lotofbadcode/phpspirit_databackup": "^1.1",
-        "wamkj/thinkphp6.0-databackup": "^1.0",
-        "taoser/think-addons": "^1.0",
-        "liliuwei/thinkphp-social": "^1.3",
-        "taoser/think-setarr": "^0.0.3",
-        "topthink/think-migration": "^3.0",
-        "workerman/workerman": "^4.0",
-        "endroid/qr-code": "^4.4",
-        "yansongda/pay": "~3.1.0",
-        "guzzlehttp/guzzle": "7.0",
-        "php-di/php-di": "^6.4",
-        "workerman/phpsocket.io": "^1.1",
-        "jaeger/querylist": "^4.2",
-        "symfony/var-exporter": "^5.4",
+        "taoser/think-auth": "^2.0",
+        "taoser/think-addons": "^2.0",
+        "taoser/think-setarr": "^0.0.5",
+        "phpmailer/phpmailer": "^6.8",
         "yzh52521/easyhttp": "^1.0"
-    },
-    "require-dev": {
-        "symfony/var-dumper": "^4.2",
-        "topthink/think-trace":"^1.0"
     },
     "autoload": {
         "psr-4": {
