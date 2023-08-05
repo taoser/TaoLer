@@ -42,7 +42,7 @@ class Login extends BaseController
 			// 检验登录是否开放
 			if(config('taoler.config.is_login') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，网站维护中，暂时不能登录哦！']);
             //登陆前数据校验
-			$data = Request::param();
+			$data = Request::only(['name','email','phone','password','captcha']);
 			if(Config::get('taoler.config.login_captcha') == 1)
 			{				
 				//先校验验证码
