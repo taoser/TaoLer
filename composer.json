@@ -26,7 +26,8 @@
         "taoser/think-addons": "^2.0",
         "taoser/think-setarr": "^0.0.5",
         "phpmailer/phpmailer": "^6.8",
-        "yzh52521/easyhttp": "^1.0"
+        "yzh52521/easyhttp": "^1.0",
+        "firebase/php-jwt": "^6.8"
     },
     "autoload": {
         "psr-4": {
