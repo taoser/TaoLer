@@ -7,7 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'yzh52521\\EasyHttp\\' => array($vendorDir . '/yzh52521/easyhttp/src'),
-    'wamkj\\thinkphp\\' => array($vendorDir . '/wamkj/thinkphp6.0-databackup/src'),
     'think\\view\\driver\\' => array($vendorDir . '/topthink/think-view/src'),
     'think\\trace\\' => array($vendorDir . '/topthink/think-trace/src'),
     'think\\migration\\' => array($vendorDir . '/topthink/think-migration/src'),
@@ -17,7 +16,6 @@ return array(
     'think\\' => array($vendorDir . '/topthink/framework/src/think', $vendorDir . '/topthink/think-helper/src', $vendorDir . '/topthink/think-orm/src', $vendorDir . '/topthink/think-template/src'),
     'taoser\\think\\' => array($vendorDir . '/taoser/think-auth/src'),
     'taoser\\' => array($vendorDir . '/taoser/think-addons/src', $vendorDir . '/taoser/think-setarr/src'),
-    'phpspirit\\databackup\\' => array($vendorDir . '/lotofbadcode/phpspirit_databackup/src'),
     'liliuwei\\social\\' => array($vendorDir . '/liliuwei/thinkphp-social/src'),
     'app\\' => array($baseDir . '/app'),
     'Yansongda\\Supports\\' => array($vendorDir . '/yansongda/supports/src'),
@@ -41,6 +39,7 @@ return array(
     'Phinx\\' => array($vendorDir . '/topthink/think-migration/phinx/src/Phinx'),
     'PHPSocketIO\\' => array($vendorDir . '/workerman/phpsocket.io/src'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
+    'Overtrue\\EasySms\\' => array($vendorDir . '/overtrue/easy-sms/src'),
     'League\\MimeTypeDetection\\' => array($vendorDir . '/league/mime-type-detection/src'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'Laravel\\SerializableClosure\\' => array($vendorDir . '/laravel/serializable-closure/src'),

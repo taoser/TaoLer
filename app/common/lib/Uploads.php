@@ -155,6 +155,7 @@ class Uploads
                 ->check(['file'=>$file]);
 
         } catch (ValidateException $e) {
+            halt($e->getMessage());
             return json(['status'=>-1,'msg'=>$e->getMessage()]);
         }
 
@@ -198,6 +199,77 @@ class Uploads
         $name_path = str_replace('\\',"/", $path . '/' . $info->getBasename());
 
         return json(['status'=>0,'msg'=>'上传成功','url'=> $name_path, 'location'=>$name_path]);
+    }
+
+    /**
+     * 上传文件
+     * @param string $fileName 文件名
+     * @param string $dirName 目录名
+     * @param int $fileSize 文件大小
+     * @param string $fileType 文件类型
+     * @param string $rule 文件命名规则 默认md5,uniqid,date,sha1，_self为上传文件名称作为文件名，或者自定义如a.jpg文件名
+     * @return \think\response\Json
+     */
+    public function put_api(string $fileName, string $dirName, int $fileSize, string $fileType, int $uid, string $rule = '' )
+    {
+        if(stripos($fileName,'http') !== false) {
+            $file = $fileName;
+        } else {
+            $file = request()->file($fileName);
+        }
+
+        $fileExt = $this->getFileInfo($fileType,'ext');
+        $fileMime = $this->getFileInfo($fileType,'mime');
+
+        try {
+            validate([$fileName=>['fileSize'=>$fileSize * 1024,'fileExt'=>$fileExt,'fileMime'=>$fileMime]])
+                ->check(['file'=>$file]);
+
+        } catch (ValidateException $e) {
+            halt($e->getMessage());
+            return json(['status'=>-1,'msg'=>$e->getMessage()]);
+        }
+
+        // 解析存储位置 SYS_开头为系统位置
+        $isSys = stripos($dirName, 'SYS_');
+        if($isSys) {
+            $disk = 'sys';
+            $dirName = substr($dirName,4);
+            $uploadDir = Config::get('filesystem.disks.sys.url');
+            $path = DIRECTORY_SEPARATOR . $disk . DIRECTORY_SEPARATOR . $dirName  . DIRECTORY_SEPARATOR . date('Ymd');
+        } else {
+            $disk = 'public';
+            $dirName = $uid . DIRECTORY_SEPARATOR . $dirName;
+            $uploadDir = Config::get('filesystem.disks.public.url');
+            $path = DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . $dirName . DIRECTORY_SEPARATOR . date('Ymd');
+        }
+
+        $realPath = app()->getRootPath() . 'public' . $path;
+
+        $rules = ['md5','date','sha1','uniqid'];
+
+        try{
+            // 解析是否自定义文件名
+            if(in_array($rule, $rules)) {
+                // rule命名
+                $info = $file->move($realPath, $file->hashName($rule));
+            } elseif(!empty($rule)) {
+                // 自定义文件名
+                if(stripos($rule, '_self')) {
+                    $info = $file->move($realPath, $file->getOriginalName());
+                }
+                $info = $file->move($realPath, $rule);
+            } else {
+                // 默认
+                $info = $file->move($realPath, $file->hashName());
+            }
+        } catch (\Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
+        }
+
+        $name_path = str_replace('\\',"/", $path . '/' . $info->getBasename());
+
+        return json(['code' => 1,'msg'=>'上传成功', 'data' => ['url'=> $name_path]]);
     }
 
 }

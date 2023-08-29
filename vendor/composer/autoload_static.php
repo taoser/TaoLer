@@ -10,9 +10,9 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
@@ -32,10 +32,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             'yzh52521\\EasyHttp\\' => 18,
         ),
-        'w' => 
-        array (
-            'wamkj\\thinkphp\\' => 15,
-        ),
         't' => 
         array (
             'think\\view\\driver\\' => 18,
@@ -47,10 +43,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'think\\' => 6,
             'taoser\\think\\' => 13,
             'taoser\\' => 7,
-        ),
-        'p' => 
-        array (
-            'phpspirit\\databackup\\' => 21,
         ),
         'l' => 
         array (
@@ -98,6 +90,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'Phinx\\' => 6,
             'PHPSocketIO\\' => 12,
             'PHPMailer\\PHPMailer\\' => 20,
+        ),
+        'O' => 
+        array (
+            'Overtrue\\EasySms\\' => 17,
         ),
         'L' => 
         array (
@@ -150,10 +146,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/yzh52521/easyhttp/src',
         ),
-        'wamkj\\thinkphp\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/wamkj/thinkphp6.0-databackup/src',
-        ),
         'think\\view\\driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-view/src',
@@ -193,10 +185,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/taoser/think-addons/src',
             1 => __DIR__ . '/..' . '/taoser/think-setarr/src',
-        ),
-        'phpspirit\\databackup\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lotofbadcode/phpspirit_databackup/src',
         ),
         'liliuwei\\social\\' => 
         array (
@@ -289,6 +277,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
+        'Overtrue\\EasySms\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/overtrue/easy-sms/src',
         ),
         'League\\MimeTypeDetection\\' => 
         array (

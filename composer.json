@@ -24,8 +24,6 @@
         "topthink/think-view": "^1.0",
         "topthink/think-captcha": "^3.0",
         "phpmailer/phpmailer": "^6.1",
-        "lotofbadcode/phpspirit_databackup": "^1.1",
-        "wamkj/thinkphp6.0-databackup": "^1.0",
         "taoser/think-addons": "^1.0",
         "liliuwei/thinkphp-social": "^1.3",
         "taoser/think-setarr": "^0.0.3",
@@ -39,7 +37,8 @@
         "jaeger/querylist": "^4.2",
         "symfony/var-exporter": "^5.4",
         "yzh52521/easyhttp": "^1.0",
-        "firebase/php-jwt": "^6.8"
+        "firebase/php-jwt": "^6.8",
+        "overtrue/easy-sms": "^2.5"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
