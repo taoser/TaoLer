@@ -5,6 +5,7 @@ namespace yzh52521\EasyHttp;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
@@ -44,6 +45,13 @@ class Request
      */
     protected $bodyFormat;
 
+    /**
+     * The raw body for the request.
+     *
+     * @var string
+     */
+    protected $pendingBody;
+
     protected $isRemoveBodyFormat = false;
 
     /**
@@ -80,10 +88,7 @@ class Request
         $this->options    = [
             'http_errors' => false,
         ];
-        if (!$this->handlerStack instanceof HandlerStack) {
-            $this->handlerStack = HandlerStack::create( new CurlHandler() );
-        }
-        $this->options['handler'] = $this->handlerStack;
+        $this->handlerStack = HandlerStack::create( new CurlHandler() );
     }
 
     /**
@@ -141,6 +146,33 @@ class Request
         return $this;
     }
 
+    public function withMiddleware(callable $middleware)
+    {
+        $this->handlerStack->push($middleware);
+
+        $this->options['handler'] = $this->handlerStack;
+
+        return $this;
+    }
+
+    public function withRequestMiddleware(callable $middleware)
+    {
+        $this->handlerStack->push(Middleware::mapRequest($middleware));
+
+        $this->options['handler'] = $this->handlerStack;
+
+        return $this;
+    }
+
+    public function withResponseMiddleware(callable $middleware)
+    {
+        $this->handlerStack->push(Middleware::mapResponse($middleware));
+
+        $this->options['handler'] = $this->handlerStack;
+
+        return $this;
+    }
+
     public function withHost(string $host)
     {
         $this->options['base_uri'] = $host;
@@ -169,6 +201,17 @@ class Request
         $this->options = array_merge_recursive( $this->options,[
             'headers' => $headers,
         ] );
+
+        return $this;
+    }
+
+    public function withBody($content, $contentType = 'application/json')
+    {
+        $this->bodyFormat = 'body';
+
+        $this->options['headers']['Content-Type'] = $contentType;
+
+        $this->pendingBody = $content;
 
         return $this;
     }
@@ -224,6 +267,13 @@ class Request
         return $this;
     }
 
+    public function maxRedirects(int $max)
+    {
+        $this->options['allow_redirects']['max'] = $max;
+
+        return $this;
+    }
+
     public function withRedirect($redirect = false)
     {
         $this->options['allow_redirects'] = $redirect;
@@ -255,6 +305,7 @@ class Request
     public function retry(int $retries = 1,int $sleep = 0)
     {
         $this->handlerStack->push( ( new Retry() )->handle( $retries,$sleep ) );
+
         $this->options['handler'] = $this->handlerStack;
 
         return $this;
@@ -267,9 +318,27 @@ class Request
         return $this;
     }
 
-    public function timeout(int $seconds)
+    public function timeout(float $seconds)
     {
-        $this->options['timeout'] = $seconds * 1000;
+        $this->options['timeout'] = $seconds;
+
+        return $this;
+    }
+
+    public function connectTimeout(float $seconds)
+    {
+        $this->options['connect_timeout'] = $seconds;
+
+        return $this;
+    }
+
+    /**
+     * @param string|resource $to
+     * @return $this
+     */
+    public function sink($to)
+    {
+        $this->options['sink'] = $to;
 
         return $this;
     }
@@ -489,7 +558,11 @@ class Request
 
     protected function request(string $method,string $url,array $options = [])
     {
-        isset( $this->options[$this->bodyFormat] ) && $this->options[$this->bodyFormat] = $options;
+        if (isset($this->options[$this->bodyFormat])) {
+            $this->options[$this->bodyFormat] = $options;
+        } else {
+            $this->options[$this->bodyFormat] = $this->pendingBody;
+        }
         if ($this->isRemoveBodyFormat) {
             unset( $this->options[$this->bodyFormat] );
         }
@@ -512,6 +585,14 @@ class Request
      */
     public function client(string $method,string $url,array $options = [])
     {
+        if (isset($this->options[$this->bodyFormat])) {
+            $this->options[$this->bodyFormat] = $options;
+        } else {
+            $this->options[$this->bodyFormat] = $this->pendingBody;
+        }
+        if ($this->isRemoveBodyFormat) {
+            unset( $this->options[$this->bodyFormat] );
+        }
         try {
             if (empty( $options )) {
                 $options = $this->options;
@@ -533,6 +614,14 @@ class Request
      */
     public function clientAsync(string $method,string $url,array $options = [])
     {
+        if (isset($this->options[$this->bodyFormat])) {
+            $this->options[$this->bodyFormat] = $options;
+        } else {
+            $this->options[$this->bodyFormat] = $this->pendingBody;
+        }
+        if ($this->isRemoveBodyFormat) {
+            unset( $this->options[$this->bodyFormat] );
+        }
         try {
             if (empty( $options )) {
                 $options = $this->options;
@@ -545,13 +634,7 @@ class Request
     }
 
 
-    protected function requestAsync(
-        string   $method,
-        string   $url,
-                 $options = null,
-        callable $success = null,
-        callable $fail = null
-    )
+    protected function requestAsync(string $method, string $url, $options = null, callable $success = null, callable $fail = null)
     {
         if (is_callable( $options )) {
             $successCallback = $options;
@@ -561,7 +644,11 @@ class Request
             $failCallback    = $fail;
         }
 
-        isset( $this->options[$this->bodyFormat] ) && $this->options[$this->bodyFormat] = $options;
+        if (isset($this->options[$this->bodyFormat])) {
+            $this->options[$this->bodyFormat] = $options;
+        } else {
+            $this->options[$this->bodyFormat] = $this->pendingBody;
+        }
 
         if ($this->isRemoveBodyFormat) {
             unset( $this->options[$this->bodyFormat] );

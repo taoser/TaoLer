@@ -17,10 +17,10 @@ class Migrator extends AbstractMigration
 {
     /**
      * @param string $tableName
-     * @param array  $options
+     * @param array $options
      * @return Table
      */
-    public function table($tableName, $options = [])
+    public function table($tableName, $options = []): \Phinx\Db\Table
     {
         return new Table($tableName, $options, $this->getAdapter());
     }

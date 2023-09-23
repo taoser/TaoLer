@@ -11,12 +11,13 @@
 namespace think\migration;
 
 use InvalidArgumentException;
+use Phinx\Config\Config;
 use Phinx\Db\Adapter\AdapterFactory;
 
 abstract class Command extends \think\console\Command
 {
     protected $adapter;
-    
+
     public function getAdapter()
     {
         if (isset($this->adapter)) {
@@ -30,6 +31,9 @@ abstract class Command extends \think\console\Command
         if ($adapter->hasOption('table_prefix') || $adapter->hasOption('table_suffix')) {
             $adapter = AdapterFactory::instance()->getWrapper('prefix', $adapter);
         }
+
+        $adapter->setInput($this->input);
+        $adapter->setOutput($this->output);
 
         $this->adapter = $adapter;
 
@@ -55,6 +59,7 @@ abstract class Command extends \think\console\Command
                 'pass'         => $config['password'],
                 'port'         => $config['hostport'],
                 'charset'      => $config['charset'],
+                'suffix'       => $config['suffix'] ?? '',
                 'table_prefix' => $config['prefix'],
             ];
         } else {
@@ -66,13 +71,15 @@ abstract class Command extends \think\console\Command
                 'pass'         => explode(',', $config['password'])[0],
                 'port'         => explode(',', $config['hostport'])[0],
                 'charset'      => explode(',', $config['charset'])[0],
+                'suffix'       => explode(',', $config['suffix'] ?? '')[0],
                 'table_prefix' => explode(',', $config['prefix'])[0],
             ];
         }
 
         $table = $this->app->config->get('database.migration_table', 'migrations');
 
-        $dbConfig['default_migration_table'] = $dbConfig['table_prefix'] . $table;
+        $dbConfig['migration_table'] = $dbConfig['table_prefix'] . $table;
+        $dbConfig['version_order']   = Config::VERSION_ORDER_CREATION_TIME;
 
         return $dbConfig;
     }

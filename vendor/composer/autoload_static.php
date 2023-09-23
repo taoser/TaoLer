@@ -268,7 +268,7 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         ),
         'Phinx\\' => 
         array (
-            0 => __DIR__ . '/..' . '/topthink/think-migration/phinx/src/Phinx',
+            0 => __DIR__ . '/..' . '/topthink/think-migration/phinx',
         ),
         'PHPSocketIO\\' => 
         array (
