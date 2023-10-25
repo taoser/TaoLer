@@ -87,7 +87,7 @@ class Forum extends AdminController
             $where[] = ['title', 'like', '%'.$data['title'].'%'];
         }
 
-        $list = $this->model->getList($where, input('limit'), input('page'));
+        $list = $this->model->getAllStatusList($where, input('limit'), input('page'));
         $res = [];
         if($list['total']){
             foreach($list['data'] as $v) {

@@ -202,16 +202,15 @@ abstract class BaseController
 	protected function getArticleAllpic($str)
 	{
 		//正则匹配<img src="http://img.com" />
-		$pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
+		$pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png|\.jpeg]))[\'|\"].*?[\/]?>/";
 		preg_match_all($pattern,$str,$matchContent);
 		if(isset($matchContent[1])){
-			$img = $matchContent[1];
+			$imgArr = $matchContent[1];
 		}else{
 			$temp = "./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
 		}
-		
-		return $img;
-
+	
+		return $imgArr;
 	}
 
     //下载远程图片
@@ -234,9 +233,9 @@ abstract class BaseController
 	{
 		$filename = pathinfo($url, PATHINFO_BASENAME);
 		//$dirname = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_DIRNAME);
-		$dirname = date('Ymd',time());
+
 		//路径
-		$path =  'storage/download/article_pic/' . $dirname . '/';
+		$path =  'storage/download/article_pic/' . date('Ymd',time()) . '/';
 		//绝对文件夹
 		$fileDir = public_path() . $path;
 		//文件绝对路径
@@ -271,12 +270,12 @@ abstract class BaseController
 		if(count($images)) {
 			foreach($images as $image){
 				//1.带http地址的图片，2.非本站的网络图片 3.非带有？号等参数的图片
-				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) === false) && (stripos($image, '?') === false)) { 
+				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) == false) && (stripos($image, '?') == false)) { 
                     // 如果图片中没有带参数或者加密可下载
                     //下载远程图片(可下载)
                     $newImageUrl = $this->downloadImage($image);
                     //替换图片链接
-                    $content = str_replace($image,Request::domain().$newImageUrl,$content);
+                    $content = str_replace($image, Request::domain().$newImageUrl, $content);
 				}
 			}
             //不可下载的图片，如加密或者带有参数的图片如？type=jpeg,直接返回content

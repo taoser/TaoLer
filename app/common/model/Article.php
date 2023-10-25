@@ -401,6 +401,26 @@ class Article extends Model
         ])->toArray();
     }
 
+     // 获取admin应用所有帖子状态内容
+     public function getAllStatusList(array $where, int $limit, int $page)
+     {
+         return $this::field('id,user_id,cate_id,title,content,is_top,is_hot,is_reply,status,update_time,read_type,art_pass')
+         ->with([
+             'user' => function($query){
+                 $query->field('id,name,user_img');
+             },
+             'cate' => function($query){
+                 $query->field('id,ename,catename');
+             }
+         ])
+         ->where($where)
+         ->order('create_time', 'desc')
+         ->paginate([
+             'list_rows' => $limit,
+             'page' => $page
+         ])->toArray();
+     }
+
     // 获取url
     public function getUrlAttr($value,$data)
     {

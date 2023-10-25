@@ -19,7 +19,6 @@ use app\common\lib\Uploads;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
 
-
 class User extends AdminController
 {
 
@@ -203,6 +202,14 @@ class User extends AdminController
             return false;
         }
         return true;
+	}
+
+	//登录用过户中心
+	public function goUserHome() {
+		$id = (int)input('id');
+		$user_home_url = $this->getUserHome($id);
+
+		return redirect($user_home_url);
 	}
 	
 }

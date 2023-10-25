@@ -20,7 +20,11 @@
               <div class="layui-col-md3">
                 <label class="layui-form-label">{:lang('special column')}</label>
                 <div class="layui-input-block">
+                  {if ($user.auth == 1)}
                   <div id="CateId" class="xm-select-demo"></div>
+                  {else /}
+                  <input type="text" class="layui-input" disabled value="{$article.cate.catename}">
+                  {/if}
                 </div>
               </div>
               <div class="layui-col-md8">
@@ -163,7 +167,7 @@
                     show: true,
                     indent: 15,
                     strict: false,
-                    expandedKeys: true
+                    expandedKeys: false
                 },
                 tips: '请选择'
             });

@@ -104,7 +104,7 @@
         <script src="/static/component/pear/pear.js"></script>
 
         <script>
-        const FORUM_List       = "{:url('content.forum/list')}";
+        const FORUM_List = "{:url('content.forum/list')}";
 
         layui.use(['toast','jquery','form', 'table','common','xmSelect'], function(){
                 var $ = layui.jquery
@@ -114,19 +114,13 @@
                 var toast = layui.toast;
                 var xmSelect = layui.xmSelect;
 
-                  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-                  var taonystatus = "{:hook('taonystatus')}";
-                  // 编辑器插件启用状态
-                  var isShow = taonystatus ? false : true;
-
-
                 let cols = [
                   [
                     {type: 'checkbox'}
                     ,{field: 'id', width: 60, title: 'ID', sort: true}
                     ,{field: 'avatar', title: '头像', width: 60, templet: '#avatarTpl'}
                     ,{field: 'poster', title: '账号',width: 80}
-                    ,{field: 'title', title: '标题', minWidth: 180,templet: '<div><a href="{{- d.url }}" target="_blank">{{- d.title }}</a></div>'}
+                    ,{field: 'title', title: '标题', minWidth: 180, templet: '<div><a href="{{- d.url }}" target="_blank">{{- d.title }}</a></div>'}
                     ,{field: 'cate', title: '类别', width: 120}
                     ,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
                     ,{field: 'posttime', title: '时间',width: 120, sort: true}
@@ -246,10 +240,7 @@
               });
 
               window.add = function() {
-                  if(isShow) {
-                      toast.info({title: '信息',message: '编辑器插件未开启或未安装',position: 'topRight'});
-                      return false;
-                  }
+
                 layer.open({
                   type: 2,
                   title: '新增',
@@ -260,10 +251,6 @@
               }
 
               window.edit = function(obj) {
-                  if(isShow) {
-                      toast.info({title: '信息',message: '编辑器插件未开启或未安装',position: 'topRight'});
-                      return false;
-                  }
                 layer.open({
                   type: 2,
                   title: '修改',
@@ -272,12 +259,6 @@
                   content: 'edit.html?id=' + obj.data.id
                 });
               }
-
-              //   $(document).on('focusin', function(e) {
-              //   if ($(e.target).closest(".tox-tinymce, .tox-tinymce-aux, .moxman-window, .tam-assetmanager-root").length) {
-              //     e.stopImmediatePropagation();
-              //   }
-              // });
 
                 window.remove = function(obj) {
 

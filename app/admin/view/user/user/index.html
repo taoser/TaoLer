@@ -82,6 +82,9 @@
 		<script type="text/html" id="imgTpl"> 
 			<img src= {{=d.avatar}} style="width: 30px; height: 30px;" />
 		</script>
+		<script type="text/html" id="adminTpl"> 
+			<a href="{:url('user.user/goUserHome')}?id={{ d.id }}" target="_blank">{{- d.username }}</a>
+		</script>
 		<script type="text/html" id="user-bar">
 			<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
 		    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
@@ -151,7 +154,8 @@
 							title: '用户',
 							field: 'username',
 							align: 'center',
-							width: 100
+							width: 100,
+							templet: '#adminTpl'
 						},
 						{
 							title: '昵称',

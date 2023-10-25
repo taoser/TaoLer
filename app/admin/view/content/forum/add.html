@@ -113,7 +113,7 @@
                             show: true,
                             indent: 15,
                             strict: false,
-                            expandedKeys: true
+                            expandedKeys: false
                         },
                         tips: '请选择'
                     });
@@ -203,6 +203,8 @@
 
           });
         </script>
+        {// 编辑器}
+        {:hook('ueditor')}
         {:hook('taonyeditor')}
         {// 百度标题词条}
         {:hook('seoBaiduTitle')}

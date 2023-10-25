@@ -127,6 +127,7 @@ class User extends Model
         $salt = substr(md5($data['create_time']),-6);
         $data['password'] = substr_replace(md5($data['password']),$salt,0,6);
         $data['status'] = Config::get('taoler.config.regist_check');
+        $data['nickname'] = $data['name'];
         $msg = $data['status'] ? '注册成功请登录' : '注册成功，请等待审核';
         $result = $this->save($data);
         if ($result) {

@@ -33,52 +33,36 @@ class UserLogin
         $url = 'http://ip-api.com/json/' . $ip . '?lang=zh-CN&fields=57361';
         $city = 'earth';
 
+        // 登录日志
+        Log::channel('login')->info('login:{user} {ip}',['user'=>$u->name,'ip'=>$ip]);
+
         //日志
         if($type == 'log'){
-            //$name = $user->user['name'];
-
             try{
                 $ipInfo = HttpHelper::get($url)->toJson();
-                if($ipInfo->status == 'success')
-                {
+                if($ipInfo->status == 'success') {
                     $city = $ipInfo->city;
                 }
+
+                $data = [
+                    'city' => $city,
+                    'last_login_ip'		=> $ip,
+                    'last_login_time'	=> time(),
+                    'login_error_num'	=> 0
+                ];
             } catch (\Exception $e) {
                 // echo $e->getMessage();
             }
-
-            //国内查询，接口已失效
-//          $url = 'http://freeapi.ipip.net/' . $ip;
-//			$ipJson = Api::urlGetRespond($url);
-//			$respond = $ipJson->getData();
-//			if($respond['code'] == 0){
-//				//字符串数组["中国","北京","北京"]
-//				$data = $respond['data'];
-//				//正则去掉[''],保留字符串
-//				$str = preg_replace('/(\"|\[|\])/','',$data);
-//				//地址数组
-//				$arr = explode(',', $str);
-//                $city = 'earth';
-//				if($arr[0] !== '本机地址') {
-//					$city = $arr[2];
-//				}
-//			}
-
         }
 
-        if($type == 'logError'){
-            $u->allowField(['login_error_num','login_error_time'])->save(['login_error_num'=>$u->login_error_num + 1,'login_error_time'=>time()]);
+        // 登录失败 失败次数加1
+        if($type == 'logError') {
+            $data = [
+                'login_error_num'   => $u->login_error_num + 1,
+                'login_error_time'  => time()
+            ];
         }
 
-        $u->allowField(['city','last_login_ip','last_login_time','login_error_num'])->save(
-            [
-                'city' => $city,
-                'last_login_ip'		=> $ip,
-                'last_login_time'	=> time(),
-                'login_error_num'	=> 0
-            ]
-        );
-        Log::channel('login')->info('login:{user} {ip}',['user'=>$u->name,'ip'=>$ip]);
-
+        $u->allowField(['city','last_login_ip','last_login_time','login_error_num'])->save($data);
     }
 }

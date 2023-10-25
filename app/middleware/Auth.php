@@ -25,7 +25,6 @@ class Auth
 		} else {
 			return json(['code' => -1, 'msg' => 'no auth']);
 		}
-		//登陆前获取加密的Cookie
 			
 		return $next($request);
     }

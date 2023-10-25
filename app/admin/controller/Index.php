@@ -21,6 +21,7 @@ use app\admin\model\Cunsult;
 use think\facade\Config;
 use taoler\com\Api;
 use app\common\lib\facade\HttpHelper;
+use app\common\model\Comment;
 
 class Index extends AdminController
 {
@@ -61,15 +62,28 @@ class Index extends AdminController
 	public function console2()
 	{
         // 评论、帖子状态
-        $comm = Db::name('comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+        $comm = Db::name('comment')->field('id,content,create_time')->where(['delete_time'=>0,'status'=>0])->select();
         $forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
         $user = Db::name('user')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+		// 回复评论
+		$comments = Comment::field('id,article_id,content,create_time,delete_time')->where(['delete_time'=>0])->order('create_time desc')->limit(10)->select();
+		$commData = [];
+		foreach($comments as $v) {
+			$commData[] = [
+				'id'			=> $v->id,
+				'content'		=> strip_tags($v['content']),
+				'create_time'	=> $v['create_time'],
+				'url'			=> $this->getArticleUrl($v['article_id'], 'index', $v->article->cate->ename)
+			];
+		}
 
         View::assign([
             'pendComms'     => count($comm),
             'pendForums'    => count($forum),
             'pendUser'      => count($user),
+			'comments'		=> $commData,
         ]);
+		
         return View::fetch('console2');
     }
 
