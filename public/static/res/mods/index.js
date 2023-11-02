@@ -50,7 +50,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   };
   
   var fly = {
-	dir: layui.cache.host + 'static/res/mods/' //模块路径
+	  dir: layui.cache.host + 'static/res/mods/' //模块路径
     //Ajax
     ,json: function(url, data, success, options){
       var that = this, type = typeof data === 'function';
@@ -699,26 +699,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   //签到
 
   //活跃榜
-  var tplReply = ['{{# layui.each(d.data, function(index, item){ }}'
-    ,'<dd>'
-      ,'<a href="{{item.uid}}">'
-        ,'<img src="{{item.user.avatar}}">'
-        ,'<cite>{{item.user.username}}</cite>'
-        ,'<i>{{item["count"]}}' + replyNum + '</i>'
-      ,'</a>'
-    ,'</dd>'
-  ,'{{# }); }}'].join('')
-  ,elemReply = $('#LAY_replyRank');
-
-  var replyUrl = elemReply.attr('data-url');
-  if(elemReply[0]){
-    fly.json(replyUrl, {
-      limit: 20
-    }, function(res){
-      var html = laytpl(tplReply).render(res);
-      elemReply.find('dl').html(html);
-    });
-  };
 
   //相册
   if($(window).width() > 750){

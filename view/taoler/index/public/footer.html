@@ -10,6 +10,7 @@
             <a href="https://beian.miit.gov.cn/" target="blank">{$sysInfo.icp}</a>
           </p>
         </div>
+        
         {//websocket统计脚本}
         <div style="text-align:center;color:#999;font-size:14px;padding:0 0 10px;" id="online_count"></div>
       </div>
@@ -30,7 +31,7 @@
       </div>
   </div>
 </footer>
-
+{:hook('callme_foot', ['id' => $article.id ?? '', 'uid' => $article.user.id ?? ''])}
 {:hook('showLeftLayer')}
 <script>
     var $ = layui.jquery;

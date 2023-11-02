@@ -44,33 +44,43 @@ class User extends AdminController
                 'page' => input('page')
             ]);
 			$count = $user->total();
-			$res = [];
+			$data = [];
 			if($count){
-				$res = ['code'=>0,'msg'=>'ok','count'=>$count];
-				foreach($user as $k => $v){
-				$data = [
-					'id'		=>	$v['id'],
-					'username'	=>	$v['name'],
-					'nick'		=>	$v['nickname'],
-					'avatar'	=>	$v['user_img'],
-					'phone'		=>	$v['phone'],
-					'email'		=>	$v['email'],
-					'sex'		=>	$v['sex'],
-					'ip'		=>	$v['last_login_ip'],
-					'city'		=>	$v['city'],
-					'logintime'	=>	date("Y-m-d H:i",$v['last_login_time']),
-					'jointime'	=>	date("Y-m-d",$v['create_time']),
-					'check'		=>	$v['status'],
-					'auth'		=>	$v['auth']
-				];
-				$res['data'][] = $data; 
+				$vipList = [];
+				$vipRule = Db::name('user_viprule')->field('id,vip,nick')->select();
+				foreach($vipRule as $v) {
+					$vipList[] = ['id' => $v['id'], 'vip' => $v['vip'], 'title' => $v['nick']];
 				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
+
+				foreach($user as $k => $v){
+					$data[] = [
+						'id'		=>	$v['id'],
+						'username'	=>	$v['name'],
+						'nick'		=>	$v['nickname'],
+						'avatar'	=>	$v['user_img'],
+						'phone'		=>	$v['phone'],
+						'email'		=>	$v['email'],
+						'sex'		=>	$v['sex'],
+						'ip'		=>	$v['last_login_ip'],
+						'city'		=>	$v['city'],
+						'point'		=>	$v['point'],
+						'logintime'	=>	date("Y-m-d H:i:s",$v['last_login_time']),
+						'jointime'	=>	date("Y-m-d H:i",$v['create_time']),
+						'check'		=>	$v['status'],
+						'auth'		=>	$v['auth'],
+						'vip'		=> 	$vipList[$v['vip']]['title']
+					];
+				}
+				
+				return json(['code'=>0,'msg'=>'ok','count'=>$count, 'data' => $data, 'viplist' => $vipList]);
 			}
-			return json($res);
+			return json(['code'=>-1,'msg'=>'没有查询结果！']);			
 		}
 		return View::fetch();
+	}
+
+	protected function getUserVipNick($vip) {
+
 	}
 	
 	
@@ -204,12 +214,39 @@ class User extends AdminController
         return true;
 	}
 
-	//登录用过户中心
+	//登录用户中心
 	public function goUserHome() {
 		$id = (int)input('id');
 		$user_home_url = $this->getUserHome($id);
 
 		return redirect($user_home_url);
 	}
+
+	// 编辑用户积分
+	public function editPoint()
+	{
+		if(Request::isAjax()) {
+			$param = Request::param(['id','point']);
+			
+			$res = Db::name('user')->where('id',(int)$param['id'])->update(['point' => (int)$param['point']]);
+			if($res > 0) {
+				return json(['code' => 0, 'msg' => '修改成功']);
+			}
+			return json(['code' => -1, 'msg' => '修改失败']);
+		}
+	}
 	
+	// 编辑用户会员等级
+	public function editVipLevel()
+	{
+		if(Request::isAjax()) {
+			$param = Request::param(['id','vip']);
+			$vipRule = Db::name('user_viprule')->field('vip,nick')->where('nick', $param['vip'])->find();
+			$res = Db::name('user')->where('id',(int)$param['id'])->update(['vip' => (int)$vipRule['vip']]);
+			if($res > 0) {
+				return json(['code' => 0, 'msg' => '修改成功']);
+			}
+			return json(['code' => -1, 'msg' => '修改失败']);
+		}
+	}
 }

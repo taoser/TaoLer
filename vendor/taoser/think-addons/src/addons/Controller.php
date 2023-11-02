@@ -101,7 +101,11 @@ class Controller extends BaseController
      */
     protected function assign($name, $value = '')
     {
-        $this->view->assign([$name => $value]);
+        if (is_array($name)) {
+            $this->view->assign($name);
+        } else {
+            $this->view->assign([$name => $value]);
+        }
 
         return $this;
     }

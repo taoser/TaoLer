@@ -98,7 +98,7 @@ class BaseController extends BaseCtrl
 		$user = Cache::get('user'.$id);
 		if(!$user){
 			//1.查询用户
-			$user = Db::name('user')->field('id,name,nickname,user_img,sex,area_id,auth,city,email,active,sign,point,vip,create_time')->find($id);
+			$user = Db::name('user')->field('id,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,vip,create_time')->find($id);
 			Cache::tag('user')->set('user'.$id,$user,600);
 		}
 		return $user;

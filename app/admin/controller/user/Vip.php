@@ -29,22 +29,30 @@ class Vip extends AdminController
 	{
 		$keys = UserViprule::select();
 		$count = $keys->count();
-		$res = [];
+		$data = [];
 		if($count){
-			$res = ['code'=>0,'msg'=>'','count'=>$count];
 			foreach($keys as $k=>$v){
-				$res['data'][] = ['id'=>$v['id'],'score'=>$v['score'],'nick'=>$v['nick'],'vip'=>$v['vip'],'ctime'=>$v['create_time']];
-			}  
-		} else {
-				$res = ['code'=>-1,'msg'=>'还没有任何vip等级设置！'];
-			}
-		return json($res);	
+				$data[] = [
+					'id'=>$v['id'],
+					'vip'=>$v['vip'],
+					'score'=>$v['score'],
+					'nick'=>$v['nick'],
+					'postnum'=>$v['postnum'],
+					'postpoint'=>$v['postpoint'],
+					'refreshnum'=>$v['refreshnum'],
+					'refreshpoint'=>$v['refreshpoint'],
+					'ctime'=>$v['create_time']
+				];
+			} 
+			return json(['code'=>0,'msg'=>'ok','count'=>$count, 'data' => $data]);
+		}
+		return json(['code'=>-1,'msg'=>'还没有任何vip等级设置！']);	
 	}
 
 	//添加VIP积分规则
 	public function add()
 	{
-		$data = Request::only(['score','vip','nick']);
+		$data = Request::only(['score','vip','nick','postnum','refreshnum']);
 		$vip = UserViprule::where('vip',$data['vip'])->find();
 		if($vip){
 			$res = ['code'=>-1,'msg'=>'vip等级不能重复设置'];

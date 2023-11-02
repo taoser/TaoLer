@@ -33,17 +33,52 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
     var post = table.render({
         elem: '#art-post'
         ,url: artListUrl
+        ,toolbar: '#toolbarPost'
 		    ,title: ''
         ,cols: [[
-            {type: 'numbers', fixed: 'left'}
+            {type: 'checkbox', fixed: 'left'},
+            {type: 'numbers', fixed: 'left', title: '序号'}
             ,{field: 'title', title: '标题',minWidth: 250 ,templet: '<div><a href="{{d.url}}" target="_blank">{{-d.title}}</a></div>'}
+            ,{field: 'pv', title:'浏览 <i class="layui-icon layui-icon-tips layui-font-14" lay-event="pv-tips" title="该字段开启了编辑功能" style="margin-left: 5px;"></i>', fieldTitle: 'pv', hide: 0, width:100, expandedMode: 'tips', edit: 'text'}
 			      ,{field: 'status', title: '状态', width: 80}
-			      ,{field: 'ctime', title: '时间', width: 120}
-            ,{field: 'datas', title: '数据', width: 120}
+			      ,{field: 'ctime', title: '发布时间', width: 160}
+            ,{field: 'utime', title: '更新时间', width:160}
+            ,{field: 'datas', title: '数据', width: 80}
             ,{title: '操作', width: 150, align: 'center', toolbar: '#artTool'}
         ]]
         ,text: '对不起，加载出现异常！'
 		    ,page: true
+    });
+
+    // 工具栏事件
+    table.on('toolbar(art-post)', function(obj){
+      var id = obj.config.id;
+      var checkStatus = table.checkStatus(id);
+      var othis = lay(this);
+      switch(obj.event){
+        case 'getCheckData':
+          var data = checkStatus.data;
+          // layer.alert(layui.util.escape(JSON.stringify(data)));
+          $.post(updateTime,{"data":data},function(res){
+            if(res.code === 0){
+              layer.msg(res.msg,{icon:6,time:2000});
+              table.reload('art-post')
+            } else {
+              layer.open({title:'刷新失败',content:res.msg,icon:5,adim:6})
+            }
+          }
+        );
+        break;
+        case 'getData':
+          var getData = table.getData(id);
+          console.log(getData);
+          layer.alert(layui.util.escape(JSON.stringify(getData)));
+        break;
+        case 'LAYTABLE_TIPS':
+          layer.alert('自定义工具栏图标按钮');
+        break;
+      };
+      return false
     });
   
   //收藏list
@@ -62,6 +97,44 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
         ,text: '对不起，加载出现异常！'
 		    ,page: true
     });
+
+    // 单元格编辑事件
+    table.on('edit(art-post)', function(obj){
+      var field = obj.field; // 得到字段
+      var value = obj.value; // 得到修改后的值
+      var data = obj.data; // 得到所在行所有键值
+
+      // 值的校验
+      if(field === 'email'){
+        if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(obj.value)){
+          layer.tips('输入的邮箱格式不正确，请重新编辑', this, {tips: 1});
+          return obj.reedit(); // 重新编辑 -- v2.8.0 新增
+        }
+      }
+
+      // 编辑后续操作，如提交更新请求，以完成真实的数据更新
+      $.ajax({
+        type: "post",
+        url: pvEdit,
+        data: data,
+        dataType: 'json',
+        success: (res) => {
+          if(res.code === 0) {
+            layer.msg(res.msg, {icon: 1});
+          } else {
+            layer.msg(res.msg, {icon: 2});
+            return false;
+          }
+        }
+      })
+      // …
+            
+      // 其他更新操作
+      var update = {};
+      update[field] = value;
+      obj.update(update);
+    });
+ 
  
   //监听行工具事件
   table.on('tool(art-post)', function(obj){

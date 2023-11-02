@@ -309,7 +309,7 @@ if (!function_exists('get_addons_list')) {
                 $info = get_addons_info($name);
                 if (!isset($info['name']))
                     continue;
-                $info['url'] =isset($info['url']) && $info['url'] ?(string)addons_url($info['url']):'';
+                //$info['url'] =isset($info['url']) && $info['url'] ?(string)addons_url($info['url']):'';
                 $list[$name] = $info;
             }
             Cache::set('addonslist', $list);

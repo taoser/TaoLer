@@ -40,7 +40,6 @@ class Index extends BaseController
 		$vs = [
 			'artTop'	=>	$artTop,
 			'artList'	=>	$artList,
-			'artHot'	=>	$artHot,
 			'type'		=>	$types,
 			'jspage'	=>	'',
 		];
@@ -48,13 +47,6 @@ class Index extends BaseController
 
 		return View::fetch();
     }
-	
-	//回帖榜
-	public function reply()
-	{
-        $comment = new \app\common\model\Comment();
-        return $comment->reply(20);
-	}
 
     public function jump()
     {

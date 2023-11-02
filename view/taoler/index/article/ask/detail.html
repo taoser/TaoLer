@@ -221,21 +221,8 @@
           </div>
         </div>
 
-        <!--详情广告赞助位-->
-        {:hook('ads_detail_support')}
-
-        <dl class="fly-panel fly-list-one">
-          <dt class="fly-panel-title">{:lang('hot post list')}</dt>
-          {volist name="artHot" id="vo"}
-          <dd>
-            <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
-            <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-          </dd>
-          {/volist}
-        </dl>
-
-        <!--详情广告图片位-->
-        {:hook('ads_detail_rimg')}
+        <!-- 插件hook位 -->
+			  {:hook('addonhook_detail')}
 
       </div>
       {//crud管理模块}
@@ -469,11 +456,8 @@
   });
 </script>
 
-{:hook('taonyeditor')}
-
-{:hook('taoplayer')}
-
-{:hook('taoplyr')}
+<!-- 插件hook位 -->
+{:hook('addonhook_detail_js')}
 
 {//图片点击放大}
 {include file="/public/images-click" /}

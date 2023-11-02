@@ -23,6 +23,7 @@
                   {if ($user.auth == 1)}
                   <div id="CateId" class="xm-select-demo"></div>
                   {else /}
+                  <input type="text" name="cate_id"  class="layui-input layui-hide" disabled value="{$article.cate_id}">
                   <input type="text" class="layui-input" disabled value="{$article.cate.catename}">
                   {/if}
                 </div>

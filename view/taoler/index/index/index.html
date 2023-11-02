@@ -101,40 +101,11 @@
 			</div>
 
 		</div>
-
+		
 		{//右栏}
 		<div class="layui-col-md4">
-			<!--签到-->
-			{:hook('signhook', ['id'=>1])}
-			<!--排名-->
-			{:hook('ranking')}
-			<!--首页图片广告-->
-			{:hook('ads_index_rimg')}
-			<!--温馨通道-->
-			{:hook('ads_index_fastlinks')}
-			<!--广告赞助-->
-			{:hook('ads_index_support')}
-			<!--回帖榜-->
-			<div class="fly-panel fly-rank fly-rank-reply layui-hide-xs" id="LAY_replyRank" data-url="{:url('user_reply')}">
-				<h3 class="fly-panel-title">{:lang('reviewers list')}</h3>
-				<dl>
-				  <i class="layui-icon fly-loading">&#xe63d;</i>
-				</dl>
-			</div>
-			<!--热帖榜-->
-			<dl class="fly-panel fly-list-one layui-hide-xs">
-				<dt class="fly-panel-title">{:lang('hot post list')}</dt>
-				{volist name="artHot" id="vo"}
-				<dd>
-				  <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
-				  <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-				</dd>
-				{/volist}
-			</dl>
-			<!--首页图片广告-->
-			{:hook('ads_index_rfimg')}
-			<!--友情链接-->
-			{:hook('ads_index_flink')}
+			<!-- 插件hook位 -->
+			{:hook('addonhook_index')}
 		</div>
 	</div>
 </div>

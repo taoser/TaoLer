@@ -229,6 +229,7 @@ class Article extends BaseController
         if (Request::isAjax()) {
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
+
 			// 数据
             $data = Request::only(['cate_id', 'title', 'title_color','read_type','art_pass', 'content', 'upzip', 'keywords', 'description', 'captcha']);
             $data['user_id'] = $this->uid;
@@ -252,7 +253,7 @@ class Article extends BaseController
 			$iva= $this->hasIva($data['content']);
 			$data = array_merge($data,$iva);
 
-			// 处理内容
+			// 处理图片内容
 			$data['content'] = $this->downUrlPicsReaplace($data['content']);
 			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
@@ -260,8 +261,31 @@ class Article extends BaseController
             // 获取分类ename,appname
             $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
 
+			// vip每天可免费发帖数
+			$user = Db::name('user')->field('id,vip,point')->find($this->uid);			
+			$postRule = Db::name('user_viprule')->field('postnum,postpoint')->where('vip', $user['vip'])->find();	
+			// 检测刷新帖子剩余量
+			$postLog = Db::name('user_article_log')->field('id,user_postnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
+			if(is_null($postLog)) {
+				Db::name('user_article_log')->save(['user_id' => $this->uid, 'create_time' => time()]);
+				$postLog = Db::name('user_article_log')->field('id,user_postnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
+			}
+			$cannum =  $postRule['postnum'] - $postLog['user_postnum']; // 可用免费额
+			if($cannum <= 0) {
+				//额度已用完需要扣积分
+				$canpoint = 1 * $postRule['postpoint'];
+				$point = $user['point'] - $canpoint;
+				if($point < 0) { // 1.积分不足
+					return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
+				}
+				// 2.扣除积分
+				Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+			}
+
             $result = $this->model->add($data);
             if ($result['code'] == 1) {
+				// 记录每天发帖量
+				Db::name('user_article_log')->where('id', $postLog['id'])->inc('user_postnum')->update();
 				// 获取到的最新ID
 				$aid = $result['data']['id'];
 				//写入taglist表
@@ -277,13 +301,14 @@ class Article extends BaseController
 				// 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 				// 发提醒邮件
-				if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
+				hook('mailtohook',[$this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
 
-                $link = $this->getRouteUrl((int)$aid, $cateName['ename']);
+                $link = $this->getRouteUrl((int) $aid, $cateName['ename']);
+				$url = $result['data']['status'] ? $link : (string)url('index/');
 
                 hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-				    
-				$url = $result['data']['status'] ? $link : (string)url('index/');
+				hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
+
 				return Msgres::success($result['msg'], $url);
             }
             return Msgres::error('add_error');

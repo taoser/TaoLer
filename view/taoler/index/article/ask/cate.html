@@ -66,18 +66,9 @@
       </div>
     </div>
     <div class="layui-col-md4">
-		<!--列表广告图片位-->
-		{:hook('ads_cate_rimg')}
+		<!-- 插件hook位 -->
+		{:hook('addonhook_list')}
 
-        <dl class="fly-panel fly-list-one layui-hide-xs">
-        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
-        {volist name="artHot" id="vo"}
-		<dd>
-          <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
-          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-        </dd>
-		{/volist} 
-      	</dl>
 		{//热门标签}
 		<div class="fly-panel layui-hide-xs">
 			<div class="fly-panel-title">热门标签</div>
@@ -89,8 +80,6 @@
 				</ul>
 			</div>
 		</div>
-		<!--列表广告赞助位-->
-		{:hook('ads_cate_support')}
 
     </div>
   </div>

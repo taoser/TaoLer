@@ -13,11 +13,11 @@
             <input type="text" name="id" class="layui-input" value="{$vip.id}">
             </div>
             <div class="layui-form-item">
-              <label class="layui-form-label">Vip级别</label>
+              <label class="layui-form-label">会员等级</label>
               <div class="layui-input-inline" >
               <select name="vip">
               {volist name="level" id="vo"}
-                <option {if condition="$vip.vip eq $vo"} selected {/if} value="{$vo}">{if condition="$vo eq 0"}普通{else /}VIP{$vo}{/if}</option>
+                <option {if condition="$vip.vip eq $vo"} selected {/if} value="{$vo}">{if condition="$vo eq 0"}普通{else /}L{$vo}{/if}</option>
               {/volist}
               </select>
               </div>
@@ -29,15 +29,33 @@
               </div>
             </div>
             <div class="layui-form-item">
-              <label class="layui-form-label">认证</label>
+              <label class="layui-form-label">认证昵称</label>
               <div class="layui-input-inline">
                 <input type="text" name="nick" lay-verify="required" placeholder="等级昵称" autocomplete="off" class="layui-input" value="{$vip.nick}">
               </div>
             </div>	
             <div class="layui-form-item">
-              <label class="layui-form-label">权限</label>
+              <label class="layui-form-label">免费发帖/日</label>
               <div class="layui-input-inline">
-                <input type="text" name="rules" lay-verify="" placeholder="请选择" autocomplete="off" class="layui-input" value="{$vip.rules}">
+                <input type="text" name="postnum" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.postnum}">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">免费刷新/日</label>
+              <div class="layui-input-inline">
+                <input type="text" name="refreshnum" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.refreshnum}">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">发贴扣积分</label>
+              <div class="layui-input-inline">
+                <input type="text" name="postpoint" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.postpoint}">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">刷贴扣积分</label>
+              <div class="layui-input-inline">
+                <input type="text" name="refreshpoint" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.refreshpoint}">
               </div>
             </div>
           </div>
@@ -77,9 +95,8 @@
                     icon: 1,
                     time: 1000
                   }, function() {
-                    parent.layer.close(parent.layer.getFrameIndex(window
-                      .name)); //关闭当前页
-                    parent.layui.table.reload("vip-table");
+                    parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+                    parent.layui.table.reload("vip-rule");
                   });
                 } else {
                   layer.msg(result.msg, {

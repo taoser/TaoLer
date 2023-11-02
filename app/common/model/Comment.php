@@ -97,7 +97,7 @@ class Comment extends Model
                 $res['data'][] = $u;
             }
         } else {
-            $res = ['status' => 0, 'msg' =>'no reply'];
+            $res = ['status' => -1, 'msg' =>'no reply'];
         }
         return json($res);
     }

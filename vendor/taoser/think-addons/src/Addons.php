@@ -41,7 +41,7 @@ abstract class Addons
         $this->addon_info = "addon_{$this->name}_info";
         $this->view = clone View::engine('Think');
         $this->view->config([
-            'view_path' => $this->addon_path . 'view' . DIRECTORY_SEPARATOR
+            'view_path' => $this->addon_path . 'view'
         ]);
 
         // 控制器初始化
@@ -98,7 +98,12 @@ abstract class Addons
      */
     protected function assign($name, $value = '')
     {
-        $this->view->assign([$name => $value]);
+
+        if (is_array($name)) {
+            $this->view->assign($name);
+        } else {
+            $this->view->assign([$name => $value]);
+        }
 
         return $this;
     }

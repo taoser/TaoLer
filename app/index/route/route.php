@@ -31,6 +31,8 @@ Route::group(function () {
 	Route::get('user/message$', 'user/message');
 	Route::get('user/post', 'user/post');
 	Route::get('user/article','user/artList');
+	Route::post('user/editpv','user/editPv');
+	Route::post('user/updatetime','user/updateTime');
 	Route::get('user/coll','user/collList');
 	Route::get('user/colldel','user/collDel');
 	Route::get('user/setpass','user/setPass');

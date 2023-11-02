@@ -270,7 +270,7 @@ abstract class BaseController
 		if(count($images)) {
 			foreach($images as $image){
 				//1.带http地址的图片，2.非本站的网络图片 3.非带有？号等参数的图片
-				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) == false) && (stripos($image, '?') == false)) { 
+				if((stripos($image,'http') !== false) && (stripos($image, Request::domain()) === false) && (stripos($image, '?') == false)) { 
                     // 如果图片中没有带参数或者加密可下载
                     //下载远程图片(可下载)
                     $newImageUrl = $this->downloadImage($image);

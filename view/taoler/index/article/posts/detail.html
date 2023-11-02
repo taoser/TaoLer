@@ -25,18 +25,20 @@
         {//图标}
         <div class="fly-detail-info">
 		      <span class="layui-badge layui-bg-green fly-detail-column">
-                {if (cookie('think_lang') == 'en-us')} {article:cate name="ename" /}
-                {else /} {article:cate name="name" /}
-                {/if}
-              </span>
-              {if ($article.is_top == 1)}<span class="layui-badge layui-bg-black">{:lang('top')}</span>{/if}
+            {if (cookie('think_lang') == 'en-us')}
+              {article:cate name="ename" /}
+            {else /}
+              {article:cate name="name" /}
+            {/if}
+          </span>
+          {if ($article.is_top == 1)}<span class="layui-badge layui-bg-black">{:lang('top')}</span>{/if}
 		      {if ($article.is_hot == 1)}<span class="layui-badge layui-bg-red">{:lang('hot')}</span>{/if}
 		      <span id="LAY_jieAdmin" data-id="{article:id /}" data-colurl="{:url('collection/find')}"></span>
 		      <span class="fly-list-nums"> 
-			    <a href="#comment">
-                  <i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{article:comment_num /}
-                </a>
-                  <i class="iconfont" title="浏览">&#xe60b;</i>{article:pv /}
+            <a href="#comment">
+              <i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{article:comment_num /}
+            </a>
+            <i class="iconfont" title="浏览">&#xe60b;</i>{article:pv /}
 		      </span>
         </div>
         {//作者}
@@ -71,11 +73,11 @@
 
           {//解密文件}
           {empty name="passJieMi"}
-          {if($article.read_type == 1)}
-          <div id="jiemi" style="text-align:center">
-            <button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
-          </div>
-          {/if}
+            {if($article.read_type == 1)}
+            <div id="jiemi" style="text-align:center">
+              <button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
+            </div>
+            {/if}
           {/empty}
 
         {notempty name="tags"}
@@ -85,18 +87,18 @@
           {/volist}
         </div>
         {/notempty}
-          <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
-            <p style="line-height:200%; ">{$sysInfo.state|raw}</p>
-          </div>
+        <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
+          <p style="line-height:200%; ">{$sysInfo.state|raw}</p>
+        </div>
         <div style="margin-top: 20px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
-          <div class="detail-zan">
-            <span class="jieda-zan" type="zan" id="article-zan">
-              点赞 <i class="iconfont icon-zan"></i> <em>{:count($userZanList)}</em>
-            </span>
-            {volist name="userZanList" id="vo" }
-              <span><img src="{$vo.userImg}"></span>
-            {/volist}
-          </div>
+        <div class="detail-zan">
+          <span class="jieda-zan" type="zan" id="article-zan">
+            点赞 <i class="iconfont icon-zan"></i> <em>{:count($userZanList)}</em>
+          </span>
+          {volist name="userZanList" id="vo" }
+            <span><img src="{$vo.userImg}"></span>
+          {/volist}
+        </div>
       </div>
 
       {//评论}
@@ -249,20 +251,15 @@
           </div>
         </div>
       </div>
-      <!--详情广告赞助位-->
-      {:hook('ads_detail_support')}
-      <dl class="fly-panel fly-list-one">
-        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
-          {volist name="artHot" id="vo"}
-          <dd>
-            <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
-            <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-          </dd>
-          {/volist}
-      </dl>
-      <!--详情广告图片位-->
-      {:hook('ads_detail_rimg')}
+
+      <!-- 联系方式 -->
+      {:hook('callme_show', ['id' => $article.id, 'uid' => $article.user.id])}
+
+      <!-- 插件hook位 -->
+			{:hook('addonhook_detail')}
+
     </div>
+    
     {//crud管理模块}
     {include file="/public/crud" /}
   </div>
@@ -270,12 +267,8 @@
 </div>
 {include file="public/menu" /}
 {/block}
+
 {block name="script"}
-
-
-
-{:hook('taoplayer')}
-
 <script>
 var collectionFind = "{:url('collection/find')}",
     collection = "{:url('collection/')}",
@@ -505,8 +498,9 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 });
 </script>
 
-{:hook('taoplyr')}
-{:hook('taonyeditor')}
+<!-- 插件hook位 -->
+{:hook('addonhook_detail_js')}
+
 {//图片点击放大}
 {include file="/public/images-click" /}
 

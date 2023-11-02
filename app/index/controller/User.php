@@ -33,13 +33,13 @@ class User extends BaseController
 	public function artList()
 	{
         $param = Request::only(['page','limit']);
-		$myArticle = Article::field('id,cate_id,title,status,pv,create_time')
+		$myArticle = Article::field('id,cate_id,title,status,pv,create_time,update_time')
             ->withCount(['comments'])
             ->where(['user_id'=>$this->uid])
             ->order('update_time','desc')
             ->paginate([
                 'list_rows' => $param['limit'],
-                'page' => $param['page']
+                'page' 		=> $param['page']
             ]);
 		$count = $myArticle->total();
 		$res = [];
@@ -52,14 +52,15 @@ class User extends BaseController
 				'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename, $v->cate->appname),
 				'status'	=> $v['status'] ? '正常':'待审',
 				'ctime'		=> $v['create_time'],
-				'datas'		=> $v['pv'].'阅/'.$v['comments_count'].'答'
+				'utime'		=> $v['update_time'],
+				'pv'		=> $v['pv'],
+				'datas'		=> $v['comments_count'].'答'
 				];
 			} 
-			
-		} else {
-			return json(['code'=>-1,'msg'=>'无数据']);
+			return json($res);
 		}
-		return json($res);	
+			
+		return json(['code'=>-1,'msg'=>'无数据']);			
 	}
 	
 	// 收藏list
@@ -99,6 +100,78 @@ class User extends BaseController
 	{
         return View::fetch();
     }
+
+	// 编辑pv
+	public function edtiPv()
+	{
+		if(Request::isAjax()){
+			$param = Request::param(['id','pv']);
+			$res = Db::name('article')->save(['id' => $param['id'], 'pv' => $param['pv']]);
+			if($res) {
+				return json(['code' => 0, 'msg' => '修改成功！']);
+			}
+		}
+		return json(['code' => -1, 'msg' => '修改失败！']);
+	}
+
+	// 刷新
+	public function updateTime()
+	{
+		if(Request::isAjax()){
+			$param = Request::param(['data']);
+			if(count($param) == 0) return json(['code' => -1, 'msg' => '未选中任何数据！']);
+			$idArr = [];
+			foreach($param['data'] as $v) {
+				$idArr[] = $v['id'];
+			}
+			$count = count($idArr);
+
+			// vip每天可刷新数
+			$user = Db::name('user')->field('id,vip,point')->find($this->uid);			
+			$refreshRule = Db::name('user_viprule')->field('refreshnum,refreshpoint')->where('vip', $user['vip'])->find();	
+			// 检测刷新帖子剩余量
+			$refreshLog = Db::name('user_article_log')->field('id,user_refreshnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
+			if(is_null($refreshLog)) {// 新增
+				Db::name('user_article_log')->save(['user_id' => $this->uid, 'create_time' => time()]);
+				$refreshLog = Db::name('user_article_log')->field('id,user_refreshnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
+			}
+			$cannum =  $refreshRule['refreshnum'] - $refreshLog['user_refreshnum']; // 可用免费数
+			// 刷帖先扣积分
+			if($cannum <= 0) { // a.免费额已用完 后面需要积分
+				$canpoint = $count * $refreshRule['refreshpoint'];
+				$point = $user['point'] - $canpoint;
+				if($point < 0) { 
+					// 1.积分不足
+					return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
+				} else {
+					// 2.扣除积分
+					Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+				}
+			} else { // b.未超限 有剩余条数
+				if($count > $cannum) { // 本次刷新数量大于剩余免费数量，需要支付积分
+					$canpoint = ($count - $cannum) * $refreshRule['refreshpoint'];
+					$point = $user['point'] - $canpoint;
+					if($point < 0) { 
+						// 1.积分不足
+						return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,额度不足请充值！"]);
+					} else {
+						// 2.扣除积分
+						Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+					}
+				}
+			}
+
+			// 刷新数据
+			$res = Db::name('article')->where('id', 'in', $idArr)->update(['update_time' => time()]);
+			if($res > 0) {
+				// 记录刷帖日志
+				Db::name('user_article_log')->where('id', $refreshLog['id'])->inc('user_refreshnum', $count)->update();
+				
+				return json(['code' => 0, 'msg' => '刷新成功！']);
+			}
+		}
+		return json(['code' => -1, 'msg' => '刷新失败！']);
+	}
 	
 	//取消文章收藏
 	public function colltDel()
@@ -119,7 +192,7 @@ class User extends BaseController
 	public function set()
 	{
 		if(Request::isAjax()){
-			$data = Request::only(['email','nickname','sex','city','area_id','sign']);
+			$data = Request::only(['email','phone','nickname','sex','city','area_id','sign']);
             $data['user_id'] = $this->uid;
 			// 过滤
 			$sign = strtolower($data['sign']);
@@ -278,15 +351,15 @@ class User extends BaseController
                 return json(['code'=>-1,'msg' =>$validate->getError()]);
 
 			}
-		$user = new userModel;
-		$result = $user->setpass($data);
+			$user = new userModel;
+			$result = $user->setpass($data);
 			if($result == 1) {
 				Session::clear();
 				Cookie::delete('auth');
-				return $this->success('密码修改成功 请登录', (string) url('login/index'));
-			} else {
-                return json(['code'=>-1,'msg' =>$result]);
+				return json(['code' => 1, 'msg' => '密码修改成功', 'data' => ['url' => (string) url('login/index')]]);
 			}
+
+            return json(['code' => -1,'msg' =>$result]);
 		}
 	}
 	

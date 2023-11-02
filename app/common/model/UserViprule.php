@@ -24,7 +24,7 @@ class UserViprule extends Model
 	//获取等级名
 	public function getVipAttr($value)
 	{
-		$vip = [0=>'普通',1=>'VIP1',2=>'VIP2',3=>'VIP3',4=>'VIP4',5=>'VIP5'];
+		$vip = [0=>'普通',1=>'L1',2=>'L2',3=>'L3',4=>'L4',5=>'L5'];
         return $vip[$value];
 	}
 	
