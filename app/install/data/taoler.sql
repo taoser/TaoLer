@@ -213,7 +213,7 @@ INSERT INTO `tao_auth_rule` VALUES (64, 'user.user/edit', 'Edit user', 1, 1, 60,
 INSERT INTO `tao_auth_rule` VALUES (65, 'user.user/delete', 'Delete user', 1, 1, 60, 2, '', 2, 54, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (66, 'user.user/check', 'Check user', 1, 1, 60, 2, '', 2, 55, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (67, 'user.user/auth', 'Superuser', 1, 1, 60, 2, '', 2, 56, '', 0, 0, 0);
-INSERT INTO `tao_auth_rule` VALUES (68, 'user.vip/index', '用户vip', 1, 1, 2, 1, '', 1, 2, '', 0, 0, 0);
+INSERT INTO `tao_auth_rule` VALUES (68, 'user.vip/index', '会员等级', 1, 1, 2, 1, '', 1, 2, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (69, 'user.vip/list', 'vip列表', 1, 1, 68, 2, '', 2, 50, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (70, 'user.vip/add', '添加vip', 1, 1, 68, 2, '', 2, 51, '', 0, 0, 0);
 INSERT INTO `tao_auth_rule` VALUES (71, 'user.vip/edit', '编辑vip', 1, 1, 68, 2, '', 2, 52, '', 0, 0, 0);
@@ -607,6 +607,20 @@ INSERT INTO `tao_user_area` VALUES (3, '广州', '广', 0, 0, 0);
 INSERT INTO `tao_user_area` VALUES (4, '深圳', '深', 0, 0, 0);
 
 -- ----------------------------
+-- Table structure for tao_user_article_log
+-- ----------------------------
+DROP TABLE IF EXISTS `tao_user_article_log`;
+CREATE TABLE `tao_user_article_log`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `user_postnum` int NOT NULL DEFAULT 0 COMMENT '用户发帖数量',
+  `user_refreshnum` int NOT NULL DEFAULT 0 COMMENT '用户刷新数量',
+  `create_time` int NOT NULL DEFAULT 0 COMMENT '记录时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `uid`(`user_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户发文刷新日志记录' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for tao_user_sign
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_user_sign`;
@@ -649,10 +663,14 @@ INSERT INTO `tao_user_signrule` VALUES (4, 7, 10, 1677824262, 1677824262, 0);
 DROP TABLE IF EXISTS `tao_user_viprule`;
 CREATE TABLE `tao_user_viprule`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '用户等级ID',
-  `score` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '积分区间',
   `vip` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'vip等级',
+  `score` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '积分区间',
   `nick` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '认证昵称',
   `rules` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '权限',
+  `postnum` int NOT NULL DEFAULT 10 COMMENT '日发帖数量',
+  `postpoint` int NOT NULL DEFAULT 0 COMMENT '发文扣积分',
+  `refreshnum` int NOT NULL DEFAULT 10 COMMENT '日刷贴数量',
+  `refreshpoint` int NOT NULL DEFAULT 0 COMMENT '刷帖扣积分',
   `create_time` int NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int NOT NULL DEFAULT 0 COMMENT '升级时间',
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
@@ -662,12 +680,12 @@ CREATE TABLE `tao_user_viprule`  (
 -- ----------------------------
 -- Records of tao_user_viprule
 -- ----------------------------
-INSERT INTO `tao_user_viprule` VALUES (1, '0-99', 0, '游民', '0', 1585476523, 1585544577, 0);
-INSERT INTO `tao_user_viprule` VALUES (2, '100-299', 1, '富农', '1', 1585476551, 1677823895, 0);
-INSERT INTO `tao_user_viprule` VALUES (3, '300-500', 2, '地主', '0', 1585545450, 1585546241, 0);
-INSERT INTO `tao_user_viprule` VALUES (4, '501-699', 3, '土豪', '0', 1585545542, 1585569657, 0);
-INSERT INTO `tao_user_viprule` VALUES (5, '700-899', 4, '霸主', '0', 1677824242, 1677824242, 0);
-INSERT INTO `tao_user_viprule` VALUES (6, '900-1000', 5, '王爷', '0', 1677824859, 1677824859, 0);
+INSERT INTO `tao_user_viprule` VALUES (1, 0, '0-99', '游民', '0', 2, 2, 10, 1, 1585476523, 1698763623, 0);
+INSERT INTO `tao_user_viprule` VALUES (2, 1, '100-299', '富农', '1', 50, 0, 10, 0, 1585476551, 1698740135, 0);
+INSERT INTO `tao_user_viprule` VALUES (3, 2, '300-500', '地主', '0', 100, 0, 0, 0, 1585545450, 1698733320, 0);
+INSERT INTO `tao_user_viprule` VALUES (4, 3, '501-699', '土豪', '0', 10, 0, 100, 0, 1585545542, 1698746583, 0);
+INSERT INTO `tao_user_viprule` VALUES (5, 4, '700-899', '霸主', '0', 10, 0, 0, 0, 1677824242, 1677824242, 0);
+INSERT INTO `tao_user_viprule` VALUES (6, 5, '900-1000', '王爷', '0', 10, 0, 0, 0, 1677824859, 1677824859, 0);
 
 -- ----------------------------
 -- Table structure for tao_user_zan
