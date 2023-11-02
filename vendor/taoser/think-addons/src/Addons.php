@@ -41,7 +41,7 @@ abstract class Addons
         $this->addon_info = "addon_{$this->name}_info";
         $this->view = clone View::engine('Think');
         $this->view->config([
-            'view_path' => $this->addon_path . 'view'
+            'view_path' => (php_uname('s') == 'Linux') ? $this->addon_path . 'view' . DIRECTORY_SEPARATOR : $this->addon_path . 'view'
         ]);
 
         // 控制器初始化
