@@ -14,64 +14,62 @@
 
 {block name="content"}
 <div class="layui-container">
-  <div class="layui-row layui-col-space15">
-    <div class="layui-col-md8">
-      <div class="fly-panel" style="margin-bottom: 0;">
-
-
-        <section id="main" class="list-home list-grid list-grid-padding">
-          {article:list}
-          <article class="list-item block card-plain">
-            {if getOnepic($article.content)}
-            <figure class="media media-3x2 col-4 col-md-4 d-none d-md-block">
-              <a class="media-content" href="{article:link /}" title="{article:title /}">
-                <img src="{:getOnepic($article.content)}" width="233" height="155" alt="{article:title /}">
-              </a>
-            </figure>
-            {/if}
-            <div class="list-width list-content">
-              <div class="list-body">
-                <h3>
-                  <a href="{article:link /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
-                </h3>
-                <div class="list-desc d-block d-md-block text-sm text-secondary my-3">
-                  <p class="h-3x">{:getArtContent($article.content)}</p>
-                </div>
-              </div>
-              <div class="list-footer">
-                <div class="d-flex flex-fill align-items-center text-muted text-xs">
-                  <time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d'}">{$article.create_time|date='Y-m-d'}</time>
-                  <div class="d-inline-block mx-1 mx-md-2">
-                    <i class="text-primary">·</i>
-                  </div>
-                  <div class="d-inline-block">
-                    <a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:auther /}</a>
-                    {$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
-                    {$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
-                    {$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
-                    {$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
-                    {$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
-                    <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {article:pv}</span>
-                    <span class=""><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num}</span>
-                  </div>
-                  <div class="flex-fill"></div>
-                  <div class="mx-1">
-                    <a href="{article:link /}" class="text-muted">阅读全文</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-          {/article:list}
-        </section>
-		  <div style="text-align: center" id="pages"></div>
-      </div>
-    </div>
-    <div class="layui-col-md4">
-        <!-- 插件hook位 -->
-		    {:hook('addonhook_list')}
-    </div>
-  </div>
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md8">
+			<div class="fly-panel" style="margin-bottom: 0;">
+				<section id="main" class="list-home list-grid list-grid-padding">
+					{article:list}
+					<article class="list-item block card-plain">
+						{if getOnepic($article.content)}
+						<figure class="media media-3x2 col-4 col-md-4 d-none d-md-block">
+							<a class="media-content" href="{article:link /}" title="{article:title /}">
+							<img src="{:getOnepic($article.content)}" width="233" height="155" alt="{article:title /}">
+							</a>
+						</figure>
+						{/if}
+						<div class="list-width list-content">
+							<div class="list-body">
+								<h3>
+									<a href="{article:link /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
+								</h3>
+								<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
+									<p class="h-3x">{:getArtContent($article.content)}</p>
+								</div>
+							</div>
+							<div class="list-footer">
+								<div class="d-flex flex-fill align-items-center text-muted text-xs">
+									<time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d'}">{$article.create_time|date='Y-m-d'}</time>
+									<div class="d-inline-block mx-1 mx-md-2">
+										<i class="text-primary">·</i>
+									</div>
+									<div class="d-inline-block">
+										<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:auther /}</a>
+										{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+										{$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+										{$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+										{$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
+										{$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+										<span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {article:pv}</span>
+										<span class=""><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num}</span>
+									</div>
+									<div class="flex-fill"></div>
+									<div class="mx-1">
+										<a href="{article:link /}" class="text-muted">阅读全文</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</article>
+					{/article:list}
+				</section>
+				<div style="text-align: center" id="pages"></div>
+			</div>
+		</div>
+		<div class="layui-col-md4">
+			<!-- 插件hook位 -->
+			{:hook('addonhook_list')}
+		</div>
+	</div>
 </div>
 {include file="public/menu" /}
 {/block}
@@ -79,7 +77,6 @@
 <script>
     layui.use(['laypage'], function(){
 	  var laypage = layui.laypage;
-	  
 	  //执行一个laypage实例
 	  laypage.render({
       elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号

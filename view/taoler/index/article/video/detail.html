@@ -203,14 +203,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
 	,laypage = layui.laypage;
   var id = "{$article.id}";
 
-  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  // 编辑器插件启用状态
-  if(taonystatus == 0) {
-    $('.detail-body').each(function(){
-      var othis = $(this), html = othis.html();
-      othis.html(fly.content(html));
-    });
-  } else {
+
     $(".comment-edit").on('click',function (){
       var id = $(this).data('id');
       layer.open({
@@ -221,19 +214,6 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
         content: "{:url('comment/edit')}" + '?id=' + id
       });
     });
-  }
-
-  //tpl模板给发布时间赋值
-  $('div.detail-hits').children('span.post-time').each(function(){
-    var othis = $(this), html = othis.html();
-	  var string =  laytpl('{{ d.time }}').render({
-		//time: html
-		time: othis.attr('data')
-	});
-	var posttime = layui.util.timeAgo(string, 1);
-	othis.text(posttime);
-    //console.log(othis.attr('data'));
-  });
 
   //文章点赞
   $("#article-zan").on('click',function(){
@@ -252,32 +232,6 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
         }
     })
   });
-  
-	//预定义颜色项
-	colorpicker.render({
-		elem: '#color'
-		,color: '#393d49'
-		,predefine: true // 开启预定义颜色
-		,size: 'xs'
-		,done: function(color){
-      //改变标题颜色
-      $('h1').css("color", color);
-      $.ajax({
-        type:'post',
-        url:"{:url('Article/titleColor')}",
-        data:{id: id,title_color: color},
-        dataType:'json',
-        success:function(data){
-          if(data.code == 0){
-            layer.msg(data.msg,{icon:6,time:2000
-            });
-          } else {
-            layer.open({content:data.msg,icon:5,adim:6});
-          }
-        }
-      });
-		}
-	});
   
   //评论需要登陆
   form.on('submit(user-comment)',function (data){

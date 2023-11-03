@@ -813,9 +813,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util', 'imgcom'],
   }
 
   //加载编辑器
-  fly.layEditor({
-    elem: '.fly-editor'
-  });
+  // fly.layEditor({
+  //   elem: '.fly-editor'
+  // });
   
   //手机设备的简单适配 用户中心底部左侧栏导航
   var treeMobile = $('.site-tree-mobile')

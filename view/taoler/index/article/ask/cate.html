@@ -15,83 +15,82 @@
 
 {block name="content"}
 <div class="layui-container">
-  <div class="layui-row layui-col-space15">
-    <div class="layui-col-md8">
-      <div class="fly-panel" style="margin-bottom: 0;">
-		<div class="layui-tab layui-tab-card">
-		  <ul class="layui-tab-title">
-			<li {if condition="$type eq 'all'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} "  >{:lang('all')}</a></li>
-			<li {if condition="$type eq 'jie'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} ">{:lang('end')}</a></li>
-			<li {if condition="$type eq 'wait'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'wait',])}">{:lang('未解决')}</a>	</li>
-		  </ul>
-		</div>
-
-		  <ul class="question-list">
-			  {article:list}
-			  <li>
-				  {if ($article.jie == 1)}
-				  <div class="que-sta-jie">
-					  <span>已解</span>
-					  <span>&radic;</span>
-				  </div>
-				  {else /}
-				  <div class="que-sta-ask">
-					  <span>未解</span>
-					  <span >？</span>
-				  </div>
-				  {/if}
-				  <div class="que-sta-view layui-hide-xs">
-					  <span>{article:pv /}</span>
-					  <span >阅读</span>
-				  </div>
-				  <div class="que-body">
-					  <h2><a href="{article:link}"  style="color:{article:title_color};">{article:title}</a></h2>
-					  <div class="que-user-info">
-						  <a href="{article:user name='link'}" class="que-avatar">
-							  <cite>{article:auther /}</cite>
-						  </a>
-						  {$article.create_time|date='Y-m-d'}
-						  {$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
-						  {$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
-						  {$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
-						  {$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
-						  {$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
-						  <span ><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num /}</span>
-					  </div>
-				  </div>
-			  </li>
-			  {/article:list}
-		  </ul>
-		<div style="text-align: center" id="pages"></div>
-      </div>
-    </div>
-    <div class="layui-col-md4">
-		<!-- 插件hook位 -->
-		{:hook('addonhook_list')}
-
-		{//热门标签}
-		<div class="fly-panel layui-hide-xs">
-			<div class="fly-panel-title">热门标签</div>
-			<div class="fly-panel-main">
-				<ul>
-					{volist name="hotTag" id="vo"}
-					<li style="padding:10px;display:inline-block;height: 15px;"><a href="{$Request.domain}{$vo.url}">{$vo.name}</a></li>
-					{/volist}
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md8">
+			<div class="fly-panel" style="margin-bottom: 0;">
+				<div class="layui-tab layui-tab-card">
+					<ul class="layui-tab-title">
+					<li {if condition="$type eq 'all'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} "  >{:lang('all')}</a></li>
+					<li {if condition="$type eq 'jie'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} ">{:lang('end')}</a></li>
+					<li {if condition="$type eq 'wait'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'wait',])}">{:lang('未解决')}</a>	</li>
+					</ul>
+				</div>
+				<ul class="question-list">
+					{article:list}
+					<li>
+						{if ($article.jie == 1)}
+						<div class="que-sta-jie">
+							<span>已解</span>
+							<span>&radic;</span>
+						</div>
+						{else /}
+						<div class="que-sta-ask">
+							<span>未解</span>
+							<span >？</span>
+						</div>
+						{/if}
+						<div class="que-sta-view layui-hide-xs">
+							<span>{article:pv /}</span>
+							<span >阅读</span>
+						</div>
+						<div class="que-body">
+							<h2><a href="{article:link}"  style="color:{article:title_color};">{article:title}</a></h2>
+							<div class="que-user-info">
+								<a href="{article:user name='link'}" class="que-avatar">
+									<cite>{article:auther /}</cite>
+								</a>
+								{$article.create_time|date='Y-m-d'}
+								{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+								{$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+								{$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+								{$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
+								{$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+								<span ><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num /}</span>
+							</div>
+						</div>
+					</li>
+					{/article:list}
 				</ul>
+			<div style="text-align: center" id="pages"></div>
 			</div>
 		</div>
+		<div class="layui-col-md4">
+			<!-- 插件hook位 -->
+			{:hook('addonhook_list')}
 
-    </div>
-  </div>
+			{//热门标签}
+			<div class="fly-panel layui-hide-xs">
+				<div class="fly-panel-title">热门标签</div>
+				<div class="fly-panel-main">
+					<ul>
+						{volist name="hotTag" id="vo"}
+						<li style="padding:10px;display:inline-block;height: 15px;"><a href="{$Request.domain}{$vo.url}">{$vo.name}</a></li>
+						{/volist}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 {include file="public/menu" /}
+
 {/block}
+
 {block name="script"}
 <script>
     layui.use(['laypage'], function(){
 	  var laypage = layui.laypage;
-	  var $ = layui.jquery;
-	  
+
 	  //执行一个laypage实例
 	  laypage.render({
 		elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号

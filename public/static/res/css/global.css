@@ -459,7 +459,6 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-about .icon-renzheng{display: inline-block; width: 15px; height: 15px; line-height: 15px; top: 25px; left: 35px; background-color: #FFB800; color: #fff; border-radius: 50%; font-size: 10px;}
 .fly-detail-user{white-space: nowrap; overflow: hidden;}
 .fly-detail-user a{padding-right: 10px; font-size: 14px;}
-.fly-detail-user .guanzhu{position: absolute;  right:10px; }
 
 /*详情页管理工具条*/
 .detail-assist{
