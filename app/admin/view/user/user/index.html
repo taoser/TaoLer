@@ -81,7 +81,7 @@
 		    </button>
 		</script>
 		<script type="text/html" id="imgTpl"> 
-			<a href="{:url('user.user/goUserHome')}?id={{ d.id }}" target="_blank"><img src= {{=d.avatar}} style="width: 100px; height: 100px; border-radius: 6px;" /></a>
+			<a href="{:url('user.user/goUserHome')}?id={{ d.id }}" target="_blank"><img src= {{=d.avatar}} style="width: 100px; height: 100px; border-radius: 6px; object-fit: cover;"/></a>
 		</script>
 		<script type="text/html" id="userInfoTpl"> 
 			<ul>

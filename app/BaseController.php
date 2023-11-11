@@ -46,6 +46,13 @@ abstract class BaseController
     protected $middleware = [];
 
     /**
+     * article content
+     *
+     * @var string
+     */
+    protected $content = '';
+
+    /**
      * 构造方法
      * @access public
      * @param  App  $app  应用对象
@@ -221,7 +228,7 @@ abstract class BaseController
     	curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false ); 
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
 		$file = curl_exec($ch);
 		curl_close($ch);
 		return $this->saveAsImage($url, $file);
@@ -265,8 +272,9 @@ abstract class BaseController
 	//下载网络图片到本地并替换
     public function downUrlPicsReaplace($content)
 	{
+        $this->content = $content;
 		// 批量下载网络图片并替换
-		$images = $this->getArticleAllpic($content);
+		$images = $this->getArticleAllpic($this->content);
 		if(count($images)) {
 			foreach($images as $image){
 				//1.带http地址的图片，2.非本站的网络图片 3.非带有？号等参数的图片
@@ -275,13 +283,13 @@ abstract class BaseController
                     //下载远程图片(可下载)
                     $newImageUrl = $this->downloadImage($image);
                     //替换图片链接
-                    $content = str_replace($image, Request::domain().$newImageUrl, $content);
+                    $this->content = str_replace($image, Request::domain().$newImageUrl, $this->content);
 				}
 			}
             //不可下载的图片，如加密或者带有参数的图片如？type=jpeg,直接返回content
 		}
 				
-		return $content;
+		return $this->content;
 	}
 
     /**

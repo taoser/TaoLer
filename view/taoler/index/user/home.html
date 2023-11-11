@@ -14,14 +14,14 @@
 {block name="column"}{/block}
 {block name="content"}
 <div class="fly-home fly-panel" >
-  <img src="{$Request.domain}{$u.user_img}" alt="{$u.name}">
+  <img src="{$Request.domain}/{$u.user_img}" alt="{$u.name}">
   {if($u.vip > 0)}<i class="iconfont icon-renzheng" title="Fly社区认证"></i>{/if}
   <h1>
     {$u.nickname ?: $u.name}
     {if($u.sex==0)}<i class="iconfont icon-nan"></i>
     {else}<i class="iconfont icon-nv"></i> {/if}
 	{if($u.vip > 0)}
-    <i class="layui-badge fly-badge-vip">VIP{$u.vip}</i>
+    <i class="layui-badge fly-badge-vip">{$u.vip}</i>
 	{/if}
     <!--
     <span style="color:#c00;">（管理员）</span>
@@ -82,17 +82,4 @@
 {/block}
 
 {block name="script"}
-<script>
-  layui.use(['fly','face'], function(){
-  var $ = layui.$;
-  var fly = layui.fly;
-  var face = layui.face;
-  
-  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  $('.detail-body').each(function(){
-    var othis = $(this), html = othis.html();
-    othis.html(fly.content(html));
-  });
-});
-</script>
 {/block}

@@ -191,8 +191,8 @@ pre{overflow-y: auto;
 
 .fly-nav-user{position: absolute; top: 0; right: 0;}
 .fly-nav-user .iconfont{position: relative;}
-.fly-nav-avatar img{width: 36px; height: 36px; margin-left: 10px; border-radius: 100%;}
-.fly-nav-avatar  .icon-renzheng{font-size: 16px; top: 1px;}
+.fly-nav-avatar img{width: 36px; height: 36px; margin-left: 10px; border-radius: 100%; object-fit: cover;}
+.fly-nav-avatar .icon-renzheng{font-size: 16px; top: 1px;}
 .fly-nav-avatar .fly-badge-vip{position: relative; margin-left: 10px;}
 .fly-nav-user .layui-nav-child a i{position: relative; top: 2px; margin-right: 10px; font-size: 26px;}
 
@@ -601,6 +601,10 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .fly-user-main .fly-none{min-height: 0;}
 .fly-panel-user[pad20]{padding-top: 5px;}
 
+@media screen and (max-width: 768px) {
+  .fly-user-main>.fly-panel{margin: 0 0 10px 0;}
+}
+
 @media screen and (min-width: 768px) {
   .fly-panel-user{height: calc(100vh - 280px)}
 }
@@ -618,7 +622,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
 
 /* 个人主页 */
 .fly-home{position: relative; padding: 30px 0 30px; text-align: center;}
-.fly-home img{width:120px; height:120px; border-radius:100%;}
+.fly-home img{width:120px; height:120px; border-radius:100%; object-fit: cover;}
 .fly-home h1{font-size:26px; line-height:30px; margin-top:10px;}
 .fly-home h1 span{font-size:14px; color:#999;}
 .fly-home h1 .icon-nan{color:#4EBBF9}

@@ -18,7 +18,7 @@
 <div class="layui-container">
     <div class="layui-row layui-col-space15">
 		<div class="layui-col-md8 content detail">
-			<div class="fly-panel detail-box">
+			<section class="fly-panel detail-box">
 				{//标题}
 				<h1>{article:title /}</h1>
 
@@ -28,7 +28,7 @@
 						<img src="{article:user name='user_img' /}" alt="{article:user name='name' /}" />
 						<cite>{article:auther} </cite>
 					</a>
-					<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px">{$article.create_time|date="Y-h-d H:i"}</span>
+					<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px">{$article.update_time|date="Y-h-d H:i"}</span>
 					<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>
 					{$article:comments_count}
 					<i class="iconfont" title="浏览">&#xe60b;</i>
@@ -47,7 +47,7 @@
 				<div style="margin: 10px 0; font-size: 16px; font-weight: bold; color: rgb(161, 155, 155)">问题描述：</div>
 
 				{:hook('taoplayerdiv')}
-				<div class="detail-body photos" id="content">{article:content}</div>
+				<article class="detail-body photos" id="content">{article:content}</article>
 				{notempty name="$article.upzip"}
 					{if (session('?user_name'))}
 					<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
@@ -79,10 +79,10 @@
 						{$Request.domain}/{$Request.url}
 					</a>
 				</div>
-			</div>
+			</section>
 
 			{//评论内容}
-			<div class="fly-panel detail-box" id="flyReply">
+			<section class="fly-panel detail-box" id="flyReply">
 				<span style="font-size:18px;">评论 {$article.comments_count}</span>
 
 				<ul class="jieda" id="jieda">
@@ -199,7 +199,7 @@
 					{/article:comment}
 				</ul>
 				<div style="text-align: center" id="pages"></div>
-			</div>
+			</section>
 
 			{//评论区}
 			{if session('?user_id') AND ( config('taoler.config.is_reply') == 1 ) AND ( $article.is_reply == 1 )}

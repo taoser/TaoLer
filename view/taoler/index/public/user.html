@@ -26,13 +26,14 @@
 {include file="public/header" /}
 <div class="layui-container fly-marginTop fly-user-main">
 {include file="public/user-nav" /}
-  <div class="fly-panel " pad20 style="padding-top:10px;">
+  <div class="fly-panel" pad20 style="padding-top:10px;">
 	{block name="content"}
 	{/block}	
   </div>
 </div> 
 {include file="public/footer" /}
 <script>
+  var $ = layui.jquery;
   var notify = layui.notify;
     layui.cache.page = 'user';
     layui.cache.user = {
@@ -48,7 +49,6 @@
     }).extend({
         fly: 'index'
     }).use('fly');
-  var $ = layui.jquery;
   var articleUrl    = "{:url('user/article')}";
 	    artListUrl    = "{:url('User/artList')}",
 	    collListUrl   = "{:url('User/collList')}",

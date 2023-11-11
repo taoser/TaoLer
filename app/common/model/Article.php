@@ -275,6 +275,7 @@ class Article extends Model
         ->where(['user_id' => $id,'status' => 1])
         ->order(['create_time'=>'desc'])
         ->append(['url'])
+        ->limit(25)
         ->cache(3600)
         ->select()
         ->toArray();
@@ -298,7 +299,8 @@ class Article extends Model
             ->order('create_time','desc')
             ->append(['url'])
             ->paginate(10);
-        return $res;
+            
+            return $res;
         }
     }
 

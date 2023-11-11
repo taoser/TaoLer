@@ -262,26 +262,32 @@ class Article extends BaseController
             $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
 
 			// vip每天可免费发帖数
-			$user = Db::name('user')->field('id,vip,point')->find($this->uid);			
+			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
+
 			$postRule = Db::name('user_viprule')->field('postnum,postpoint')->where('vip', $user['vip'])->find();	
-			// 检测刷新帖子剩余量
+			// 检测可发帖子剩余量
 			$postLog = Db::name('user_article_log')->field('id,user_postnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
 			if(is_null($postLog)) {
+				//没有记录创建
 				Db::name('user_article_log')->save(['user_id' => $this->uid, 'create_time' => time()]);
 				$postLog = Db::name('user_article_log')->field('id,user_postnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
 			}
-			$cannum =  $postRule['postnum'] - $postLog['user_postnum']; // 可用免费额
-			if($cannum <= 0) {
-				//额度已用完需要扣积分
-				$canpoint = 1 * $postRule['postpoint'];
-				$point = $user['point'] - $canpoint;
-				if($point < 0) { // 1.积分不足
-					return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
-				}
-				// 2.扣除积分
-				Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
-			}
 
+			// 超级管理员排外
+			if($user['auth'] === '0') {
+				$cannum =  $postRule['postnum'] - $postLog['user_postnum']; // 可用免费额
+				if($cannum <= 0) {
+					//额度已用完需要扣积分
+					$canpoint = 1 * $postRule['postpoint'];
+					$point = $user['point'] - $canpoint;
+					if($point < 0) { // 1.积分不足
+						return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
+					}
+					// 2.扣除积分
+					Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+				}
+			}
+			
             $result = $this->model->add($data);
             if ($result['code'] == 1) {
 				// 记录每天发帖量

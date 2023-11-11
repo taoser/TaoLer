@@ -127,7 +127,8 @@ class User extends BaseController
 			$count = count($idArr);
 
 			// vip每天可刷新数
-			$user = Db::name('user')->field('id,vip,point')->find($this->uid);			
+			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
+
 			$refreshRule = Db::name('user_viprule')->field('refreshnum,refreshpoint')->where('vip', $user['vip'])->find();	
 			// 检测刷新帖子剩余量
 			$refreshLog = Db::name('user_article_log')->field('id,user_refreshnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
@@ -135,28 +136,31 @@ class User extends BaseController
 				Db::name('user_article_log')->save(['user_id' => $this->uid, 'create_time' => time()]);
 				$refreshLog = Db::name('user_article_log')->field('id,user_refreshnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
 			}
-			$cannum =  $refreshRule['refreshnum'] - $refreshLog['user_refreshnum']; // 可用免费数
-			// 刷帖先扣积分
-			if($cannum <= 0) { // a.免费额已用完 后面需要积分
-				$canpoint = $count * $refreshRule['refreshpoint'];
-				$point = $user['point'] - $canpoint;
-				if($point < 0) { 
-					// 1.积分不足
-					return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
-				} else {
-					// 2.扣除积分
-					Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
-				}
-			} else { // b.未超限 有剩余条数
-				if($count > $cannum) { // 本次刷新数量大于剩余免费数量，需要支付积分
-					$canpoint = ($count - $cannum) * $refreshRule['refreshpoint'];
+			// 超级管理员排外
+			if($user['auth'] === '0') {
+				$cannum =  $refreshRule['refreshnum'] - $refreshLog['user_refreshnum']; // 可用免费数
+				// 刷帖先扣积分
+				if($cannum <= 0) { // a.免费额已用完 后面需要积分
+					$canpoint = $count * $refreshRule['refreshpoint'];
 					$point = $user['point'] - $canpoint;
 					if($point < 0) { 
 						// 1.积分不足
-						return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,额度不足请充值！"]);
+						return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
 					} else {
 						// 2.扣除积分
 						Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+					}
+				} else { // b.未超限 有剩余条数
+					if($count > $cannum) { // 本次刷新数量大于剩余免费数量，需要支付积分
+						$canpoint = ($count - $cannum) * $refreshRule['refreshpoint'];
+						$point = $user['point'] - $canpoint;
+						if($point < 0) { 
+							// 1.积分不足
+							return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,额度不足请充值！"]);
+						} else {
+							// 2.扣除积分
+							Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+						}
 					}
 				}
 			}
@@ -302,6 +306,7 @@ class User extends BaseController
 		->where(['a.delete_time'=>0,'c.delete_time'=>0,'c.status'=>1])
 		->where('c.user_id',$id)
 		->order(['c.create_time'=>'desc'])
+		->limit(10)
 		->cache(3600)->select();
 
 		View::assign(['u'=>$u,'arts'=>$arts,'reys'=>$reys,'jspage'=>'']);

@@ -1,6 +1,6 @@
 <div class="fly-header layui-bg-black">
 	<div class="layui-container">
-		<a class="fly-logo layui-hide-xs" href="{$Request.domain}"><img src="{$Request.domain}{$sysInfo.logo}"  alt="{system:webname}logo"></a>
+		<a class="fly-logo layui-hide-xs" href="{$Request.domain}"><img src="{$Request.domain}/{$sysInfo.logo}"  alt="{system:webname}logo"></a>
 		<!--头部伸缩侧边栏-->
 		<div class="site-tree-mobile-top layui-hide"><i class="layui-icon layui-icon-spread-left"></i></div>
 		<div class="site-mobile-shade-top"></div>
@@ -8,22 +8,22 @@
 		<a class="layui-hide-md layui-hide-sm" href="{$Request.domain}" ><img class="fly-logo-m" src="{$Request.domain}{$sysInfo.m_logo}" alt="logo"></a>
 		{//导航nav}
 		<ul class="layui-nav fly-nav layui-hide-xs">
-			{if config('taoler.config.nav_top')  != 0}
-				{taoler:nav}
-				<li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
-					<a href="{nav:link /}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
-					{notempty name="nav.children"}
-					<dl class="layui-nav-child"> <!-- 二级菜单 -->
-						{taoler:snav}
-						<dd><a href="{snav:link /}">{snav:name /}</a></dd>
-						{/taoler:snav}
-					</dl>
-					{/notempty}
-				</li>
-				{/taoler:nav}
-			{/if}
-			{// 后台自定义头部链接}
-			{:hook('ads_header_link')}
+		{if config('taoler.config.nav_top')  != 0}
+		{taoler:nav}
+			<li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
+				<a href="{nav:link /}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
+				{notempty name="nav.children"}
+				<dl class="layui-nav-child"> <!-- 二级菜单 -->
+					{taoler:snav}
+					<dd><a href="{snav:link /}">{snav:name /}</a></dd>
+					{/taoler:snav}
+				</dl>
+				{/notempty}
+			</li>
+		{/taoler:nav}
+		{/if}
+		{// 后台自定义头部链接}
+		{:hook('ads_header_link')}
 		</ul>
 
 		{//头部右栏}
@@ -34,10 +34,10 @@
 			<!-- 登录 -->
 			{if session('?user_id')}
 				{if ($Request.action=='user')}
-					<li class="layui-nav-item"><a href="{$Request.domain}">{:lang('home page')}</a></li>
+				<li class="layui-nav-item"><a href="{$Request.domain}">{:lang('home page')}</a></li>
 				{/if}
 				<li class="layui-nav-item">
-					<a class="fly-nav-avatar" ><cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}{$user.user_img}"></a>
+					<a class="fly-nav-avatar" ><cite class="layui-hide-xs">{$user.name}</cite><img src="{$Request.domain}/{$user.user_img}"></a>
 					<dl class="layui-nav-child">
 						<dd><a href="{:url('user/index')}"><i class="layui-icon layui-icon-username"></i>{:lang('user center')}</a></dd>
 						<dd><a href="{:url('user/set')}"><i class="layui-icon layui-icon-set"></i>{:lang('set info')}</a></dd>

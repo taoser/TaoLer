@@ -30,6 +30,7 @@ class Article extends TagLib
         'description'   => ['attr' => '', 'close' => 0],
         'link'          => ['attr' => '', 'close' => 0],
         'time'          => ['attr' => '', 'close' => 0],
+        'uptime'        => ['attr' => '', 'close' => 0],
 
         'cate'          => ['attr' => 'name', 'close' => 0],
         'user'          => ['attr' => 'name', 'close' => 0],
@@ -100,6 +101,11 @@ class Article extends TagLib
     public function tagTime(): string
     {
         return '{$article.create_time}';
+    }
+
+    public function tagUptime(): string
+    {
+        return '{$article.update_time}';
     }
 
     // 详情分类

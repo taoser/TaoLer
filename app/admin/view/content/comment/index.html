@@ -5,74 +5,77 @@
   <title>管理员管理</title>
   <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 </head>
-    <body class="pear-container">
-      <div class="layui-card">
-        <div class="layui-card-body">
-          <form class="layui-form" action="">
-            <div class="layui-form-item">
-              <div class="layui-inline layuiadmin-input-useradmin">
-                <label class="layui-form-label">回帖人</label>
-                <div class="layui-input-block">
-                  <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-              <div class="layui-inline">
-                <label class="layui-form-label">内容</label>
-                <div class="layui-input-block">
-                  <input type="text" name="content" placeholder="请输入" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-                  <div class="layui-inline">
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-block">
-                 <select name="status" lay-filter="fourm-check">
-                            <option value="">全部</option>
-                            <option value="0">待审</option>
-                    <option value="-1">禁止</option>
-                            <option value="1">通过</option>
-                  </select>
-                </div>
-              </div>
-              <div class="layui-form-item layui-inline">
-                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="comment-query">
-                  <i class="layui-icon layui-icon-search"></i>
-                  查询
-                </button>
-                <button type="reset" class="pear-btn pear-btn-md">
-                  <i class="layui-icon layui-icon-refresh"></i>
-                  重置
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="layui-card">
-        <div class="layui-card-body">
-          <table id="comment-table" lay-filter="comment-table"></table>
-        </div>
-      </div>
+<body class="pear-container">
+	<div class="layui-card">
+		<div class="layui-card-body">
+			<form class="layui-form" action="">
+				<div class="layui-form-item">
+					<div class="layui-inline layuiadmin-input-useradmin">
+					<label class="layui-form-label">回帖人</label>
+					<div class="layui-input-block">
+						<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+					</div>
+					</div>
+					<div class="layui-inline">
+					<label class="layui-form-label">内容</label>
+					<div class="layui-input-block">
+						<input type="text" name="content" placeholder="请输入" autocomplete="off" class="layui-input">
+					</div>
+					</div>
+						<div class="layui-inline">
+					<label class="layui-form-label">状态</label>
+					<div class="layui-input-block">
+						<select name="status" lay-filter="fourm-check">
+						<option value="">全部</option>
+						<option value="0">待审</option>
+						<option value="-1">禁止</option>
+						<option value="1">通过</option>
+						</select>
+					</div>
+					</div>
+					<div class="layui-form-item layui-inline">
+					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="comment-query">
+						<i class="layui-icon layui-icon-search"></i>
+						查询
+					</button>
+					<button type="reset" class="pear-btn pear-btn-md">
+						<i class="layui-icon layui-icon-refresh"></i>
+						重置
+					</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="layui-card">
+		<div class="layui-card-body">
+			<table id="comment-table" lay-filter="comment-table"></table>
+		</div>
+	</div>
 
-      <script type="text/html" id="comment-toolbar">
-        <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-          <i class="layui-icon layui-icon-delete"></i>
-          删除
-        </button>
-      </script>
+	<script type="text/html" id="comment-toolbar">
+	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+		<i class="layui-icon layui-icon-delete"></i>
+		删除
+	</button>
+	<button class="pear-btn layui-bg-orange pear-btn-md" lay-event="checkSelect">
+		批量审核
+	</button>
+	</script>
 
 
-      <script type="text/html" id="imgTpl">
-        <img style="width: 25px; height: 25px;" src= {{ d.avatar }}>
-      </script>
-      <script type="text/html" id="buttonCheck">
-            <input type="checkbox" name="check" lay-skin="switch" lay-filter="check" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{  d.check == 1 ? 'checked' : '' }} id="{{d.id}}" >
+	<script type="text/html" id="imgTpl">
+	<img style="width: 25px; height: 25px;" src= {{ d.avatar }}>
+	</script>
+	<script type="text/html" id="buttonCheck">
+		<input type="checkbox" name="check" lay-skin="switch" lay-filter="check" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{  d.check == 1 ? 'checked' : '' }} id="{{d.id}}" >
 
-        </script>
+	</script>
 
-      <script type="text/html" id="comment-bar">
-        <!--<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>-->
-        <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
-      </script>
+	<script type="text/html" id="comment-bar">
+	<!--<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>-->
+	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+	</script>
 
     </div>
 
@@ -125,7 +128,9 @@
             window.refresh();
           } else if (obj.event === 'batchRemove') {
             window.batchRemove(obj);
-          }
+          } else if (obj.event === 'checkSelect') {
+				window.checkSelect(obj);
+			}
         });
 
         form.on('submit(comment-query)', function(data) {
@@ -245,6 +250,53 @@
             })
           });
         }
+
+        // 全选审核
+		window.checkSelect = function(obj) {
+			var id = obj.config.id;
+    		var checkStatus = table.checkStatus(id);
+			var data = checkStatus.data;
+
+			if (data.length === 0) {
+				layer.msg("未选中数据", {
+					icon: 3,
+					time: 1000
+				});
+				return false;
+			}
+
+			layer.confirm('确定要审核?', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+				console.log(data)
+				$.ajax({
+					type: "post",
+					url: "{:url('content.comment/checkSelect')}",
+					dataType: 'json',
+					data: {data},
+					success: function(result) {
+						layer.close(loading);
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								table.reload('comment-table');
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
+
 
         window.refresh = function(param) {
           table.reload('comment-table');

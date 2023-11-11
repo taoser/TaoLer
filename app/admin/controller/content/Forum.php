@@ -278,6 +278,29 @@ class Forum extends AdminController
 	}
 
     /**
+	 * 多选批量审核
+	 *
+	 * @return Json
+	 */
+	public function checkSelect()
+	{
+        $param = Request::param('data');
+        $data = [];
+        foreach($param as $v) {
+            $data[] = ['id' => (int)$v['id'], 'status' => $v['check'] == '1' ? '-1' : '1'];
+        }
+
+		//获取状态
+		$res = $this->model->saveAll($data);
+	
+		if($res){
+			return json(['code'=>0,'msg'=>'审核成功','icon'=>6]);
+		}else {
+			return json(['code'=>-1,'msg'=>'失败啦','icon'=>6]);
+		}
+	}
+
+    /**
      * 上传接口
      *
      * @return void
