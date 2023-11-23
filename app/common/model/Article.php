@@ -313,14 +313,17 @@ class Article extends Model
      */
     public function getAllTags($tagId)
     {
-        $allTags = $this::hasWhere('taglist',['tag_id'=>$tagId])
+        $arrId = Taglist::where('tag_id', $tagId)->column('article_id');
+
+        $allTags = $this::field('id,user_id,cate_id,title,create_time,is_hot')->where('id','in', $arrId)
         ->with(['user' => function($query){
             $query->field('id,name,nickname,user_img,area_id,vip');
         },'cate' => function($query){
             $query->where('delete_time',0)->field('id,catename,ename');
         }])
         ->where(['status'=>1])
-        ->order('pv desc')
+        ->order('id desc')
+        ->limit(20)
         ->append(['url'])
         ->select()
         ->toArray();
@@ -337,14 +340,13 @@ class Article extends Model
      */
     public function getRelationTags($tagId,$id,$limit)
     {
-        $allTags = $this::hasWhere('taglist',['tag_id'=>$tagId])
-        ->with(['user' => function($query){
-            $query->field('id,name,nickname,user_img,area_id,vip');
-        },'cate' => function($query){
-            $query->where('delete_time',0)->field('id,catename,ename');
-        }])
+        $arrId = Taglist::where([
+            ['tag_id', '=', $tagId],
+            ['article_id','<>',$id]
+        ])->column('article_id');
+
+        $allTags = $this::field('id,cate_id,title')->where('id', 'in', $arrId)
         ->where(['status'=>1])
-       // ->where('article.id', '<>', $id)
         ->order('pv desc')
         ->limit($limit)
         ->append(['url'])
@@ -377,7 +379,7 @@ class Article extends Model
             ['id', '>', $id],
             ['cate_id', '=', $cid],
             ['status', '=',1]
-        ])->limit(1)->append(['url'])->select()->toArray();
+        ])->order('id asc')->limit(1)->append(['url'])->select()->toArray();
 
         return ['previous' => $previous, 'next' => $next];
     }

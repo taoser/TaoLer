@@ -38,6 +38,9 @@ class User extends AdminController
 		if(Request::isAjax()){
 			$datas = Request::only(['id','name','email','sex','status']);
 			$map = array_filter($datas,[$this,'filtrArr']);
+			if(!empty($map['id'])) {
+			    $map['id'] = (int) $map['id'];
+			}
 
 			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->paginate([
                 'list_rows' => input('limit'),

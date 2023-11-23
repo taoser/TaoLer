@@ -19,7 +19,7 @@ class Auth
 				$request->uid = $data->uid;
 				
 			} catch(\Exception $e) {
-				return $e->getMessage();
+				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
 			
 		} else {

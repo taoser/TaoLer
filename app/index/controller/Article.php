@@ -55,13 +55,13 @@ class Article extends BaseController
 
 
 		$assignArr = [
-			'ename'=>$ename,
-			'cateinfo'=> $cateInfo,
-			'type'=>$type,
-			'artList'=>$artList,
-			'artHot'=>$artHot,
-			'path'=>$path,
-			'jspage'=>'jie'
+			'ename'		=> $ename,
+			'cateinfo'	=> $cateInfo,
+			'type'		=> $type,
+			'artList'	=> $artList,
+			'artHot'	=> $artHot,
+			'path'		=> $path,
+			'jspage'	=> 'jie'
 		];
 		View::assign($assignArr);
 
@@ -96,8 +96,8 @@ class Article extends BaseController
 
 		// 标签
 		$tags = [];
-		$relationArticle = [];
-        $artTags = Db::name('taglist')->where('article_id',$id)->select();
+		$relationArticle = []; //相关帖子
+        $artTags = Db::name('taglist')->where('article_id', $id)->select();
 		if(count($artTags)) {
 			foreach($artTags as $v) {
 				$tag = Db::name('tag')->find($v['tag_id']);
@@ -139,22 +139,22 @@ class Article extends BaseController
 		$push_js = Db::name('push_jscode')->where(['delete_time'=>0,'type'=>1])->cache(true)->select();
 
 		View::assign([
-			'article'	=> $artDetail,
-			'pv'		=> $pv,
-			'artHot'	=> $artHot,
-			'tags'		=> $tags,
+			'article'		=> $artDetail,
+			'pv'			=> $pv,
+			'artHot'		=> $artHot,
+			'tags'			=> $tags,
 			'relationArticle' => $relationArticle,
-			'previous'	=> $previous,
-			'next'		=> $next,
-			'page'		=> $page,
-			'comments'	=> $comments,
-			'push_js'	=> $push_js,
-			'cid' 		=> $id,
-			'lrDate_time' => $lrDate_time,
-			'userZanList' => $userZanList,
-			'zanCount'    => $zanCount,
-			'jspage'	  => 'jie',
-            'passJieMi'   => session('art_pass_'.$id),
+			'previous'		=> $previous,
+			'next'			=> $next,
+			'page'			=> $page,
+			'comments'		=> $comments,
+			'push_js'		=> $push_js,
+			'cid' 			=> $id,
+			'lrDate_time' 	=> $lrDate_time,
+			'userZanList' 	=> $userZanList,
+			'zanCount'    	=> $zanCount,
+			'jspage'	  	=> 'jie',
+            'passJieMi'   	=> session('art_pass_'.$id),
 			$download,
 		]);
 	
@@ -179,7 +179,7 @@ class Article extends BaseController
 			$data = Request::only(['content','article_id','pid','to_user_id']);
             $data['user_id'] = $this->uid;
 			$sendId = $data['user_id'];
-//            halt($data);
+
 			$art = Db::name('article')->field('id,status,is_reply,delete_time')->find($data['article_id']);
 
 			if($art['delete_time'] != 0 || $art['status'] != 1 || $art['is_reply'] != 1){
@@ -294,15 +294,16 @@ class Article extends BaseController
 				Db::name('user_article_log')->where('id', $postLog['id'])->inc('user_postnum')->update();
 				// 获取到的最新ID
 				$aid = $result['data']['id'];
+
 				//写入taglist表
-				$tagArr = [];
-				if(isset($tagId)) {
-					$tagIdArr = explode(',',$tagId);
+				if(!empty($tagId)) {
+					$tagArr = [];
+					$tagIdArr = explode(',', $tagId);
 					foreach($tagIdArr as $tid) {
-						$tagArr[] = ['article_id'=>$aid,'tag_id'=>$tid,'create_time'=>time()];
+						$tagArr[] = [ 'article_id' => $aid, 'tag_id' => $tid, 'create_time'=>time()];
 					}
-				}
-				Db::name('taglist')->insertAll($tagArr);
+					Db::name('taglist')->insertAll($tagArr);
+				}	
 				
 				// 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
@@ -385,11 +386,11 @@ class Article extends BaseController
 				$result = $article->edit($data);
 				if($result == 1) {
 					//处理标签
-					$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
-					if(isset($tagId)) {
+					if(!empty($tagId)) {
 						$tagIdArr = explode(',',$tagId);
+						$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
 						foreach($artTags as $aid => $tid) {
-							if(!in_array($tid,$tagIdArr)){
+							if(!in_array($tid, $tagIdArr)){
 								//删除被取消的tag
 								Db::name('taglist')->delete($aid);
 							}

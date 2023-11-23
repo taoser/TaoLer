@@ -8,9 +8,9 @@
 	</head>
 	<body class="pear-container">
 		<div class="layui-fluid" id="component-tabs">
-				<div class="layui-card">
-					<div class="layui-card-body">
-						<div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief">
+			<div class="layui-card">
+				<div class="layui-card-body">
+					<div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief"  lay-allowclose="true">
 						<ul class="layui-tab-title">
 							<li lay-id="vip" class="layui-this">用户等级</li>
 						</ul>
@@ -68,6 +68,7 @@
 							</div>
 
 							{:hook('signadminhook')}
+
 						</div>
 					</div>
 				</div>

@@ -29,6 +29,8 @@ class Index extends BaseController
      */
     public function index()
     {
+		// $ip = file_get_contents('https://myip.ipip.net');
+		// echo "My public IP address is: " . $ip;
 		$types = input('type');
 		//置顶文章
 		$artTop = Article::getArtTop(5);
