@@ -327,7 +327,7 @@
 	const v = layui.v;
 
 
-	layui.use(['form','layer', 'echarts', 'element', 'count','toast'], function() {
+	layui.use(['form','layer', 'echarts', 'carousel', 'element', 'count','toast'], function() {
 		let $ = layui.jquery, form = layui.form,
 				layer = layui.layer,
 				element = layui.element,
@@ -335,6 +335,7 @@
 				echarts = layui.echarts;
 		let toast = layui.toast;
 		let table = layui.table;
+		let carousel = layui.carousel;
 
 		$('.UI').append(v);
 
@@ -342,21 +343,21 @@
 			time: 4000,
 			num: {:hook('seoBaiduTongji',['name'=>'tpv']) ?: 0},
 			bit: 0,
-				regulator: 50
+			regulator: 50
 		})
 
 		count.up("value2", {
 			time: 4000,
 			num: {:hook('seoBaiduTongji',['name'=>'tuv']) ?: 0},
 			bit: 0,
-				regulator: 50
+			regulator: 50
 		})
 
 		count.up("value3", {
 			time: 4000,
 			num: {:hook('seoBaiduTongji',['name'=>'tip']) ?: 0},
 			bit: 0,
-				regulator: 50
+			regulator: 50
 		})
 
 		count.up("value4", {
@@ -609,7 +610,7 @@
 			$.get("{:url('system.upgrade/check')}",function (data){
 				if (data.code === 1) {
 					//可升级
-					layer.confirm('发现新版本V' + data.data.version + '，确定升级？',{icon: 3, title:'系统检测'}, function(){
+					layer.confirm('发现新版本V' + data.data.version + '，确定升级？', {icon: 3, title:'系统检测'}, function(index){
 						var loadIndex = layer.load(0);
 						//更新
 						$.get("{:url('system.upgrade/upload')}",function (res){
@@ -621,7 +622,7 @@
 							}
 							return false;
 						});
-						
+						layer.close(index);
 					});
 					
 				}

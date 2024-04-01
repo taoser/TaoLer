@@ -1,8 +1,11 @@
 <?php
-
 namespace app\middleware;
+
 use think\facade\Log;
 
+/**
+ * 浏览记录日志中间件
+ */
 class Browse
 {
     public function handle($request, \Closure $next)

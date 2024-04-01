@@ -3,7 +3,6 @@ namespace app\index\controller;
 
 use app\common\controller\BaseController;
 use app\common\validate\User as userValidate;
-use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\Session;
@@ -13,7 +12,6 @@ use think\facade\View;
 use app\common\model\Article;
 use app\common\model\Collection;
 use app\common\model\User as userModel;
-use app\common\model\Comment;
 use taoler\com\Message;
 
 class User extends BaseController
@@ -50,7 +48,7 @@ class User extends BaseController
 				$res['data'][] = ['id'=>$v['id'],
 				'title'	=> htmlspecialchars($v['title']),
 				'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename, $v->cate->appname),
-				'status'	=> $v['status'] ? '正常':'待审',
+				'status'	=> $this->artStatus($v['status']),
 				'ctime'		=> $v['create_time'],
 				'utime'		=> $v['update_time'],
 				'pv'		=> $v['pv'],
@@ -61,6 +59,23 @@ class User extends BaseController
 		}
 			
 		return json(['code'=>-1,'msg'=>'无数据']);			
+	}
+
+	// 文章状态
+	private function artStatus($status)
+	{
+		switch ($status) {
+			case 1:
+				$res = '正常';
+				break;
+			case -1:
+				$res = '禁止';
+				break;
+			default:
+				$res = '待审';
+				break;
+		}
+		return $res;
 	}
 	
 	// 收藏list

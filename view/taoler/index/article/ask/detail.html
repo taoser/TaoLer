@@ -101,6 +101,7 @@
 							</div>
 							<div class="detail-hits">
 								<span class="post-time" data="{comment:time}"></span>{:hook('ipShow',$comment.user.city)}</span>
+								{if $comment.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
 							</div>
 
 							{//加密未解密评论不可查看}
@@ -118,6 +119,9 @@
 									{if ((session('user_id') == $comment.user_id) && (getLimtTime($comment.create_time) < 2)) OR ($user.auth  ?? '')}
 									<span type="edit" class="comment-edit" data-id="{comment:id /}">{:lang('edit')}</span>
 									<span type="del" class="comment-del" data-id="{comment:id /}">{:lang('delete')}</span>
+									{/if}
+									{if ($comment.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth ?? ''))/}
+										<span class="jieda-accept" type="accept">{:lang('accept')}</span>
 									{/if}
 									</div>
 									{/eq}

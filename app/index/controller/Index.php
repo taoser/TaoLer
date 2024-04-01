@@ -18,6 +18,9 @@ use think\facade\Db;
 use app\facade\Article;
 use app\common\lib\Msgres;
 
+use addons\pay\controller\AlipayFactory;
+use addons\pay\controller\WeixinFactory;
+
 class Index extends BaseController
 {
     /**
@@ -31,13 +34,16 @@ class Index extends BaseController
     {
 		// $ip = file_get_contents('https://myip.ipip.net');
 		// echo "My public IP address is: " . $ip;
+// 		$alipay = AlipayFactory::createPayMethod();
+// 		$weixin = WeixinFactory::createPayMethod();
+// 		$a = $alipay->index();
+// 		$b= $weixin->index();
+// var_dump($a,$b);
 		$types = input('type');
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示10个
         $artList = Article::getArtList(10);
-        //热议文章
-        $artHot = Article::getArtHot(10);
 
 		$vs = [
 			'artTop'	=>	$artTop,

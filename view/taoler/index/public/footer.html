@@ -4,6 +4,7 @@
 			<img src="{$sysInfo.logo}" alt="{$sysInfo.webname}">
 		</div>
 		<div class="footer-col footer-col-copy">
+			{:hook('ads_footer_flink')}
 			{:hook('ads_footer_link')}
 			<div class="copyright">
 				<span class="layui-hide"> v{:config('taoler.version')}</span>

@@ -170,17 +170,14 @@ class Article extends Model
     public function getArtHot(int $num)
     {
         $artHot = $this::field('id,cate_id,title,create_time')
-        ->with(['cate' => function($query){
-                $query->where('delete_time',0)->field('id,ename');
-            }])
-            ->withCount('comments')
-            ->where(['status'=>1,'delete_time'=>0])
-            ->whereTime('create_time', 'year')
-            ->order('comments_count','desc')
-            ->limit($num)
-            ->withCache(120)
-            ->append(['url'])
-            ->select();
+        ->withCount('comments')
+        ->where(['status' => 1])
+        ->whereTime('create_time', 'year')
+        ->order('comments_count','desc')
+        ->limit($num)
+        ->withCache(120)
+        ->append(['url'])
+        ->select();
 
         return $artHot;
     }

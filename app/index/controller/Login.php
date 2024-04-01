@@ -42,9 +42,8 @@ class Login extends BaseController
 			// 检验登录是否开放
 			if(config('taoler.config.is_login') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，网站维护中，暂时不能登录哦！']);
             //登陆前数据校验
-			$data = Request::only(['name','email','phone','password','captcha']);
-			if(Config::get('taoler.config.login_captcha') == 1)
-			{				
+			$data = Request::only(['name','email','phone','password','captcha','remember']);
+			if(Config::get('taoler.config.login_captcha') == 1) {				
 				//先校验验证码
 				if(!captcha_check($data['captcha'])){
 				 // 验证失败
@@ -55,8 +54,7 @@ class Login extends BaseController
 			//邮箱正则表达式
 			$pattern = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
 
-            if(preg_match("/^1[34578]\d{9}$/",$data['name']))
-            {
+            if(preg_match("/^1[34578]\d{9}$/",$data['name'])) {
                 //手机验证登录
                 $data['phone'] = $data['name'];
                 unset($data['name']);

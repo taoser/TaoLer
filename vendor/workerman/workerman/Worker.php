@@ -34,7 +34,7 @@ class Worker
      *
      * @var string
      */
-    const VERSION = '4.1.13';
+    const VERSION = '4.1.15';
 
     /**
      * Status starting.
@@ -569,8 +569,8 @@ class Worker
      */
     protected static function checkSapiEnv()
     {
-        // Only for cli.
-        if (\PHP_SAPI !== 'cli') {
+        // Only for cli and micro.
+        if (!in_array(\PHP_SAPI, ['cli', 'micro'])) {
             exit("Only run in command line mode \n");
         }
         if (\DIRECTORY_SEPARATOR === '\\') {
@@ -943,7 +943,7 @@ class Worker
             exit;
         }
 
-        $statistics_file =  static::$statusFile ? static::$statusFile : __DIR__ . "/../workerman-$master_pid.$command";
+        $statistics_file =  static::$statusFile ? static::$statusFile : __DIR__ . "/../workerman-$master_pid.status";
 
         // execute command.
         switch ($command) {
@@ -1064,6 +1064,9 @@ class Worker
         try {
             $workerInfo = unserialize($info[0], ['allowed_classes' => false]);
         } catch (Throwable $exception) {}
+        if (!is_array($workerInfo)) {
+            $workerInfo = [];
+        }
         \ksort($workerInfo, SORT_NUMERIC);
         unset($info[0]);
         $data_waiting_sort = array();

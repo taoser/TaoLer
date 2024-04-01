@@ -468,11 +468,14 @@ class Article extends BaseController
     public function download($id)
     {
         $zipdir = Db::name('article')->where('id',$id)->value('upzip');
-        $zip = substr($zipdir,1);
-		Db::name('article')->cache(true)->where('id',$id)->inc('downloads')->update();
-		//删除缓存显示下载后数据
-        Cache::delete('article_'.$id);
-        return download($zip,'my');
+		if(!empty($zipdir)) {
+			$zip = substr($zipdir,1);
+			Db::name('article')->cache(true)->where('id',$id)->inc('downloads')->update();
+			//删除缓存显示下载后数据
+			Cache::delete('article_'.$id);
+			return download($zip,'my');
+		}
+        
     }
 
 	// 文章置顶、加精、评论状态

@@ -25,14 +25,26 @@ use app\BaseController as BaseCtrl;
 class BaseController extends BaseCtrl
 {
 
-	protected $uid = '';
+	/**
+	 * 登录用户uid
+	 *
+	 * @var int|null
+	 */
+	protected $uid;
+
+	/**
+	 * 登录用户信息
+	 *
+	 * @var array|object
+	 */
+	protected $user;
 
     /**
 	 * 初始化系统，导航，用户
 	 */
     protected function initialize()
     {
-        $this->uid = Session::get('user_id');
+        $this->setUid();
 		//系统配置
 		$this->showSystem();
 
@@ -46,21 +58,20 @@ class BaseController extends BaseCtrl
 
 	}
 
-	//判断是否已登录？
-	protected function isLogged()
+	// 用户登录
+	private function setUid()
 	{
-		if(Session::has('user_id')){
-			$this->success('您已登录','/index/index/index');
+		if(Session::has('user_id')) {
+			$this->uid = Session::get('user_id');
 		}
 	}
 
-    //判断是否需要登录？
-    protected function isLogin()
-    {
-        if(!Session::has('user_id')){
-            $this->error('请登录','/index/user/login');
-        }
-    }
+	private function setUser()
+	{
+		if(Session::has('user_id')) {
+			$this->uid = Session::get('user_id');
+		}
+	}
 
 	// 显示子导航subnav
     protected function showSubnav()
