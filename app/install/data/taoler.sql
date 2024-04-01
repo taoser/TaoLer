@@ -74,7 +74,8 @@ CREATE TABLE `tao_article`  (
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id`) USING BTREE COMMENT '文章的用户索引',
-  INDEX `cate_id`(`cate_id`) USING BTREE COMMENT '文章分类索引'
+  INDEX `cate_id`(`cate_id`) USING BTREE COMMENT '文章分类索引',
+  INDEX `idx_article_create_time`(`create_time` DESC) USING BTREE COMMENT '创建时间'
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------

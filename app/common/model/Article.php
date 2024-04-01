@@ -7,6 +7,7 @@ use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Cache;
 use think\facade\Config;
+use think\db\Query;
 
 class Article extends Model
 {
@@ -111,13 +112,13 @@ class Article extends Model
     {
 
         return Cache::remember('topArticle', function() use($num){
-             return $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_top,pv,upzip,has_img,has_video,has_audio,read_type,art_pass')
-                ->where([['is_top', '=', 1], ['status', '=', 1]])
+             return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,upzip,has_img,has_video,has_audio,read_type')
+                ->where(['is_top' => 1, 'status' => 1])
                 ->with([
-                    'cate' => function ($query) {
+                    'cate' => function (Query $query) {
                         $query->where('delete_time', 0)->field('id,catename,ename');
                     },
-                    'user' => function ($query) {
+                    'user' => function (Query $query) {
                         $query->field('id,name,nickname,user_img');
                     }
                 ])->withCount(['comments'])
@@ -140,12 +141,12 @@ class Article extends Model
     public function getArtList(int $num)
     {
         return Cache::remember('indexArticle', function() use($num){
-            return $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
+            $data = $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
             ->with([
-            'cate' => function($query){
+            'cate' => function(Query $query){
                 $query->where('delete_time',0)->field('id,catename,ename,detpl');
             },
-			'user' => function($query){
+			'user' => function(Query $query){
                 $query->field('id,name,nickname,user_img');
 			} ])
             ->withCount(['comments'])
@@ -153,8 +154,9 @@ class Article extends Model
             ->order('create_time','desc')
             ->limit($num)
             ->append(['url'])
-            ->select()
-            ->toArray();
+            ->select();
+
+            return $data->hidden(['art_pass'])->toArray();
 		},30);
 
     }
@@ -172,10 +174,10 @@ class Article extends Model
         $artHot = $this::field('id,cate_id,title,create_time')
         ->withCount('comments')
         ->where(['status' => 1])
-        ->whereTime('create_time', 'year')
+        ->whereMonth('create_time')
         ->order('comments_count','desc')
         ->limit($num)
-        ->withCache(120)
+        ->withCache(600)
         ->append(['url'])
         ->select();
 
@@ -195,14 +197,15 @@ class Article extends Model
             return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,keywords,description,read_type,art_pass,title_color,create_time,update_time')
             ->where(['status'=>1])
             ->with([
-                'cate' => function($query){
+                'cate' => function(Query $query){
                     $query->where('delete_time',0)->field('id,catename,ename');
                 },
-                'user' => function($query){
+                'user' => function(Query $query){
                     $query->field('id,name,nickname,user_img,area_id,vip,city')->withCount(['article','comments']);
                 }
             ])
             ->withCount(['comments'])
+            ->hidden(['art_pass'])
             ->append(['url'])
             ->find($id);
             

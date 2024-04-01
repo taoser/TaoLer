@@ -89,7 +89,7 @@ class Cate extends Model
     {
         try {
             return $this->where(['status' => 1])
-                ->cache('catename', 3600)
+                ->cache(3600)
                 ->append(['url'])
                 ->select()
                 ->toArray();
@@ -104,7 +104,7 @@ class Cate extends Model
     {
         try {
             $cateList = $this->where(['status' => 1])
-                ->cache('catename', 3600)
+                ->cache(3600)
                 ->append(['url'])
                 ->select()
                 ->toArray();

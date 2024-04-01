@@ -109,9 +109,11 @@ class BaseController extends BaseCtrl
 		$user = Cache::get('user'.$id);
 		if(!$user){
 			//1.查询用户
-			$user = Db::name('user')->field('id,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,vip,create_time')->find($id);
-			$vipNick = Db::name('user_viprule')->field('nick')->where('vip', $user['vip'] ?? 0)->value('nick');
-			$user['nick'] = $vipNick;
+			$user = Db::name('user')
+			->alias('u')
+			->join('user_viprule v','v.vip = u.vip')
+			->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as cteate_time')
+			->find($id);
 			Cache::tag('user')->set('user'.$id, $user, 600);
 		}
 		return $user;
