@@ -25,7 +25,9 @@
 			<div class="fly-panel">
 				<div class="fly-panel-title fly-filter">
 					<span>{:lang('top')}</span>
+					{if hook('signstatushook') == 1}
 					<a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin">{:lang('go sign')}</a>
+					{/if}
 				</div>
 				<ul class="fly-list">
 					{if config('taoler.config.top_show') == 1}

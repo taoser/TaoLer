@@ -430,7 +430,8 @@ CREATE TABLE `tao_message_to`  (
   `create_time` int NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_mesto_receveid`(`receve_id`) USING BTREE COMMENT '收件人ID'
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息详细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------

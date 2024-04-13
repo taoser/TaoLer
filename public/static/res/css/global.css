@@ -434,7 +434,6 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .jie-row li i, .jie-row li em, .jie-row li cite{font-size:12px; color:#999; font-style: normal;}
 .jie-row li .mine-edit{margin-left:15px; padding:0 6px; background-color: #8FCDA0; color:#fff; font-size:12px;}
 .jie-row li em{position:absolute; right:0; top:0;}
-.jie-row li .jie-user{}
 .jie-row li .jie-title{max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .jie-row li .jie-user img{position:relative; top: 16px; width: 35px; height: 35px;}
 
@@ -792,7 +791,7 @@ p {
   margin: 0;
   white-space: normal;
   word-break: break-all;
-  -webkit-user-select: none;
+  /* -webkit-user-select: none; */
 }
 
 code[class*="language-"], pre[class*="language-"] {

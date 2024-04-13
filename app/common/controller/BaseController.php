@@ -16,7 +16,6 @@ use think\facade\Request;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
-use think\facade\Cache;
 use app\BaseController as BaseCtrl;
 
 /**
@@ -62,28 +61,28 @@ class BaseController extends BaseCtrl
 	private function setUid()
 	{
 		if(Session::has('user_id')) {
-			$this->uid = Session::get('user_id');
+			$this->uid = Session::get('user_id') ?? -1;
 		}
 	}
 
 	private function setUser()
 	{
 		if(Session::has('user_id')) {
-			$this->uid = Session::get('user_id');
+			$this->uid = Session::get('user_id') ?? -1;
 		}
 	}
 
 	// 显示子导航subnav
     protected function showSubnav()
     {
+		$subCateList = []; // 没有点击任何分类，点击首页获取全部分类信息
         //1.查询父分类id
 		$pCate = Db::name('cate')->field('id,pid,ename,catename,is_hot')->where(['ename'=>input('ename'),'status'=>1,'delete_time'=>0])->find();
 
-		if(empty($pCate)) { // 没有点击任何分类，点击首页获取全部分类信息
-			$subCateList = [];
-		} else { // 点击分类，获取子分类信息
+		if(!is_null($pCate)) { // 点击分类，获取子分类信息
 			$parentId = $pCate['id'];
 			$subCate = Db::name('cate')->field('id,ename,catename,is_hot,pid')->where(['pid'=>$parentId,'status'=>1,'delete_time'=>0])->select()->toArray();
+			
 			if(!empty($subCate)) { // 有子分类
 				$subCateList = array2tree($subCate);
 			} else { //无子分类
@@ -106,16 +105,14 @@ class BaseController extends BaseCtrl
 	//显示当前登录用户
     protected function showUser($id)
     {
-		$user = Cache::get('user'.$id);
-		if(!$user){
-			//1.查询用户
-			$user = Db::name('user')
-			->alias('u')
-			->join('user_viprule v','v.vip = u.vip')
-			->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as cteate_time')
-			->find($id);
-			Cache::tag('user')->set('user'.$id, $user, 600);
-		}
+		if($id == -1) return [];
+		//1.查询用户
+		$user = Db::name('user')
+		->alias('u')
+		->join('user_viprule v','v.vip = u.vip')
+		->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as create_time')
+		->cache('user'.$id)
+		->find((int)$id);
 		return $user;
     }
 

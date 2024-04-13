@@ -2,11 +2,11 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-08-16 14:16:40
+ * @LastEditTime: 2024-04-12 19:32:40
  * @LastEditors: TaoLer
  * @Description: 优化版
  * @FilePath: \TaoLer\app\common\lib\SqlFile.php
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ * Copyright (c) 2020~2024 https://www.aieok.com All rights reserved.
  */
 declare (strict_types = 1);
 
@@ -84,6 +84,9 @@ class SqlFile
         if (file_exists($sqlFile)) {
             $sqlArr = self::loadSqlFile($sqlFile);
             if(!empty($sqlArr)) {
+				$orginal = 'tao_';	//sql默认表前缀
+				$prefix = config('database.mysql.prefix'); // 现在表前缀
+				($orginal == $prefix) ? true : $sqlArr = str_replace(" `{$orginal}", " `{$prefix}", $sqlArr);	//替换数组中表前缀
                 foreach($sqlArr as $v){
                     try {
                         Db::execute($v);

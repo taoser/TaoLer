@@ -110,10 +110,10 @@ class Article extends Model
      */
     public function getArtTop(int $num)
     {
-
         return Cache::remember('topArticle', function() use($num){
+            $topIdArr = $this::where(['is_top' => 1, 'status' => 1])->limit($num)->column('id');
              return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,upzip,has_img,has_video,has_audio,read_type')
-                ->where(['is_top' => 1, 'status' => 1])
+                ->where('id', 'in', $topIdArr)
                 ->with([
                     'cate' => function (Query $query) {
                         $query->where('delete_time', 0)->field('id,catename,ename');
@@ -122,8 +122,7 @@ class Article extends Model
                         $query->field('id,name,nickname,user_img');
                     }
                 ])->withCount(['comments'])
-                ->order('create_time', 'desc')
-                ->limit($num)
+                ->order('id', 'desc')
                 ->append(['url'])
                 ->select()
                 ->toArray();
@@ -151,8 +150,9 @@ class Article extends Model
 			} ])
             ->withCount(['comments'])
             ->where('status', '=', 1)
-            ->order('create_time','desc')
+            ->order('id','desc')
             ->limit($num)
+            ->hidden(['art_pass'])
             ->append(['url'])
             ->select();
 
@@ -163,7 +163,7 @@ class Article extends Model
 
     /**
      * 热点文章
-     * @param int $num 热点列表数量
+     * @param int $num 热点列表数量 评论或者pv排序
      * @return \think\Collection
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
@@ -171,17 +171,48 @@ class Article extends Model
      */
     public function getArtHot(int $num)
     {
-        $artHot = $this::field('id,cate_id,title,create_time')
-        ->withCount('comments')
-        ->where(['status' => 1])
-        ->whereMonth('create_time')
-        ->order('comments_count','desc')
-        ->limit($num)
-        ->withCache(600)
-        ->append(['url'])
-        ->select();
+        return Cache::remember('article_hot', function() use($num){
+            $comments = Comment::field('article_id,count(*) as count')
+            ->where('comment.delete_time',0)
+            ->hasWhere('article',['status' =>1, 'delete_time' => 0])
+            ->group('article_id')
+            ->order('count','desc')
+            ->limit($num)
+            ->select();
+            $idArr = [];
+            foreach($comments as $v) {
+                $idArr[] = $v->article_id;
+            }
+            $where = [];
+            if(count($idArr)) {
+                // 评论数
+                $where = [
+                    ['id', 'in', $idArr]
+                ];
 
-        return $artHot;
+                $artHot = $this::field('id,cate_id,title,create_time')
+                ->withCount('comments')
+                ->where($where)
+                //->whereYear('create_time')
+                // ->order('comments_count','desc')
+                ->append(['url'])
+                ->select();
+            } else {
+                // pv数
+                $where = [
+                    ['status', '=', 1]
+                ];
+                $artHot = $this::field('id,cate_id,title,create_time')
+                ->withCount('comments')
+                ->where($where)
+                ->whereMonth('create_time')
+                ->order('pv','desc')
+                ->limit($num)
+                ->append(['url'])
+                ->select();
+            }
+            return $artHot;
+        }, 3600);
     }
 
     /**
@@ -223,12 +254,6 @@ class Article extends Model
      */
     public function getCateList(string $ename, string $type, int $page = 1)
     {
-        $where = [];
-        $cateId = Cate::where('ename',$ename)->value('id');
-        if($cateId){
-            $where[] = ['cate_id' ,'=', $cateId];
-        }
-
         switch ($type) {
             //查询文章,15个分1页
             case 'jie':
@@ -244,10 +269,28 @@ class Article extends Model
                 $where[] = ['jie','=', 0];
                 break;
         }
+
         $where[] = ['status', '=', 1];
 
-        return Cache::remember('cate_list_'.$ename.$type.$page, function() use($where,$page){
-            return $this::field('id,cate_id,user_id,title,content,title_color,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
+        return Cache::remember('cate_list_'.$ename.$type.$page, function() use($where,$ename,$page){
+            $cateId = Cate::where('ename',$ename)->value('id');
+            if($cateId){
+                $where[] = ['cate_id' ,'=', $cateId];
+            }
+
+            $list = $this::field('id')->where($where)->order(['id'=>'desc'])->paginate([
+                'list_rows' => 15,
+                'page' => $page
+            ])->toArray();
+
+            $idArr = [];
+            if($list['total'] > 0) {
+                foreach($list['data'] as $v) {
+                    $idArr[] = $v['id'];
+                }
+            }
+
+            $data = $this::field('id,cate_id,user_id,title,content,title_color,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
             ->with([
                 'cate' => function($query) {
                     $query->field('id,catename,ename');
@@ -256,13 +299,19 @@ class Article extends Model
                     $query->field('id,name,nickname,user_img,vip');
                 }
             ])->withCount(['comments'])
-                ->where($where)
-                ->limit(15)
-                ->order(['create_time'=>'desc'])
-                ->paginate([
-                    'list_rows' => 15,
-                    'page' => $page
-                ])->append(['url'])->toArray();
+                ->where('id','in',$idArr)
+                ->order(['id'=>'desc'])
+                ->append(['url'])
+                ->hidden(['art_pass'])
+                ->select()
+                ->toArray();
+            return [
+                'total' => $list['total'],
+                'per_page' => $list['per_page'],
+                'current_page' => $list['current_page'],
+                'last_page' => $list['last_page'],
+                'data' => $data
+            ];
         }, 600);
     }
 
@@ -273,7 +322,7 @@ class Article extends Model
             $query->where(['delete_time'=>0,'status'=>1])->field('id,ename');
         }])
         ->where(['user_id' => $id,'status' => 1])
-        ->order(['create_time'=>'desc'])
+        ->order('id','desc')
         ->append(['url'])
         ->limit(25)
         ->cache(3600)
@@ -296,7 +345,7 @@ class Article extends Model
             $map[] = ['title','like','%'.$keywords.'%'];
             $res = Article::where($map)
             ->withCount('comments')
-            ->order('create_time','desc')
+            ->order('id','desc')
             ->append(['url'])
             ->paginate(10);
             
@@ -363,23 +412,33 @@ class Article extends Model
      * @param [type] $cid 当前分类ID
      * @return void|array
      */
-    public function getPrevNextArticle($id,$cid)
+    public function getPrevNextArticle($id, $cid)
     {
         //上一篇
-        $previous = $this::field('id,title,cate_id')
-        ->where([
-            ['id', '<', $id],
+        $pIds = $this::where([
+            ['id', '>=', $id], // >= <= 条件可以使用索引
             ['cate_id', '=', $cid],
             ['status', '=',1]
-        ])->order('id desc')->limit(1)->append(['url'])->select()->toArray();
+        ])->order('id asc')->limit(2)->column('id');
 
+        if(count($pIds) === 2) {
+            $previous = $this::field('id,title,cate_id')->append(['url'])->find($pIds[1])->toArray();
+        } else {
+            $previous = [];
+        }
+  
         //下一篇
-        $next = $this::field('id,title,cate_id')
-        ->where([
-            ['id', '>', $id],
+        $nids = $this::where([
+            ['id', '<=', $id],
             ['cate_id', '=', $cid],
             ['status', '=',1]
-        ])->order('id asc')->limit(1)->append(['url'])->select()->toArray();
+        ])->order('id desc')->limit(2)->column('id');
+
+        if(count($nids) === 2) {
+            $next = $this::field('id,title,cate_id')->append(['url'])->find($nids[1])->toArray();
+        } else {
+            $next = [];
+        }
 
         return ['previous' => $previous, 'next' => $next];
     }
@@ -398,7 +457,7 @@ class Article extends Model
         ])
         ->where(['status' => 1])
         ->where($where)
-        ->order('create_time', 'desc')
+        ->order('id', 'desc')
         ->paginate([
             'list_rows' => $limit,
             'page' => $page
@@ -418,7 +477,7 @@ class Article extends Model
              }
          ])
          ->where($where)
-         ->order('create_time', 'desc')
+         ->order('id', 'desc')
          ->paginate([
              'list_rows' => $limit,
              'page' => $page

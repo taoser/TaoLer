@@ -11,7 +11,6 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
-use app\common\lib\facade\HttpHelper;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -32,13 +31,22 @@ class Index extends BaseController
      */
     public function index()
     {
+
+		// $res = get_addons_info('callme1');
+// halt($res);
+		// $htmlString = "<p>这是一个<a href='http://example.com'>链接</a>和其他文本。</p>";
+		// $cleanString = preg_replace("/<a\b[^>]*>(.*?)<\/a>/is", "", $htmlString);
+		// //$cleanString = preg_replace("(<a [^>]*>|</a>)","",$htmlString);
+		// echo $cleanString;
+
 		// $ip = file_get_contents('https://myip.ipip.net');
 		// echo "My public IP address is: " . $ip;
-// 		$alipay = AlipayFactory::createPayMethod();
-// 		$weixin = WeixinFactory::createPayMethod();
-// 		$a = $alipay->index();
-// 		$b= $weixin->index();
-// var_dump($a,$b);
+		// $alipay = AlipayFactory::createPayMethod();
+		// $weixin = WeixinFactory::createPayMethod();
+		// $a = $alipay->index();
+		// $b= $weixin->index();
+		// var_dump($a,$b);
+
 		$types = input('type');
 		//置顶文章
 		$artTop = Article::getArtTop(5);

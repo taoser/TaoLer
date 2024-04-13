@@ -50,6 +50,7 @@ class Article extends BaseController
 		
         //分类列表
 		$artList = $this->model->getCateList($ename,$type,$page);
+		// halt($artList);
 		//	热议文章
 		$artHot = $this->model->getArtHot(10);
 
@@ -118,15 +119,15 @@ class Article extends BaseController
 
 		//上一篇下一篇
 		$upDownArt =  $this->model->getPrevNextArticle($id,$artDetail['cate_id']);
-		if(empty($upDownArt['previous'][0])) {
+		if(empty($upDownArt['previous'])) {
             $previous = '前面已经没有了！';
         } else {
-            $previous = '<a href="' . $upDownArt['previous'][0]['url'] . '" rel="prev">' . $upDownArt['previous'][0]['title'] . '</a>';
+            $previous = '<a href="' . $upDownArt['previous']['url'] . '" rel="prev">' . $upDownArt['previous']['title'] . '</a>';
         }
-		if(empty($upDownArt['next'][0])) {
+		if(empty($upDownArt['next'])) {
             $next = '已经是最新的内容了!';
         } else {
-            $next = '<a href="' . $upDownArt['next'][0]['url'] . '" rel="prev">' . $upDownArt['next'][0]['title'] . '</a>';
+            $next = '<a href="' . $upDownArt['next']['url'] . '" rel="prev">' . $upDownArt['next']['title'] . '</a>';
         }
 
 		//评论
@@ -440,7 +441,7 @@ class Article extends BaseController
 	 */
     public function delete()
 	{
-		$article = $this->model->find(input('id'));
+		$article = $this->model->find((int)input('id'));
 		$result = $article->together(['comments'])->delete();
 		if($result) {
             return  Msgres::success('delete_success');

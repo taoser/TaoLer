@@ -13,12 +13,14 @@
 <div class="fly-msg" style="margin-bottom: 20px;"> 
 	Hi，<span style="color: red">{:session('user_name')}</span>，你已是我们的正式社员。
 </div>
-<div class="layui-row layui-col-space20"> 
+<div class="layui-row layui-col-space20">
+{if hook('signstatushook') == 1}
 <div class="layui-col-md6">
-<div class="fly-panel fly-signin"> 
+	<div class="fly-panel fly-signin">
 	{:hook('signhook', ['id'=>1])}
+	</div>
 </div>
-</div> 
+{/if}
 <div class="layui-col-md6"> 
 <div class="fly-panel fly-panel-border"> <div class="fly-panel-title"> 我的会员信息 </div> 
 <div class="fly-panel-main layui-text" style="padding: 18px 15px; height: 50px; line-height: 26px;"> 

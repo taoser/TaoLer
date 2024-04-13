@@ -63,12 +63,12 @@ class Cate extends Model
 	public function del($id)
 	{
 		$cates = $this->field('id,pid')->with('article')->find($id);
-		$sonCate = $this->field('id,pid')->where('pid',$cates['id'])->find();
-		if(empty($sonCate)) {
-			$res = $cates->together(['article'])->delete();
-            return $res ? 1 : '删除失败';
+		$sonCate = $this::where('pid',$cates['id'])->count();
+		if($sonCate > 0) {
+            return '存在子分类，无法删除';
 		}
-        return '存在子分类，无法删除';
+        $res = $cates->together(['article'])->delete();
+        return $res ? 1 : '删除失败';
 	}
 
     // 分类表
@@ -121,11 +121,11 @@ class Cate extends Model
     public function getUrlAttr($value,$data)
     {
         // 栏目下存在帖子，则返回正常url,否则为死链
-        $articleArr = Article::field('id')->where('cate_id', $data['id'])->find();
-        if(empty($articleArr)) {
-            return 'javascript:void(0);';
+        $articleCount = Article::where('cate_id', $data['id'])->count();
+        if($articleCount > 0) {
+            return (string) url('cate',['ename' => $data['ename']]);
         }
-        return (string) url('cate',['ename' => $data['ename']]);;
+        return 'javascript:void(0);';
     }
 	
 	

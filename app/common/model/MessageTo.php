@@ -33,12 +33,11 @@ class MessageTo extends Model
 	//得到消息数
 	public function getMsgNum($id)
 	{
-		$msg = $this::where(['receve_id'=>$id,'is_read'=>0])->column('id');
-		if($num = count($msg)) {
-			return $num;
-		} else {
-			return 0;
+		$msgNum = $this::where(['receve_id'=>$id,'is_read'=>0])->count('id');
+		if($msgNum) {
+			return $msgNum;
 		}
+		return 0;
 	}
 
 	

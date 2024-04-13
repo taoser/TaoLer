@@ -302,8 +302,10 @@ class User extends BaseController
     {
 		//用户
 		$u = Cache::get('user'.$id);
-		if(!$u){
-			$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->cache(3600)->find($id);
+		if(empty($u)){
+			$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->find($id);
+		} else {
+			$u = $u[0];
 		}
 		
 		$article = new Article();
@@ -320,7 +322,7 @@ class User extends BaseController
 		->field('a.id,a.title,t.ename,c.content,c.create_time,c.delete_time,c.status')
 		->where(['a.delete_time'=>0,'c.delete_time'=>0,'c.status'=>1])
 		->where('c.user_id',$id)
-		->order(['c.create_time'=>'desc'])
+		->order(['c.id'=>'desc'])
 		->limit(10)
 		->cache(3600)->select();
 
