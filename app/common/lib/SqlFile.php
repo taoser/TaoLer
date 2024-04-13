@@ -85,7 +85,7 @@ class SqlFile
             $sqlArr = self::loadSqlFile($sqlFile);
             if(!empty($sqlArr)) {
 				$orginal = 'tao_';	//sql默认表前缀
-				$prefix = config('database.mysql.prefix'); // 现在表前缀
+				$prefix = config('database.connections.mysql.prefix'); // 现在表前缀
 				($orginal == $prefix) ? true : $sqlArr = str_replace(" `{$orginal}", " `{$prefix}", $sqlArr);	//替换数组中表前缀
                 foreach($sqlArr as $v){
                     try {

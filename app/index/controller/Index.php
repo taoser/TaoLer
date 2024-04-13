@@ -32,7 +32,6 @@ class Index extends BaseController
      */
     public function index()
     {
-
 		// $comments = Comment::field('article_id,count(*) as count')
         //     ->hasWhere('article',['status' =>1])
         //     ->group('article_id')
