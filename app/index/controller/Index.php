@@ -16,6 +16,7 @@ use think\facade\Request;
 use think\facade\Db;
 use app\facade\Article;
 use app\common\lib\Msgres;
+use app\common\model\Comment;
 
 use addons\pay\controller\AlipayFactory;
 use addons\pay\controller\WeixinFactory;
@@ -32,8 +33,17 @@ class Index extends BaseController
     public function index()
     {
 
+		// $comments = Comment::field('article_id,count(*) as count')
+        //     ->hasWhere('article',['status' =>1])
+        //     ->group('article_id')
+        //     ->order('count','desc')
+        //     ->limit(5)
+        //     ->fetchSql(true)
+        //     ->select();
+        //     halt($comments);
+
 		// $res = get_addons_info('callme1');
-// halt($res);
+
 		// $htmlString = "<p>这是一个<a href='http://example.com'>链接</a>和其他文本。</p>";
 		// $cleanString = preg_replace("/<a\b[^>]*>(.*?)<\/a>/is", "", $htmlString);
 		// //$cleanString = preg_replace("(<a [^>]*>|</a>)","",$htmlString);

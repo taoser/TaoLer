@@ -116,7 +116,7 @@ class Article extends Model
                 ->where('id', 'in', $topIdArr)
                 ->with([
                     'cate' => function (Query $query) {
-                        $query->where('delete_time', 0)->field('id,catename,ename');
+                        $query->field('id,catename,ename');
                     },
                     'user' => function (Query $query) {
                         $query->field('id,name,nickname,user_img');
@@ -143,7 +143,7 @@ class Article extends Model
             $data = $this::field('id,title,title_color,cate_id,user_id,content,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
             ->with([
             'cate' => function(Query $query){
-                $query->where('delete_time',0)->field('id,catename,ename,detpl');
+                $query->field('id,catename,ename,detpl');
             },
 			'user' => function(Query $query){
                 $query->field('id,name,nickname,user_img');
@@ -173,8 +173,7 @@ class Article extends Model
     {
         return Cache::remember('article_hot', function() use($num){
             $comments = Comment::field('article_id,count(*) as count')
-            ->where('comment.delete_time',0)
-            ->hasWhere('article',['status' =>1, 'delete_time' => 0])
+            ->hasWhere('article',['status' => 1])
             ->group('article_id')
             ->order('count','desc')
             ->limit($num)
@@ -229,7 +228,7 @@ class Article extends Model
             ->where(['status'=>1])
             ->with([
                 'cate' => function(Query $query){
-                    $query->where('delete_time',0)->field('id,catename,ename');
+                    $query->field('id,catename,ename');
                 },
                 'user' => function(Query $query){
                     $query->field('id,name,nickname,user_img,area_id,vip,city')->withCount(['article','comments']);
@@ -319,7 +318,7 @@ class Article extends Model
     public function getUserArtList(int $id) {
         $userArtList = $this::field('id,cate_id,title,create_time,pv,is_hot')
         ->with(['cate' => function($query){
-            $query->where(['delete_time'=>0,'status'=>1])->field('id,ename');
+            $query->where(['status'=>1])->field('id,ename');
         }])
         ->where(['user_id' => $id,'status' => 1])
         ->order('id','desc')
@@ -368,7 +367,7 @@ class Article extends Model
         ->with(['user' => function($query){
             $query->field('id,name,nickname,user_img,area_id,vip');
         },'cate' => function($query){
-            $query->where('delete_time',0)->field('id,catename,ename');
+            $query->field('id,catename,ename');
         }])
         ->where(['status'=>1])
         ->order('id desc')

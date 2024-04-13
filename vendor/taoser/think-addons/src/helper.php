@@ -24,8 +24,10 @@ define('DS', DIRECTORY_SEPARATOR);
 spl_autoload_register(function ($class) {
 
     $class = ltrim($class, '\\');
-
-    $dir = App::getRootPath();
+    
+    //$dir = App::getRootPath();
+    $root_path = str_replace('\\','/', dirname(__DIR__));
+    $dir = strstr($root_path, 'vendor', true);
     $namespace = 'addons';
 
     if (strpos($class, $namespace) === 0) {

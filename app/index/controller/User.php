@@ -301,13 +301,8 @@ class User extends BaseController
     public function home($id)
     {
 		//用户
-		$u = Cache::get('user'.$id);
-		if(empty($u)){
-			$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->find($id);
-		} else {
-			$u = $u[0];
-		}
-		
+		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->find($id);
+	
 		$article = new Article();
 		$arts = $article->getUserArtList((int) $id);
 
