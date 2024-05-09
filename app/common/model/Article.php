@@ -11,13 +11,43 @@ use think\db\Query;
 
 class Article extends Model
 {
+    // 设置字段信息
+    // protected $schema = [
+    //     'id'            => 'int',
+    //     'title'         => 'string',
+    //     'content'       => 'mediumtext',
+    //     'status'        => 'enum',
+    //     'cate_id'       => 'int',
+    //     'user_id'       => 'int',
+    //     'goods_detail_id' => 'int',
+    //     'is_top'        => 'enum',
+    //     'is_hot'        => 'enum',
+    //     'is_reply'      => 'enum',
+    //     'has_img'       => 'enum',
+    //     'has_video'     => 'enum',
+    //     'has_audio'     => 'enum',
+    //     'pv'            => 'int',
+    //     'jie'           => 'enum',
+    //     'upzip'         => 'varchar',
+    //     'downloads'     => 'int',
+    //     'keywords'      => 'varchar',
+    //     'description'   => 'text',
+    //     'read_type'     => 'tinyint',
+    //     'art_pass'      => 'varchar',
+    //     'title_color'   => 'varchar',
+    //     'title_font'    => 'varchar',
+    //     'create_time'   => 'int',
+    //     'update_time'   => 'int',
+    //     'delete_time'   => 'int',
+    // ];
+
     protected $autoWriteTimestamp = true; //开启自动时间戳
     protected $createTime = 'create_time';
     protected $updateTime = 'update_time';
 	//开启自动设置
 	protected $auto = [];
 	//仅新增有效
-	protected $insert = ['create_time','status'=>1,'is_top'=>0,'is_hot'=>0];
+	protected $insert = ['create_time','status'=>1,'is_top'=>'0','is_hot'=>'0'];
 	//仅更新有效
 	protected $update = ['update_time'];
 	
@@ -126,7 +156,7 @@ class Article extends Model
                 ->append(['url'])
                 ->select()
                 ->toArray();
-        },60);
+        },180);
     }
 
     /**

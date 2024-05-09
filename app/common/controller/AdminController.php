@@ -20,6 +20,7 @@ use taoler\com\Files;
 use think\facade\Lang;
 use think\facade\Cookie;
 use think\facade\Config;
+use think\facade\Cache;
 
 /**
  * 控制器基础类
@@ -140,6 +141,7 @@ class AdminController extends \app\BaseController
 	public function clearSysCache()
     {
         //清理缓存
+        Cache::clear(); 
 		$atemp = str_replace('\\',"/",app()->getRootPath().'runtime/admin/temp/');
 		$itemp = str_replace('\\',"/",app()->getRootPath().'runtime/index/temp/');
 		$cache = str_replace('\\',"/",app()->getRootPath().'runtime/cache/');

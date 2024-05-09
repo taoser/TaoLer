@@ -568,6 +568,7 @@ CREATE TABLE `tao_user`  (
   `area_id` int NULL DEFAULT NULL COMMENT '用户所属区域ID',
   `status` enum('1','0','-1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '1启用0待审-1禁用',
   `vip` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'vip',
+  `note` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '备注信息',
   `last_login_ip` varchar(70) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '最后登陆ip',
   `last_login_time` int NOT NULL DEFAULT 0 COMMENT '最后登陆时间',
   `login_error_num` tinyint(1) NOT NULL DEFAULT 0 COMMENT '登陆错误次数',

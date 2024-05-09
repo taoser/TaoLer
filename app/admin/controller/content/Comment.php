@@ -118,7 +118,7 @@ class Comment extends AdminController
                     'title'     => htmlspecialchars($v['title']),
                     'avatar'    => $v['user_img'],
                     'content'   => strip_tags($v['content']),
-                    'replytime' => date("Y-m-d",$v['create_time']),
+                    'replytime' => date("Y-m-d H:i:s",$v['create_time']),
                     'check'     => $v['astatus'],
                     'url'       => $this->getArticleUrl($v['cid'],'index',$v['ename'])
                 ];

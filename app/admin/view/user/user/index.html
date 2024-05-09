@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<meta charset="utf-8">
-		<title>用户管理</title>
+		<meta charset="UTF-8">
+		<title>新增页面</title>
 		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 	</head>
-	<body class="pear-container">
+<body>
 		<div class="layui-card">
 			<div class="layui-card-body">
 				<form class="layui-form" action="">
-					<div class="layui-form-item">
-						<div class="layui-form-item layui-inline">
+					<div class="layui-row layui-col-space15">
+						<div class="layui-col-md2">
 							<label class="layui-form-label">ID</label>
 							<div class="layui-input-block">
 							  <input type="text" name="id" placeholder="请输入ID号" autocomplete="off" class="layui-input">
 							</div>
 						</div>
-						<div class="layui-form-item layui-inline">
+						<div class="layui-col-md2">
 							<label class="layui-form-label">用户</label>
-							<div class="layui-input-inline">
-								<input type="text" name="name" placeholder="用户名" class="layui-input">
+							<div class="layui-input-block">
+								<input type="text" name="name" placeholder="用户名" autocomplete="on"  class="layui-input">
 							</div>
 						</div>
-						<div class="layui-form-item layui-inline">
+						<div class="layui-col-md2">
 							<label class="layui-form-label">性别</label>
 							<div class="layui-input-block">
 								<select name="sex">
@@ -30,15 +30,15 @@
 								  <option value="0">男</option>
 								  <option value="1">女</option>
 								</select>
-							  </div>
+							</div>
 						</div>
-						<div class="layui-form-item layui-inline">
+						<div class="layui-col-md2">
 							<label class="layui-form-label">邮箱</label>
-							<div class="layui-input-inline">
+							<div class="layui-input-block">
 								<input type="text" name="email" placeholder="邮箱" class="layui-input">
 							</div>
 						</div>
-						<div class="layui-form-item layui-inline">
+						<div class="layui-col-md2">
 							<label class="layui-form-label">状态</label>
 							<div class="layui-input-block">
 							  <select name="status">
@@ -49,7 +49,7 @@
 							  </select>
 							</div>
 						</div>
-						<div class="layui-form-item layui-inline">
+						<div class="layui-col-md2">
 							<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
 								<i class="layui-icon layui-icon-search"></i>
 								查询
@@ -125,16 +125,16 @@
 				<i class="layui-icon layui-icon-down layui-font-12"></i>
 			</button>
 		</script>
-
 		<script src="/static/component/layui/layui.js"></script>
 		<script src="/static/component/pear/pear.js"></script>
 		<script>
-			layui.use(['table', 'form', 'jquery','common'], function() {
+			layui.use(['table', 'form', 'jquery','common','admin'], function() {
+				let $ = layui.jquery;
 				let table = layui.table;
 				let form = layui.form;
-				let $ = layui.jquery;
 				let common = layui.common;
 				var dropdown = layui.dropdown;
+				var admin = layui.admin;
 
 				let MODULE_PATH = "operate/";				
 
@@ -165,7 +165,7 @@
 							title: '积分/金币',
 							field: 'point',
 							align: 'center',
-							width:	120,
+							width:	100,
 							edit: 'text'
 						},
 						{
@@ -194,6 +194,13 @@
 							title: '注册',
 							field: 'jointime',
 							align: 'center'
+						},
+						{
+							title: '备注',
+							field: 'note',
+							align: 'center',
+							width:	100,
+							edit: 'text'
 						},
 						{
 							title: '操作',
@@ -239,7 +246,7 @@
 							this.elem.find('span').html(obj.title);
 							// 更新数据中对应的字段
 							data.vip = obj.title;
-							console.log(data)
+
 							$.ajax({
 								type: "post",
 								url: "{:url('user.user/editVipLevel')}",
@@ -281,27 +288,31 @@
 
 				// 单元格编辑后的事件
 				table.on('edit(user-table)', function(obj){
-					//var field = obj.field; // 得到修改的字段
+					var field = obj.field; // 得到修改的字段
 					var value = obj.value // 得到修改后的值
 					//var oldValue = obj.oldValue // 得到修改前的值 -- v2.8.0 新增
 					var data = obj.data // 得到所在行所有键值
 					//var col = obj.getCol(); // 得到当前列的表头配置属性 -- v2.8.0 新增
-					
+					data.field = field;
+					//return
 					// 值的校验
 					if(value.replace(/\s/g, '') === ''){
 						layer.tips('值不能为空', this, {tips: 1});
 						return obj.reedit(); // 重新编辑 -- v2.8.0 新增
 					}
 					// 只能为数值型
-					if(isNaN(value)) {
-						layer.tips('只能为数值', this, {tips: 1});
-						return obj.reedit();
+					if(field === 'point') {
+						if(isNaN(value)) {
+							layer.tips('只能为数值', this, {tips: 1});
+							return obj.reedit();
+						}
 					}
+					
 
 					// 编辑后续操作，如提交更新请求，以完成真实的数据更新
 					$.ajax({
 						type: "post",
-						url: "{:url('user.user/editPoint')}",
+						url: "{:url('user.user/editField')}",
 						data: data,
 						dataType: 'json',
 						success: (res) => {
@@ -391,7 +402,7 @@
 						title: '新增',
 						shade: 0.1,
 						area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'450px'],
-						content: 'add.html'
+						content: "{:url('user.user/add')}"
 					});
 				}
 
@@ -486,4 +497,4 @@
 			})
 		</script>
 	</body>
-</html>
+	</html>

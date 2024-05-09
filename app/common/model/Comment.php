@@ -23,19 +23,19 @@ class Comment extends Model
 	public function article()
 	{
 		//评论关联文章
-		return $this->belongsTo('Article','article_id','id');
+		return $this->belongsTo(Article::class);
 	}
 	
 	public function user()
 	{
 		//评论关联用户
-		return $this->belongsTo('User','user_id','id');
+		return $this->belongsTo(User::class);
 	}
 
 	//获取评论
     public function getComment($id, $page)
     {
-        $comment = $this::withTrashed()->with(['user'=>function($query){
+        $comment = $this->withTrashed()->with(['user'=>function($query){
             $query->field('id,name,user_img,sign,city,vip');
         }])
             ->where(['article_id'=>(int)$id,'status'=>1])
@@ -45,8 +45,7 @@ class Comment extends Model
             ->select()
             ->toArray();
 
-        foreach ($comment as $k => $v)
-        {
+        foreach ($comment as $k => $v) {
             if(empty($v['content'])){
                 unset($comment[$k]);
             }

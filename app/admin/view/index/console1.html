@@ -9,8 +9,8 @@
 	<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 	<link rel="stylesheet" href="/static/admin/css/other/console1.css" />
 </head>
-<body class="pear-container">
-<div>
+<body>
+<div class="pear-container">
 	<div class="layui-row layui-col-space10">
 		<div class="layui-col-xs6 layui-col-md3">
 			<div class="layui-card top-panel">
@@ -316,9 +316,10 @@
 		</div>
 	</div>
 </div>
-<!--</div>-->
+
 <script src="/static/component/layui/layui.js"></script>
 <script src="/static/component/pear/pear.js"></script>
+
 <script>
 	const indexForums = "{:url('Index/forums')}";	//帖子
 	const indexReplys = "{:url('Index/replys')}";		//回复
@@ -327,12 +328,13 @@
 	const v = layui.v;
 
 
-	layui.use(['form','layer', 'echarts', 'carousel', 'element', 'count','toast'], function() {
+	layui.use(['layer', 'echarts',  'carousel', 'element', 'count', 'toast', 'form'], function() {
 		let $ = layui.jquery, form = layui.form,
 				layer = layui.layer,
 				element = layui.element,
-				count = layui.count,
-				echarts = layui.echarts;
+				echarts = layui.echarts,
+				count = layui.count;
+
 		let toast = layui.toast;
 		let table = layui.table;
 		let carousel = layui.carousel;

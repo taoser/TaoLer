@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '2.5.8',
+    'version'   => '2.5.9',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
@@ -45,7 +45,7 @@ return [
 		// 登录验证码
 		'login_captcha'   => 1,
 		// 发帖验证码
-		'post_captcha'   => 0,
+		'post_captcha'   => 1,
 		// 显示分类
         'cate_show'   => 0,
 		// 显示用户归属地简称

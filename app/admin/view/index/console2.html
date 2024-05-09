@@ -9,166 +9,165 @@
 		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 		<link rel="stylesheet" href="/static/admin/css/other/console2.css" />
 	</head>
-	<body class="pear-container">
-		<div class="layui-row layui-col-space10">
-			<div class="layui-col-md8">
-				<div class="layui-row layui-col-space10">
-
-					<div class="layui-col-md12">
-						<div class="layui-card">
-							<div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a href="{:url('system.upgrade/index')}" id="up_version" lay-href="{:url('system.upgrade/index')}"></a></div>
-						</div>
-					</div>
-					<div class="layui-col-md6">
-						<div class="layui-card">
-							<div class="layui-card-header">
-								快捷菜单
+	<body>
+		<div class="pear-container">
+			<div class="layui-row layui-col-space10">
+				<div class="layui-col-md8">
+					<div class="layui-row layui-col-space10">
+	
+						<div class="layui-col-md12">
+							<div class="layui-card">
+								<div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a href="{:url('system.upgrade/index')}" id="up_version" lay-href="{:url('system.upgrade/index')}"></a></div>
 							</div>
-							<div class="layui-card-body">
-								<div class="layui-row layui-col-space10">
-									<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
-										<div class="pear-card" data-id="home1" data-title="主页"
-											data-url="http://www.baidu.com">
-											<i class="layui-icon layui-icon-home"></i>
-										</div>
-										<span class="pear-card-title">主页</span>
-									</div>
-									<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
-										<div class="pear-card" data-id="home2" data-title="弹层"
-											data-url="http://www.baidu.com">
-											<i class="layui-icon layui-icon-camera"></i>
-										</div>
-										<span class="pear-card-title">弹层</span>
-									</div>
-									<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
-										<div class="pear-card" data-id="home2" data-title="聊天"
-											data-url="http://www.baidu.com">
-											<i class="layui-icon layui-icon-star"></i>
-										</div>
-										<span class="pear-card-title">聊天</span>
-									</div>
-									<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
-										<div class="pear-card" data-id="home3" data-title="相机"
-											data-url="http://www.baidu.com">
-											<i class="layui-icon layui-icon-camera"></i>
-										</div>
-										<span class="pear-card-title">相机</span>
-									</div>
-									<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
-										<div class="pear-card" data-id="home4" data-title="表单"
-											data-url="http://www.baidu.com">
-											<i class="layui-icon layui-icon-console"></i>
-										</div>
-										<span class="pear-card-title">表单</span>
-									</div>
-									<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
-										<div class="pear-card" data-id="home5" data-title="安全"
-											data-url="http://www.baidu.com">
-											<i class="layui-icon layui-icon-auz"></i>
-										</div>
-										<span class="pear-card-title">安全</span>
-									</div>
-									<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
-										<div class="pear-card" data-id="home6" data-title="公告"
-											data-url="http://www.baidu.com">
-											<i class="layui-icon layui-icon-cart"></i>
-										</div>
-										<span class="pear-card-title">公告</span>
-									</div>
-									<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
-										<div class="pear-card" data-id="home7" data-title="更多"
-											data-url="http://www.baidu.com">
-											<i class="layui-icon layui-icon-app"></i>
-										</div>
-										<span class="pear-card-title">更多</span>
-									</div>
+						</div>
+						<div class="layui-col-md6">
+							<div class="layui-card">
+								<div class="layui-card-header">
+									快捷菜单
 								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-col-md6">
-						<div class="layui-card">
-							<div class="layui-card-header">
-								代办任务
-							</div>
-							<div class="layui-card-body">
-								<div class="layui-row layui-col-space10">
-									<div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
-										<div class="pear-card2">
-											<div class="title">待审评论</div>
-											<div class="count pear-text">{$pendComms}</div>
+								<div class="layui-card-body">
+									<div class="layui-row layui-col-space10">
+										<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+											<div class="pear-card" data-id="home1" data-title="主页"
+												data-url="http://www.baidu.com">
+												<i class="layui-icon layui-icon-home"></i>
+											</div>
+											<span class="pear-card-title">主页</span>
 										</div>
-									</div>
-									<div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
-										<div class="pear-card2">
-											<div class="title">待审帖子</div>
-											<div class="count pear-text">{$pendForums}</div>
+										<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+											<div class="pear-card" data-id="home2" data-title="弹层"
+												data-url="http://www.baidu.com">
+												<i class="layui-icon layui-icon-camera"></i>
+											</div>
+											<span class="pear-card-title">弹层</span>
 										</div>
-									</div>
-									<div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
-										<div class="pear-card2">
-											<div class="title">待审文章</div>
-											<div class="count pear-text">0</div>
+										<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+											<div class="pear-card" data-id="home2" data-title="聊天"
+												data-url="http://www.baidu.com">
+												<i class="layui-icon layui-icon-star"></i>
+											</div>
+											<span class="pear-card-title">聊天</span>
 										</div>
-									</div>
-									<div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
-										<div class="pear-card2">
-											<div class="title">待审用户</div>
-											<div class="count pear-text">{$pendUser}</div>
+										<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+											<div class="pear-card" data-id="home3" data-title="相机"
+												data-url="http://www.baidu.com">
+												<i class="layui-icon layui-icon-camera"></i>
+											</div>
+											<span class="pear-card-title">相机</span>
+										</div>
+										<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+											<div class="pear-card" data-id="home4" data-title="表单"
+												data-url="http://www.baidu.com">
+												<i class="layui-icon layui-icon-console"></i>
+											</div>
+											<span class="pear-card-title">表单</span>
+										</div>
+										<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+											<div class="pear-card" data-id="home5" data-title="安全"
+												data-url="http://www.baidu.com">
+												<i class="layui-icon layui-icon-auz"></i>
+											</div>
+											<span class="pear-card-title">安全</span>
+										</div>
+										<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+											<div class="pear-card" data-id="home6" data-title="公告"
+												data-url="http://www.baidu.com">
+												<i class="layui-icon layui-icon-cart"></i>
+											</div>
+											<span class="pear-card-title">公告</span>
+										</div>
+										<div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+											<div class="pear-card" data-id="home7" data-title="更多"
+												data-url="http://www.baidu.com">
+												<i class="layui-icon layui-icon-app"></i>
+											</div>
+											<span class="pear-card-title">更多</span>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="layui-col-md12">
-						<div class="layui-card">
-							<div class="layui-card-body">
-								<div class="layui-tab custom-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-									<div id="echarts-records" style="background-color:#ffffff;min-height:400px;"></div>
+						<div class="layui-col-md6">
+							<div class="layui-card">
+								<div class="layui-card-header">
+									代办任务
+								</div>
+								<div class="layui-card-body">
+									<div class="layui-row layui-col-space10">
+										<div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+											<div class="pear-card2">
+												<div class="title">待审评论</div>
+												<div class="count pear-text">{$pendComms}</div>
+											</div>
+										</div>
+										<div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+											<div class="pear-card2">
+												<div class="title">待审帖子</div>
+												<div class="count pear-text">{$pendForums}</div>
+											</div>
+										</div>
+										<div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+											<div class="pear-card2">
+												<div class="title">待审文章</div>
+												<div class="count pear-text">0</div>
+											</div>
+										</div>
+										<div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+											<div class="pear-card2">
+												<div class="title">待审用户</div>
+												<div class="count pear-text">{$pendUser}</div>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
-						<!-- <div class="layui-card">
-							<div class="layui-card-header">
-								使用记录
+						<div class="layui-col-md12">
+							<div class="layui-card">
+								<div class="layui-card-body">
+									<div class="layui-tab custom-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+										<div id="echarts-records" style="background-color:#ffffff;min-height:400px;"></div>
+									</div>
+								</div>
 							</div>
-							<div class="layui-card-body">
-								<table id="role-table" lay-filter="role-table"></table>
-							</div>
-						</div> -->
+							<!-- <div class="layui-card">
+								<div class="layui-card-header">
+									使用记录
+								</div>
+								<div class="layui-card-body">
+									<table id="role-table" lay-filter="role-table"></table>
+								</div>
+							</div> -->
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="layui-col-md4">
-				<div class="layui-card">
-					<div class="layui-card-header">留言板</div>
-					<div class="layui-card-body">
-						<ul class="pear-card-status">
-							{volist name="comments" id="vo"}
-							<li>
-								<p>{$vo.content|raw}</p>
-								<span>{$vo.create_time}</span>
-								<a href="{$vo.url}" data-id="{$vo.id}" target="_blank" class="pear-btn pear-btn-primary pear-btn-xs pear-reply">回复</a>
-							</li>
-							{/volist}
-						</ul>
+				<div class="layui-col-md4">
+					<div class="layui-card">
+						<div class="layui-card-header">留言板</div>
+						<div class="layui-card-body">
+							<ul class="pear-card-status">
+								{volist name="comments" id="vo"}
+								<li>
+									<p>{$vo.content|raw}</p>
+									<span>{$vo.create_time}</span>
+									<a href="{$vo.url}" data-id="{$vo.id}" target="_blank" class="pear-btn pear-btn-primary pear-btn-xs pear-reply">回复</a>
+								</li>
+								{/volist}
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!--</div>-->
-		<script src="/static/component/layui/layui.js"></script>
-		<script src="/static/component/pear/pear.js"></script>
+		
 		<script>
 			layui.use(['layer', 'echarts', 'carousel', 'element', 'table'], function() {
 				var $ = layui.jquery,
 					layer = layui.layer,
 					element = layui.element,
-					echarts = layui.echarts,
 					table = layui.table,
 					carousel = layui.carousel;
-
+					let echarts = layui.echarts;
 				let cols = [
 					[{
 							type: 'checkbox'

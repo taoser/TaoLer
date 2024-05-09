@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>管理员管理</title>
+  <title>评论管理</title>
   <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 </head>
 <body class="pear-container">
@@ -63,9 +63,14 @@
 	</button>
 	</script>
 
-
+  <script type="text/html" id="repTpl">
+    <ul>
+      <li> {{ d.replyer }} </li>
+      <li> {{ d.replytime }} </li>
+    </ul>
+  </script>
 	<script type="text/html" id="imgTpl">
-	<img style="width: 25px; height: 25px;" src= {{ d.avatar }}>
+	<img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= {{ d.avatar }}>
 	</script>
 	<script type="text/html" id="buttonCheck">
 		<input type="checkbox" name="check" lay-skin="switch" lay-filter="check" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{  d.check == 1 ? 'checked' : '' }} id="{{d.id}}" >
@@ -83,6 +88,7 @@
     <script src="/static/component/layui/layui.js"></script>
     <script src="/static/component/pear/pear.js"></script>
     <script>
+      const TABLE_LIST = "{:url('content.comment/list')}";
       const COMMENT_DELETE = "{:url('content.comment/delete')}";
 
       layui.use(['jquery','table','form','common'], function(){
@@ -94,16 +100,17 @@
         //评论管理
         table.render({
           elem: '#comment-table'
-          ,url: "{:url('content.comment/list')}"
+          ,url: TABLE_LIST
+          ,skin: 'line'
+          ,lineStyle: 'height: 80px;'
           ,toolbar: '#comment-toolbar'
           ,cols: [[
             {type: 'checkbox'}
             ,{field: 'id', width: 80, title: 'ID', sort: true}
-            ,{field: 'avatar', title: '头像', width: 60, templet: '#imgTpl'}
-            ,{field: 'replyer', title: '账号', width: 80}
+            ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
             ,{field: 'title', title: '标题',minWidth: 150, templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
-            ,{field: 'content', title: '评论', minWidth: 200}
-            ,{field: 'replytime', title: '回复时间', width: 120, sort: true}
+            ,{field: 'content', title: '评论内容', minWidth: 200,templet: '<div><strong>{{d.content}}</strong></div>'}
+            ,{ title: '详情', width: 180, templet: '#repTpl'}
             ,{field: 'check', title: '审核', templet: '#buttonCheck', width: 100}
             ,{title: '操作', width: 60, align: 'center', toolbar: '#comment-bar'}
           ]]

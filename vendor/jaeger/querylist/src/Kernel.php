@@ -14,7 +14,7 @@ use Closure;
 use QL\Providers\HttpServiceProvider;
 use QL\Providers\PluginServiceProvider;
 use QL\Providers\SystemServiceProvider;
-use QL\Collect\Support\Collection;
+use Tightenco\Collect\Support\Collection;
 
 class Kernel
 {

@@ -62,25 +62,27 @@ class Index extends AdminController
 	public function console2()
 	{
         // 评论、帖子状态
-        $comm = Db::name('comment')->field('id,content,create_time')->where(['delete_time'=>0,'status'=>0])->select();
-        $forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
-        $user = Db::name('user')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+        $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
+        $forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->count();
+        $user = Db::name('user')->where(['delete_time'=>0,'status'=>0])->count();
 		// 回复评论
-		$comments = Comment::field('id,article_id,content,create_time,delete_time')->where(['delete_time'=>0])->order('create_time desc')->limit(10)->select();
+		$comments = Comment::field('id,article_id,content,create_time,delete_time')->order('id desc')->limit(10)->select();
 		$commData = [];
 		foreach($comments as $v) {
-			$commData[] = [
-				'id'			=> $v->id,
-				'content'		=> strip_tags($v['content']),
-				'create_time'	=> $v['create_time'],
-				'url'			=> $this->getArticleUrl($v['article_id'], 'index', $v->article->cate->ename)
-			];
+			if(!is_null($v->article)) {
+				$commData[] = [
+					'id'			=> $v->id,
+					'content'		=> strip_tags($v['content']),
+					'create_time'	=> $v['create_time'],
+					'url'			=> $this->getArticleUrl($v['article_id'], 'index', $v->article->cate->ename)
+				];
+			}
 		}
 
         View::assign([
-            'pendComms'     => count($comm),
-            'pendForums'    => count($forum),
-            'pendUser'      => count($user),
+            'pendComms'     => $comm,
+            'pendForums'    => $forum,
+            'pendUser'      => $user,
 			'comments'		=> $commData,
         ]);
 		

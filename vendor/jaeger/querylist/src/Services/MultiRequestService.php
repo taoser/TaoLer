@@ -13,6 +13,7 @@ use Jaeger\GHttp;
 use Closure;
 use GuzzleHttp\Psr7\Response;
 use QL\QueryList;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Class MultiRequestService
@@ -52,7 +53,7 @@ class MultiRequestService
 
     public function error(Closure $error)
     {
-        $this->multiRequest = $this->multiRequest->error(function($reason, $index) use($error){
+        $this->multiRequest = $this->multiRequest->error(function(RequestException $reason, $index) use($error){
             $error($this->ql,$reason, $index);
         });
         return $this;

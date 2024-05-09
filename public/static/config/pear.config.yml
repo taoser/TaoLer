@@ -7,7 +7,6 @@ logo:
 ## 菜单配置
 menu: 
   ## 菜单数据来源
-  ## data: "/static/admin/data/menu.json"
   data: "/admin/system.menu/getnav"
   ## 菜单接口的请求方式 GET / POST
   method: "GET" 

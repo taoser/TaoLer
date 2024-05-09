@@ -65,7 +65,7 @@ return [
     'enable reply'      => '开评',
     'disable reply'     => '禁评',
     'go sign'			=> '去签到',
-    'more post'		    => '更多帖子',
+    'more post'		    => '更多内容',
     'friendly link'	    => '友情链接',
     'reviewers list'	=> '活跃榜',
 	'hot post list'	    => '本周热议',

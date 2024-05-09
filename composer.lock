@@ -799,16 +799,16 @@
         },
         {
             "name": "jaeger/querylist",
-            "version": "V4.2.9",
+            "version": "V4.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jae-jae/QueryList.git",
-                "reference": "7aae3aed38214d3d7096174faf49f6c41b2dd550"
+                "reference": "39dc0ca9c668bec7a793e20472ccd7d26ef89ea4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jae-jae/QueryList/zipball/7aae3aed38214d3d7096174faf49f6c41b2dd550",
-                "reference": "7aae3aed38214d3d7096174faf49f6c41b2dd550",
+                "url": "https://api.github.com/repos/jae-jae/QueryList/zipball/39dc0ca9c668bec7a793e20472ccd7d26ef89ea4",
+                "reference": "39dc0ca9c668bec7a793e20472ccd7d26ef89ea4",
                 "shasum": ""
             },
             "require": {
@@ -816,10 +816,11 @@
                 "jaeger/g-http": "^1.1",
                 "jaeger/phpquery-single": "^1",
                 "php": ">=7.1",
-                "symfony/var-dumper": ">3.4"
+                "tightenco/collect": ">5.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.5"
+                "phpunit/phpunit": "^8.5",
+                "symfony/var-dumper": "^3.3"
             },
             "type": "library",
             "autoload": {
@@ -846,7 +847,7 @@
             ],
             "support": {
                 "issues": "https://github.com/jae-jae/QueryList/issues",
-                "source": "https://github.com/jae-jae/QueryList/tree/V4.2.9"
+                "source": "https://github.com/jae-jae/QueryList/tree/V4.2.8"
             },
             "funding": [
                 {
@@ -854,7 +855,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-04-12T06:29:50+00:00"
+            "time": "2021-07-05T06:07:58+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -1143,16 +1144,16 @@
         },
         {
             "name": "overtrue/easy-sms",
-            "version": "2.6.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/overtrue/easy-sms.git",
-                "reference": "bb88b244f0de8d1f74bc50c4c08414f4c5f30281"
+                "reference": "d71d32f6631dda4c0da09c2831ff110a1c19873c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/overtrue/easy-sms/zipball/bb88b244f0de8d1f74bc50c4c08414f4c5f30281",
-                "reference": "bb88b244f0de8d1f74bc50c4c08414f4c5f30281",
+                "url": "https://api.github.com/repos/overtrue/easy-sms/zipball/d71d32f6631dda4c0da09c2831ff110a1c19873c",
+                "reference": "d71d32f6631dda4c0da09c2831ff110a1c19873c",
                 "shasum": ""
             },
             "require": {
@@ -1197,7 +1198,7 @@
             "description": "The easiest way to send short message.",
             "support": {
                 "issues": "https://github.com/overtrue/easy-sms/issues",
-                "source": "https://github.com/overtrue/easy-sms/tree/2.6.0"
+                "source": "https://github.com/overtrue/easy-sms/tree/2.7.1"
             },
             "funding": [
                 {
@@ -1205,7 +1206,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-08T06:36:45+00:00"
+            "time": "2024-04-17T07:10:05+00:00"
         },
         {
             "name": "php-di/invoker",
@@ -2182,16 +2183,16 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v5.4.35",
+            "version": "v5.4.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "abb0a151b62d6b07e816487e20040464af96cae7"
+                "reference": "e85a27cfdbb48e5e9a2d4a5f04efa359857771fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/abb0a151b62d6b07e816487e20040464af96cae7",
-                "reference": "abb0a151b62d6b07e816487e20040464af96cae7",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/e85a27cfdbb48e5e9a2d4a5f04efa359857771fd",
+                "reference": "e85a27cfdbb48e5e9a2d4a5f04efa359857771fd",
                 "shasum": ""
             },
             "require": {
@@ -2235,7 +2236,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v5.4.35"
+                "source": "https://github.com/symfony/var-exporter/tree/v5.4.39"
             },
             "funding": [
                 {
@@ -2251,7 +2252,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-23T13:51:25+00:00"
+            "time": "2024-04-18T08:26:06+00:00"
         },
         {
             "name": "taoser/think-addons",
@@ -2402,6 +2403,61 @@
                 "source": "https://github.com/taoser/think-setarr/tree/v0.0.3"
             },
             "time": "2022-04-16T23:08:43+00:00"
+        },
+        {
+            "name": "tightenco/collect",
+            "version": "v8.83.27",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tighten/collect.git",
+                "reference": "07eed6cf7441c7a69c379fdcb118eec1a1fdd0e6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tighten/collect/zipball/07eed6cf7441c7a69c379fdcb118eec1a1fdd0e6",
+                "reference": "07eed6cf7441c7a69c379fdcb118eec1a1fdd0e6",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3|^8.0",
+                "symfony/var-dumper": "^3.4 || ^4.0 || ^5.0 || ^6.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "nesbot/carbon": "^2.23.0",
+                "phpunit/phpunit": "^8.3"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Collect/Support/helpers.php",
+                    "src/Collect/Support/alias.php"
+                ],
+                "psr-4": {
+                    "Tightenco\\Collect\\": "src/Collect"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "Collect - Illuminate Collections as a separate package.",
+            "keywords": [
+                "collection",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/tighten/collect/issues",
+                "source": "https://github.com/tighten/collect/tree/v8.83.27"
+            },
+            "abandoned": "illuminate/collections",
+            "time": "2023-01-13T18:05:42+00:00"
         },
         {
             "name": "topthink/framework",

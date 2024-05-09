@@ -226,12 +226,16 @@ class User extends AdminController
 	}
 
 	// 编辑用户积分
-	public function editPoint()
+	public function editField()
 	{
 		if(Request::isAjax()) {
-			$param = Request::param(['id','point']);
-			
-			$res = Db::name('user')->where('id',(int)$param['id'])->update(['point' => (int)$param['point']]);
+			$param = Request::param(['id','field','point','note']);
+			if($param['field'] == 'point') {
+				$data = ['point' => (int)$param['point']];
+			} else {
+				$data = ['note' => $param['note']];
+			}
+			$res = Db::name('user')->where('id',(int)$param['id'])->update($data);
 			if($res > 0) {
 				return json(['code' => 0, 'msg' => '修改成功']);
 			}

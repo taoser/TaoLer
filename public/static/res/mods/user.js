@@ -157,9 +157,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
         table.reload('art-post');
       });
     } else if(obj.event === 'edit'){//编辑
-		  $.post(artEditUrl,{"id":id},function(){
 			  location.href = artEditUrl + '?id=' + id;
-		  });
 		}
   
   });
