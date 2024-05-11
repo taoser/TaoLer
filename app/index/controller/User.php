@@ -83,15 +83,15 @@ class User extends BaseController
 	{
 		//收藏的帖子
 		$collect = Collection::with(['article'=>function($query){
-			$query->withCount('comments')->where('status',1);
-		}])->where('user_id',$this->uid)->order('create_time','desc')->paginate(10);
+			$query->withTrashed();
+		}])->where('user_id',$this->uid)->order('id','desc')->paginate(10);
 		$count =$collect->total();
-		$res = [];
+
 		if($count){
+			$res = [];
 			$res['code'] = 0;
 			$res['count'] = $count ;
 			foreach($collect as $v){
-				
 				$res['data'][] = [
 					'id' 	=>$v['id'],
 					'title'	=> htmlspecialchars($v['collect_title']),
@@ -101,11 +101,9 @@ class User extends BaseController
 					'ctime' =>	$v['create_time']
 				]; 
 			}
-			
-		} else {
-			return json(['code'=>-1,'msg'=>'无数据']);
+			return json($res);
 		}
-		return json($res);
+		return json(['code'=>-1,'msg'=>'无数据']);		
 	}
 	
 	

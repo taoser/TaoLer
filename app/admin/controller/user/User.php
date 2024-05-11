@@ -71,7 +71,8 @@ class User extends AdminController
 						'jointime'	=>	date("Y-m-d H:i",$v['create_time']),
 						'check'		=>	$v['status'],
 						'auth'		=>	$v['auth'],
-						'vip'		=> 	$vipList[$v['vip']]['title']
+						'vip'		=> 	$vipList[$v['vip']]['title'],
+						'note'		=>  $v['note']
 					];
 				}
 				

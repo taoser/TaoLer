@@ -144,6 +144,10 @@
 				url: FORUM_List,
 				page: true,
 				cols: cols,
+				height: function(){
+					var otherHeight = $('.layui-card-body:first').outerHeight(); // 自定义其他区域的高度
+					return $(window).height() - otherHeight - 70; // 返回 number 类型
+				},
 				skin: 'line',
 				lineStyle: 'height: 120px;',
 				toolbar: '#forum-toolbar',
@@ -152,6 +156,7 @@
 					layEvent: 'refresh',
 					icon: 'layui-icon-refresh',
 				}, 'filter', 'print', 'exports'],
+				limit: 100,
 				limits: [100,200,500,1000]
 			});
 

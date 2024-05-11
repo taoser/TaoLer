@@ -441,12 +441,20 @@ class Article extends BaseController
 	 */
     public function delete()
 	{
-		$article = $this->model->find((int)input('id'));
-		$result = $article->together(['comments'])->delete();
-		if($result) {
-            return  Msgres::success('delete_success');
+		$id = input('id');
+		
+		if(Request::isAjax()){
+            try {
+                $arr = explode(",", $id);
+                foreach($arr as $v){
+                    $article = $this->model->find((int) $v);
+                    $article->together(['comments'])->delete();
+                }
+                return json(['code'=>0,'msg'=>'删除成功']);
+            } catch (\Exception $e) {
+                return json(['code'=>-1,'msg'=>'删除失败']);
+            }
 		}
-        return  Msgres::error('delete_error');
 	}
 
 	/**

@@ -4,7 +4,7 @@
 
  */
  
-layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
+layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom','common'], function(exports){
 
   var $ = layui.jquery;
   var layer = layui.layer;
@@ -18,6 +18,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
   var upload = layui.upload;
   var imgcom = layui.imgcom;
   var table = layui.table;
+  let common = layui.common;
 
   var gather = {}, dom = {
     mine: $('#LAY_mine')
@@ -35,19 +36,27 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
         ,url: artListUrl
         ,toolbar: '#toolbarPost'
 		    ,title: ''
+        ,height: function(){
+          var otherHeight = $('.fly-header').outerHeight(); // 自定义其他区域的高度
+          var footHeight = $('.footer').outerHeight(); 
+          return $(window).height() - otherHeight - footHeight - 150; // 返回 number 类型
+        }
         ,cols: [[
             {type: 'checkbox', fixed: 'left'},
             {type: 'numbers', fixed: 'left', title: '序号'}
             ,{field: 'title', title: '标题',minWidth: 250 ,templet: '<div><a href="{{d.url}}" target="_blank">{{-d.title}}</a></div>'}
-            ,{field: 'pv', title:'浏览 <i class="layui-icon layui-icon-tips layui-font-14" lay-event="pv-tips" title="该字段开启了编辑功能" style="margin-left: 5px;"></i>', fieldTitle: 'pv', hide: 0, width:100, expandedMode: 'tips', edit: 'text'}
-			      ,{field: 'status', title: '状态', width: 80}
+            ,{field: 'pv', title:'浏览 <i class="layui-icon layui-icon-tips layui-font-14" lay-event="pv-tips" title="该字段开启了编辑功能" style="margin-left: 5px;"></i>', fieldTitle: 'pv', align: 'center', hide: 0, width:100, expandedMode: 'tips', edit: 'text'}
+			      ,{field: 'status', title: '状态', width: 60}
 			      ,{field: 'ctime', title: '发布时间', width: 160}
             ,{field: 'utime', title: '更新时间', width:160}
             ,{field: 'datas', title: '数据', width: 80}
+            ,{field: 'url', title: 'link', width:100}
             ,{title: '操作', width: 150, align: 'center', toolbar: '#artTool'}
         ]]
         ,text: '对不起，加载出现异常！'
 		    ,page: true
+        ,limit: 20
+				,limits: [20,50,100,200,300]
     });
 
     // 工具栏事件
@@ -55,6 +64,16 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
       var id = obj.config.id;
       var checkStatus = table.checkStatus(id);
       var othis = lay(this);
+      var checkIds = common.checkField(obj,'id');
+
+			if (checkIds === "") {
+				layer.msg("未选中数据", {
+					icon: 3,
+					time: 1000
+				});
+				return false;
+			}
+
       switch(obj.event){
         case 'getCheckData':
           var data = checkStatus.data;
@@ -69,10 +88,23 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
           }
         );
         break;
-        case 'getData':
+        case 'deleteAll':
           var getData = table.getData(id);
-          console.log(getData);
-          layer.alert(layui.util.escape(JSON.stringify(getData)));
+          layer.confirm('确定删除吗?',{
+            title:'批量删除',
+            icon:3
+          },function(index){
+            layer.close(index);
+            $.post(atrDelUrl,{"id": checkIds},function(res){
+                if(res.code === 0){
+                  table.reload('art-post');
+                  layer.msg(res.msg,{icon:6,time:2000});
+                } else {
+                  layer.open({title:'删除失败',content:res.msg,icon:5,adim:6})
+                }
+              }
+            );
+          });
         break;
         case 'LAYTABLE_TIPS':
           layer.alert('自定义工具栏图标按钮');
@@ -86,6 +118,11 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
         elem: '#coll-post'
         ,url: collListUrl
 		    ,title: ''
+        ,height: function(){
+          var otherHeight = $('.fly-header').outerHeight(); // 自定义其他区域的高度
+          var footHeight = $('.footer').outerHeight(); 
+          return $(window).height() - otherHeight - footHeight - 170; // 返回 number 类型
+        }
         ,cols: [[
             {type: 'numbers', fixed: 'left'}
             ,{field: 'title', title: '标题',minWidth: 250,templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
@@ -96,6 +133,8 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom'], function(exports){
         ]]
         ,text: '对不起，加载出现异常！'
 		    ,page: true
+        ,limit: 20
+				,limits: [20,50,100,200]
     });
 
     // 单元格编辑事件
