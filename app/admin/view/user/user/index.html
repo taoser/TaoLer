@@ -242,10 +242,9 @@
 							data: res.viplist,
 							click: function(obj){
 							var data = table.getRowData(this.elem); // 获取当前行数据(如 id 等字段，以作为数据修改的索引)
-		
 							this.elem.find('span').html(obj.title);
 							// 更新数据中对应的字段
-							data.vip = obj.title;
+							data.vip = obj.vip;
 
 							$.ajax({
 								type: "post",

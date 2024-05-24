@@ -122,7 +122,7 @@
 {block name="script"}
 <script src="/static/xm-select.js"></script>
 <script>
-  let taonystatus = "{:hook('taonystatus') ? 1 : 0} ";
+
 
   layui.use(['fly'], function () {
     var $ = layui.jquery,
@@ -130,15 +130,6 @@
       form = layui.form,
       colorpicker = layui.colorpicker,
       upload = layui.upload;
-
-    //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-    // 编辑器插件启用状态
-    if(taonystatus == 0) {
-      $('.layui-textarea').each(function(){
-        var othis = $(this), html = othis.html();
-        othis.attr(fly.content(html));
-      })
-    }
 
     // 分类选择
       $.get("{:url('article/getCateTree')}",function(res){

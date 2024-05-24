@@ -585,7 +585,7 @@ CREATE TABLE `tao_user`  (
 -- ----------------------------
 -- Records of tao_user
 -- ----------------------------
-INSERT INTO `tao_user` VALUES (1, 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', 0, '管理员', 'earth', '1', '这是一个社区系统', '/static/res/images/avatar/00.jpg', '1', 0, 1, '1', 0, '127.0.0.1', 1677900186, 0, 0, 0, 1579053025, 1677900186, 0);
+INSERT INTO `tao_user` VALUES (1, 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', 0, '管理员', 'earth', '1', '这是一个社区系统', '/static/res/images/avatar/00.jpg', '1', 0, 1, '1', 0, '备注信息', '127.0.0.1', 1677900186, 0, 0, 0, 1579053025, 1677900186, 0);
 
 -- ----------------------------
 -- Table structure for tao_user_area

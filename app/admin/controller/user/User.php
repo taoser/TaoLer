@@ -31,8 +31,8 @@ class User extends AdminController
 	{
 		return View::fetch();
 	}
+	
 	//用户表
-
 	public function list()
 	{
 		if(Request::isAjax()){
@@ -249,8 +249,7 @@ class User extends AdminController
 	{
 		if(Request::isAjax()) {
 			$param = Request::param(['id','vip']);
-			$vipRule = Db::name('user_viprule')->field('vip,nick')->where('nick', $param['vip'])->find();
-			$res = Db::name('user')->where('id',(int)$param['id'])->update(['vip' => (int)$vipRule['vip']]);
+			$res = Db::name('user')->where('id',(int)$param['id'])->update(['vip' => (int)$param['vip']]);
 			if($res > 0) {
 				return json(['code' => 0, 'msg' => '修改成功']);
 			}
