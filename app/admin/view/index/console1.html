@@ -531,8 +531,14 @@
 				,{field: 'title', title: '标题', minWidth: 300, templet: '<div><a href="{{d.id}}" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
 				,{field: 'time', title: '时间', sort: true}
 				,{field: 'catename', title: '类别'}
-			]]
-			,page: true
+			]],
+			page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					//curr: 5, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+				}
 			,limit: 10
 			,limits: [10, 15, 20, 25, 30]
 			,text: '对不起，加载出现异常！'
@@ -543,7 +549,13 @@
 		table.render({
 			elem: '#console-topreply'
 			,url: indexReply //评论接口
-			,page: true
+			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					//curr: 5, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+			}
 			,cellMinWidth: 120
 			,cols: [[
 				{type: 'numbers', fixed: 'left'}
@@ -559,7 +571,13 @@
 		table.render({
 			elem: '#console-topSearch'
 			,url: indexForums //发贴接口
-			,page: true
+			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					//curr: 5, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+			}
 			,cellMinWidth: 120
 			,cols: [[
 				{type: 'numbers', fixed: 'left'}
@@ -575,7 +593,13 @@
 		table.render({
 			elem: '#console-topCard'
 			,url: indexReplys //评论接口
-			,page: true
+			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					//curr: 5, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+			}
 			,cellMinWidth: 120
 			,cols: [[
 				{type: 'numbers', fixed: 'left'}

@@ -45,51 +45,11 @@ class Forum extends AdminController
     public function list()
     {
         $data = Request::only(['id','name','title','sec','cate_id']);
-        $where = [];
-        if (!empty($data['sec'])) {
-            switch ($data['sec']) {
-                case '1':
-                    $where[] = ['status', '=', 1];
-                    break;
-                case '2':
-                    $where[] = ['is_top', '=', 1];
-                    break;
-                case '3':
-                    $where[] = ['is_hot', '=', 1];
-                    break;
-                case '4':
-                    $where[] = ['is_reply', '=', 1];
-                    break;
-                case '5':
-                    $where[] = ['status', '=', -1];
-                    break;
-                case '6':
-                    $where[] = ['status', '=', 0];
-                    break;
-            }
-        }
-        unset($data['sec']);
-
-        if(!empty($data['id'])){
-            $where[] = ['id', '=', $data['id']];
-        }
-
-        if(!empty($data['cate_id'])){
-            $where[] = ['cate_id', '=', $data['cate_id']];
-        }
-
-        if(!empty($data['name'])){
-            $userId = Db::name('user')->where('name',$data['name'])->value('id');
-            $where[] = ['user_id', '=', $userId];
-        }
-
-        if(!empty($data['title'])){
-            $where[] = ['title', 'like', '%'.$data['title'].'%'];
-        }
-
-        $list = $this->model->getAllStatusList($where, input('limit'), input('page'));
+        
+        $list = $this->model->getAllStatusList($data, (int)input('limit'), (int)input('page'));
+        
         $res = [];
-        if($list['total']){
+        if(count($list['data'])){
             foreach($list['data'] as $v) {
                 $res['data'][] = [
                     'id'        => $v['id'],
@@ -98,7 +58,7 @@ class Forum extends AdminController
                     'title'     => htmlspecialchars($v['title']),
                     'cate'      => $v['cate']['catename'],
                     'url'       => $this->getArticleUrl($v['id'], 'index', $v['cate']['ename']),
-                    'content'   => strip_tags($v['content']),
+                    'content'   => strip_tags($v['description']),
                     'posttime'  => $v['update_time'],
                     'top'       => $v['is_top'],
                     'hot'       => $v['is_hot'],
@@ -106,7 +66,8 @@ class Forum extends AdminController
                     'check'     => $v['status']
                 ];
             }
-            return json(['code' =>0, 'msg' => 'ok', 'count' => $list['total'], 'data' => $res['data']]);
+            //return json(['code' =>0, 'msg' => 'ok', 'count' => $list['total'], 'data' => $res['data']]);
+            return json(['code' =>0, 'msg' => 'ok', 'count' => $list['count'], 'data' => $res['data'], 'oldPage' => (int)input('page')]);
         }
         return json(['code' =>-1, 'msg' => 'no data']);
     }

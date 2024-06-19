@@ -82,8 +82,9 @@ Route::group(function () use($detail_as, $cate_as){
     //分类
 	Route::get($cate_as . '<ename>$','article/cate')->name('cate');
 	Route::get($cate_as . '<ename>/<type>$', 'article/cate')->name('cate_type');
+	// 分页路由
 	Route::get($cate_as . '<ename>/<type>/<page>$', 'article/cate')->name('cate_page');
-	})->pattern([
+})->pattern([
 		'ename' => '[\w|\-]+',
 		'type' => '\w+',
 		'page'   => '\d+',

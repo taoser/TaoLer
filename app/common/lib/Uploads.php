@@ -155,7 +155,7 @@ class Uploads
                 ->check(['file'=>$file]);
 
         } catch (ValidateException $e) {
-            halt($e->getMessage());
+            //halt($e->getMessage());
             return json(['status'=>-1,'msg'=>$e->getMessage()]);
         }
 

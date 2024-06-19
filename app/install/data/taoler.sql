@@ -435,21 +435,6 @@ CREATE TABLE `tao_message_to`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息详细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for tao_push_jscode
--- ----------------------------
-DROP TABLE IF EXISTS `tao_push_jscode`;
-CREATE TABLE `tao_push_jscode`  (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '平台名',
-  `jscode` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'js代码',
-  `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1push2taglink',
-  `create_time` int NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '站长平台自动推送js代码' ROW_FORMAT = Dynamic;
-
--- ----------------------------
 -- Table structure for tao_slider
 -- ----------------------------
 DROP TABLE IF EXISTS `tao_slider`;

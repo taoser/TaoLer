@@ -65,7 +65,7 @@
 
             <div class="layui-form-item layui-form-text">
               <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="详细内容"  class="layui-textarea taonyeditor" style="height: 260px;">{$article.content}</textarea>
+                <textarea id="L_content" name="content" lay-verify="" placeholder="详细内容"  class="layui-textarea taonyeditor" style="height: 260px;">{$article.content}</textarea>
               </div>
             </div>
             <div class="layui-form-item">
@@ -124,8 +124,6 @@
 {block name="script"}
 <script src="/static/xm-select.js"></script>
 <script>
-  let taonystatus = "{:hook('taonystatus') ? 1 : 0} ";
-
 	layui.use(['fly'], function(){
     var $ = layui.jquery
     ,fly = layui.fly
@@ -135,16 +133,6 @@
 
     var cateId = "{$article.cate.id}";
     var artId = "{$article.id}";
-
-
-    //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-    // 编辑器插件启用状态
-      if(taonystatus == 0) {
-      $('.layui-textarea').each(function(){
-        var othis = $(this), html = othis.html();
-        othis.attr(fly.content(html));
-      })
-    }
 
     // 分类选择
       $.get("{:url('article/getCateTree')}",function(res){

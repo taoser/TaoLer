@@ -42,17 +42,16 @@ class Article extends BaseController
 
 		// 分类信息
 		$cateInfo = $cate->getCateInfo($ename);
-
-		//分页url
-		$url = url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
-		//返回最后/前面的字符串
-		$path = substr($url,0,strrpos($url,"/"));
 		
         //分类列表
 		$artList = $this->model->getCateList($ename,$type,$page);
-		// halt($artList);
+
 		//	热议文章
 		$artHot = $this->model->getArtHot(10);
+
+		//分页url
+		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
+		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
 
 
 		$assignArr = [
@@ -64,6 +63,7 @@ class Article extends BaseController
 			'path'		=> $path,
 			'jspage'	=> 'jie'
 		];
+
 		View::assign($assignArr);
 
 		$cateView = is_null($cateInfo) ? 'article/cate' : 'article/' . $cateInfo->detpl . '/cate';
@@ -259,6 +259,8 @@ class Article extends BaseController
 			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
             $data['description'] = strip_tags($this->filterEmoji($data['description']));
+
+			
             // 获取分类ename,appname
             $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
 

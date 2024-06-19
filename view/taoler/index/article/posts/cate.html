@@ -87,9 +87,12 @@
 		laypage.render({
 			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
 			,count: "{$artList['total']}" //数据总数，从服务端得到
+			,groups: 1
 			,limit: "{$artList['per_page']}"
 			,curr : "{$artList['current_page']}"
-			
+			,first: false
+    		,last: false
+			,layout: ['prev', 'page','next','count']
 			//获取起始页
 			,jump: function(obj, first){
 				//首次不执行

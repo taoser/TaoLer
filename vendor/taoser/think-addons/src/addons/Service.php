@@ -22,74 +22,109 @@ class Service extends \think\Service
 
     public function register()
     {
-        // 绑定插件容器
-        $this->app->bind('addons', Service::class);
-
         $this->addons_path = $this->getAddonsPath();
-        // 自动载入插件
-        $this->autoload();
         // 加载系统语言包
         $this->loadLang();
-        // 加载自定义路由
-        $this->loadRoutes();
+        // 自动载入插件
+        $this->autoload();
         // 加载插件事件
         $this->loadEvent();
+        // 加载自定义路由
+        $this->loadRoutes();
         // 加载插件系统服务
         $this->loadService();
+        // 加载插件命令
+        $this->loadCommand();
         // 加载配置
         $this->loadConfig();
+        // 绑定插件容器
+        $this->app->bind('addons', Service::class);
         
     }
 
     public function boot()
     {
         $this->registerRoutes(function (Route $route) {
-            // 路由脚本
-            $execute = '\\taoser\\addons\\Route::execute';
+            // 只有在addons下进行注册解析
+            $path = $this->app->request->pathinfo();
+            $pathArr = explode("/", str_replace('.html','', str_replace('\\', '/', $path)));
+            if($pathArr[0] === 'addons') {
+                // 路由脚本
+                $execute = '\\taoser\\addons\\Route::execute';
 
-            // 注册插件公共中间件
+                // 中间件数组
+                $middlewaresArr = [];
+
+                // 注册插件公共中间件
             if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
                 $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
+//
+//                    // addons目录下全局中间件，对所有addons都生效
+//                    //$middleware = (array) include $this->app->addons->getAddonsPath() . 'middleware.php';
+//                    // 执行addons全局中间件
+//                    //$route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware($middleware);
+//                    //$middlewaresArr = array_merge($middlewaresArr, $middleware);
             }
-            // 注册控制器路由
-            $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
-            // 自定义路由
-            $routes = (array) Config::get('addons.route', []);
-            foreach ($routes as $key => $val) {
-                if (!$val) {
-                    continue;
-                }
-                if (is_array($val)) {
-                    $domain = $val['domain'];
-                    $rules = [];
-                    foreach ($val['rule'] as $k => $rule) {
-                        [$addon, $controller, $action] = explode('/', $rule);
-                        $rules[$k] = [
-                            'addon'        => $addon,
-                            'controller'    => $controller,
-                            'action'        => $action,
-                            'indomain'      => 1,
-                        ];
+
+
+//            $middlewareDir = $this->app->addons->getAddonsPath() . $addon. DIRECTORY_SEPARATOR . 'middleware' .  DIRECTORY_SEPARATOR;
+                    // 如果插件下存在middleware文件夹
+//            if(is_dir($middlewareDir)) {
+//                //配置
+//                $middleware_dir = scandir($middlewareDir);
+//                foreach ($middleware_dir as $name) {
+//                    if (in_array($name, ['.', '..'])) {
+//                        continue;
+//                    }
+//                    if(is_dir($middlewareDir . $name)) continue;
+//                    $middlewareClassName = str_replace('.php','',$name);
+//                    $middlewareClass = "\\addons\\{$addon}\\middleware\\{$middlewareClassName}";
+//
+//                    array_push($middlewaresArr, $middlewareClass);
+//                }
+//            }
+
+                // 注册控制器路由
+                $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+
+                // 自定义路由
+                $routes = (array) Config::get('addons.route', []);
+                foreach ($routes as $key => $val) {
+                    if (!$val) {
+                        continue;
                     }
-                    $route->domain($domain, function () use ($rules, $route, $execute) {
-                        // 动态注册域名的路由规则
-                        foreach ($rules as $k => $rule) {
-                            $route->rule($k, $execute)
-                                ->name($k)
-                                ->completeMatch(true)
-                                ->append($rule);
+                    if (is_array($val)) {
+                        $domain = $val['domain'];
+                        $rules = [];
+                        foreach ($val['rule'] as $k => $rule) {
+                            [$addon, $controller, $action] = explode('/', $rule);
+                            $rules[$k] = [
+                                'addon'        => $addon,
+                                'controller'    => $controller,
+                                'action'        => $action,
+                                'indomain'      => 1,
+                            ];
                         }
-                    });
-                } else {
-                    list($addon, $controller, $action) = explode('/', $val);
-                    $route->rule($key, $execute)
-                        ->name($key)
-                        ->completeMatch(true)
-                        ->append([
-                            'addon' => $addon,
-                            'controller' => $controller,
-                            'action' => $action
-                        ]);
+                        $route->domain($domain, function () use ($rules, $route, $execute) {
+                            // 动态注册域名的路由规则
+                            foreach ($rules as $k => $rule) {
+                                $route->rule($k, $execute)
+                                    ->name($k)
+                                    ->completeMatch(true)
+                                    ->append($rule);
+                            }
+                        });
+                    } else {
+                        list($addon, $controller, $action) = explode('/', $val);
+                        $route->rule($key, $execute)
+                            ->name($key)
+                            ->completeMatch(true)
+                            ->append([
+                                'addon' => $addon,
+                                'controller' => $controller,
+                                'action' => $action
+                            ]);
+                    }
                 }
             }
         });
@@ -146,7 +181,7 @@ class Service extends \think\Service
                 $commands = [];
                 //配置文件
                 $addons_config_dir = $this->addons_path . $name . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR;
-                //dump($addons_config_dir);
+
                 if (is_dir($addons_config_dir)) {
                     $files = glob($addons_config_dir . '*.php');
                     foreach ($files as $file) {
@@ -159,7 +194,7 @@ class Service extends \think\Service
                         }
                     }
                 }
-                //dump($commands);                
+
             }
         }
     }
@@ -268,6 +303,32 @@ class Service extends \think\Service
             }
         }
         Config::set($config, 'addons');
+    }
+
+    /**
+     * 加载插件命令
+     */
+    private function loadCommand()
+    {
+        $results = scandir($this->addons_path);
+        foreach ($results as $name) {
+            if ($name === '.' or $name === '..') {
+                continue;
+            }
+            if (is_file($this->addons_path . $name)) {
+                continue;
+            }
+            $addonDir = $this->addons_path . $name . DIRECTORY_SEPARATOR;
+            if (!is_dir($addonDir)) {
+                continue;
+            }
+            $command_file = $addonDir . 'command.php';
+            if (is_file($command_file)) {
+                $commands = include_once $command_file;
+                if (is_array($commands))
+                    $this->commands($commands);
+            }
+        }
     }
 
     /**

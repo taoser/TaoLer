@@ -50,6 +50,12 @@ class Addons extends AdminController
         //本地插件列表
         $localAddons = Files::getDirName('../addons/');
 
+        // 排除公共中间件目录
+        $key = array_search('middleware',$localAddons,true);
+        if($key !== false) {
+            unset($localAddons[$key]);
+        }
+
         if($data['type'] == 'installed') {
             $count = count($localAddons); // 安装总数
             // 已安装

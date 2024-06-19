@@ -6,7 +6,7 @@
 <div class="layui-container fly-marginTop">
   <div class="fly-panel" pad20 style="padding-top: 5px">
     <!--<div class="fly-none">没有权限</div>-->
-    <div class="layui-form layui-form-pane">
+    <form class="layui-form layui-form-pane">
       <div class="layui-tab layui-tab-brief" lay-filter="user">
         <ul class="layui-tab-title">
           <li class="layui-this">{:lang('add post')}<!-- 编辑帖子 --></li>
@@ -57,7 +57,7 @@
 
             <div class="layui-form-item layui-form-text">
               <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
+                <textarea id="L_content" name="content" lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
               </div>
             </div>
             {//附件}
@@ -113,7 +113,7 @@
           {/if}
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </div>
 {include file="public/menu" /}
@@ -242,8 +242,9 @@
   });
 </script>
 {// 编辑器}
-{:hook('taonyeditor')}
 {:hook('ueditor')}
+{:hook('taonyeditor')}
+
 {// 百度标题词条}
 {:hook('seoBaiduTitle')}
 {// 百度关键词}
