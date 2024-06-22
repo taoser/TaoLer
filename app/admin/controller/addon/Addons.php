@@ -278,6 +278,7 @@ class Addons extends AdminController
         if($response->code < 0) return json($response);
         // 获取配置信息
         $config = get_addons_config($data['name']);
+        $info = get_addons_info($data['name']);
         // 卸载插件
         $class = get_addons_instance($data['name']);
         $class->uninstall();
@@ -304,8 +305,10 @@ class Addons extends AdminController
             if(!empty($config)) {
                 set_addons_config($data['name'], $config);
             }
-            // 写入版本号
-            set_addons_info($data['name'],['version' =>$data['version']]);
+            // 回复info
+            $info['version'] = $data['version']; // 写入版本号
+            set_addons_info($data['name'], $info);
+
             return $installRes;
         } catch (\Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
