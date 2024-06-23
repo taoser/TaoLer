@@ -297,7 +297,7 @@ class Addons extends AdminController
             $res = $installRes->getData();
             if($res['code'] == -1) return json(['code' => -1, 'msg' => $res['msg']]);
             // 升级sql
-            $sqlUpdateFile = root_path().'addons/'.$data['name'].'/update.sql';
+            $sqlUpdateFile = root_path()."addons/{$data['name']}/update_{$data['version']}.sql";
             if(file_exists($sqlUpdateFile)) {
                 SqlFile::dbExecute($sqlUpdateFile);
             }
