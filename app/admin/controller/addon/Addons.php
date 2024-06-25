@@ -111,6 +111,7 @@ class Addons extends AdminController
     public function install(array $data = [], bool $type = true)
     {
         $data = Request::only(['name','version','uid','token']) ?? $data;
+        $data['type'] = 'install';
         // 接口
         $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
         if($response->code < 0) return json($response);
@@ -275,15 +276,8 @@ class Addons extends AdminController
     {
         $data = Request::only(['name','uid','token']);
         $plug = get_addons_info($data['name']);
-        $nowVersion = $plug['version'];
-        $appId = Db::name('app')->where('app_name',$data['name'])->value('id');
-        $newVersion = Db::name('plugins')->where([
-            ['plugins_version', '>', $nowVersion],
-            ['app_id','=',$appId],
-            ['status','=',1]
-        ])->limit(1)->value('plugins_version');
-
-        $data['version'] = $newVersion;
+        $data['version'] = $plug['version'];
+        $data['type'] = 'upgrade';
 
         // 接口
         $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
