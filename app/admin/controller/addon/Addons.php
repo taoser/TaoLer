@@ -17,6 +17,7 @@ use think\Exception;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Config;
+use think\facade\Db;
 use app\admin\model\AuthRule;
 use app\admin\model\Addons as AddonsModel;
 use think\response\Json;
@@ -104,7 +105,7 @@ class Addons extends AdminController
     /**
      * 安装&升级，
      * @param array $data
-     * @param bool $type true执行sql,false升级不执行sql
+     * @param bool $type true执行install.sql, false升级不执行sql
      * @return Json
      */
     public function install(array $data = [], bool $type = true)
@@ -272,7 +273,18 @@ class Addons extends AdminController
      */
     public function upgrade()
     {
-        $data = Request::only(['name','version','uid','token']);
+        $data = Request::only(['name','uid','token']);
+        $plug = get_addons_info($data['name']);
+        $nowVersion = $plug['version'];
+        $appId = Db::name('app')->where('app_name',$data['name'])->value('id');
+        $newVersion = Db::name('plugins')->where([
+            ['plugins_version', '>', $nowVersion],
+            ['app_id','=',$appId],
+            ['status','=',1]
+        ])->limit(1)->value('plugins_version');
+
+        $data['version'] = $newVersion;
+
         // 接口
         $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
         if($response->code < 0) return json($response);
