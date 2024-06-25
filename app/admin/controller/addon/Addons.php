@@ -111,8 +111,10 @@ class Addons extends AdminController
     public function install(array $data = [], bool $type = true)
     {
         $data = Request::only(['name','version','uid','token']) ?? $data;
+        $data['type'] = 'install';
+        
         // 接口
-        $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
+        $response = HttpHelper::withHost()->post('/v1/getaddons', $data)->toJson();
         if($response->code < 0) return json($response);
 
         //版本判断，是否能够安装？
@@ -298,7 +300,7 @@ class Addons extends AdminController
 
         try {
             // 升级安装，第二个type参数false为升级，true安装
-            $installRes = $this->install($data,false);
+            $installRes = $this->install($data, false);
             $res = $installRes->getData();
             if($res['code'] == -1) return json(['code' => -1, 'msg' => $res['msg']]);
             // 升级sql
