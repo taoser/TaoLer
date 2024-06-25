@@ -302,7 +302,7 @@ class Addons extends AdminController
             $res = $installRes->getData();
             if($res['code'] == -1) return json(['code' => -1, 'msg' => $res['msg']]);
             // 升级sql
-            $sqlUpdateFile = root_path()."addons/{$data['name']}/update_{$data['version']}.sql";
+            $sqlUpdateFile = root_path()."addons/{$data['name']}/update_{$response->version}.sql";
             if(file_exists($sqlUpdateFile)) {
                 SqlFile::dbExecute($sqlUpdateFile);
             }
@@ -311,7 +311,7 @@ class Addons extends AdminController
                 set_addons_config($data['name'], $config);
             }
             // 回复info
-            $info['version'] = $data['version']; // 写入版本号
+            $info['version'] = $response->version; // 写入版本号
             set_addons_info($data['name'], $info);
 
             return $installRes;
