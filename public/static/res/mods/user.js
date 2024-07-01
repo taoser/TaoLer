@@ -45,7 +45,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom','common'], function(
             {type: 'checkbox', fixed: 'left'},
             {type: 'numbers', fixed: 'left', title: '序号'}
             ,{field: 'title', title: '标题',minWidth: 250 ,templet: '<div><a href="{{d.url}}" target="_blank">{{-d.title}}</a></div>'}
-            ,{field: 'pv', title:'浏览 <i class="layui-icon layui-icon-tips layui-font-14" lay-event="pv-tips" title="该字段开启了编辑功能" style="margin-left: 5px;"></i>', fieldTitle: 'pv', align: 'center', hide: 0, width:100, expandedMode: 'tips', edit: 'text'}
+            ,{field: 'pv', title:'浏览 <i class="layui-icon layui-icon-tips layui-font-14" lay-event="pv-tips" title="该字段开启了编辑功能" style="margin-left: 5px;"></i>', fieldTitle: 'pv', align: 'center', hide: 0, width:100, expandedMode: 'tips', edit: 'text', sort: true}
 			      ,{field: 'status', title: '状态', width: 60}
 			      ,{field: 'ctime', title: '发布时间', width: 160}
             ,{field: 'utime', title: '更新时间', width:160}
