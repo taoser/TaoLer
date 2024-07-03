@@ -1,0 +1,18 @@
+{
+    "name"  : "workerman/gateway-worker",
+    "keywords": ["distributed","communication"],
+    "homepage": "http://www.workerman.net",
+    "license" : "MIT",
+    "require": {
+        "php": ">=7.0",
+        "workerman/workerman" : "^4.0.30"
+    },
+    "autoload": {
+        "psr-4": {"GatewayWorker\\": "./src"}
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.0-dev"
+        }
+    }
+}

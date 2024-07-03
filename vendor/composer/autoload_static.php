@@ -115,6 +115,8 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+            'GatewayWorker\\' => 14,
+            'GatewayClient\\' => 14,
         ),
         'F' => 
         array (
@@ -318,6 +320,14 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'GatewayWorker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/gateway-worker/src',
+        ),
+        'GatewayClient\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/gatewayclient',
         ),
         'Firebase\\JWT\\' => 
         array (
