@@ -300,6 +300,7 @@ class Article extends Model
      */
     public function getCateList(string $ename, string $type, int $page = 1)
     {
+        $where = [];
         switch ($type) {
             //查询文章,15个分1页
             case 'jie':
@@ -318,15 +319,18 @@ class Article extends Model
 
         $where[] = ['status', '=', 1];
 
-        return Cache::remember('cate_list_'.$ename.$type.$page, function() use($where,$ename,$page) {
-            
-            $cateId = Cate::where('ename',$ename)->value('id');
-            if($cateId){
-                $where[] = ['cate_id' ,'=', $cateId];
-            }
+        // ··································
+        $cateId = Cate::where('ename',$ename)->value('id');
+        if(!is_null($cateId)){
+            $where[] = ['cate_id' ,'=', $cateId];
+        }
 
-            // ··································
-            $count = $this->where($where)->cache(true)->count();
+        $count = (int) Cache::remember('cate_count_'.$ename, function() use($where){
+            return $this->where($where)->count();
+        });
+
+
+        return Cache::remember('cate_list_'.$ename.$type.$page, function() use($where,$ename,$page,$count) {
             // 默认排序
             $order = ['id' => 'desc'];
             if($page === 1) {

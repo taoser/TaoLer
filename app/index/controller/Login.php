@@ -13,6 +13,8 @@ use think\facade\Cache;
 use think\facade\View;
 use think\facade\Config;
 use app\common\model\User;
+use Exception;
+use Symfony\Component\VarExporter\Internal\Exporter;
 
 class Login extends BaseController
 {
@@ -37,7 +39,7 @@ class Login extends BaseController
         }
 		//获取登录前访问页面refer
         $refer = str_replace(Request::domain(), '', Request::server('HTTP_REFERER'));
-        Cookie::set('refer', $refer);
+
         if(Request::isAjax()) {
 			// 检验登录是否开放
 			if(config('taoler.config.is_login') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，网站维护中，暂时不能登录哦！']);
@@ -95,13 +97,14 @@ class Login extends BaseController
                 }  
 		   }			
 			//登陆请求
-			$user = new User();
-			$res = $user->login($data);
-            if ($res == 1) {	//登陆成功
-                return Msgres::success('login_success', Cookie::get('refer'));
-            } else {
-				return Msgres::error($res);
-            }
+			try{
+				$user = new User();
+				$res = $user->login($data);
+				return json(['code' => 0, 'msg' => '登录成功', 'data' => ['token' => $res['token'], 'url' => $refer]]);
+			} catch(Exception $e) {
+				return json(['code' => -1, 'msg' => $e->getMessage()]);
+			}
+			
         }
 
         return View::fetch('login');

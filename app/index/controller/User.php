@@ -383,8 +383,7 @@ class User extends BaseController
 	{
 		Session::clear();
 		Cookie::delete('auth');
-		//Cookie::delete('user_name');
-		//Cookie::delete('user_id');
+
 		if(Session::has('user_id')){
 			return json(['code' => -1, 'msg' => '退出失败']);
 		}

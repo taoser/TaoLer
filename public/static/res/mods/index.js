@@ -388,8 +388,10 @@ layui.define(['layer', 'form', 'util'], function(exports){
             if (data.code == 200) {
                 layer.close(loading);
                 layer.msg(data.msg, { icon: 1, time: 1000 }, function() {
+                    layui.data('tao-user', null); // 删除 test 表
                     location.href = data.url;
                 });
+                
             } else {
                 layer.close(loading);
                 layer.msg(data.msg, { icon: 2, anim: 6, time: 1000 });
@@ -419,19 +421,45 @@ layui.define(['layer', 'form', 'util'], function(exports){
 		return false;
 	});
   
-  //固定Bar
-  util.fixbar({
-    bar1: '&#xe642;'
-    ,bgcolor: '#009688'
-    ,css: {right: 10, bottom: 50}
-    ,click: function(type){
-		//添加文章
-      if(type === 'bar1'){
-        //slayer.msg('打开 index.js，开启发表新帖的路径');
-        location.href = articleAdd;
-      }
-    }
-  });
+	// 自定义固定条
+	util.fixbar({
+		bars: [{
+			type: 'chat',
+			icon: 'layui-icon-chat',
+			style: 'background-color: #16b777;'
+		}, { 
+			type: 'add',
+			icon: 'layui-icon-add-circle',
+			style: 'background-color: #FF5722;'
+		}],
+		// bar1: true,
+		// bar2: true,
+		// default: false, // 是否显示默认的 bar 列表 --  v2.8.0 新增
+		// bgcolor: '#393D52', // bar 的默认背景色
+		// css: {right: 100, bottom: 100},
+		// target: '#target-test', // 插入 fixbar 节点的目标元素选择器
+		// duration: 300, // top bar 等动画时长（毫秒）
+		on: { // 任意事件 --  v2.8.0 新增
+			mouseenter: function(type){
+				layer.tips(type, this, {
+				tips: 4, 
+				fixed: true
+				});
+			},
+			mouseleave: function(type){
+				layer.closeAll('tips');
+			}
+		},
+		// 点击事件
+		click: function(type){
+			// console.log(this, type);
+			if(type === 'add'){
+				location.href = articleAdd;
+			} else if(type === 'chat') {
+				location.href = '/addons/worker/im/index'
+			}
+		}
+	});
 
   exports('fly', fly);
 });

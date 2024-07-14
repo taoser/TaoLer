@@ -51,7 +51,7 @@ class JwtAuth
             if (!empty($decoded->data->uid)) {
                 $data =  $decoded->data;
             } else {
-                throw new \Exception('token 中没有用户信息');
+                throw new \Exception('The token does not contain user information');
             }
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage(), 201);

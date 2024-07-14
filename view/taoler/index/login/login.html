@@ -72,31 +72,35 @@
 
 {block name="script"}
 <script>
-  $(function() {
-    $('#login').click(function() {
-      var loadIndex = layer.load(2);
-      $.ajax({
-        type:"post",
-        url:"{:url('login/index')}",
-        data:$('form').serialize(),
-        daType:"json",
-        success:function (res){
-          layer.close(loadIndex);
-          if (res.code === 0) {
-            toast.success({title:"成功消息",message: res.msg});
-            location.href = res.url;
-          } else {
-            toast.error({title:"失败消息",message:res.msg});
-            layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-          }
-        }
-      });
-    return false;
-    });
-  });
-// 更新验证码
-  layui.jquery('#captcha').on('click',function(){
-    layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-  })
+	$(function() {
+		$('#login').click(function() {
+			var loadIndex = layer.load(2);
+			$.ajax({
+				type:"post",
+				url:"{:url('login/index')}",
+				data:$('form').serialize(),
+				daType:"json",
+				success:function (res){
+					layer.close(loadIndex);
+					if (res.code === 0) {
+						layui.data('tao-user', {
+							key: 'token',
+							value: res.data.token
+						});
+						toast.success({title:"成功消息",message: res.msg});
+						location.href = res.data.url;
+					} else {
+						toast.error({title:"失败消息",message:res.msg});
+						layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+					}
+				}
+			});
+			return false;
+		});
+	});
+	// 更新验证码
+	layui.jquery('#captcha').on('click',function(){
+		layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+	})
 </script>
 {/block}
