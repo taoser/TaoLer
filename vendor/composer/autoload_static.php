@@ -104,6 +104,8 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             'Invoker\\' => 8,
             'Intervention\\Image\\' => 19,
+            'Illuminate\\Contracts\\' => 21,
+            'Illuminate\\Container\\' => 21,
         ),
         'G' => 
         array (
@@ -304,6 +306,14 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'Intervention\\Image\\' => 
         array (
             0 => __DIR__ . '/..' . '/intervention/image/src/Intervention/Image',
+        ),
+        'Illuminate\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/contracts',
+        ),
+        'Illuminate\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/container',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
