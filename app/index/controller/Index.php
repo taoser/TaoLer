@@ -21,6 +21,8 @@ use app\common\model\Comment;
 use addons\pay\controller\AlipayFactory;
 use addons\pay\controller\WeixinFactory;
 
+use app\common\lib\Near;
+
 class Index extends BaseController
 {
     /**

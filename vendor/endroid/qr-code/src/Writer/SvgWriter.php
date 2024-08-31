@@ -81,7 +81,7 @@ final class SvgWriter implements WriterInterface
         return $result;
     }
 
-    /** @param array<mixed> $options */
+    /** @param array<string, mixed> $options */
     private function addLogo(LogoInterface $logo, SvgResult $result, array $options): void
     {
         $logoImageData = LogoImageData::createForLogo($logo);

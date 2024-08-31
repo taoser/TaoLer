@@ -1,12 +1,13 @@
 <p align="center">
-      <a href="https://pay.yansongda.cn" target="_blank" rel="noopener noreferrer"><img width="200" src="https://pay.yansongda.cn/images/logo.png" alt="Logo"></a>
+      <a href="https://pay.yansongda.cn" target="_blank" rel="noopener noreferrer"><img width="200" src="https://cdn.jsdelivr.net/gh/yansongda/pay/web/public/images/logo.png" alt="Logo"></a>
 </p>
 
 <p align="center">
     <a href="https://codecov.io/gh/yansongda/pay" ><img src="https://codecov.io/gh/yansongda/pay/branch/master/graph/badge.svg?token=tYMV0YT5jj"/></a>
     <a href="https://scrutinizer-ci.com/g/yansongda/pay/?branch=master"><img src="https://scrutinizer-ci.com/g/yansongda/pay/badges/quality-score.png?b=master" alt="scrutinizer"></a>
-    <a href="https://github.com/yansongda/pay/actions"><img src="https://github.com/yansongda/pay/workflows/Linter/badge.svg" alt="Linter Status"></a>
     <a href="https://github.com/yansongda/pay/actions"><img src="https://github.com/yansongda/pay/workflows/Tester/badge.svg" alt="Tester Status"></a>
+    <a href="https://github.com/yansongda/pay/actions"><img src="https://github.com/yansongda/pay/workflows/Code%20Coverage/badge.svg" alt="Code Coverage Status"></a>
+    <a href="https://github.com/yansongda/pay/actions"><img src="https://github.com/yansongda/pay/workflows/Coding%20Style/badge.svg" alt="Coding Style Status"></a>
     <a href="https://packagist.org/packages/yansongda/pay"><img src="https://poser.pugx.org/yansongda/pay/v/stable" alt="Stable Version"></a>
     <a href="https://packagist.org/packages/yansongda/pay"><img src="https://poser.pugx.org/yansongda/pay/downloads" alt="Total Downloads"></a>
     <a href="https://packagist.org/packages/yansongda/pay"><img src="https://poser.pugx.org/yansongda/pay/license" alt="License"></a>
@@ -41,9 +42,9 @@ yii 扩展包请 [传送至这里](https://github.com/guanguans/yii-pay)
 - 内置自动获取微信公共证书方法，再也不用再费劲去考虑第一次获取证书的的问题了
 - 符合 PSR2、PSR3、PSR4、PSR7、PSR11、PSR14、PSR18 等各项标准，你可以各种方便的与你的框架集成
 
-## 运行环境
-- PHP 7.3+ (v3.1.0 开始需 7.4+)
-- composer
+## 版本计划
+
+[https://pay.yansongda.cn/docs/v3/overview/planning](https://pay.yansongda.cn/docs/v3/overview/planning)
 
 ## 详细文档
 
@@ -51,7 +52,7 @@ yii 扩展包请 [传送至这里](https://github.com/guanguans/yii-pay)
 
 ## 支持的支付方法
 
-yansongda/pay 100% 兼容 支付宝/微信 所有功能（包括服务商功能），只需通过「插件机制」引入即可。
+yansongda/pay 100% 兼容 支付宝/微信/银联 所有功能（包括服务商功能），只需通过「插件机制」引入即可。
 
 同时，SDK 直接支持内置了以下插件，详情请查阅文档。
 
@@ -73,14 +74,30 @@ yansongda/pay 100% 兼容 支付宝/微信 所有功能（包括服务商功能�
 - H5 支付
 - 扫码支付
 - APP 支付
+- 刷卡支付
 - ...
-- ~~刷卡支付，微信v3版暂不支持，计划后续内置支持v2版，或直接使用 Pay v2 版本~~
-- ~~普通红包，微信v3版暂不支持，计划后续内置支持v2版，或直接使用 Pay v2 版本~~
-- ~~分裂红包，微信v3版暂不支持，计划后续内置支持v2版，或直接使用 Pay v2 版本~~
+
+### 抖音
+
+- 小程序支付
+- ...
+
+### 银联
+
+- 手机网站支付
+- 电脑网站支付
+- 刷卡支付
+- 扫码支付
+- ...
+- 
+### 江苏银行(e融支付)
+
+- 聚合扫码支付(微信,支付宝,银联,e融)
+- ...
 
 ## 安装
 ```shell
-composer require yansongda/pay:~3.1.0 -vvv
+composer require yansongda/pay:~3.7.0 -vvv
 ```
 
 ## 深情一撇
@@ -110,6 +127,8 @@ class AlipayController
                 'alipay_root_cert_path' => '/Users/yansongda/pay/cert/alipayRootCert.crt',
                 'return_url' => 'https://yansongda.cn/alipay/return',
                 'notify_url' => 'https://yansongda.cn/alipay/notify',
+                // 选填-第三方应用授权token
+                'app_auth_token' => '',
                 // 选填-服务商模式下的服务商 id，当 mode 为 Pay::MODE_SERVICE 时使用该参数
                 'service_provider_id' => '',
                 // 选填-默认为正常模式。可选为： MODE_NORMAL, MODE_SANDBOX, MODE_SERVICE
@@ -132,7 +151,9 @@ class AlipayController
 
     public function web()
     {
-        $result = Pay::alipay($this->config)->web([
+        Pay::config($this->config);
+        
+        $result = Pay::alipay()->web([
             'out_trade_no' => ''.time(),
             'total_amount' => '0.01',
             'subject' => 'yansongda 测试 - 1',
@@ -143,7 +164,9 @@ class AlipayController
 
     public function returnCallback()
     {
-        $data = Pay::alipay($this->config)->callback(); // 是的，验签就这么简单！
+        Pay::config($this->config);
+    
+        $data = Pay::alipay()->callback(); // 是的，验签就这么简单！
 
         // 订单号：$data->out_trade_no
         // 支付宝交易号：$data->trade_no
@@ -152,10 +175,10 @@ class AlipayController
 
     public function notifyCallback()
     {
-        $alipay = Pay::alipay($this->config);
-    
+        Pay::config($this->config);
+        
         try{
-            $data = $alipay->callback(); // 是的，验签就这么简单！
+            $data = Pay::alipay()->callback(); // 是的，验签就这么简单！
 
             // 请自行对 trade_status 进行判断及其它逻辑进行判断，在支付宝的业务通知中，只有交易通知状态为 TRADE_SUCCESS 或 TRADE_FINISHED 时，支付宝才会认定为买家付款成功。
             // 1、商户需要验证该通知数据中的out_trade_no是否为商户系统中创建的订单号；
@@ -163,11 +186,11 @@ class AlipayController
             // 3、校验通知中的seller_id（或者seller_email) 是否为out_trade_no这笔单据的对应的操作方（有的时候，一个商户可能有多个seller_id/seller_email）；
             // 4、验证app_id是否为该商户本身。
             // 5、其它业务逻辑情况
-        } catch (\Exception $e) {
-            // $e->getMessage();
+        } catch (\Throwable $e) {
+            dd($e);
         }
 
-        return $alipay->success();
+        return Pay::alipay()->success();
     }
 }
 ```
@@ -185,9 +208,11 @@ class WechatController
     protected $config = [
         'wechat' => [
             'default' => [
-                // 必填-商户号，服务商模式下为服务商商户号
+                // 必填-商户号
                 'mch_id' => '',
-                // 必填-商户秘钥
+                // 选填-v2商户私钥
+                'mch_secret_key_v2' => '',
+                // 必填-v3商户秘钥
                 'mch_secret_key' => '',
                 // 必填-商户私钥 字符串或路径
                 'mch_secret_cert' => '',
@@ -196,15 +221,11 @@ class WechatController
                 // 必填
                 'notify_url' => 'https://yansongda.cn/wechat/notify',
                 // 选填-公众号 的 app_id
-                'mp_app_id' => '2016082000291234',
+                'mp_app_id' => '',
                 // 选填-小程序 的 app_id
                 'mini_app_id' => '',
                 // 选填-app 的 app_id
                 'app_id' => '',
-                // 选填-合单 app_id
-                'combine_app_id' => '',
-                // 选填-合单商户号 
-                'combine_mch_id' => '',
                 // 选填-服务商模式下，子公众号 的 app_id
                 'sub_mp_app_id' => '',
                 // 选填-服务商模式下，子 app 的 app_id
@@ -213,9 +234,9 @@ class WechatController
                 'sub_mini_app_id' => '',
                 // 选填-服务商模式下，子商户id
                 'sub_mch_id' => '',
-                // 选填-微信公钥证书路径, optional，强烈建议 php-fpm 模式下配置此参数
+                // 选填-微信平台公钥证书路径, optional，强烈建议 php-fpm 模式下配置此参数
                 'wechat_public_cert_path' => [
-                    '45F59D4DABF31918AFCEC556D5D2C6E376675D57' => __DIR__.'/Cert/wechatPublicKey.crt',
+                    '45F59D4DABF31918AFCEC556D5D2C6E376675D57' => __DIR__.'/Cert/wechatpay_45F***D57.pem',
                 ],
                 // 选填-默认为正常模式。可选为： MODE_NORMAL, MODE_SERVICE
                 'mode' => Pay::MODE_NORMAL,
@@ -237,6 +258,8 @@ class WechatController
 
     public function index()
     {
+        Pay::config($this->config);
+        
         $order = [
             'out_trade_no' => time().'',
             'description' => 'subject-测试',
@@ -248,7 +271,7 @@ class WechatController
             ],
         ];
 
-        $pay = Pay::wechat($this->config)->mp($order);
+        $pay = Pay::wechat()->mp($order);
 
         // $pay->appId
         // $pay->timeStamp
@@ -257,30 +280,182 @@ class WechatController
         // $pay->signType
     }
 
-    public function notifyCallback()
+    public function callback()
     {
-        $pay = Pay::wechat($this->config);
-
+        Pay::config($this->config);
+        
         try{
-            $data = $pay->callback(); // 是的，验签就这么简单！
-        } catch (\Exception $e) {
-            // $e->getMessage();
+            $data = Pay::wechat()->callback(); // 是的，验签就这么简单！
+        } catch (\Throwable $e) {
+            dd($e);
         }
         
-        return $pay->success();
+        return Pay::wechat()->success();
+    }
+}
+```
+
+### 抖音
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Yansongda\Pay\Pay;
+
+class DouyinController
+{
+    protected $config = [
+        'douyin' => [
+            'default' => [
+                // 选填-商户号
+                // 抖音开放平台 --> 应用详情 --> 支付信息 --> 产品管理 --> 商户号
+                'mch_id' => '73744242495132490630',
+                // 必填-支付 Token，用于支付回调签名
+                // 抖音开放平台 --> 应用详情 --> 支付信息 --> 支付设置 --> Token(令牌)
+                'mch_secret_token' => 'douyin_mini_token',
+                // 必填-支付 SALT，用于支付签名
+                // 抖音开放平台 --> 应用详情 --> 支付信息 --> 支付设置 --> SALT
+                'mch_secret_salt' => 'oDxWDBr4U7FAAQ8hnGDm29i4A6pbTMDKme4WLLvA',
+                // 必填-小程序 app_id
+                // 抖音开放平台 --> 应用详情 --> 支付信息 --> 支付设置 --> 小程序appid
+                'mini_app_id' => 'tt226e54d3bd581bf801',
+                // 选填-抖音开放平台服务商id
+                'thirdparty_id' => '',
+                // 选填-抖音支付回调地址
+                'notify_url' => 'https://yansongda.cn/douyin/notify',
+            ],
+        ],
+        'logger' => [ // optional
+            'enable' => false,
+            'file' => './logs/alipay.log',
+            'level' => 'info', // 建议生产环境等级调整为 info，开发环境为 debug
+            'type' => 'single', // optional, 可选 daily.
+            'max_file' => 30, // optional, 当 type 为 daily 时有效，默认 30 天
+        ],
+        'http' => [ // optional
+            'timeout' => 5.0,
+            'connect_timeout' => 5.0,
+            // 更多配置项请参考 [Guzzle](https://guzzle-cn.readthedocs.io/zh_CN/latest/request-options.html)
+        ],
+    ];
+
+    public function pay()
+    {
+        Pay::config($this->config);
+        
+        $result = Pay::douyin()->mini([
+            'out_order_no' => date('YmdHis').mt_rand(1000, 9999),
+            'total_amount' => 1,
+            'subject' => '闫嵩达 - test - subject - 01',
+            'body' => '闫嵩达 - test - body - 01',
+            'valid_time' => 600,
+            'expand_order_info' => json_encode([
+                'original_delivery_fee' => 15,
+                'actual_delivery_fee' => 10
+            ])
+        ]);
+        
+        return $result;
+    }
+
+    public function callback()
+    {
+        Pay::config($this->config);
+    
+        try{
+            $data = Pay::douyin()->callback(); // 是的，验签就这么简单！
+        } catch (\Throwable $e) {
+            dd($e)
+        }
+
+        return Pay::douyin()->success();
+    }
+}
+```
+
+### 江苏银行(e融支付)
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Yansongda\Pay\Pay;
+
+class JsbController
+{
+    protected $config = [
+        'jsb' => [
+            'default' => [
+                // 服务代码
+                'svr_code' => '',
+                // 必填-合作商ID
+                'partner_id' => '',
+                // 必填-公私钥对编号
+                'public_key_code' => '00',
+                // 必填-商户私钥(加密签名)
+                'mch_secret_cert_path' => '',
+                // 必填-商户公钥证书路径(提供江苏银行进行验证签名用)
+                'mch_public_cert_path' => '',
+                // 必填-江苏银行的公钥(用于解密江苏银行返回的数据)
+                'jsb_public_cert_path' => '',
+                //支付通知地址
+                'notify_url'            => '', 
+                // 选填-默认为正常模式。可选为： MODE_NORMAL:正式环境, MODE_SANDBOX:测试环境
+                'mode' => Pay::MODE_NORMAL,
+            ]
+        ],
+        'logger' => [ // optional
+            'enable' => false,
+            'file' => './logs/epay.log',
+            'level' => 'info', // 建议生产环境等级调整为 info，开发环境为 debug
+            'type' => 'single', // optional, 可选 daily.
+            'max_file' => 30, // optional, 当 type 为 daily 时有效，默认 30 天
+        ],
+        'http' => [ // optional
+            'timeout' => 5.0,
+            'connect_timeout' => 5.0,
+            // 更多配置项请参考 [Guzzle](https://guzzle-cn.readthedocs.io/zh_CN/latest/request-options.html)
+        ],
+    ];
+
+    public function index()
+    {
+        Pay::config($this->config);
+        
+        $order = [
+            'outTradeNo' => time().'',
+            'proInfo' => 'subject-测试',
+            'totalFee'=> 1,
+        ];
+
+        $pay = Pay::jsb()->scan($order);
+    }
+
+    public function notifyCallback()
+    {
+        Pay::config($this->config);
+
+        try{
+            $data = Pay::jsb()->callback(); // 是的，验签就这么简单！
+        } catch (\Throwable $e) {
+            dd($e);
+        }
+        
+        return Pay::jsb()->success();
     }
 }
 ```
 
 ## 代码贡献
 
-由于测试及使用环境的限制，本项目中只开发了「支付宝」和「微信支付」的相关支付网关。
+由于测试及使用环境的限制，本项目中只开发了「支付宝」、「微信支付」、「抖音支付」、「银联」、「江苏银行」的相关支付网关。
 
 如果您有其它支付网关的需求，或者发现本项目中需要改进的代码，**_欢迎 Fork 并提交 PR！_**
 
 ## 赏一杯咖啡吧
 
-![pay](https://cdn.jsdelivr.net/gh/yansongda/pay-site/.vuepress/public/images/pay.jpg)
+![pay](https://cdn.jsdelivr.net/gh/yansongda/pay/web/public/images/pay.jpg)
 
 ## LICENSE
 

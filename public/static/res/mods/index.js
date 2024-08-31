@@ -432,6 +432,10 @@ layui.define(['layer', 'form', 'util'], function(exports){
 			icon: 'layui-icon-add-circle',
 			style: 'background-color: #FF5722;'
 		}],
+    css:{
+      right: 10,
+      bottom: 50
+    },
 		// bar1: true,
 		// bar2: true,
 		// default: false, // 是否显示默认的 bar 列表 --  v2.8.0 新增

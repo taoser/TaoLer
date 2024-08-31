@@ -13,26 +13,12 @@ use Psr\Container\ContainerInterface;
  */
 class Pipeline
 {
-    /**
-     * The container implementation.
-     */
     protected ContainerInterface $container;
 
-    /**
-     * The object being passed through the pipeline.
-     *
-     * @var mixed
-     */
-    protected $passable;
+    protected mixed $passable;
 
-    /**
-     * The array of class pipes.
-     */
     protected array $pipes = [];
 
-    /**
-     * The method to call on each pipe.
-     */
     protected string $method = 'handle';
 
     public function __construct(ContainerInterface $container)
@@ -40,24 +26,14 @@ class Pipeline
         $this->container = $container;
     }
 
-    /**
-     * Set the object being sent through the pipeline.
-     *
-     * @param mixed $passable
-     */
-    public function send($passable): self
+    public function send(mixed $passable): self
     {
         $this->passable = $passable;
 
         return $this;
     }
 
-    /**
-     * Set the array of pipes.
-     *
-     * @param array|mixed $pipes
-     */
-    public function through($pipes): self
+    public function through(mixed $pipes): self
     {
         $this->pipes = is_array($pipes) ? $pipes : func_get_args();
 
@@ -74,19 +50,13 @@ class Pipeline
         return $this;
     }
 
-    /**
-     * Run the pipeline with a final destination callback.
-     */
-    public function then(Closure $destination)
+    public function then(Closure $destination): mixed
     {
         $pipeline = array_reduce(array_reverse($this->pipes), $this->carry(), $this->prepareDestination($destination));
 
         return $pipeline($this->passable);
     }
 
-    /**
-     * Get the final piece of the Closure onion.
-     */
     protected function prepareDestination(Closure $destination): Closure
     {
         return static function ($passable) use ($destination) {
@@ -94,15 +64,12 @@ class Pipeline
         };
     }
 
-    /**
-     * Get a Closure that represents a slice of the application onion.
-     */
     protected function carry(): Closure
     {
         return function ($stack, $pipe) {
             return function ($passable) use ($stack, $pipe) {
                 if (is_callable($pipe)) {
-                    // If the pipe is an instance of a Closure, we will just call it directly but
+                    // If the pipe is an instance of a Closure, we will just call it directly, but
                     // otherwise we'll resolve the pipes out of the container and call it with
                     // the appropriate method and arguments, returning the results back out.
                     return $pipe($passable, $stack);
@@ -130,9 +97,6 @@ class Pipeline
         };
     }
 
-    /**
-     * Parse full pipe string to get name and parameters.
-     */
     protected function parsePipeString(string $pipe): array
     {
         [$name, $parameters] = array_pad(explode(':', $pipe, 2), 2, []);
@@ -144,14 +108,7 @@ class Pipeline
         return [$name, $parameters];
     }
 
-    /**
-     * Handle the value returned from each pipe before passing it to the next.
-     *
-     * @param mixed $carry
-     *
-     * @return mixed
-     */
-    protected function handleCarry($carry)
+    protected function handleCarry(mixed $carry): mixed
     {
         return $carry;
     }

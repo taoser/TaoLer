@@ -6,134 +6,127 @@ namespace Yansongda\Pay\Provider;
 
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Yansongda\Pay\Event;
+use Yansongda\Artful\Artful;
+use Yansongda\Artful\Event;
+use Yansongda\Artful\Exception\ContainerException;
+use Yansongda\Artful\Exception\InvalidParamsException;
+use Yansongda\Artful\Exception\ServiceNotFoundException;
+use Yansongda\Artful\Plugin\ParserPlugin;
+use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Contract\ProviderInterface;
+use Yansongda\Pay\Event\CallbackReceived;
+use Yansongda\Pay\Event\MethodCalled;
 use Yansongda\Pay\Pay;
-use Yansongda\Pay\Plugin\Alipay\CallbackPlugin;
-use Yansongda\Pay\Plugin\Alipay\LaunchPlugin;
-use Yansongda\Pay\Plugin\Alipay\PreparePlugin;
-use Yansongda\Pay\Plugin\Alipay\RadarPlugin;
-use Yansongda\Pay\Plugin\Alipay\SignPlugin;
-use Yansongda\Pay\Plugin\ParserPlugin;
+use Yansongda\Pay\Plugin\Alipay\V2\AddPayloadSignaturePlugin;
+use Yansongda\Pay\Plugin\Alipay\V2\AddRadarPlugin;
+use Yansongda\Pay\Plugin\Alipay\V2\CallbackPlugin;
+use Yansongda\Pay\Plugin\Alipay\V2\FormatPayloadBizContentPlugin;
+use Yansongda\Pay\Plugin\Alipay\V2\ResponsePlugin;
+use Yansongda\Pay\Plugin\Alipay\V2\StartPlugin;
+use Yansongda\Pay\Plugin\Alipay\V2\VerifySignaturePlugin;
 use Yansongda\Supports\Collection;
 use Yansongda\Supports\Str;
 
 /**
- * @method ResponseInterface app(array $order)      APP 支付
- * @method Collection        pos(array $order)      刷卡支付
- * @method Collection        scan(array $order)     扫码支付
- * @method Collection        transfer(array $order) 帐户转账
- * @method ResponseInterface wap(array $order)      手机网站支付
- * @method ResponseInterface web(array $order)      电脑支付
- * @method Collection        mini(array $order)     小程序支付
+ * @method ResponseInterface|Rocket app(array $order)      APP 支付
+ * @method Collection|Rocket        pos(array $order)      刷卡支付（付款码，被扫码）
+ * @method Collection|Rocket        scan(array $order)     扫码支付（摄像头，主动扫）
+ * @method Collection|Rocket        transfer(array $order) 帐户转账
+ * @method ResponseInterface|Rocket h5(array $order)       手机网站支付
+ * @method ResponseInterface|Rocket web(array $order)      电脑支付
+ * @method Collection|Rocket        mini(array $order)     小程序支付
  */
-class Alipay extends AbstractProvider
+class Alipay implements ProviderInterface
 {
     public const URL = [
         Pay::MODE_NORMAL => 'https://openapi.alipay.com/gateway.do?charset=utf-8',
-        Pay::MODE_SANDBOX => 'https://openapi.alipaydev.com/gateway.do?charset=utf-8',
+        Pay::MODE_SANDBOX => 'https://openapi-sandbox.dl.alipaydev.com/gateway.do?charset=utf-8',
         Pay::MODE_SERVICE => 'https://openapi.alipay.com/gateway.do?charset=utf-8',
     ];
 
     /**
-     * @return \Psr\Http\Message\MessageInterface|\Yansongda\Supports\Collection|array|null
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
      */
-    public function __call(string $shortcut, array $params)
+    public function __call(string $shortcut, array $params): null|Collection|MessageInterface|Rocket
     {
-        $plugin = '\\Yansongda\\Pay\\Plugin\\Alipay\\Shortcut\\'.
-            Str::studly($shortcut).'Shortcut';
+        $plugin = '\Yansongda\Pay\Shortcut\Alipay\\'.Str::studly($shortcut).'Shortcut';
 
-        return $this->call($plugin, ...$params);
+        return Artful::shortcut($plugin, ...$params);
     }
 
     /**
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
      */
-    public function find($order)
+    public function pay(array $plugins, array $params): null|Collection|MessageInterface|Rocket
     {
-        $order = is_array($order) ? $order : ['out_trade_no' => $order];
+        return Artful::artful($plugins, $params);
+    }
 
-        Event::dispatch(new Event\MethodCalled('alipay', __METHOD__, $order, null));
+    /**
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
+     */
+    public function query(array $order): Collection|Rocket
+    {
+        Event::dispatch(new MethodCalled('alipay', __METHOD__, $order, null));
 
         return $this->__call('query', [$order]);
     }
 
     /**
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
      */
-    public function cancel($order)
+    public function cancel(array $order): Collection|Rocket
     {
-        $order = is_array($order) ? $order : ['out_trade_no' => $order];
-
-        Event::dispatch(new Event\MethodCalled('alipay', __METHOD__, $order, null));
+        Event::dispatch(new MethodCalled('alipay', __METHOD__, $order, null));
 
         return $this->__call('cancel', [$order]);
     }
 
     /**
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
      */
-    public function close($order)
+    public function close(array $order): Collection|Rocket
     {
-        $order = is_array($order) ? $order : ['out_trade_no' => $order];
-
-        Event::dispatch(new Event\MethodCalled('alipay', __METHOD__, $order, null));
+        Event::dispatch(new MethodCalled('alipay', __METHOD__, $order, null));
 
         return $this->__call('close', [$order]);
     }
 
     /**
-     * @return array|\Yansongda\Supports\Collection
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
      */
-    public function refund(array $order)
+    public function refund(array $order): Collection|Rocket
     {
-        Event::dispatch(new Event\MethodCalled('alipay', __METHOD__, $order, null));
+        Event::dispatch(new MethodCalled('alipay', __METHOD__, $order, null));
 
         return $this->__call('refund', [$order]);
     }
 
     /**
-     * @param array|\Psr\Http\Message\ServerRequestInterface|null $contents
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
+     * @throws ContainerException
+     * @throws InvalidParamsException
      */
-    public function callback($contents = null, ?array $params = null): Collection
+    public function callback(null|array|ServerRequestInterface $contents = null, ?array $params = null): Collection
     {
-        Event::dispatch(new Event\CallbackReceived('alipay', $contents, $params, null));
-
         $request = $this->getCallbackParams($contents);
 
-        return $this->pay(
-            [CallbackPlugin::class], $request->merge($params)->all()
-        );
+        Event::dispatch(new CallbackReceived('alipay', $request->all(), $params, null));
+
+        return $this->pay([CallbackPlugin::class], $request->merge($params)->all());
     }
 
     public function success(): ResponseInterface
@@ -144,17 +137,13 @@ class Alipay extends AbstractProvider
     public function mergeCommonPlugins(array $plugins): array
     {
         return array_merge(
-            [PreparePlugin::class],
+            [StartPlugin::class],
             $plugins,
-            [SignPlugin::class, RadarPlugin::class],
-            [LaunchPlugin::class, ParserPlugin::class],
+            [FormatPayloadBizContentPlugin::class, AddPayloadSignaturePlugin::class, AddRadarPlugin::class, VerifySignaturePlugin::class, ResponsePlugin::class, ParserPlugin::class],
         );
     }
 
-    /**
-     * @param array|ServerRequestInterface|null $contents
-     */
-    protected function getCallbackParams($contents = null): Collection
+    protected function getCallbackParams(null|array|ServerRequestInterface $contents = null): Collection
     {
         if (is_array($contents)) {
             return Collection::wrap($contents);

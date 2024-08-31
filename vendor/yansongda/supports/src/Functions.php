@@ -7,9 +7,6 @@ namespace Yansongda\Supports;
 use Closure;
 
 if (!function_exists('collect')) {
-    /**
-     * Create a collection from the given value.
-     */
     function collect(array $value = []): Collection
     {
         return new Collection($value);
@@ -17,34 +14,21 @@ if (!function_exists('collect')) {
 }
 
 if (!function_exists('value')) {
-    /**
-     * Return the default value of the given value.
-     *
-     * @param mixed $value
-     *
-     * @return mixed
-     */
-    function value($value)
+    function value(mixed $value): mixed
     {
         return $value instanceof Closure ? $value() : $value;
     }
 }
 
 if (!function_exists('data_get')) {
-    /**
-     * Get an item from an array or object using "dot" notation.
-     *
-     * @param array|int|string|null $key
-     * @param mixed|null            $default
-     * @param mixed                 $target
-     */
-    function data_get($target, $key, $default = null)
+    function data_get(mixed $target, null|array|int|string $key, mixed $default = null): mixed
     {
         if (is_null($key)) {
             return $target;
         }
 
         $key = is_array($key) ? $key : explode('.', is_int($key) ? (string) $key : $key);
+
         while (!is_null($segment = array_shift($key))) {
             if ('*' === $segment) {
                 if ($target instanceof Collection) {

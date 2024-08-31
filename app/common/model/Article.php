@@ -419,18 +419,21 @@ class Article extends Model
 
     // 获取用户发帖列表
     public function getUserArtList(int $id) {
-        $userArtList = $this::field('id,cate_id,title,create_time,pv,is_hot')
-        ->with(['cate' => function($query){
-            $query->where(['status'=>1])->field('id,ename');
-        }])
-        ->where(['user_id' => $id,'status' => 1])
-        ->order('id','desc')
-        ->append(['url'])
-        ->limit(25)
-        ->cache(3600)
-        ->select()
-        ->toArray();
-
+        $userArtList = Cache::remember('user_recently_post_'.$id, function() use($id) {
+            return $this::field('id,cate_id,title,create_time,pv,is_hot')
+            ->with([
+                'cate' => function($query){
+                    $query->where(['status'=>1])->field('id,ename');
+                }
+            ])
+            ->where(['user_id' => $id, 'status' => 1])
+            ->order('id','desc')
+            ->append(['url'])
+            ->limit(15)
+            ->select()
+            ->toArray();
+        });
+        
         return $userArtList;
     }
 

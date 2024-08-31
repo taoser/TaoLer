@@ -310,12 +310,12 @@ class User extends BaseController
 
         $reys = Db::name('comment')
 		->alias('c')
-		->join('article a','c.article_id = a.id')
-		->join('cate t','a.cate_id = t.id')
+		->join('article a', 'c.article_id = a.id')
+		->join('cate t', 'a.cate_id = t.id')
 		->field('a.id,a.title,t.ename,c.content,c.create_time,c.delete_time,c.status')
-		->where(['a.delete_time'=>0,'c.delete_time'=>0,'c.status'=>1])
-		->where('c.user_id',$id)
-		->order(['c.id'=>'desc'])
+		->where(['a.delete_time' => 0, 'c.delete_time' => 0, 'c.status' => 1])
+		->where('c.user_id', $id)
+		->order(['c.id' => 'desc'])
 		->limit(10)
 		->cache(3600)->select();
 

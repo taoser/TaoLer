@@ -4,65 +4,25 @@ declare(strict_types=1);
 
 namespace Yansongda\Pay\Contract;
 
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Yansongda\Artful\Rocket;
 use Yansongda\Supports\Collection;
 
 interface ProviderInterface
 {
-    /**
-     * pay.
-     *
-     * @return \Psr\Http\Message\MessageInterface|\Yansongda\Supports\Collection|array|null
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
-     */
-    public function pay(array $plugins, array $params);
+    public function pay(array $plugins, array $params): null|Collection|MessageInterface|Rocket;
 
-    /**
-     * Quick road - Query an order.
-     *
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection
-     */
-    public function find($order);
+    public function query(array $order): Collection|Rocket;
 
-    /**
-     * Quick road - Cancel an order.
-     *
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection|void
-     */
-    public function cancel($order);
+    public function cancel(array $order): Collection|Rocket;
 
-    /**
-     * Quick road - Close an order.
-     *
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection|void
-     */
-    public function close($order);
+    public function close(array $order): Collection|Rocket;
 
-    /**
-     * Quick road - Refund an order.
-     *
-     * @return array|\Yansongda\Supports\Collection
-     */
-    public function refund(array $order);
+    public function refund(array $order): Collection|Rocket;
 
-    /**
-     * Verify a request.
-     *
-     * @param array|\Psr\Http\Message\ServerRequestInterface|null $contents
-     */
-    public function callback($contents = null, ?array $params = null): Collection;
+    public function callback(null|array|ServerRequestInterface $contents = null, ?array $params = null): Collection|Rocket;
 
-    /**
-     * Echo success to server.
-     */
     public function success(): ResponseInterface;
 }

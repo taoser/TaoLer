@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yansongda\Supports;
 
-use Exception;
+use Random\RandomException;
 
 /**
  * Most of the methods in this file come from illuminate/support.
@@ -12,32 +12,11 @@ use Exception;
  */
 class Str
 {
-    /**
-     * The cache of snake-cased words.
-     */
-    protected static array $snakeCache = [];
-
-    /**
-     * The cache of camel-cased words.
-     */
-    protected static array $camelCache = [];
-
-    /**
-     * The cache of studly-cased words.
-     */
-    protected static array $studlyCache = [];
-
-    /**
-     * Return the remainder of a string after a given value.
-     */
     public static function after(string $subject, string $search): string
     {
         return '' === $search ? $subject : array_reverse(explode($search, $subject, 2))[0];
     }
 
-    /**
-     * Transliterate a UTF-8 value to ASCII.
-     */
     public static function ascii(string $value, string $language = 'en'): string
     {
         $languageSpecific = static::languageSpecificCharsArray($language);
@@ -53,35 +32,20 @@ class Str
         return preg_replace('/[^\x20-\x7E]/u', '', $value);
     }
 
-    /**
-     * Get the portion of a string before a given value.
-     */
     public static function before(string $subject, string $search): string
     {
         return '' === $search ? $subject : explode($search, $subject)[0];
     }
 
-    /**
-     * Convert a value to camel case.
-     */
     public static function camel(string $value): string
     {
-        if (isset(static::$camelCache[$value])) {
-            return static::$camelCache[$value];
-        }
-
-        return static::$camelCache[$value] = lcfirst(static::studly($value));
+        return lcfirst(static::studly($value));
     }
 
-    /**
-     * Determine if a given string contains a given substring.
-     *
-     * @param string|array $needles
-     */
-    public static function contains(string $haystack, $needles): bool
+    public static function contains(string $haystack, array|string $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ('' !== $needle && false !== mb_strpos($haystack, $needle)) {
+            if (str_contains($haystack, $needle)) {
                 return true;
             }
         }
@@ -89,15 +53,10 @@ class Str
         return false;
     }
 
-    /**
-     * Determine if a given string ends with a given substring.
-     *
-     * @param string|array $needles
-     */
-    public static function endsWith(string $haystack, $needles): bool
+    public static function endsWith(string $haystack, array|string $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if (substr($haystack, -strlen($needle)) === (string) $needle) {
+            if (str_ends_with($haystack, $needle)) {
                 return true;
             }
         }
@@ -105,9 +64,6 @@ class Str
         return false;
     }
 
-    /**
-     * Cap a string with a single instance of a given value.
-     */
     public static function finish(string $value, string $cap): string
     {
         $quoted = preg_quote($cap, '/');
@@ -115,12 +71,7 @@ class Str
         return preg_replace('/(?:'.$quoted.')+$/u', '', $value).$cap;
     }
 
-    /**
-     * Determine if a given string matches a given pattern.
-     *
-     * @param string|array $pattern
-     */
-    public static function is($pattern, string $value): bool
+    public static function is(array|string $pattern, string $value): bool
     {
         $patterns = Arr::wrap($pattern);
 
@@ -151,17 +102,11 @@ class Str
         return false;
     }
 
-    /**
-     * Convert a string to kebab case.
-     */
     public static function kebab(string $value): string
     {
         return static::snake($value, '-');
     }
 
-    /**
-     * Return the length of the given string.
-     */
     public static function length(string $value, ?string $encoding = null): int
     {
         if (null !== $encoding) {
@@ -171,9 +116,6 @@ class Str
         return mb_strlen($value);
     }
 
-    /**
-     * Limit the number of characters in a string.
-     */
     public static function limit(string $value, int $limit = 100, string $end = '...'): string
     {
         if (mb_strwidth($value, 'UTF-8') <= $limit) {
@@ -183,17 +125,11 @@ class Str
         return rtrim(mb_strimwidth($value, 0, $limit, '', 'UTF-8')).$end;
     }
 
-    /**
-     * Convert the given string to lower-case.
-     */
     public static function lower(string $value): string
     {
         return mb_strtolower($value, 'UTF-8');
     }
 
-    /**
-     * Limit the number of words in a string.
-     */
     public static function words(string $value, int $words = 100, string $end = '...'): string
     {
         preg_match('/^\s*+\S++\s*+{1,'.$words.'}/u', $value, $matches);
@@ -205,18 +141,13 @@ class Str
         return rtrim($matches[0]).$end;
     }
 
-    /**
-     * Parse a Class.
-     */
     public static function parseCallback(string $callback, ?string $default = null): array
     {
         return static::contains($callback, '@') ? explode('@', $callback, 2) : [$callback, $default];
     }
 
     /**
-     * Generate a more truly "random" alpha-numeric string.
-     *
-     * @throws Exception
+     * @throws RandomException
      */
     public static function random(int $length = 16): string
     {
@@ -235,31 +166,31 @@ class Str
 
     public static function uuidV4(): string
     {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0xFFFF),
+            mt_rand(0, 0xFFFF),
 
             // 16 bits for "time_mid"
-            mt_rand(0, 0xffff),
+            mt_rand(0, 0xFFFF),
 
             // 16 bits for "time_hi_and_version",
             // four most significant bits holds version number 4
-            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x0FFF) | 0x4000,
 
             // 16 bits, 8 bits for "clk_seq_hi_res",
             // 8 bits for "clk_seq_low",
             // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0x3FFF) | 0x8000,
 
             // 48 bits for "node"
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+            mt_rand(0, 0xFFFF),
+            mt_rand(0, 0xFFFF),
+            mt_rand(0, 0xFFFF)
         );
     }
 
-    /**
-     * Replace a given value in the string sequentially with an array.
-     */
     public static function replaceArray(string $search, array $replace, string $subject): string
     {
         foreach ($replace as $value) {
@@ -269,9 +200,6 @@ class Str
         return $subject;
     }
 
-    /**
-     * Replace the first occurrence of a given value in the string.
-     */
     public static function replaceFirst(string $search, string $replace, string $subject): string
     {
         if ('' == $search) {
@@ -287,9 +215,6 @@ class Str
         return $subject;
     }
 
-    /**
-     * Replace the last occurrence of a given value in the string.
-     */
     public static function replaceLast(string $search, string $replace, string $subject): string
     {
         $position = strrpos($subject, $search);
@@ -301,9 +226,6 @@ class Str
         return $subject;
     }
 
-    /**
-     * Begin a string with a single instance of a given value.
-     */
     public static function start(string $value, string $prefix): string
     {
         $quoted = preg_quote($prefix, '/');
@@ -311,25 +233,16 @@ class Str
         return $prefix.preg_replace('/^(?:'.$quoted.')+/u', '', $value);
     }
 
-    /**
-     * Convert the given string to upper-case.
-     */
     public static function upper(string $value): string
     {
         return mb_strtoupper($value, 'UTF-8');
     }
 
-    /**
-     * Convert the given string to title case.
-     */
     public static function title(string $value): string
     {
         return mb_convert_case($value, MB_CASE_TITLE, 'UTF-8');
     }
 
-    /**
-     * Generate a URL friendly "slug" from a given string.
-     */
     public static function slug(string $title, string $separator = '-', string $language = 'en'): string
     {
         $title = static::ascii($title, $language);
@@ -351,35 +264,21 @@ class Str
         return trim($title, $separator);
     }
 
-    /**
-     * Convert a string to snake case.
-     */
     public static function snake(string $value, string $delimiter = '_'): string
     {
-        $key = $value;
-
-        if (isset(static::$snakeCache[$key][$delimiter])) {
-            return static::$snakeCache[$key][$delimiter];
-        }
-
         if (!ctype_lower($value)) {
             $value = preg_replace('/\s+/u', '', ucwords($value));
 
             $value = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $value));
         }
 
-        return static::$snakeCache[$key][$delimiter] = $value;
+        return $value;
     }
 
-    /**
-     * Determine if a given string starts with a given substring.
-     *
-     * @param string|array $needles
-     */
-    public static function startsWith(string $haystack, $needles): bool
+    public static function startsWith(string $haystack, array|string $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ('' !== $needle && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+            if (str_starts_with($haystack, $needle)) {
                 return true;
             }
         }
@@ -387,51 +286,29 @@ class Str
         return false;
     }
 
-    /**
-     * Convert a value to studly caps case.
-     */
-    public static function studly(string $value): string
+    public static function studly(string $value, string $gap = ''): string
     {
-        $key = $value;
-
-        if (isset(static::$studlyCache[$key])) {
-            return static::$studlyCache[$key];
-        }
-
         $value = ucwords(str_replace(['-', '_'], ' ', $value));
 
-        return static::$studlyCache[$key] = str_replace(' ', '', $value);
+        return str_replace(' ', $gap, $value);
     }
 
-    /**
-     * Returns the portion of string specified by the start and length parameters.
-     */
     public static function substr(string $string, int $start, ?int $length = null): string
     {
         return mb_substr($string, $start, $length, 'UTF-8');
     }
 
-    /**
-     * Make a string's first character uppercase.
-     */
     public static function ucfirst(string $string): string
     {
         return static::upper(static::substr($string, 0, 1)).static::substr($string, 1);
     }
 
-    /**
-     * Convert string's encoding.
-     */
     public static function encoding(string $string, string $to = 'utf-8', string $from = 'gb2312'): string
     {
         return mb_convert_encoding($string, $to, $from);
     }
 
     /**
-     * Returns the replacements for the ascii method.
-     *
-     * Note: Adapted from Stringy\Stringy.
-     *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
      */
     protected static function charsArray(): array
@@ -560,10 +437,6 @@ class Str
     }
 
     /**
-     * Returns the language specific replacements for the ascii method.
-     *
-     * Note: Adapted from Stringy\Stringy.
-     *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
      */
     protected static function languageSpecificCharsArray(string $language): ?array
@@ -576,7 +449,7 @@ class Str
                     ['h', 'H', 'sht', 'SHT', 'a', 'А', 'y', 'Y'],
                 ],
                 'de' => [
-                    ['ä',  'ö',  'ü',  'Ä',  'Ö',  'Ü'],
+                    ['ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü'],
                     ['ae', 'oe', 'ue', 'AE', 'OE', 'UE'],
                 ],
             ];

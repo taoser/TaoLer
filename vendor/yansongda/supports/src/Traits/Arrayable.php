@@ -9,9 +9,6 @@ use Yansongda\Supports\Str;
 
 trait Arrayable
 {
-    /**
-     * toArray.
-     */
     public function toArray(): array
     {
         $result = [];

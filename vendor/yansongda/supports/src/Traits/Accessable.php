@@ -8,50 +8,27 @@ use Yansongda\Supports\Str;
 
 trait Accessable
 {
-    /**
-     * __get.
-     *
-     * @return mixed
-     */
-    public function __get(string $key)
+    public function __get(string $key): mixed
     {
         return $this->get($key);
     }
 
-    /**
-     * Whether or not an data exists by key.
-     */
     public function __isset(string $key): bool
     {
         return !is_null($this->get($key));
     }
 
-    /**
-     * Unsets an data by key.
-     */
-    public function __unset(string $key)
+    public function __unset(string $key): void
     {
         $this->offsetUnset($key);
     }
 
-    /**
-     * __set.
-     *
-     * @param mixed $value
-     */
-    public function __set(string $key, $value): void
+    public function __set(string $key, mixed $value): void
     {
         $this->set($key, $value);
     }
 
-    /**
-     * get.
-     *
-     * @param mixed $default
-     *
-     * @return mixed
-     */
-    public function get(?string $key = null, $default = null)
+    public function get(?string $key = null, mixed $default = null): mixed
     {
         if (is_null($key)) {
             return method_exists($this, 'toArray') ? $this->toArray() : $default;
@@ -66,12 +43,7 @@ trait Accessable
         return $default;
     }
 
-    /**
-     * set.
-     *
-     * @param mixed $value
-     */
-    public function set(string $key, $value): self
+    public function set(string $key, mixed $value): self
     {
         $method = 'set'.Str::studly($key);
 
@@ -82,65 +54,20 @@ trait Accessable
         return $this;
     }
 
-    /**
-     * Whether a offset exists.
-     *
-     * @see https://php.net/manual/en/arrayaccess.offsetexists.php
-     *
-     * @param mixed $offset an offset to check for
-     *
-     * @return bool true on success or false on failure.
-     *
-     * The return value will be casted to boolean if non-boolean was returned.
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return !is_null($this->get($offset));
     }
 
-    /**
-     * Offset to retrieve.
-     *
-     * @see https://php.net/manual/en/arrayaccess.offsetget.php
-     *
-     * @param mixed $offset the offset to retrieve
-     *
-     * @return mixed can return all value types
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
-    /**
-     * Offset to set.
-     *
-     * @see https://php.net/manual/en/arrayaccess.offsetset.php
-     *
-     * @param mixed $offset the offset to assign the value to
-     * @param mixed $value  the value to set
-     *
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
 
-    /**
-     * Offset to unset.
-     *
-     * @see https://php.net/manual/en/arrayaccess.offsetunset.php
-     *
-     * @param mixed $offset the offset to unset
-     *
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
-    {
-    }
+    public function offsetUnset(mixed $offset): void {}
 }
