@@ -77,10 +77,10 @@ Route::rule('search/[:keywords]', 'index/search'); // 搜索
 // article分类和详情路由 ！放到最后！
 Route::group(function () use($detail_as, $cate_as){
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
-	Route::get($detail_as . ':id$', 'article/detail')->name('article_detail');
+	Route::get($detail_as . ':id$', 'article/detail')->name('article_detail')->cache(600);
     Route::get($detail_as . '<id>/<page>$', 'article/detail')->name('article_comment');
     //分类
-	Route::get($cate_as . '<ename>$','article/cate')->name('cate');
+	Route::get($cate_as . '<ename>$','article/cate')->name('cate')->cache(180);
 	Route::get($cate_as . '<ename>/<type>$', 'article/cate')->name('cate_type');
 	// 分页路由
 	Route::get($cate_as . '<ename>/<type>/<page>$', 'article/cate')->name('cate_page');

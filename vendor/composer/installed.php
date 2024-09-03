@@ -3,7 +3,7 @@
         'name' => 'taoser/taoler',
         'pretty_version' => '2.3.10.x-dev',
         'version' => '2.3.10.9999999-dev',
-        'reference' => '7b64c168a1c3e5dd7c508a300858d66a92901356',
+        'reference' => '372ad41963e80ad8daaf54b789073882f22f3726',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -262,8 +262,8 @@
         'psr/container-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '^1.0',
-                1 => '1.1|2.0',
+                0 => '1.1|2.0',
+                1 => '^1.0',
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -410,7 +410,7 @@
         'taoser/taoler' => array(
             'pretty_version' => '2.3.10.x-dev',
             'version' => '2.3.10.9999999-dev',
-            'reference' => '7b64c168a1c3e5dd7c508a300858d66a92901356',
+            'reference' => '372ad41963e80ad8daaf54b789073882f22f3726',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

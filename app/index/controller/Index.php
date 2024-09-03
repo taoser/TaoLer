@@ -16,12 +16,11 @@ use think\facade\Request;
 use think\facade\Db;
 use app\facade\Article;
 use app\common\lib\Msgres;
-use app\common\model\Comment;
 
-use addons\pay\controller\AlipayFactory;
-use addons\pay\controller\WeixinFactory;
+//use addons\pay\controller\AlipayFactory;
+//use addons\pay\controller\WeixinFactory;
 
-use app\common\lib\Near;
+//use app\common\lib\Near;
 
 class Index extends BaseController
 {

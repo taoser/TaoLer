@@ -74,7 +74,7 @@ class Cate extends Model
     // 分类表
     public function getList()
     {
-        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,status,is_hot,desc')->select()->toArray();
+        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,status,is_hot,desc')->cache(3600)->select()->toArray();
         if(count($data)) {
             // 排序
             $cmf_arr = array_column($data, 'sort');
@@ -121,7 +121,7 @@ class Cate extends Model
     public function getUrlAttr($value,$data)
     {
         // 栏目下存在帖子，则返回正常url,否则为死链
-        $articleCount = Article::where('cate_id', $data['id'])->count();
+        $articleCount = Article::where('cate_id', $data['id'])->cache(true)->count();
         if($articleCount > 0) {
             return (string) url('cate',['ename' => $data['ename']]);
         }

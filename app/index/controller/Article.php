@@ -75,30 +75,40 @@ class Article extends BaseController
     {
 		$id = input('id');
 		$page = input('page',1);
-		//输出内容
-        $artDetail = $this->model->getArtDetail($id);
-        if(is_null($artDetail)){
-            throw new \think\exception\HttpException(404, '无内容');
-        }
-        //被赞
-        $zanCount = Db::name('user_zan')->where('user_id', $artDetail['user_id'])->count('id');
 
-		//赞列表
+		// 1.内容
+        $artDetail = $this->model->getArtDetail($id);
+        if(is_null($artDetail)) throw new \think\exception\HttpException(404, '无内容');
+
+		// 2.pv
+		$artDetail->inc('pv')->update();
+		$pv = Db::name('article')->where('id',$id)->value('pv');
+        $artDetail->pv = $pv;
+
+		// 3.设置内容的tag内链
+		$artDetail->content = $this->setArtTagLink($artDetail->content);
+
+		// 4.附件
+		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
+
+		// 5.赞列表
 		$userZanList = [];
-		$userZan = UserZan::where(['article_id'=>$id,'type'=>1])->select();
+		$userZan = UserZan::where(['article_id'=>$id,'type'=>1])->cache(true)->select();
 		if(count($userZan)) {
 			foreach($userZan as $v){
 				$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
 			}
 		}
 
-		// 设置内容的tag内链
-		$artDetail->content = $this->setArtTagLink($artDetail->content);
+        // 被赞
+        $zanCount = Db::name('user_zan')->where('user_id', $artDetail['user_id'])->cache(true)->count();
+
+		
 
 		// 标签
 		$tags = [];
 		$relationArticle = []; //相关帖子
-        $artTags = Db::name('taglist')->where('article_id', $id)->select();
+        $artTags = Db::name('taglist')->where('article_id', $id)->cache(true)->select();
 		if(count($artTags)) {
 			foreach($artTags as $v) {
 				$tag = Db::name('tag')->find($v['tag_id']);
@@ -109,13 +119,7 @@ class Article extends BaseController
 			$relationArticle =  $this->model->getRelationTags($artTags[0]['tag_id'],$id,5);
 		}
 
-		$tpl = Db::name('cate')->where('id', $artDetail['cate_id'])->value('detpl');
-		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
-
-		//浏览pv
-		Db::name('article')->where('id',$id)->inc('pv')->update();
-		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
-        $artDetail->pv = $pv;
+		
 
 		//上一篇下一篇
 		$upDownArt =  $this->model->getPrevNextArticle($id,$artDetail['cate_id']);
@@ -133,7 +137,7 @@ class Article extends BaseController
 		//评论
 		$comments = $this->getComments($id, $page);
 		//最新评论时间
-		$lrDate_time = Db::name('comment')->where('article_id', $id)->max('update_time',false) ?? time();
+		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
 		//	热议文章
 		$artHot =  $this->model->getArtHot(10);
 		//push
@@ -159,7 +163,7 @@ class Article extends BaseController
 			$download,
 		]);
 	
-		return View::fetch('article/'.$tpl.'/detail');
+		return View::fetch('article/'.$artDetail['cate']['detpl'].'/detail');
     }
 	
 	//评论内容

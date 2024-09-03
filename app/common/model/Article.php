@@ -48,7 +48,7 @@ class Article extends Model
 	//开启自动设置
 	protected $auto = [];
 	//仅新增有效
-	protected $insert = ['create_time','status'=>1,'is_top'=>'0','is_hot'=>'0'];
+	protected $insert = ['create_time', 'status'=>1, 'is_top'=>'0', 'is_hot'=>'0'];
 	//仅更新有效
 	protected $update = ['update_time'];
 	
@@ -160,7 +160,7 @@ class Article extends Model
         return Cache::remember('topArticle', function() use($num){
             $topIdArr = $this::where(['is_top' => 1, 'status' => 1])->limit($num)->column('id');
              return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,upzip,has_img,has_video,has_audio,read_type')
-                ->where('id', 'in', $topIdArr)
+                ->whereIn('id', $topIdArr)
                 ->with([
                     'cate' => function (Query $query) {
                         $query->field('id,catename,ename');
@@ -168,12 +168,13 @@ class Article extends Model
                     'user' => function (Query $query) {
                         $query->field('id,name,nickname,user_img');
                     }
-                ])->withCount(['comments'])
+                ])
+                ->withCount(['comments'])
                 ->order('id', 'desc')
                 ->append(['url'])
                 ->select()
                 ->toArray();
-        },180);
+        },600);
     }
 
     /**
@@ -196,7 +197,7 @@ class Article extends Model
                 $query->field('id,name,nickname,user_img');
 			} ])
             ->withCount(['comments'])
-            ->where('status', '=', 1)
+            ->where('status', 1)
             ->order('id','desc')
             ->limit($num)
             ->hidden(['art_pass'])
@@ -204,7 +205,7 @@ class Article extends Model
             ->select();
 
             return $data->hidden(['art_pass'])->toArray();
-		},30);
+		},120);
 
     }
 
@@ -219,12 +220,13 @@ class Article extends Model
     public function getArtHot(int $num)
     {
         return Cache::remember('article_hot', function() use($num){
-            $comments = Comment::field('article_id,count(*) as count')
+            $comments = Comment::field('article_id, count(*) as count')
             ->hasWhere('article',['status' => 1])
             ->group('article_id')
             ->order('count','desc')
             ->limit($num)
             ->select();
+
             $idArr = [];
             foreach($comments as $v) {
                 $idArr[] = $v->article_id;
@@ -243,11 +245,13 @@ class Article extends Model
                 // ->order('comments_count','desc')
                 ->append(['url'])
                 ->select();
+
             } else {
                 // pv数
                 $where = [
                     ['status', '=', 1]
                 ];
+
                 $artHot = $this::field('id,cate_id,title,create_time')
                 ->withCount('comments')
                 ->where($where)
@@ -275,7 +279,7 @@ class Article extends Model
             ->where(['status'=>1])
             ->with([
                 'cate' => function(Query $query){
-                    $query->field('id,catename,ename');
+                    $query->field('id,catename,ename,detpl');
                 },
                 'user' => function(Query $query){
                     $query->field('id,name,nickname,user_img,area_id,vip,city')->withCount(['article','comments']);
@@ -494,19 +498,22 @@ class Article extends Model
      */
     public function getRelationTags($tagId,$id,$limit)
     {
-        $arrId = Taglist::where([
-            ['tag_id', '=', $tagId],
-            ['article_id','<>',$id]
-        ])->column('article_id');
+        $allTags = Cache::remember("relation_tag_post_{$tagId}_{$id}", function() use($tagId,$id,$limit) {
 
-        $allTags = $this::field('id,cate_id,title')->where('id', 'in', $arrId)
-        ->where(['status'=>1])
-        ->order('pv desc')
-        ->limit($limit)
-        ->append(['url'])
-        ->select()
-        ->toArray();
-    
+            $arrId = Taglist::where([
+                ['tag_id', '=', $tagId],
+                ['article_id','<>',$id]
+            ])->column('article_id');
+
+            return $this::field('id,cate_id,title')->whereIn('id', $arrId)
+            ->where(['status'=>1])
+            ->order('pv desc')
+            ->limit($limit)
+            ->append(['url'])
+            ->select()
+            ->toArray();
+        });
+
         return $allTags;
     }
 
@@ -672,12 +679,12 @@ class Article extends Model
         return ['data' => $data, 'count' => $count];
      }
 
-    // 获取url
+    // 两种模式 获取url
     public function getUrlAttr($value,$data)
     {
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
-            //$cate = Cate::field('id,ename')->find($data['cate_id']);
-            return (string) url('article_detail',['id' => $data['id'],'ename' => $this->cate->ename]);
+            $ename = Cate::where('id', $data['cate_id'])->cache(true)->value('ename');
+            return (string) url('article_detail',['id' => $data['id'],'ename' => $ename]);
         }
         return (string) url('article_detail',['id' => $data['id']]);
     }
