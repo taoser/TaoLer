@@ -44,11 +44,11 @@ return [
 		// 是否需要断线重连
 		'break_reconnect'   => false,
 		// 开启SQL性能分析
-		'trigger_sql'     => env('APP_DEBUG', true),
+		'trigger_sql'     => env('APP_DEBUG', false),
 		// 开启字段缓存
 		'fields_cache'      => false,
 		// 开启数据库调试模式
-        'debug'           => true,
+        'debug'           => false,
 		],
 		// 更多的数据库配置信息
     ],
