@@ -136,12 +136,13 @@ class User extends Model
         $data['status'] = Config::get('taoler.config.regist_check');
         $data['nickname'] = $data['name'];
         $msg = $data['status'] ? '注册成功请登录' : '注册成功，请等待审核';
-        $result = $this->save($data);
-        if ($result) {
-            return ['code'=>1,'msg'=>$msg];
-        } else{
-            return '注册失败';
+        try{
+            $this->save($data);
+        } catch(\Exception $e){
+            throw new Exception("保存失败");
         }
+        
+        return true;
     }
 	
 	//重置密码

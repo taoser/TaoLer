@@ -6,11 +6,10 @@ use think\facade\Db;
 use taoler\com\Files;
 use think\facade\Cache;
 
+    $template = '';
 	//如果网站安装从数据库查询选择的模板
 	if(file_exists('./install.lock')){
-			$template = Db::name('system')->where('id',1)->cache(true)->value('template');
-	} else {
-		$template = '';
+		$template = Db::name('system')->where('id',1)->cache(true)->value('template');
 	}
 
     $taglib_pre_load = Cache::remember('taglib', function(){
@@ -24,7 +23,7 @@ use think\facade\Cache;
         //获取插件下标签 addons/taglib文件
         $localAddons = Files::getDirName('../addons/');
         foreach($localAddons as $v) {
-            $dir = root_path(). 'addons'. DIRECTORY_SEPARATOR . $v . DIRECTORY_SEPARATOR .'taglib';
+            $dir = root_path() . 'addons'. DIRECTORY_SEPARATOR . $v . DIRECTORY_SEPARATOR .'taglib';
             if(!file_exists($dir)) continue;
             $addons_taglib = Files::getAllFile($dir);
             foreach ($addons_taglib as $a) {
@@ -39,8 +38,10 @@ return [
     'type'          => 'Think',
     // 默认模板渲染规则 1 解析为小写+下划线 2 全部转换小写 3 保持操作方法
     'auto_rule'     => 1,
+    // 模板路径
+    'view_path'    => '..'. DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $template . DIRECTORY_SEPARATOR,
     // 模板目录名
-    'view_dir_name' => 'view' . DIRECTORY_SEPARATOR . $template,
+    // 'view_dir_name' => 'view' . DIRECTORY_SEPARATOR . $template,
     // 模板后缀
     'view_suffix'   => 'html',
     // 定义内置标签
@@ -57,7 +58,9 @@ return [
     'taglib_begin'  => '{',
     // 标签库标签结束标记
     'taglib_end'    => '}',
-	
+	// 去除空格和换行
+    'strip_space'   => true,
+    // 默认过滤方法 用于普通标签输出
 	'default_filter' => 'htmlspecialchars',
 
 	//模板输出替换

@@ -1,7 +1,7 @@
 ﻿/**
  TaoLer社区修改 www.aieok.com
- @Name: Fly社区主入口
- 2024-4.7
+ @Name: taolerCms
+ 2024-9-6
  */
 
 layui.define(['layer', 'form', 'util'], function(exports){
@@ -90,38 +90,8 @@ layui.define(['layer', 'form', 'util'], function(exports){
 
     //简易编辑器 -移除 -2024/4/7
 
-    //新消息通知
-    ,newmsg: function(){
-      var elemUser = $('.fly-nav-user');
-      var messageNums = elemUser.attr('msg-url');
-      var messageRead = elemUser.attr('readMsg-url');
-      if(uid != -1 && elemUser[0]){
-        fly.json(messageNums, {
-          _: new Date().getTime()
-        }, function(res){
-          if(res.status === 0 && res.count > 0){
-            var msg = $('<a class="fly-nav-msg" href="javascript:;">'+ res.count +'</a>');
-            elemUser.append(msg);
-            msg.on('click', function(){
-              fly.json(messageRead, {}, function(res){
-                if(res.status === 0){
-                  location.href = res.url;
-                }
-              });
-            });
-            layer.tips('你有 '+ res.count +' 条未读消息', msg, {
-              tips: 3
-              ,tipsMore: true
-              ,fixed: true
-            });
-            msg.on('mouseenter', function(){
-              layer.closeAll('tips');
-            })
-          }
-        });
-      }
-      return arguments.callee;
-    }
+    //新消息通知 -移除 -2024/9/6
+    
 
 	//手机绑定弹窗
     ,setPhoneNotice: function(){
@@ -160,14 +130,6 @@ layui.define(['layer', 'form', 'util'], function(exports){
     }
   }; 
 
-  //加载扩展模块
-  // layui.config({
-  //   base: fly.dir
-  // }).extend({
-  //   im: 'im'
-  //   ,face: 'face'
-  // });
-
   //头像
   if(device.android || device.ios){
     $('#LAY_header_avatar').on('click', function(){
@@ -179,12 +141,11 @@ layui.define(['layer', 'form', 'util'], function(exports){
   $('body').on('click', '#captcha111', function(){
       var othis = $(this);
       othis.attr('src', othis.attr('src')+'?'+ new Date().getTime());
-      //console.log(othis.attr('src'));
   });
 
-  //签到
+  //签到 移除
 
-  //活跃榜
+  //活跃榜 移除
 
   //相册
   if($(window).width() > 750){
@@ -231,10 +192,6 @@ layui.define(['layer', 'form', 'util'], function(exports){
   });
   
   //移动端搜索
-  
-
-  //新消息通知
-  fly.newmsg();
 
   //发送激活邮件
   fly.activate = function(email){
@@ -294,9 +251,9 @@ layui.define(['layer', 'form', 'util'], function(exports){
   }
   
   //加载IM
-  if(!device.android && !device.ios){
-    //layui.use('im');
-  }
+  // if(!device.android && !device.ios){
+  //   //layui.use('im');
+  // }
 
   //加载编辑器
 
@@ -436,13 +393,6 @@ layui.define(['layer', 'form', 'util'], function(exports){
       right: 10,
       bottom: 50
     },
-		// bar1: true,
-		// bar2: true,
-		// default: false, // 是否显示默认的 bar 列表 --  v2.8.0 新增
-		// bgcolor: '#393D52', // bar 的默认背景色
-		// css: {right: 100, bottom: 100},
-		// target: '#target-test', // 插入 fixbar 节点的目标元素选择器
-		// duration: 300, // top bar 等动画时长（毫秒）
 		on: { // 任意事件 --  v2.8.0 新增
 			mouseenter: function(type){
 				layer.tips(type, this, {

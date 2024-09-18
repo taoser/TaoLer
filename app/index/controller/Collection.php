@@ -42,11 +42,10 @@ class Collection extends BaseController
 
     //收藏查询
 	public function find(){
-		//$cid = Request::param();
 		$cid = input('cid');
 		$aid = intval($cid);
         $collectData =  Db::name('collection')->where(['article_id' => $aid,'user_id' => $this->uid])->find();
-		if($collectData){
+		if(!is_null($collectData)){
 			$res['status'] = 0;
 			$res['data']['collection'] = $collectData['article_id'];
 		} else {

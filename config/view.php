@@ -8,6 +8,8 @@ return [
     'type'          => 'Think',
     // 默认模板渲染规则 1 解析为小写+下划线 2 全部转换小写 3 保持操作方法
     'auto_rule'     => 1,
+    // 模板目录名
+    'view_dir_name' => 'view',
     // 模板后缀
     'view_suffix'   => 'html',
     // 模板文件名分隔符
@@ -20,10 +22,10 @@ return [
     'taglib_begin'  => '{',
     // 标签库标签结束标记
     'taglib_end'    => '}',
-	
+    // 去除空格和换行
+    'strip_space'   => true,
+	// 默认过滤方法 用于普通标签输出
 	'default_filter' => 'htmlspecialchars',
-    
-
 	//模板输出替换
 	'tpl_replace_string'  =>  [
     '__STATIC__'=>'/static/layui',

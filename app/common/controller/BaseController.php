@@ -40,6 +40,8 @@ class BaseController extends BaseCtrl
 
 	protected $isLogin = false;
 
+	protected $adminEmail;
+
     /**
 	 * 初始化系统，导航，用户
 	 */
@@ -48,6 +50,8 @@ class BaseController extends BaseCtrl
 		$this->uid = session('?user_id') ? (int)session('user_id') : null;
 
 		$this->user = $this->showUser();
+
+		$this->adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
 
 		//系统配置
 		$this->showSystem();

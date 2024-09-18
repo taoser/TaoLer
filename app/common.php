@@ -1,77 +1,25 @@
 <?php
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
 use taoser\SetArr;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
 use taoser\think\Auth;
 
-// 应用公共文件
-function mailto($to,$title,$content)
-{
-	$mail = new PHPMailer(true);	// Passing `true` enables exceptions
-	$mailserver = Db::name('mail_server')->find(1);
-try {
-    //Server settings
-    $mail->SMTPDebug = 0;                       // Enable verbose debug output
-//    $mail->SMTPDebug = SMTP::DEBUG_SERVER;
-    $mail->CharSet = 'utf-8';           //b
-    $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = $mailserver['host'];  // Specify main and backup SMTP servers
-    $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username = $mailserver['mail'];                 // SMTP username
-    $mail->Password = $mailserver['password'];                           // SMTP password
-    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-//    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port = $mailserver['port'];                                    // TCP port to connect to
-
-    //Recipients
-    $mail->setFrom($mailserver['mail'], $mailserver['nickname']);
-    $mail->addAddress($to);     // Add a recipient
-    //$mail->addAddress('ellen@example.com');               // Name is optional
-    //$mail->addReplyTo('info@example.com', 'Information');
-    //$mail->addCC('cc@example.com');
-    //$mail->addBCC('bcc@example.com');
-
-    //Attachments
-    //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-    //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
-
-    //Content
-    $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->Subject = $title;
-    $mail->Body    = $content;
-    //$mail->AltBody =$user ;
-
-
-    $mail->send();
-    //echo 'Message has been sent';
-	//return true;
-	} catch (Exception $e) {
-    //echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
-	//return false;
-    return $mail->ErrorInfo;
-    }
-    return 1;
-}
-
 //根据用户主键ID，查询用户名称
 if(!function_exists('getUserName'))
 {
-    function getUserName($user_id)
+    function getUserName($uid)
     {
-       return Db::name('user')->where('id',$user_id)->value('name');
+       return Db::name('user')->where('id', $uid)->value('name');
     }
 }
 
 if(!function_exists('getUserImg'))
 {
-    function getUserImg($user_id)
+    function getUserImg($uid)
     {
-       return Db::name('user')->where('id',$user_id)->value('user_img');
+       return Db::name('user')->where('id', $uid)->value('user_img');
     }
 }
 
@@ -100,18 +48,11 @@ if(!function_exists('getArticName'))
 
 //根据评论时间查询是否已过修改期
 function getLimtTime($create_time)
-    {
-		$nt = time();
-		$lt = intval(($nt - strtotime($create_time))/86400);
-		
-       return $lt;
-    }
-
-//根据用户名查询主页
-function jump()
 {
-    $username = Request::param('username');
-    return Db::name('user')->where('name',$username)->find();
+    $nt = time();
+    $lt = intval(($nt - strtotime($create_time))/86400);
+    
+    return $lt;
 }
 
 /**
@@ -247,34 +188,27 @@ function checkRuleButton($rules_button)
 	}
 }
 
-//菜单结构
-function getSpaceNmu($level)
-{
-	return str_repeat('---',$level);
-}
-
 //提取内容第一张图片
 function getOnepic($str)
 {
     //匹配格式为 <img src="http://img.com" />
     $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
-    preg_match($pattern,$str,$matchContent);
+    //匹配格式为 img[/storage/1/article_pic/20220428/6c2647d24d5ca2c179e4a5b76990c00c.jpg]
+    $pattern2 = "/(?<=img\[)[^\]]*(?=\])/";
+
+    preg_match($pattern, $str, $matchContent);
     if(isset($matchContent[1])){
         $img = $matchContent[1];
-    } else {
-        //$temp="./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
-
-        //匹配格式为 img[/storage/1/article_pic/20220428/6c2647d24d5ca2c179e4a5b76990c00c.jpg]
-        $pattern = "/(?<=img\[)[^\]]*(?=\])/";
-        preg_match($pattern,$str,$matchContent);
-
-        if(isset($matchContent[0])){
-            $img = $matchContent[0];
-        }else{
-            return false;
-        }
+        return $img;
+    } 
+    //$temp="./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
+    preg_match($pattern2, $str, $matchContent2);
+    if(isset($matchContent2[0])){
+        $img = $matchContent2[0];
+        return $img;
     }
-    return $img;
+    
+    return false;
 }
 
 if (!function_exists('get_all_img')) {
@@ -315,19 +249,23 @@ if (!function_exists('get_all_video')) {
 
 //判断蜘蛛函数
 function find_spider(){
-    $useragent = strtolower(empty($useragent) ? Request::header('USER_AGENT') : '');
-    $spider_arr=array(
-        'bot',
+    $useragent = strtolower(Request::header('user-agent'));
+    if(empty($useragent)) return false;
+    
+    $spider_arr = [
         'spider',
+        'bot',
         'slurp',
         'ia_archiver',
-    );	
+    ];
+
     foreach($spider_arr as $spider){
         $spider = strtolower($spider);
-        if(strstr($useragent,$spider)){
+        if(strstr($useragent, $spider)){
             return true;
         }
     }
+
     return false;
 }
 

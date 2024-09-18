@@ -40,7 +40,7 @@ class Index extends BaseController
 		// $a = $alipay->index();
 		// $b= $weixin->index();
 		// var_dump($a,$b);
-
+	
 		$types = input('type');
 		//置顶文章
 		$artTop = Article::getArtTop(5);
@@ -61,8 +61,8 @@ class Index extends BaseController
     public function jump()
     {
         $username = Request::param('username');
-        $u = Db::name('user')->whereOr('nickname', $username)->whereOr('name', $username)->find();
-        return redirect((string) url('user/home',['id'=>$u['id']]));
+        $uid = Db::name('user')->whereOr('nickname', $username)->whereOr('name', $username)->value('id');
+        return redirect((string) url('user/home',['id'=>$uid]));
 
     }
 	

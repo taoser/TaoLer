@@ -38,12 +38,12 @@ class AdminAuth
 		//登陆前获取加密的Cookie
 		$cooAuth = Cookie::get('adminAuth');
 
-		if(!empty($cooAuth)){
+		if(!session('?admin_id') && !empty($cooAuth)){
 			$resArr = explode(':',$cooAuth);
 			$userId = end($resArr);
 			//检验用户
 			$user = Db::name('admin')->where('id',$userId)->find();
-			if(!empty($user)){
+			if(!is_null($user)){
 				//验证cookie
 				$salt = Config::get('taoler.salt');
 				$auth = md5($user['username'].$salt).":".$userId;

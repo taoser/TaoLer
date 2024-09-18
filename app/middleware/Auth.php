@@ -10,20 +10,19 @@ class Auth
     {
 		$header = $request->header();
 
-		if(isset($header['authorization'])) {
-			$token = trim(ltrim($request->header('authorization'), 'Bearer'));
-			
-			try{
-				$data = JwtAuth::decode($token);
-				
-				$request->uid = $data->uid;
-				
-			} catch(\Exception $e) {
-				return json(['code' => -1, 'msg' => $e->getMessage()]);
-			}
-			
-		} else {
+		if(!isset($header['authorization'])) {
 			return json(['code' => -1, 'msg' => 'no auth']);
+		}
+			
+		$token = trim(ltrim($request->header('authorization'), 'Bearer'));
+
+		try{
+			$data = JwtAuth::decode($token);
+			
+			$request->uid = $data->uid;
+			
+		} catch(\Exception $e) {
+			return json(['code' => -1, 'msg' => $e->getMessage()]);
 		}
 			
 		return $next($request);

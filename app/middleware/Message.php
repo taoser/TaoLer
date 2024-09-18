@@ -19,7 +19,7 @@ class Message
         //后置中间件
         $response = $next($request);
 
-        if(session('user_id')){
+        if(session('?user_id')){
             MessageIns::insertMsg((int)session('user_id'));
         }
         return $response;

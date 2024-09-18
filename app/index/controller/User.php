@@ -381,7 +381,8 @@ class User extends BaseController
 	//退出账户
 	public function logout()
 	{
-		Session::clear();
+		Session::delete('user_name');
+		Session::delete('user_id');
 		Cookie::delete('auth');
 
 		if(Session::has('user_id')){

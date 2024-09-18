@@ -35,7 +35,7 @@
 
 {:hook('callme_foot', ['id' => $article.id ?? '', 'uid' => $article.user.id ?? ''])}
 {:hook('showLeftLayer')}
-
+{:hook('msgnum')}
 <script>
     var $ = layui.jquery;
     var articleAdd  = "{:url('add_article',['cate'=>$Request.param.ename])}",
