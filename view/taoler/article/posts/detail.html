@@ -254,9 +254,6 @@
 			</div>
 		</div>
 
-		<!-- 插件hook位 -->
-		{:hook('addonhook_detail')}
-
 	</div>
 
 	<!-- crud管理模块 -->
@@ -265,7 +262,12 @@
   <!--底部栏-->
 </div>
 {include file="public/menu" /}
+
+<!-- 插件hook位 -->
+{:hook('addonhook_detail')}
+
 {/block}
+
 
 {block name="script"}
 <script>
@@ -449,7 +451,7 @@
 </script>
 
 <!-- 插件hook位 -->
-{:hook('addonhook_detail_js')}
+
 
 {//图片点击放大}
 {include file="/public/images-click" /}

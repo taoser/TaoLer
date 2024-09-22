@@ -42,7 +42,8 @@
         "intervention/image": "^2.7",
         "workerman/gateway-worker": "^3.1",
         "workerman/gatewayclient": "^3.1",
-        "illuminate/container": "^11.21"
+        "illuminate/container": "^11.21",
+        "taoser/think-view": "^0.1.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

@@ -3,7 +3,7 @@
         'name' => 'taoser/taoler',
         'pretty_version' => '2.3.10.x-dev',
         'version' => '2.3.10.9999999-dev',
-        'reference' => '91dca5bf8f15563893482b40cc483e4a503d26af',
+        'reference' => '3738ed732ebcf78ee8827b2496a5b5ff778b10d7',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -173,9 +173,9 @@
             'dev_requirement' => false,
         ),
         'league/mime-type-detection' => array(
-            'pretty_version' => '1.15.0',
-            'version' => '1.15.0.0',
-            'reference' => 'ce0f4d1e8a6f4eb0ddff33f57c69c50fd09f4301',
+            'pretty_version' => '1.16.0',
+            'version' => '1.16.0.0',
+            'reference' => '2d6702ff215bf922936ccc1ad31007edc76451b9',
             'type' => 'library',
             'install_path' => __DIR__ . '/../league/mime-type-detection',
             'aliases' => array(),
@@ -262,8 +262,8 @@
         'psr/container-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '^1.0',
-                1 => '1.1|2.0',
+                0 => '1.1|2.0',
+                1 => '^1.0',
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -410,7 +410,7 @@
         'taoser/taoler' => array(
             'pretty_version' => '2.3.10.x-dev',
             'version' => '2.3.10.9999999-dev',
-            'reference' => '91dca5bf8f15563893482b40cc483e4a503d26af',
+            'reference' => '3738ed732ebcf78ee8827b2496a5b5ff778b10d7',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -440,6 +440,15 @@
             'reference' => '6651c31ef42417a6294ef08e6fb970917b7e7f86',
             'type' => 'library',
             'install_path' => __DIR__ . '/../taoser/think-setarr',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'taoser/think-view' => array(
+            'pretty_version' => 'v0.1.0',
+            'version' => '0.1.0.0',
+            'reference' => 'c809036bd3c0324c0b35e89ead2fd84ea30db5cc',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../taoser/think-view',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

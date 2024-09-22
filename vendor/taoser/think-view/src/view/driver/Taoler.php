@@ -1,27 +1,31 @@
 <?php
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006~2019 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
-// +----------------------------------------------------------------------
 declare (strict_types = 1);
 
 namespace think\view\driver;
 
+use Exception;
 use think\App;
 use think\helper\Str;
 use think\Template;
 use think\template\exception\TemplateNotFoundException;
+use think\contract\TemplateHandlerInterface;
 
-class Think
+class Taoler implements TemplateHandlerInterface
 {
     // 模板引擎实例
     private $template;
     private $app;
+    /**
+     * 模板变量
+     * @var array
+     */
+    protected $data = [];
+
+    /**
+     * 内容过滤
+     * @var mixed
+     */
+    protected $filter;
 
     // 模板引擎参数
     protected $config = [
@@ -138,7 +142,11 @@ class Think
 
         if ('' == pathinfo($template, PATHINFO_EXTENSION)) {
             // 获取模板文件名
-            $template = $this->parseTemplate($template);
+            try{
+                $template = $this->parseTemplate($template);
+            } catch(\Exception $e) {
+                throw new Exception($e->getMessage());
+            }
         }
 
         // 模板不存在 抛出异常
@@ -173,13 +181,13 @@ class Think
         $request = $this->app['request'];
         // 应用名
         $appName = app('http')->getName();
-
+  
         // 获取视图根目录
         if (strpos($template, '@')) {
             // 跨模块调用
             list($app, $template) = explode('@', $template);
         }
-        
+
         if (isset($app)) {
             $view     = $this->config['view_dir_name'];
             $viewPath = $this->app->getBasePath() . $app . DIRECTORY_SEPARATOR . $view . DIRECTORY_SEPARATOR;
@@ -197,35 +205,49 @@ class Think
 
         $depr = $this->config['view_depr'];
 
-        if (0 !== strpos($template, '/')) {
-            $template   = str_replace(['/', ':'], $depr, $template);
-            $controller = $request->controller();
+        try{
+            if (0 !== strpos($template, '/')) {
+                $template   = str_replace(['/', ':'], $depr, $template);
+                $controller = $request->controller();
 
-            if (strpos($controller, '.')) {
-                $pos        = strrpos($controller, '.');
-                $controller = substr($controller, 0, $pos) . '.' . Str::snake(substr($controller, $pos + 1));
-            } else {
-                $controller = Str::snake($controller);
-            }
-
-            if ($controller) {
-                if ('' == $template) {
-                    // 如果模板文件名为空 按照默认模板渲染规则定位
-                    if (2 == $this->config['auto_rule']) {
-                        $template = $request->action(true);
-                    } elseif (3 == $this->config['auto_rule']) {
-                        $template = $request->action();
-                    } else {
-                        $template = Str::snake($request->action());
-                    }
-
-                    $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
-                } elseif (false === strpos($template, $depr)) {
-                    $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                if (strpos($controller, '.')) {
+                    // addon no
+                    $pos        = strrpos($controller, '.');
+                    $controller = substr($controller, 0, $pos) . '.' . Str::snake(substr($controller, $pos + 1));
+                } else {
+                    $controller = Str::snake($controller);
                 }
+
+                if ($controller) {
+                    if ('' == $template) {
+                        // addon no
+                        // 如果模板文件名为空 按照默认模板渲染规则定位
+                        if (2 == $this->config['auto_rule']) {
+                            $template = $request->action(true);
+                        } elseif (3 == $this->config['auto_rule']) {
+                            $template = $request->action();
+                        } else {
+                            $template = Str::snake($request->action());
+                        }
+                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                        
+                    } elseif (false === strpos($template, $depr)) {
+                        // addons插件中解析controller
+                        if(empty($appName)) {
+                            $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                        }
+                        // app多应用中解析controller
+                        if(strpos($path, 'addons') === false){
+                            $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                        }
+                    }
+                }
+
+            } else {
+                $template = str_replace(['/', ':'], $depr, substr($template, 1));          
             }
-        } else {
-            $template = str_replace(['/', ':'], $depr, substr($template, 1));
+        } catch(\Exception $e) {
+            throw new Exception($e->getMessage());
         }
 
         return $path . ltrim($template, '/') . '.' . ltrim($this->config['view_suffix'], '.');
@@ -258,4 +280,54 @@ class Think
     {
         return call_user_func_array([$this->template, $method], $params);
     }
+
+
+    /**
+     * 获取模板引擎渲染内容
+     * @param $callback
+     * @return string
+     * @throws \Exception
+     */
+    // protected function getContent($callback): string
+    // {
+    //     // 页面缓存
+    //     ob_start();
+    //     if (PHP_VERSION > 8.0) {
+    //         ob_implicit_flush(false);
+    //     } else {
+    //         ob_implicit_flush(0);
+    //     }
+
+    //     // 渲染输出
+    //     try {
+    //         $callback();
+    //     } catch (\Exception $e) {
+    //         ob_end_clean();
+    //         throw $e;
+    //     }
+
+    //     // 获取并清空缓存
+    //     $content = ob_get_clean();
+
+    //     if ($this->filter) {
+    //         $content = call_user_func_array($this->filter, [$content]);
+    //     }
+
+    //     return $content;
+    // }
+
+    /**
+     * 视图过滤
+     * @access public
+     * @param Callable $filter 过滤方法或闭包
+     * @return $this
+     */
+    // public function filter(callable $filter = null)
+    // {
+    //     $this->filter = $filter;
+    //     return $this;
+    // }
+
+
+
 }

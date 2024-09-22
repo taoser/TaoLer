@@ -13,7 +13,8 @@
         "topthink/framework": "^6.0",
         "topthink/think-view": "^1.0",
         "topthink/think-helper": "^3.0.0",
-        "symfony/var-exporter": "^5.4"
+        "symfony/var-exporter": "^5.4",
+        "taoser/think-view": "^0.1.0"
     },
     "autoload": {
         "psr-4": {

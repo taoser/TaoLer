@@ -146,7 +146,8 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         ),
         'think\\view\\driver\\' => 
         array (
-            0 => __DIR__ . '/..' . '/topthink/think-view/src',
+            0 => __DIR__ . '/..' . '/taoser/think-view/src/view/driver',
+            1 => __DIR__ . '/..' . '/topthink/think-view/src',
         ),
         'think\\trace\\' => 
         array (

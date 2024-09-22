@@ -1315,17 +1315,17 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.15.0",
-            "version_normalized": "1.15.0.0",
+            "version": "1.16.0",
+            "version_normalized": "1.16.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "ce0f4d1e8a6f4eb0ddff33f57c69c50fd09f4301"
+                "reference": "2d6702ff215bf922936ccc1ad31007edc76451b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/ce0f4d1e8a6f4eb0ddff33f57c69c50fd09f4301",
-                "reference": "ce0f4d1e8a6f4eb0ddff33f57c69c50fd09f4301",
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/2d6702ff215bf922936ccc1ad31007edc76451b9",
+                "reference": "2d6702ff215bf922936ccc1ad31007edc76451b9",
                 "shasum": ""
             },
             "require": {
@@ -1337,7 +1337,7 @@
                 "phpstan/phpstan": "^0.12.68",
                 "phpunit/phpunit": "^8.5.8 || ^9.3 || ^10.0"
             },
-            "time": "2024-01-28T23:22:08+00:00",
+            "time": "2024-09-21T08:32:55+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1358,7 +1358,7 @@
             "description": "Mime-type detection for Flysystem",
             "support": {
                 "issues": "https://github.com/thephpleague/mime-type-detection/issues",
-                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.15.0"
+                "source": "https://github.com/thephpleague/mime-type-detection/tree/1.16.0"
             },
             "funding": [
                 {
@@ -2932,6 +2932,50 @@
                 "source": "https://github.com/taoser/think-setarr/tree/v0.0.3"
             },
             "install-path": "../taoser/think-setarr"
+        },
+        {
+            "name": "taoser/think-view",
+            "version": "v0.1.0",
+            "version_normalized": "0.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/taoser/think-view.git",
+                "reference": "c809036bd3c0324c0b35e89ead2fd84ea30db5cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/taoser/think-view/zipball/c809036bd3c0324c0b35e89ead2fd84ea30db5cc",
+                "reference": "c809036bd3c0324c0b35e89ead2fd84ea30db5cc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0",
+                "topthink/think-template": "^2.0|^3.0"
+            },
+            "time": "2024-09-22T05:46:38+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "think\\view\\driver\\": "src/view/driver/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "taoser",
+                    "email": "317927823@qq.com"
+                }
+            ],
+            "description": "TaoLer template driver",
+            "support": {
+                "issues": "https://github.com/taoser/think-view/issues",
+                "source": "https://github.com/taoser/think-view/tree/v0.1.0"
+            },
+            "install-path": "../taoser/think-view"
         },
         {
             "name": "topthink/framework",
