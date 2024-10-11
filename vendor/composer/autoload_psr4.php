@@ -7,7 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'yzh52521\\EasyHttp\\' => array($vendorDir . '/yzh52521/easyhttp/src'),
-    'think\\view\\driver\\' => array($vendorDir . '/taoser/think-view/src/view/driver', $vendorDir . '/topthink/think-view/src'),
+    'think\\view\\driver\\' => array($vendorDir . '/topthink/think-view/src'),
     'think\\trace\\' => array($vendorDir . '/topthink/think-trace/src'),
     'think\\migration\\' => array($vendorDir . '/topthink/think-migration/src'),
     'think\\composer\\' => array($vendorDir . '/topthink/think-installer/src'),

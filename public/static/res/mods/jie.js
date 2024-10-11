@@ -180,11 +180,11 @@ layui.define('fly', function(exports){
       dom.content.focus()
       if(val.indexOf(aite) !== -1) return;
       // 切换编辑器 回复@赋值
-      if(taonystatus == 0) {
+      // if(taonystatus == 0) {
         dom.content.val(aite +' ' + val);
-      } else { //编辑器插件赋值
-        tinymce.activeEditor.setContent(aite + ' .' + val);
-      }
+      // } else { //编辑器插件赋值
+      //   tinymce.activeEditor.setContent(aite + ' .' + val);
+      // }
     }
     ,accept: function(li){ //采纳
       var othis = $(this);
@@ -205,8 +205,6 @@ layui.define('fly', function(exports){
       });
     }
     ,edit: function(li){ //编辑评论
-      if(taonystatus == 0) {
-
         fly.json(commentGetDa, {
           id: li.data('id')
         }, function (res) {
@@ -218,9 +216,9 @@ layui.define('fly', function(exports){
             , title: '编辑回帖'
             , area: ['738px', '310px']
             , success: function (layero) {
-                fly.layEditor({
-                  elem: layero.find('textarea')
-                });
+                // fly.layEditor({
+                //   elem: layero.find('textarea')
+                // });
             }
           }, function (value, index) {
             fly.json(commentUpdateDa, {
@@ -233,10 +231,9 @@ layui.define('fly', function(exports){
             });
           });
         });
-      }
+      
     }
-    ,del: function(span){ //删除评论
-      if(taonystatus == 0) {
+    ,del: function(li){ //删除评论
         layer.confirm('确认删除该回答么？', function(index){
           layer.close(index);
           fly.json(commentJiedaDelete, {
@@ -255,7 +252,7 @@ layui.define('fly', function(exports){
             }
           });
         });
-      }
+      
 
     }
   };

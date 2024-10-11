@@ -800,17 +800,17 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v11.23.5",
-            "version_normalized": "11.23.5.0",
+            "version": "v11.27.2",
+            "version_normalized": "11.27.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
-                "reference": "66d20471c8c55ef056044dc1ff16da90d7b4d649"
+                "reference": "bc49d144a20b0d432e1ac812c9e056594b6c6480"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/container/zipball/66d20471c8c55ef056044dc1ff16da90d7b4d649",
-                "reference": "66d20471c8c55ef056044dc1ff16da90d7b4d649",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/bc49d144a20b0d432e1ac812c9e056594b6c6480",
+                "reference": "bc49d144a20b0d432e1ac812c9e056594b6c6480",
                 "shasum": ""
             },
             "require": {
@@ -821,7 +821,7 @@
             "provide": {
                 "psr/container-implementation": "1.1|2.0"
             },
-            "time": "2024-09-11T20:15:17+00:00",
+            "time": "2024-10-08T13:34:53+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -854,17 +854,17 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.23.5",
-            "version_normalized": "11.23.5.0",
+            "version": "v11.27.2",
+            "version_normalized": "11.27.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "5a4c6dcf633c1f69e1b70bbea1ef1b7d2186d3da"
+                "reference": "56312862af937bd6da8e6dc8bbd88188dfb478f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/5a4c6dcf633c1f69e1b70bbea1ef1b7d2186d3da",
-                "reference": "5a4c6dcf633c1f69e1b70bbea1ef1b7d2186d3da",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/56312862af937bd6da8e6dc8bbd88188dfb478f8",
+                "reference": "56312862af937bd6da8e6dc8bbd88188dfb478f8",
                 "shasum": ""
             },
             "require": {
@@ -872,7 +872,7 @@
                 "psr/container": "^1.1.1|^2.0.1",
                 "psr/simple-cache": "^1.0|^2.0|^3.0"
             },
-            "time": "2024-09-12T15:25:08+00:00",
+            "time": "2024-09-22T15:08:08+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1148,17 +1148,17 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.3.4",
-            "version_normalized": "1.3.4.0",
+            "version": "v1.3.5",
+            "version_normalized": "1.3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "61b87392d986dc49ad5ef64e75b1ff5fee24ef81"
+                "reference": "1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/61b87392d986dc49ad5ef64e75b1ff5fee24ef81",
-                "reference": "61b87392d986dc49ad5ef64e75b1ff5fee24ef81",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c",
+                "reference": "1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c",
                 "shasum": ""
             },
             "require": {
@@ -1171,7 +1171,7 @@
                 "phpstan/phpstan": "^1.8.2",
                 "symfony/var-dumper": "^5.4.11|^6.2.0|^7.0.0"
             },
-            "time": "2024-08-02T07:48:17+00:00",
+            "time": "2024-09-23T13:33:08+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1709,17 +1709,17 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v6.9.1",
-            "version_normalized": "6.9.1.0",
+            "version": "v6.9.2",
+            "version_normalized": "6.9.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "039de174cd9c17a8389754d3b877a2ed22743e18"
+                "reference": "a7b17b42fa4887c92146243f3d2f4ccb962af17c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/039de174cd9c17a8389754d3b877a2ed22743e18",
-                "reference": "039de174cd9c17a8389754d3b877a2ed22743e18",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/a7b17b42fa4887c92146243f3d2f4ccb962af17c",
+                "reference": "a7b17b42fa4887c92146243f3d2f4ccb962af17c",
                 "shasum": ""
             },
             "require": {
@@ -1749,7 +1749,7 @@
                 "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)",
                 "thenetworg/oauth2-azure": "Needed for Microsoft XOAUTH2 authentication"
             },
-            "time": "2023-11-25T22:23:28+00:00",
+            "time": "2024-10-09T10:07:50+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1781,7 +1781,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.9.1"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.9.2"
             },
             "funding": [
                 {
@@ -2932,50 +2932,6 @@
                 "source": "https://github.com/taoser/think-setarr/tree/v0.0.3"
             },
             "install-path": "../taoser/think-setarr"
-        },
-        {
-            "name": "taoser/think-view",
-            "version": "v0.1.0",
-            "version_normalized": "0.1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/taoser/think-view.git",
-                "reference": "c809036bd3c0324c0b35e89ead2fd84ea30db5cc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/taoser/think-view/zipball/c809036bd3c0324c0b35e89ead2fd84ea30db5cc",
-                "reference": "c809036bd3c0324c0b35e89ead2fd84ea30db5cc",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0",
-                "topthink/think-template": "^2.0|^3.0"
-            },
-            "time": "2024-09-22T05:46:38+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "think\\view\\driver\\": "src/view/driver/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "taoser",
-                    "email": "317927823@qq.com"
-                }
-            ],
-            "description": "TaoLer template driver",
-            "support": {
-                "issues": "https://github.com/taoser/think-view/issues",
-                "source": "https://github.com/taoser/think-view/tree/v0.1.0"
-            },
-            "install-path": "../taoser/think-view"
         },
         {
             "name": "topthink/framework",

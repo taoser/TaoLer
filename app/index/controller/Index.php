@@ -40,6 +40,33 @@ class Index extends BaseController
 		// $a = $alipay->index();
 		// $b= $weixin->index();
 		// var_dump($a,$b);
+
+		// $hook['hook_name'] = 'thinkphp';
+		// $hook['hook_type'] = 1;
+		// $hook['template'] = 'taoler';
+		// $hook['sort'] = 111;
+		// $hook['create_time'] = time();
+		// $hook['param'] = [
+		// 	'article_id'    => '$article.id',
+		// 	'uid' => 1,
+		// ];
+		// Db::name('addon_hook')
+		// 	->json(['param'])
+		// 	->insert($hook);
+
+		// $lawyers = Db::name('addon_lawyer')
+		// //->json(['begood'])
+		// ->where('begood','like', '%1%')
+		// ->select()
+		// ->toArray();
+
+		// $count = count($lawyers);
+
+		// if($count) {
+		// 	$k = rand(0,$count - 1) ;
+		// 	$lawyer = $lawyers[$k];
+		// }
+
 	
 		$types = input('type');
 		//置顶文章

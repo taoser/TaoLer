@@ -162,7 +162,7 @@ class Article extends BaseController
             'passJieMi'   	=> session('art_pass_'.$id),
 			$download,
 		]);
-	
+
 		return View::fetch('article/'.$artDetail['cate']['detpl'].'/detail');
     }
 	

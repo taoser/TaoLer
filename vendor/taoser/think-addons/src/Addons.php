@@ -10,6 +10,7 @@ use think\facade\Config;
 use think\facade\View;
 use taoler\com\Files;
 use think\facade\Cache;
+use think\facade\Db;
 
 abstract class Addons
 {
@@ -44,10 +45,9 @@ abstract class Addons
         $this->addon_config = "addon_{$this->name}_config";
         $this->addon_info = "addon_{$this->name}_info";
         // $this->taglib_pre_load = $this->getTagLib();
-        $this->view = View::engine('Taoler');
-        // $this->view = new \think\Template();
+        // $this->view = clone View::engine('Taoler');
+        $this->view = clone View::engine('Think');
         $this->view->config([
-            'type' => 'Taoler',
             'strip_space'   => true, // 去除空格和换行
             'view_path' => $this->addon_path . 'view' . DIRECTORY_SEPARATOR,
             // 'taglib_pre_load'   => $this->taglib_pre_load
@@ -83,7 +83,8 @@ abstract class Addons
      */
     protected function fetch($template = '', $vars = [])
     {
-        return $this->view->fetch($template, $vars);
+        // addons 插件视图此处必须加路径前缀/
+        return $this->view->fetch('/' . $template, $vars);
     }
 
     /**
@@ -221,4 +222,39 @@ abstract class Addons
 
     //必须卸载插件方法
     abstract public function uninstall();
+
+    // 写入管理位
+    protected function insert(array $hooks = []) {
+
+        if(!empty($hooks)) {
+            foreach($hooks as $v) {
+                $res = Db::name('addon_hook')->where([
+                    'hook_name' => $v['hook_name'],
+                    'hook_type' => $v['hook_type']
+                ])->find();
+
+                if(is_null($res)) {
+                    Db::name('addon_hook')->save($hooks);
+                }
+            }
+        }
+    }
+
+    // 移除管理位
+    protected function remove(array $hooks = []) {
+
+        if(!empty($hooks)) {
+            foreach($hooks as $v) {
+                $res = Db::name('addon_hook')->where([
+                    'hook_name' => $v['hook_name'],
+                    'hook_type' => $v['hook_type']
+                ])->find();
+
+                if(!is_null($res)) {
+                    Db::name('addon_hook')->delete($res['id']);
+                }
+            }
+        }
+    }
+
 }

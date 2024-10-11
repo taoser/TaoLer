@@ -140,7 +140,6 @@ class Think
             // 获取模板文件名
             $template = $this->parseTemplate($template);
         }
-
         // 模板不存在 抛出异常
         if (!is_file($template)) {
             throw new TemplateNotFoundException('template not exists:' . $template, $template);
@@ -171,8 +170,6 @@ class Think
     {
         // 分析模板文件规则
         $request = $this->app['request'];
-        // 应用名
-        $appName = app('http')->getName();
 
         // 获取视图根目录
         if (strpos($template, '@')) {
@@ -223,6 +220,7 @@ class Think
                 } elseif (false === strpos($template, $depr)) {
                     $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
                 }
+                
             }
         } else {
             $template = str_replace(['/', ':'], $depr, substr($template, 1));

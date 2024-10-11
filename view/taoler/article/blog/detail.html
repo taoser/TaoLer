@@ -167,11 +167,11 @@
 													{notempty name="$comment.children"}
 													{volist name="$comment.children" id="vo"}
 														<div class="layui-clear" style="margin:10px 0; padding: 10px; border: 1px solid #f0f0f0; background: #f6f6f6">
-															<a style="display: inline-block;width: 50px;">
-																<img src="{$vo.user.user_img}" style="width: 30px; height: 30px; border-radius: 15px; object-fit: cover">
-															</a>
 															<div style="float: left;width: calc(100% - 50px);">
-															<div>{$vo.user.name} {$vo.create_time|date='Y-m-d H:i'}</div>
+															<div>
+																<img src="{$vo.user.user_img}" style="width: 30px; height: 30px; border-radius: 15px; object-fit: cover">
+																{$vo.user.name} {$vo.create_time|date='Y-m-d H:i'}
+															</div>
 															<div class="detail-body jieda-body photos">{$vo.content|raw}</div>
 															<div class="jieda-reply">
 																{eq name="vo.delete_time" value="0"}
@@ -195,11 +195,11 @@
 														{notempty name="$vo.children"}
 															{volist name="$vo.children" id="voo"}
 															<div class="layui-clear" style="margin:10px 0; padding: 10px; border: 1px solid #f0f0f0;">
-																<a style="display: inline-block; width: 50px;">
-																	<img src="{$voo.user.user_img}" style="width: 30px; height: 30px; object-fit: cover; border-radius: 15px;">
-																</a>
 																<div style="float: left;width: calc(100% - 50px);">
-																	<div>{$voo.user.name} 回复 {$voo.touser} {$voo.create_time|date='Y-m-d H:i'}</div>
+																	<div>
+																		<img src="{$voo.user.user_img}" style="width: 30px; height: 30px; object-fit: cover; border-radius: 15px;">
+																		{$voo.user.name} 回复 {$voo.touser} {$voo.create_time|date='Y-m-d H:i'}
+																	</div>
 																	<div class="detail-body jieda-body photos">{$voo.content|raw}</div>
 																	<div class="jieda-reply">
 																		{eq name="voo.delete_time" value="0"}
@@ -380,7 +380,6 @@
 		commentJiedaDelete = "{:url('Comment/jiedaDelete')}",
 		langCollection = "{:lang('collection')}",
 		langCancelCollection = "{:lang('cancel collection')}";
-	let taonystatus = "{:hook('taonystatus') ? 1 : 0} ";
 	  
 	layui.use(['laypage'], function(){
 		var $ = layui.jquery

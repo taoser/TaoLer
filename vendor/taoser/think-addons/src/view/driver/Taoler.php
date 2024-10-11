@@ -151,11 +151,7 @@ class Taoler implements TemplateHandlerInterface
 
         if ('' == pathinfo($template, PATHINFO_EXTENSION)) {
             // 获取模板文件名
-            try{
-                $template = $this->parseTemplate($template);
-            } catch(\Exception $e) {
-                throw new Exception($e->getMessage());
-            }
+            $template = $this->parseTemplate($template);
         }
 
         // 模板不存在 抛出异常
@@ -214,13 +210,13 @@ class Taoler implements TemplateHandlerInterface
 
         $depr = $this->config['view_depr'];
 
-        try{
+        // 应用控制器视图解析
+        if(strpos($path, 'addons') === false){
             if (0 !== strpos($template, '/')) {
                 $template   = str_replace(['/', ':'], $depr, $template);
                 $controller = $request->controller();
 
                 if (strpos($controller, '.')) {
-                    // addon no
                     $pos        = strrpos($controller, '.');
                     $controller = substr($controller, 0, $pos) . '.' . Str::snake(substr($controller, $pos + 1));
                 } else {
@@ -229,7 +225,6 @@ class Taoler implements TemplateHandlerInterface
 
                 if ($controller) {
                     if ('' == $template) {
-                        // addon no
                         // 如果模板文件名为空 按照默认模板渲染规则定位
                         if (2 == $this->config['auto_rule']) {
                             $template = $request->action(true);
@@ -241,22 +236,14 @@ class Taoler implements TemplateHandlerInterface
                         $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
                         
                     } elseif (false === strpos($template, $depr)) {
-                        // addons插件中解析controller
-                        if(empty($appName)) {
-                            $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
-                        }
                         // app多应用中解析controller
-                        if(strpos($path, 'addons') === false){
-                            $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
-                        }
+                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                        
                     }
                 }
-
             } else {
                 $template = str_replace(['/', ':'], $depr, substr($template, 1));          
             }
-        } catch(\Exception $e) {
-            throw new Exception($e->getMessage());
         }
 
         return $path . ltrim($template, '/') . '.' . ltrim($this->config['view_suffix'], '.');

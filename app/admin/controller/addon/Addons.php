@@ -159,9 +159,8 @@ class Addons extends AdminController
     }
 
     /**
-     * 安装&升级，
+     * 安装，
      * @param array $data
-     * @param bool $type true执行install.sql, false升级不执行sql
      * @return Json
      */
     public function install(array $data = [])
@@ -257,7 +256,7 @@ class Addons extends AdminController
             $this->addonsFileCheckInstall($data['name'], $response->addons_src);
 
             // 升级sql
-            $sqlUpdateFile = root_path()."addons/{$data['name']}/update_{$response->version}.sql";
+            $sqlUpdateFile = root_path()."addons/{$data['name']}/data/update_{$response->version}.sql";
             if(file_exists($sqlUpdateFile)) {
                 SqlFile::dbExecute($sqlUpdateFile);
             }

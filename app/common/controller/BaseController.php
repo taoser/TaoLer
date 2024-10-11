@@ -42,6 +42,8 @@ class BaseController extends BaseCtrl
 
 	protected $adminEmail;
 
+	protected $hooks = [];
+
     /**
 	 * 初始化系统，导航，用户
 	 */
@@ -53,6 +55,8 @@ class BaseController extends BaseCtrl
 
 		$this->adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
 
+		// $this->hooks = $this->getHooks();
+
 		//系统配置
 		$this->showSystem();
 
@@ -62,6 +66,8 @@ class BaseController extends BaseCtrl
 			'subcatelist'	=> $this->showSubnav(),
 			//当前登录用户
 			'user'			=> $this->user,
+			// hooks
+			// 'hooks'			=> $this->hooks
 		]);
 
 	}
@@ -168,5 +174,13 @@ class BaseController extends BaseCtrl
         View::assign($assign);
 		return $sysInfo;
     }
+
+	// 插件
+	protected function getHooks() {
+		$hooksArr = config('addons.hooks');
+		unset($hooksArr['initialize'],$hooksArr['install'],$hooksArr['uninstall'],$hooksArr['enabled'],$hooksArr['disabled']);
+		// return $hooksArr;
+		return array_keys($hooksArr);
+	}
 
 }
