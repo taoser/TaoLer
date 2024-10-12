@@ -27,6 +27,13 @@ use app\common\lib\FileHelper;
 
 class Addons extends AdminController
 {
+    protected $menu = [];
+
+    public function __construct()
+    {
+        //
+    }
+
     /**
      * 浏览插件
      *
@@ -182,32 +189,28 @@ class Addons extends AdminController
                 SqlFile::dbExecute($sqlInstallFile);
             }
 
+            //执行插件安装
+            $class = get_addons_instance($data['name']);
+            $class->install();
+
             //安装菜单
-            //$menu = get_addons_menu($data['name']);
-            $menu = [];
-            $menuFile = app()->getRootPath() . 'addons' . DS . $data['name'] . DS . 'menu.php';
-            if(file_exists($menuFile)){
-                $menu = include $menuFile;
-                if(isset($menu['is_nav']) && $menu['is_nav'] < 8){
-                    $pid = $menu['is_nav'];
-                } else {
-                    //$pid = AuthRule::where('name','addons')->value('id');
-                    return json(['code'=>-1,'msg'=> 'is_nav菜单项目设置错误']);
+            $menu = get_addons_menu($data['name']);
+            if(!empty($menu)){
+                if(!isset($menu['is_nav']) || $menu['is_nav'] > 8){
+                    return json(['code'=>-1,'msg'=> 'is_nav菜单设置错误,无法完成安装！']);
                 }
+                //$pid = AuthRule::where('name','addons')->value('id');
+                $pid = $menu['is_nav'];
                 // 父ID状态为0时打开
                 $pidStatus = AuthRule::where('id', $pid)->value('status');
                 if($pidStatus < 1) {
                     AuthRule::update(['status' => 1, 'id' => $pid]);
                 }
-                // 安装菜单
-                $menu_arr[] = $menu['menu'];
-                $this->addAddonMenu($menu_arr, (int)$pid,1);
+                unset($menu['is_nav']);
+                $this->insertMenu($menu, (int)$pid, 1);
             }
-
-            //执行插件安装
-            $class = get_addons_instance($data['name']);
-            $class->install();
-
+            
+            // 设置插件info
             set_addons_info($data['name'],['status' => 1,'install' => 1]);
 
         } catch (\Exception $e) {
@@ -215,6 +218,7 @@ class Addons extends AdminController
         }
 
         Files::delDirAndFile('../runtime/addons/'.$data['name'] . DS);
+
         return json(['code' => 0, 'msg' => '插件安装成功！']);
 
     }
@@ -236,21 +240,22 @@ class Addons extends AdminController
         if($response->code < 0) return json($response);
 
         try {
-
             // 获取配置信息
             $config = get_addons_config($data['name']);
             $info = get_addons_info($data['name']);
+
             // 卸载插件
-            $class = get_addons_instance($data['name']);
-            $class->uninstall();
-            //$this->uninstall($data['name']);
+            // $class = get_addons_instance($data['name']);
+            // $class->uninstall();
 
             // 卸载菜单
-            // $menu = get_addons_menu($data['name']);
-            // if(!empty($menu)){
-            //     $menu_arr[] = $menu['menu'];
-            //     $this->delAddonMenu($menu_arr);
-            // }
+            $menu = get_addons_menu($data['name']);
+            $isMenuEmpty = empty($menu);
+            if(!$isMenuEmpty){
+                $pid = $menu['is_nav'];
+                unset($menu['is_nav']);
+                $this->removeMenu($menu);
+            }
 
             // 升级安装
             $this->addonsFileCheckInstall($data['name'], $response->addons_src);
@@ -260,18 +265,26 @@ class Addons extends AdminController
             if(file_exists($sqlUpdateFile)) {
                 SqlFile::dbExecute($sqlUpdateFile);
             }
+
             // 恢复配置
             if(!empty($config)) {
                 set_addons_config($data['name'], $config);
             }
-            // 回复info
+
+            // 恢复info
             $info['version'] = number_format($response->version, 1, '.', '');; // 写入版本号
             set_addons_info($data['name'], $info);
-
-            return json(['code' => 0, 'msg' => "{$response->version}版本升级成功！"]);
+    
+            //恢复菜单
+            if(!$isMenuEmpty){
+                $this->insertMenu($menu, (int)$pid, 1);
+            }
+            
         } catch (\Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
+
+        return json(['code' => 0, 'msg' => "{$response->version}版本升级成功！"]);
     }
 
     /**
@@ -283,19 +296,22 @@ class Addons extends AdminController
     public function uninstall(string $name = '')
     {
         $name = input('name') ?? $name;
-        // 执行插件卸载
-        $class = get_addons_instance($name);
-        $class->uninstall();
-        // 卸载菜单
-        $menu = get_addons_menu($name);
-        if(!empty($menu)){
-            $menu_arr[] = $menu['menu'];
-            $this->delAddonMenu($menu_arr);
-        }
-
+        
+        
         try {
+            // 执行插件卸载
+            $class = get_addons_instance($name);
+            $class->uninstall();
+
+            // 卸载菜单
+            $menu = get_addons_menu($name);
+            if(!empty($menu)){
+                unset($menu['is_nav']);
+                $this->removeMenu($menu);
+            }
+
             //卸载插件数据库
-            $sqlUninstallFile = root_path().'addons/'.$name.'/uninstall.sql';
+            $sqlUninstallFile = root_path()."addons/{$name}/uninstall.sql";
             if(file_exists($sqlUninstallFile)) {
                 SqlFile::dbExecute($sqlUninstallFile);
             }
@@ -404,65 +420,72 @@ class Addons extends AdminController
     }
 
     /**
-     * 添加菜单
-     * @param array $menu
-     * @param int $pid
-     * @param int $type
+     * 插入插件菜单
+     *
+     * @param array $menu 菜单数组
+     * @param integer $pid 父ID
+     * @param integer $type 菜单类型
      * @return void
-     * @throws \Exception
      */
-    public function addAddonMenu(array $menu,int $pid = 0, int $type = 1)
+    public function insertMenu(array $menu, int $pid = 0, int $type = 1)
     {
-        foreach ($menu as $v){
-            $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
-            try {
+        try {
+
+            foreach($menu as $v){
+                $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
+                
                 $v['pid'] = $pid;
                 $v['name'] = trim($v['name'],'/');
                 $v['type'] = $type;
-                $menu = AuthRule::withTrashed()->where('name',$v['name'])->find();
-                if($menu){
-                    $menu->restore();
+
+                $menu_rule = AuthRule::withTrashed()->where('name', $v['name'])->findOrEmpty();
+                if(!$menu_rule->isEmpty()){
+                    $menu_rule->restore();
                 } else {
-                    $menu = AuthRule::create($v);
+                    $menu_rule = AuthRule::create($v);
                 }
 
                 if ($hasChild) {
-                    $this->addAddonMenu($v['sublist'], $menu->id,$type);
+                    $this->insertMenu($v['sublist'], $menu_rule->id, $type);
                 }
-            } catch (\Exception $e) {
-                throw new \Exception($e->getMessage());
             }
+
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
 
+        return true;
     }
 
     /**
-     * 循环删除菜单
-     * @param array $menu
-     * @param string $module
+     * 循环删除插件菜单
+     * @param array $menu 菜单数组
+     * @param string $module 插件模式 预留功能
      * @return void
      * @throws \Exception
      */
-    public function delAddonMenu(array $menu,string $module = 'addon')
+    public function removeMenu(array $menu, string $module = 'addon')
     {
-        foreach ($menu as $k=>$v){
-            $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
-            try {
-                $v['name'] = trim($v['name'],'/');
-                $menu_rule = AuthRule::withTrashed()->where('name',$v['name'])->find();
-                if(!is_null($menu_rule)){
+        try {
+            foreach ($menu as $k => $v){
+                $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
+                $v['name'] = trim($v['name'], '/');
+
+                $menu_rule = AuthRule::withTrashed()->where('name', $v['name'])->findOrEmpty();
+                if(!$menu_rule->isEmpty()){
                     $menu_rule->delete(true);
                     if ($hasChild) {
-                        $this->delAddonMenu($v['sublist']);
+                        $this->removeMenu($v['sublist']);
                     }
                 }
-
-            } catch (\Exception $e) {
-                throw new \Exception($e->getMessage());
             }
-        }
 
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        return true;
     }
+
 
     /**
      * 用户登录

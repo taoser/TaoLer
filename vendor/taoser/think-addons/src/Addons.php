@@ -208,7 +208,7 @@ abstract class Addons
      */
     final public function setInfo($name = '', $value = [])
     {
-        if (empty($name)) {
+        if(empty($name)) {
             $name = $this->getName();
         }
         $info = $this->getInfo($name);
