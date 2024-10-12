@@ -14,6 +14,8 @@ use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
+use think\facade\Session;
+use think\facade\Cookie;
 use app\common\model\User as UserModel;
 use app\common\lib\Uploads;
 use app\common\validate\User as userValidate;
@@ -221,6 +223,9 @@ class User extends AdminController
 	//登录用户中心
 	public function goUserHome() {
 		$id = (int)input('id');
+		Session::delete('user_name');
+		Session::delete('user_id');
+		Cookie::delete('auth');
 		$user_home_url = $this->getUserHome($id);
 
 		return redirect($user_home_url);

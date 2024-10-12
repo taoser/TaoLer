@@ -240,7 +240,7 @@ class Addons extends AdminController
         if($response->code < 0) return json($response);
 
         try {
-            // 获取配置信息
+            // 获取原配置信息
             $config = get_addons_config($data['name']);
             $info = get_addons_info($data['name']);
 
@@ -259,6 +259,8 @@ class Addons extends AdminController
 
             // 升级安装
             $this->addonsFileCheckInstall($data['name'], $response->addons_src);
+            // 先恢复原来的info版本
+            set_addons_info($data['name'], $info);
 
             // 升级sql
             $sqlUpdateFile = root_path()."addons/{$data['name']}/data/update_{$response->version}.sql";
@@ -271,8 +273,8 @@ class Addons extends AdminController
                 set_addons_config($data['name'], $config);
             }
 
-            // 恢复info
-            $info['version'] = number_format($response->version, 1, '.', '');; // 写入版本号
+            // 更新现在的新版本info
+            $info['version'] = number_format($response->version, 1, '.', ''); // 写入版本号
             set_addons_info($data['name'], $info);
     
             //恢复菜单
