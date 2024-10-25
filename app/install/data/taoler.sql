@@ -61,10 +61,8 @@ CREATE TABLE `tao_article`  (
   `has_audio` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '1有音频0无',
   `pv` int NOT NULL DEFAULT 0 COMMENT '浏览量',
   `jie` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '0未结1已结',
-  `upzip` varchar(70) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文章附件',
-  `downloads` int NOT NULL DEFAULT 0 COMMENT '下载量',
-  `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '关键词',
-  `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'seo描述',
+  `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '关键词',
+  `description` tinytext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'seo描述',
   `read_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '阅读权限0开放1回复可读2密码可读3私密',
   `art_pass` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文章加密密码',
   `title_color` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标题颜色',
@@ -73,10 +71,10 @@ CREATE TABLE `tao_article`  (
   `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `user_id`(`user_id`) USING BTREE COMMENT '文章的用户索引',
-  INDEX `cate_id`(`cate_id`) USING BTREE COMMENT '文章分类索引',
+  INDEX `user_id`(`user_id` ASC) USING BTREE COMMENT '文章的用户索引',
+  INDEX `cate_id`(`cate_id` ASC) USING BTREE COMMENT '文章分类索引',
   INDEX `idx_article_create_time`(`create_time` DESC) USING BTREE COMMENT '创建时间'
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 89 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_auth_group

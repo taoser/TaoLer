@@ -226,28 +226,52 @@ abstract class Addons
     // 写入管理位
     protected function insert(array $hooks = []) {
 
+        $methods = (array)get_class_methods("\\addons\\" . $this->name . "\\Plugin");
         if(!empty($hooks)) {
-            foreach($hooks as $v) {
-                $res = Db::name('addon_hook')->where([
-                    'hook_name' => $v['hook_name'],
-                    'hook_type' => $v['hook_type']
-                ])->find();
+            foreach($hooks as $k => $v) {
+                // 添加的方法不在类中跳过
+                if(!in_array($k, $methods)) {
+                    continue;
+                }
 
-                if(is_null($res)) {
-                    Db::name('addon_hook')->save($hooks);
+                if(is_array($v)) {
+                    foreach($v as $j) {
+                        if(!is_int($j)) continue;
+                        $result = Db::name('addon_hook')->where([
+                            'hook_name' => $k,
+                            'hook_type' => $j
+                        ])->find();
+                        if(is_null($result)) {
+                            Db::name('addon_hook')->save([
+                                'hook_name' => $k,
+                                'hook_type' => $j
+                            ]);
+                        }
+                    }
+                } else {
+                    if(!is_int($v)) continue;
+                    $data = [
+                        'hook_name' => $k,
+                        'hook_type' => $v
+                    ];
+                    $res = Db::name('addon_hook')->where($data)->find();
+    
+                    if(is_null($res)) {
+                        Db::name('addon_hook')->save($data);
+                    }
                 }
             }
         }
+        return true;
     }
 
     // 移除管理位
     protected function remove(array $hooks = []) {
 
         if(!empty($hooks)) {
-            foreach($hooks as $v) {
+            foreach($hooks as $k => $v) {
                 $res = Db::name('addon_hook')->where([
-                    'hook_name' => $v['hook_name'],
-                    'hook_type' => $v['hook_type']
+                    'hook_name' => $k
                 ])->find();
 
                 if(!is_null($res)) {

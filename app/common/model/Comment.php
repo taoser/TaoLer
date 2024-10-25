@@ -52,7 +52,7 @@ class Comment extends Model
                 ->append(['touser'])
                 ->select()
                 ->toArray();
-        });
+        },10);
         
 
         foreach ($comment as $k => $v) {

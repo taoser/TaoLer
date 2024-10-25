@@ -6,13 +6,70 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cache;
+use think\facade\Db;
+use think\facade\Config;
 use app\common\model\Comment as CommentModel;
 use app\common\model\Article;
 use app\common\model\UserZan;
+use taoler\com\Message;
 
 
 class Comment extends BaseController
 {
+	protected $middleware = ['logincheck'];
+
+	//文章评论
+	public function add()
+	{
+		// 检验发帖是否开放
+		if(config('taoler.config.is_reply') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止评论！']);
+
+		if (Request::isAjax()){
+			//获取评论
+			$data = Request::only(['content','article_id','pid','to_user_id']);
+            $data['user_id'] = $this->uid;
+			$sendId = $data['user_id'];
+
+			$art = Db::name('article')->field('id,status,is_reply,delete_time')->find($data['article_id']);
+
+			if($art['delete_time'] != 0 || $art['status'] != 1 || $art['is_reply'] != 1){
+				return json(['code'=>-1, 'msg'=>'评论不可用状态']);
+			}
+			if(empty($data['content'])){
+				return json(['code'=>-1, 'msg'=>'评论不能为空！']);
+			}
+			$superAdmin = Db::name('user')->where('id',$sendId)->value('auth');
+			$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.commnets_check');
+			$msg = $data['status'] ? '留言成功' : '留言成功，请等待审核';
+				
+			//用户留言存入数据库
+			if (CommentModel::create($data)) {
+				//站内信
+				$article = Db::name('article')->field('id,title,user_id,cate_id')->where('id',$data['article_id'])->find();
+                // 获取分类ename,appname
+                $cateName = Db::name('cate')->field('ename,appname')->find($article['cate_id']);
+				//$link = (string) url('article_detail',['id'=>$data['article_id']]);
+                $link = $this->getRouteUrl($data['article_id'], $cateName['ename'], $cateName['appname']);
+
+				//评论中回复@user comment
+				$preg = "/@([^@\s]*)\s/";
+				preg_match($preg,$data['content'],$username);
+				if(isset($username[1])){
+					$receveId = Db::name('user')->whereOr('nickname', $username[1])->whereOr('name', $username[1])->value('id'); 
+				} else {
+					$receveId = $article['user_id'];
+				}
+				$data = ['title' => $article['title'], 'content' => '评论通知', 'link' => $link, 'user_id' => $sendId, 'type' => 2]; //type=2为评论留言
+				Message::sendMsg($sendId, $receveId, $data);
+				if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->adminEmail,'评论审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚对 <b>' . $article['title'] . '</b> 发表了评论，请尽快处理。']);
+				$res = ['code'=>0, 'msg'=>$msg];
+			} else {
+				$res = ['code'=>-1, 'msg'=>'留言失败'];
+			}
+			return json($res);
+		}
+	}
+
 	//采纳评论
     public function jiedaCai()
     {

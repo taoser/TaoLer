@@ -283,7 +283,7 @@
 			var index = layer.load(1);
 			$.ajax({
 				type: "post",
-				url: "{:url('article/comment')}",
+				url: "{:url('comment/add')}",
 				data: data,
 				dataType: "json",
 				success:function (res) {

@@ -267,6 +267,9 @@ class Addons extends AdminController
                 SqlFile::dbExecute($sqlUpdateFile);
             }
 
+            $class = get_addons_instance($data['name']);
+            $class->enabled();
+
             // 恢复配置
             if(!empty($config)) {
                 set_addons_config($data['name'], $config);

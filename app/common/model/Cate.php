@@ -31,7 +31,7 @@ class Cate extends Model
 	public function getCateInfo(string $ename)
 	{
 		//
-		return $this->field('ename,catename,detpl,desc')->where('ename',$ename)->cache('cate_'.$ename,600)->find();
+		return $this->field('ename,catename,detpl,desc')->where(['ename' => $ename, 'status' => 1])->cache('cate_'.$ename, 600)->find();
 	}
 
     // ID查询类别信息

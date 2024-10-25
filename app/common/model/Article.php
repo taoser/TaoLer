@@ -29,8 +29,6 @@ class Article extends Model
         'has_audio'     => 'enum',
         'pv'            => 'int',
         'jie'           => 'enum',
-        'upzip'         => 'varchar',
-        'downloads'     => 'int',
         'keywords'      => 'varchar',
         'description'   => 'text',
         'read_type'     => 'tinyint',
@@ -159,7 +157,7 @@ class Article extends Model
     {
         return Cache::remember('topArticle', function() use($num){
             $topIdArr = $this::where(['is_top' => 1, 'status' => 1])->limit($num)->column('id');
-             return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,upzip,has_img,has_video,has_audio,read_type')
+             return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type')
                 ->whereIn('id', $topIdArr)
                 ->with([
                     'cate' => function (Query $query) {
@@ -188,7 +186,7 @@ class Article extends Model
     public function getArtList(int $num)
     {
         return Cache::remember('indexArticle', function() use($num){
-            $data = $this::field('id,title,title_color,cate_id,user_id,content,description,create_time,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
+            $data = $this::field('id,title,title_color,cate_id,user_id,content,description,create_time,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
             ->with([
             'cate' => function(Query $query){
                 $query->field('id,catename,ename,detpl');
@@ -275,7 +273,7 @@ class Article extends Model
     {
         return Cache::remember('article_'.$id, function() use($id){
             //查询文章
-            return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,upzip,downloads,keywords,description,read_type,art_pass,title_color,create_time,update_time')
+            return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,keywords,description,read_type,art_pass,title_color,create_time,update_time')
             ->where(['status'=>1])
             ->with([
                 'cate' => function(Query $query){
@@ -374,7 +372,7 @@ class Article extends Model
 //                 }
 //             }
 
-            $data = $this::field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,upzip,has_img,has_video,has_audio,read_type,art_pass')
+            $data = $this::field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
             ->with([
                 'cate' => function($query) {
                     $query->field('id,catename,ename');
@@ -505,13 +503,39 @@ class Article extends Model
                 ['article_id','<>',$id]
             ])->column('article_id');
 
-            return $this::field('id,cate_id,title')->whereIn('id', $arrId)
+            $tags = $this::field('id,cate_id,user_id,title,content,create_time,pv,read_type,art_pass')->whereIn('id', $arrId)
             ->where(['status'=>1])
+            ->with(['user' => function($query){
+                $query->field('id,name,user_img');
+                },'cate' => function($query){
+                    $query->field('id,catename');
+                }
+            ])
             ->order('pv desc')
             ->limit($limit)
             ->append(['url'])
             ->select()
             ->toArray();
+          
+            $tagsArr = [];
+            if(count($tags)) {
+                foreach($tags as $v) {
+                    $tagsArr[] = [
+                        'id' => $v['id'],
+                        'hasImg' => getOnepic($v['content']) ? true : false,
+                        'img' => getOnepic($v['content']) ? (strstr(getOnepic($v['content']), 'http') ? getOnepic($v['content']) : config('base.domain').getOnepic($v['content'])) : '',
+                        'title' => $v['title'],
+                        'desc' => getArtContent($v['content']),
+                        'auther' => $v['user']['name'],
+                        'cate_name' => $v['cate']['catename'],
+                        'pv'    => $v['pv'],
+                        'time' => date('Y-m-d',strtotime($v['create_time'])),
+                        'url' => $v['url']
+                    ];
+                }
+            }
+
+            return $tagsArr;
         });
 
         return $allTags;

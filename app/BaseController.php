@@ -297,7 +297,7 @@ abstract class BaseController
      * @param $arr
      * @return bool
      */
-    protected function  filter($arr) :bool
+    protected function filter($arr) :bool
     {
         if($arr === '' || $arr === null){
             return false;

@@ -77,8 +77,7 @@ class Index extends BaseController
 		$vs = [
 			'artTop'	=>	$artTop,
 			'artList'	=>	$artList,
-			'type'		=>	$types,
-			'jspage'	=>	'',
+			'type'		=>	$types
 		];
 		View::assign($vs);
 

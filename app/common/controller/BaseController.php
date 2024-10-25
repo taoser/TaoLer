@@ -65,9 +65,7 @@ class BaseController extends BaseCtrl
 			//显示子分类导航
 			'subcatelist'	=> $this->showSubnav(),
 			//当前登录用户
-			'user'			=> $this->user,
-			// hooks
-			// 'hooks'			=> $this->hooks
+			'user'			=> $this->user
 		]);
 
 	}
@@ -174,13 +172,5 @@ class BaseController extends BaseCtrl
         View::assign($assign);
 		return $sysInfo;
     }
-
-	// 插件
-	protected function getHooks() {
-		$hooksArr = config('addons.hooks');
-		unset($hooksArr['initialize'],$hooksArr['install'],$hooksArr['uninstall'],$hooksArr['enabled'],$hooksArr['disabled']);
-		// return $hooksArr;
-		return array_keys($hooksArr);
-	}
 
 }

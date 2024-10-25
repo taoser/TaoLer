@@ -20,7 +20,7 @@ use app\admin\model\AuthRule as AuthRuleModel;
 class AuthRule extends AdminController
 {
 
-	protected $model = '';
+	protected $model = null;
 
     //
     public function __construct()
