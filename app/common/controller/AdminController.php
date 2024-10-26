@@ -18,6 +18,9 @@ use think\facade\Db;
 use taoser\think\Auth;
 use taoler\com\Files;
 use think\facade\Lang;
+use think\facade\Cookie;
+use think\facade\Config;
+use think\facade\Cache;
 
 /**
  * 控制器基础类
@@ -138,6 +141,7 @@ class AdminController extends \app\BaseController
 	public function clearSysCache()
     {
         //清理缓存
+        Cache::clear(); 
 		$atemp = str_replace('\\',"/",app()->getRootPath().'runtime/admin/temp/');
 		$itemp = str_replace('\\',"/",app()->getRootPath().'runtime/index/temp/');
 		$cache = str_replace('\\',"/",app()->getRootPath().'runtime/cache/');
@@ -165,6 +169,31 @@ class AdminController extends \app\BaseController
             $articleUrl = (string) url('article_detail', ['id' => (int) $aid, 'ename'=> $ename]);
         }
 
+        return $this->appConver($appName, $articleUrl);
+        
+    }
+
+    //后台管理用户的路由转换为前台用户中心的路由
+    //直接登录用户中心
+    protected function getUserHome($uid) {
+        $user = Db::name('user')->field('id,name')->find($uid);
+		$salt = Config::get('taoler.salt');
+		$auth = md5($user['name'].$salt).":".$user['id'];
+    	Cookie::set('auth',$auth,604800);
+        $url = (string) url('user/index');
+        return $this->appConver('index', $url);
+    }
+
+
+    /**
+     * APP应用转换,在后台admin应用转换为在其它app应用的路径
+     * /admin/user/info转换为 /index/user/info
+     * @param string $appName 要转换为哪个应用
+     * @param string $url 路由地址
+     * @return string
+     */
+    public function appConver(string $appName, string $url) :string
+    {
         // 判断应用是否绑定域名
         $app_bind = array_search($appName, config('app.domain_bind'));
         // 判断应用是否域名映射
@@ -179,43 +208,40 @@ class AdminController extends \app\BaseController
         if($bind_admin) {
             // 1.应用绑定了域名
             if($app_bind) {
-                return $this->getDomain() . $articleUrl;
+                return $this->getDomain() . $url;
             }
             // 2.应用进行了映射
             if($app_map){
-                return $this->getDomain() . '/' . $appName . $articleUrl;
+                return $this->getDomain() . '/' . $appName . $url;
             }
             // 3.应用未绑定域名也未进行映射
-            return $this->getDomain() . '/' . $appName . $articleUrl;
+            return $this->getDomain() . '/' . $appName . $url;
         }
 
         //2.admin进行了映射
         if($map_admin) {
             // 1.应用绑定了域名
             if($app_bind) {
-                return $this->getDomain() . str_replace($map_admin, '', $articleUrl);;
+                return $this->getDomain() . str_replace($map_admin, '', $url);;
             }
             // 2.应用进行了映射
             if($app_map){
-                return $this->getDomain() . str_replace($map_admin, $app_map, $articleUrl);
+                return $this->getDomain() . str_replace($map_admin, $app_map, $url);
             }
             // 3.应用未绑定域名也未进行映射
-            return  $this->getDomain() . str_replace($map_admin, $appName, $articleUrl);
+            return  $this->getDomain() . str_replace($map_admin, $appName, $url);
         }
         //3.admin未绑定域名也未映射
         // 1.应用绑定了域名
         if($app_bind) {
-            return $this->getDomain() . $articleUrl;
+            return $this->getDomain() . $url;
         }
         // 2.应用进行了映射
         if($app_map){
-            return $this->getDomain() . str_replace('admin', $app_map, $articleUrl);
+            return $this->getDomain() . str_replace('admin', $app_map, $url);
         }
-        return str_replace('admin', $appName, $articleUrl);
+        return str_replace('admin', $appName, $url);
     }
-
-
-	
 	
 
 }

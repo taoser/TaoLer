@@ -9,8 +9,8 @@
 	<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 	<link rel="stylesheet" href="/static/admin/css/other/console1.css" />
 </head>
-<body class="pear-container">
-<div>
+<body>
+<div class="pear-container">
 	<div class="layui-row layui-col-space10">
 		<div class="layui-col-xs6 layui-col-md3">
 			<div class="layui-card top-panel">
@@ -316,9 +316,10 @@
 		</div>
 	</div>
 </div>
-<!--</div>-->
-<script src="/static/component/layui/layui.js"></script>
+
+<script src="/static/layui/layui.js"></script>
 <script src="/static/component/pear/pear.js"></script>
+
 <script>
 	const indexForums = "{:url('Index/forums')}";	//帖子
 	const indexReplys = "{:url('Index/replys')}";		//回复
@@ -327,45 +328,46 @@
 	const v = layui.v;
 
 
-	layui.use(['form','layer', 'echarts', 'element', 'count','toast'], function() {
+	layui.use(['layer', 'echarts',  'carousel', 'element', 'count', 'toast', 'form'], function() {
 		let $ = layui.jquery, form = layui.form,
 				layer = layui.layer,
 				element = layui.element,
-				count = layui.count,
-				echarts = layui.echarts;
+				echarts = layui.echarts,
+				count = layui.count;
+
 		let toast = layui.toast;
 		let table = layui.table;
+		let carousel = layui.carousel;
 
 		$('.UI').append(v);
-
 
 		count.up("value1", {
 			time: 4000,
 			num: {:hook('seoBaiduTongji',['name'=>'tpv']) ?: 0},
-		bit: 0,
-				regulator: 50
-	})
+			bit: 0,
+			regulator: 50
+		})
 
 		count.up("value2", {
 			time: 4000,
 			num: {:hook('seoBaiduTongji',['name'=>'tuv']) ?: 0},
-		bit: 0,
-				regulator: 50
-	})
+			bit: 0,
+			regulator: 50
+		})
 
 		count.up("value3", {
 			time: 4000,
 			num: {:hook('seoBaiduTongji',['name'=>'tip']) ?: 0},
-		bit: 0,
-				regulator: 50
-	})
+			bit: 0,
+			regulator: 50
+		})
 
 		count.up("value4", {
 			time: 4000,
 			bit: 2,
 			num: {:hook('seoBaiduTongji',['name'=>'tvt']) ?: 0},
-		regulator: 50
-	})
+			regulator: 50
+		})
 
 		var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
 
@@ -529,8 +531,14 @@
 				,{field: 'title', title: '标题', minWidth: 300, templet: '<div><a href="{{d.id}}" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
 				,{field: 'time', title: '时间', sort: true}
 				,{field: 'catename', title: '类别'}
-			]]
-			,page: true
+			]],
+			page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					//curr: 5, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+				}
 			,limit: 10
 			,limits: [10, 15, 20, 25, 30]
 			,text: '对不起，加载出现异常！'
@@ -541,7 +549,13 @@
 		table.render({
 			elem: '#console-topreply'
 			,url: indexReply //评论接口
-			,page: true
+			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					//curr: 5, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+			}
 			,cellMinWidth: 120
 			,cols: [[
 				{type: 'numbers', fixed: 'left'}
@@ -557,7 +571,13 @@
 		table.render({
 			elem: '#console-topSearch'
 			,url: indexForums //发贴接口
-			,page: true
+			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					//curr: 5, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+			}
 			,cellMinWidth: 120
 			,cols: [[
 				{type: 'numbers', fixed: 'left'}
@@ -573,7 +593,13 @@
 		table.render({
 			elem: '#console-topCard'
 			,url: indexReplys //评论接口
-			,page: true
+			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					//curr: 5, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+			}
 			,cellMinWidth: 120
 			,cols: [[
 				{type: 'numbers', fixed: 'left'}
@@ -589,7 +615,7 @@
 		form.on('switch(sys-sys)',function(data){
 			var status = data.elem.checked;
 			$.post("{:url('index/sysSys')}",{status:status},function(res){
-				if (res.code === 0) { toast.info({title:"通知消息",message:res.msg})} else {
+				if (res.code == 0) { toast.info({title:"通知消息",message:res.msg})} else {
 					toast.error({title:"错误消息",message:res.msg});
 				}
 			})
@@ -610,21 +636,20 @@
 			$.get("{:url('system.upgrade/check')}",function (data){
 				if (data.code === 1) {
 					//可升级
-					layer.confirm('发现新版本V' + data.data.version + '，确定升级？',{icon: 3, title:'系统检测'}, function(index){
-						var loading = layer.load(0);
+					layer.confirm('发现新版本V' + data.data.version + '，确定升级？', {icon: 3, title:'系统检测'}, function(index){
+						var loadIndex = layer.load(0);
 						//更新
 						$.get("{:url('system.upgrade/upload')}",function (res){
-							layer.close(index);
-							layer.close(loading);
+							layer.close(loadIndex)
 							if (res.code === 0) {
 								toast.info({title:"通知消息", message: res.msg ,position: 'topRight'})
 							} else {
 								toast.error({title:"服务器错误", message:res.msg})
 							}
-							return false;
 						});
-						//关闭load加载层
+						layer.close(index);
 					});
+					
 				}
 			});
 		});

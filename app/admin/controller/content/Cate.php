@@ -103,7 +103,7 @@ class Cate extends AdminController
     protected function getIndexTpl() :array
     {
         $sys = $this->getSystem();
-        return Files::getDirName('../view/'.$sys['template'].'/index/article/');
+        return Files::getDirName('../view/'.$sys['template'].'/article/');
     }
 
 

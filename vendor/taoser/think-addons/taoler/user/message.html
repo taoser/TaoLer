@@ -1,0 +1,66 @@
+<!--
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-04-21 21:52:57
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\user\message.html
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+-->
+{extend name="public/user" /} {block name="content"}
+<div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px">
+  <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">
+    清空全部消息
+  </button>
+  <div id="LAY_minemsg" style="margin-top: 10px"></div>
+</div>
+{/block} {block name="script"}
+<script>
+  var messageFind = "{:url('Message/find')}",
+    messageRemove = "{:url('Message/remove')}",
+    userNameJump = "{:url('Index/jump')}";
+
+  //点开标题改变帖子已读状态
+  $("#LAY_minemsg").on("click", ".art-title", function () {
+    var id = $(this).attr("id-data");
+    var othis = $(this);
+    $.ajax({
+      type: "post",
+      url: "{:url('message/read')}",
+      data: { id: id },
+      daType: "json",
+      success: function (res) {
+        if (res.status == 0) {
+          othis.next().html("已读");
+          //location.reload();
+          //othis.append('<span class="float:right">已读</span>');
+        }
+      },
+    });
+  });
+
+  //读消息
+  $("#LAY_minemsg").on("click", ".sys-title", function () {
+    var id = $(this).attr("id-data");
+    var othis = $(this);
+    $.ajax({
+      type: "post",
+      url: "{:url('message/read')}",
+      data: { id: id },
+      daType: "json",
+      success: function (res) {
+        if (res.status == 0) {
+          layer.open({
+            type: 1,
+            skin: "layui-layer-rim", //加上边框
+            area: ["400px", "350px"], //宽高
+            content:
+              '<div class="layui-form" style="padding: 10px 20px 0 20px;"> ' + res.content + "</div>",
+          }),
+            othis.next().html("已读");
+        }
+      },
+    });
+  });
+</script>
+{/block}

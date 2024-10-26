@@ -15,6 +15,6 @@ return [
     'httponly'  => false,
     // 是否使用 setcookie
     'setcookie' => true,
-	// samesite 设置，支持 'strict' 'lax'
+    // samesite 设置，支持 'strict' 'lax'
     'samesite'  => '',
 ];

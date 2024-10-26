@@ -31,6 +31,8 @@ Route::group(function () {
 	Route::get('user/message$', 'user/message');
 	Route::get('user/post', 'user/post');
 	Route::get('user/article','user/artList');
+	Route::post('user/editpv','user/editPv');
+	Route::post('user/updatetime','user/updateTime');
 	Route::get('user/coll','user/collList');
 	Route::get('user/colldel','user/collDel');
 	Route::get('user/setpass','user/setPass');
@@ -78,10 +80,11 @@ Route::group(function () use($detail_as, $cate_as){
 	Route::get($detail_as . ':id$', 'article/detail')->name('article_detail');
     Route::get($detail_as . '<id>/<page>$', 'article/detail')->name('article_comment');
     //分类
-	Route::get($cate_as . '<ename>$','article/cate')->name('cate');
+	Route::get($cate_as . '<ename>$','article/cate')->name('cate')->cache(180);
 	Route::get($cate_as . '<ename>/<type>$', 'article/cate')->name('cate_type');
+	// 分页路由
 	Route::get($cate_as . '<ename>/<type>/<page>$', 'article/cate')->name('cate_page');
-	})->pattern([
+})->pattern([
 		'ename' => '[\w|\-]+',
 		'type' => '\w+',
 		'page'   => '\d+',

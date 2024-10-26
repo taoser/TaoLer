@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace think\log;
 
@@ -25,12 +25,6 @@ class Channel implements LoggerInterface
     use LoggerTrait;
 
     /**
-     * 事件
-     * @var Event
-     */
-    protected $event;
-
-    /**
      * 日志信息
      * @var array
      */
@@ -38,11 +32,11 @@ class Channel implements LoggerInterface
 
     /**
      * 关闭日志
-     * @var array
+     * @var bool
      */
     protected $close = false;
 
-    public function __construct(protected string $name, protected LogHandlerInterface $logger, protected array $allow = [], protected bool $lazy = true, Event $event = null)
+    public function __construct(protected string $name, protected LogHandlerInterface $logger, protected array $allow, protected bool $lazy, protected Event $event)
     {
     }
 
@@ -81,7 +75,7 @@ class Channel implements LoggerInterface
         if ($msg instanceof Stringable) {
             $msg = $msg->__toString();
         }
-        
+
         if (is_string($msg) && !empty($context)) {
             $replace = [];
             foreach ($context as $key => $val) {
@@ -151,13 +145,13 @@ class Channel implements LoggerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed  $level
-     * @param string|Stringable  $message
-     * @param array  $context
+     * @param mixed             $level
+     * @param string|Stringable $message
+     * @param array             $context
      *
      * @return void
      */
-    public function log($level, string|Stringable $message, array $context = []): void
+    public function log($level, $message, array $context = []): void
     {
         $this->record($message, $level, $context);
     }

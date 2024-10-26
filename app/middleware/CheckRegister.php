@@ -9,7 +9,7 @@ class CheckRegister
     public function handle($request, \Closure $next)
     {
 		//排除禁止注册用户名的字段
-		if($request->action(true)=='reg'){
+		if($request->action(true) == 'reg'){
 			$name = $request->param('name');
 			if(!is_null($name)) {
 				$disname = Db::name('system')->where('id',1)->value('blackname');

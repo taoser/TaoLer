@@ -3,7 +3,6 @@ namespace app\index\controller;
 
 use app\common\controller\BaseController;
 use app\common\validate\User as userValidate;
-use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\Session;
@@ -13,7 +12,6 @@ use think\facade\View;
 use app\common\model\Article;
 use app\common\model\Collection;
 use app\common\model\User as userModel;
-use app\common\model\Comment;
 use taoler\com\Message;
 
 class User extends BaseController
@@ -33,13 +31,13 @@ class User extends BaseController
 	public function artList()
 	{
         $param = Request::only(['page','limit']);
-		$myArticle = Article::field('id,cate_id,title,status,pv,create_time')
+		$myArticle = Article::field('id,cate_id,title,status,pv,create_time,update_time')
             ->withCount(['comments'])
             ->where(['user_id'=>$this->uid])
             ->order('update_time','desc')
             ->paginate([
                 'list_rows' => $param['limit'],
-                'page' => $param['page']
+                'page' 		=> $param['page']
             ]);
 		$count = $myArticle->total();
 		$res = [];
@@ -50,16 +48,34 @@ class User extends BaseController
 				$res['data'][] = ['id'=>$v['id'],
 				'title'	=> htmlspecialchars($v['title']),
 				'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename, $v->cate->appname),
-				'status'	=> $v['status'] ? '正常':'待审',
+				'status'	=> $this->artStatus($v['status']),
 				'ctime'		=> $v['create_time'],
-				'datas'		=> $v['pv'].'阅/'.$v['comments_count'].'答'
+				'utime'		=> $v['update_time'],
+				'pv'		=> $v['pv'],
+				'datas'		=> $v['comments_count'].'答'
 				];
 			} 
-			
-		} else {
-			return json(['code'=>-1,'msg'=>'无数据']);
+			return json($res);
 		}
-		return json($res);	
+			
+		return json(['code'=>-1,'msg'=>'无数据']);			
+	}
+
+	// 文章状态
+	private function artStatus($status)
+	{
+		switch ($status) {
+			case 1:
+				$res = '正常';
+				break;
+			case -1:
+				$res = '禁止';
+				break;
+			default:
+				$res = '待审';
+				break;
+		}
+		return $res;
 	}
 	
 	// 收藏list
@@ -67,15 +83,15 @@ class User extends BaseController
 	{
 		//收藏的帖子
 		$collect = Collection::with(['article'=>function($query){
-			$query->withCount('comments')->where('status',1);
-		}])->where('user_id',$this->uid)->order('create_time','desc')->paginate(10);
+			$query->withTrashed();
+		}])->where('user_id',$this->uid)->order('id','desc')->paginate(10);
 		$count =$collect->total();
-		$res = [];
+
 		if($count){
+			$res = [];
 			$res['code'] = 0;
 			$res['count'] = $count ;
 			foreach($collect as $v){
-				
 				$res['data'][] = [
 					'id' 	=>$v['id'],
 					'title'	=> htmlspecialchars($v['collect_title']),
@@ -85,11 +101,9 @@ class User extends BaseController
 					'ctime' =>	$v['create_time']
 				]; 
 			}
-			
-		} else {
-			return json(['code'=>-1,'msg'=>'无数据']);
+			return json($res);
 		}
-		return json($res);
+		return json(['code'=>-1,'msg'=>'无数据']);		
 	}
 	
 	
@@ -99,6 +113,82 @@ class User extends BaseController
 	{
         return View::fetch();
     }
+
+	// 编辑pv
+	public function edtiPv()
+	{
+		if(Request::isAjax()){
+			$param = Request::param(['id','pv']);
+			$res = Db::name('article')->save(['id' => $param['id'], 'pv' => $param['pv']]);
+			if($res) {
+				return json(['code' => 0, 'msg' => '修改成功！']);
+			}
+		}
+		return json(['code' => -1, 'msg' => '修改失败！']);
+	}
+
+	// 刷新
+	public function updateTime()
+	{
+		if(Request::isAjax()){
+			$param = Request::param(['data']);
+			if(count($param) == 0) return json(['code' => -1, 'msg' => '未选中任何数据！']);
+			$idArr = [];
+			foreach($param['data'] as $v) {
+				$idArr[] = $v['id'];
+			}
+			$count = count($idArr);
+
+			// vip每天可刷新数
+			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
+
+			$refreshRule = Db::name('user_viprule')->field('refreshnum,refreshpoint')->where('vip', $user['vip'])->find();	
+			// 检测刷新帖子剩余量
+			$refreshLog = Db::name('user_article_log')->field('id,user_refreshnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
+			if(is_null($refreshLog)) {// 新增
+				Db::name('user_article_log')->save(['user_id' => $this->uid, 'create_time' => time()]);
+				$refreshLog = Db::name('user_article_log')->field('id,user_refreshnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
+			}
+			// 超级管理员排外
+			if($user['auth'] === '0') {
+				$cannum =  $refreshRule['refreshnum'] - $refreshLog['user_refreshnum']; // 可用免费数
+				// 刷帖先扣积分
+				if($cannum <= 0) { // a.免费额已用完 后面需要积分
+					$canpoint = $count * $refreshRule['refreshpoint'];
+					$point = $user['point'] - $canpoint;
+					if($point < 0) { 
+						// 1.积分不足
+						return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
+					} else {
+						// 2.扣除积分
+						Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+					}
+				} else { // b.未超限 有剩余条数
+					if($count > $cannum) { // 本次刷新数量大于剩余免费数量，需要支付积分
+						$canpoint = ($count - $cannum) * $refreshRule['refreshpoint'];
+						$point = $user['point'] - $canpoint;
+						if($point < 0) { 
+							// 1.积分不足
+							return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,额度不足请充值！"]);
+						} else {
+							// 2.扣除积分
+							Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+						}
+					}
+				}
+			}
+
+			// 刷新数据
+			$res = Db::name('article')->where('id', 'in', $idArr)->update(['update_time' => time()]);
+			if($res > 0) {
+				// 记录刷帖日志
+				Db::name('user_article_log')->where('id', $refreshLog['id'])->inc('user_refreshnum', $count)->update();
+				
+				return json(['code' => 0, 'msg' => '刷新成功！']);
+			}
+		}
+		return json(['code' => -1, 'msg' => '刷新失败！']);
+	}
 	
 	//取消文章收藏
 	public function colltDel()
@@ -119,7 +209,7 @@ class User extends BaseController
 	public function set()
 	{
 		if(Request::isAjax()){
-			$data = Request::only(['email','nickname','sex','city','area_id','sign']);
+			$data = Request::only(['email','phone','nickname','sex','city','area_id','sign']);
             $data['user_id'] = $this->uid;
 			// 过滤
 			$sign = strtolower($data['sign']);
@@ -209,11 +299,8 @@ class User extends BaseController
     public function home($id)
     {
 		//用户
-		$u = Cache::get('user'.$id);
-		if(!$u){
-			$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->cache(3600)->find($id);
-		}
-		
+		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->find($id);
+	
 		$article = new Article();
 		$arts = $article->getUserArtList((int) $id);
 
@@ -223,12 +310,13 @@ class User extends BaseController
 
         $reys = Db::name('comment')
 		->alias('c')
-		->join('article a','c.article_id = a.id')
-		->join('cate t','a.cate_id = t.id')
+		->join('article a', 'c.article_id = a.id')
+		->join('cate t', 'a.cate_id = t.id')
 		->field('a.id,a.title,t.ename,c.content,c.create_time,c.delete_time,c.status')
-		->where(['a.delete_time'=>0,'c.delete_time'=>0,'c.status'=>1])
-		->where('c.user_id',$id)
-		->order(['c.create_time'=>'desc'])
+		->where(['a.delete_time' => 0, 'c.delete_time' => 0, 'c.status' => 1])
+		->where('c.user_id', $id)
+		->order(['c.id' => 'desc'])
+		->limit(10)
 		->cache(3600)->select();
 
 		View::assign(['u'=>$u,'arts'=>$arts,'reys'=>$reys,'jspage'=>'']);
@@ -278,25 +366,25 @@ class User extends BaseController
                 return json(['code'=>-1,'msg' =>$validate->getError()]);
 
 			}
-		$user = new userModel;
-		$result = $user->setpass($data);
+			$user = new userModel;
+			$result = $user->setpass($data);
 			if($result == 1) {
 				Session::clear();
 				Cookie::delete('auth');
-				return $this->success('密码修改成功 请登录', (string) url('login/index'));
-			} else {
-                return json(['code'=>-1,'msg' =>$result]);
+				return json(['code' => 1, 'msg' => '密码修改成功', 'data' => ['url' => (string) url('login/index')]]);
 			}
+
+            return json(['code' => -1,'msg' =>$result]);
 		}
 	}
 	
 	//退出账户
 	public function logout()
 	{
-		Session::clear();
+		Session::delete('user_name');
+		Session::delete('user_id');
 		Cookie::delete('auth');
-		//Cookie::delete('user_name');
-		//Cookie::delete('user_id');
+
 		if(Session::has('user_id')){
 			return json(['code' => -1, 'msg' => '退出失败']);
 		}

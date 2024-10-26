@@ -13,6 +13,7 @@ declare(strict_types = 1);
 namespace think;
 
 use DateInterval;
+use DateTimeInterface;
 use Psr\SimpleCache\CacheInterface;
 use think\cache\Driver;
 use think\cache\TagSet;
@@ -108,7 +109,7 @@ class Cache extends Manager implements CacheInterface
      * @param mixed  $default 默认值
      * @return mixed
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, mixed $default = null): mixed
     {
         return $this->store()->get($key, $default);
     }
@@ -116,12 +117,12 @@ class Cache extends Manager implements CacheInterface
     /**
      * 写入缓存
      * @access public
-     * @param string        $key   缓存变量名
-     * @param mixed         $value 存储数据
-     * @param int|\DateTime $ttl   有效时间 0为永久
+     * @param string                             $key   缓存变量名
+     * @param mixed                              $value 存储数据
+     * @param int|DateTimeInterface|DateInterval $ttl   有效时间 0为永久
      * @return bool
      */
-    public function set(string $key, mixed $value, int|DateInterval $ttl = null): bool
+    public function set($key, $value, $ttl = null): bool
     {
         return $this->store()->set($key, $value, $ttl);
     }
@@ -132,7 +133,7 @@ class Cache extends Manager implements CacheInterface
      * @param string $key 缓存变量名
      * @return bool
      */
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
         return $this->store()->delete($key);
     }
@@ -145,7 +146,7 @@ class Cache extends Manager implements CacheInterface
      * @return iterable
      * @throws InvalidArgumentException
      */
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple($keys, $default = null): iterable
     {
         return $this->store()->getMultiple($keys, $default);
     }
@@ -157,7 +158,7 @@ class Cache extends Manager implements CacheInterface
      * @param null|int|\DateInterval $ttl    有效时间 0为永久
      * @return bool
      */
-    public function setMultiple(iterable $values, int|DateInterval $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         return $this->store()->setMultiple($values, $ttl);
     }
@@ -169,7 +170,7 @@ class Cache extends Manager implements CacheInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function deleteMultiple(iterable $keys): bool
+    public function deleteMultiple($keys): bool
     {
         return $this->store()->deleteMultiple($keys);
     }
@@ -180,7 +181,7 @@ class Cache extends Manager implements CacheInterface
      * @param string $key 缓存变量名
      * @return bool
      */
-    public function has(string $key): bool
+    public function has($key): bool
     {
         return $this->store()->has($key);
     }
@@ -191,8 +192,9 @@ class Cache extends Manager implements CacheInterface
      * @param string|array $name 标签名
      * @return TagSet
      */
-    public function tag(string|array $name): TagSet
+    public function tag($name)
     {
         return $this->store()->tag($name);
     }
+
 }

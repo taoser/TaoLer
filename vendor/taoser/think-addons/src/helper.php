@@ -24,8 +24,10 @@ define('DS', DIRECTORY_SEPARATOR);
 spl_autoload_register(function ($class) {
 
     $class = ltrim($class, '\\');
-
-    $dir = App::getRootPath();
+    
+    //$dir = App::getRootPath();
+    $root_path = str_replace('\\','/', dirname(__DIR__));
+    $dir = strstr($root_path, 'vendor', true);
     $namespace = 'addons';
 
     if (strpos($class, $namespace) === 0) {
@@ -127,6 +129,10 @@ if (!function_exists('get_addons_class')) {
         switch ($type) {
             case 'controller':
                 $namespace = '\\addons\\' . $name . '\\controller\\' . $class;
+                // 匹配空控制器
+                if (!class_exists($namespace)) {
+                    $namespace = '\\addons\\' . $name . '\\Controller\\' . config('route.empty_controller');
+                }
                 break;
             default:
                 $namespace = '\\addons\\' . $name . '\\Plugin';
@@ -200,14 +206,16 @@ if (!function_exists('set_addons_info')) {
         if (!isset($array['name']) || !isset($array['title']) || !isset($array['version'])) {
             throw new Exception("Failed to write plugin config");
         }
-        $res = array();
+        $res = [];
         foreach ($array as $key => $val) {
             if (is_array($val)) {
                 $res[] = "[$key]";
                 foreach ($val as $k => $v)
-                    $res[] = "$k = " . (is_numeric($v) ? $v : $v);
-            } else
-                $res[] = "$key = " . (is_numeric($val) ? $val : $val);
+                    $res[] = "$k = " . (is_float($val) ? sprintf("%.1f",$val) : $v);
+            } else {
+                //$res[] = "$key = " . (is_numeric($val) ? $val : $val);
+                $res[] = "$key = " . (is_float($val) ? sprintf("%.1f",$val) : $val);
+            } 
         }
 
         if ($handle = fopen($file, 'w')) {
@@ -309,7 +317,7 @@ if (!function_exists('get_addons_list')) {
                 $info = get_addons_info($name);
                 if (!isset($info['name']))
                     continue;
-                $info['url'] =isset($info['url']) && $info['url'] ?(string)addons_url($info['url']):'';
+                //$info['url'] =isset($info['url']) && $info['url'] ?(string)addons_url($info['url']):'';
                 $list[$name] = $info;
             }
             Cache::set('addonslist', $list);

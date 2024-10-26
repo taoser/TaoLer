@@ -160,7 +160,7 @@ pre{overflow-y: auto;
 
 /* 头像 */
 .fly-avatar{position: absolute; left: 15px; top: 10px;}
-.fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 100%;}
+.fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 100%; object-fit: cover;}
 .fly-avatar i{position: absolute; left: 35px; top: 25px;  }
 
 /* 徽章 */
@@ -191,8 +191,8 @@ pre{overflow-y: auto;
 
 .fly-nav-user{position: absolute; top: 0; right: 0;}
 .fly-nav-user .iconfont{position: relative;}
-.fly-nav-avatar img{width: 36px; height: 36px; margin-left: 10px; border-radius: 100%;}
-.fly-nav-avatar  .icon-renzheng{font-size: 16px; top: 1px;}
+.fly-nav-avatar img{width: 36px; height: 36px; margin-left: 10px; border-radius: 100%; object-fit: cover;}
+.fly-nav-avatar .icon-renzheng{font-size: 16px; top: 1px;}
 .fly-nav-avatar .fly-badge-vip{position: relative; margin-left: 10px;}
 .fly-nav-user .layui-nav-child a i{position: relative; top: 2px; margin-right: 10px; font-size: 26px;}
 
@@ -409,13 +409,6 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .fly-signin-main span{padding-left: 10px;}
 
 /* 榜单 */
-.fly-rank{padding-bottom: 10px;}
-.fly-rank dl{position: relative; overflow: hidden; margin-left: 10px; text-align: center; font-size: 0;}
-.fly-rank dd{position: relative; width: 55px; height: 75px; margin: 10px 15px 5px 0; display:inline-block; *display:inline; *zoom:1; vertical-align:top; font-size:12px;}
-.fly-rank dd a img{width: 55px; height: 55px; border-radius: 10px;}
-.fly-rank dd a cite{ position:absolute; bottom: 20px; left: 0; width: 100%; height:20px; line-height:20px; text-align:center; background-color:rgba(0,0,0,.2); color:#fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-.fly-rank dd a:hover cite{display: block;}
-.fly-rank dd a i{position:absolute; bottom: 0; left: 0; width: 100%; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal;}
 
 /* 温馨通道 */
 .fly-list-quick{border: 1px solid #f2f2f2; border-bottom: none; border-right: 0;}
@@ -441,7 +434,6 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .jie-row li i, .jie-row li em, .jie-row li cite{font-size:12px; color:#999; font-style: normal;}
 .jie-row li .mine-edit{margin-left:15px; padding:0 6px; background-color: #8FCDA0; color:#fff; font-size:12px;}
 .jie-row li em{position:absolute; right:0; top:0;}
-.jie-row li .jie-user{}
 .jie-row li .jie-title{max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .jie-row li .jie-user img{position:relative; top: 16px; width: 35px; height: 35px;}
 
@@ -450,7 +442,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail .title>h1{float: left; font-size: 22px; line-height: 36px; padding-bottom:10px;}
 .detail-box .title span {float: right; padding-right: 5px;}
 .detail .fly-avatar{position: absolute; left: 15px; top: 10px;}
-.detail .fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 100%;}
+.detail .fly-avatar img{display: block; width: 45px; height: 45px; margin: 0; border-radius: 100%; object-fit: cover;}
 .detail .fly-avatar .icon-renzheng{display: inline-block; width: 15px; height: 15px; line-height: 15px; top: 25px; left: 32px; background-color: #FFB800; color: #fff; border-radius: 50%; font-size: 14px;}
 
 .fly-detail-info{position: relative; margin: 10px 0 15px;}
@@ -466,7 +458,6 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-about .icon-renzheng{display: inline-block; width: 15px; height: 15px; line-height: 15px; top: 25px; left: 35px; background-color: #FFB800; color: #fff; border-radius: 50%; font-size: 10px;}
 .fly-detail-user{white-space: nowrap; overflow: hidden;}
 .fly-detail-user a{padding-right: 10px; font-size: 14px;}
-.fly-detail-user .guanzhu{position: absolute;  right:10px; }
 
 /*详情页管理工具条*/
 .detail-assist{
@@ -483,6 +474,32 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
   border-radius:5px;
   z-index: 100;
 }
+
+@media screen and (max-width: 750px) {
+  .detail-assist {
+    right:calc(50% - 500px);
+  }
+}
+
+@media  screen and (min-width: 970px) {
+  .detail-assist {
+    right:calc(50% - 530px);
+  }
+}
+
+@media  screen and (min-width: 1170px) {
+  .detail-assist {
+    right:calc(50% - 620px);
+  }
+}
+
+@media  screen and (min-width: 1330px) {
+  .detail-assist {
+    right:calc(50% - 720px);
+  }
+}
+
+
 .detail-assist .fly-admin-box{text-align: center;}
 .detail-assist span{height: 30px;width:30px; line-height:30px;}
 .detail-assist .layui-btn{border-radius: 0;}
@@ -498,13 +515,6 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 .detail-body p{margin-bottom: .6rem;font-size: .9375rem;line-height: 1.875;color: var(--color-secondary);word-wrap: break-word;}
 
 .detail-body img{max-width: 100%; cursor: pointer;}
-/*
-.detail-body table{margin: 10px 0 15px;}
-.detail-body table thead{background-color:#f2f2f2;}
-.detail-body table th, 
-.detail-body table td{padding: 10px 20px; line-height: 22px; border: 1px solid #DFDFDF; font-size: 14px; font-weight: 400;}
-*/
-
 .detail-body .layui-btn{margin: 0 10px 10px 0;}
 .detail-body .layui-btn a{color: #fff;}
 .detail-body ul>li{margin-top: 0;}
@@ -512,25 +522,15 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 /*详情页-问答*/
 .user-questions{position:relative; margin: 5px 0 15px;}
-.user-questions .user-avatar img{width: 25px; height: 25px; margin-top: 10; border-radius: 100%;}
-
-/*
-.detail-body-wenda{margin: 10px 0 5px; line-height: 26px; font-size: 16px; color: rgb(82, 80, 80); word-wrap: break-word;}
-.detail-body-wenda p{margin-bottom:15px;}
-.detail-body-wenda img{max-width: 100%; cursor: pointer;}
-.detail-body-wenda .layui-btn{margin: 0 10px 10px 0;}
-.detail-body-wenda .layui-btn a{color: #fff;}
-.detail-body-wenda ul>li{margin-top: 0;}
-.detail-body-wenda .layui-elem-quote{margin: 10px 0; font-size: 14px; line-height: 26px;}
-*/
+.user-questions .user-avatar img{width: 25px; height: 25px; border-radius: 100%;object-fit: cover;}
 
 .layui-form-pane{position:relative; width:100%;}
 .que-comments{position:absolute; right:15px; bottom:15px;}
 
-.wenda-user{height:200px; margin: 0,auto; text-align: center; pardding-top:20px;}
-.wenda-user .user-img{posation:relative; width:100%;}
-.wenda-user .user-img img{width:150px;height:150px; border-radius: 100%;}
-.wenda-user .user-img i{posation:absolute;right:20px;top:30px;width: 25px; height:25px; color:#fff; font-site:18px; border-radius: 100%;background-color:#FFB800;}
+.wenda-user{height:200px; margin: 0,auto; text-align: center; padding-top:20px;}
+.wenda-user .user-img{position:relative; width:100%;}
+.wenda-user .user-img img{width:150px; height:150px; border-radius: 100%; object-fit: cover;}
+.wenda-user .user-img i{position:absolute;right:20px;top:30px;width: 25px; height:25px; color:#fff; font-size:18px; border-radius: 100%;background-color:#FFB800;}
 .wenda-user .questions{height:30px;margin:20px 20px;}
 
 /*详情页-文章post*/
@@ -600,6 +600,10 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .fly-user-main .fly-none{min-height: 0;}
 .fly-panel-user[pad20]{padding-top: 5px;}
 
+@media screen and (max-width: 768px) {
+  .fly-user-main>.fly-panel{margin: 0 0 10px 0;}
+}
+
 @media screen and (min-width: 768px) {
   .fly-panel-user{height: calc(100vh - 280px)}
 }
@@ -617,7 +621,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
 
 /* 个人主页 */
 .fly-home{position: relative; padding: 30px 0 30px; text-align: center;}
-.fly-home img{width:120px; height:120px; border-radius:100%;}
+.fly-home img{width:120px; height:120px; border-radius:100%; object-fit: cover;}
 .fly-home h1{font-size:26px; line-height:30px; margin-top:10px;}
 .fly-home h1 span{font-size:14px; color:#999;}
 .fly-home h1 .icon-nan{color:#4EBBF9}
@@ -787,7 +791,7 @@ p {
   margin: 0;
   white-space: normal;
   word-break: break-all;
-  -webkit-user-select: none;
+  /* -webkit-user-select: none; */
 }
 
 code[class*="language-"], pre[class*="language-"] {

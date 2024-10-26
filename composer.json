@@ -19,6 +19,7 @@
         "php": ">=8.0.0",
         "topthink/framework": "^8.0.1",
         "topthink/think-orm": "^3.0",
+        "topthink/think-filesystem": "^2.0",
         "topthink/think-multi-app": "^1.0",
         "topthink/think-view": "^2.0",
         "topthink/think-captcha": "^3.0",
@@ -27,7 +28,22 @@
         "taoser/think-setarr": "^0.0.5",
         "phpmailer/phpmailer": "^6.8",
         "yzh52521/easyhttp": "^1.0",
-        "firebase/php-jwt": "^6.8"
+        "firebase/php-jwt": "^6.10",
+        "workerman/workerman": "^4.1",
+        "workerman/gateway-worker": "^3.1",
+        "workerman/gatewayclient": "^3.1",
+        "workerman/phpsocket.io": "^2.1",
+        "intervention/image": "^3.9",
+        "overtrue/easy-sms": "^3.0",
+        "endroid/qr-code": "^6.0",
+        "yansongda/pay": "~3.7.0",
+        "guzzlehttp/guzzle": "^7.8",
+        "illuminate/container": "^11.29",
+        "jaeger/querylist": "^3.2"
+    },
+    "require-dev": {
+        "symfony/var-dumper": ">=4.2",
+        "topthink/think-trace": "^1.0"
     },
     "autoload": {
         "psr-4": {

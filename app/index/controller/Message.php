@@ -11,7 +11,6 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
-use think\facade\Session;
 use think\facade\Request;
 use think\facade\Db;
 use app\common\model\Message as MessageModel;
@@ -25,12 +24,8 @@ class Message extends BaseController
 	{
 		$messgeto = new MessageTo();
 		$num = $messgeto->getMsgNum($this->uid);
-		if($num){
-			$res = ['status' =>0,'count' => $num, 'msg' => 'ok'];
-		} else {
-			$res = ['status' =>0,'count' => 0, 'msg' => 'no message'];
-		}
-        return json($res);
+		if($num) return json(['status' =>0,'count' => $num, 'msg' => 'ok']);
+		return json(['status' =>0,'count' => 0, 'msg' => 'no message']);
 	}
 	
 	//消息查询
@@ -82,18 +77,20 @@ class Message extends BaseController
 		$uid = $this->uid;
 		
 		$id = Request::only(['id']);
+
 		if($id['id'] == 'true'){
-			//删除所有此用户消息
-			$msg = Db::name('message_to')->where(['receve_id'=>$uid,'delete_time'=>0])->useSoftDelete('delete_time',time())->delete();
+			// id为'true' 删除所有此用户消息
+			$msg = Db::name('message_to')->where(['receve_id' => $uid])->delete();
 		} else {
 			//删除单条消息
-			$msg = Db::name('message_to')->where('id',$id['id'])->useSoftDelete('delete_time',time())->delete();
+			$msg = Db::name('message_to')->where('id', $id['id'])->delete();
 		}
 		
         if($msg){
 			$res = ['status'=>0];
+			return $res;
 		}
-      return $res;
+      
            
 	}
 	

@@ -1,0 +1,44 @@
+.layui-dropdown {
+    border-radius: var(--global-border-radius);
+}
+
+.layui-input {
+    border-radius: var(--global-border-radius);
+}
+
+.layui-form-onswitch {
+    background-color: var(--global-primary-color) !important;
+}
+
+.layui-form-onswitch {
+    border-color: var(--global-primary-color);
+}
+
+.layui-btn {
+    background-color: var(--global-primary-color);
+}
+
+.layui-btn.layui-btn-normal {
+    background-color: #1e9fff !important;
+}
+
+.layui-btn.layui-btn-danger {
+    background-color: #ff5722 !important;
+}
+
+.layui-btn.layui-btn-warm {
+    background-color: #ffb800 !important;
+}
+
+.layui-btn.layui-btn-primary {
+    background-color: transparent !important;
+    color: #5f5f5f !important;
+}
+
+.layui-card {
+    border-radius: var(--global-border-radius);
+}
+
+.layui-timeline-axis {
+    color: var(--global-primary-color);
+}

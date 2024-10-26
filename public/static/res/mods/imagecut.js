@@ -61,7 +61,7 @@ layui.define(['upload','layer'],function(exports){
         img.src = path;
 
         img.onload = function(){
-            var that = this, quality = 0.7;
+            var that = this, quality = 0.6;
             var w = that.width, h = that.height, scale = w / h;
             w = config.width || w;
             h = config.height || (w / scale);

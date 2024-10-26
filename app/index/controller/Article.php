@@ -14,7 +14,6 @@ use app\common\model\Cate;
 use app\common\model\Comment;
 use app\common\model\UserZan;
 use app\common\model\PushJscode;
-use taoler\com\Message;
 use app\common\lib\Msgres;
 
 class Article extends BaseController
@@ -43,26 +42,31 @@ class Article extends BaseController
 		// 分类信息
 		$cateInfo = $cate->getCateInfo($ename);
 
-		//分页url
-		$url = url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
-		//返回最后/前面的字符串
-		$path = substr($url,0,strrpos($url,"/"));
+		if(is_null($cateInfo)) {
+			// 抛出 HTTP 异常
+			throw new \think\exception\HttpException(404, '没有可访问的数据！');
+		}
 		
         //分类列表
 		$artList = $this->model->getCateList($ename,$type,$page);
+
 		//	热议文章
 		$artHot = $this->model->getArtHot(10);
 
+		//分页url
+		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
+		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
+
 
 		$assignArr = [
-			'ename'=>$ename,
-			'cateinfo'=> $cateInfo,
-			'type'=>$type,
-			'artList'=>$artList,
-			'artHot'=>$artHot,
-			'path'=>$path,
-			'jspage'=>'jie'
+			'ename'		=> $ename,
+			'cateinfo'	=> $cateInfo,
+			'type'		=> $type,
+			'artList'	=> $artList,
+			'artHot'	=> $artHot,
+			'path'		=> $path
 		];
+
 		View::assign($assignArr);
 
 		$cateView = is_null($cateInfo) ? 'article/cate' : 'article/' . $cateInfo->detpl . '/cate';
@@ -74,30 +78,38 @@ class Article extends BaseController
     {
 		$id = input('id');
 		$page = input('page',1);
-		//输出内容
-        $artDetail = $this->model->getArtDetail($id);
-        if(is_null($artDetail)){
-            throw new \think\exception\HttpException(404, '无内容');
-        }
-        //被赞
-        $zanCount = Db::name('user_zan')->where('user_id', $artDetail['user_id'])->count('id');
 
-		//赞列表
+		// 1.内容
+        $artDetail = $this->model->getArtDetail($id);
+        if(is_null($artDetail)) throw new \think\exception\HttpException(404, '无内容');
+
+		// 2.pv
+		$artDetail->inc('pv', 1)->save();
+		$pv = Db::name('article')->where('id',$id)->value('pv');
+        $artDetail->pv = $pv;
+
+		// 3.设置内容的tag内链
+		$artDetail->content = $this->setArtTagLink($artDetail->content);
+
+		//	热议文章
+		$artHot = $this->model->getArtHot(10);
+
+		// 5.赞列表
 		$userZanList = [];
-		$userZan = UserZan::where(['article_id'=>$id,'type'=>1])->select();
+		$userZan = UserZan::where(['article_id'=>$id,'type'=>1])->cache(true)->select();
 		if(count($userZan)) {
 			foreach($userZan as $v){
 				$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
 			}
 		}
 
-		// 设置内容的tag内链
-		$artDetail->content = $this->setArtTagLink($artDetail->content);
+        // 被赞
+        $zanCount = Db::name('user_zan')->where('user_id', $artDetail['user_id'])->cache(true)->count();
 
 		// 标签
 		$tags = [];
-		$relationArticle = [];
-        $artTags = Db::name('taglist')->where('article_id',$id)->select();
+		$relationArticle = []; //相关帖子
+        $artTags = Db::name('taglist')->where('article_id', $id)->cache(true)->select();
 		if(count($artTags)) {
 			foreach($artTags as $v) {
 				$tag = Db::name('tag')->find($v['tag_id']);
@@ -108,117 +120,48 @@ class Article extends BaseController
 			$relationArticle =  $this->model->getRelationTags($artTags[0]['tag_id'],$id,5);
 		}
 
-		$tpl = Db::name('cate')->where('id', $artDetail['cate_id'])->value('detpl');
-		$download = $artDetail['upzip'] ? download($artDetail['upzip'],'file') : '';
-
-		//浏览pv
-		Db::name('article')->where('id',$id)->inc('pv')->update();
-		$pv = Db::name('article')->field('pv')->where('id',$id)->value('pv');
-        $artDetail->pv = $pv;
-
 		//上一篇下一篇
 		$upDownArt =  $this->model->getPrevNextArticle($id,$artDetail['cate_id']);
-		if(empty($upDownArt['previous'][0])) {
+		if(empty($upDownArt['previous'])) {
             $previous = '前面已经没有了！';
         } else {
-            $previous = '<a href="' . $upDownArt['previous'][0]['url'] . '" rel="prev">' . $upDownArt['previous'][0]['title'] . '</a>';
+            $previous = '<a href="' . $upDownArt['previous']['url'] . '" rel="prev">' . $upDownArt['previous']['title'] . '</a>';
         }
-		if(empty($upDownArt['next'][0])) {
+		if(empty($upDownArt['next'])) {
             $next = '已经是最新的内容了!';
         } else {
-            $next = '<a href="' . $upDownArt['next'][0]['url'] . '" rel="prev">' . $upDownArt['next'][0]['title'] . '</a>';
+            $next = '<a href="' . $upDownArt['next']['url'] . '" rel="prev">' . $upDownArt['next']['title'] . '</a>';
         }
 
 		//评论
-		$comments = $this->getComments($id, $page);
+		$comment = new Comment();
+		$comments = $comment->getComment($id, $page);
+
 		//最新评论时间
-		$lrDate_time = Db::name('comment')->where('article_id', $id)->max('update_time',false) ?? time();
-		//	热议文章
-		$artHot =  $this->model->getArtHot(10);
+		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
 		//push
 		$push_js = Db::name('push_jscode')->where(['delete_time'=>0,'type'=>1])->cache(true)->select();
 
 		View::assign([
-			'article'	=> $artDetail,
-			'pv'		=> $pv,
+			'article'		=> $artDetail,
 			'artHot'	=> $artHot,
-			'tags'		=> $tags,
+			'pv'			=> $pv,
+			'tags'			=> $tags,
 			'relationArticle' => $relationArticle,
-			'previous'	=> $previous,
-			'next'		=> $next,
-			'page'		=> $page,
-			'comments'	=> $comments,
-			'push_js'	=> $push_js,
-			'cid' 		=> $id,
-			'lrDate_time' => $lrDate_time,
-			'userZanList' => $userZanList,
-			'zanCount'    => $zanCount,
-			'jspage'	  => 'jie',
-            'passJieMi'   => session('art_pass_'.$id),
-			$download,
+			'previous'		=> $previous,
+			'next'			=> $next,
+			'page'			=> $page,
+			'comments'		=> $comments,
+			'push_js'		=> $push_js,
+			'cid' 			=> $id,
+			'lrDate_time' 	=> $lrDate_time,
+			'userZanList' 	=> $userZanList,
+			'zanCount'    	=> $zanCount,
+            'passJieMi'   	=> session('art_pass_'.$id)
 		]);
-	
-		return View::fetch('article/'.$tpl.'/detail');
+
+		return View::fetch('article/'.$artDetail['cate']['detpl'].'/detail');
     }
-	
-	//评论内容
-	public function getComments($id, $page)
-	{
-		$comment = new Comment;
-		return $comment->getComment($id, $page);
-	}
-	
-	//文章评论
-	public function comment()
-	{
-		// 检验发帖是否开放
-		if(config('taoler.config.is_reply') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止评论！']);
-
-		if (Request::isAjax()){
-			//获取评论
-			$data = Request::only(['content','article_id','pid','to_user_id']);
-            $data['user_id'] = $this->uid;
-			$sendId = $data['user_id'];
-//            halt($data);
-			$art = Db::name('article')->field('id,status,is_reply,delete_time')->find($data['article_id']);
-
-			if($art['delete_time'] != 0 || $art['status'] != 1 || $art['is_reply'] != 1){
-				return json(['code'=>-1, 'msg'=>'评论不可用状态']);
-			}
-			if(empty($data['content'])){
-				return json(['code'=>-1, 'msg'=>'评论不能为空！']);
-			}
-			$superAdmin = Db::name('user')->where('id',$sendId)->value('auth');
-			$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.commnets_check');
-			$msg = $data['status'] ? '留言成功' : '留言成功，请等待审核';
-				
-			//用户留言存入数据库
-			if (Comment::create($data)) {
-				//站内信
-				$article = Db::name('article')->field('id,title,user_id,cate_id')->where('id',$data['article_id'])->find();
-                // 获取分类ename,appname
-                $cateName = Db::name('cate')->field('ename,appname')->find($article['cate_id']);
-				//$link = (string) url('article_detail',['id'=>$data['article_id']]);
-                $link = $this->getRouteUrl($data['article_id'], $cateName['ename'], $cateName['appname']);
-
-				//评论中回复@user comment
-				$preg = "/@([^@\s]*)\s/";
-				preg_match($preg,$data['content'],$username);
-				if(isset($username[1])){
-					$receveId = Db::name('user')->whereOr('nickname', $username[1])->whereOr('name', $username[1])->value('id'); 
-				} else {
-					$receveId = $article['user_id'];
-				}
-				$data = ['title' => $article['title'], 'content' => '评论通知', 'link' => $link, 'user_id' => $sendId, 'type' => 2]; //type=2为评论留言
-				Message::sendMsg($sendId, $receveId, $data);
-				if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'评论审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚对 <b>' . $article['title'] . '</b> 发表了评论，请尽快处理。']);
-				$res = ['code'=>0, 'msg'=>$msg];
-			} else {
-				$res = ['code'=>-1, 'msg'=>'留言失败'];
-			}
-			return json($res);
-		}
-	}
 
     /**
      * 添加帖子文章
@@ -229,8 +172,9 @@ class Article extends BaseController
         if (Request::isAjax()) {
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
+
 			// 数据
-            $data = Request::only(['cate_id', 'title', 'title_color','read_type','art_pass', 'content', 'upzip', 'keywords', 'description', 'captcha']);
+            $data = Request::only(['cate_id', 'title', 'title_color','read_type','art_pass', 'content', 'keywords', 'description', 'captcha']);
             $data['user_id'] = $this->uid;
 			$tagId = input('tagid');
 
@@ -252,38 +196,71 @@ class Article extends BaseController
 			$iva= $this->hasIva($data['content']);
 			$data = array_merge($data,$iva);
 
-			// 处理内容
+			// 处理图片内容
 			$data['content'] = $this->downUrlPicsReaplace($data['content']);
 			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
             $data['description'] = strip_tags($this->filterEmoji($data['description']));
+
+			
             // 获取分类ename,appname
             $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
 
+			// vip每天可免费发帖数
+			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
+
+			$postRule = Db::name('user_viprule')->field('postnum,postpoint')->where('vip', $user['vip'])->find();	
+			// 检测可发帖子剩余量
+			$postLog = Db::name('user_article_log')->field('id,user_postnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
+			if(is_null($postLog)) {
+				//没有记录创建
+				Db::name('user_article_log')->save(['user_id' => $this->uid, 'create_time' => time()]);
+				$postLog = Db::name('user_article_log')->field('id,user_postnum')->where(['user_id' => $this->uid])->whereDay('create_time')->find();
+			}
+
+			// 超级管理员排外
+			if($user['auth'] === '0') {
+				$cannum =  $postRule['postnum'] - $postLog['user_postnum']; // 可用免费额
+				if($cannum <= 0) {
+					//额度已用完需要扣积分
+					$canpoint = 1 * $postRule['postpoint'];
+					$point = $user['point'] - $canpoint;
+					if($point < 0) { // 1.积分不足
+						return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
+					}
+					// 2.扣除积分
+					Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
+				}
+			}
+			
             $result = $this->model->add($data);
             if ($result['code'] == 1) {
+				// 记录每天发帖量
+				Db::name('user_article_log')->where('id', $postLog['id'])->inc('user_postnum')->update();
 				// 获取到的最新ID
 				$aid = $result['data']['id'];
+
 				//写入taglist表
-				$tagArr = [];
-				if(isset($tagId)) {
-					$tagIdArr = explode(',',$tagId);
+				if(!empty($tagId)) {
+					$tagArr = [];
+					$tagIdArr = explode(',', $tagId);
 					foreach($tagIdArr as $tid) {
-						$tagArr[] = ['article_id'=>$aid,'tag_id'=>$tid,'create_time'=>time()];
+						$tagArr[] = [ 'article_id' => $aid, 'tag_id' => $tid, 'create_time'=>time()];
 					}
-				}
-				Db::name('taglist')->insertAll($tagArr);
+					Db::name('taglist')->insertAll($tagArr);
+				}	
 				
 				// 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 				// 发提醒邮件
-				if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->showUser($this->uid)['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
+				hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
 
-                $link = $this->getRouteUrl((int)$aid, $cateName['ename']);
+                $link = $this->getRouteUrl((int) $aid, $cateName['ename']);
+				$url = $result['data']['status'] ? $link : (string)url('index/');
 
                 hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-				    
-				$url = $result['data']['status'] ? $link : (string)url('index/');
+				hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
+
 				return Msgres::success($result['msg'], $url);
             }
             return Msgres::error('add_error');
@@ -308,7 +285,7 @@ class Article extends BaseController
 		//子模块下存在add模板则调用，否则调用article/add.html
 		$addTpl = is_file($vfile) ? $vfile : 'add';
 
-		View::assign(['jspage'=>'jie','cid'=>$cid]);
+		View::assign(['cid'=>$cid]);
 		return View::fetch($addTpl);
     }
 
@@ -354,11 +331,11 @@ class Article extends BaseController
 				$result = $article->edit($data);
 				if($result == 1) {
 					//处理标签
-					$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
-					if(isset($tagId)) {
+					if(!empty($tagId)) {
 						$tagIdArr = explode(',',$tagId);
+						$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
 						foreach($artTags as $aid => $tid) {
-							if(!in_array($tid,$tagIdArr)){
+							if(!in_array($tid, $tagIdArr)){
 								//删除被取消的tag
 								Db::name('taglist')->delete($aid);
 							}
@@ -389,7 +366,7 @@ class Article extends BaseController
 			}
 		}
 			
-        View::assign(['article'=>$article,'jspage'=>'jie']);
+        View::assign(['article'=>$article]);
 		// 编辑多模板支持
 		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('detpl');
 		$appName = $this->app->http->getName();
@@ -408,12 +385,20 @@ class Article extends BaseController
 	 */
     public function delete()
 	{
-		$article = $this->model->find(input('id'));
-		$result = $article->together(['comments'])->delete();
-		if($result) {
-            return  Msgres::success('delete_success');
+		$id = input('id');
+		
+		if(Request::isAjax()){
+            try {
+                $arr = explode(",", $id);
+                foreach($arr as $v){
+                    $article = $this->model->find((int) $v);
+                    $article->together(['comments'])->delete();
+                }
+                return json(['code'=>0,'msg'=>'删除成功']);
+            } catch (\Exception $e) {
+                return json(['code'=>-1,'msg'=>'删除失败']);
+            }
 		}
-        return  Msgres::error('delete_error');
 	}
 
 	/**
@@ -425,22 +410,6 @@ class Article extends BaseController
     {
         $type = Request::param('type');
         return $this->uploadFiles($type);
-    }
-
-    /**
-	 * 附件下载
-	 *
-	 * @param [type] $id
-	 * @return void
-	 */
-    public function download($id)
-    {
-        $zipdir = Db::name('article')->where('id',$id)->value('upzip');
-        $zip = substr($zipdir,1);
-		Db::name('article')->cache(true)->where('id',$id)->inc('downloads')->update();
-		//删除缓存显示下载后数据
-        Cache::delete('article_'.$id);
-        return download($zip,'my');
     }
 
 	// 文章置顶、加精、评论状态

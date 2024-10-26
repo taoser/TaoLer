@@ -118,7 +118,7 @@ class Comment extends AdminController
                     'title'     => htmlspecialchars($v['title']),
                     'avatar'    => $v['user_img'],
                     'content'   => strip_tags($v['content']),
-                    'replytime' => date("Y-m-d",$v['create_time']),
+                    'replytime' => date("Y-m-d H:i:s",$v['create_time']),
                     'check'     => $v['astatus'],
                     'url'       => $this->getArticleUrl($v['cid'],'index',$v['ename'])
                 ];
@@ -166,7 +166,29 @@ class Comment extends AdminController
             return json(['code'=>0,'msg'=>'评论被禁止','icon'=>5]);
 		}
         return json(['code'=>-1,'msg'=>'审核出错']);
+	}
 
+    /**
+	 * 多选批量审核
+	 *
+	 * @return Json
+	 */
+	public function checkSelect()
+	{
+        $param = Request::param('data');
+        $data = [];
+        foreach($param as $v) {
+            $data[] = ['id' => (int)$v['id'], 'status' => $v['check'] == '1' ? '-1' : '1'];
+        }
+
+		//获取状态
+		$res = $this->model->saveAll($data);
+	
+		if($res){
+			return json(['code'=>0,'msg'=>'审核成功','icon'=>6]);
+		}else {
+			return json(['code'=>-1,'msg'=>'失败啦','icon'=>6]);
+		}
 	}
 	
 

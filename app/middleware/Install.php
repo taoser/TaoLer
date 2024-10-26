@@ -12,6 +12,7 @@ class Install
 			return redirect('/install/index');
 			//header('Location:'.Request::domain().'/install.php');
 		}
+		
 		return $next($request);
 	}
 }

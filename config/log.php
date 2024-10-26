@@ -7,7 +7,7 @@ return [
     // 默认日志记录通道
     'default'      => env('log.channel', 'file'),
     // 日志记录级别
-    'level'        => ['info'],
+    'level'        => ['error','info','sql'],
     // 日志类型记录的通道 ['error'=>'email',...]
     'type_channel' => [],
     // 关闭全局日志写入
@@ -19,7 +19,7 @@ return [
     'channels'     => [
         'file' => [
             // 日志记录方式
-            'type'           => 'File',
+            'type'           => 'file',
             // 日志保存目录
             'path'           => '',
             // 单文件日志写入
@@ -42,7 +42,7 @@ return [
         // 其它日志通道配置
 		'login' => [
             // 日志记录方式
-            'type'           => 'File',
+            'type'           => 'file',
             // 日志保存目录
             'path'           => '../runtime/log/login/',
             // 单文件日志写入
@@ -58,7 +58,7 @@ return [
         ],
 		'browse' => [
             // 日志记录方式
-            'type'           => 'File',
+            'type'           => 'file',
             // 日志保存目录
             'path'           => '../runtime/log/browse/',
             // 单文件日志写入
@@ -70,11 +70,11 @@ return [
             // 日志输出格式化
             'format'         => '[%s][%s] %s',
             // 是否实时写入
-            'realtime_write' => true,
+            'realtime_write' => false,
         ],
         'update' => [
             // 日志记录方式
-            'type'           => 'File',
+            'type'           => 'file',
             // 日志保存目录
             'path'           => '../runtime/update/log/',
             // 单文件日志写入
@@ -90,7 +90,7 @@ return [
         ],
         'taocai' => [
             // 日志记录方式
-            'type'           => 'File',
+            'type'           => 'file',
             // 日志保存目录
             'path'           => '../runtime/taocai/',
             // 单文件日志写入
@@ -102,7 +102,7 @@ return [
             // 日志输出格式化
             'format'         => '[%s][%s] %s',
             // 是否实时写入
-            'realtime_write' => true,
+            'realtime_write' => false,
         ],
     ],
 

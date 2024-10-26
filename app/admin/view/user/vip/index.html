@@ -8,20 +8,14 @@
 	</head>
 	<body class="pear-container">
 		<div class="layui-fluid" id="component-tabs">
-				<div class="layui-card">
-					<div class="layui-card-body">
-						<div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief">
+			<div class="layui-card">
+				<div class="layui-card-body">
+					<div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief"  lay-allowclose="true">
 						<ul class="layui-tab-title">
-							{if hook('signstatushook') == 1}
-							<li class="layui-this" lay-id="score">签到规则</li>
-							{/if}
-							<li lay-id="vip" class="{if hook('signstatushook') == 0} layui-this {/if}">用户等级</li>
+							<li lay-id="vip" class="layui-this">用户等级</li>
 						</ul>
 						<div class="layui-tab-content">
-
-							{:hook('signadminhook')}
-
-							<div class="layui-tab-item {if hook('signstatushook') == 0}layui-show{/if}">
+							<div class="layui-tab-item layui-show">
 								<div class="layui-tab-content" style="padding: 20px 0;">
 									<div class="layui-form">
 										<div class="layui-form-item">
@@ -29,24 +23,37 @@
 											<label class="layui-form-label">用户积分</label>
 												<div class="layui-input-inline" style="width: 120px;">
 													<select name="vip">
-													<option value="0">普通</option>
-													<option value="1">VIP1</option>
-													<option value="2">VIP2</option>
-													<option value="3">VIP3</option>
-													<option value="4">VIP4</option>
-													<option value="5">VIP5</option>
-													
+														<option value="0">普通</option>
+														<option value="1">L1</option>
+														<option value="2">L2</option>
+														<option value="3">L3</option>
+														<option value="4">L4</option>
+														<option value="5">L5</option>
 													</select>
 												</div>
+												
 												<div class="layui-input-inline">
-													<input type="tel" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input">
+													<input type="text" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input">
 												</div>
 												<div class="layui-input-inline">
-													<input type="tel" name="nick" lay-verify="required" placeholder="认证名称" autocomplete="off" class="layui-input">
+													<input type="text" name="nick" lay-verify="required" placeholder="认证名称" autocomplete="off" class="layui-input">
+												</div>
+												<div class="layui-input-inline">
+													<input type="text" name="postnum" lay-verify="required|number" placeholder="免费发帖日限额" autocomplete="off" class="layui-input">
+												</div>
+												<div class="layui-input-inline">
+													<input type="text" name="refreshnum" lay-verify="required|number" placeholder="免费刷新日限额" autocomplete="off" class="layui-input">
+												</div>
+												<div class="layui-input-inline">
+													<input type="text" name="postpoint" lay-verify="required|number" placeholder="发帖扣积分" autocomplete="off" class="layui-input">
+												</div>
+												<div class="layui-input-inline">
+													<input type="text" name="refreshpoint" lay-verify="required|number" placeholder="刷贴扣积分" autocomplete="off" class="layui-input">
 												</div>
 												<div class="layui-input-inline">
 												<input type="submit" class="pear-btn  pear-btn-primary" lay-submit lay-filter="vip-rule-submit" id="vip-rule-submit" value="立即提交">								
 												</div>
+												
 											</div>	
 										</div>
 									</div>	
@@ -59,6 +66,9 @@
 									</div>	
 								</div>
 							</div>
+
+							{:hook('signadminhook')}
+
 						</div>
 					</div>
 				</div>
@@ -75,6 +85,9 @@
 
 			let VIP_RULE = "{:url('user.vip/list')}";
 
+			// 渲染 tab 组件
+  			element.render('tab', 'server-tabs-brief');
+
 			//Vip规则
 			table.render({
 				elem: '#vip-rule',
@@ -84,7 +97,10 @@
 					{field: 'vip',title: '等级'},
 					{field: 'score',title: '积分'},
 					{field: 'nick',title: '认证'},
-					{field: 'rules',title: '权限'},
+					{field: 'postnum',title: '免费发帖/日'},
+					{field: 'refreshnum',title: '免费刷新/日'},
+					{field: 'postpoint',title: '发帖扣积分'},
+					{field: 'refreshpoint',title: '刷新扣积分'},
 					{field: 'ctime',title: '时间'},
 					{title: '操作', width: 150, align:'center', toolbar: '#vip-rule-bar'}
 					
@@ -111,23 +127,23 @@
 						url:"{:url('user.vip/add')}",
 						data:field,
 						daType:"json",
-						success:function (data){
-								if (data.code == 0) {
-									layer.msg(data.msg,{
-										icon:6,
-										time:2000
-									}, function(){
-									table.reload('vip-rule'); //数据刷新
-									});
-								} else {
-									layer.open({
-										title:'添加失败',
-										content:data.msg,
-										icon:5,
-										anim:6
-									});
-								}
+						success:function (res){
+							if (res.code == 0) {
+								layer.msg(res.msg,{
+									icon:6,
+									time:2000
+								}, function(){
+								table.reload('vip-rule'); //数据刷新
+								});
+							} else {
+								layer.open({
+									title:'添加失败',
+									content:res.msg,
+									icon:5,
+									anim:6
+								});
 							}
+						}
 					});
 				return false;
 			});
@@ -139,7 +155,7 @@
 					type: 2,
 					title: '修改',
 					shade: 0.1,
-					area: ['450px', '400px'],
+					area: ['450px', '580px'],
 					content: 'edit.html?id=' + obj.data.id
 				});
 			}

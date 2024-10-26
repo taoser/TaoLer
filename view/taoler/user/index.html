@@ -1,0 +1,49 @@
+<!--
+ * @Author: TaoLer <alipey_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-07-19 11:17:50
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\user\index.html
+ * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+-->
+{extend name="public/user" /}
+
+{block name="content"}
+<div class="fly-msg" style="margin-bottom: 20px;"> 
+	Hi，<span style="color: red">{:session('user_name')}</span>，你已是我们的正式社员。
+</div>
+<div class="layui-row layui-col-space20">
+{if hook('signstatushook') == 1}
+<div class="layui-col-md6">
+	<div class="fly-panel fly-signin">
+	{:hook('signhook', ['id'=>1])}
+	</div>
+</div>
+{/if}
+<div class="layui-col-md6"> 
+<div class="fly-panel fly-panel-border"> <div class="fly-panel-title"> 我的会员信息 </div> 
+<div class="fly-panel-main layui-text" style="padding: 18px 15px; height: 50px; line-height: 26px;"> 
+<p>您的财富经验值：<span style="color: red">{$user.point}</span> 金币</p> <p>您当前为：<span style="color: red">{$user.nick}</span></p> </div> </div> </div>
+	<div class="layui-col-md12" style="margin-top: -20px;"> 
+		<div class="fly-panel fly-panel-border"> <div class="fly-panel-title"> 快捷方式 </div> 
+			<div class="fly-panel-main"> 
+				<ul class="layui-row layui-col-space10 fly-shortcut"> 
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/set')}"><i class="layui-icon"></i><cite>修改信息</cite></a> </li> 
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/set#avatar')}"><i class="layui-icon"></i><cite>修改头像</cite></a> </li> 
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/set#pass')}"><i class="layui-icon"></i><cite>修改密码</cite></a> </li>
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('article/add')}"><i class="layui-icon"></i><cite>发表新帖</cite></a> </li>
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="{:url('user/post#collection')}"><i class="layui-icon"></i><cite>我的收藏</cite></a> </li>
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="#"><i class="layui-icon"></i><cite>帐号绑定</cite></a> </li> 
+					<li class="layui-col-sm3 layui-col-xs4"> <a href="#"><i class="layui-icon"></i><cite>查看分享</cite></a> </li> 
+					<li class="layui-col-sm3 layui-col-xs4 LAY_search "> <a href="javascript:;"><i class="layui-icon"></i><cite>搜索资源</cite></a> </li> 
+					 
+				</ul> 
+			</div> 
+		</div> 
+	</div> 
+</div>
+{/block}
+
+{block name="script"}
+{/block}

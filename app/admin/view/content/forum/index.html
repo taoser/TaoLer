@@ -5,358 +5,413 @@
   <title>用户管理</title>
   <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 </head>
-    <body class="pear-container">
-        <div class="layui-card">
-          <div class="layui-card-body">
-            <form class="layui-form" action="">
-                <div class="layui-row layui-col-space15 ">
-                  <div class="layui-col-md3">
-                      <label class="layui-form-label">选择类目</label>
-                      <div class="layui-input-block">
-                          <div id="CateId" class="xm-select-demo"></div>
-                      </div>
-                  </div>
-                <div class="layui-col-md3">
-                    <label class="layui-form-label">帖子ID</label>
-                    <div class="layui-input-block">
-                      <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-col-md3">
-                    <label class="layui-form-label">发帖人</label>
-                    <div class="layui-input-block">
-                      <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-col-md3">
-                    <label class="layui-form-label">标题</label>
-                    <div class="layui-input-block">
-                      <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-col-md3">
-                    <label class="layui-form-label">状态</label>
-                    <div class="layui-input-block">
-                      <select name="sec">
-                            <option value="">选择状态</option>
-                            <option value="1">正常</option>
-                            <option value="5">禁止</option>
-                            <option value="6">待审</option>
-                            <option value="2">置顶</option>
-                            <option value="3">加精</option>
-                            <option value="4">禁评</option>
-                      </select>
-                    </div>
-                </div>
-                <div class="layui-col-md3">
-                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
-                      <i class="layui-icon layui-icon-search"></i>
-                      查询
-                    </button>
-                    <button type="reset" class="pear-btn pear-btn-md">
-                      <i class="layui-icon layui-icon-refresh"></i>
-                      重置
-                    </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="layui-card">
-          <div class="layui-card-body">
-            <table id="forum-table" lay-filter="forum-table" ></table>
-          </div>
-        </div>
+<body class="pear-container">
+	<div class="layui-card">
+		<div class="layui-card-body">
+			<form class="layui-form" action="">
+				<div class="layui-row layui-col-space15 ">
+					<div class="layui-col-md2">
+						<label class="layui-form-label">选择类目</label>
+						<div class="layui-input-block">
+							<div id="CateId" class="xm-select-demo"></div>
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">帖子ID</label>
+						<div class="layui-input-block">
+							<input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">发帖人</label>
+						<div class="layui-input-block">
+							<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">标题</label>
+						<div class="layui-input-block">
+							<input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">状态</label>
+						<div class="layui-input-block">
+							<select name="sec">
+								<option value="">选择状态</option>
+								<option value="1">正常</option>
+								<option value="5">禁止</option>
+								<option value="6">待审</option>
+								<option value="2">置顶</option>
+								<option value="3">加精</option>
+								<option value="4">禁评</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
+							<i class="layui-icon layui-icon-search"></i>
+							查询
+						</button>
+						<button type="reset" class="pear-btn pear-btn-md">
+							<i class="layui-icon layui-icon-refresh"></i>
+							重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="layui-card">
+		<div class="layui-card-body">
+		<table id="forum-table" lay-filter="forum-table" ></table>
+		</div>
+	</div>
 
-        <script type="text/html" id="forum-toolbar">
-          <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
-            <i class="layui-icon layui-icon-add-1"></i>
-            新增
-          </button>
-          <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-            <i class="layui-icon layui-icon-delete"></i>
-            删除
-          </button>
-        </script>
+	<script type="text/html" id="forum-toolbar">
+		<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+		<i class="layui-icon layui-icon-add-1"></i>
+		新增
+		</button>
+		<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+		<i class="layui-icon layui-icon-delete"></i>
+		删除
+		</button>
+		<button class="pear-btn layui-bg-orange pear-btn-md" lay-event="checkSelect">
+		批量审核
+		</button>
+	</script>
+	<script type="text/html" id="titleTpl">
+        <ul>
+          <li><a href="{{- d.url }}" target="_blank"><strong>{{- d.title }}</strong></a></li>
+          <li>类别：{{ d.cate }}</li>
+          <li>{{ d.poster }} - {{ d.posttime }}</li>
+        </ul>
+    </script>
 
-        <script type="text/html" id="avatarTpl">
-          <div><img style="width: 25px; height: 25px;" src= "{{ d.avatar }}"></div>
-        </script>
-        <script type="text/html" id="forum-istop">
-          <input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.top == 1 ? 'checked' : '' }}>
-        </script>
-        <script type="text/html" id="buttonHot">
-          <input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isHot" {{ d.hot == 1 ? 'checked' : '' }}>
-        </script>
-        <script type="text/html" id="buttonReply">
-          <input type="checkbox" name="is_reply" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isReply" {{ d.reply == 0 ? 'checked' : '' }}>
-        </script>
-        <script type="text/html" id="buttonCheck">
-          <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{ d.check == 1 ? 'checked' : '' }}>
-        </script>
+	<script type="text/html" id="avatarTpl">
+		<div><img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= "{{ d.avatar }}"></div>
+	</script>
+	<script type="text/html" id="forum-istop">
+		<input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.top == 1 ? 'checked' : '' }}>
+	</script>
+	<script type="text/html" id="buttonHot">
+		<input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isHot" {{ d.hot == 1 ? 'checked' : '' }}>
+	</script>
+	<script type="text/html" id="buttonReply">
+		<input type="checkbox" name="is_reply" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isReply" {{ d.reply == 0 ? 'checked' : '' }}>
+	</script>
+	<script type="text/html" id="buttonCheck">
+		<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{ d.check == 1 ? 'checked' : '' }}>
+	</script>
 
-        <script type="text/html" id="forum-table-bar">
-            <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-            <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
-        </script>
+	<script type="text/html" id="forum-table-bar">
+		<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+		<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+	</script>
 
-        <script src="/static/component/layui/layui.js"></script>
-        <script src="/static/component/pear/pear.js"></script>
+	<script src="/static/component/layui/layui.js"></script>
+	<script src="/static/component/pear/pear.js"></script>
+	
+	<script>
+		const FORUM_List = "{:url('content.forum/list')}";
 
-        <script>
-        const FORUM_List       = "{:url('content.forum/list')}";
+		layui.use(['toast','common','xmSelect'], function(){
+			var $ = layui.jquery, form = layui.form, table = layui.table;
+			let common = layui.common;
+			var toast = layui.toast;
+			var xmSelect = layui.xmSelect;
 
-        layui.use(['toast','jquery','form', 'table','common','xmSelect'], function(){
-                var $ = layui.jquery
-                ,form = layui.form
-                ,table = layui.table;
-                let common = layui.common;
-                var toast = layui.toast;
-                var xmSelect = layui.xmSelect;
+			let cols = [
+				[
+				{type: 'checkbox'}
+				,{field: 'id', width: 80, title: 'ID', sort: true}
+				,{field: 'avatar', title: '头像', width: 80, templet: '#avatarTpl'}
+				,{title: '详情', minWidth: 200, templet: '#titleTpl'}
+				,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
+				,{field: 'top', title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
+				,{field: 'hot', title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
+				,{field: 'reply', title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
+				,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
+				,{title: '操作', width: 110, align: 'center', toolbar: '#forum-table-bar'}
+				]
+			];
 
-                  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-                  var taonystatus = "{:hook('taonystatus')}";
-                  // 编辑器插件启用状态
-                  var isShow = taonystatus ? false : true;
+			table.render({
+				elem: '#forum-table',
+				url: FORUM_List,
+				page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					curr: 1, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+				},
+				cols: cols,
+				height: function(){
+					var otherHeight = $('.layui-card-body:first').outerHeight(); // 自定义其他区域的高度
+					return $(window).height() - otherHeight - 70; // 返回 number 类型
+				},
+				skin: 'line',
+				lineStyle: 'height: 120px;',
+				toolbar: '#forum-toolbar',
+				defaultToolbar: [{
+					title: '刷新',
+					layEvent: 'refresh',
+					icon: 'layui-icon-refresh',
+				}, 'filter', 'print', 'exports'],
+				limit: 30,
+				limits: [30,100,200,500,1000],
+			});
 
 
-                let cols = [
-                  [
-                    {type: 'checkbox'}
-                    ,{field: 'id', width: 60, title: 'ID', sort: true}
-                    ,{field: 'avatar', title: '头像', width: 60, templet: '#avatarTpl'}
-                    ,{field: 'poster', title: '账号',width: 80}
-                    ,{field: 'title', title: '标题', minWidth: 180,templet: '<div><a href="{{- d.url }}" target="_blank">{{- d.title }}</a></div>'}
-                    ,{field: 'cate', title: '类别', width: 120}
-                    ,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
-                    ,{field: 'posttime', title: '时间',width: 120, sort: true}
-                    ,{field: 'top', title: '置顶', templet: '#forum-istop', width: 80, align: 'center'}
-                    ,{field: 'hot', title: '加精', templet: '#buttonHot', width: 80, align: 'center'}
-                    ,{field: 'reply', title: '禁评', templet: '#buttonReply', width: 80, align: 'center'}
-                    ,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 95, align: 'center'}
-                    ,{title: '操作', width: 110, align: 'center', toolbar: '#forum-table-bar'}
-                  ]
-                ];
+		// 动态分类
+		function getSelectCate() {
+			// 分类选择
+			$.get("{:url('content.forum/getCateList')}", function(res){
+				// 渲染下拉树
+				xmSelect.render({
+					el: '#CateId',
+					name: 'cate_id',
+					height: '250px',
+					layVerify: '',
+					layVerType: 'tips',
+					data: res.data,
+					initValue:  [],
+					model: {label: {type: 'text'}},
+					prop: {
+						name: 'catename',
+						value: 'id'
+					},
+					radio: true,
+					clickClose: true,
+					tree: {
+						show: true,
+						indent: 15,
+						strict: false,
+						expandedKeys: true
+					},
+					tips: '请选择'
+				});
+			});
+		}
 
-              table.render({
-                elem: '#forum-table',
-                url: FORUM_List,
-                page: true,
-                cols: cols,
-                skin: 'line',
-                toolbar: '#forum-toolbar',
-                defaultToolbar: [{
-                  title: '刷新',
-                  layEvent: 'refresh',
-                  icon: 'layui-icon-refresh',
-                }, 'filter', 'print', 'exports']
-              });
+		getSelectCate();
 
-            // 动态分类
-            function getSelectCate() {
-                // 分类选择
-                $.get("{:url('content.forum/getCateList')}", function(res){
-                    // 渲染下拉树
-                    xmSelect.render({
-                        el: '#CateId',
-                        name: 'cate_id',
-                        height: '250px',
-                        layVerify: '',
-                        layVerType: 'tips',
-                        data: res.data,
-                        initValue:  [],
-                        model: {label: {type: 'text'}},
-                        prop: {
-                            name: 'catename',
-                            value: 'id'
-                        },
-                        radio: true,
-                        clickClose: true,
-                        tree: {
-                            show: true,
-                            indent: 15,
-                            strict: false,
-                            expandedKeys: true
-                        },
-                        tips: '请选择'
-                    });
-                });
-            }
-            getSelectCate();
+			table.on('tool(forum-table)', function(obj) {
+				if (obj.event === 'remove') {
+					window.remove(obj);
+				} else if (obj.event === 'edit') {
+					window.edit(obj);
+				}
+			});
 
-              table.on('tool(forum-table)', function(obj) {
-                if (obj.event === 'remove') {
-                  window.remove(obj);
-                } else if (obj.event === 'edit') {
-                  window.edit(obj);
-                }
-              });
+			table.on('toolbar(forum-table)', function(obj) {
+				if (obj.event === 'add') {
+					window.add();
+				} else if (obj.event === 'refresh') {
+					window.refresh();
+				} else if (obj.event === 'batchRemove') {
+					window.batchRemove(obj);
+				} else if (obj.event === 'checkSelect') {
+					window.checkSelect(obj);
+				}
+			});
 
-              table.on('toolbar(forum-table)', function(obj) {
-                if (obj.event === 'add') {
-                  window.add();
-                } else if (obj.event === 'refresh') {
-                  window.refresh();
-                } else if (obj.event === 'batchRemove') {
-                  window.batchRemove(obj);
-                }
-              });
+			form.on('submit(forum-query)', function(data) {
+				table.reloadData('forum-table', {
+					where: data.field,
+					page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+						layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+						curr: 1, //设定初始在第 5 页
+						groups: 1, //只显示 1 个连续页码
+						first: false, //不显示首页
+						last: false //不显示尾页
+					},
+					scrollPos: true,
+				})
+				return false;
+			});
 
-              form.on('submit(forum-query)', function(data) {
-                table.reload('forum-table', {
-                  where: data.field,
-                    page: {
-                      curr: 1 //重新从第 1 页开始
-                  }
-                })
-                return false;
-              });
+			// 监听置顶
+			form.on('switch(isTop)', function(obj){
+				$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value:obj.elem.checked ? 1 : 0},function(res){
+					layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+				});
+			});
 
-               // 监听置顶
-               form.on('switch(isTop)', function(obj){
-                $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value:obj.elem.checked ? 1 : 0},function(res){
-                  layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-                });
-              });
+			// 监听加精
+			form.on('switch(isHot)', function(obj){
+				$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
+					layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+				});
+			});
 
-              // 监听加精
-              form.on('switch(isHot)', function(obj){
-                $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
-                  layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-                });
-              });
+			// 监听回复
+			form.on('switch(isReply)', function(obj){
+				$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
+					layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+				});
+			});
 
-              // 监听回复
-              form.on('switch(isReply)', function(obj){
-                $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
-                  layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-                });
-              });
+			// 监听审贴
+			form.on('switch(artStatus)', function(obj){
+				//layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+				$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
+					if(res.code === 0){
+						layer.msg(res.msg,{icon:res.icon,time:2000})
+					} else {
+						layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+					}
+				});
+			});
 
-              // 监听审贴
-              form.on('switch(artStatus)', function(obj){
-                //layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-                $.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
-                  if(res.code === 0){
-                                layer.msg(res.msg,{icon:res.icon,time:2000})
-                        } else {
-                                layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
-                  }
-                });
-              });
+		// 添加
+		window.add = function() {
+			layer.open({
+				type: 2,
+				title: '新增',
+				shade: 0.1,
+				area: [common.isModile()?'100%':'100%', common.isModile()?'100%':'100%'],
+				content: "{:url('content.forum/add')}"
+			});
+		}
 
-              window.add = function() {
-                  if(isShow) {
-                      toast.info({title: '信息',message: '编辑器插件未开启或未安装',position: 'topRight'});
-                      return false;
-                  }
-                layer.open({
-                  type: 2,
-                  title: '新增',
-                  shade: 0.1,
-                  area: [common.isModile()?'100%':'100%', common.isModile()?'100%':'100%'],
-                  content: 'add.html'
-                });
-              }
+		window.edit = function(obj) {
+			layer.open({
+				type: 2,
+				title: '修改',
+				shade: 0.1,
+				area: ['100%', '100%'],
+				content: 'edit.html?id=' + obj.data.id
+			});
+		}
 
-              window.edit = function(obj) {
-                  if(isShow) {
-                      toast.info({title: '信息',message: '编辑器插件未开启或未安装',position: 'topRight'});
-                      return false;
-                  }
-                layer.open({
-                  type: 2,
-                  title: '修改',
-                  shade: 0.1,
-                  area: ['100%', '100%'],
-                  content: 'edit.html?id=' + obj.data.id
-                });
-              }
+		window.remove = function(obj) {
+			layer.confirm('确定要删除?', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+				$.ajax({
+					url: "{:url('content.forum/delete')}?id=" + obj.data['id'],
+					dataType: 'json',
+					type: 'delete',
+					success: function(result) {
+						layer.close(loading);
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								obj.del();
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
 
-              //   $(document).on('focusin', function(e) {
-              //   if ($(e.target).closest(".tox-tinymce, .tox-tinymce-aux, .moxman-window, .tam-assetmanager-root").length) {
-              //     e.stopImmediatePropagation();
-              //   }
-              // });
+		// 批量删除
+		window.batchRemove = function(obj) {
+			var checkIds = common.checkField(obj,'id');
+			if (checkIds === "") {
+				layer.msg("未选中数据", {
+					icon: 3,
+					time: 1000
+				});
+				return false;
+			}
 
-                window.remove = function(obj) {
+			layer.confirm('确定要删除?', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+				$.ajax({
+					url: "{:url('content.forum/delete')}?id=" + checkIds,
+					dataType: 'json',
+					type: 'delete',
+					data:{"id":checkIds},
+					success: function(result) {
+						layer.close(loading);
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								table.reload('forum-table');
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
 
-                  layer.confirm('确定要删除?', {
-                      icon: 3,
-                      title: '提示'
-                    }, function(index) {
-                      layer.close(index);
-                      let loading = layer.load();
-                      $.ajax({
-                          url: "{:url('content.forum/delete')}?id=" + obj.data['id'],
-                          dataType: 'json',
-                          type: 'delete',
-                          success: function(result) {
-                              layer.close(loading);
-                              if (result.code === 0) {
-                                  layer.msg(result.msg, {
-                                      icon: 1,
-                                      time: 1000
-                                  }, function() {
-                                      obj.del();
-                                  });
-                              } else {
-                                  layer.msg(result.msg, {
-                                      icon: 2,
-                                      time: 1000
-                                  });
-                              }
-                          }
-                      })
-                  });
-              }
+		// 全选审核
+		window.checkSelect = function(obj) {
+			var id = obj.config.id;
+    		var checkStatus = table.checkStatus(id);
+			var data = checkStatus.data;
 
-                window.batchRemove = function(obj) {
-                  var checkIds = common.checkField(obj,'id');
-                  if (checkIds === "") {
-                      layer.msg("未选中数据", {
-                          icon: 3,
-                          time: 1000
-                      });
-                      return false;
-                  }
+			if (data.length === 0) {
+				layer.msg("未选中数据", {
+					icon: 3,
+					time: 1000
+				});
+				return false;
+			}
 
-                  layer.confirm('确定要删除?', {
-                      icon: 3,
-                      title: '提示'
-                  }, function(index) {
-                      layer.close(index);
-                      let loading = layer.load();
-                      $.ajax({
-                          url: "{:url('content.forum/delete')}?id=" + checkIds,
-                          dataType: 'json',
-                          type: 'delete',
-                          data:{"id":checkIds},
-                          success: function(result) {
-                              layer.close(loading);
-                              if (result.code === 0) {
-                                  layer.msg(result.msg, {
-                                      icon: 1,
-                                      time: 1000
-                                  }, function() {
-                                      table.reload('forum-table');
-                                  });
-                              } else {
-                                  layer.msg(result.msg, {
-                                      icon: 2,
-                                      time: 1000
-                                  });
-                              }
-                          }
-                      })
-                  });
-              }
+			layer.confirm('确定要审核?', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+				console.log(data)
+				$.ajax({
+					type: "post",
+					url: "{:url('content.forum/checkSelect')}",
+					dataType: 'json',
+					data: {data},
+					success: function(result) {
+						layer.close(loading);
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								table.reload('forum-table');
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
 
-                window.refresh = function(param) {
-                  table.reload('forum-table');
-                }
+		// 刷新
+		window.refresh = function(param) {
+			table.reload('forum-table');
+		}
 
-            });
-        </script>
-    </body>
+	});
+	</script>
+</body>
 </html>

@@ -12,6 +12,7 @@ namespace app\common\model;
 
 use think\Model;
 use think\model\concern\SoftDelete;
+use think\facade\Cache;
 
 class Comment extends Model
 {	
@@ -23,35 +24,42 @@ class Comment extends Model
 	public function article()
 	{
 		//评论关联文章
-		return $this->belongsTo('Article','article_id','id');
+		return $this->belongsTo(Article::class);
 	}
 	
 	public function user()
 	{
 		//评论关联用户
-		return $this->belongsTo('User','user_id','id');
+		return $this->belongsTo(User::class);
 	}
 
-	//获取评论
-    public function getComment($id, $page)
+	/**
+     * article的评论
+     *
+     * @param integer $id
+     * @param integer $page
+     * @return void
+     */
+    public function getComment(int $id, int $page)
     {
-        $comment = $this::withTrashed()->with(['user'=>function($query){
-            $query->field('id,name,user_img,sign,city,vip');
-        }])
-            ->where(['article_id'=>(int)$id,'status'=>1])
-            ->order(['cai'=>'asc','create_time'=>'asc'])
-//            ->paginate(['list_rows'=>10, 'page'=>$page])
-            ->append(['touser'])
-            ->select()
-            ->toArray();
+        $comment = Cache::remember("comment_{$id}_{$page}", function() use($id, $page){
+            return $this->withTrashed()->with(['user'=>function($query){
+                $query->field('id,name,user_img,sign,city,vip');
+            }])
+                ->where(['article_id'=>(int)$id,'status'=>1])
+                ->order(['cai'=>'asc','create_time'=>'asc'])
+                //->paginate(['list_rows'=>10, 'page'=>$page])
+                ->append(['touser'])
+                ->select()
+                ->toArray();
+        },10);
+        
 
-        foreach ($comment as $k => $v)
-        {
+        foreach ($comment as $k => $v) {
             if(empty($v['content'])){
                 unset($comment[$k]);
             }
         }
-
 
         if(count($comment)) {
             $data['data'] = getTree($comment);
@@ -97,7 +105,7 @@ class Comment extends Model
                 $res['data'][] = $u;
             }
         } else {
-            $res = ['status' => 0, 'msg' =>'no reply'];
+            $res = ['status' => -1, 'msg' =>'no reply'];
         }
         return json($res);
     }
@@ -170,18 +178,20 @@ class Comment extends Model
         // dump($data);
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
             
-            $article = Article::field('id,cate_id')->with(['cate' => function($query){
+            $article = Article::field('id,cate_id')
+            ->with(['cate' => function($query){
                 $query->withField('id,ename')->where(['status' => 1]);
-            }])->find($data['article_id']);
-            
-            return (string) url('detail',['id' => $data['article_id'],'ename'=>$article->cate->ename]);
+            }])
+            ->find($data['article_id']);
+
+            return (string) url('detail', ['id' => $data['article_id'], 'ename' => $article->cate->ename]);
         } else {
             return (string) url('detail',['id' => $data['id']]);
         }
     }
 
     // 获取to_user_id
-    public function getTouserAttr($value,$data)
+    public function getTouserAttr($value, $data)
     {
         if(isset($data['to_user_id'])) {
             return User::where('id', $data['to_user_id'])->value('name');

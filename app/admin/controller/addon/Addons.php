@@ -20,7 +20,6 @@ use think\facade\Config;
 use app\admin\model\AuthRule;
 use app\admin\model\Addons as AddonsModel;
 use think\response\Json;
-use Symfony\Component\VarExporter\VarExporter;
 use taoler\com\Files;
 use app\common\lib\facade\HttpHelper;
 use app\common\lib\FileHelper;
@@ -28,6 +27,13 @@ use app\common\lib\FileHelper;
 
 class Addons extends AdminController
 {
+    protected $menu = [];
+
+    public function __construct()
+    {
+        //
+    }
+
     /**
      * 浏览插件
      *
@@ -49,6 +55,12 @@ class Addons extends AdminController
         $res = [];
         //本地插件列表
         $localAddons = Files::getDirName('../addons/');
+
+        // 排除公共中间件目录
+        $key = array_search('middleware',$localAddons,true);
+        if($key !== false) {
+            unset($localAddons[$key]);
+        }
 
         if($data['type'] == 'installed') {
             $count = count($localAddons); // 安装总数
@@ -95,57 +107,43 @@ class Addons extends AdminController
         return json(['code' => -1, 'msg' => '未获取到服务器信息']);
     }
 
-    /**
-     * 安装&升级，
-     * @param array $data
-     * @param bool $type true执行sql,false升级不执行sql
-     * @return Json
-     */
-    public function install(array $data = [], bool $type = true)
-    {
-        $data = Request::only(['name','version','uid','token']) ?? $data;
-        // 接口
-        $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
-        if($response->code < 0) return json($response);
+    // 插件文件升级检查
+    protected function addonsFileCheckInstall($name, $url) {
 
-        //版本判断，是否能够安装？
-        $addInstalledVersion = get_addons_info($data['name']);
-        if(!empty($addInstalledVersion)){
-            $verRes = version_compare($data['version'],$addInstalledVersion['version'],'>');
-            if(!$verRes){
-                return json(['code'=>-1,'msg'=>'不能降级，请选择正确版本']);
-            }
-            //$tpl_ver_res = version_compare($addInstalledVersion['template_version'], config('taoler.template_version'),'<');
+        // 1.判断远程文件是否可用存在
+        $header = get_headers($url, true);
+        if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))) {
+            throw new Exception('获取远程文件失败');
         }
-
-        $file_url = $response->addons_src;
-        //判断远程文件是否可用存在
-        $header = get_headers($file_url, true);
-        if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
-            return json(['code'=>-1,'msg'=>'获取远程文件失败']);
-        }
-        //把远程文件放入本地
-
+        
         //拼接路径
         $addons_dir = FileHelper::getDirPath(root_path() . 'runtime' . DS . 'addons');
         if(!is_dir($addons_dir)) Files::mkdirs($addons_dir);
 
-        $package_file = $addons_dir . $data['name'] . '.zip';  //升级的压缩包文件路径
-        $cpfile = copy($file_url, $package_file);
-        if(!$cpfile) return json(['code'=>-1,'msg'=>'下载升级文件失败']);
+        // 2.把远程文件放入本地
+        $package_file = $addons_dir . $name . '.zip';  //升级的压缩包文件路径
+        $cpfile = copy($url, $package_file);
+        if(!$cpfile) {
+            throw new Exception('下载升级文件失败');
+        }
 
         $uzip = new Zip();
         $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
         $zipPath = FileHelper::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
         $unzip_res = $uzip->unzip($package_file, $zipPath, true);
-        if(!$unzip_res) return json(['code'=>-1,'msg'=>'解压失败']);
+        if(!$unzip_res) {
+            throw new Exception('解压失败');
+        }
+
         unlink($package_file);
-        //升级插件
 
         //升级前的写入文件权限检查
         $allUpdateFiles = Files::getAllFile($zipPath);
 
-        if (empty($allUpdateFiles)) return json(['code' => -1, 'msg' => '无可更新文件。']);
+        if (empty($allUpdateFiles)) {
+            throw new Exception('无可更新文件!');
+        }
+    
         $checkString    = '';
         foreach ($allUpdateFiles as $updateFile) {
             $coverFile  = ltrim(str_replace($zipPath, '', $updateFile), DIRECTORY_SEPARATOR);
@@ -157,56 +155,140 @@ class Addons extends AdminController
                 if (!is_writable($dirPath)) $checkString .= $dirPath . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
             }
         }
-        if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
+        if (!empty($checkString)) {
+            throw new Exception('$checkString');
+        }
 
-        try {
-            // 拷贝文件
-            FileHelper::copyDir(root_path() . 'runtime' . DS . 'addons' . DS . $data['name'] . DS, root_path());
-            // $type判断是安装还是升级
-            if($type) {
-                // 执行数据库
-                $sqlInstallFile = root_path(). 'addons' . DS . $data['name'] . DS . 'install.sql';
-                if(file_exists($sqlInstallFile)) {
-                    SqlFile::dbExecute($sqlInstallFile);
-                }
+        // 拷贝文件
+        FileHelper::copyDir(root_path() . 'runtime' . DS . 'addons' . DS . $name . DS, root_path());
 
+        return true;
+    }
+
+    /**
+     * 安装，
+     * @param array $data
+     * @return Json
+     */
+    public function install(array $data = [])
+    {
+        $data = Request::only(['name','version','uid','token']);
+        $data['type'] = 'install';
+        
+        // 接口
+        $response = HttpHelper::withHost()->post('/v1/getaddons', $data)->toJson();
+        if($response->code < 0) return json($response);
+
+        try{
+            // 文件
+            $this->addonsFileCheckInstall($data['name'], $response->addons_src);
+
+            // 执行数据库
+            $sqlInstallFile = root_path(). 'addons' . DS . $data['name'] . DS . 'install.sql';
+            if(file_exists($sqlInstallFile)) {
+                SqlFile::dbExecute($sqlInstallFile);
             }
+
+            //执行插件安装
+            $class = get_addons_instance($data['name']);
+            $class->install();
+
             //安装菜单
-            //$menu = get_addons_menu($data['name']);
-            $menuFile = app()->getRootPath() . 'addons' . DS . $data['name'] . DS . 'menu.php';
-            if(file_exists($menuFile)){
-                $menu = include $menuFile;
-            } else {
-                $menu = [];
-            }
+            $menu = get_addons_menu($data['name']);
             if(!empty($menu)){
-                if(isset($menu['is_nav']) && $menu['is_nav'] < 8){
-                    $pid = $menu['is_nav'];
-                } else {
-                    //$pid = AuthRule::where('name','addons')->value('id');
-                    return json(['code'=>-1,'msg'=> 'is_nav菜单项目设置错误']);
+                if(!isset($menu['is_nav']) || $menu['is_nav'] > 8){
+                    return json(['code'=>-1,'msg'=> 'is_nav菜单设置错误,无法完成安装！']);
                 }
+                //$pid = AuthRule::where('name','addons')->value('id');
+                $pid = $menu['is_nav'];
                 // 父ID状态为0时打开
                 $pidStatus = AuthRule::where('id', $pid)->value('status');
                 if($pidStatus < 1) {
                     AuthRule::update(['status' => 1, 'id' => $pid]);
                 }
-                // 安装菜单
-                $menu_arr[] = $menu['menu'];
-                $this->addAddonMenu($menu_arr, (int)$pid,1);
+                unset($menu['is_nav']);
+                $this->insertMenu($menu, (int)$pid, 1);
             }
-            $class = get_addons_instance($data['name']);
-            //执行插件安装
-            $class->install();
+            
+            // 设置插件info
             set_addons_info($data['name'],['status' => 1,'install' => 1]);
+
         } catch (\Exception $e) {
-            return json(['code'=>-1,'msg'=> $e->getMessage()]);
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
 
         Files::delDirAndFile('../runtime/addons/'.$data['name'] . DS);
-        $msg = $type ? '插件安装成功！' : '插件升级成功！';
-        return json(['code' => 0, 'msg' => $msg]);
 
+        return json(['code' => 0, 'msg' => '插件安装成功！']);
+
+    }
+
+        /**
+     * 升级插件
+     * @return Json
+     * @throws \Exception
+     */
+    public function upgrade()
+    {
+        $data = Request::only(['name','uid','token']);
+        $info = get_addons_info($data['name']);
+        $data['version'] = $info['version'];
+        $data['type'] = 'upgrade';
+
+        // 接口
+        $response = HttpHelper::withHost()->post('/v1/getaddons', $data)->toJson();
+        if($response->code < 0) return json($response);
+
+        try {
+            // 获取原配置信息
+            $config = get_addons_config($data['name']);
+
+            // 文件升级安装
+            $this->addonsFileCheckInstall($data['name'], $response->addons_src);
+            // 先恢复原来的info版本
+            set_addons_info($data['name'], ['version' => $info['version']]);
+
+            // 卸载插件
+            // $class = get_addons_instance($data['name']);
+            // $class->uninstall();
+
+            // 卸载菜单
+            $menu = get_addons_menu($data['name']);
+            $isMenuEmpty = empty($menu);
+            if(!$isMenuEmpty){
+                $pid = $menu['is_nav'];
+                unset($menu['is_nav']);
+                $this->removeMenu($menu);
+            }
+
+            // 升级sql
+            $sqlUpdateFile = root_path()."addons/{$data['name']}/data/update_{$response->version}.sql";
+            if(file_exists($sqlUpdateFile)) {
+                SqlFile::dbExecute($sqlUpdateFile);
+            }
+
+            $class = get_addons_instance($data['name']);
+            $class->enabled();
+
+            // 恢复配置
+            if(!empty($config)) {
+                set_addons_config($data['name'], $config);
+            }
+
+            // 更新现在的新版本info
+            $info['version'] = number_format($response->version, 1); // 写入版本号
+            set_addons_info($data['name'], $info);
+    
+            //恢复菜单
+            if(!$isMenuEmpty){
+                $this->insertMenu($menu, (int)$pid, 1);
+            }
+            
+        } catch (\Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
+        }
+
+        return json(['code' => 0, 'msg' => "{$response->version}版本升级成功！"]);
     }
 
     /**
@@ -218,19 +300,22 @@ class Addons extends AdminController
     public function uninstall(string $name = '')
     {
         $name = input('name') ?? $name;
-        // 执行插件卸载
-        $class = get_addons_instance($name);
-        $class->uninstall();
-        // 卸载菜单
-        $menu = get_addons_menu($name);
-        if(!empty($menu)){
-            $menu_arr[] = $menu['menu'];
-            $this->delAddonMenu($menu_arr);
-        }
-
+        
+        
         try {
+            // 执行插件卸载
+            $class = get_addons_instance($name);
+            $class->uninstall();
+
+            // 卸载菜单
+            $menu = get_addons_menu($name);
+            if(!empty($menu)){
+                unset($menu['is_nav']);
+                $this->removeMenu($menu);
+            }
+
             //卸载插件数据库
-            $sqlUninstallFile = root_path().'addons/'.$name.'/uninstall.sql';
+            $sqlUninstallFile = root_path()."addons/{$name}/uninstall.sql";
             if(file_exists($sqlUninstallFile)) {
                 SqlFile::dbExecute($sqlUninstallFile);
             }
@@ -257,53 +342,6 @@ class Addons extends AdminController
         }
 
         return json(['code' => 0, 'msg' => '插件卸载成功']);
-    }
-
-    /**
-     * 升级插件
-     * @return Json
-     * @throws \Exception
-     */
-    public function upgrade()
-    {
-        $data = Request::only(['name','version','uid','token']);
-        // 接口
-        $response = HttpHelper::withHost()->post('/v1/getaddons',$data)->toJson();
-        if($response->code < 0) return json($response);
-        // 获取配置信息
-        $config = get_addons_config($data['name']);
-        // 卸载插件
-        $class = get_addons_instance($data['name']);
-        $class->uninstall();
-        //$this->uninstall($data['name']);
-
-        // 卸载菜单
-        $menu = get_addons_menu($data['name']);
-        if(!empty($menu)){
-            $menu_arr[] = $menu['menu'];
-            $this->delAddonMenu($menu_arr);
-        }
-
-        try {
-            // 升级安装，第二个type参数false为升级，true安装
-            $installRes = $this->install($data,false);
-            $res = $installRes->getData();
-            if($res['code'] == -1) return json(['code' => -1, 'msg' => $res['msg']]);
-            // 升级sql
-            $sqlUpdateFile = root_path().'addons/'.$data['name'].'/update.sql';
-            if(file_exists($sqlUpdateFile)) {
-                SqlFile::dbExecute($sqlUpdateFile);
-            }
-            // 恢复配置
-            if(!empty($config)) {
-                set_addons_config($data['name'], $config);
-            }
-            // 写入版本号
-            set_addons_info($data['name'],['version' =>$data['version']]);
-            return $installRes;
-        } catch (\Exception $e) {
-            return json(['code' => -1, 'msg' => $e->getMessage()]);
-        }
     }
 
     /**
@@ -386,65 +424,72 @@ class Addons extends AdminController
     }
 
     /**
-     * 添加菜单
-     * @param array $menu
-     * @param int $pid
-     * @param int $type
+     * 插入插件菜单
+     *
+     * @param array $menu 菜单数组
+     * @param integer $pid 父ID
+     * @param integer $type 菜单类型
      * @return void
-     * @throws \Exception
      */
-    public function addAddonMenu(array $menu,int $pid = 0, int $type = 1)
+    public function insertMenu(array $menu, int $pid = 0, int $type = 1)
     {
-        foreach ($menu as $v){
-            $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
-            try {
+        try {
+
+            foreach($menu as $v){
+                $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
+                
                 $v['pid'] = $pid;
                 $v['name'] = trim($v['name'],'/');
                 $v['type'] = $type;
-                $menu = AuthRule::withTrashed()->where('name',$v['name'])->find();
-                if($menu){
-                    $menu->restore();
+
+                $menu_rule = AuthRule::withTrashed()->where('name', $v['name'])->findOrEmpty();
+                if(!$menu_rule->isEmpty()){
+                    $menu_rule->restore();
                 } else {
-                    $menu = AuthRule::create($v);
+                    $menu_rule = AuthRule::create($v);
                 }
 
                 if ($hasChild) {
-                    $this->addAddonMenu($v['sublist'], $menu->id,$type);
+                    $this->insertMenu($v['sublist'], $menu_rule->id, $type);
                 }
-            } catch (\Exception $e) {
-                throw new \Exception($e->getMessage());
             }
+
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
 
+        return true;
     }
 
     /**
-     * 循环删除菜单
-     * @param array $menu
-     * @param string $module
+     * 循环删除插件菜单
+     * @param array $menu 菜单数组
+     * @param string $module 插件模式 预留功能
      * @return void
      * @throws \Exception
      */
-    public function delAddonMenu(array $menu,string $module = 'addon')
+    public function removeMenu(array $menu, string $module = 'addon')
     {
-        foreach ($menu as $k=>$v){
-            $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
-            try {
-                $v['name'] = trim($v['name'],'/');
-                $menu_rule = AuthRule::withTrashed()->where('name',$v['name'])->find();
-                if(!is_null($menu_rule)){
+        try {
+            foreach ($menu as $k => $v){
+                $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
+                $v['name'] = trim($v['name'], '/');
+
+                $menu_rule = AuthRule::withTrashed()->where('name', $v['name'])->findOrEmpty();
+                if(!$menu_rule->isEmpty()){
                     $menu_rule->delete(true);
                     if ($hasChild) {
-                        $this->delAddonMenu($v['sublist']);
+                        $this->removeMenu($v['sublist']);
                     }
                 }
-
-            } catch (\Exception $e) {
-                throw new \Exception($e->getMessage());
             }
-        }
 
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        return true;
     }
+
 
     /**
      * 用户登录

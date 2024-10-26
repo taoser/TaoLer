@@ -7,7 +7,6 @@ logo:
 ## 菜单配置
 menu: 
   ## 菜单数据来源
-  ## data: "/static/admin/data/menu.json"
   data: "/admin/system.menu/getnav"
   ## 菜单接口的请求方式 GET / POST
   method: "GET" 
@@ -17,8 +16,6 @@ menu:
   collapse: false
   ## 是否开启多系统菜单模式
   control: false
-  ## 顶部菜单宽度 PX
-  controlWidth: 500
   ## 默认选中的菜单项
   select: "501"
   ## 是否开启异步菜单，false 时 data 属性设置为静态数据，true 时为后端接口

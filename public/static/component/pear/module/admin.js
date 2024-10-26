@@ -2,7 +2,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 	function(exports) {
 		"use strict";
 
-		var $ = layui.jquery,
+		const $ = layui.jquery,
 			form = layui.form,
 			element = layui.element,
 			yaml = layui.yaml,
@@ -12,30 +12,31 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 			pearFrame = layui.frame,
 			pearTheme = layui.theme,
 			message = layui.message,
-			fullscreen=layui.fullscreen;
+			fullscreen = layui.fullscreen;
 
-		var bodyFrame;
-		var sideMenu;
-		var bodyTab;
-		var config;
-		var logout = function() {};
-		var msgInstance;
-		var body = $('body');
+		let bodyFrame;
+		let sideMenu;
+		let bodyTab;
+		let config;
+		let logout = function () {
+		};
+		let msgInstance;
+		const body = $('body');
 
-		var pearAdmin = new function() {
+		const pearAdmin = new function () {
 
-			var configType = 'yml';
-			var configPath = 'pear.config.yml';
+			let configType = 'yml';
+			let configPath = 'pear.config.yml';
 
-			this.setConfigPath = function(path) {
+			this.setConfigPath = function (path) {
 				configPath = path;
 			}
 
-			this.setConfigType = function(type) {
+			this.setConfigType = function (type) {
 				configType = type;
 			}
 
-			this.render = function(initConfig) {
+			this.render = function (initConfig) {
 				if (initConfig !== undefined) {
 					applyConfig(initConfig);
 				} else {
@@ -43,11 +44,11 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				}
 			}
 
-			this.readConfig = function() {
+			this.readConfig = function () {
 				if (configType === "yml") {
 					return yaml.load(configPath);
 				} else {
-					var data;
+					let data;
 					$.ajax({
 						url: configPath,
 						type: 'get',
@@ -61,8 +62,8 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				}
 			}
 
-			this.messageRender = function(option) {
-				var option = {
+			this.messageRender = function (option) {
+				option = {
 					elem: '.message',
 					url: option.header.message,
 					height: '250px'
@@ -70,12 +71,12 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				msgInstance = message.render(option);
 			}
 
-			this.logoRender = function(param) {
+			this.logoRender = function (param) {
 				$(".layui-logo .logo").attr("src", param.logo.image);
 				$(".layui-logo .title").html(param.logo.title);
 			}
 
-			this.menuRender = function(param) {
+			this.menuRender = function (param) {
 				sideMenu = pearMenu.render({
 					elem: 'sideMenu',
 					async: param.menu.async !== undefined ? param.menu.async : true,
@@ -83,16 +84,15 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					height: '100%',
 					method: param.menu.method,
 					control: isControl(param) === 'true' || isControl(param) === true ? 'control' : false, // control
-					controlWidth: param.menu.controlWidth,
 					defaultMenu: 0,
 					accordion: param.menu.accordion,
 					url: param.menu.data,
 					data: param.menu.data,
 					parseData: false,
-					change: function() {
+					change: function () {
 						compatible();
 					},
-					done: function() {
+					done: function () {
 						sideMenu.isCollapse = param.menu.collapse;
 						sideMenu.selectItem(param.menu.select);
 						pearAdmin.collapse(param);
@@ -100,9 +100,9 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				});
 			}
 
-			this.bodyRender = function(param) {
+			this.bodyRender = function (param) {
 
-				body.on("click", ".refresh", function() {
+				body.on("click", ".refresh", function () {
 					refresh();
 				})
 
@@ -117,7 +117,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 						index: 0,
 						tabMax: param.tab.max,
 						preload: param.tab.preload,
-						closeEvent: function(id) {
+						closeEvent: function (id) {
 							sideMenu.selectItem(id);
 						},
 						data: [{
@@ -126,9 +126,9 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 							title: param.tab.index.title,
 							close: false
 						}],
-						success: function(id) {
+						success: function (id) {
 							if (param.tab.session) {
-								setTimeout(function() {
+								setTimeout(function () {
 									sideMenu.selectItem(id);
 									bodyTab.positionTab();
 								}, 500)
@@ -136,7 +136,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 						}
 					});
 
-					bodyTab.click(function(id) {
+					bodyTab.click(function (id) {
 						if (!param.tab.keepState) {
 							bodyTab.refresh(false);
 						}
@@ -144,7 +144,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 						sideMenu.selectItem(id);
 					})
 
-					sideMenu.click(function(dom, data) {
+					sideMenu.click(function (dom, data) {
 						bodyTab.addTabOnly({
 							id: data.menuId,
 							title: data.menuTitle,
@@ -163,32 +163,32 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 						height: '100%'
 					});
 
-					sideMenu.click(function(dom, data) {
+					sideMenu.click(function (dom, data) {
 						bodyFrame.changePage(data.menuUrl, true);
 						compatible()
 					})
 				}
 			}
 
-			this.keepLoad = function(param) {
+			this.keepLoad = function (param) {
 				compatible()
-				setTimeout(function() {
+				setTimeout(function () {
 					$(".loader-main").fadeOut(200);
 				}, param.other.keepLoad)
 			}
 
-			this.themeRender = function(option) {
+			this.themeRender = function (option) {
 				if (option.theme.allowCustom === false) {
 					$(".setting").remove();
 				}
-				var colorId = localStorage.getItem("theme-color");
-				var currentColor = getColorById(colorId);
+				const colorId = localStorage.getItem("theme-color");
+				const currentColor = getColorById(colorId);
 				localStorage.setItem("theme-color", currentColor.id);
 				localStorage.setItem("theme-color-color", currentColor.color);
 				localStorage.setItem("theme-color-second", currentColor.second);
 				pearTheme.changeTheme(window, isAutoHead(config));
 
-				var menu = localStorage.getItem("theme-menu");
+				let menu = localStorage.getItem("theme-menu");
 				if (menu === null) {
 					menu = option.theme.defaultMenu;
 				} else {
@@ -197,7 +197,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					}
 				}
 
-				var header = localStorage.getItem("theme-header");
+				let header = localStorage.getItem("theme-header");
 				if (header === null) {
 					header = option.theme.defaultHeader;
 				} else {
@@ -206,7 +206,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					}
 				}
 
-				var banner = localStorage.getItem("theme-banner");
+				let banner = localStorage.getItem("theme-banner");
 				if (banner === null) {
 					banner = option.theme.banner;
 				} else {
@@ -215,7 +215,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					}
 				}
 
-				var autoHead = localStorage.getItem("auto-head");
+				let autoHead = localStorage.getItem("auto-head");
 				if (autoHead === null) {
 					autoHead = option.other.autoHead;
 				} else {
@@ -224,7 +224,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					}
 				}
 
-				var muiltTab = localStorage.getItem("muilt-tab");
+				let muiltTab = localStorage.getItem("muilt-tab");
 				if (muiltTab === null) {
 					muiltTab = option.tab.enable;
 				} else {
@@ -233,7 +233,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					}
 				}
 
-				var control = localStorage.getItem("control");
+				let control = localStorage.getItem("control");
 				if (control === null) {
 					control = option.menu.control;
 				} else {
@@ -242,10 +242,10 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					}
 				}
 
-				var footer = localStorage.getItem("footer");
-				if( footer === null) {
+				let footer = localStorage.getItem("footer");
+				if (footer === null) {
 					footer = option.other.footer;
-				}else{
+				} else {
 					if (option.theme.allowCustom === false) {
 						footer = option.other.footer;
 					}
@@ -264,9 +264,9 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				this.footer(footer);
 			}
 
-			this.footer = function(footer){
-				var bodyDOM = $(".pear-admin .layui-body");
-				var footerDOM = $(".pear-admin .layui-footer");
+			this.footer = function (footer) {
+				const bodyDOM = $(".pear-admin .layui-body");
+				const footerDOM = $(".pear-admin .layui-footer");
 				if (footer === true || footer === "true") {
 					footerDOM.removeClass("close");
 					bodyDOM.css("bottom", footerDOM.outerHeight());
@@ -276,15 +276,15 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				}
 			}
 
-			this.bannerSkin = function(theme) {
-				var pearAdmin = $(".pear-admin");
+			this.bannerSkin = function (theme) {
+				const pearAdmin = $(".pear-admin");
 				pearAdmin.removeClass("banner-layout");
 				if (theme === true || theme === "true") {
 					pearAdmin.addClass("banner-layout");
 				}
 			}
 
-			this.collapse = function(param) {
+			this.collapse = function (param) {
 				if (param.menu.collapse) {
 					if ($(window).width() >= 768) {
 						collapse()
@@ -292,43 +292,44 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				}
 			}
 
-			this.menuSkin = function(theme) {
-				var pearAdmin = $(".pear-admin .layui-side");
+			this.menuSkin = function (theme) {
+				const pearAdmin = $(".pear-admin .layui-side");
 				pearAdmin.removeClass("light-theme");
 				pearAdmin.removeClass("dark-theme");
 				pearAdmin.addClass(theme);
 			}
 
-			this.headerSkin = function(theme) {
-				var pearAdmin = $(".pear-admin .layui-header");
+			this.headerSkin = function (theme) {
+				const pearAdmin = $(".pear-admin .layui-header");
 				pearAdmin.removeClass("light-theme");
 				pearAdmin.removeClass("dark-theme");
 				pearAdmin.addClass(theme);
 			}
 
-			this.logout = function(callback) {
+			this.logout = function (callback) {
 				logout = callback;
 			}
 
-			this.message = function(callback) {
+			this.message = function (callback) {
 				if (callback != null) {
 					msgInstance.click(callback);
 				}
 			}
 
-			this.collapseSide = function() {
+			this.collapseSide = function () {
 				collapse()
 			}
 
-			this.refreshThis = function() {
+			this.refreshThis = function () {
 				refresh()
 			}
 
-			this.refresh = function(id) {
-				$("iframe[id='"+ id +"']").attr('src', $("iframe[id='"+ id +"']").attr('src'));
+			this.refresh = function (id) {
+				const iframe = $("iframe[id='" + id + "']");
+				iframe.attr('src', iframe.attr('src'));
 			}
 
-			this.addTab = function(id, title, url) {
+			this.addTab = function (id, title, url) {
 				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
 					bodyTab.addTabOnly({
 						id: id,
@@ -337,79 +338,67 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 						icon: null,
 						close: true
 					}, 400);
-				} else {
-					return;
 				}
 			}
 
-			this.closeTab = function(id) {
+			this.closeTab = function (id) {
 				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearTab.delTabByElem('content', id, function(currentId){
+					pearTab.delTabByElem('content', id, function (currentId) {
 						sideMenu.selectItem(currentId);
 					});
-				} else {
-					return;
 				}
 			}
 
-			this.closeCurrentTab = function() {
+			this.closeCurrentTab = function () {
 				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearTab.delCurrentTabByElem('content', function(id){
+					pearTab.delCurrentTabByElem('content', function (id) {
 						sideMenu.selectItem(id);
 					});
-				} else {
-					return;
-				}
-			}
-			
-			this.closeOtherTab = function() {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearTab.delOtherTabByElem('content', function(id){
-						sideMenu.selectItem(id);
-					});
-				} else {
-					return;
-				}
-			}
-			
-			this.closeAllTab = function() {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearTab.delAllTabByElem('content', function(id){
-						sideMenu.selectItem(id);
-					});
-				} else {
-					return;
 				}
 			}
 
-			this.changeTabTitle = function(id, title) {
-				pearTab.changeTabTitleById('content', id ,title);
-			}
-			
-			this.changeIframe = function(id, title, url) {
+			this.closeOtherTab = function () {
 				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					return;
-				} else {
+					pearTab.delOtherTabByElem('content', function (id) {
+						sideMenu.selectItem(id);
+					});
+				}
+			}
+
+			this.closeAllTab = function () {
+				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
+					pearTab.delAllTabByElem('content', function (id) {
+						sideMenu.selectItem(id);
+					});
+				}
+			}
+
+			this.changeTabTitle = function (id, title) {
+				pearTab.changeTabTitleById('content', id, title);
+			}
+
+			this.changeIframe = function (id, title, url) {
+				if (isMuiltTab(config) !== "true" && isMuiltTab(config) !== true) {
 					sideMenu.selectItem(id);
 					bodyFrame.changePage(url, true);
 				}
 			}
 
-			this.jump = function(id, title, url) {
+			this.jump = function (id, title, url) {
 				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
 					pearAdmin.addTab(id, title, url)
 				} else {
 					pearAdmin.changeIframe(id, title, url)
 				}
 			}
-			
-			this.fullScreen = function() {
+
+			this.fullScreen = function () {
 				if ($(".fullScreen").hasClass("layui-icon-screen-restore")) {
-					screenFun(2).then(function() {
+					screenFun(2).then(function () {
 						$(".fullScreen").eq(0).removeClass("layui-icon-screen-restore");
 					});
 				} else {
-					screenFun(1).then(function() {
+					screenFun(1).then(function () {
 						$(".fullScreen").eq(0).addClass("layui-icon-screen-restore");
 					});
 				}
@@ -417,7 +406,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 		};
 
 		function refresh() {
-			var refreshA = $(".refresh a");
+			const refreshA = $(".refresh a");
 			refreshA.removeClass("layui-icon-refresh-1");
 			refreshA.addClass("layui-anim");
 			refreshA.addClass("layui-anim-rotate");
@@ -436,9 +425,9 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 
 		function collapse() {
 			sideMenu.collapse();
-			var admin = $(".pear-admin");
-			var left = $(".layui-icon-spread-left")
-			var right = $(".layui-icon-shrink-right")
+			const admin = $(".pear-admin");
+			const left = $(".layui-icon-spread-left");
+			const right = $(".layui-icon-shrink-right");
 			if (admin.is(".pear-mini")) {
 				left.addClass("layui-icon-shrink-right")
 				left.removeClass("layui-icon-spread-left")
@@ -464,14 +453,14 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 
 		body.on("click", ".menuSearch", function () {
 			// 过滤菜单
-			var filterHandle = function (filterData, val) {
+			const filterHandle = function (filterData, val) {
 				if (!val) return [];
-				var filteredMenus = [];
+				const filteredMenus = [];
 				filterData = $.extend(true, {}, filterData);
 				$.each(filterData, function (index, item) {
 					if (item.children && item.children.length) {
 						var children = filterHandle(item.children, val)
-						var obj = $.extend({}, item, { children: children });
+						var obj = $.extend({}, item, {children: children});
 						if (children && children.length) {
 							filteredMenus.push(obj);
 						} else if (item.title.indexOf(val) >= 0) {
@@ -483,25 +472,25 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					}
 				})
 				return filteredMenus;
-			}
+			};
 
 			// 树转路径
-			var tiledHandle = function (data) {
-				var tiledMenus = [];
-				var treeTiled = function (data, content) {
-					var path = "";
-					var separator = " / ";
+			const tiledHandle = function (data) {
+				const tiledMenus = [];
+				const treeTiled = function (data, content) {
+					let path = "";
+					const separator = " / ";
 					// 上级路径
 					if (!content) content = "";
 					$.each(data, function (index, item) {
 						if (item.children && item.children.length) {
 							path += content + item.title + separator;
-							var childPath = treeTiled(item.children, path);
+							const childPath = treeTiled(item.children, path);
 							path += childPath;
 							if (!childPath) path = ""; // 重置路径
 						} else {
 							path += content + item.title
-							tiledMenus.push({ path: path, info: item });
+							tiledMenus.push({path: path, info: item});
 							path = ""; //重置路径
 						}
 					})
@@ -510,11 +499,11 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				treeTiled(data);
 
 				return tiledMenus;
-			}
+			};
 
 			// 创建搜索列表
-			var createList = function (data) {
-				var _listHtml = '';
+			const createList = function (data) {
+				let _listHtml = '';
 				$.each(data, function (index, item) {
 					_listHtml += '<li smenu-id="' + item.info.id + '" smenu-icon="' + item.info.icon + '" smenu-url="' + item.info.href + '" smenu-title="' + item.info.title + '" smenu-type="' + item.info.type + '">';
 					_listHtml += '  <span><i style="margin-right:10px" class=" ' + item.info.icon + '"></i>' + item.path + '</span>';
@@ -522,9 +511,9 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					_listHtml += '</li>'
 				})
 				return _listHtml;
-			}
+			};
 
-			var _html = [
+			const _html = [
 				'<div class="menu-search-content">',
 				'  <div class="layui-form menu-search-input-wrapper">',
 				'    <div class=" layui-input-wrap layui-input-wrap-prefix">',
@@ -551,43 +540,43 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				move: false,
 				content: _html,
 				success: function(layero,layeridx){
-					var $layer = layero;
-					var $content = $(layero).children('.layui-layer-content');
-					var $input = $(".menu-search-input-wrapper input");
-					var $noData = $(".menu-search-no-data");
-					var $list = $(".menu-search-list");
-					var menuData = sideMenu.option.data;
+					const $layer = layero;
+					const $content = $(layero).children('.layui-layer-content');
+					const $input = $(".menu-search-input-wrapper input");
+					const $noData = $(".menu-search-no-data");
+					const $list = $(".menu-search-list");
+					const menuData = sideMenu.option.data;
 
 
 					$layer.css("border-radius", "6px");
 					$input.off("focus").focus();
 					// 搜索菜单
 					$input.off("input").on("input", debounce(function(){
-						var keywords = $input.val().trim();
-						var filteredMenus = filterHandle(menuData, keywords);
+							const keywords = $input.val().trim();
+							const filteredMenus = filterHandle(menuData, keywords);
 
-						if(filteredMenus.length){
-							var tiledMenus = tiledHandle(filteredMenus);
-							var listHtml = createList(tiledMenus);
-							$noData.css("display", "none");
-							$list.html("").append(listHtml).children(":first").addClass("this")
+							if(filteredMenus.length){
+								const tiledMenus = tiledHandle(filteredMenus);
+								const listHtml = createList(tiledMenus);
+								$noData.css("display", "none");
+								$list.html("").append(listHtml).children(":first").addClass("this")
 						}else{
 							$list.html("");
 							$noData.css("display", "flex");
 						}
-						var currentHeight = $(".menu-search-content").outerHeight()
-						$layer.css("height", currentHeight);
-						$content.css("height", currentHeight);
-					}, 500)
+							const currentHeight = $(".menu-search-content").outerHeight();
+							$layer.css("height", currentHeight);
+							$content.css("height", currentHeight);
+						}, 500)
 					)
 					// 搜索列表点击事件
 					$list.off("click").on("click", "li", function () {
-						var menuId = $(this).attr("smenu-id");
-						var menuUrl = $(this).attr("smenu-url");
-						var menuIcon = $(this).attr("smenu-icon");
-						var menuTitle = $(this).attr("smenu-title");
-						var menuType = $(this).attr("smenu-type");
-						var openableWindow = menuType === "1" || menuType === 1;
+						const menuId = $(this).attr("smenu-id");
+						const menuUrl = $(this).attr("smenu-url");
+						const menuIcon = $(this).attr("smenu-icon");
+						const menuTitle = $(this).attr("smenu-title");
+						const menuType = $(this).attr("smenu-type");
+						const openableWindow = menuType === "1" || menuType === 1;
 
 						if(sideMenu.isCollapse){
 							collapse();
@@ -611,13 +600,14 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					// 监听键盘事件
 					// Enter:13 Spacebar:32 UpArrow:38 DownArrow:40 Esc:27
 					$(document).off("keydown").keydown(function (e) {
+						const $menuSearchList = $(".menu-search-list li.this");
 						if (e.keyCode === 13 || e.keyCode === 32) {
 							e.preventDefault();
-							var menuId = $(".menu-search-list li.this").attr("smenu-id");
-							var menuUrl = $(".menu-search-list li.this").attr("smenu-url");
-							var menuTitle = $(".menu-search-list li.this").attr("smenu-title");
-							var menuType = $(".menu-search-list li.this").attr("smenu-type");
-							var openableWindow = menuType === "1" || menuType === 1;
+							const menuId = $menuSearchList.attr("smenu-id");
+							const menuUrl = $menuSearchList.attr("smenu-url");
+							const menuTitle = $menuSearchList.attr("smenu-title");
+							const menuType = $menuSearchList.attr("smenu-type");
+							const openableWindow = menuType === "1" || menuType === 1;
 							if (sideMenu.isCollapse) {
 								collapse();
 							}
@@ -630,8 +620,8 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 							layer.close(layeridx);
 						}else if(e.keyCode === 38){
 							e.preventDefault();
-							var prevEl = $(".menu-search-list li.this").prev();
-							$(".menu-search-list li.this").removeClass("this");
+							const prevEl = $menuSearchList.prev();
+							$menuSearchList.removeClass("this");
 							if(prevEl.length !== 0){
 								prevEl.addClass("this");
 							}else{
@@ -639,8 +629,8 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 							}
 						}else if(e.keyCode === 40){
 							e.preventDefault();
-							var nextEl = $(".menu-search-list li.this").next();
-							$(".menu-search-list li.this").removeClass("this");
+							const nextEl = $menuSearchList.next();
+							$menuSearchList.removeClass("this");
 							if(nextEl.length !== 0){
 								nextEl.addClass("this");
 							}else{
@@ -684,7 +674,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 
 		body.on("click", ".setting", function() {
 
-			var menuItem =
+			let menuItem =
 				'<li class="layui-this" data-select-bgcolor="dark-theme" >' +
 				'<a href="javascript:;" data-skin="skin-blue" style="" class="clearfix full-opacity-hover">' +
 				'<div><span style="display:block; width: 20%; float: left; height: 12px; background: #28333E;"></span><span style="display:block; width: 80%; float: left; height: 12px; background: white;"></span></div>' +
@@ -700,7 +690,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				'</a>' +
 				'</li>';
 
-			var menuHtml =
+			const menuHtml =
 				'<div class="pearone-color">\n' +
 				'<div class="color-title">菜单风格</div>\n' +
 				'<div class="color-content">\n' +
@@ -708,7 +698,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				'</div>\n' +
 				'</div>';
 
-			var headItem =
+			let headItem =
 				'<li class="layui-this" data-select-header="light-theme" >' +
 				'<a href="javascript:;" data-skin="skin-blue" style="" class="clearfix full-opacity-hover">' +
 				'<div><span style="display:block; width: 20%; float: left; height: 12px; background: #28333E;"></span><span style="display:block; width: 80%; float: left; height: 12px; background: white;"></span></div>' +
@@ -724,7 +714,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				'</a>' +
 				'</li>';
 
-			var headHtml =
+			const headHtml =
 				'<div class="pearone-color">\n' +
 				'<div class="color-title">顶部风格</div>\n' +
 				'<div class="color-content">\n' +
@@ -732,7 +722,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 				'</div>\n' +
 				'</div>';
 
-			var moreItem =
+			let moreItem =
 				'<div class="layui-form-item"><div class="layui-input-inline"><input type="checkbox" name="control" lay-filter="control" lay-skin="switch" lay-text="开|关"></div><span class="set-text">菜单</span></div>';
 
 			moreItem +=
@@ -747,7 +737,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 			moreItem +=
 				'<div class="layui-form-item"><div class="layui-input-inline"><input type="checkbox" name="footer" lay-filter="footer" lay-skin="switch" lay-text="开|关"></div><span class="set-text">页脚</span></div>';
 
-			var moreHtml = '<br><div class="pearone-color">\n' +
+			const moreHtml = '<br><div class="pearone-color">\n' +
 				'<div class="color-title">更多设置</div>\n' +
 				'<div class="color-content">\n' +
 				'<form class="layui-form">\n' + moreItem + '</form>\n' +
@@ -770,9 +760,9 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 
 					form.render();
 
-					var color = localStorage.getItem("theme-color");
-					var menu = localStorage.getItem("theme-menu");
-					var header = localStorage.getItem("theme-header");
+					const color = localStorage.getItem("theme-color");
+					const menu = localStorage.getItem("theme-menu");
+					const header = localStorage.getItem("theme-header");
 
 					if (color !== "null") {
 						$(".select-color-item").removeClass("layui-icon").removeClass("layui-icon-ok");
@@ -790,7 +780,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 					}
 
 					$('#layui-layer-shade' + index).click(function() {
-						var $layero = $('#layui-layer' + index);
+						const $layero = $('#layui-layer' + index);
 						$layero.animate({
 							left: $layero.offset().left + $layero.width()
 						}, 200, function() {
@@ -859,7 +849,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 		});
 
 		body.on('click', '[data-select-bgcolor]', function() {
-			var theme = $(this).attr('data-select-bgcolor');
+			const theme = $(this).attr('data-select-bgcolor');
 			$('[data-select-bgcolor]').removeClass("layui-this");
 			$(this).addClass("layui-this");
 			localStorage.setItem("theme-menu", theme);
@@ -867,7 +857,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 		});
 
 		body.on('click', '[data-select-header]', function() {
-			var theme = $(this).attr('data-select-header');
+			const theme = $(this).attr('data-select-header');
 			$('[data-select-header]').removeClass("layui-this");
 			$(this).addClass("layui-this");
 			localStorage.setItem("theme-header", theme);
@@ -877,8 +867,8 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 		body.on('click', '.select-color-item', function() {
 			$(".select-color-item").removeClass("layui-icon").removeClass("layui-icon-ok");
 			$(this).addClass("layui-icon").addClass("layui-icon-ok");
-			var colorId = $(".select-color-item.layui-icon-ok").attr("color-id");
-			var currentColor = getColorById(colorId);
+			const colorId = $(".select-color-item.layui-icon-ok").attr("color-id");
+			const currentColor = getColorById(colorId);
 			localStorage.setItem("theme-color", currentColor.id);
 			localStorage.setItem("theme-color-color", currentColor.color);
 			localStorage.setItem("theme-color-second", currentColor.second);
@@ -892,14 +882,14 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 			pearAdmin.bodyRender(param);
 			pearAdmin.themeRender(param);
 			pearAdmin.keepLoad(param);
-			if (param.header.message != false) {
+			if (param.header.message !== false) {
 				pearAdmin.messageRender(param);
 			}
 		}
 
 		function getColorById(id) {
-			var color;
-			var flag = false;
+			let color;
+			let flag = false;
 			$.each(config.colors, function(i, value) {
 				if (value.id === id) {
 					color = value;
@@ -917,7 +907,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 		}
 
 		function buildColorHtml() {
-			var colors = "";
+			let colors = "";
 			$.each(config.colors, function(i, value) {
 				colors += "<span class='select-color-item' color-id='" + value.id + "' style='background-color:" + value.color +
 					";'></span>";
@@ -981,9 +971,9 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 		},50));
 
 		function debounce(fn, awaitTime) {
-			var timerID = null
+			let timerID = null;
 			return function () {
-				var arg = arguments[0]
+				const arg = arguments[0];
 				if (timerID) {
 					clearTimeout(timerID)
 				}

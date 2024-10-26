@@ -20,7 +20,6 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 			defaultOpen: opt.defaultOpen,
 			defaultSelect: opt.defaultSelect,
 			control: opt.control,
-			controlWidth: opt.controlWidth ? opt.controlWidth : "auto",
 			defaultMenu: opt.defaultMenu,
 			accordion: opt.accordion,
 			height: opt.height,
@@ -57,31 +56,6 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 		// 处理高度
 		$("#" + opt.elem).height(option.height)
 
-		setTimeout(function () {
-			$("#" + opt.control + " .control").on("mousewheel DOMMouseScroll", function (event) {
-
-				var delta = (event.originalEvent.wheelDelta && (event.originalEvent.wheelDelta > 0 ? 1 : -1)) || // chrome & ie
-					(event.originalEvent.detail && (event.originalEvent.detail > 0 ? -1 : 1)); // firefox
-
-				if (delta > 0) {
-					for (var num = 1; num < 20; num++) {
-						setTimeout(function () {
-							if ($("#" + opt.control + " .control ul").css('left').replace("px", "") < 0) {
-								$("#" + opt.control + " .control ul").css("left", "+=2px");
-							}
-						}, 10)
-					}
-				} else if (delta < 0) {
-					if (((Number)($("#" + opt.control + " .control ul").css("left").replace("px", "")) + ($("#" + opt.control + " .control ul").width() - $("#" + opt.control + " .control").width())) > 0) {
-						for (var num = 1; num < 20; num++) {
-							setTimeout(function () {
-								$("#" + opt.control + " .control ul").css("left", "-=2px");
-							}, 10)
-						}
-					}
-				}
-			});
-		}, 1000)
 
     return new pearMenu(option);
 	}
@@ -322,7 +296,8 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 	}
 
 	function createMenuAndControl(option) {
-		var control = '<div style="width: ' + option.controlWidth + 'px;white-space: nowrap;overflow-x: scroll;overflow: hidden;" class="control"><ul class="layui-nav pear-nav-control pc layui-hide-xs" style="width: fit-content;">';
+		var control = '<div class="control"><ul class="layui-nav pear-nav-control pc layui-hide-xs" style="width: fit-content;">';
+		control+= '<li class="layui-nav-item tabdrop layui-hide" style="float:right !important;"><a href="javascript:;"><i class="layui-icon layui-icon-more layui-font-20"></i></a><dl class="layui-nav-child"></dl></li>';
 		var controlPe = '<ul class="layui-nav pear-nav-control layui-hide-sm">';
 		// 声 明 头 部
 		var menu = '<div class="layui-side-scroll ' + option.theme + '">'
@@ -479,7 +454,6 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 						});
 					});
 				} else {
-					$(this).parent().addClass("layui-nav-itemed");
 					ele.animate({
 						height: "0px"
 					}, 240, function () {
@@ -551,10 +525,57 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 			rationalizeWidth = $headerControl.parent().innerWidth() - $headerControl.position().left;
 		}
 
-		if (option.controlWidth && rationalizeWidth >= option.controlWidth) {
-			rationalizeWidth = option.controlWidth;
-		}
-		$("#" + option.control + " .control").css({ "width": rationalizeWidth, "transition": "width .15s" });
+		$("#" + option.control + " .control").css({"width": rationalizeWidth});
+
+		var navobj = $("#" + option.control+' ul.pear-nav-control.pc');
+		var dropdown = $(".tabdrop", navobj);
+
+        var collection = 0;
+        var maxwidth = rationalizeWidth - 60;
+
+        var liwidth = 0;
+        //检查超过一行的标签页
+        $('.tabdrop').find('dd').each(function(){
+        	var newLI = $('<li></li>').html($(this).html());
+        	newLI.addClass('layui-nav-item');
+            newLI.attr('pear-href', $(this).attr('pear-href'));
+            newLI.attr('pear-title', $(this).attr('pear-title'));
+            newLI.attr('pear-id', $(this).attr('pear-id'));
+        	navobj.append(newLI);
+        	$(this).remove();
+
+        })
+        var litabs = navobj.find('>li').not('.tabdrop');
+
+        var totalwidth = 0;
+        litabs.each(function () {
+            totalwidth += $(this).outerWidth(true);
+        });
+
+        if (rationalizeWidth < totalwidth) {
+            litabs.each(function () {
+                liwidth += $(this).outerWidth(true);
+                if (liwidth > maxwidth) {
+                    var newDD = $('<dd></dd>').html($(this).html());
+                    newDD.attr('pear-href', $(this).attr('pear-href'));
+                    newDD.attr('pear-title', $(this).attr('pear-title'));
+                    newDD.attr('pear-id', $(this).attr('pear-id'));
+                    dropdown.find('dl').append(newDD);
+                    collection++;
+                    $(this).remove();
+                }
+            });
+            if (collection > 0) {
+                dropdown.removeClass('layui-hide');
+                if (dropdown.find('.active').length === 1) {
+                    dropdown.addClass('active');
+                } else {
+                    dropdown.removeClass('active');
+                }
+            }
+        }else {
+            dropdown.addClass('layui-hide');
+        }
 	}
 
 	function rationalizeHeaderControlWidthAuto(option){

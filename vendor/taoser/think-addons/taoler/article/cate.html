@@ -1,0 +1,109 @@
+{extend name="public/base" /}
+{block name="title"}{$sysInfo.webname}{/block}
+{block name="keywords"}{$sysInfo.keywords}{/block}
+{block name="description"}{$sysInfo.descript}{/block}
+{block name="ogtitle"}<meta property="og:title" content="{$sysInfo.webtitle}" />{/block}
+{block name="ogdescription"}<meta property="og:description" content="{$sysInfo.descript}" />{/block}
+{block name="ogimage"}<meta property="og:image" content="{$Request.domain}{$sysInfo.logo}" />{/block}
+{block name="meta"}
+	<!-- SEO优化 -->
+	<meta name="Copyright" content="{$sysInfo.webname}">
+	<meta property="og:type" content="website"/>
+	<meta property="og:image" content=""/>
+{/block}
+{block name="column"}{include file="/public/column" /}{/block}
+
+{block name="content"}
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md8">
+      <div class="fly-panel" style="margin-bottom: 0;">
+	  
+	    {include file="public/filter" /}
+        <ul class="fly-list">
+		    {volist name="artList['data']" id="art"}
+          <li>
+            <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
+              <img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
+            </a>
+            <h2><a href="{$Request.domain}{$art.url}"  style="color: {$art['title_color'] ?? '#333'};">{$art.title}</a></h2>
+            <div class="fly-list-info">
+              {if config('taoler.config.cate_show') == 1}
+              <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
+              {/if}
+                <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
+              <cite>{$art.user.nickname ?: $art.user.name}</cite>
+              <i>{$art.create_time|date='Y-m-d'}</i>
+              <!--
+              <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
+              {if($art.user.vip > 0)}
+                      <i class="layui-badge fly-badge-vip">vip{$art.user.vip}</i>
+              {/if}
+              -->
+              </a>
+                {$art.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+                {$art.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
+                {$art.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
+                {$art.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
+                {$art.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+              <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
+              {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/if}
+              <span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}</span>
+            </div>
+            <div class="fly-list-badge">
+            {if ($art.is_hot == 1)}
+            <i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i>
+            <span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span>
+            {/if}
+            </div>
+          </li>
+		    {/volist}	
+        </ul>
+		<div style="text-align: center" id="pages"></div>
+      </div>
+    </div>
+    <div class="layui-col-md4">
+        <!--列表广告图片位-->
+        {:hook('ads_cate_rimg')}
+        <dl class="fly-panel fly-list-one layui-hide-xs">
+        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
+        {volist name="artHot" id="vo"}
+		    <dd>
+          <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
+          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
+        </dd>
+		    {/volist} 
+      </dl>
+        <!--列表广告赞助位-->
+        {:hook('ads_cate_support')}
+    </div>
+  </div>
+</div>
+{include file="public/menu" /}
+{/block}
+{block name="script"}
+<script>
+    layui.use(['laypage'], function(){
+	  var laypage = layui.laypage;
+	  
+	  //执行一个laypage实例
+		laypage.render({
+			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+			,count: "{$artList['total']}" //数据总数，从服务端得到
+			,groups: 1
+			,limit: "{$artList['per_page']}"
+			,curr : "{$artList['current_page']}"
+			,first: false
+    		,last: false
+			,layout: ['prev', 'page','next','count']
+			//获取起始页
+			,jump: function(obj, first){
+				//首次不执行
+				if(!first){
+					window.location.href = '{$path}/'+obj.curr+'.html'; //跳转
+				}
+			}
+	  	})
+	});
+</script>
+{/block}

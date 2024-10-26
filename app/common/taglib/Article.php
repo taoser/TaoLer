@@ -30,14 +30,13 @@ class Article extends TagLib
         'description'   => ['attr' => '', 'close' => 0],
         'link'          => ['attr' => '', 'close' => 0],
         'time'          => ['attr' => '', 'close' => 0],
-        'info'          => ['attr' => '', 'close' => 0],
+        'uptime'        => ['attr' => '', 'close' => 0],
 
         'cate'          => ['attr' => 'name', 'close' => 0],
         'user'          => ['attr' => 'name', 'close' => 0],
 
         'list'          => ['attr' => '', 'close' => 1],
 
-        'catelist'      => ['attr' => 'name', 'close' => 1],
 
         'comment'       => ['attr' => '', 'close' => 1],
 
@@ -104,9 +103,9 @@ class Article extends TagLib
         return '{$article.create_time}';
     }
 
-    public function tagInfo(): string
+    public function tagUptime(): string
     {
-        return '{$article.content|getArtContent}';
+        return '{$article.update_time}';
     }
 
     // 详情分类
@@ -211,22 +210,6 @@ class Article extends TagLib
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;
-    }
-
-    // 分类列表
-    public function tagCatelist($tag, $content): string
-    {
-        //$parseStr = '{assign name="id" value="$Request.param.id" /}';
-//        $parseStr .= '$__article__ = \app\facade\Article::getCateList(\''.$name.'\',\''.$type.'\');';
-        $name = $tag['name'];
-        $type = 'all';
-        $parseStr = '<?php ';
-        $parseStr .= "\$__article__ = \\app\\facade\Article::getCateList('{$name}','{$type}');";
-        $parseStr .= ' ?>';
-        $parseStr .= '{volist name="$__article__[\'data\']" id="article" empty= "还没有内容"}';
-        $parseStr .= $content;
-        $parseStr .= '{/volist}';
-        return $parseStr;
     }
 
 }

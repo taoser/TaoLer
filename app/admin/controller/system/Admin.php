@@ -247,9 +247,8 @@ class Admin extends AdminController
         $res = $this->clearSysCache();
         if($res){
            return json(['code'=>0,'msg'=>'清除缓存成功']);
-        } else {
-			return json(['code'=>-1,'msg'=>'清除缓存失败']);
-		} 
+        }
+		return json(['code'=>-1,'msg'=>'清除缓存失败']);
     }
 	
 	//退出登陆

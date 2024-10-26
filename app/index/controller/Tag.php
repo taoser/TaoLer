@@ -15,7 +15,6 @@ use app\facade\Article;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\common\model\Slider;
 use app\common\model\Tag as TagModel;
 
 class Tag extends BaseController
@@ -31,22 +30,20 @@ class Tag extends BaseController
     {
         //
         $tagEname = Request::param('ename');
-        $tag = Db::name('tag')->where('ename',$tagEname)->find();
+        $tag = Db::name('tag')->where('ename', $tagEname)->find();
 
         $artList = Article::getAllTags($tag['id']);
-        $slider = new Slider();
-        //首页右栏
-        $ad_comm = $slider->getSliderList(2);
+
         //	查询热议
         $artHot = Article::getArtHot(10);
 
         $assign = [
-            'tag'=>$tag,
-            'artList'=>$artList,
-            'ad_comm'=>$ad_comm,
-            'artHot'=>$artHot,
-            'jspage'=>''
+            'tag'       => $tag,
+            'artList'   => $artList,
+            'artHot'    => $artHot,
+            'jspage'    => ''
         ];
+
         View::assign($assign);
         return View::fetch('index');
     }

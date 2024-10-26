@@ -17,6 +17,7 @@ use Closure;
 use think\Collection;
 use think\db\BaseQuery as Query;
 use think\db\exception\DbException as Exception;
+use think\db\exception\InvalidArgumentException;
 use think\helper\Str;
 use think\Model;
 use think\model\Relation;
@@ -50,6 +51,13 @@ trait RelationShip
      * @var array
      */
     private $relation = [];
+
+    /**
+     * 预载入关联模型
+     *
+     * @var array
+     */
+    protected $with = [];
 
     /**
      * 关联写入定义信息.
@@ -97,7 +105,7 @@ trait RelationShip
      *
      * @return mixed
      */
-    public function getRelation(string $name = null, bool $auto = false)
+    public function getRelation(?string $name = null, bool $auto = false)
     {
         if (is_null($name)) {
             return $this->relation;
@@ -130,7 +138,10 @@ trait RelationShip
             $value = $this->$method($value, array_merge($this->data, $data));
         }
 
-        $this->relation[$this->getRealFieldName($name)] = $value;
+        $name = $this->getRealFieldName($name);
+
+        $this->relation[$name]  = $value;
+        $this->with[$name]      = true;
 
         return $this;
     }
@@ -170,7 +181,7 @@ trait RelationShip
                 $relationResult->withAttr($withRelationAttr[$relationName]);
             }
 
-            $this->relation[$relation] = $relationResult->getRelation((array) $subRelation, $closure);
+            $this->setRelation($relation, $relationResult->getRelation((array) $subRelation, $closure));
         }
     }
 
@@ -202,7 +213,7 @@ trait RelationShip
      *
      * @return Query
      */
-    public static function has(string $relation, string $operator = '>=', int $count = 1, string $id = '*', string $joinType = '', Query $query = null): Query
+    public static function has(string $relation, string $operator = '>=', int $count = 1, string $id = '*', string $joinType = '', ?Query $query = null): Query
     {
         return (new static())
             ->$relation()
@@ -220,7 +231,7 @@ trait RelationShip
      *
      * @return Query
      */
-    public static function hasWhere(string $relation, $where = [], string $fields = '*', string $joinType = '', Query $query = null): Query
+    public static function hasWhere(string $relation, $where = [], string $fields = '*', string $joinType = '', ?Query $query = null): Query
     {
         return (new static())
             ->$relation()
@@ -239,7 +250,7 @@ trait RelationShip
      *
      * @return bool
      */
-    public function eagerly(Query $query, string $relation, $field, string $joinType = '', Closure $closure = null, bool $first = false): bool
+    public function eagerly(Query $query, string $relation, $field, string $joinType = '', ?Closure $closure = null, bool $first = false): bool
     {
         $relation   = Str::camel($relation);
         $class      = $this->$relation();
@@ -257,7 +268,7 @@ trait RelationShip
      * 预载入关联查询 返回数据集.
      *
      * @param array  $resultSet        数据集
-     * @param string $relation         关联名
+     * @param array  $relations        关联名
      * @param array  $withRelationAttr 关联获取器
      * @param bool   $join             是否为JOIN方式
      * @param mixed  $cache            关联缓存
@@ -299,6 +310,8 @@ trait RelationShip
             }
 
             $relationResult->eagerlyResultSet($resultSet, $relationName, $subRelation, $closure, $relationCache, $join);
+
+            $this->with[$relationName] = true;
         }
     }
 
@@ -365,14 +378,25 @@ trait RelationShip
         $relation = $this->getRelation($relation, true);
 
         foreach ($attrs as $key => $attr) {
-            $key    = is_numeric($key) ? $attr : $key;
-            $value  = $this->getOrigin($key);
+            if (is_numeric($key)) {
+                if (!is_string($attr)) {
+                    throw new InvalidArgumentException('bind attr must be string:' . $key);
+                }
 
-            if (!is_null($value)) {
+                $key = $attr;
+            }
+
+            if (null !== $this->getOrigin($key)) {
                 throw new Exception('bind attr has exists:' . $key);
             }
 
-            $this->set($key, $relation ? $relation->$attr : null);
+            if ($attr instanceof Closure) {
+                $value = $attr($relation, $key, $this);
+            } else {
+                $value = $relation?->getAttr($attr);
+            }
+
+            $this->set($key, $value);
         }
 
         return $this;
@@ -562,7 +586,7 @@ trait RelationShip
      *
      * @return MorphOne
      */
-    public function morphOne(string $model, string|array $morph = null, string $type = ''): MorphOne
+    public function morphOne(string $model, string|array|null $morph = null, string $type = ''): MorphOne
     {
         // 记录当前关联信息
         $model = $this->parseModel($model);
@@ -588,7 +612,7 @@ trait RelationShip
      *
      * @return MorphMany
      */
-    public function morphMany(string $model, string|array $morph = null, string $type = ''): MorphMany
+    public function morphMany(string $model, string|array|null $morph = null, string $type = ''): MorphMany
     {
         // 记录当前关联信息
         $model = $this->parseModel($model);
@@ -613,7 +637,7 @@ trait RelationShip
      *
      * @return MorphTo
      */
-    public function morphTo(string|array $morph = null, array $alias = []): MorphTo
+    public function morphTo(string|array|null $morph = null, array $alias = []): MorphTo
     {
         $trace      = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $relation   = Str::snake($trace[1]['function']);
@@ -637,7 +661,7 @@ trait RelationShip
      *
      * @return MorphToMany
      */
-    public function morphToMany(string $model, string $middle, string|array $morph = null, string $localKey = null): MorphToMany
+    public function morphToMany(string $model, string $middle, string|array|null $morph = null, ?string $localKey = null): MorphToMany
     {
         if (is_null($morph)) {
             $morph = $middle;
@@ -662,7 +686,7 @@ trait RelationShip
      *
      * @return MorphToMany
      */
-    public function morphByMany(string $model, string $middle, string|array $morph = null, string $foreignKey = null): MorphToMany
+    public function morphByMany(string $model, string $middle, string|array|null $morph = null, ?string $foreignKey = null): MorphToMany
     {
         if (is_null($morph)) {
             $morph = $middle;

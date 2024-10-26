@@ -36,7 +36,7 @@
 
                 <div class="layui-form-item layui-form-text">
                   <div class="layui-input-block">
-                    <textarea id="L_content" name="content"  lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"> </textarea>
+                    <textarea id="L_content" name="content" lay-verify="" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
                   </div>
                 </div>
                 <div class="layui-form-item layui-inline">
@@ -113,7 +113,7 @@
                             show: true,
                             indent: 15,
                             strict: false,
-                            expandedKeys: true
+                            expandedKeys: false
                         },
                         tips: '请选择'
                     });
@@ -203,6 +203,8 @@
 
           });
         </script>
+        {// 编辑器}
+        {:hook('ueditor')}
         {:hook('taonyeditor')}
         {// 百度标题词条}
         {:hook('seoBaiduTitle')}

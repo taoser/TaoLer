@@ -38,6 +38,9 @@
 				{{# } }}
 			{{# } }}
 		</script>
+		<script type="text/html" id="ver-tpl">
+			<div>{{d.version}} {{#  if(d.have_newversion == 1) { }} <span class="layui-badge-dot"></span> {{#  } }}</div>
+		</script>
 
 		<script type="text/html" id="buttonStatus">
 			<input type="checkbox" name="{{d.name}}" lay-skin="switch" lay-filter="addonsStatus" lay-text="启动|禁用" {{#  if(d.status == 1){ }} checked {{#  } }} data-url="{:url('addon.addons/check')}">
@@ -51,7 +54,7 @@
 
 		{include file="public/user_login" /}
 		<script src="/static/component/layui/layui.js"></script>
-		<script src="/static/component/pear/pear.js"></script>
+    	<script src="/static/component/pear/pear.js"></script>
 
 		<script>
 			var addonList = "{:url('addon.addons/getList')}";
@@ -65,7 +68,7 @@
 			  var toast = layui.toast;
 
 			  let LIST_URL = "{:url('addon.addons/list')}";
-
+				
 				let cols = [[
 					{type: 'checkbox'},
 					{title: '序号', type: 'numbers'},
@@ -74,7 +77,7 @@
 					{field: 'author', title: '作者', width: 100},
 					{field: 'price', title: '价格(元)', width: 85},
 					{field: 'downloads', title: '下载', width: 70},
-					{field: 'version', title: '版本', templet: '<div>{{d.version}} {{#  if(d.have_newversion == 1){ }}<span class="layui-badge-dot"></span>{{#  } }}</div>', width: 75},
+					{field: 'version', title: '版本', templet: '#ver-tpl', width: 75},
 					{field: 'status', title: '在线', width: 70},
 					{title: '操作', width: 165, align: 'center', toolbar: '#addons-bar'}
 				]];

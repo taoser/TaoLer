@@ -11,12 +11,16 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
-use app\common\lib\facade\HttpHelper;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\facade\Article;
 use app\common\lib\Msgres;
+
+//use addons\pay\controller\AlipayFactory;
+//use addons\pay\controller\WeixinFactory;
+
+//use app\common\lib\Near;
 
 class Index extends BaseController
 {
@@ -29,38 +33,62 @@ class Index extends BaseController
      */
     public function index()
     {
+		// $ip = file_get_contents('https://myip.ipip.net');
+		// echo "My public IP address is: " . $ip;
+		// $alipay = AlipayFactory::createPayMethod();
+		// $weixin = WeixinFactory::createPayMethod();
+		// $a = $alipay->index();
+		// $b= $weixin->index();
+		// var_dump($a,$b);
+
+		// $hook['hook_name'] = 'thinkphp';
+		// $hook['hook_type'] = 1;
+		// $hook['template'] = 'taoler';
+		// $hook['sort'] = 111;
+		// $hook['create_time'] = time();
+		// $hook['param'] = [
+		// 	'article_id'    => '$article.id',
+		// 	'uid' => 1,
+		// ];
+		// Db::name('addon_hook')
+		// 	->json(['param'])
+		// 	->insert($hook);
+
+		// $lawyers = Db::name('addon_lawyer')
+		// //->json(['begood'])
+		// ->where('begood','like', '%1%')
+		// ->select()
+		// ->toArray();
+
+		// $count = count($lawyers);
+
+		// if($count) {
+		// 	$k = rand(0,$count - 1) ;
+		// 	$lawyer = $lawyers[$k];
+		// }
+
+	
 		$types = input('type');
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示10个
-        $artList = Article::getArtList(15);
-        //热议文章
-        $artHot = Article::getArtHot(10);
+        $artList = Article::getArtList(10);
 
 		$vs = [
 			'artTop'	=>	$artTop,
 			'artList'	=>	$artList,
-			'artHot'	=>	$artHot,
-			'type'		=>	$types,
-			'jspage'	=>	'',
+			'type'		=>	$types
 		];
 		View::assign($vs);
 
 		return View::fetch();
     }
-	
-	//回帖榜
-	public function reply()
-	{
-        $comment = new \app\common\model\Comment();
-        return $comment->reply(20);
-	}
 
     public function jump()
     {
         $username = Request::param('username');
-        $u = Db::name('user')->whereOr('nickname', $username)->whereOr('name', $username)->find();
-        return redirect((string) url('user/home',['id'=>$u['id']]));
+        $uid = Db::name('user')->whereOr('nickname', $username)->whereOr('name', $username)->value('id');
+        return redirect((string) url('user/home',['id'=>$uid]));
 
     }
 	

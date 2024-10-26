@@ -14,11 +14,12 @@ use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
+use think\facade\Session;
+use think\facade\Cookie;
 use app\common\model\User as UserModel;
 use app\common\lib\Uploads;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
-
 
 class User extends AdminController
 {
@@ -32,46 +33,60 @@ class User extends AdminController
 	{
 		return View::fetch();
 	}
+	
 	//用户表
-
 	public function list()
 	{
 		if(Request::isAjax()){
 			$datas = Request::only(['id','name','email','sex','status']);
 			$map = array_filter($datas,[$this,'filtrArr']);
+			if(!empty($map['id'])) {
+			    $map['id'] = (int) $map['id'];
+			}
 
 			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->paginate([
                 'list_rows' => input('limit'),
                 'page' => input('page')
             ]);
 			$count = $user->total();
-			$res = [];
+			$data = [];
 			if($count){
-				$res = ['code'=>0,'msg'=>'ok','count'=>$count];
-				foreach($user as $k => $v){
-				$data = [
-					'id'		=>	$v['id'],
-					'username'	=>	$v['name'],
-					'nick'		=>	$v['nickname'],
-					'avatar'	=>	$v['user_img'],
-					'phone'		=>	$v['phone'],
-					'email'		=>	$v['email'],
-					'sex'		=>	$v['sex'],
-					'ip'		=>	$v['last_login_ip'],
-					'city'		=>	$v['city'],
-					'logintime'	=>	date("Y-m-d H:i",$v['last_login_time']),
-					'jointime'	=>	date("Y-m-d",$v['create_time']),
-					'check'		=>	$v['status'],
-					'auth'		=>	$v['auth']
-				];
-				$res['data'][] = $data; 
+				$vipList = [];
+				$vipRule = Db::name('user_viprule')->field('id,vip,nick')->select();
+				foreach($vipRule as $v) {
+					$vipList[] = ['id' => $v['id'], 'vip' => $v['vip'], 'title' => $v['nick']];
 				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
+
+				foreach($user as $k => $v){
+					$data[] = [
+						'id'		=>	$v['id'],
+						'username'	=>	$v['name'],
+						'nick'		=>	$v['nickname'],
+						'avatar'	=>	$v['user_img'],
+						'phone'		=>	$v['phone'],
+						'email'		=>	$v['email'],
+						'sex'		=>	$v['sex'],
+						'ip'		=>	$v['last_login_ip'],
+						'city'		=>	$v['city'],
+						'point'		=>	$v['point'],
+						'logintime'	=>	date("Y-m-d H:i:s",$v['last_login_time']),
+						'jointime'	=>	date("Y-m-d H:i",$v['create_time']),
+						'check'		=>	$v['status'],
+						'auth'		=>	$v['auth'],
+						'vip'		=> 	$vipList[$v['vip']]['title'],
+						'note'		=>  $v['note']
+					];
+				}
+				
+				return json(['code'=>0,'msg'=>'ok','count'=>$count, 'data' => $data, 'viplist' => $vipList]);
 			}
-			return json($res);
+			return json(['code'=>-1,'msg'=>'没有查询结果！']);			
 		}
 		return View::fetch();
+	}
+
+	protected function getUserVipNick($vip) {
+
 	}
 	
 	
@@ -204,5 +219,46 @@ class User extends AdminController
         }
         return true;
 	}
+
+	//登录用户中心
+	public function goUserHome() {
+		$id = (int)input('id');
+		Session::delete('user_name');
+		Session::delete('user_id');
+		Cookie::delete('auth');
+		$user_home_url = $this->getUserHome($id);
+
+		return redirect($user_home_url);
+	}
+
+	// 编辑用户积分
+	public function editField()
+	{
+		if(Request::isAjax()) {
+			$param = Request::param(['id','field','point','note']);
+			if($param['field'] == 'point') {
+				$data = ['point' => (int)$param['point']];
+			} else {
+				$data = ['note' => $param['note']];
+			}
+			$res = Db::name('user')->where('id',(int)$param['id'])->update($data);
+			if($res > 0) {
+				return json(['code' => 0, 'msg' => '修改成功']);
+			}
+			return json(['code' => -1, 'msg' => '修改失败']);
+		}
+	}
 	
+	// 编辑用户会员等级
+	public function editVipLevel()
+	{
+		if(Request::isAjax()) {
+			$param = Request::param(['id','vip']);
+			$res = Db::name('user')->where('id',(int)$param['id'])->update(['vip' => (int)$param['vip']]);
+			if($res > 0) {
+				return json(['code' => 0, 'msg' => '修改成功']);
+			}
+			return json(['code' => -1, 'msg' => '修改失败']);
+		}
+	}
 }

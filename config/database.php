@@ -43,12 +43,12 @@ return [
 		'fields_strict'     => true,
 		// 是否需要断线重连
 		'break_reconnect'   => false,
-		// 监听SQL
-		'trigger_sql'       => env('app_debug', true),
+		// 开启SQL性能分析
+		'trigger_sql'     => env('APP_DEBUG', false),
 		// 开启字段缓存
 		'fields_cache'      => false,
-		// 字段缓存路径
-		//'schema_cache_path' => app()->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR,
+		// 开启数据库调试模式
+        'debug'           => false,
 		],
 		// 更多的数据库配置信息
     ],

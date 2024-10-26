@@ -10,6 +10,14 @@ use think\response\Json;
 
 class Arts
 {
+
+    /**
+     * 数据内容
+     *
+     * @var string
+     */
+    protected $content = '';
+
     //显示网站设置
     protected function getSystem()
     {
@@ -19,11 +27,17 @@ class Arts
     }
 
     //域名协议转换 把数据库中的带HTTP或不带协议的域名转换为当前协议的域名前缀
-    protected function getHttpUrl($url)
-    {
-        //域名转换为无http协议
+	protected function getHttpUrl($url)
+	{
+		//域名转换为无http协议
         $www = stripos($url,'://') ? substr(stristr($url,'://'),3) : $url;
-        return Request::scheme().'://'. $www;
+		$htpw = Request::scheme().'://'. $www;
+		return  $htpw;
+	}
+
+    protected function getDomain()
+    {
+        return $this->getHttpUrl($this->getSystem()['domain']);
     }
 
     //得到当前系统安装前台域名
@@ -156,8 +170,8 @@ class Arts
                     $conf['baidufenci']['value']['access_token'] = json_decode($res)->access_token;
                     set_addons_config('seo', $conf);
 
-//                    echo 'api接口数据错误 - ';
-//                    echo $dataItem->error_msg;
+                    echo 'api接口数据错误 - ';
+                    echo $dataItem->error_msg;
                 }
             }
         }
@@ -305,10 +319,10 @@ class Arts
     {
         $filename = pathinfo($url, PATHINFO_BASENAME);
         //$dirname = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_DIRNAME);
-        $dirname = date('Ymd',time());
+
         $uid = session('user_id') ?: $userId;
         //路径
-        $path =  'storage/' . $uid . '/article_pic/' . $dirname . '/';
+        $path =  'storage/' . $uid . '/article_pic/' . date('Ymd',time()) . '/';
         //绝对文件夹
         $fileDir = public_path() . $path;
         //文件绝对路径
@@ -338,8 +352,9 @@ class Arts
     //下载网络图片到本地并替换
     public function downUrlPicsReaplace($content, $userId = 1)
     {
+        $this->content = $content;
         // 批量下载网络图片并替换
-        $images = $this->getArticleAllpic($content);
+        $images = $this->getArticleAllpic($this->content);
         if(count($images)) {
             foreach($images as $image){
                 //1.带http地址的图片，2.非本站的网络图片 3.非带有？号等参数的图片
@@ -348,13 +363,13 @@ class Arts
                     //下载远程图片(可下载)
                     $newImageUrl = $this->downloadImage($image, $userId);
                     //替换图片链接
-                    $content = str_replace($image,Request::domain().$newImageUrl,$content);
+                    $this->content = str_replace($image,Request::domain().$newImageUrl,$this->content);
                 }
             }
             //不可下载的图片，如加密或者带有参数的图片如？type=jpeg,直接返回content
         }
 
-        return $content;
+        return $this->content;
     }
 
 }

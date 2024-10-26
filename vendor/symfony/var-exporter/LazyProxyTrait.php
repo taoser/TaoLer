@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\VarExporter;
 
+use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\VarExporter\Hydrator as PublicHydrator;
 use Symfony\Component\VarExporter\Internal\Hydrator;
 use Symfony\Component\VarExporter\Internal\LazyObjectRegistry as Registry;
@@ -27,7 +28,7 @@ trait LazyProxyTrait
      * @param \Closure():object $initializer Returns the proxied object
      * @param static|null       $instance
      */
-    public static function createLazyProxy(\Closure $initializer, object $instance = null): static
+    public static function createLazyProxy(\Closure $initializer, ?object $instance = null): static
     {
         if (self::class !== $class = $instance ? $instance::class : static::class) {
             $skippedProperties = ["\0".self::class."\0lazyObjectState" => true];
@@ -50,6 +51,7 @@ trait LazyProxyTrait
      *
      * @param $partial Whether partially initialized objects should be considered as initialized
      */
+    #[Ignore]
     public function isLazyObjectInitialized(bool $partial = false): bool
     {
         return !isset($this->lazyObjectState) || isset($this->lazyObjectState->realInstance) || Registry::$noInitializerState === $this->lazyObjectState->initializer;
@@ -295,7 +297,7 @@ trait LazyProxyTrait
         $data = [];
 
         foreach (parent::__sleep() as $name) {
-            $value = $properties[$k = $name] ?? $properties[$k = "\0*\0$name"] ?? $properties[$k = "\0$scope\0$name"] ?? $k = null;
+            $value = $properties[$k = $name] ?? $properties[$k = "\0*\0$name"] ?? $properties[$k = "\0$class\0$name"] ?? $properties[$k = "\0$scope\0$name"] ?? $k = null;
 
             if (null === $k) {
                 trigger_error(sprintf('serialize(): "%s" returned as member variable from __sleep() but does not exist', $name), \E_USER_NOTICE);
