@@ -1,3 +1,2 @@
-/addons
-/app
-/home
+*
+!.gitignore

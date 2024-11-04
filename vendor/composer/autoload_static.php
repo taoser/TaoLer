@@ -4,140 +4,48 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitbabe579e097699360331ba6987637945
+class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
 {
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
-        '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
-        '8c783b3a3de2f6d9177022b5ccdcc841' => __DIR__ . '/..' . '/yansongda/pay/src/Functions.php',
-        'd421242fd42b2ea6cd13f802bcf18a6e' => __DIR__ . '/../..' . '/extend/taoler/com/form.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'y' => 
-        array (
-            'yzh52521\\EasyHttp\\' => 18,
-        ),
         't' => 
         array (
-            'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
-            'think\\captcha\\' => 14,
-            'think\\app\\' => 10,
             'think\\' => 6,
-            'taoser\\think\\' => 13,
-            'taoser\\' => 7,
         ),
         'a' => 
         array (
             'app\\' => 4,
         ),
-        'Y' => 
-        array (
-            'Yansongda\\Supports\\' => 19,
-            'Yansongda\\Pay\\' => 14,
-            'Yansongda\\Artful\\' => 17,
-        ),
-        'W' => 
-        array (
-            'Workerman\\' => 10,
-        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
-        ),
-        'Q' => 
-        array (
-            'QL\\' => 3,
         ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
-            'Psr\\Http\\Client\\' => 16,
-            'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
-            'PHPSocketIO\\' => 12,
-            'PHPMailer\\PHPMailer\\' => 20,
-        ),
-        'O' => 
-        array (
-            'Overtrue\\EasySms\\' => 17,
         ),
         'L' => 
         array (
             'League\\MimeTypeDetection\\' => 25,
             'League\\Flysystem\\' => 17,
         ),
-        'I' => 
-        array (
-            'Intervention\\Image\\' => 19,
-            'Intervention\\Gif\\' => 17,
-            'Illuminate\\Contracts\\' => 21,
-            'Illuminate\\Container\\' => 21,
-        ),
-        'G' => 
-        array (
-            'GuzzleHttp\\Psr7\\' => 16,
-            'GuzzleHttp\\Promise\\' => 19,
-            'GuzzleHttp\\' => 11,
-            'GatewayWorker\\' => 14,
-            'GatewayClient\\' => 14,
-        ),
-        'F' => 
-        array (
-            'Firebase\\JWT\\' => 13,
-        ),
-        'E' => 
-        array (
-            'Endroid\\QrCode\\' => 15,
-        ),
-        'D' => 
-        array (
-            'DASPRiD\\Enum\\' => 13,
-        ),
-        'C' => 
-        array (
-            'Channel\\' => 8,
-        ),
-        'B' => 
-        array (
-            'BaconQrCode\\' => 12,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'yzh52521\\EasyHttp\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yzh52521/easyhttp/src',
-        ),
-        'think\\view\\driver\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-view/src',
-        ),
         'think\\trace\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-trace/src',
-        ),
-        'think\\captcha\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-captcha/src',
-        ),
-        'think\\app\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-multi-app/src',
         ),
         'think\\' => 
         array (
@@ -145,52 +53,18 @@ class ComposerStaticInitbabe579e097699360331ba6987637945
             1 => __DIR__ . '/..' . '/topthink/think-filesystem/src',
             2 => __DIR__ . '/..' . '/topthink/think-helper/src',
             3 => __DIR__ . '/..' . '/topthink/think-orm/src',
-            4 => __DIR__ . '/..' . '/topthink/think-template/src',
-        ),
-        'taoser\\think\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/taoser/think-auth/src',
-        ),
-        'taoser\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/taoser/think-addons/src',
-            1 => __DIR__ . '/..' . '/taoser/think-setarr/src',
         ),
         'app\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
-        'Yansongda\\Supports\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yansongda/supports/src',
-        ),
-        'Yansongda\\Pay\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yansongda/pay/src',
-        ),
-        'Yansongda\\Artful\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yansongda/artful/src',
-        ),
-        'Workerman\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/workerman/workerman',
-        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Component\\VarExporter\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/var-exporter',
-        ),
         'Symfony\\Component\\VarDumper\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
-        ),
-        'QL\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jaeger/querylist',
         ),
         'Psr\\SimpleCache\\' => 
         array (
@@ -202,32 +76,11 @@ class ComposerStaticInitbabe579e097699360331ba6987637945
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
-        ),
-        'Psr\\Http\\Client\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/http-client/src',
-        ),
-        'Psr\\EventDispatcher\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
-        ),
-        'PHPSocketIO\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/workerman/phpsocket.io/src',
-        ),
-        'PHPMailer\\PHPMailer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
-        ),
-        'Overtrue\\EasySms\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/overtrue/easy-sms/src',
         ),
         'League\\MimeTypeDetection\\' => 
         array (
@@ -237,62 +90,6 @@ class ComposerStaticInitbabe579e097699360331ba6987637945
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
         ),
-        'Intervention\\Image\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/intervention/image/src',
-        ),
-        'Intervention\\Gif\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/intervention/gif/src',
-        ),
-        'Illuminate\\Contracts\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/illuminate/contracts',
-        ),
-        'Illuminate\\Container\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/illuminate/container',
-        ),
-        'GuzzleHttp\\Psr7\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
-        ),
-        'GuzzleHttp\\Promise\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
-        ),
-        'GuzzleHttp\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
-        ),
-        'GatewayWorker\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/workerman/gateway-worker/src',
-        ),
-        'GatewayClient\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/workerman/gatewayclient',
-        ),
-        'Firebase\\JWT\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
-        ),
-        'Endroid\\QrCode\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/endroid/qr-code/src',
-        ),
-        'DASPRiD\\Enum\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dasprid/enum/src',
-        ),
-        'Channel\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/workerman/channel/src',
-        ),
-        'BaconQrCode\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
-        ),
     );
 
     public static $fallbackDirsPsr0 = array (
@@ -300,29 +97,16 @@ class ComposerStaticInitbabe579e097699360331ba6987637945
     );
 
     public static $classMap = array (
-        'Callback' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackBody' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackParam' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackParameterToReference' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackReturnReference' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackReturnValue' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'DOMDocumentWrapper' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'DOMEvent' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'ICallbackNamed' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQuery' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryEvents' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryObject' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryPlugins' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitbabe579e097699360331ba6987637945::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitbabe579e097699360331ba6987637945::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitbabe579e097699360331ba6987637945::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitbabe579e097699360331ba6987637945::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb::$classMap;
 
         }, null, ClassLoader::class);
     }
