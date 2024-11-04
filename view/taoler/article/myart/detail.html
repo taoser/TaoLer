@@ -49,16 +49,12 @@
 							</div>
 							<div class="border-theme bg-primary"></div>
 						</div>
-						{:hook('taoplayerdiv')}
+
 						<article class="post-content detail-body" itemprop="articleBody" view-image>
-							{article:content}
+						{article:content}
 						</article>
 						<!-- 文章末尾 -->
-						{notempty name="$article.upzip"}
-						{if (session('?user_name'))}
-							<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-						{/if}
-						{/notempty}
+	
 						<!-- 解密文件 -->
 						{empty name="passJieMi"}
 						{if($article.read_type == 1)}

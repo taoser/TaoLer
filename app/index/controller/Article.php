@@ -191,20 +191,34 @@ class Article extends BaseController
             if (true !== $result) {
                 return Msgres::error($validate->getError());
             }
-			
-			// 获取内容图片音视频标识
-			$iva= $this->hasIva($data['content']);
-			$data = array_merge($data,$iva);
 
-			// 处理图片内容
-			$data['content'] = $this->downUrlPicsReaplace($data['content']);
 			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
             $data['description'] = strip_tags($this->filterEmoji($data['description']));
+			// 处理图片内容
+			$data['content'] = $this->downUrlPicsReaplace($data['content']);
+			// 获取内容图片音视频标识
+			// $iva= $this->hasIva($data['content']);
+			// $data = array_merge($data, $iva);
 
-			
+			$images = get_all_img($data['content']);
+			$video = get_one_video($data['content']);
+
+			$media = [];
+
+			if(!empty($images)) {
+				$media['image'] = $images;
+				$data['has_img'] = '1';
+			}
+			if(!empty($video)) {
+				$media['video'] = $video;
+				$data['has_video'] = '1';
+			}
+
+			$data['media'] = $media;
+
             // 获取分类ename,appname
-            $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
+            $cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
 
 			// vip每天可免费发帖数
 			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
@@ -232,7 +246,7 @@ class Article extends BaseController
 					Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
 				}
 			}
-			
+			// halt($data);
             $result = $this->model->add($data);
             if ($result['code'] == 1) {
 				// 记录每天发帖量

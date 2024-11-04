@@ -10,8 +10,8 @@ class LoginCheck
 		//需要登陆的操作
 		if(Session::has('user_id')){
 			return $next($request);
-		} else {
-			return redirect((string) url('login/index'));
 		}
+		
+		return redirect((string) url('login/index'));
     }
 }

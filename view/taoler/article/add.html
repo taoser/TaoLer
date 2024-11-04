@@ -4,107 +4,106 @@
 {block name="column"}{/block}
 {block name="content"}
 <div class="layui-container fly-marginTop">
-  <div class="fly-panel" pad20 style="padding-top: 5px">
-    <!--<div class="fly-none">没有权限</div>-->
-    <form class="layui-form layui-form-pane">
-      <div class="layui-tab layui-tab-brief" lay-filter="user">
-        <ul class="layui-tab-title">
-          <li class="layui-this">{:lang('add post')}<!-- 编辑帖子 --></li>
-        </ul>
-        <div class="layui-tab-content" id="LAY_ucm" style="padding: 20px 0">
-          <div class="layui-tab-item layui-show">
-            {if config('taoler.config.is_post') == 1}
-            <div class="layui-row layui-col-space15 layui-form-item">
-              <div class="layui-col-md3">
-                <label class="layui-form-label">{:lang('special column')}</label>
-                <div class="layui-input-block">
-                  <div id="CateId" class="xm-select-demo"></div>
-                </div>
-              </div>
-              <div class="layui-col-md8">
-                <label for="L_title" class="layui-form-label">{:lang('title')}</label>
-                <div class="layui-input-block">
-                  <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;" value=""/>
-                  <input type="hidden" id="L_title_color" name="title_color" autocomplete="off" class="layui-input" />
-                </div>
-              </div>
-              {if ($user.auth == 1)}
-              <div class="layui-col-md1">
-                <div id="color"></div>
-              </div>
-              {/if}
-            </div>
+	<div class="fly-panel" pad20 style="padding-top: 5px">
+	<!--<div class="fly-none">没有权限</div>-->
+		<form class="layui-form layui-form-pane">
+			<div class="layui-tab layui-tab-brief" lay-filter="user">
+				<ul class="layui-tab-title">
+					<li class="layui-this">{:lang('add post')}<!-- 编辑帖子 --></li>
+				</ul>
+				<div class="layui-tab-content" id="LAY_ucm" style="padding: 20px 0">
+					<div class="layui-tab-item layui-show">
+					{if config('taoler.config.is_post') == 1}
+						<div class="layui-row layui-col-space15 layui-form-item">
+							<div class="layui-col-md3">
+								<label class="layui-form-label">{:lang('special column')}</label>
+								<div class="layui-input-block">
+									<div id="CateId" class="xm-select-demo"></div>
+								</div>
+							</div>
+							<div class="layui-col-md8">
+								<label for="L_title" class="layui-form-label">{:lang('title')}</label>
+								<div class="layui-input-block">
+									<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;" value=""/>
+									<input type="hidden" id="L_title_color" name="title_color" autocomplete="off" class="layui-input" />
+								</div>
+							</div>
+							{if ($user.auth == 1)}
+							<div class="layui-col-md1">
+							<div id="color"></div>
+							</div>
+							{/if}
+						</div>
 
-            <div class="layui-row layui-col-space15 layui-form-item" id="LAY_quiz">
-              <div class="layui-col-md3">
-                <label class="layui-form-label">阅读权限</label>
-                <div class="layui-input-block">
-                  <select name="read_type">
-                    <option value="0">开放阅读</option>
-                    <option value="1">密码加密</option>
-                    <option value="2">回帖阅读</option>
-                    <option value="3">购买阅读</option>
-                  </select>
-                </div>
-              </div>
-              <div class="layui-col-md3">
-                <label class="layui-form-label" for="L_version">密码</label>
-                <div class="layui-input-block">
-                  <input type="text" id="L_version" value="" name="art_pass" autocomplete="off" class="layui-input" />
-                </div>
-              </div>
-            </div>
+						<div class="layui-row layui-col-space15 layui-form-item" id="LAY_quiz">
+							<div class="layui-col-md3">
+								<label class="layui-form-label">阅读权限</label>
+								<div class="layui-input-block">
+									<select name="read_type">
+									<option value="0">开放阅读</option>
+									<option value="1">密码加密</option>
+									<option value="2">回帖阅读</option>
+									<option value="3">购买阅读</option>
+									</select>
+								</div>
+							</div>
+							<div class="layui-col-md3">
+								<label class="layui-form-label" for="L_version">密码</label>
+								<div class="layui-input-block">
+									<input type="text" id="L_version" value="" name="art_pass" autocomplete="off" class="layui-input" />
+								</div>
+							</div>
+						</div>
+						<div class="layui-form-item layui-form-text">
+							<div class="layui-input-block">
+							<textarea id="L_content" name="content" lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
+							</div>
+						</div>
+						{//描述}
+						<div class="layui-form-item layui-hide">
+							<label class="layui-form-label">{:lang('description')}</label>
+							<div class="layui-input-block">
+							<textarea name="description" class="layui-textarea" placeholder="SEO {:lang('description')}"></textarea>
+							</div>
+						</div>
+						{//关键词}
+						<div class="layui-form-item layui-hide">
+							<label class="layui-form-label">{:lang('add keywords')}</label>
+							<div class="layui-input-block">
+								<!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
+								<input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="{:lang('add keywords')}" />
+							</div>
+						</div>
+						{//tag}
+						<div class="layui-form-item">
+							<label class="layui-form-label">{:lang('add tags')}</label>
+							<div class="layui-input-block">
+								<div id="tag"></div>
+							</div>
+						</div>
 
-            <div class="layui-form-item layui-form-text">
-              <div class="layui-input-block">
-                <textarea id="L_content" name="content" lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
-              </div>
-            </div>
-            {//描述}
-            <div class="layui-form-item layui-hide">
-              <label class="layui-form-label">{:lang('description')}</label>
-              <div class="layui-input-block">
-                <textarea name="description" class="layui-textarea" placeholder="SEO {:lang('description')}"></textarea>
-              </div>
-            </div>
-            {//关键词}
-            <div class="layui-form-item layui-hide">
-                <label class="layui-form-label">{:lang('add keywords')}</label>
-                <div class="layui-input-block">
-                  <!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
-                  <input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="{:lang('add keywords')}" />
-                </div>
-            </div>
-            {//tag}
-            <div class="layui-form-item">
-                <label class="layui-form-label">{:lang('add tags')}</label>
-                <div class="layui-input-block">
-                  <div id="tag"></div>
-                </div>
-            </div>
-
-            {if config('taoler.config.post_captcha') == 1}
-            <div class="layui-form-item">
-              <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
-              <div class="layui-input-inline">
-                <input type="text" id="L_vercode" name="captcha" required lay-verify="required"  placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input" />
-              </div>
-              <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important">
-                <img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();" style="float: left; cursor: pointer"  alt="captcha" />
-              </div>
-            </div>
-            {/if}
-            <div class="layui-form-item">
-              <button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="add">{:lang('post now')}</button>
-            </div>
-          </div>
-          {else /}
-          <div class="layui-form-item">抱歉，系统维护中，暂时禁止发帖！</div>
-          {/if}
-        </div>
-      </div>
-    </form>
-  </div>
+						{if config('taoler.config.post_captcha') == 1}
+						<div class="layui-form-item">
+							<label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
+							<div class="layui-input-inline">
+								<input type="text" id="L_vercode" name="captcha" required lay-verify="required"  placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input" />
+							</div>
+							<div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important">
+								<img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();" style="float: left; cursor: pointer"  alt="captcha" />
+							</div>
+						</div>
+						{/if}
+						<div class="layui-form-item">
+							<button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="add">{:lang('post now')}</button>
+						</div>
+					</div>
+					{else /}
+					<div class="layui-form-item">抱歉，系统维护中，暂时禁止发帖！</div>
+					{/if}
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
 {include file="public/menu" /}
 {/block}
@@ -112,16 +111,16 @@
 {block name="script"}
 <script src="/static/xm-select.js"></script>
 <script>
-  layui.use(['fly'], function () {
+layui.use(['fly'], function () {
     var $ = layui.jquery,
-      fly = layui.fly,
-      form = layui.form,
-      colorpicker = layui.colorpicker,
-      upload = layui.upload;
+		fly = layui.fly,
+		form = layui.form,
+		colorpicker = layui.colorpicker,
+		upload = layui.upload;
 
-    // 分类选择
-      $.get("{:url('article/getCateTree')}",function(res){
-        var cid = "{$cid}";
+    	// 分类选择
+      	$.get("{:url('article/getCateTree')}",function(res){
+        	var cid = "{$cid}";
             // 渲染下拉树
             xmSelect.render({
                 el: '#CateId',
@@ -146,29 +145,30 @@
                 },
                 tips: '请选择'
             });
-      });
+    	});
     
     // tag标签
     $(function(){
-      //1.渲染标签
-      var addTags = xmSelect.render({
-        el: '#tag',
-        name: 'tagid',
-        layVerify: '',
-        layVerType: 'msg',
-        paging: true,
-        pageSize: 5,
-        data: []
-      });
-      //2.动态标签赋值
-      $.get("{:url('get_all_tag')}",function(res){
-        if(res.code === 0){
-          addTags.update({
-            data: res.data,
-            autoRow: true,
-          })
-        }
-      });
+		//1.渲染标签
+		var addTags = xmSelect.render({
+			el: '#tag',
+			name: 'tagid',
+			layVerify: '',
+			layVerType: 'msg',
+			paging: true,
+			pageSize: 5,
+			data: []
+		});
+
+		//2.动态标签赋值
+		$.get("{:url('get_all_tag')}",function(res){
+			if(res.code === 0){
+				addTags.update({
+				data: res.data,
+				autoRow: true,
+				})
+			}
+		});
     });
 
     // 改变标题颜色
@@ -185,37 +185,29 @@
 
     // 发布文章
     form.on("submit(article-add)", function (data) {
-      var field = data.field;
-      var loadIndex = layer.load(2);
-      $.ajax({
-        type: "post",
-        url: "{:url('article/add')}",
-        data: field,
-        dataType: "json",
-        success: function (res) {
-          layer.close(loadIndex);
-          if (res.code === 0) {
-            toast.success({title:"成功消息",message: res.msg});
-            location.href = res.url;
-          } else {
-            toast.error({title:"失败消息",message:res.msg});
-            $("#captcha").attr("src", "{:captcha_src()}?" + Math.random());
-          }
-          layer.close(index);
-        },
-      });
-      return false;
+		var field = data.field;
+		var loadIndex = layer.load(2);
+		$.ajax({
+			type: "post",
+			url: "{:url('article/add')}",
+			data: field,
+			dataType: "json",
+			success: function (res) {
+				layer.close(loadIndex);
+				if (res.code === 0) {
+					toast.success({title:"成功消息",message: res.msg});
+					location.href = res.url;
+				} else {
+					toast.error({title:"失败消息",message:res.msg});
+					$("#captcha").attr("src", "{:captcha_src()}?" + Math.random());
+				}
+			},
+		});
+		return false;
     });
 
   });
 </script>
 {// 编辑器}
-{:hook('ueditor')}
-{:hook('taonyeditor')}
-
-{// 百度标题词条}
-{:hook('seoBaiduTitle')}
-{// 百度关键词}
-{:hook('seoBaiduKeywords')}
 
 {/block}
