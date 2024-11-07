@@ -118,14 +118,16 @@ class Cate extends Model
     }
 
     // 获取url
-    public function getUrlAttr($value,$data)
+    public function getUrlAttr($value, $data)
     {
         // 栏目下存在帖子，则返回正常url,否则为死链
-        $articleCount = Article::where('cate_id', $data['id'])->cache(true)->count();
-        if($articleCount > 0) {
-            return (string) url('cate',['ename' => $data['ename']]);
-        }
-        return 'javascript:void(0);';
+        return (string) url('cate', ['ename' => $data['ename']]);
+        
+    }
+
+    public function getArticleList(string $ename)
+    {
+
     }
 	
 	

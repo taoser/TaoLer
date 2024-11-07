@@ -9,15 +9,19 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+        '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
+            'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
             'think\\' => 6,
+            'taoser\\' => 7,
         ),
         'a' => 
         array (
@@ -26,6 +30,7 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
         'S' => 
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
         ),
         'P' => 
@@ -43,6 +48,10 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
     );
 
     public static $prefixDirsPsr4 = array (
+        'think\\view\\driver\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-view/src',
+        ),
         'think\\trace\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-trace/src',
@@ -53,6 +62,11 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
             1 => __DIR__ . '/..' . '/topthink/think-filesystem/src',
             2 => __DIR__ . '/..' . '/topthink/think-helper/src',
             3 => __DIR__ . '/..' . '/topthink/think-orm/src',
+            4 => __DIR__ . '/..' . '/topthink/think-template/src',
+        ),
+        'taoser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/taoser/think-addons/src',
         ),
         'app\\' => 
         array (
@@ -61,6 +75,10 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Component\\VarExporter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/var-exporter',
         ),
         'Symfony\\Component\\VarDumper\\' => 
         array (

@@ -1,0 +1,7 @@
+<?php
+//000000003600
+ exit();?>
+a:1:{i:0;a:29:{s:2:"id";i:1;s:7:"webname";s:6:"TaoLer";s:8:"webtitle";s:26:"TaoLer社区-www.aieok.com";s:6:"domain";s:11:"www.tp6.com";s:8:"template";s:6:"taoler";s:4:"logo";s:22:"/storage/logo/logo.png";s:6:"m_logo";s:29:"/static/res/images/logo-m.png";s:5:"cache";i:10;s:6:"upsize";i:12288;s:6:"uptype";s:112:"image:png|gif|jpg|jpeg,application:zip|rar|docx,video:mp4,audio:mp3|m4a|mp4|mpeg,zip:zip,application/msword:docx";s:9:"copyright";s:58:"<a href="https://www.aieok.com" target="_blank">TaoLer</a>";s:8:"keywords";s:60:"TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,";s:8:"descript";s:40:"这是一个Taoler轻社区论坛系统.";s:5:"state";s:235:"网站声明：<br>
+1.本站使用TaoLerCMS驱动，简单好用，深度SEO。<br>
+2.内容为用户提供如有侵权，请联系本站管理员删除。<br>
+3.原创内容转载请注明出处，否则一切后果自行承担。<br>";s:7:"is_open";s:1:"1";s:10:"is_comment";s:1:"1";s:6:"is_reg";s:1:"1";s:3:"icp";s:9:"0.0.0.0-1";s:8:"showlist";s:0:"";s:9:"blackname";s:39:"管理员|admin|审核员|超级|垃圾";s:15:"sys_version_num";s:5:"1.6.3";s:3:"key";s:40:"e49183beee30d0b463fbf415d63cce3908d95599";s:6:"clevel";i:2;s:7:"api_url";s:20:"http://api.aieok.com";s:8:"base_url";s:26:"http://api.aieok.com/v1/cy";s:11:"upcheck_url";s:36:"http://api.aieok.com/v1/upload/check";s:11:"upgrade_url";s:34:"http://api.aieok.com/v1/upload/api";s:11:"create_time";i:1641004619;s:11:"update_time";i:1726533982;}}

@@ -703,13 +703,13 @@ class Article extends Model
      }
 
     // 两种模式 获取url
-    public function getUrlAttr($value,$data)
+    public function getUrlAttr($value, $data)
     {
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
             $ename = Cate::where('id', $data['cate_id'])->cache(true)->value('ename');
-            return (string) url('article_detail',['id' => $data['id'],'ename' => $ename]);
+            return (string) url('detail',['id' => $data['id'], 'ename' => $ename]);
         }
-        return (string) url('article_detail',['id' => $data['id']]);
+        return (string) url('detail', ['id' => $data['id']]);
     }
 
     // 内容是否加密

@@ -15,3 +15,18 @@ Route::get('think', function () {
 });
 
 Route::get('hello/:name', 'index/hello');
+
+Route::get('/', 'index.index/index'); // 首页路由
+Route::get('admin', 'admin.index/index'); // 管理路由
+
+Route::group(function(){
+    Route::get('index', 'index/index');
+    Route::get('category/<ename>$', 'category/getArticleListByEname')->name('cate');
+    Route::get('article/<ename>/<id>$', 'Article/detail')->name('detail');
+})->prefix('index.')
+->pattern([
+    'ename' => '[\w|\-]+',
+    'type' => '\w+',
+    'page'   => '\d+',
+    'id'   => '\d+',
+]);

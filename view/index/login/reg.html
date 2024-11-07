@@ -1,0 +1,134 @@
+{extend name="public:base" /}
+
+{block name="title"}注册账号{/block}
+{block name="column"}{/block}
+{block name="content"}
+<div class="layui-container fly-marginTop">
+  <div class="fly-panel fly-panel-user" pad20>
+    <div class="layui-tab layui-tab-brief" lay-filter="user">
+      <ul class="layui-tab-title">
+        <li><a href="{$Request.domain}{:url('login/index')}">{:lang('login')}</a></li>
+        <li class="layui-this">{:lang('sign up')}</li>
+      </ul>
+      <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;" lay-filter="register">
+        <div class="layui-tab-item layui-show">
+          <div class="layui-form layui-form-pane">
+            <form>
+            {if config('taoler.config.is_regist') == 1}
+            <div class="layui-form-item">
+              <label for="L_username" class="layui-form-label">{:lang('username')}</label>
+              <div class="layui-input-inline">
+                <input type="text" id="L_username" name="name" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="建议用手机号注册">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label for="L_email" class="layui-form-label">{:lang('email')}</label>
+              <div class="layui-input-inline">
+                <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" class="layui-input" placeholder="{:lang('the only way to get back your password')}">
+              </div>
+              {if config('taoler.config.regist_type') == 2}
+              <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important;"> 
+                <button type="button" class="layui-btn layui-btn-normal" id="LAY-component-form-getval">发送邮箱验证码</button>
+              </div>
+              {/if}
+            </div>
+            {if config('taoler.config.regist_type') == 2}
+            <div class="layui-form-item">
+              <label for="L_email" class="layui-form-label">{:lang('captcha')}</label>
+              <div class="layui-input-inline">
+                <input type="text" name="email_code" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('请去邮箱查验验证码')}">
+              </div>
+            </div>
+            {/if}
+            <div class="layui-form-item">
+              <label for="L_pass" class="layui-form-label">{:lang('password')}</label>
+              <div class="layui-input-inline">
+                <input type="password" id="L_pass" name="password" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('6-16 characters')}">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">{:lang('confirm password')}</label>
+              <div class="layui-input-inline">
+                <input type="password" id="L_repass" name="repassword" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="{:lang('please confirm the password')}">
+              </div>
+            </div>
+            {if config('taoler.config.regist_type') == 1}
+            <div class="layui-form-item">
+              <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
+              <div class="layui-input-inline">
+                <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important;">
+                  <img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();"  alt="captcha" />
+              </div>
+            </div>
+            {/if}			  
+            <div class="layui-form-item">
+            <button type="submit" class="layui-btn" lay-filter="user-register" lay-submit>{:lang('register now')}</button>
+            </div>
+            {else /}
+            <div class="layui-form-item">抱歉，暂未开放注册</div>
+            {/if}
+              <!--div class="layui-form-item fly-form-app">
+                <span>或者直接使用社交账号快捷注册</span>
+                <a href="" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-qq" title="QQ登入"></a>
+                <a href="" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" class="iconfont icon-weibo" title="微博登入"></a>
+              </div-->
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/menu" /}
+{/block}
+
+{block name="script"}
+<script>
+layui.use(['form','layer'],function(){
+    var $ = layui.jquery;
+    var form = layui.form;
+    var layer = layui.layer;
+	//注册
+	form.on('submit(user-register)', function(data){
+		var field = data.field;
+		var loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+		$.ajax({
+		type:'post',
+		url:"{:url('Login/reg')}",
+		data:field,
+		dataType:"json",
+		success:function(res){
+          layer.close(loading);
+			if(res.code === 0){
+              toast.success({title:"成功消息",message: res.msg});
+              location.href = res.url;
+			} else {
+				layer.open({title:"注册失败",content:res.msg,icon:5,anim:6});
+				$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+			}}
+		});
+	return false;
+	});
+
+  //表单取值
+  $('#LAY-component-form-getval').on('click', function(){
+    var loadIndex = layer.load(2);
+    var data = form.val('register');
+    //alert(JSON.stringify(data));
+    $.post("{:url('Login/sentMailCode')}",{"email": data.email},  function(res){
+      layer.close(loadIndex);
+      if(res.code === 0){
+        toast.success({title:"成功消息",message: res.msg});
+      } else {
+        layer.open({title:"发送失败",content:res.msg,icon:5,anim:6});
+      }
+    })
+  });
+
+});
+</script>
+{/block}
