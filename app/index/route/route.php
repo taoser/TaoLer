@@ -73,7 +73,6 @@ Route::get('arttag','tag/getArticleTag')->name('get_art_tag');
 
 Route::rule('search/[:keywords]', 'index/search'); // 搜索
 
-
 // article分类和详情路由 ！放到最后！
 Route::group(function () use($detail_as, $cate_as){
 	// 动态路径路由会影响下面的路由，所以动态路由放下面

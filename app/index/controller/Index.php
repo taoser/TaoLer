@@ -20,8 +20,8 @@ use app\common\lib\Msgres;
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
 
-//use app\common\lib\Near;
-
+// use app\common\lib\Near;
+use think\facade\Cache;
 class Index extends BaseController
 {
     /**
@@ -67,19 +67,27 @@ class Index extends BaseController
 		// 	$lawyer = $lawyers[$k];
 		// }
 
-	
-		$types = input('type');
+// $data = [
+// 	['msg' => '111','id' => 1],
+// 	['msg' => '111', 'id' => 1],
+// ];
+
+// Cache::set('data', $data);
+// Cache::delete('data');
+// $ddd = Cache::get('data');
+// halt($ddd);
+
+		
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示10个
         $artList = Article::getArtList(10);
+// halt($artList);
 
-		$vs = [
+		View::assign([
 			'artTop'	=>	$artTop,
-			'artList'	=>	$artList,
-			'type'		=>	$types
-		];
-		View::assign($vs);
+			'artList'	=>	$artList
+		]);
 
 		return View::fetch();
     }
@@ -100,7 +108,7 @@ class Index extends BaseController
 			if($lang){
 				return Msgres::success();
 			}
-		}else {
+		} else {
 			return Msgres::error('illegal_request');
 		}
 	}

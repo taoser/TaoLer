@@ -46,13 +46,7 @@
 				{//问题内容}
 				<div style="margin: 10px 0; font-size: 16px; font-weight: bold; color: rgb(161, 155, 155)">问题描述：</div>
 
-				{:hook('taoplayerdiv')}
 				<article class="detail-body photos" id="content">{article:content}</article>
-				{notempty name="$article.upzip"}
-					{if (session('?user_name'))}
-					<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-					{/if}
-				{/notempty}
 
 					{//解密文件}
 				{empty name="passJieMi"}
@@ -377,19 +371,6 @@
 		},
     });
 
-    //下载
-    $("#zip-download").click(function () {
-		var id = "{$article.id}";
-		$.ajax({
-		type: "post",
-		url: "{:url('article/download')}",
-		data: { id: id },
-		success: function (data) {
-			location.href = "{:url('article/download',['id'=>$article.id])}";
-		}
-		});
-    });
-
     $("#jiemi").click(function (){
 		//判断登陆
 		if(uid == -1){
@@ -413,14 +394,6 @@
 
   });
 </script>
-
-<!-- 插件hook位 -->
-{:hook('addonhook_detail_js')}
-<!-- 插件hook位 -->
-{:hook('addonhook_detail')}
-
-{//图片点击放大}
-{include file="/public/images-click" /}
 
 {/block}
 

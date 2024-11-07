@@ -62,9 +62,9 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function hidden(array $hidden = [], bool $merge = false)
+    public function hidden(array $hidden, bool $merge = false)
     {
-        $this->options['hidden'] = $merge ? array_merge($this->options['hidden'], $hidden) : $hidden;
+        $this->options['hidden'] = [$hidden, $merge];
 
         return $this;
     }
@@ -77,9 +77,9 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function visible(array $visible = [], bool $merge = false)
+    public function visible(array $visible, bool $merge = false)
     {
-        $this->options['visible'] = $merge ? array_merge($this->options['visible'], $visible) : $visible;
+        $this->options['visible'] = [$visible, $merge];
 
         return $this;
     }
@@ -92,9 +92,9 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function append(array $append = [], bool $merge = false)
+    public function append(array $append, bool $merge = false)
     {
-        $this->options['append'] = $merge ? array_merge($this->options['append'], $append) : $append;
+        $this->options['append'] = [$append, $merge];
 
         return $this;
     }
@@ -693,7 +693,8 @@ trait ModelRelationQuery
 
         foreach (['hidden', 'visible', 'append'] as $name) {
             if (isset($this->options[$name])) {
-                $result->$name($this->options[$name]);
+                [$value, $merge] = $this->options[$name];
+                $result->$name($value, $merge);
             }
         }
 

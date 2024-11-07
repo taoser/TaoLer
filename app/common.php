@@ -221,7 +221,7 @@ if (!function_exists('get_all_img')) {
     {
         //匹配格式为 <img src="http://img.com" />的图片
         $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
-        preg_match_all($pattern, $str,$matchContent);
+        preg_match_all($pattern, $str, $matchContent);
         if(isset($matchContent[1][0])) {
             return array_unique($matchContent[1]);
         }
@@ -229,9 +229,31 @@ if (!function_exists('get_all_img')) {
     }
 }
 
+if (!function_exists('get_one_video')) {
+    /**
+     * 提取字符串中所有视频
+     * @param $str
+     * @return array
+     */
+    function get_one_video($str)
+    {
+        //$pattern_video = "/(src)=( \\\?)([\"|' ]?)([^ \"'>]+\.(swf|flv|mp4|rmvb|avi|mpeg|ra|ram|mov|wmv)((\?[^ \"'>]+)?))\\2\\3/i";
+        // $pattern_music = "/(src)=( \\\?)([\"|' ]?)([^ \"'>]+\.(mp3|wav|wma|ogg|ape|acc))\\2\\3/i";
+        // $pattern_img = "/(src)=( \\\?)([\"|' ]?)([^ \"'>]+\.(gif|jpg|jpeg|bmp|png))\\2\\3/i";
+
+        //匹配格式为 <video src="http://img.com" > </video> 的视频
+        $pattern = "/<[video|VIDEO][\s\S]*src=[\'|\"](.*?(?:[\.mp4|\.mkv|\.flv|\.avi]))[\'|\"].*?[<\/video]>/";
+        preg_match($pattern, $str, $matchs);
+        if(isset($matchs[1])) {
+            return $matchs[1];
+        }
+        return [];
+    }
+}
+
 if (!function_exists('get_all_video')) {
     /**
-     * 提取字符串中所有图片
+     * 提取字符串中所有视频
      * @param $str
      * @return array
      */

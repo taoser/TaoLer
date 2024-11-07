@@ -17,24 +17,24 @@ class Article extends Model
         'id'            => 'int',
         'title'         => 'string',
         'content'       => 'mediumtext',
-        'status'        => 'enum',
+        'keywords'      => 'varchar',
+        'description'   => 'text',
         'cate_id'       => 'int',
         'user_id'       => 'int',
-        'goods_detail_id' => 'int',
+        'pv'            => 'int',
+        'jie'           => 'enum',
         'is_top'        => 'enum',
         'is_hot'        => 'enum',
         'is_reply'      => 'enum',
         'has_img'       => 'enum',
         'has_video'     => 'enum',
         'has_audio'     => 'enum',
-        'pv'            => 'int',
-        'jie'           => 'enum',
-        'keywords'      => 'varchar',
-        'description'   => 'text',
-        'read_type'     => 'tinyint',
-        'art_pass'      => 'varchar',
+        'read_type'     => 'enum',
+        'status'        => 'enum',
         'title_color'   => 'varchar',
-        'title_font'    => 'varchar',
+        'art_pass'      => 'varchar',
+        'goods_detail_id' => 'int',
+        'media'         => 'json',
         'create_time'   => 'int',
         'update_time'   => 'int',
         'delete_time'   => 'int',
@@ -46,7 +46,7 @@ class Article extends Model
 	//开启自动设置
 	protected $auto = [];
 	//仅新增有效
-	protected $insert = ['create_time', 'status'=>1, 'is_top'=>'0', 'is_hot'=>'0'];
+	protected $insert = ['create_time', 'status' => '1', 'is_top' => '0', 'is_hot' => '0'];
 	//仅更新有效
 	protected $update = ['update_time'];
 	
@@ -54,6 +54,9 @@ class Article extends Model
 	use SoftDelete;
 	protected $deleteTime = 'delete_time';
 	protected $defaultSoftDelete = 0;
+
+    // 设置json类型字段
+	protected $json = ['media'];
 	
     //文章关联栏目表
     public function cate()
@@ -82,7 +85,7 @@ class Article extends Model
 	//文章关联用户
 	public function user()
 	{
-		return $this->belongsTo('User','user_id','id');
+		return $this->belongsTo(User::class);
 	}
 
     //文章关联Tag表
@@ -118,6 +121,19 @@ class Article extends Model
         // 超级管理员无需审核
 		$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
 		$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
+        // $this->status = $data['status'];
+        // $this->user_id = $data['user_id'];
+        // $this->cate_id = $data['cate_id'];
+        // $this->title = $data['title'];
+        // $this->title_color = $data['title_color'];
+        // $this->content = $data['content'];
+        // $this->read_type = $data['read_type'];
+        // $this->art_pass = $data['art_pass'];
+        // $this->keywords = $data['keywords'];
+        // $this->description = $data['description'];
+        // $this->has_img = $data['has_img'];
+        // $this->has_video = $data['has_video'];
+        // $this->media = $data['media'];
 		$result = $this->save($data);
 		if($result) {
 			return ['code' => 1, 'msg' => $msg, 'data' => ['status' => $data['status'], 'id'=> $this->id]];
@@ -155,10 +171,11 @@ class Article extends Model
      */
     public function getArtTop(int $num)
     {
-        return Cache::remember('topArticle', function() use($num){
-            $topIdArr = $this::where(['is_top' => 1, 'status' => 1])->limit($num)->column('id');
+        return Cache::remember('top_article', function() use($num){
+            // $topIdArr = $this::where(['status' => '1', 'is_top' => '1'])->limit($num)->column('id');
              return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type')
-                ->whereIn('id', $topIdArr)
+                // ->whereIn('id', $topIdArr)
+                ->where(['status' => '1', 'is_top' => '1'])
                 ->with([
                     'cate' => function (Query $query) {
                         $query->field('id,catename,ename');
@@ -167,12 +184,13 @@ class Article extends Model
                         $query->field('id,name,nickname,user_img');
                     }
                 ])
+                ->limit($num)
                 ->withCount(['comments'])
                 ->order('id', 'desc')
                 ->append(['url'])
                 ->select()
                 ->toArray();
-        },600);
+        }, 600);
     }
 
     /**
@@ -185,8 +203,8 @@ class Article extends Model
      */
     public function getArtList(int $num)
     {
-        return Cache::remember('indexArticle', function() use($num){
-            $data = $this::field('id,title,title_color,cate_id,user_id,content,description,create_time,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
+        return Cache::remember('idx_article', function() use($num){
+            $data = $this::field('id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time')
             ->with([
             'cate' => function(Query $query){
                 $query->field('id,catename,ename,detpl');
@@ -195,7 +213,7 @@ class Article extends Model
                 $query->field('id,name,nickname,user_img');
 			} ])
             ->withCount(['comments'])
-            ->where('status', 1)
+            ->where('status', '1')
             ->order('id','desc')
             ->limit($num)
             ->hidden(['art_pass'])
@@ -219,7 +237,7 @@ class Article extends Model
     {
         return Cache::remember('article_hot', function() use($num){
             $comments = Comment::field('article_id, count(*) as count')
-            ->hasWhere('article', ['status' => 1])
+            ->hasWhere('article', ['status' => '1'])
             ->group('article_id')
             ->limit($num)
             ->select();
@@ -246,7 +264,7 @@ class Article extends Model
             } else {
                 // pv数
                 $where = [
-                    ['status', '=', 1]
+                    ['status', '=', '1']
                 ];
 
                 $artHot = $this::field('id,cate_id,title,create_time')
@@ -273,7 +291,7 @@ class Article extends Model
         return Cache::remember('article_'.$id, function() use($id){
             //查询文章
             return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,keywords,description,read_type,art_pass,title_color,create_time,update_time')
-            ->where(['status'=>1])
+            ->where(['status' => 1])
             ->with([
                 'cate' => function(Query $query){
                     $query->field('id,catename,ename,detpl');
@@ -305,20 +323,20 @@ class Article extends Model
         switch ($type) {
             //查询文章,15个分1页
             case 'jie':
-                $where[] = ['jie','=', 1];
+                $where[] = ['jie','=', '1'];
                 break;
             case 'hot':
-                $where[] = ['is_hot','=', 1];
+                $where[] = ['is_hot','=', '1'];
                 break;
             case 'top':
-                $where[] = ['is_top' ,'=', 1];
+                $where[] = ['is_top' ,'=', '1'];
                 break;
             case 'wait':
-                $where[] = ['jie','=', 0];
+                $where[] = ['jie','=', '0'];
                 break;
         }
 
-        $where[] = ['status', '=', 1];
+        $where[] = ['status', '=', '1'];
 
         // ··································
         $cateId = Cate::where('ename',$ename)->value('id');
@@ -609,13 +627,13 @@ class Article extends Model
                     $where[] = ['status', '=', 1];
                     break;
                 case '2':
-                    $where[] = ['is_top', '=', '1'];
+                    $where[] = ['is_top', '=', 1];
                     break;
                 case '3':
-                    $where[] = ['is_hot', '=', '1'];
+                    $where[] = ['is_hot', '=', 1];
                     break;
                 case '4':
-                    $where[] = ['is_reply', '=', '1'];
+                    $where[] = ['is_reply', '=', 1];
                     break;
                 case '5':
                     $where[] = ['status', '=', -1];

@@ -9,135 +9,131 @@
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md9 content detail">
-      <div class="fly-panel detail-box">
-		{//标题}
-        <h1 style="color:{$article.title_color};">{$article.title}
-		<span class="layui-hide-xs"><div onclick="PhoneDown();" style="" class="detail_qrcode" id="mobile"></div></span>
-		</h1>
-		{//图标}
-        <div class="fly-detail-info">
-		 <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.cate.ename : $article.cate.catename}</span>
-          {if ($article.jie == 0)}
-          <span class="layui-badge" style="background-color: #999;">{:lang('no finished')}</span>
-		  {else /}
-          <span class="layui-badge" style="background-color: #5FB878;">{:lang('finished')}</span>
-		  {/if}
-          {if ($article.is_top == 1)}<span class="layui-badge layui-bg-black">{:lang('top')}</span>{/if}
-		  {if ($article.is_hot == 1)}<span class="layui-badge layui-bg-red">{:lang('hot')}</span>{/if}
-		  
-		  <span id="LAY_jieAdmin" data-id="{$article['id']}"></span>
-		  
-		  <span class="fly-list-nums"> 
-			<a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$comments->count()}</a><i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
-		  </span>
-        </div>
-		{//作者}
-        <div class="detail-about">
-			<a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
-			<img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
-			<i class="iconfont icon-renzheng" title="认证信息"></i>
-			</a>
-			<div class="fly-detail-user">
-			<a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
-			<cite>{$article.user.nickname ?: $article.user.name}</cite>
-			</a>
-			<span class="layui-btn layui-btn-xs guanzhu" >关注</span>
-			</div>
-			<div class="detail-hits">
-			<!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
-			<span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
-			</div>
-			
-        </div>
-          {:hook('taoplayerdiv')}
+        <div class="fly-panel detail-box">
+            {//标题}
+            <h1 style="color:{$article.title_color};">{$article.title}
+                <span class="layui-hide-xs"><div onclick="PhoneDown();" style="" class="detail_qrcode" id="mobile"></div></span>
+            </h1>
+            {//图标}
+            <div class="fly-detail-info">
+                <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.cate.ename : $article.cate.catename}</span>
+                {if ($article.jie == 0)}
+                <span class="layui-badge" style="background-color: #999;">{:lang('no finished')}</span>
+                {else /}
+                <span class="layui-badge" style="background-color: #5FB878;">{:lang('finished')}</span>
+                {/if}
+                {if ($article.is_top == 1)}<span class="layui-badge layui-bg-black">{:lang('top')}</span>{/if}
+                {if ($article.is_hot == 1)}<span class="layui-badge layui-bg-red">{:lang('hot')}</span>{/if}
+                
+                <span id="LAY_jieAdmin" data-id="{$article['id']}"></span>
+                
+                <span class="fly-list-nums"> 
+                <a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$comments->count()}</a><i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
+                </span>
+            </div>
+            {//作者}
+            <div class="detail-about">
+                <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
+                <img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
+                <i class="iconfont icon-renzheng" title="认证信息"></i>
+                </a>
+                <div class="fly-detail-user">
+                <a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}" class="fly-link">
+                <cite>{$article.user.nickname ?: $article.user.name}</cite>
+                </a>
+                <span class="layui-btn layui-btn-xs guanzhu" >关注</span>
+                </div>
+                <div class="detail-hits">
+                <!--span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span-->
+                <span class="post-time" data="{$article.create_time}" style="padding-top: 5px;"></span>
+                </div>
+            </div>
+            {:hook('taoplayerdiv')}
         <div class="detail-body photos">{$article.content|raw}</div>
-		{//管理}
-		{if (($article.upzip !== '') || session('?user_name'))}
-		<div class="detail-assist">
-		{notempty name="$article.upzip"}
-		 <button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-		{/notempty}
-		  <div class="fly-admin-box" data-id="{$article.id}">
-		  {if ($user.auth ?? '')}
+        {//管理}
+        {if (session('?user_name'))}
+        <div class="detail-assist">
+            <div class="fly-admin-box" data-id="{$article.id}">
+            {if ($user.auth ?? '')}
             <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
             {if($article.is_top == 0)}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
-			{else /}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>{/if}
-			{if($article.is_hot == 0)}
+            {else /}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>{/if}
+            {if($article.is_hot == 0)}
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
-			{else /}
+            {else /}
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">{:lang('cancel hoting')}</span>
-			{/if}
+            {/if}
             {if($article.is_reply == 1)}
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0"><i class="layui-icon layui-icon-face-cry"></i></span>
             {else /}
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;">{:lang('enable reply')}</span>
             {/if}
-			<span id="color">{:lang('title color')}</span>
-		  {/if}
-		   {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-			<span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
-		  {/if}
-          </div>
-		</div>
-		{/if}
-      </div>
-	{//评论}
-      <div class="fly-panel detail-box" id="flyReply">
+            <span id="color">{:lang('title color')}</span>
+            {/if}
+            {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
+            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}">{:lang('edit')}</a></span>
+            {/if}
+            </div>
+        </div>
+        {/if}
+        </div>
+	    {//评论}
+        <div class="fly-panel detail-box" id="flyReply">
         <span style="font-size:18px;">评论 {$comments->count()}</span>
         <ul class="jieda" id="jieda">
-		{volist name="comments['data']" id="vo" empty= ""}
-          <li data-id="{$vo.id}" class="jieda-daan">
+        {volist name="comments['data']" id="vo" empty= ""}
+            <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" href="{:url('user/home',['id'=>$vo.user.id])}">
+                <a class="fly-avatar" href="{:url('user/home',['id'=>$vo.user.id])}">
                 <img src="{$vo.user.user_img}" alt=" "><i class="iconfont icon-renzheng" title="认证信息"></i>
-              </a>
-              <div class="fly-detail-user">
+                </a>
+                <div class="fly-detail-user">
                 <a href="{:url('user/home',['id'=>$vo.user.id])}" class="fly-link">
-                  <cite>{$vo.user.nickname ?: $vo.user.name}</cite>     
+                    <cite>{$vo.user.nickname ?: $vo.user.name}</cite>     
                 </a>
                 {if condition="$article.user.id eq $vo.user.id"}<span>({:lang('poster')})</span>{/if}
-              </div>
-              <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span></div>
-			{if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
+                </div>
+                <div class="detail-hits"><span class="post-time" data="{$vo.create_time}"></span></div>
+            {if $vo.cai == 1}<i class="iconfont icon-caina" title="最佳答案"></i>{/if}
             </div>
             <div class="detail-body jieda-body photos">{$vo.content|raw}</div>
             <div class="jieda-reply">
-              <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
+                <span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
                 <i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
-              </span>
-              <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
-			{//评论编辑删除采纳权限}
-              <div class="jieda-admin">
-				{if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
-                  <span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
-					<span type="del">{:lang('delete')}</span>				
-				{/if}
-				{if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth  ?? '')) /}<span class="jieda-accept" type="accept">{:lang('accept')}</span>{/if}
-              </div>
+                </span>
+                <span type="reply"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
+            {//评论编辑删除采纳权限}
+                <div class="jieda-admin">
+                {if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
+                    <span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
+                    <span type="del">{:lang('delete')}</span>				
+                {/if}
+                {if ($vo.cai == 0) && ((session('user_id') == $article.user_id) OR ($user.auth  ?? '')) /}<span class="jieda-accept" type="accept">{:lang('accept')}</span>{/if}
+                </div>
             </div>
-          </li>
+            </li>
         {/volist} 
         </ul>
-		<div style="text-align: center">{$comments|raw}</div>
+        <div style="text-align: center">{$comments|raw}</div>
         {if condition="$article.is_reply == 1"}
-		<div class="layui-form layui-form-pane">
+        <div class="layui-form layui-form-pane">
             <div class="layui-form-item layui-form-text">
-              <a name="comment"></a>
-              <div class="layui-input-block">
+                <a name="comment"></a>
+                <div class="layui-input-block">
                 <textarea id="L_content" name="content" required lay-verify="required" placeholder="{:lang('please input the content')}"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
-              </div>
+                </div>
             </div>
             <div class="layui-form-item">
-              <input type="hidden" name="article_id" value="{$article.id}">
-			  <input type="hidden" name="user_id" value="{:session('user_id')}">
-              <button class="layui-btn" lay-filter="user-comment" lay-submit>{:lang('submit comments')}</button>
+                <input type="hidden" name="article_id" value="{$article.id}">
+                <input type="hidden" name="user_id" value="{:session('user_id')}">
+                <button class="layui-btn" lay-filter="user-comment" lay-submit>{:lang('submit comments')}</button>
             </div>
         </div>
-		{else /}
-		<blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">本帖已设置禁止回复</blockquote>
-		{/if}
-      </div>
+        {else /}
+        <blockquote class="layui-elem-quote layui-quote-nm layui-disabled" style="margin: 100px 0 20px; padding: 50px 20px; text-align: center; color: #999!important;">本帖已设置禁止回复</blockquote>
+        {/if}
+        </div>
     </div>
     <div class="layui-col-md3">
         <div class="fly-panel">
@@ -173,9 +169,8 @@
 </div>
 {include file="public/menu" /}
 {/block}
-{block name="script"}
 
-{:hook('taoplayer')}
+{block name="script"}
 
 <script>
 var collectionFind = "{:url('Collection/find')}",
@@ -190,27 +185,27 @@ var collectionFind = "{:url('Collection/find')}",
 	langCancelCollection = "{:lang('cancel collection')}";
 var	collection = "{:url('collection/')}";
 	  
-layui.use(['fly', 'face','colorpicker','plyr'], function(){
-  var $ = layui.jquery
-  ,form = layui.form
-  ,fly = layui.fly
-  ,colorpicker = layui.colorpicker
-  ,plyr = layui.plyr;
-  var laytpl = layui.laytpl;
-  var uid = layui.cache.user.uid;
-  
-  //tpl模板给发布时间赋值
-  $('div.detail-hits').children('span.post-time').each(function(){
-    var othis = $(this), html = othis.html();
-	var string =  laytpl('{{ d.time }}').render({
-		//time: html
-		time: othis.attr('data')
-	});
-	var posttime = layui.util.timeAgo(string, 1);
-  
-	othis.text(posttime);
-    //console.log(othis.attr('data'));
-  });
+layui.use(['fly', 'colorpicker','plyr'], function(){
+    var $ = layui.jquery
+    ,form = layui.form
+    ,fly = layui.fly
+    ,colorpicker = layui.colorpicker
+    ,plyr = layui.plyr;
+    var laytpl = layui.laytpl;
+    var uid = layui.cache.user.uid;
+    
+    //tpl模板给发布时间赋值
+    $('div.detail-hits').children('span.post-time').each(function(){
+        var othis = $(this), html = othis.html();
+        var string =  laytpl('{{ d.time }}').render({
+            //time: html
+            time: othis.attr('data')
+        });
+        var posttime = layui.util.timeAgo(string, 1);
+    
+        othis.text(posttime);
+        //console.log(othis.attr('data'));
+    });
   
 
 	//预定义颜色项
@@ -222,7 +217,7 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
 		,done: function(color){
 			  //改变标题颜色
 			  $('h1').css("color", color);
-			  var id = {$article.id};
+			  var id = "{$article.id}";
 			  $.ajax({
 				type:'post',
 				url:"{:url('Article/titleColor')}",
@@ -242,8 +237,8 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
   
     //评论需要登陆
     form.on('submit(user-comment)',function (data){
-	var index = layer.load(1);
-	var filed = data.field;
+        var index = layer.load(1);
+        var filed = data.field;
         if (uid == -1) {
 			layer.msg('请先登陆',{icon:5,time:2000},function(){
                 location.href = "{:url('login/index')}";
@@ -268,31 +263,9 @@ layui.use(['fly', 'face','colorpicker','plyr'], function(){
         return false;
     });
 	
-	//下载
-    $('#zip-download').click(function (){
-	var id = "{$article.id}";
-        $.ajax({
-                type:"post",
-                url:"{:url('article/download')}",
-                data:{id:id},
-                success:function (data) {
-                      location.href = "{:url('article/download',['id'=>$article.id])}"; 
-                }
-            });
-    });
-	
-	//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  $('.detail-body').each(function(){
-    var othis = $(this), html = othis.html();
-    othis.html(fly.content(html));
-  });
-  //加载播放器
-  plyr.setup();
-
-});
-
-//扫码阅读
-$("#rdown").hover(function(){
+})
+    //扫码阅读
+    $("#rdown").hover(function(){
 		 $("#phonedl").show().stop();
 	},function(){
 		 $("#phonedl").hide().stop();
@@ -311,18 +284,20 @@ $("#rdown").hover(function(){
 			content: "<img src='/qrcode/?text={$Request.domain}{:url('article/detail',['id' => $article.id])}&size=230'>"
 		});
 	}
-//推送百度收录服务
-(function(){
-    var bp = document.createElement('script');
-    var curProtocol = window.location.protocol.split(':')[0];
-    if (curProtocol === 'https') {
-        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-    }
-    else {
-        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-    }
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(bp, s);
-})();
+
+    //推送百度收录服务
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+
 </script>
 {/block}
