@@ -107,7 +107,7 @@ layui.use(['form','layer'],function(){
               toast.success({title:"成功消息",message: res.msg});
               location.href = res.url;
 			} else {
-				layer.open({title:"注册失败",content:data.msg,icon:5,anim:6});
+				layer.open({title:"注册失败",content:res.msg,icon:5,anim:6});
 				$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 			}}
 		});
