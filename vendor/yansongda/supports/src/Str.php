@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Yansongda\Supports;
 
-use Random\RandomException;
-
 /**
  * Most of the methods in this file come from illuminate/support.
  * thanks provide such a useful class.
@@ -146,9 +144,6 @@ class Str
         return static::contains($callback, '@') ? explode('@', $callback, 2) : [$callback, $default];
     }
 
-    /**
-     * @throws RandomException
-     */
     public static function random(int $length = 16): string
     {
         $string = '';
@@ -275,10 +270,10 @@ class Str
         return $value;
     }
 
-    public static function startsWith(string $haystack, array|string $needles): bool
+    public static function startsWith(int|string $haystack, array|string $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if (str_starts_with($haystack, $needle)) {
+            if (str_starts_with(strval($haystack), $needle)) {
                 return true;
             }
         }

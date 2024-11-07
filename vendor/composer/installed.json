@@ -595,17 +595,17 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.0.3",
-            "version_normalized": "2.0.3.0",
+            "version": "2.0.4",
+            "version_normalized": "2.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8"
+                "reference": "f9c436286ab2892c7db7be8c8da4ef61ccf7b455"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8",
-                "reference": "6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/f9c436286ab2892c7db7be8c8da4ef61ccf7b455",
+                "reference": "f9c436286ab2892c7db7be8c8da4ef61ccf7b455",
                 "shasum": ""
             },
             "require": {
@@ -615,7 +615,7 @@
                 "bamarni/composer-bin-plugin": "^1.8.2",
                 "phpunit/phpunit": "^8.5.39 || ^9.6.20"
             },
-            "time": "2024-07-18T10:29:17+00:00",
+            "time": "2024-10-17T10:06:22+00:00",
             "type": "library",
             "extra": {
                 "bamarni-bin": {
@@ -661,7 +661,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.0.3"
+                "source": "https://github.com/guzzle/promises/tree/2.0.4"
             },
             "funding": [
                 {
@@ -800,17 +800,17 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v11.27.2",
-            "version_normalized": "11.27.2.0",
+            "version": "v11.30.0",
+            "version_normalized": "11.30.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
-                "reference": "bc49d144a20b0d432e1ac812c9e056594b6c6480"
+                "reference": "06dfc614aff58384b28ba5ad191f6a02d6b192cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/container/zipball/bc49d144a20b0d432e1ac812c9e056594b6c6480",
-                "reference": "bc49d144a20b0d432e1ac812c9e056594b6c6480",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/06dfc614aff58384b28ba5ad191f6a02d6b192cb",
+                "reference": "06dfc614aff58384b28ba5ad191f6a02d6b192cb",
                 "shasum": ""
             },
             "require": {
@@ -821,7 +821,7 @@
             "provide": {
                 "psr/container-implementation": "1.1|2.0"
             },
-            "time": "2024-10-08T13:34:53+00:00",
+            "time": "2024-10-11T15:30:11+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -854,8 +854,8 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.27.2",
-            "version_normalized": "11.27.2.0",
+            "version": "v11.30.0",
+            "version_normalized": "11.30.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -2694,17 +2694,17 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v5.4.40",
-            "version_normalized": "5.4.40.0",
+            "version": "v5.4.45",
+            "version_normalized": "5.4.45.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "6a13d37336d512927986e09f19a4bed24178baa6"
+                "reference": "862700068db0ddfd8c5b850671e029a90246ec75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/6a13d37336d512927986e09f19a4bed24178baa6",
-                "reference": "6a13d37336d512927986e09f19a4bed24178baa6",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/862700068db0ddfd8c5b850671e029a90246ec75",
+                "reference": "862700068db0ddfd8c5b850671e029a90246ec75",
                 "shasum": ""
             },
             "require": {
@@ -2714,7 +2714,7 @@
             "require-dev": {
                 "symfony/var-dumper": "^4.4.9|^5.0.9|^6.0"
             },
-            "time": "2024-05-31T14:33:22+00:00",
+            "time": "2024-09-25T14:11:13+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2750,7 +2750,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v5.4.40"
+                "source": "https://github.com/symfony/var-exporter/tree/v5.4.45"
             },
             "funding": [
                 {
@@ -3059,17 +3059,17 @@
         },
         {
             "name": "topthink/think-helper",
-            "version": "v3.1.8",
-            "version_normalized": "3.1.8.0",
+            "version": "v3.1.9",
+            "version_normalized": "3.1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-helper.git",
-                "reference": "612eea76eec2a22f41b0e24be27f49454e4fd5f5"
+                "reference": "d554a0a62e4c7034abc7343ee866005c3f399ae2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-helper/zipball/612eea76eec2a22f41b0e24be27f49454e4fd5f5",
-                "reference": "612eea76eec2a22f41b0e24be27f49454e4fd5f5",
+                "url": "https://api.github.com/repos/top-think/think-helper/zipball/d554a0a62e4c7034abc7343ee866005c3f399ae2",
+                "reference": "d554a0a62e4c7034abc7343ee866005c3f399ae2",
                 "shasum": ""
             },
             "require": {
@@ -3078,7 +3078,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2024-08-26T15:07:58+00:00",
+            "time": "2024-10-15T02:24:05+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3102,7 +3102,7 @@
             "description": "The ThinkPHP6 Helper Package",
             "support": {
                 "issues": "https://github.com/top-think/think-helper/issues",
-                "source": "https://github.com/top-think/think-helper/tree/v3.1.8"
+                "source": "https://github.com/top-think/think-helper/tree/v3.1.9"
             },
             "install-path": "../topthink/think-helper"
         },
@@ -3279,24 +3279,18 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.61",
-            "version_normalized": "2.0.61.0",
+            "version": "v2.0.62",
+            "version_normalized": "2.0.62.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "10528ebf4a5106b19c3bac9c6deae7a67ff49de6"
+                "reference": "e53bfea572a133039ad687077120de5521af617f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/10528ebf4a5106b19c3bac9c6deae7a67ff49de6",
-                "reference": "10528ebf4a5106b19c3bac9c6deae7a67ff49de6",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/e53bfea572a133039ad687077120de5521af617f",
+                "reference": "e53bfea572a133039ad687077120de5521af617f",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
@@ -3309,7 +3303,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^7|^8|^9.5"
             },
-            "time": "2023-04-20T14:27:51+00:00",
+            "time": "2024-09-22T06:17:47+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3337,7 +3331,7 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v2.0.61"
+                "source": "https://github.com/top-think/think-orm/tree/v2.0.62"
             },
             "install-path": "../topthink/think-orm"
         },
@@ -3672,26 +3666,26 @@
         },
         {
             "name": "workerman/workerman",
-            "version": "v4.1.16",
-            "version_normalized": "4.1.16.0",
+            "version": "v4.2.0",
+            "version_normalized": "4.2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/workerman.git",
-                "reference": "405d904d33026e19497dffc3d085bbc16e66534e"
+                "reference": "df513f3fd274811ebb8358d05d7cec19ee8bd3e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/workerman/zipball/405d904d33026e19497dffc3d085bbc16e66534e",
-                "reference": "405d904d33026e19497dffc3d085bbc16e66534e",
+                "url": "https://api.github.com/repos/walkor/workerman/zipball/df513f3fd274811ebb8358d05d7cec19ee8bd3e1",
+                "reference": "df513f3fd274811ebb8358d05d7cec19ee8bd3e1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0"
+                "php": ">=8.0"
             },
             "suggest": {
                 "ext-event": "For better performance. "
             },
-            "time": "2024-07-04T08:26:39+00:00",
+            "time": "2024-11-07T08:31:33+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3891,20 +3885,22 @@
         },
         {
             "name": "yansongda/supports",
-            "version": "v4.0.10",
-            "version_normalized": "4.0.10.0",
+            "version": "v4.0.11",
+            "version_normalized": "4.0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yansongda/supports.git",
-                "reference": "11cc73776e6d4d763a84c8c733f64820abdc44e5"
+                "reference": "c26a61c8bc2dbae6278693d8ec5d6771615e7674"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yansongda/supports/zipball/11cc73776e6d4d763a84c8c733f64820abdc44e5",
-                "reference": "11cc73776e6d4d763a84c8c733f64820abdc44e5",
+                "url": "https://api.github.com/repos/yansongda/supports/zipball/c26a61c8bc2dbae6278693d8ec5d6771615e7674",
+                "reference": "c26a61c8bc2dbae6278693d8ec5d6771615e7674",
                 "shasum": ""
             },
             "require": {
+                "ext-ctype": "*",
+                "ext-mbstring": "*",
                 "php": ">=8.0"
             },
             "require-dev": {
@@ -3917,7 +3913,7 @@
                 "monolog/monolog": "Use logger",
                 "symfony/console": "Use stdout logger"
             },
-            "time": "2024-06-09T15:49:21+00:00",
+            "time": "2024-11-06T08:18:03+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
