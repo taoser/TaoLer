@@ -13,8 +13,7 @@ namespace app\controller\index;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\facade\Article;
-use app\common\lib\Msgres;
+use app\model\index\Article;
 
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
@@ -67,18 +66,15 @@ class Index extends IndexBaseController
 		// }
 
 	
-		$types = input('type');
 		//置顶文章
 		$artTop = Article::getArtTop(5);
         //首页文章列表,显示10个
-        $artList = Article::getArtList(10);
+        $indexArticles = Article::getIndexs();
 
-		$vs = [
+		View::assign([
 			'artTop'	=>	$artTop,
-			'artList'	=>	$artList,
-			'type'		=>	$types
-		];
-		View::assign($vs);
+			'artList'	=>	$indexArticles,
+		]);
 
 		return View::fetch();
     }
@@ -90,18 +86,5 @@ class Index extends IndexBaseController
         return redirect((string) url('user/home',['id'=>$uid]));
 
     }
-	
-	public function language()
-	{
-		if(request()->isPost()){
-			$language = new \app\common\controller\Language;
-			$lang = $language->select(input('language'));
-			if($lang){
-				return Msgres::success();
-			}
-		}else {
-			return Msgres::error('illegal_request');
-		}
-	}
 
 }

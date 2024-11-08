@@ -2,10 +2,10 @@
 
 namespace app\controller\index;
 
-use app\common\model\Cate;
 use think\facade\View;
+use app\model\index\Article;
 
-class category extends IndexBaseController
+class Category extends IndexBaseController
 {
 
     private $model = null;
@@ -14,36 +14,39 @@ class category extends IndexBaseController
     {
         parent::initialize();
 
-        $this->model = new Cate();
+        $this->model = new \app\model\index\Category();
     }
 
     //文章分类
-    public function getArticleListByEname()
+    public function getArticles()
 	{
-		$cate = new Cate();
 		//动态参数
 		$ename = $this->request->param('ename');
-		$type = $this->request->param('type','all');
-		$page = $this->request->param('page',1);
+		$type = $this->request->param('type', '');
+		$page = $this->request->param('page', 1);
 
 		// 分类信息
-		$cateInfo = $cate->getCateInfo($ename);
+		$cateInfo = $this->model::getCateInfo($ename);
 
-		if(is_null($cateInfo)) {
+		if(is_null($cateInfo) && $ename != 'all') {
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '没有可访问的数据！');
 		}
 		
         //分类列表
-		$artList = $this->model->getCateList($ename, $type, $page);
-
+		$artList = $this->model::getArticlesByCategoryEname($ename, $page, $type);
+// halt($artList);
 		//	热议文章
-		$artHot = $this->model->getArtHot(10);
+		$artHot = Article::getArtHot(10);
 
 		//分页url
-		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
+		if(empty($type)) {
+			$url = (string) url('cate_page',['ename' => $ename,'page' => $page]);
+		} else {
+			$url = (string) url('cate_type_page',['ename'=>$ename, 'type' => $type, 'page'=>$page]);
+		}
+		// halt($url);
 		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
-
 
 		$assignArr = [
 			'ename'		=> $ename,

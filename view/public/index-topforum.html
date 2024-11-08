@@ -1,14 +1,14 @@
 <div>
 	<li>
-		<a href="{$Request.domain}{:url('user/home',['id'=>$top.user_id])}" class="fly-avatar">
-		  <img src="{$Request.domain}{$top.user.user_img}" alt="{$top.user.name}">
+		<a href="{:url('user/home',['id'=>$top.user_id])}" class="fly-avatar">
+		  <img src="{$top.user.user_img}" alt="{$top.user.name}">
 		</a>
-		<h2><a href="{$Request.domain}{$top.url}" style="color: {$top.title_color ?? ''}">{$top.title}</a></h2>
+		<h2><a href="{$top.url}" style="color: {$top.title_color ?? ''}">{$top.title}</a></h2>
 		<div class="fly-list-info">
 			{if config('taoler.config.cate_show') == 1}
 			<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $top.cate.ename : $top.cate.catename}</a>
 			{/if}
-			<a href="{$Request.domain}{:url('user/home',['id'=>$top.user_id])}" link>
+			<a href="{:url('user/home',['id'=>$top.user_id])}" link>
 			<cite>{$top.user.nickname ?: $top.user.name}</cite>
 			</a>
 			<i>{$top.create_time|date='Y-m-d'}</i>

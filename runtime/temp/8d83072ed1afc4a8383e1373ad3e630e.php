@@ -1,4 +1,4 @@
-<?php /*a:8:{s:44:"E:\github\TaoLer\view\index\index\index.html";i:1730713592;s:38:"E:\github\TaoLer\view\public\base.html";i:1730713592;s:40:"E:\github\TaoLer\view\public\header.html";i:1730854752;s:40:"E:\github\TaoLer\view\public\column.html";i:1730854784;s:48:"E:\github\TaoLer\view\public\index-topforum.html";i:1730713592;s:38:"E:\github\TaoLer\view\public\menu.html";i:1730713592;s:40:"E:\github\TaoLer\view\public\footer.html";i:1730713592;s:36:"E:\github\TaoLer\view\public\js.html";i:1730713592;}*/ ?>
+<?php /*a:8:{s:44:"E:\github\TaoLer\view\index\index\index.html";i:1731046101;s:38:"E:\github\TaoLer\view\public\base.html";i:1730978209;s:40:"E:\github\TaoLer\view\public\header.html";i:1730978209;s:40:"E:\github\TaoLer\view\public\column.html";i:1730978209;s:48:"E:\github\TaoLer\view\public\index-topforum.html";i:1731067839;s:38:"E:\github\TaoLer\view\public\menu.html";i:1730978209;s:40:"E:\github\TaoLer\view\public\footer.html";i:1730978209;s:36:"E:\github\TaoLer\view\public\js.html";i:1730978209;}*/ ?>
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
@@ -156,15 +156,15 @@
 					<?php if(config('taoler.config.top_show') == 1): if(is_array($artTop) || $artTop instanceof \think\Collection || $artTop instanceof \think\Paginator): $i = 0; $__LIST__ = $artTop;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$top): $mod = ($i % 2 );++$i;?>
 						<div>
 	<li>
-		<a href="<?php echo htmlentities((string) app('request')->domain()); ?><?php echo url('user/home',['id'=>$top['user_id']]); ?>" class="fly-avatar">
-		  <img src="<?php echo htmlentities((string) app('request')->domain()); ?><?php echo htmlentities((string) $top['user']['user_img']); ?>" alt="<?php echo htmlentities((string) $top['user']['name']); ?>">
+		<a href="<?php echo url('user/home',['id'=>$top['user_id']]); ?>" class="fly-avatar">
+		  <img src="<?php echo htmlentities((string) $top['user']['user_img']); ?>" alt="<?php echo htmlentities((string) $top['user']['name']); ?>">
 		</a>
-		<h2><a href="<?php echo htmlentities((string) app('request')->domain()); ?><?php echo htmlentities((string) $top['url']); ?>" style="color: <?php echo isset($top['title_color']) ? htmlentities((string) $top['title_color']) : ''; ?>"><?php echo htmlentities((string) $top['title']); ?></a></h2>
+		<h2><a href="<?php echo htmlentities((string) $top['url']); ?>" style="color: <?php echo isset($top['title_color']) ? htmlentities((string) $top['title_color']) : ''; ?>"><?php echo htmlentities((string) $top['title']); ?></a></h2>
 		<div class="fly-list-info">
 			<?php if(config('taoler.config.cate_show') == 1): ?>
 			<a class="layui-badge"><?php echo cookie('think_lang') == 'en-us' ? $top['cate']['ename'] : $top['cate']['catename']; ?></a>
 			<?php endif; ?>
-			<a href="<?php echo htmlentities((string) app('request')->domain()); ?><?php echo url('user/home',['id'=>$top['user_id']]); ?>" link>
+			<a href="<?php echo url('user/home',['id'=>$top['user_id']]); ?>" link>
 			<cite><?php echo !empty($top['user']['nickname']) ? htmlentities((string) $top['user']['nickname']) : htmlentities((string) $top['user']['name']); ?></cite>
 			</a>
 			<i><?php echo htmlentities((string) date('Y-m-d',!is_numeric($top['create_time'])? strtotime($top['create_time']) : $top['create_time'])); ?></i>
@@ -186,15 +186,15 @@
 								<?php if(is_array($artTop) || $artTop instanceof \think\Collection || $artTop instanceof \think\Paginator): $i = 0; $__LIST__ = $artTop;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$top): $mod = ($i % 2 );++$i;?>
 								<div>
 	<li>
-		<a href="<?php echo htmlentities((string) app('request')->domain()); ?><?php echo url('user/home',['id'=>$top['user_id']]); ?>" class="fly-avatar">
-		  <img src="<?php echo htmlentities((string) app('request')->domain()); ?><?php echo htmlentities((string) $top['user']['user_img']); ?>" alt="<?php echo htmlentities((string) $top['user']['name']); ?>">
+		<a href="<?php echo url('user/home',['id'=>$top['user_id']]); ?>" class="fly-avatar">
+		  <img src="<?php echo htmlentities((string) $top['user']['user_img']); ?>" alt="<?php echo htmlentities((string) $top['user']['name']); ?>">
 		</a>
-		<h2><a href="<?php echo htmlentities((string) app('request')->domain()); ?><?php echo htmlentities((string) $top['url']); ?>" style="color: <?php echo isset($top['title_color']) ? htmlentities((string) $top['title_color']) : ''; ?>"><?php echo htmlentities((string) $top['title']); ?></a></h2>
+		<h2><a href="<?php echo htmlentities((string) $top['url']); ?>" style="color: <?php echo isset($top['title_color']) ? htmlentities((string) $top['title_color']) : ''; ?>"><?php echo htmlentities((string) $top['title']); ?></a></h2>
 		<div class="fly-list-info">
 			<?php if(config('taoler.config.cate_show') == 1): ?>
 			<a class="layui-badge"><?php echo cookie('think_lang') == 'en-us' ? $top['cate']['ename'] : $top['cate']['catename']; ?></a>
 			<?php endif; ?>
-			<a href="<?php echo htmlentities((string) app('request')->domain()); ?><?php echo url('user/home',['id'=>$top['user_id']]); ?>" link>
+			<a href="<?php echo url('user/home',['id'=>$top['user_id']]); ?>" link>
 			<cite><?php echo !empty($top['user']['nickname']) ? htmlentities((string) $top['user']['nickname']) : htmlentities((string) $top['user']['name']); ?></cite>
 			</a>
 			<i><?php echo htmlentities((string) date('Y-m-d',!is_numeric($top['create_time'])? strtotime($top['create_time']) : $top['create_time'])); ?></i>
@@ -222,7 +222,7 @@
 				<article class="list-item block card-plain">
 					<?php if(getOnepic($article['content'])): ?>
 					<figure class="media media-3x2  d-none d-md-block">
-						<a class="media-content" href="<?php echo htmlentities((string) $article['url']); ?>" title="<?php echo htmlentities((string) $article['title']); ?>">
+						<a class="media-content" href="<?php echo url('detail', ['ename' => $article['cate']['ename'],'id' => $article['id']]); ?>" title="<?php echo htmlentities((string) $article['title']); ?>">
 							<img src="<?php echo getOnepic($article['content']); ?>" alt="<?php echo htmlentities((string) $article['title']); ?>">
 						</a>
 					</figure>
@@ -230,7 +230,7 @@
 					<div class="list-width list-content">
 						<div class="list-body">
 							<h3>
-								<a href="<?php echo htmlentities((string) $article['url']); ?>" title="<?php echo htmlentities((string) $article['title']); ?>" class="list-title fanpian"><?php echo htmlentities((string) $article['title']); ?></a>
+								<a href="<?php echo url('detail', ['ename' => $article['cate']['ename'],'id' => $article['id']]); ?>" title="<?php echo htmlentities((string) $article['title']); ?>" class="list-title fanpian"><?php echo htmlentities((string) $article['title']); ?></a>
 							</h3>
 							<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
 								<p class="h-3x"><?php echo htmlentities((string) $article['description']); ?></p>

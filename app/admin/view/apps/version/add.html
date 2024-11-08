@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增页面</title>
+    <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+</head>
+    <body>
+        <form class="layui-form" action="">
+            <div class="mainBox">
+                <div class="main-container">
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">应用名</label>
+                      <div class="layui-input-inline">
+                        <select name="pname" lay-verify="required" >
+                        <option value="TaoLer">TaoLer</option>
+                        <option value="TaoilSys">TaoilSys</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">应用版本</label>
+                      <div class="layui-input-inline">
+                        <input type="text" name="version_name" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item  layui-form-text">
+                      <label class="layui-form-label">升级包</label>
+                      <div class="layui-input-inline">
+                        <input type="text" name="version_src" lay-verify="required" placeholder="请上传升级包" autocomplete="off" class="layui-input" >
+                      </div>
+                      <button style="float: left;" type="button" class="layui-btn " id="upload-version">上传升级包</button>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">版本说明</label>
+                      <div class="layui-input-inline">
+                      <textarea name="version_resume" placeholder="请输入内容"  lay-verify="required"  class="layui-textarea"></textarea>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom">
+                <div class="button-container">
+                    <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+                            lay-filter="version-save">
+                        <i class="layui-icon layui-icon-ok"></i>
+                        提交
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-sm">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+        <script src="/static/component/layui/layui.js"></script>
+        <script src="/static/component/pear/pear.js"></script>
+
+          <script>
+          layui.use(['form', 'upload'], function(){
+              let $ = layui.jquery;
+              let form = layui.form;
+              let upload = layui.upload ;
+
+            let UPLOAD_URL = "{:url('apps.version/uploadZip')}";
+            let ADD_URL = "{:url('apps.version/add')}";
+
+              form.on('submit(version-save)', function(data) {
+                  $.ajax({
+                      url: ADD_URL,
+                      data: JSON.stringify(data.field),
+                      dataType: 'json',
+                      contentType: 'application/json',
+                      type: 'post',
+                      success: function(result) {
+                          if (result.code === 0) {
+                              layer.msg(result.msg, {
+                                  icon: 1,
+                                  time: 1000
+                              }, function() {
+                                  parent.layer.close(parent.layer.getFrameIndex(window
+                                      .name)); //关闭当前页
+                                  parent.layui.table.reload("version-table");
+                              });
+                          } else {
+                              layer.msg(result.msg, {
+                                  icon: 2,
+                                  time: 1000
+                              });
+                          }
+                      }
+                  })
+                  return false;
+              });
+
+            upload.render({
+              elem: '#upload-version'
+              ,url: UPLOAD_URL
+              ,data: {type:'zip'}
+              ,accept: 'file'
+              ,field: 'file'
+              ,method: 'get'
+              ,exts: 'zip|rar|7z'
+              ,done: function(res){
+                    $(this.item).prev("div").children("input").val(res.src);
+                        if(res.code === 0){
+                            layer.msg(res.msg,{
+                                icon:6,
+                                tiye:2000
+                            });
+                        } else {
+                            layer.open({
+                                title:"上传失败",
+                                content:res.msg,
+                                icon:5,
+                                anim:6
+                            });
+                        }
+                    }
+                });
+            })
+        </script>
+    </body>
+</html>

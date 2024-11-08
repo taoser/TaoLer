@@ -21,8 +21,13 @@ Route::get('admin', 'admin.index/index'); // 管理路由
 
 Route::group(function(){
     Route::get('index', 'index/index');
-    Route::get('category/<ename>$', 'category/getArticleListByEname')->name('cate');
     Route::get('article/<ename>/<id>$', 'Article/detail')->name('detail');
+
+    Route::get('category/<ename>$', 'category/getArticles')->name('cate');
+    Route::get('category/<ename>/<page>$', 'category/getArticles')->name('cate_page');
+    Route::get('category/<ename>/<type>$', 'category/getArticles')->name('cate_type');
+	Route::get('category/<ename>/<type>/<page>$', 'category/getArticles')->name('cate_type_page');
+    
 })->prefix('index.')
 ->pattern([
     'ename' => '[\w|\-]+',

@@ -95,6 +95,11 @@ class Article extends TagLib
 
     public function tagLink(): string
     {
+        return '{:url(\'detail\', [\'ename\' => $article.cate.ename,\'id\' => $article.id])}';
+    }
+
+    public function tagUrl(): string
+    {
         return '{$article.url}';
     }
 
