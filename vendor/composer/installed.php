@@ -3,7 +3,7 @@
         'name' => 'topthink/think',
         'pretty_version' => '3.0.x-dev',
         'version' => '3.0.9999999.9999999-dev',
-        'reference' => '415f81b28f95f77dd2d4a111be8ffc229b5833d7',
+        'reference' => '44cb652cbae87d44135917ceb13497d2479439b4',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -109,6 +109,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'taoser/think-auth' => array(
+            'pretty_version' => 'v2.0.0',
+            'version' => '2.0.0.0',
+            'reference' => 'db57156530dd8e2c020afc6e64abc1ad64e9e06c',
+            'type' => 'think-extend',
+            'install_path' => __DIR__ . '/../taoser/think-auth',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'topthink/framework' => array(
             'pretty_version' => 'v8.0.4',
             'version' => '8.0.4.0',
@@ -121,7 +130,7 @@
         'topthink/think' => array(
             'pretty_version' => '3.0.x-dev',
             'version' => '3.0.9999999.9999999-dev',
-            'reference' => '415f81b28f95f77dd2d4a111be8ffc229b5833d7',
+            'reference' => '44cb652cbae87d44135917ceb13497d2479439b4',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

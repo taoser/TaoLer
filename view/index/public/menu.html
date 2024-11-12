@@ -1,0 +1,75 @@
+{if $Request.isMobile}
+<div class="layui-panel site-menu layui-hide-md">
+    <ul class="layui-menu layui-menu-lg">
+		<li class="search" style="padding-left:5px;padding-top:2px;padding-right:5px;">
+			<form action="{$Request.domain}{:url('index/search',['keywords'=>$Request.param.keywords])}">
+				<input  type="search" name="keywords" value="" aria-label="Search text" placeholder="搜索" class="layui-input">
+			</form>
+		</li>
+	{if session('?user_id')}
+		<li class="layui-nav-item" style="padding-left:25px;">
+			<a class="fly-nav-avatar" href="javascript:;">
+				<img src="{$user['user_img']}" >
+			</a>
+		</li>
+	{else /}
+		<li class="layui-nav-item" style="padding-left:25px;">
+			<a class="iconfont icon-touxiang" href="{:url('login/index')}"></a>
+			<a href="{:url('login/index')}"> {:lang('login')} </a>
+			<a href="{:url('login/reg')}"> {:lang('register')} </a>
+		</li>
+		<li class="layui-nav-item" style="padding-left:25px;">
+			<select name="language" style="width:100px;" lay-filter="language1" lay-verify="" id="language1">
+			<option value="cn" {if cookie('think_lang')=='zh-cn'} selected{/if} >{:lang('chinese')}</option>
+			<option value="tw" {if cookie('think_lang')=='zh-tw'} selected{/if} >{:lang('tChinese')}</option>
+			<option value="en" {if cookie('think_lang')=='en-us'} selected{/if} >{:lang('english')}</option>
+			</select>
+		</li>
+	{/if}
+	
+		<li class="layui-menu-item-group" lay-options="{type: 'group', isAllowSpread: true}">
+			<div class="layui-menu-body-title">
+				社区分类
+			</div>
+			<hr>
+			<ul>
+			{taoler:nav}
+				<li {if condition="$nav.ename eq $Request.param.ename"} class="layui-this" {/if} class="layui-menu-item-group layui-menu-item-down" lay-options="{type: 'group'}">
+					<div class="layui-menu-body-title">
+						<a href="{nav:link /}">
+							<i class="layui-icon {nav:icon /}"></i>{nav:title}
+							{if condition="$nav.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}
+						</a>
+					</div>
+					{notempty name="nav.children"}
+					<ul>
+						{taoler:snav}
+						<li><a href="{snav:link /}">{snav:name /}</a></li>
+						{/taoler:snav}
+					</ul>
+					{/notempty}
+				</li>
+			{/taoler:nav}
+			</ul>
+		</li>
+      
+		<li class="layui-menu-item-group" lay-options="{type: 'group', isAllowSpread: true}">
+			<div class="layui-menu-body-title">菜单</div>
+			<hr>
+			<ul>
+				{:hook('ads_mobile_link')}
+				<li class="">
+					<div class="layui-menu-body-title">
+						<a href="/">
+							<i class="layui-icon layui-icon-home" style="color: #009688;"></i><span> 回首页</span> 
+							<span class="layui-font-12 layui-font-gray">index</span>
+						</a>
+					</div>
+				</li> 
+			</ul>
+		</li>
+    </ul>
+</div>
+{/if}
+
+

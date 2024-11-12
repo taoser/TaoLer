@@ -2,6 +2,7 @@
 
 namespace app\model\index;
 
+use Exception;
 use think\Model;
 use think\db\Query;
 use think\facade\Cache;
@@ -26,7 +27,90 @@ class Category extends Model
 	}
 
 
+    // 分类文章
     public static function getArticlesByCategoryEname(string $ename, int $page = 1, string $type = 'all', int $limit = 15)
+    {
+
+        $where = [];
+        $cateId = self::where('status', 1)->where('ename', $ename)->value('id');
+
+        if(!is_null($cateId)){
+            $where[] = ['cate_id' ,'=', $cateId];
+        }
+
+        $where[] = ['status', '=', 1];
+
+        switch ($type) {
+            //查询文章,15个分1页
+            case 'jie':
+                $where[] = ['jie','=', '1'];
+                break;
+            case 'hot':
+                $where[] = ['is_hot','=', '1'];
+                break;
+            case 'top':
+                $where[] = ['is_top' ,'=', '1'];
+                break;
+            case 'wait':
+                $where[] = ['jie','=', '0'];
+                break;
+        }
+
+        // 文章分类总数
+        $count = (int) Cache::remember("cate_count_{$ename}_{$type}", function() use($where){
+            return Article::where($where)->count();
+        });
+
+        $data = [];
+
+        // 总共页面数
+        $lastPage = (int) ceil($count / $limit); // 向上取整
+ 
+        if($count) {
+
+            if($page > $lastPage) {
+                throw new Exception('no data');
+            }
+
+            $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit) {
+                $articles = Article::field('id')->where($where)->order('id', 'desc')->page($page, $limit)->select();
+                $ids = $articles->toArray();
+                $idArr = array_column($ids, 'id');
+
+                $list =  Article::field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
+                ->with([
+                    'cate' => function(Query $query) {
+                        $query->field('id,catename,ename');
+                    },
+                    'user' => function(Query $query){
+                        $query->field('id,name,nickname,user_img,vip');
+                    }
+                ])
+                ->withCount(['comments'])
+                ->whereIn('id', $idArr)
+                ->order('id', 'desc')
+                ->select()
+                ->append(['url'])
+                ->hidden(['art_pass'])
+                ->toArray();
+
+                return $list;
+                
+            }, 600);
+        }
+
+        return [
+            'total' => $count,
+            'per_page' => $limit,
+            'current_page' => $page,
+            'last_page' => $lastPage,
+            'data' => $data
+        ];
+
+    }
+
+
+    public static function getArticlesByCategoryEname1(string $ename, int $page = 1, string $type = 'all', int $limit = 15)
     {
         // $articles = Article::withJoin(['category' => function(Query $query) use($ename) {
         //     $query->where('category.ename', $ename);
@@ -82,11 +166,18 @@ class Category extends Model
             return Article::where($where)->count();
         });
 
+        // 总共页面数
+        $lastPage = (int) ceil($count / $limit);
+
+        if($page > $lastPage) {
+            throw new Exception('no data');
+        }
+
         $data = [];
  
         if($count) {
             $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $count, $limit) {
-                // halt(123);
+                
                 // 默认排序
                 $order = ['id' => 'desc'];
     
@@ -133,9 +224,9 @@ class Category extends Model
                 ->where($where)
                 ->order($order)
                 ->limit($limit)
+                ->select()
                 ->append(['url'])
                 ->hidden(['art_pass'])
-                ->select()
                 ->toArray();
     
                 // 向上翻页反转
@@ -143,31 +234,23 @@ class Category extends Model
                     $articles = array_reverse($articles);
                 }
 
-                // $pa = [
-                //     'opg' => $page, //当前页
-                //     'fid' => $articles[0]['id'], // 第一ID
-                //     'lid' => end($articles)['id'] // 最后id
-                // ];
-
-                // halt($pa);
-    
-                // 翻页定位
-                Session::set('category_opage', [
-                    'opg' => $page, //当前页
-                    'fid' => $articles[0]['id'], // 第一ID
-                    'lid' => end($articles)['id'] // 最后id
-                ]);
-    
                 return $articles;
                 
             }, 600);
         }
 
+        // 翻页定位
+        Session::set('category_opage', [
+            'opg' => $page, //当前页
+            'fid' => $data[0]['id'], // 第一ID
+            'lid' => end($data)['id'] // 最后id
+        ]);
+
         return [
             'total' => $count,
             'per_page' => $limit,
             'current_page' => $page,
-            'last_page' => (int) ceil($count / $limit), // 向上取整
+            'last_page' => $lastPage, // 向上取整
             'data' => $data
         ];
 

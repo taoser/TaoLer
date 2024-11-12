@@ -25,7 +25,8 @@
         "topthink/think-orm": "^3.0",
         "topthink/think-filesystem": "^2.0",
         "topthink/think-view": "^2.0",
-        "taoser/think-addons": "^2.2"
+        "taoser/think-addons": "^2.2",
+        "taoser/think-auth": "^2.0"
     },
     "require-dev": {
         "symfony/var-dumper": ">=4.2",

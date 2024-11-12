@@ -317,47 +317,50 @@
 	</div>
 </div>
 
-<script src="/static/layui/layui.js"></script>
+<script src="/static/component/layui/layui.js"></script>
 <script src="/static/component/pear/pear.js"></script>
 
 <script>
-	const indexForums = "{:url('Index/forums')}";	//帖子
-	const indexReplys = "{:url('Index/replys')}";		//回复
-	const NEWS = "{:url('index/news')}";	 //动态
-	const indexReply = "{:url('Index/reply')}";	//反馈
-	const v = layui.v;
+	layui.use(['layer', 'echarts',  'carousel', 'element', 'count', 'toast'], function() {
+		let $ = layui.jquery,
+			layer = layui.layer,
+			element = layui.element,
+			echarts = layui.echarts,
+			count = layui.count;
 
-
-	layui.use(['layer', 'echarts',  'carousel', 'element', 'count', 'toast', 'form'], function() {
-		let $ = layui.jquery, form = layui.form,
-				layer = layui.layer,
-				element = layui.element,
-				echarts = layui.echarts,
-				count = layui.count;
-
-		let toast = layui.toast;
+		let form = layui.form;
 		let table = layui.table;
+		let toast = layui.toast;
 		let carousel = layui.carousel;
 
-		$('.UI').append(v);
+		$('.UI').append(layui.v);
+
+		const NEWS = "{:url('index/news')}"; //动态
+		const FEEDBACK = "{:url('admin_feedback')}"; //反馈
+		const WEEKARTICLES = "{:url('admin_weekarticle')}"; //本周帖子
+		const WEEKCOMMENTS = "{:url('admin_weekcomment')}"; //本周回复
+		
+		
+		
+		
 
 		count.up("value1", {
 			time: 4000,
-			num: {:hook('seoBaiduTongji',['name'=>'tpv']) ?: 0},
+			num: 0,
 			bit: 0,
 			regulator: 50
 		})
 
 		count.up("value2", {
 			time: 4000,
-			num: {:hook('seoBaiduTongji',['name'=>'tuv']) ?: 0},
+			num: 0,
 			bit: 0,
 			regulator: 50
 		})
 
 		count.up("value3", {
 			time: 4000,
-			num: {:hook('seoBaiduTongji',['name'=>'tip']) ?: 0},
+			num: 0,
 			bit: 0,
 			regulator: 50
 		})
@@ -365,15 +368,15 @@
 		count.up("value4", {
 			time: 4000,
 			bit: 2,
-			num: {:hook('seoBaiduTongji',['name'=>'tvt']) ?: 0},
+			num: 0,
 			regulator: 50
 		})
 
 		var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
 
 		const colorList = ["#9E87FF", '#73DDFF', '#fe9a8b', '#F56948', '#9E87FF']
-		var pv = "{:hook('seoBaiduTodayTime',['name'=>'pv']) ?: 0}";
-		var uv = "{:hook('seoBaiduTodayTime',['name'=>'uv']) ?: 0}";
+		var pv = '1,2,3,4,5,6,5,4,3,2,1';
+		var uv = '2,3,4,5,6,7,6,5,4,3,2';
 
 		var option = {
 			backgroundColor: '#fff',
@@ -548,7 +551,7 @@
 		//反馈
 		table.render({
 			elem: '#console-topreply'
-			,url: indexReply //评论接口
+			,url: FEEDBACK //评论接口
 			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
 					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
 					//curr: 5, //设定初始在第 5 页
@@ -570,7 +573,7 @@
 		//本周发贴
 		table.render({
 			elem: '#console-topSearch'
-			,url: indexForums //发贴接口
+			,url: WEEKARTICLES //发贴接口
 			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
 					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
 					//curr: 5, //设定初始在第 5 页
@@ -592,7 +595,7 @@
 		//本周评论
 		table.render({
 			elem: '#console-topCard'
-			,url: indexReplys //评论接口
+			,url: WEEKCOMMENTS //评论接口
 			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
 					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
 					//curr: 5, //设定初始在第 5 页
@@ -632,27 +635,29 @@
 		});
 
 		// 升级提醒
-		$(function (){
-			$.get("{:url('system.upgrade/check')}",function (data){
-				if (data.code === 1) {
-					//可升级
-					layer.confirm('发现新版本V' + data.data.version + '，确定升级？', {icon: 3, title:'系统检测'}, function(index){
-						var loadIndex = layer.load(0);
-						//更新
-						$.get("{:url('system.upgrade/upload')}",function (res){
-							layer.close(loadIndex)
-							if (res.code === 0) {
-								toast.info({title:"通知消息", message: res.msg ,position: 'topRight'})
-							} else {
-								toast.error({title:"服务器错误", message:res.msg})
-							}
+		setTimeout(function() {
+			$(function (){
+				$.get("{:url('system.upgrade/check')}",function (data){
+					if (data.code === 1) {
+						//可升级
+						layer.confirm('发现新版本V' + data.data.version + '，确定升级？', {icon: 3, title:'系统检测'}, function(index){
+							var loadIndex = layer.load(0);
+							//更新
+							$.get("{:url('system.upgrade/upload')}",function (res){
+								layer.close(loadIndex)
+								if (res.code === 0) {
+									toast.info({title:"通知消息", message: res.msg ,position: 'topRight'})
+								} else {
+									toast.error({title:"服务器错误", message:res.msg})
+								}
+							});
+							layer.close(index);
 						});
-						layer.close(index);
-					});
-					
-				}
+					}
+				});
 			});
-		});
+
+		}, 2000);
 
 	});
 </script>

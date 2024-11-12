@@ -8,15 +8,15 @@
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  */
 
-namespace app\admin\controller\system;
+namespace app\controller\admin\system;
 
-use app\common\controller\AdminController;
+use app\controller\admin\AdminBaseController;
 use think\facade\Db;
 use taoser\think\Auth;
 use think\facade\Lang;
 use think\facade\Session;
 
-class Menu extends AdminController
+class Menu extends AdminBaseController
 {
     /**
      * pearadmin动态菜单栏
@@ -27,6 +27,7 @@ class Menu extends AdminController
      */
     public function getnav()
     {
+        $this->aid = 1;
         $auth     = new Auth();
         $menu     = [];
         $rule = Session::has('ruleTable') ? Session::get('ruleTable') : 'auth_rule';
@@ -62,7 +63,7 @@ class Menu extends AdminController
                     "icon"  => "layui-icon layui-icon-console",
                     "type"  => 1,
                     "openType"  =>"_iframe",
-                    "href"  => (string) url("index/console1"),
+                    "href"  => (string) url("console1"),
                     'sort'  => 1,
                 ],[
                     'id'    => 502,
@@ -70,7 +71,7 @@ class Menu extends AdminController
                     "icon"  => "layui-icon layui-icon-console",
                     "type"  => 1,
                     "openType"  => "_iframe",
-                    "href"  => (string) url("index/console2"),
+                    "href"  => (string) url("console2"),
                     'sort'  => 2,
                 ]
             ]

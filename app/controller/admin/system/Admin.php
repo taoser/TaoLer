@@ -6,12 +6,11 @@
  * Time: 15:40
  */
 
-namespace app\admin\controller\system;
+namespace app\controller\admin\system;
 
-use app\common\controller\AdminController;
+use app\controller\admin\AdminBaseController;
+
 use app\admin\validate\Admin as AdminValidate;
-use app\admin\model\Admin as AdminModel;
-use think\App;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -19,14 +18,14 @@ use think\facade\Session;
 use think\facade\Cookie;
 
 
-class Admin extends AdminController
+class Admin extends AdminBaseController
 {
     protected $model = null;
 
-    public function __construct(App $app)
+    public function initialize()
     {
-        parent::__construct($app);
-        $this->model = new AdminModel();
+        parent::initialize();
+        $this->model = new \app\model\admin\Admin();
     }
 
     /**

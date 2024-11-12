@@ -7,7 +7,6 @@ use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Cache;
 use think\facade\Session;
-use think\facade\Config;
 use think\db\Query;
 
 class Article extends Model
@@ -46,7 +45,7 @@ class Article extends Model
 	//开启自动设置
 	protected $auto = [];
 	//仅新增有效
-	protected $insert = ['create_time', 'status'=>1, 'is_top'=>'0', 'is_hot'=>'0'];
+	protected $insert = ['create_time'];
 	//仅更新有效
 	protected $update = ['update_time'];
 	
@@ -54,23 +53,18 @@ class Article extends Model
 	use SoftDelete;
 	protected $deleteTime = 'delete_time';
 	protected $defaultSoftDelete = 0;
+
+    //文章关联用户
+	public function user()
+	{
+		return $this->belongsTo(User::class);
+	}
 	
     //文章关联栏目表
-    // public function cate()
-    // {
-    //     return $this->belongsTo(Cate::class);
-    // }
-
-     //文章关联栏目表
-     public function category()
-     {
-         return $this->belongsTo(Category::class);
-     }
-
-     public function cate()
-     {
-         return $this->belongsTo(Category::class);
-     }
+    public function cate()
+    {
+        return $this->belongsTo(Category::class);
+    }
 	
 	//文章关联评论
 	public function comments()
@@ -88,12 +82,6 @@ class Article extends Model
 	public function userzan()
 	{
 		return $this->hasMany(UserZan::class);
-	}
-	
-	//文章关联用户
-	public function user()
-	{
-		return $this->belongsTo('User','user_id','id');
 	}
 
     //文章关联Tag表
@@ -119,44 +107,6 @@ class Article extends Model
     }
 
     /**
-     * 添加
-     * @param array $data
-     * @return int|string|array
-     */
-	public function add(array $data)
-	{
-		$superAdmin = User::where('id', $data['user_id'])->value('auth');
-        // 超级管理员无需审核
-		$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
-		$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
-		$result = $this->save($data);
-		if($result) {
-			return ['code' => 1, 'msg' => $msg, 'data' => ['status' => $data['status'], 'id'=> $this->id]];
-		} else {
-			return ['code' => -1, 'msg'=> '添加文章失败'];
-		}
-	}
-
-    /**
-     * 编辑
-     * @param array $data
-     * @return int|string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-	public function edit(array $data)
-	{
-		$article = $this::find($data['id']);
-		$result = $article->save($data);
-		if($result) {
-			return 1;
-		} else {
-			return 'edit_error';
-		}
-	}
-
-    /**
      * 获取置顶文章
      * @param int $num 列表数量
      * @return mixed|\think\Collection
@@ -164,11 +114,11 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public static function getArtTop(int $num = 5)
+    public static function getTops(int $num = 5)
     {
         return Cache::remember('topArticle', function() use($num){
             $topIdArr = self::where(['is_top' => 1, 'status' => 1])->limit($num)->column('id');
-             return self::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type')
+            return self::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type')
                 ->whereIn('id', $topIdArr)
                 ->with([
                     'cate' => function (Query $query) {
@@ -181,8 +131,7 @@ class Article extends Model
                 ->withCount(['comments'])
                 ->order('id', 'desc')
                 ->append(['url'])
-                ->select()
-                ->toArray();
+                ->select();
         },600);
     }
 
@@ -199,12 +148,13 @@ class Article extends Model
         $data =  Cache::remember('indexArticle', function() use($num){
             return self::field('id,title,title_color,cate_id,user_id,content,description,create_time,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
             ->with([
-            'cate' => function(Query $query){
-                $query->field('id,catename,ename,detpl');
-            },
-			'user' => function(Query $query){
-                $query->field('id,name,nickname,user_img');
-			} ])
+                'cate' => function(Query $query){
+                    $query->field('id,catename,ename,detpl');
+                },
+                'user' => function(Query $query){
+                    $query->field('id,name,nickname,user_img');
+                }
+            ])
             ->withCount(['comments'])
             ->where('status', 1)
             ->order('id','desc')
@@ -226,7 +176,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public static function getArtHot(int $num)
+    public static function getHots(int $num = 10)
     {
         return Cache::remember('article_hot', function() use($num){
             $comments = Comment::field('article_id, count(*) as count')
@@ -269,7 +219,7 @@ class Article extends Model
                 // ->append(['url'])
                 ->select();
             }
-            return $artHot;
+            return $artHot->toArray();
         }, 3600);
     }
 
@@ -279,7 +229,7 @@ class Article extends Model
      * @return mixed
      * @throws \Throwable
      */
-    public function getArtDetail(int $id)
+    public function getDetail(int $id)
     {
         return Cache::remember('article_'.$id, function() use($id){
             //查询文章
@@ -589,7 +539,7 @@ class Article extends Model
     // 两种模式 获取url
     public function getUrlAttr($value, $data)
     {
-        halt($value,$data);
+
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
             $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
             return (string) url('detail',['id' => $data['id'], 'ename' => $ename]);

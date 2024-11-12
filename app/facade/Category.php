@@ -11,11 +11,11 @@ use think\Facade;
  * @method static array getArtList(int $num) 获取文章列表
  * @method static array getArtHot(int $num) 获取精华文章
  */
-class Cate extends Facade
+class Category extends Facade
 {
     protected static function getFacadeClass()
     {
-        return 'app\common\model\Cate';
+        return 'app\model\index\Category';
     }
 
 }

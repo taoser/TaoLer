@@ -23,53 +23,11 @@ class Article extends IndexBaseController
 
     protected $model;
 
-    public function __construct(App $app)
+	public function initialize()
     {
-        parent::__construct($app);
-        $this->model = new \app\common\model\Article();
-    }
+        parent::initialize();
 
-    //文章分类
-    public function cate()
-	{
-		$cate = new Cate();
-		//动态参数
-		$ename = Request::param('ename');
-		$type = Request::param('type','all');
-		$page = Request::param('page',1);
-
-		// 分类信息
-		$cateInfo = $cate->getCateInfo($ename);
-
-		if(is_null($cateInfo)) {
-			// 抛出 HTTP 异常
-			throw new \think\exception\HttpException(404, '没有可访问的数据！');
-		}
-		
-        //分类列表
-		$artList = $this->model->getCateList($ename, $type, $page);
-
-		//	热议文章
-		$artHot = $this->model->getArtHot(10);
-
-		//分页url
-		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
-		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
-
-
-		$assignArr = [
-			'ename'		=> $ename,
-			'cateinfo'	=> $cateInfo,
-			'type'		=> $type,
-			'artList'	=> $artList,
-			'artHot'	=> $artHot,
-			'path'		=> $path
-		];
-
-		View::assign($assignArr);
-
-		$cateView = is_null($cateInfo) ? "index/article/cate" : "index/article/{$cateInfo->detpl}/cate";
-		return View::fetch($cateView);
+        $this->model = new \app\model\index\Article();
     }
 
 	//文章详情页
@@ -79,7 +37,7 @@ class Article extends IndexBaseController
 		$page = input('page',1);
 
 		// 1.内容
-        $artDetail = $this->model->getArtDetail($id);
+        $artDetail = $this->model->getDetail($id);
         if(is_null($artDetail)) throw new \think\exception\HttpException(404, '无内容');
 
 		// 2.pv
@@ -91,7 +49,7 @@ class Article extends IndexBaseController
 		$artDetail->content = $this->setArtTagLink($artDetail->content);
 
 		//	热议文章
-		$artHot = $this->model->getArtHot(10);
+		$artHot = $this->model->getHots(10);
 
 		// 5.赞列表
 		$userZanList = [];
@@ -232,12 +190,17 @@ class Article extends IndexBaseController
 				}
 			}
 			
-            $result = $this->model->add($data);
-            if ($result['code'] == 1) {
+			$superAdmin = Db::name('user')->where('id', $data['user_id'])->value('auth');
+			// 超级管理员无需审核
+			$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
+			$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
+			$result = $this->model->save($data);
+			
+            if ($result) {
 				// 记录每天发帖量
 				Db::name('user_article_log')->where('id', $postLog['id'])->inc('user_postnum')->update();
 				// 获取到的最新ID
-				$aid = $result['data']['id'];
+				$aid = $result->id;
 
 				//写入taglist表
 				if(!empty($tagId)) {
@@ -254,10 +217,10 @@ class Article extends IndexBaseController
 				// 发提醒邮件
 				hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
 
-                $link = $this->getRouteUrl((int) $aid, $cateName['ename']);
-				$url = $result['data']['status'] ? $link : (string)url('index/');
+                $link = (string) url('detail', ['ename' => $cateName['ename'], 'id' => $aid]);
+				$url = $data['status'] ? $link : (string)url('index/');
 
-                hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+                hook('SeoBaiduPush', ['link' => $link]); // 推送给百度收录接口
 				hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
 
 				return Msgres::success($result['msg'], $url);
@@ -317,52 +280,56 @@ class Article extends IndexBaseController
 			
 			if(true !== $res){
                 return Msgres::error($validate->getError());
-			} else {
-				//获取内容图片音视频标识
-				$iva= $this->hasIva($data['content']);
-				$data = array_merge($data,$iva);
-
-				$data['content'] = $this->downUrlPicsReaplace($data['content']);
-				// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-				$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-                $data['description'] = strip_tags($this->filterEmoji($data['description']));
-
-				$result = $article->edit($data);
-				if($result == 1) {
-					//处理标签
-					if(!empty($tagId)) {
-						$tagIdArr = explode(',',$tagId);
-						$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
-						foreach($artTags as $aid => $tid) {
-							if(!in_array($tid, $tagIdArr)){
-								//删除被取消的tag
-								Db::name('taglist')->delete($aid);
-							}
-						}
-						//查询保留的标签
-						$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
-						$tagArr = [];
-						foreach($tagIdArr as $tid) {
-							if(!in_array($tid, $artTags)){
-								//新标签
-								$tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
-							}
-						}
-						//更新新标签
-						Db::name('taglist')->insertAll($tagArr);
-					}
-					
-                    //删除原有缓存显示编辑后内容
-                    Cache::delete('article_'.$id);
-                    Session::delete('art_pass_'.$id);
-
-                    $link = $this->getRouteUrl((int) $id, $article->cate->ename);
-
-                    hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-					return Msgres::success('edit_success',$link);
-				}
-                return Msgres::error($result);
 			}
+			//获取内容图片音视频标识
+			$iva= $this->hasIva($data['content']);
+			$data = array_merge($data,$iva);
+
+			$data['content'] = $this->downUrlPicsReaplace($data['content']);
+			// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+			$data['description'] = strip_tags($this->filterEmoji($data['description']));
+
+
+			$article = $this->model::find($data['id']);
+			$result = $article->save($data);
+
+			if($result) {
+				//处理标签
+				if(!empty($tagId)) {
+					$tagIdArr = explode(',',$tagId);
+					$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
+					foreach($artTags as $aid => $tid) {
+						if(!in_array($tid, $tagIdArr)){
+							//删除被取消的tag
+							Db::name('taglist')->delete($aid);
+						}
+					}
+					//查询保留的标签
+					$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
+					$tagArr = [];
+					foreach($tagIdArr as $tid) {
+						if(!in_array($tid, $artTags)){
+							//新标签
+							$tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
+						}
+					}
+					//更新新标签
+					Db::name('taglist')->insertAll($tagArr);
+				}
+				
+				//删除原有缓存显示编辑后内容
+				Cache::delete('article_'.$id);
+				Session::delete('art_pass_'.$id);
+
+				$link = $this->getRouteUrl((int) $id, $article->cate->ename);
+
+				hook('SeoBaiduPush', ['link' => $link]); // 推送给百度收录接口
+
+				return Msgres::success('edit_success',$link);
+			}
+            return Msgres::error($result);
+			
 		}
 			
         View::assign(['article'=>$article]);
@@ -384,20 +351,19 @@ class Article extends IndexBaseController
 	 */
     public function delete()
 	{
-		$id = input('id');
+		$id = $this->request->get('id');
 		
-		if(Request::isAjax()){
-            try {
-                $arr = explode(",", $id);
-                foreach($arr as $v){
-                    $article = $this->model->find((int) $v);
-                    $article->together(['comments'])->delete();
-                }
-                return json(['code'=>0,'msg'=>'删除成功']);
-            } catch (\Exception $e) {
-                return json(['code'=>-1,'msg'=>'删除失败']);
-            }
+		try {
+			$arr = explode(",", $id);
+			foreach($arr as $v){
+				$article = $this->model->find((int) $v);
+				$article->together(['comments'])->delete();
+			}
+			
+		} catch (\Exception $e) {
+			return json(['code'=>-1,'msg'=>'删除失败']);
 		}
+		return json(['code'=>0,'msg'=>'删除成功']);
 	}
 
 	/**

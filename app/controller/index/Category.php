@@ -34,10 +34,10 @@ class Category extends IndexBaseController
 		}
 		
         //分类列表
-		$artList = $this->model::getArticlesByCategoryEname($ename, $page, $type);
-// halt($artList);
+		$articles = $this->model::getArticlesByCategoryEname($ename, $page, $type);
+
 		//	热议文章
-		$artHot = Article::getArtHot(10);
+		$artHot = Article::getHots(10);
 
 		//分页url
 		if(empty($type)) {
@@ -52,7 +52,8 @@ class Category extends IndexBaseController
 			'ename'		=> $ename,
 			'cateinfo'	=> $cateInfo,
 			'type'		=> $type,
-			'artList'	=> $artList,
+			'artList'	=> $articles,
+			// 'articles'	=> $articles,
 			'artHot'	=> $artHot,
 			'path'		=> $path
 		];

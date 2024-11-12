@@ -21,6 +21,7 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
             'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
             'think\\' => 6,
+            'taoser\\think\\' => 13,
             'taoser\\' => 7,
         ),
         'a' => 
@@ -63,6 +64,10 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
             2 => __DIR__ . '/..' . '/topthink/think-helper/src',
             3 => __DIR__ . '/..' . '/topthink/think-orm/src',
             4 => __DIR__ . '/..' . '/topthink/think-template/src',
+        ),
+        'taoser\\think\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/taoser/think-auth/src',
         ),
         'taoser\\' => 
         array (

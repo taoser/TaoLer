@@ -9,6 +9,7 @@
 		"accordion": true,
 		"collapse": false,
 		"control": false,
+		"controlWidth": 500,
 		"select": "10",
 		"async": true
 	},

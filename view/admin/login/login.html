@@ -62,7 +62,7 @@
 					//请求登入接口
 					$.ajax({
 						type: "post"
-						,url: "{:url('login/index')}" //实际使用请改成服务端真实接口
+						,url: "{:url('login_index')}" //实际使用请改成服务端真实接口
 						,data: data.field
 						,success: function(res){
 							if(res.code == 0){
@@ -80,7 +80,7 @@
 
 							} else {
 								layer.open({title:'登陆失败', content:res.msg, icon:5, anim:6});
-								layui.jquery('#captcha').attr('src', '{:captcha_src()}?' + Math.random());
+								//layui.jquery('#captcha').attr('src', '{:captcha_src()}?' + Math.random());
 								}
 
 							}
@@ -106,7 +106,7 @@
 				//更换图形验证码
 				$body.on('click', '#captcha', function(){
 					var othis = $(this);
-					this.src = '/captcha.html?t='+ new Date().getTime()
+					this.src = "{:url('admin_captcha')}?t="+ new Date().getTime()
 				});
 
 

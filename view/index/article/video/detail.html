@@ -1,4 +1,4 @@
-{extend name="public/base" /}
+{extend name="index/public/base" /}
 
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.keywords ?: $article.title}{/block}
@@ -15,7 +15,7 @@
 {block name="link"}
 <link rel="stylesheet" type="text/css" href="/addons/taoplayer/ckplayer/css/ckplayer.css">
 {/block}
-{block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
+{block name="column"}<div class="layui-hide-xs">{include file="index/public/column" /}</div>{/block}
 {block name="content"}
 <div class="layui-container" style="max-width: 1864px;">
   <div class="layui-row layui-col-space15">
@@ -165,14 +165,14 @@
       {/if}
     </div>
     {//crud管理模块}
-    {include file="/public/crud" /}
+    {include file="index/public/crud" /}
   </div>
   <!--底部栏-->
   <div class="site-tree-mobile-detail-bottom layui-hide-md">
     <div id="LAY_jieAdmin1" data-id="{$article['id']}"></div>
   </div> 
 </div>
-{include file="public/menu" /}
+{include file="index/public/menu" /}
 {/block}
 {block name="script"}
 

@@ -1,4 +1,4 @@
-{extend name="public/base" /}
+{extend name="index/public/base" /}
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block}
 {block name="keywords"}{$article.keywords ?: $article.title}{/block}
 {block name="description"}{$article.title},{$article.description ?? ''}{/block}
@@ -12,7 +12,7 @@
 <meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
 {/block}
 {block name="link"} {/block}
-{block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
+{block name="column"}<div class="layui-hide-xs">{include file="index/public/column" /}</div>{/block}
 
 {block name="content"}
 <div class="layui-container">
@@ -25,7 +25,7 @@
 				{//图标}
 				<div class="user-questions">
 					<a class="user-avatar" href="{article:user name='link' /}">
-						<img src="{article:user name='user_img' /}" alt="{article:user name='name' /}" />
+						<img src="{article:atarav /}" alt="{article:auther /}" />
 						<cite>{article:auther} </cite>
 					</a>
 					<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px">{$article.update_time|date="Y-h-d H:i"}</span>
@@ -241,11 +241,11 @@
 		</div>
 
 		{//crud管理模块}
-		{include file="/public/crud" /}
+		{include file="index/public/crud" /}
     </div>
   <!--底部栏-->
 </div>
-{include file="public/menu" /}
+{include file="index/public/menu" /}
 
 {/block}
 
@@ -420,7 +420,7 @@
 {:hook('addonhook_detail')}
 
 {//图片点击放大}
-{include file="/public/images-click" /}
+{include file="index/public/images-click" /}
 
 {/block}
 

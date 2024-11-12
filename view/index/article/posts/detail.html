@@ -1,4 +1,4 @@
-{extend name="public/base" /}
+{extend name="index/public/base" /}
 <!--seo-->
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
 {block name="keywords"}{article:keywords /}{/block}
@@ -13,7 +13,7 @@
 <meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
 {/block}
 {block name="link"} {/block}
-{block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
+{block name="column"}<div class="layui-hide-xs">{include file="index/public/column" /}</div>{/block}
 <!--body-->
 {block name="content"}
 <div class="layui-container">
@@ -23,7 +23,6 @@
 
 				{//标题}
 				<h1>{article:title /}</h1>
-
 				{//图标}
 				<div class="fly-detail-info">
 					<span class="layui-badge layui-bg-green fly-detail-column">
@@ -33,9 +32,9 @@
 						{article:cate name="name" /}
 					{/if}
 					</span>
-					{if ($article.is_top == 1)}
+					{eq name="article.is_top" value='1'}
 					<span class="layui-badge layui-bg-black">{:lang('top')}</span>
-					{/if}
+					{/eq}
 					{if ($article.is_hot == 1)}
 					<span class="layui-badge layui-bg-red">{:lang('hot')}</span>
 					{/if}
@@ -51,16 +50,16 @@
 				{//作者}
 				<div class="detail-about">
 					<a class="fly-avatar" href="{article:user name='link' /}">
-					<img src="{article:user name='user_img' /}" alt="{article:user name='name' /}">
+					<img src="{article:user name='avatar' /}" alt="{article:user name='name' /}">
 					{if($article.user.vip > 0)}
 					<i class="iconfont icon-renzheng" title="认证信息"></i>
 					{/if}
 					</a>
 					<div class="fly-detail-user">
-					<a href="{article:user name='link' /}" class="fly-link"><cite>{article:auther}</cite></a>
+					<a href="{article:user name='link' /}" class="fly-link"><cite>{article:author /}</cite></a>
 					</div>
 					<div class="detail-hits">
-					<span class="post-time" data="{$article.update_time}" style="padding-top: 5px;">{article:uptime}</span>
+					<span class="post-time" data="{article.uptime}" style="padding-top: 5px;">{article:uptime /}</span>
 					{:hook('ipShow',$article.user.city)}
 					</div>
 				</div>
@@ -68,14 +67,8 @@
 
 				{//内容}
 				{:hook('taoplayerdiv')}
-				<article class="detail-body photos" id="content">{article:content}</article>
-				{//下载}
-				{notempty name="$article.upzip"}
-				{if(session('?user_name'))}
-					<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-				{/if}
-				{/notempty}
-
+				<article class="detail-body photos" id="content">{article:content /}</article>
+				
 				{//解密文件}
 				{empty name="passJieMi"}
 				{if($article.read_type == 1)}
@@ -97,7 +90,7 @@
 					<p style="line-height:200%; ">{$sysInfo.state|raw}</p>
 				</div>
 				{//本文链接}
-				<div style="margin-top: 20px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
+				<div style="margin-top: 20px;">本文链接：<a href="{article:link}">{article:link}</a></div>
 				<div class="detail-zan">
 					<span class="jieda-zan" type="zan" id="article-zan">
 						点赞 <i class="iconfont icon-zan"></i> <em>{:count($userZanList)}</em>
@@ -129,7 +122,7 @@
 
 			{//评论内容}
 			<div class="fly-panel detail-box" id="flyReply">
-			<span style="font-size:18px;">评论 {$article.comments_count}</span>
+			<span style="font-size:18px;">评论 {article:comment_num}</span>
 			<ul class="jieda" id="jieda">
 				{article:comment}
 					<li data-id="{comment:id /}" class="jieda-daan">
@@ -257,11 +250,11 @@
 	</div>
 
 	<!-- crud管理模块 -->
-	{include file="/public/crud" /}
+	{include file="index/public/crud" /}
 	</div>
   <!--底部栏-->
 </div>
-{include file="public/menu" /}
+{include file="index/public/menu" /}
 
 
 
@@ -454,6 +447,6 @@
 {:hook('addonhook_detail')}
 
 {//图片点击放大}
-{include file="/public/images-click" /}
+{include file="index/public/images-click" /}
 
 {/block}

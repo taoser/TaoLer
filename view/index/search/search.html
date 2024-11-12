@@ -7,9 +7,9 @@
  * @FilePath: \github\TaoLer\view\taoler\index\search\search.html
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
 -->
-{extend name="public/base" /}
+{extend name="index/public/base" /}
 {block name="title"}{$sysInfo.webname}{$keywords}搜索内容{/block}
-{block name="column"}{include file="public/column" /}{/block}
+{block name="column"}{include file="index/public/column" /}{/block}
 {block name="content"}
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
@@ -19,15 +19,15 @@
         <ul class="fly-list">   
 		    {volist name="artList" id="art"}
           <li>
-            <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
+            <a href="{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
               <img src="{$art.user.user_img}" alt="{$art.user_id|getUserName}"><i class="iconfont icon-renzheng" title="认证信息"></i>  
             </a>
-            <h2><a href="{$Request.domain}{$art.url}" title="{$art.title}">{$art.title}</a></h2>
+            <h2><a href="{$art.url}" title="{$art.title}">{$art.title}</a></h2>
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
-              <a class="layui-badge" href="{$Request.domain}{:url('cate',['ename'=>$art.cate.ename])}">{$art.cate.catename}</a>
+              <a class="layui-badge" href="{:url('cate',['ename'=>$art.cate.ename])}">{$art.cate.catename}</a>
               {/if}
-              <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" link><cite>{$art.user.name}</cite></a>
+              <a href="{:url('user/home',['id'=>$art.user_id])}" link><cite>{$art.user.name}</cite></a>
               <span>{$art.create_time|date='Y-m-d'}</span>
               <span class="fly-list-nums"> 			
                 <i class="iconfont icon-pinglun1" title="回答"></i>{$art.comments_count}
@@ -47,7 +47,7 @@
         <dt class="fly-panel-title">本周热议</dt>
         {volist name="artHot" id="vo"  empty="还没有帖子"}
         <dd>
-          <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
+          <a href="{$vo.url}">{$vo.title}</a>
           <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
         </dd>
         {/volist}
@@ -57,6 +57,6 @@
     </div>
   </div>
 </div>
-{include file="public/menu" /}
+{include file="index/public/menu" /}
 {/block}
 {block name="script"} {/block}

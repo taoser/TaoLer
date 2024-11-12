@@ -1,4 +1,4 @@
-{extend name="public/base" /}
+{extend name="index/public/base" /}
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.keywords ?: $article.title}{/block}
 {block name="description"}{$article.title},{$article.description ?? ''}{/block}
@@ -11,7 +11,7 @@
 <meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
 {/block}
 {block name="link"} {/block}
-{block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
+{block name="column"}<div class="layui-hide-xs">{include file="index/public/column" /}</div>{/block}
 
 {block name="content"}
 <div class="layui-container">
@@ -63,14 +63,14 @@
 			</div>
 		</div>
     {//crud管理模块}
-    {include file="/public/crud" /}
+    {include file="index/public/crud" /}
   </div>
 <!--底部栏-->
 	<!-- <div class="site-tree-mobile-detail-bottom layui-hide-md">
 		<div id="LAY_jieAdmin1" data-id="{$article['id']}"></div>
   </div>  -->
 </div>
-{include file="public/menu" /}
+{include file="index/public/menu" /}
 
 {/block}
 
@@ -94,6 +94,6 @@
 {:hook('addonhook_detail_js')}
 
 {//图片点击放大}
-{include file="/public/images-click" /}
+{include file="index/public/images-click" /}
 
 {/block}

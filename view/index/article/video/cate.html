@@ -1,4 +1,4 @@
-{extend name="public/base" /}
+{extend name="index/public/base" /}
 {block name="title"}{$cateinfo.catename} - {$sysInfo.webname}{/block}
 {block name="keywords"}{$cateinfo.catename},{$sysInfo.webname}{/block}
 {block name="description"}{$cateinfo.desc}{/block}
@@ -10,7 +10,7 @@
 	<meta property="og:type" content="website"/>
 	<meta property="og:image" content=""/>
 {/block}
-{block name="column"}{include file="/public/column" /}{/block}
+{block name="column"}{include file="index/public/column" /}{/block}
 
 {block name="content"}
 <div class="layui-container">
@@ -86,7 +86,7 @@
     </div>
   </div>
 </div>
-{include file="public/menu" /}
+{include file="index/public/menu" /}
 {/block}
 {block name="script"}
 <script>

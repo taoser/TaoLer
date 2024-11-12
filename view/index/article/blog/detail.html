@@ -1,4 +1,4 @@
-{extend name="public/base" /}
+{extend name="index/public/base" /}
 
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.keywords ?: $article.title}{/block}
@@ -25,7 +25,7 @@
  <script type='text/javascript' src="{$Request.domain}/view/common/blog/js/view-image.min.js"></script>
  <script>window.ViewImage && ViewImage.init('.post-content img');</script>
 {/block}
-{block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
+{block name="column"}<div class="layui-hide-xs">{include file="index/public/column" /}</div>{/block}
 <!-- 内容 -->
 {block name="content"}
 <main class="py-2 py-md-2 pb-3">
@@ -356,11 +356,11 @@
     </div>
 
     {//crud管理模块}
-    {include file="/public/crud" /}
+    {include file="index/public/crud" /}
 
 </main>
 
-{include file="public/menu" /}
+{include file="index/public/menu" /}
 
 {/block}
 

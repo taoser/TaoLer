@@ -50,12 +50,12 @@ class Index extends AdminBaseController
     
     public function index()
 	{
-        return View::fetch('index');
+        return View::fetch('admin/index/index');
     }
 
 	public function console1()
 	{
-        return View::fetch('console1');
+        return View::fetch('admin/index/console1');
     }
 	
 	public function console2()
@@ -85,7 +85,7 @@ class Index extends AdminBaseController
 			'comments'		=> $commData,
         ]);
 		
-        return View::fetch('console2');
+        return View::fetch('admin/index/console2');
     }
 
     public function set()
@@ -168,7 +168,7 @@ class Index extends AdminBaseController
     }
 	
 	//本周发帖
-	public function forums()
+	public function weekForums()
 	{
 		$forumList = Db::name('article')
 			->alias('a')
@@ -187,8 +187,9 @@ class Index extends AdminBaseController
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
 				    //$url = (string) str_replace("admin","index",$this->domain.url('article/detail',['id'=>$v['aid']]));
-					$url = $this->getRouteUrl($v['aid'],$v['ename']);
-				$res['data'][]= ['id'=>$url,'title'=>htmlspecialchars($v['title']),'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
+					//$url = $this->getRouteUrl($v['aid'],$v['ename']);
+					$url = '';
+					$res['data'][]= ['id'=>$url,'title'=>htmlspecialchars($v['title']),'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没有发帖！'];
@@ -197,7 +198,7 @@ class Index extends AdminBaseController
 	}
 	
 	//本周评论
-	public function replys()
+	public function weekComments()
 	{
 		if(Request::isAjax()){
 		
@@ -267,7 +268,7 @@ class Index extends AdminBaseController
 	}
 	
 	//问题和反馈
-	public function reply()
+	public function feedback()
 	{
 		if(Request::isAjax()) {
 		
@@ -291,7 +292,7 @@ class Index extends AdminBaseController
 	}
 	
 	//删除反馈
-	public function delReply()
+	public function delleteFeedback()
 	{
 		if(Request::isAjax()){
 			$res = Db::name('cunsult')->delete(input('id'));
@@ -331,11 +332,12 @@ class Index extends AdminBaseController
 
 			$appStr = preg_replace($appPatk, $appArr, $appStr);
 			$res = file_put_contents($app, $appStr) ? true : false;
-			if($res == true){
+			if($res){
 				return json(['code'=>0,'msg'=>'设置成功']);
-			} else {
-				return json(['code'=>-1,'msg'=>'开启失败']);
 			}
+			
+			return json(['code'=>-1,'msg'=>'开启失败']);
+			
 		}
 		
 	}

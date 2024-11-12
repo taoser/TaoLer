@@ -7,14 +7,14 @@
  * @FilePath: \TaoLer\view\taoler\index\user\home.html
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
 -->
-{extend name="public/base" /}
+{extend name="index/public/base" /}
 
 {block name="title"}{$u.nickname ?: $u.name}的主页-{$sysInfo.webname}{/block}
 {block name="description"}{$u.sign}{/block}
 {block name="column"}{/block}
 {block name="content"}
 <div class="fly-home fly-panel" >
-  <img src="{$Request.domain}/{$u.user_img}" alt="{$u.name}">
+  <img src="  `{$u.user_img}" alt="{$u.name}">
   {if($u.vip > 0)}<i class="iconfont icon-renzheng" title="Fly社区认证"></i>{/if}
   <h1>
     {$u.nickname ?: $u.name}
@@ -47,7 +47,7 @@
 		    {volist name="$arts" id="vo"}
           <li>
             {if condition="$vo.is_hot==1"}<span class="fly-jing">{:lang('hot')}</span>{/if}
-            <a href="{$Request.domain}{$vo.url}" class="jie-title"> {$vo.title}</a>
+            <a href="{$vo.url}" class="jie-title"> {$vo.title}</a>
             <i>{$vo.create_time|date='Y-m-d'}</i>
             <em class="layui-hide-xs">{$vo.pv} {:lang('browses')}</em>
           </li>
@@ -78,7 +78,7 @@
     </div>
   </div>
 </div>
-{include file="public/menu" /}
+{include file="index/public/menu" /}
 {/block}
 
 {block name="script"}

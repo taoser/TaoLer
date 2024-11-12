@@ -8,20 +8,25 @@
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  */
 
-namespace app\admin\controller;
+namespace app\controller\admin;
 
+use app\controller\admin\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Session;
 use app\admin\validate\Admin;
 use think\exception\ValidateException;
-use app\common\controller\AdminController;
 
-class Login extends AdminController
+
+class Login extends AdminBaseController
 {
 	// 登录
 	public function index()
 	{	
+		return View::fetch('login');
+	}
+
+	public function login() {
 		if(Request::isAjax()){
 			$data = Request::param();
 
@@ -33,12 +38,11 @@ class Login extends AdminController
 				return json(['code'=>-1,'msg'=>$e->getError()]);
 			}
 
-			$user = new \app\admin\model\Admin();
+			$user = new \app\model\admin\Admin();
 			$result = $user->login($data);
 
 			return $result;
 		}
-		return View::fetch('login');
 	}
 	
 	//注册
