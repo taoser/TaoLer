@@ -53,32 +53,50 @@ class User extends Model
     public function login($data)
     {	
         //查询使用邮箱或者用户名登陆
-        $user = $this::whereOr('phone',$data['name'])->whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
+        $user = $this::whereOr('phone', $data['name'])->whereOr('email', $data['name'])->whereOr('name', $data['name'])->findOrEmpty();
 
         if($user->isEmpty()){
 			throw new Exception(Lang::get('username or password error'));
         }
+
         //被禁用和待审核
         if($user['status'] == -1){
             throw new Exception(Lang::get('Account disabled'));
         }
+
         if($user['status'] == 0){
             throw new Exception(Lang::get('Pending approval'));
         }
+
         //错误登陆连续3次且小于10分钟
-        if((time() - $user->login_error_time < 60) && is_int($user->login_error_num/3)){	
+        if(((time() - $user->login_error_time) < 60) && is_int($user->login_error_num/3)){	
             throw new Exception(Lang::get('Please log in 10 minutes later'));
         }
         
         //对输入的密码字段进行MD5加密，再进行数据库的查询
         $salt = substr(md5($user['create_time']),-6);
         $pwd = substr_replace(md5($data['password']),$salt,0,6);
-        $data['password'] = md5($pwd);
+        $password = md5($pwd);
         
-        if($user['password'] == $data['password']){
+        // 密码错误
+        if($user['password'] !== $password){
+            event(new UserLogin(['type'=>'logError','id'=>$user->id]));
+            //连续3次错误
+            if(is_int(($user->login_error_num + 1)/3) && $user->login_error_num > 0 ){
+                $user->inc('login_error_num', 1)->save();
+                throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'));
+            }
+
+            throw new Exception(Lang::get('The user name or password is incorrect'));
+        } 
             //将用户数据写入Session
             Session::set('user_id',$user['id']);
             Session::set('user_name',$user['name']);
+            
+            Session::set('user', [
+                'id' => $user['id'],
+                'name' => $user['na,e']
+            ]);
             //记住密码
             if(isset($data['remember'])){
                 $salt = Config::get('taoler.salt');
@@ -101,15 +119,6 @@ class User extends Model
             ]);
 
             return ['token' => $token];
-        } else {//密码错误登陆错误次数加1
-            event(new UserLogin(['type'=>'logError','id'=>$user->id]));
-            //echo $user->login_error_num;
-            //连续3次错误
-            if(is_int(($user->login_error_num+1)/3) && $user->login_error_num >0 ){
-                throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'));
-            }
-            
-        }
     }
 
     //更新数据

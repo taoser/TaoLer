@@ -14,9 +14,6 @@ namespace app\middleware;
 
 use taoser\think\Auth as UserAuth;
 use think\facade\Session;
-use think\facade\Cookie;
-use think\facade\Db;
-use think\facade\Config;
 use think\facade\Request;
 
 class AdminAuth
@@ -30,88 +27,65 @@ class AdminAuth
      */
     public function handle($request, \Closure $next)
     {
-//        var_dump(Request::url(),Request::pathinfo(),$request->baseUrl(),$request->controller());
-		//访问路径
-//		$path = app('http')->getName().'/'.stristr($request->pathinfo(),".html",true);
-        $path = stristr($request->pathinfo(),".html",true) ?: Request::pathinfo();
-//    var_dump($path);
-		//登陆前获取加密的Cookie
-		$cooAuth = Cookie::get('adminAuth');
+        // var_dump(Request::url(),Request::pathinfo(),$request->baseUrl(),$request->controller(),$request->action());
 
-		if(!session('?admin_id') && !empty($cooAuth)){
-			$resArr = explode(':',$cooAuth);
-			$userId = end($resArr);
-			//检验用户
-			$user = Db::name('admin')->where('id',$userId)->find();
-			if(!is_null($user)){
-				//验证cookie
-				$salt = Config::get('taoler.salt');
-				$auth = md5($user['username'].$salt).":".$userId;
-				if($auth == $cooAuth){
-					Session::set('admin_name',$user['username']);
-					Session::set('admin_id',$userId);
-				}
-			}
-			
-		}
+        $controller = $request->controller();
+        $action = $request->action();
 
-//		//没有登录及当前非登录页重定向登录页
-//		if(!Session::has('admin_id') && $path !== 'admin/login/index' && !(stristr($request->pathinfo(),"captcha.html") || stristr($request->pathinfo(),"addons")) )
-//		{
-//			return redirect((string) url('login/index'));
-//		}
-//		//登陆后无法访问登录页
-//		if(Session::has('admin_id') && $path == 'admin/login/index'){
-//			return redirect((string) url('index/index'));
-//		}
-//		// 排除公共权限
-//		$not_check = ['admin/','index/index', 'admin/menu/getMenuNavbar','admin/login/index','admin/index/index','admin/index/home','admin/Admin/info','admin/Admin/repass','admin/Admin/logout','admin/Index/news','admin/Index/cunsult','admin/Index/replys','admin/Index/reply','admin/captcha','addons/socail/','admin/addons/social/oauth/login','admin/addons/bacimg/index/getImages'];
+        $path = strtolower($controller . '/' . $action);
 
+        // 1.未登录状态
+        if(!Session::has('admin')) {
+            // 未登录时，访问权限页面跳转登录页，只能放行访问 登录，注册，找回密码，提交注册
+            if(!in_array($path, ['admin.login/index','admin.login/reg','admin.login/forget','admin.login/signin'])) {
+                return redirect((string)url('admin_login'));
+            }
 
-        //没有登录及当前非登录页重定向登录页
-        if(!Session::has('admin_id') && $path !== 'login/index' && !(stristr($request->pathinfo(),"captcha.html") || stristr($request->pathinfo(),"addons")) )
-        {
-            return redirect((string) url('login/index'));
-        }
-        //登陆后无法访问登录页
-        if(Session::has('admin_id') && $path == 'login/index' || $path == ''){
-            return redirect((string) url('index/index'));
+            return $next($request);
         }
 
-        // 排除公共权限
-        $not_check = [
-            'captcha',
-            'login/index',
-            'admin/index',
-            'system.menu/getnav',
-            'index/index',
-            'index/console1',
-            'index/console2',
-            'index/news',
-            'menu/getMenuNavbar',
-            'index/home',
-            'Admin/info',
-            'system.admin/repass',
-            'system.admin/logout',
-            'Index/cunsult',
-            'Index/replys',
-            'Index/reply',
-            'admin/captcha',
-            'addons/socail/',
-            'addons/social/oauth/login',
-            'addons/bacimg/index/getImages'
-        ];
+        // 2.已登录 禁止访问 登录，注册，找回密码，提交注册
+        if(in_array($path, ['admin.login/index','admin.login/reg','admin.login/forget','admin.login/signin'])) {
+            return redirect((string)url('admin_index'));
+        }
 
-		if (!in_array($path, $not_check)) {
-			$auth     = new UserAuth();
-			$admin_id = Session::get('admin_id');	//登录用户的id
+        // 3.管理用户信息
+        $admin = Session::get('admin');
+        $aid = (int) $admin['id'];
+        $request->aid = $aid; // 控制器传参
 
-			if (!$auth->check($path, $admin_id) && $admin_id != 1) {
-				//return view('public/auth');
-				//return response("<script>alert('没有操作权限')</script>");
-				return json(['code'=>-1,'msg'=>'无权限']);
-			}
-		}
+        // 4.非超级管理员鉴权开始
+        if($aid !== 1) {
+            // 公共权限
+            $not_check_list = [
+                'admin/index',
+                'system.menu/getnav',
+                'index/index',
+                'index/console1',
+                'index/console2',
+                'index/news',
+                'menu/getMenuNavbar',
+                'index/home',
+                'Admin/info',
+                'system.admin/repass',
+                'system.admin/logout',
+                'Index/cunsult',
+                'Index/replys',
+                'Index/reply'
+            ];
+
+            // 未在排除列表中的地址，需要鉴权
+            if(!in_array($path, $not_check_list)) {
+                
+                $auth = new UserAuth();
+                if (!$auth->check($path, $admin['id'])) {
+                    //return view('public/auth');
+                    return response("<script>alert('没有操作权限')</script>");
+                }
+            }
+            
+        }
+
 		return $next($request);	
     }
 }

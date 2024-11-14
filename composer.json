@@ -26,7 +26,9 @@
         "topthink/think-filesystem": "^2.0",
         "topthink/think-view": "^2.0",
         "taoser/think-addons": "^2.2",
-        "taoser/think-auth": "^2.0"
+        "taoser/think-auth": "^2.0",
+        "topthink/think-captcha": "^3.0",
+        "firebase/php-jwt": "^6.10"
     },
     "require-dev": {
         "symfony/var-dumper": ">=4.2",

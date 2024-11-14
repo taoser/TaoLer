@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'think\\view\\driver\\' => array($vendorDir . '/topthink/think-view/src'),
     'think\\trace\\' => array($vendorDir . '/topthink/think-trace/src'),
+    'think\\captcha\\' => array($vendorDir . '/topthink/think-captcha/src'),
     'think\\' => array($vendorDir . '/topthink/framework/src/think', $vendorDir . '/topthink/think-filesystem/src', $vendorDir . '/topthink/think-helper/src', $vendorDir . '/topthink/think-orm/src', $vendorDir . '/topthink/think-template/src'),
     'taoser\\think\\' => array($vendorDir . '/taoser/think-auth/src'),
     'taoser\\' => array($vendorDir . '/taoser/think-addons/src'),
@@ -21,4 +22,5 @@ return array(
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'League\\MimeTypeDetection\\' => array($vendorDir . '/league/mime-type-detection/src'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
+    'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
 );

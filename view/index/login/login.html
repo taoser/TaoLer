@@ -51,7 +51,7 @@
                 <input type="checkbox" name="remember" title="{:lang('remember password')}" lay-skin="primary"  lay-filter="remember" value="1">
               </div>
               <div class="layui-form-item">
-                <button type="submit" name="submit" class="layui-btn" lay-filter="user" lay-submit id="login">{:lang('login now')}</button>
+                <button type="submit" name="submit" class="layui-btn" lay-filter="user-lgoin" lay-submit id="login">{:lang('login now')}</button>
                 <span style="padding-left:20px;">
                   <a href="{$Request.domain}{:url('user_forget')}">{:lang('forget password')}？</a>
                 </span>
@@ -71,36 +71,44 @@
 {/block}
 
 {block name="script"}
-<script>
-	$(function() {
-		$('#login').click(function() {
-			var loadIndex = layer.load(2);
-			$.ajax({
-				type:"post",
-				url:"{:url('login/index')}",
-				data:$('form').serialize(),
-				daType:"json",
-				success:function (res){
-					layer.close(loadIndex);
-					if (res.code === 0) {
-						layui.data('tao-user', {
-							key: 'token',
-							value: res.data.token
-						});
-						toast.success({title:"成功消息",message: res.msg});
-						location.href = res.data.url;
-					} else {
-						toast.error({title:"失败消息",message:res.msg});
-						layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-					}
-				}
-			});
-			return false;
-		});
-	});
-	// 更新验证码
-	layui.jquery('#captcha').on('click',function(){
-		layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-	})
-</script>
+    <script  type="text/javascript" src="/static/common/axios.min.js"></script>
+    <script  type="text/javascript" src="/static/common/http.js"></script>
+    
+    <script>
+        layui.use(function(){
+            var form = layui.form;
+            var $ = layui.jquery;
+            var layer = layui.layer;
+
+            // 提交事件
+            form.on('submit(user-lgoin)', function(data){
+                var field = data.field; // 获取表单字段值
+                var loadIndex = layer.load(2);
+                // 此处可执行 Ajax 等操作
+                http.post("{:url('index.login/signin')}",field).then(
+                    res => {
+                        layer.close(loadIndex);
+                        if (res.code === 0) {
+                            layui.data('tao-user', {
+                                key: 'token',
+                                value: res.data.token
+                            });
+                            toast.success({title:"成功消息",message: res.msg});
+                            location.href = res.data.url;
+                        } else {
+                            toast.error({title:"失败消息",message:res.msg});
+                            $('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+                        }
+                    }
+                )
+  
+                return false; // 阻止默认 form 跳转
+            });
+
+            // 更新验证码
+            $('#captcha').on('click',function(){
+                $('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+            })
+        })
+    </script>
 {/block}

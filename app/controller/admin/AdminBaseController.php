@@ -27,10 +27,11 @@ use think\facade\Cache;
  */
 class AdminBaseController extends \app\BaseController
 {
+    // 中间件
+    protected $middleware = [\app\middleware\AdminAuth::class];
 
-    protected $aid = '';
-
-    protected $appName = '';
+    // 管理员id
+    protected $aid;
 
     /**
      * 初始化菜单
@@ -38,7 +39,7 @@ class AdminBaseController extends \app\BaseController
     protected function initialize()
     {
 		//权限auth检查
-        $this->aid = Session::get('admin_id');
+        $this->aid = $this->request->aid;
 		//系统配置
         $sys = $this->getSystem();
         $syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');

@@ -120,7 +120,6 @@ abstract class BaseController
     {
         //1.系统配置信息
         return Db::name('system')->cache('system',3600)->find(1);
-        
     }
 
     /**

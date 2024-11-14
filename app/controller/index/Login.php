@@ -1,35 +1,33 @@
 <?php
-namespace app\index\Controller;
+namespace app\Controller\index;
 
-use app\common\controller\BaseController;
+use app\controller\index\IndexBaseController;
 use app\common\lib\Msgres;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\Session;
-use think\facade\Cookie;
 use think\facade\Cache;
 use think\facade\View;
 use think\facade\Config;
-use app\common\model\User;
+
 use Exception;
 use Symfony\Component\VarExporter\Internal\Exporter;
 
-class Login extends BaseController
+class Login extends IndexBaseController
 {
-	protected $user = null;
-	//已登陆中间件检测
-	protected $middleware = [
-	    'logedcheck' => ['except' 	=> ['index'] ]
-    ];
+	protected $model = null;
 
-	public function __construct(\think\App $app)
+	//已登陆中间件检测
+	// protected $middleware = [
+	//     'logedcheck' => ['except' 	=> ['index'] ]
+    // ];
+
+	public function initialize()
 	{
-		parent::__construct($app);
-		$this->user = new User();
-		//给模板中JScace文件赋值
-		View::assign(['jspage'=>'']);
+		parent::initialize();
+		$this->model = new \app\model\index\User();
 	}
 
     //用户登陆
@@ -39,14 +37,22 @@ class Login extends BaseController
         if(Session::has('user_id')){
             return redirect((string) url('user/index'));
         }
+
+        return View::fetch('login');
+	}
+
+	// 登录
+	public function signin() {
+		
 		//获取登录前访问页面refer
         $refer = str_replace(Request::domain(), '', Request::server('HTTP_REFERER'));
 
-        if(Request::isAjax()) {
+        if(Request::isPost()) {
 			// 检验登录是否开放
 			if(config('taoler.config.is_login') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，网站维护中，暂时不能登录哦！']);
             //登陆前数据校验
 			$data = Request::only(['name','email','phone','password','captcha','remember']);
+
 			if(Config::get('taoler.config.login_captcha') == 1) {				
 				//先校验验证码
 				if(!captcha_check($data['captcha'])){
@@ -54,62 +60,52 @@ class Login extends BaseController
 				 return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
-			
-			//邮箱正则表达式
-			$pattern = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
 
-            if(preg_match("/^1[34578]\d{9}$/",$data['name'])) {
-                //手机验证登录
-                $data['phone'] = $data['name'];
-                unset($data['name']);
-                try{
-                    validate(userValidate::class)
-                        ->scene('loginPhone')
-                        ->check($data);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-                    return json(['code'=>-1,'msg'=>$e->getError()]);
-                }
-                $data['name'] = $data['phone'];
-                unset($data['phone']);
-
-            } elseif (preg_match($pattern, $data['name'])){
-               //输入邮箱email登陆验证
-               $data['email'] = $data['name'];
-			   unset($data['name']);
-			   try{
-                    validate(userValidate::class)
-                        ->scene('loginEmail')
-                        ->check($data);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-                    return json(['code'=>-1,'msg'=>$e->getError()]);
-                }
-                $data['name'] = $data['email'];
-				unset($data['email']);
-		   } else {
-			   //用户名name登陆验证
-			   try{
-                    validate(userValidate::class)
-                        ->scene('loginName')
-                        ->check($data);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-					return json(['code'=>-1,'msg'=>$e->getError()]);
-                }  
-		   }			
-			//登陆请求
 			try{
+				//邮箱正则表达式
+				$pattern = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
 
-				$res = $this->user->login($data);
-				return json(['code' => 0, 'msg' => '登录成功', 'data' => ['token' => $res['token'], 'url' => $refer]]);
+				if(preg_match("/^1[34578]\d{9}$/", $data['name'])) {
+					//手机验证登录
+					$data['phone'] = $data['name'];
+					unset($data['name']);
+				
+						validate(userValidate::class)
+							->scene('loginPhone')
+							->check($data);
+					
+					$data['name'] = $data['phone'];
+					unset($data['phone']);
+
+				} elseif (preg_match($pattern, $data['name'])){
+					//输入邮箱email登陆验证
+					$data['email'] = $data['name'];
+					unset($data['name']);
+					
+					validate(userValidate::class)
+						->scene('loginEmail')
+						->check($data);
+
+					$data['name'] = $data['email'];
+					unset($data['email']);
+				} else {
+					//用户名name登陆验证
+					validate(userValidate::class)
+					->scene('loginName')
+					->check($data);
+						
+				}
+
+				$res = $this->model->login($data);
+				
+			} catch (ValidateException $e) {
+				return json(['code'=>-1,'msg'=>$e->getError()]);
 			} catch(Exception $e) {
 				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
-			
-        }
 
-        return View::fetch('login');
+			return json(['code' => 0, 'msg' => '登录成功', 'data' => ['token' => $res['token'], 'url' => $refer]]);
+        }
 	}
 
     //注册
@@ -153,7 +149,7 @@ class Login extends BaseController
 			}
 
 			try{
-				$this->user->reg($data);
+				$this->model->reg($data);
 				return json([
 					'code' => 0,
 					'msg'=> '注册成功',
@@ -182,7 +178,7 @@ class Login extends BaseController
 				return json(['code'=>-1,'msg'=>$e->getError()]);
 			}
 			//查询用户
-			$user = $this->user::field('id,name')->where('email',$data['email'])->find();
+			$user = $this->model::field('id,name')->where('email',$data['email'])->find();
 			if(is_null($user)) {
 				return json(['code' =>-1,'msg'=>'邮箱错误或不存在']);
 			}
@@ -256,7 +252,7 @@ class Login extends BaseController
 			
 			$data['uid'] = Cache::get('userid');
 			
-			$res = $this->user->respass($data);
+			$res = $this->model->respass($data);
 				if ($res == 1) {
 					return json(['code'=> 0, 'msg'=> '修改成功', 'url'=>(string) url('login/index')]);
 				} else {

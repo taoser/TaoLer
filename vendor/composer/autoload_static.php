@@ -13,6 +13,7 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
+        '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -20,6 +21,7 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
         array (
             'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
+            'think\\captcha\\' => 14,
             'think\\' => 6,
             'taoser\\think\\' => 13,
             'taoser\\' => 7,
@@ -46,6 +48,10 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
             'League\\MimeTypeDetection\\' => 25,
             'League\\Flysystem\\' => 17,
         ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -56,6 +62,10 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
         'think\\trace\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-trace/src',
+        ),
+        'think\\captcha\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-captcha/src',
         ),
         'think\\' => 
         array (
@@ -112,6 +122,10 @@ class ComposerStaticInitf666241246314f63fdc1fd28d2dd12eb
         'League\\Flysystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
     );
 

@@ -167,6 +167,48 @@ class Index extends AdminBaseController
         }
     }
 	
+	
+	
+	//动态信息
+	public function news()
+	{
+		$data = Request::only(['page', 'limit']);
+		$url = $this->api.'/v1/news?'.'page='.$data['page'].'&'.'limit='.$data['limit'];
+		$news = Cache::get('news'.$data['page'].'_'.$data['limit']);
+		if(empty($news)){
+			$news = Api::urlGet($url);
+			if($news->code == 0){
+				Cache::set('news'.$data['page'].'_'.$data['limit'],$news,600);
+			}
+		}
+		return $news;
+	}
+	
+	//提交反馈
+	public function cunsult()
+	{
+		$url = $this->api.'/v1/reply';
+		if(Request::isAjax()){
+			$data = Request::only(['type','title','content','post','uid']);
+			$apiRes = Api::urlPost($url,$data);
+			$data['poster'] = Session::get('admin_id');
+			unset($data['post']);
+			if($apiRes){
+				$res = Cunsult::create($data);
+				if($res->id){
+					//$result = mailto($mail,$data['title'],'我的问题类型是'.$data['type'].$data['content']);
+					$res = ['code'=>0,'msg'=>$apiRes->msg];
+				} else {
+					$res = ['code'=>0,'msg'=>$apiRes->msg];
+				}
+			} else {
+				$res = ['code'=>-1,'msg'=>'失败，请稍后再试提交...'];
+			}
+			return json($res);
+		}
+		
+	}
+
 	//本周发帖
 	public function weekForums()
 	{
@@ -218,53 +260,18 @@ class Index extends AdminBaseController
 			if ($count) {
 				$res = ['code'=>0,'msg'=>'','count'=>$count];
 				foreach($replys as $k => $v){
-					$res['data'][] = ['content'=>htmlspecialchars($v['content']),'title'=>htmlspecialchars($v['title']),'cid'=>$this->getRouteUrl($v['cid'],$v['ename']),'name'=>$v['name']];
+					$res['data'][] = [
+						'content'=>htmlspecialchars($v['content']),
+						'title'=>htmlspecialchars($v['title']),
+						'cid' => $this->getRouteUrl($v['cid'], $v['ename']),
+						'name'=>$v['name']
+					];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没评论'];
 			}
 			return json($res);
 		}
-	}
-	
-	//动态信息
-	public function news()
-	{
-		$data = Request::only(['page', 'limit']);
-		$url = $this->api.'/v1/news?'.'page='.$data['page'].'&'.'limit='.$data['limit'];
-		$news = Cache::get('news'.$data['page'].'_'.$data['limit']);
-		if(empty($news)){
-			$news = Api::urlGet($url);
-			if($news->code == 0){
-				Cache::set('news'.$data['page'].'_'.$data['limit'],$news,600);
-			}
-		}
-		return $news;
-	}
-	
-	//提交反馈
-	public function cunsult()
-	{
-		$url = $this->api.'/v1/reply';
-		if(Request::isAjax()){
-			$data = Request::only(['type','title','content','post','uid']);
-			$apiRes = Api::urlPost($url,$data);
-			$data['poster'] = Session::get('admin_id');
-			unset($data['post']);
-			if($apiRes){
-				$res = Cunsult::create($data);
-				if($res->id){
-					//$result = mailto($mail,$data['title'],'我的问题类型是'.$data['type'].$data['content']);
-					$res = ['code'=>0,'msg'=>$apiRes->msg];
-				} else {
-					$res = ['code'=>0,'msg'=>$apiRes->msg];
-				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'失败，请稍后再试提交...'];
-			}
-			return json($res);
-		}
-		
 	}
 	
 	//问题和反馈
@@ -342,7 +349,4 @@ class Index extends AdminBaseController
 		
 	}
 	
-	public function layout(){
-        return view();
-    }
 }

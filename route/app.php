@@ -29,6 +29,8 @@ Route::group(function(){
 	Route::get('category/<ename>/<type>/<page>$', 'category/getArticles')->name('cate_type_page');
 
     Route::get('user/<id>$', 'user/home')->name('user_home');
+    Route::get('user/lgoin$', 'Login/index')->name('user_login');
+    // Route::get('user/signin$', 'Login/signin')->name('user_signin');
     
 })->prefix('index.')
 ->pattern([

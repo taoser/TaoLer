@@ -10,7 +10,7 @@ namespace app\controller\admin\system;
 
 use app\controller\admin\AdminBaseController;
 
-use app\admin\validate\Admin as AdminValidate;
+use app\validate\admin\Admin as AdminValidate;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -130,7 +130,7 @@ class Admin extends AdminBaseController
 	//管理员编辑
 	public function edit($id)
 	{
-		$admin = AdminModel::find($id);
+		$admin = $this->model::find($id);
 		
 		if(Request::isAjax()){
 			$data = Request::only(['id','username','email','password','mobile','sex','roleId']);
@@ -190,7 +190,7 @@ class Admin extends AdminBaseController
 	//修改基本资料显示
 	public function infoEdit()
     {
-		$admin = AdminModel::find($this->aid);
+		$admin = $this->model::find($this->aid);
 		$auths = $admin->adminGroup;
 		$authName = [];
 		foreach($auths as $v){
@@ -205,7 +205,7 @@ class Admin extends AdminBaseController
 	//管理员资料更新
 	public function infoSet()
     {
-		$admin = AdminModel::find($this->aid);
+		$admin = $this->model::find($this->aid);
         if(Request::isAjax()){
 			$data = Request::only(['nickname','sex','mobile','email','remarks']);
 			$result = $admin->save($data);
@@ -231,7 +231,7 @@ class Admin extends AdminBaseController
 			$data = Request::only(['oldPassword','password','repassword']);
 			$data['admin_id'] = $this->aid;
 			
-			$admin = new AdminModel;
+			$admin = new $this->model;
 			return $admin->setpass($data);
 			 
 		}

@@ -10,13 +10,12 @@
 
 namespace app\model\admin;
 
+use Exception;
 use think\Model;
-use think\facade\Db;
 use think\facade\Session;
-use app\oil\model\Station;
 use think\facade\Cookie;
-use think\facade\Config;
 use think\model\concern\SoftDelete;
+use app\common\lib\JwtAuth;
 
 class Admin extends Model
 {
@@ -38,11 +37,6 @@ class Admin extends Model
         return $this->belongsTo('AuthGroup','auth_group_id','id');
     }
 */
-	//管理员关联站点
-	public function station()
-    {
-        return $this->belongsTo(Station::class);
-    }
 
     //远程一对多管理员关联角色
     public function adminGroup()
@@ -56,48 +50,48 @@ class Admin extends Model
     }
 	
 	//登陆校验
-    public function login($data)
+    public function login(array $data)
     {
         //查询用户
-        $admin = $this->where('username',$data['username'])->where('delete_time',0)->find();
+        $admin = $this->where('username', $data['username'])->find();
 
 		if(is_null($admin)){
-			return json(['code'=>-1,'msg'=>'用户名或密码错误']);
+			return json(['code' => -1,'msg'=>'用户名或密码错误']);
 		}
-		if($admin['status'] !=1){
-			return json(['code' => -1,'msg'=> '用户被禁用或未审核,请联系管理员']);
-		}
-		//对输入的密码字段进行MD5加密，再进行数据库的查询
-		$salt = substr(md5($admin['create_time']),-6);
-		$pwd = substr_replace(md5($data['password']),$salt,0,6);
-		$data['password'] = md5($pwd);
-		
-        if($admin['password'] == $data['password']){
-			
-			//将用户数据写入Session
-			Session::set('admin_id',$admin['id']);
-			Session::set('admin_name',$admin['username']);
-			
-			if(isset($data['remember'])){
-				$salt = Config::get('taoler.salt');
-				//加密auth存入cookie
-				$auth = md5($admin['username'].$salt).":".$admin['id'];
-				Cookie::set('adminAuth',$auth,604800);
-			}
 
-			Db::name('admin')->where('id',$admin['id'])->update(
-                        [
-                            'last_login_time' => time(),
-                            'last_login_ip' => request()->ip(),
-                        ]
-                );
-					
-            //用户名密码正确返回1
-            $res = ['code'=>0,'msg'=>'登陆成功', 'url'=>(string) url('index/index')];
-        } else {
-			$res = ['code'=>-1,'msg'=>'用户名或密码错误','url'=>(string) url('admin/login')];
+		if($admin['status'] != 1){
+			return json(['code' => -1, 'msg'=> '用户被禁用或未审核,请联系管理员']);
 		}
-		return json($res);
+
+		//对输入的密码字段进行MD5加密，再进行数据库的查询
+		$salt = substr(md5($admin['create_time']), -6);
+		$pwd = substr_replace(md5($data['password']), $salt, 0, 6);
+		$password = md5($pwd);
+		
+        if($admin['password'] !== $password){
+			throw new Exception('The user name or password is incorrect');
+        }
+
+		Session::set('admin', [
+			'id' => $admin['id'],
+			'name' => $admin['username']
+		]);
+
+		$admin->save([
+			'last_login_time' => time(),
+			'last_login_ip' => request()->ip(),
+		]);
+		
+		// 记住我
+		if(isset($data['remember'])){
+			// $token = JwtAuth::encode([
+			// 	'id' => $admin['id'],
+			// 	'name' => $admin['username']
+			// ]);
+
+			// return ['data' => ['token' => $token]];
+		}
+		return ['data' => ''];
     }
 	
 	//修改密码
