@@ -23,6 +23,7 @@ Route::get('index/reply$','index/reply')->name('user_reply');
 Route::rule('search','Search/getSearch')->name('user_search');
 Route::get('message/nums$','message/nums')->name('user_message');
 Route::get('tag/:ename', 'Tag/list')->name('tag_list');
+
 // 用户中心
 Route::group(function () {
 	Route::get('u/:id$', 'user/home')->name('user_home'); 
@@ -44,13 +45,13 @@ Route::group(function () {
 
 // 登录注册
 Route::group(function () {
-	Route::rule('login$','login/index')->name('user_login');
-	Route::rule('forget$','login/forget')->name('user_forget');
+	Route::rule('user/login$','login/index')->name('user_login');
+	Route::rule('user/forget$','login/forget')->name('user_forget');
+	Route::rule('user/reg$','Login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
 	Route::rule('postcode$','login/postcode');
 	Route::rule('sentemailcode$','login/sentMailCode');
 	Route::rule('respass$','login/respass');
-	Route::rule('reg$','Login/reg')->name('user_reg')
-		->middleware(\app\middleware\CheckRegister::class);
+	
 });
 
 // comment

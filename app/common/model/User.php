@@ -73,43 +73,43 @@ class User extends Model
         //对输入的密码字段进行MD5加密，再进行数据库的查询
         $salt = substr(md5($user['create_time']),-6);
         $pwd = substr_replace(md5($data['password']),$salt,0,6);
-        $data['password'] = md5($pwd);
+        $password = md5($pwd);
         
-        if($user['password'] == $data['password']){
-            //将用户数据写入Session
-            Session::set('user_id',$user['id']);
-            Session::set('user_name',$user['name']);
-            //记住密码
-            if(isset($data['remember'])){
-                $salt = Config::get('taoler.salt');
-                //加密auth存入cookie
-                $auth = md5($user['name'].$salt).":".$user['id'];
-                Cookie::set('auth',$auth,604800);
-                //Cookie::set('user_id', $user['id'], 604800);
-                //Cookie::set('user_name', $user['name'], 604800);
-            }
+        if($user['password'] !== $password){
+             //密码错误登陆错误次数加1
+             event(new UserLogin(['type'=>'logError','id'=>$user->id]));
+      
+             //连续3次错误
+             if(is_int(($user->login_error_num+1)/3) && $user->login_error_num >0 ){
+                 throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'));
+             }
 
-            event(new UserLogin(['type'=>'log','id'=>$user->id]));
-
-            //查询结果1表示有用户，用户名密码正确
-            $this->loggedUser = $user;
-
-            $token = JwtAuth::encode([
-                'uid'       => $user['id'],
-                'username'  => $user['name'],
-                'avatar'    => $user['user_img']
-            ]);
-
-            return ['token' => $token];
-        } else {//密码错误登陆错误次数加1
-            event(new UserLogin(['type'=>'logError','id'=>$user->id]));
-            //echo $user->login_error_num;
-            //连续3次错误
-            if(is_int(($user->login_error_num+1)/3) && $user->login_error_num >0 ){
-                throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'));
-            }
-            
+             throw new Exception(Lang::get('The user name or password is incorrect'));
         }
+        //将用户数据写入Session
+        Session::set('user_id',$user['id']);
+        Session::set('user_name',$user['name']);
+        //记住密码
+        if(isset($data['remember'])){
+            $salt = Config::get('taoler.salt');
+            //加密auth存入cookie
+            $auth = md5($user['name'].$salt).":".$user['id'];
+            Cookie::set('auth',$auth,604800);
+        }
+
+        event(new UserLogin(['type'=>'log','id'=>$user->id]));
+
+        //查询结果1表示有用户，用户名密码正确
+        $this->loggedUser = $user;
+
+        $token = JwtAuth::encode([
+            'uid'       => $user['id'],
+            'username'  => $user['name'],
+            'avatar'    => $user['user_img']
+        ]);
+
+        return ['token' => $token];
+        
     }
 
     //更新数据

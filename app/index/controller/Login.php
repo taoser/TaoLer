@@ -54,59 +54,53 @@ class Login extends BaseController
 				 return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
-			
-			//邮箱正则表达式
-			$pattern = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
-
-            if(preg_match("/^1[34578]\d{9}$/",$data['name'])) {
-                //手机验证登录
-                $data['phone'] = $data['name'];
-                unset($data['name']);
-                try{
-                    validate(userValidate::class)
-                        ->scene('loginPhone')
-                        ->check($data);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-                    return json(['code'=>-1,'msg'=>$e->getError()]);
-                }
-                $data['name'] = $data['phone'];
-                unset($data['phone']);
-
-            } elseif (preg_match($pattern, $data['name'])){
-               //输入邮箱email登陆验证
-               $data['email'] = $data['name'];
-			   unset($data['name']);
-			   try{
-                    validate(userValidate::class)
-                        ->scene('loginEmail')
-                        ->check($data);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-                    return json(['code'=>-1,'msg'=>$e->getError()]);
-                }
-                $data['name'] = $data['email'];
-				unset($data['email']);
-		   } else {
-			   //用户名name登陆验证
-			   try{
-                    validate(userValidate::class)
-                        ->scene('loginName')
-                        ->check($data);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-					return json(['code'=>-1,'msg'=>$e->getError()]);
-                }  
-		   }			
+						
 			//登陆请求
 			try{
+				//邮箱正则表达式
+				// $patternEmail = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
+				// 包含英文和中文用户名邮箱
+				$patternEmail = "/^[A-Za-z0-9\x{4e00}-\x{9fa5}]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/u";
+				$patternTel = "/^1[3-9]\d{9}$/";
+
+				if(preg_match($patternTel, $data['name'])) {
+					//手机验证登录
+					$data['phone'] = $data['name'];
+					unset($data['name']);
+					validate(userValidate::class)
+						->scene('loginPhone')
+						->check($data);
+					
+					$data['name'] = $data['phone'];
+					unset($data['phone']);
+
+				} elseif (preg_match($patternEmail, $data['name'])){
+					//输入邮箱email登陆验证
+					$data['email'] = $data['name'];
+					unset($data['name']);
+					
+					validate(userValidate::class)
+						->scene('loginEmail')
+						->check($data);
+					
+					$data['name'] = $data['email'];
+					unset($data['email']);
+				} else {
+					//用户名name登陆验证
+					validate(userValidate::class)
+						->scene('loginName')
+						->check($data);
+						  
+				}
 
 				$res = $this->user->login($data);
-				return json(['code' => 0, 'msg' => '登录成功', 'data' => ['token' => $res['token'], 'url' => $refer]]);
+				
+			} catch (ValidateException $e) {
+				return json(['code'=>-1,'msg'=>$e->getError()]);
 			} catch(Exception $e) {
 				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
-			
+			return json(['code' => 0, 'msg' => '登录成功', 'data' => ['token' => $res['token'], 'url' => $refer]]);
         }
 
         return View::fetch('login');
