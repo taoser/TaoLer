@@ -38,21 +38,22 @@ class UserLogin
 
         //日志
         if($type == 'log'){
-            try{
-                $ipInfo = HttpHelper::get($url)->toJson();
-                if($ipInfo->status == 'success') {
-                    $city = $ipInfo->city;
-                }
+            // try{
+            //     $ipInfo = HttpHelper::get($url)->toJson();
+            //     if($ipInfo->status == 'success') {
+            //         $city = $ipInfo->city;
+            //     }
 
-                $data = [
-                    'city' => $city,
-                    'last_login_ip'		=> $ip,
-                    'last_login_time'	=> time(),
-                    'login_error_num'	=> 0
-                ];
-            } catch (\Exception $e) {
-                // echo $e->getMessage();
-            }
+            // } catch (\Exception $e) {
+            //     // echo $e->getMessage();
+            // }
+            
+            $data = [
+                'city' => $city,
+                'last_login_ip'		=> $ip,
+                'last_login_time'	=> time(),
+                'login_error_num'	=> 0
+            ];
         }
 
         // 登录失败 失败次数加1

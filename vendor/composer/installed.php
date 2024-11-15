@@ -3,7 +3,7 @@
         'name' => 'taoser/taoler',
         'pretty_version' => '2.3.10.x-dev',
         'version' => '2.3.10.9999999-dev',
-        'reference' => '1bf962eb40d85dc42dce4015da21441c49fa9e11',
+        'reference' => 'ff76cb76075a27f9969d9b89ecb669544e8b5e0f',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -101,8 +101,8 @@
             'dev_requirement' => false,
         ),
         'illuminate/container' => array(
-            'pretty_version' => 'v11.30.0',
-            'version' => '11.30.0.0',
+            'pretty_version' => 'v11.31.0',
+            'version' => '11.31.0.0',
             'reference' => '06dfc614aff58384b28ba5ad191f6a02d6b192cb',
             'type' => 'library',
             'install_path' => __DIR__ . '/../illuminate/container',
@@ -110,8 +110,8 @@
             'dev_requirement' => false,
         ),
         'illuminate/contracts' => array(
-            'pretty_version' => 'v11.30.0',
-            'version' => '11.30.0.0',
+            'pretty_version' => 'v11.31.0',
+            'version' => '11.31.0.0',
             'reference' => '56312862af937bd6da8e6dc8bbd88188dfb478f8',
             'type' => 'library',
             'install_path' => __DIR__ . '/../illuminate/contracts',
@@ -155,9 +155,9 @@
             'dev_requirement' => false,
         ),
         'laravel/serializable-closure' => array(
-            'pretty_version' => 'v1.3.5',
-            'version' => '1.3.5.0',
-            'reference' => '1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c',
+            'pretty_version' => 'v1.3.6',
+            'version' => '1.3.6.0',
+            'reference' => 'f865a58ea3a0107c336b7045104c75243fa59d96',
             'type' => 'library',
             'install_path' => __DIR__ . '/../laravel/serializable-closure',
             'aliases' => array(),
@@ -262,8 +262,8 @@
         'psr/container-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '^1.0',
-                1 => '1.1|2.0',
+                0 => '1.1|2.0',
+                1 => '^1.0',
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -410,7 +410,7 @@
         'taoser/taoler' => array(
             'pretty_version' => '2.3.10.x-dev',
             'version' => '2.3.10.9999999-dev',
-            'reference' => '1bf962eb40d85dc42dce4015da21441c49fa9e11',
+            'reference' => 'ff76cb76075a27f9969d9b89ecb669544e8b5e0f',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

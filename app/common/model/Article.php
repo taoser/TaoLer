@@ -9,6 +9,7 @@ use think\facade\Cache;
 use think\facade\Session;
 use think\facade\Config;
 use think\db\Query;
+use Exception;
 
 class Article extends Model
 {
@@ -300,123 +301,84 @@ class Article extends Model
      * @return mixed
      * @throws \Throwable
      */
-    public function getCateList(string $ename, string $type, int $page = 1)
+    public function getCateList(string $ename, int $page = 1, string $type = 'all', int $limit = 15)
     {
         $where = [];
-        switch ($type) {
-            //查询文章,15个分1页
-            case 'jie':
-                $where[] = ['jie','=', 1];
-                break;
-            case 'hot':
-                $where[] = ['is_hot','=', 1];
-                break;
-            case 'top':
-                $where[] = ['is_top' ,'=', 1];
-                break;
-            case 'wait':
-                $where[] = ['jie','=', 0];
-                break;
-        }
+        $cateId = Cate::where('status', 1)->where('ename', $ename)->value('id');
 
-        $where[] = ['status', '=', 1];
-
-        // ··································
-        $cateId = Cate::where('ename',$ename)->value('id');
         if(!is_null($cateId)){
             $where[] = ['cate_id' ,'=', $cateId];
         }
 
-        $count = (int) Cache::remember('cate_count_'.$ename, function() use($where){
-            return $this->where($where)->count();
+        $where[] = ['status', '=', 1];
+
+        switch ($type) {
+            //查询文章,15个分1页
+            case 'jie':
+                $where[] = ['jie','=', '1'];
+                break;
+            case 'hot':
+                $where[] = ['is_hot','=', '1'];
+                break;
+            case 'top':
+                $where[] = ['is_top' ,'=', '1'];
+                break;
+            case 'wait':
+                $where[] = ['jie','=', '0'];
+                break;
+        }
+
+        // 文章分类总数
+        $count = (int) Cache::remember("cate_count_{$ename}_{$type}", function() use($where){
+            return $this::where($where)->count();
         });
 
+        $data = [];
 
-        return Cache::remember('cate_list_'.$ename.$type.$page, function() use($where,$ename,$page,$count) {
-            // 默认排序
-            $order = ['id' => 'desc'];
-            if($page === 1) {
-                // 第一页定位
-                if(count($where)) {
-                    $maxId = (int)$this->where($where)->max('id');
-                } else {
-                    $maxId = $this->order('id', 'desc')->value('id');
-                }
-                $where[] = ['id', '<=', $maxId];
-            } else {
-                // 非第一页，可以获取前分页标记
-                $opage = Session::get('opage');
+        // 总共页面数
+        $lastPage = (int) ceil($count / $limit); // 向上取整
+ 
+        if($count) {
 
-                switch($page) {
-                    // next
-                    case $page > $opage['opg']:
-                        $where[] = ['id', '<=', $opage['lid'] - 1];
-                        break;
-                    // up
-                    case $page < $opage['opg']:
-                        $where[] = ['id', '>=', $opage['fid'] + 1];
-                        $order = ['id' => 'asc']; // 向上翻页时正序
-                        break;
-                }
+            if($page > $lastPage) {
+                throw new Exception('no data');
             }
 
-//             $list = $this::field('id')->where($where)->order(['id'=>'desc'])->paginate([
-//                 'list_rows' => 15,
-//                 'page' => $page
-//             ]);
+            $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit) {
+                $articles = Article::field('id')->where($where)->order('id', 'desc')->page($page, $limit)->select();
+                $ids = $articles->toArray();
+                $idArr = array_column($ids, 'id');
 
-//             $idArr = [];
-//             if($list['total'] > 0) {
-//                 foreach($list['data'] as $v) {
-//                     $idArr[] = $v['id'];
-//                 }
-//             }
-
-            $data = $this::field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
-            ->with([
-                'cate' => function($query) {
-                    $query->field('id,catename,ename');
-                },
-                'user' => function($query){
-                    $query->field('id,name,nickname,user_img,vip');
-                }
-            ])->withCount(['comments'])
-                //->where('id','in',$idArr)
-                //->order(['id'=>'desc'])
-                ->where($where)
-                ->order($order)
-                ->limit(15)
+                $list =  Article::field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
+                ->with([
+                    'cate' => function(Query $query) {
+                        $query->field('id,catename,ename');
+                    },
+                    'user' => function(Query $query){
+                        $query->field('id,name,nickname,user_img,vip');
+                    }
+                ])
+                ->withCount(['comments'])
+                ->whereIn('id', $idArr)
+                ->order('id', 'desc')
+                ->select()
                 ->append(['url'])
                 ->hidden(['art_pass'])
-                ->select()
                 ->toArray();
 
-                // 向上翻页反转
-            if($page != 1 && $page < $opage['opg']) {
-                $data = array_reverse($data);
-            }
+                return $list;
+                
+            }, 600);
+        }
 
-            if($count) {
-                // 翻页定位
-                Session::set('opage',['opg' => $page, 'fid' => $data[0]['id'], 'lid' => end($data)['id']]);
-            }
-            
-            // return [
-            //     'total' => $list['total'],
-            //     'per_page' => $list['per_page'],
-            //     'current_page' => $list['current_page'],
-            //     'last_page' => $list['last_page'],
-            //     'data' => $data
-            // ];
+        return [
+            'total' => $count,
+            'per_page' => $limit,
+            'current_page' => $page,
+            'last_page' => $lastPage,
+            'data' => $data
+        ];
 
-            return [
-                'total' => $count,
-                'per_page' => 15,
-                'current_page' => $page,
-                'data' => $data
-            ];
-
-        }, 600);
     }
 
     // 获取用户发帖列表
