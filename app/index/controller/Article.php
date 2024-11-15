@@ -42,13 +42,13 @@ class Article extends BaseController
 		// 分类信息
 		$cateInfo = $cate->getCateInfo($ename);
 
-		if(is_null($cateInfo)) {
+		if(is_null($cateInfo)  && $ename != 'all') {
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '没有可访问的数据！');
 		}
 		
         //分类列表
-		$artList = $this->model->getCateList($ename,$type,$page);
+		$artList = $this->model->getCateList($ename,$page,$type,);
 
 		//	热议文章
 		$artHot = $this->model->getArtHot(10);
@@ -138,8 +138,7 @@ class Article extends BaseController
 		$comments = $comment->getComment($id, $page);
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
-		//push
-		$push_js = Db::name('push_jscode')->where(['delete_time'=>0,'type'=>1])->cache(true)->select();
+		
 
 		View::assign([
 			'article'		=> $artDetail,
@@ -151,7 +150,6 @@ class Article extends BaseController
 			'next'			=> $next,
 			'page'			=> $page,
 			'comments'		=> $comments,
-			'push_js'		=> $push_js,
 			'cid' 			=> $id,
 			'lrDate_time' 	=> $lrDate_time,
 			'userZanList' 	=> $userZanList,

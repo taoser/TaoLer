@@ -11,6 +11,7 @@ use think\facade\View;
 use taoler\com\Files;
 use think\facade\Cache;
 use think\facade\Db;
+use think\facade\Template;
 
 abstract class Addons
 {

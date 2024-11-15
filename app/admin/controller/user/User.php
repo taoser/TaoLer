@@ -20,6 +20,9 @@ use app\common\model\User as UserModel;
 use app\common\lib\Uploads;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
+use app\common\model\Article;
+use app\common\model\Comment;
+use Exception;
 
 class User extends AdminController
 {
@@ -158,6 +161,34 @@ class User extends AdminController
 					return json(['code'=>-1,'msg'=>'删除失败']);
 				}
 			}
+	}
+
+	//删除用户
+	public function clear($id)
+	{
+		$id = (int)input('id');
+		
+		
+			$articleCount = Article::where('user_id', $id)->count();
+			$commentCount = Comment::where('user_id', $id)->count();
+
+			if($articleCount) {
+				Article::destroy(function($query) use($id){
+					$query->where('user_id','=', $id);
+				});
+			}
+
+			if($commentCount) {
+				Comment::destroy(function($query) use($id){
+					$query->where('user_id','=', $id);
+				});
+			}
+			try{
+		} catch(Exception $e) {
+			return json(['code'=>-1,'msg'=>'清空资源失败']);
+		}
+			
+		return json(['code'=>0,'msg'=>'清空资源成功']);
 	}
 	
 	//上传头像

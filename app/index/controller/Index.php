@@ -17,8 +17,8 @@ use think\facade\Db;
 use app\facade\Article;
 use app\common\lib\Msgres;
 
-//use addons\pay\controller\AlipayFactory;
-//use addons\pay\controller\WeixinFactory;
+// use addons\pay\controller\AlipayFactory;
+use addons\pay\controller\WeixinFactory;
 
 //use app\common\lib\Near;
 
@@ -37,9 +37,10 @@ class Index extends BaseController
 		// echo "My public IP address is: " . $ip;
 		// $alipay = AlipayFactory::createPayMethod();
 		// $weixin = WeixinFactory::createPayMethod();
+		// dump($weixin);
 		// $a = $alipay->index();
 		// $b= $weixin->index();
-		// var_dump($a,$b);
+		// var_dump($b);
 
 		// $hook['hook_name'] = 'thinkphp';
 		// $hook['hook_type'] = 1;
