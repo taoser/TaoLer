@@ -22,144 +22,197 @@ class Article extends TagLib
         'id'            => ['attr' => '', 'close' => 0],
         'title'         => ['attr' => '', 'close' => 0],
         'content'       => ['attr' => '', 'close' => 0],
-        'auther'        => ['attr' => '', 'close' => 0],
+        'author'        => ['attr' => '', 'close' => 0],
+        'author_id'     => ['attr' => '', 'close' => 0],
+        'author_avatar' => ['attr' => '', 'close' => 0],
+        'author_link' => ['attr' => '', 'close' => 0],
         'pv'            => ['attr' => '', 'close' => 0],
         'title_color'   => ['attr' => '', 'close' => 0],
         'comment_num'   => ['attr' => '', 'close' => 0],
         'keywords'      => ['attr' => '', 'close' => 0],
         'description'   => ['attr' => '', 'close' => 0],
         'link'          => ['attr' => '', 'close' => 0],
+        'url'           => ['attr' => '', 'close' => 0],
         'time'          => ['attr' => '', 'close' => 0],
         'uptime'        => ['attr' => '', 'close' => 0],
+        'is_top'        => ['attr' => '', 'close' => 0],
+        'has_img'       => ['attr' => '', 'close' => 0],
+        'has_video'     => ['attr' => '', 'close' => 0],
+
+        'cate_name'     => ['attr' => '', 'close' => 0],
+        'cate_ename'    => ['attr' => '', 'close' => 0],
+        'cate_id'       => ['attr' => '', 'close' => 0],
+
+        'field'         => ['attr' => 'name', 'close' => 0],
 
         'cate'          => ['attr' => 'name', 'close' => 0],
         'user'          => ['attr' => 'name', 'close' => 0],
 
+        
+
         'list'          => ['attr' => '', 'close' => 1],
 
 
-        'comment'       => ['attr' => '', 'close' => 1],
+        'comment'       => ['attr' => ''],
 
-        'istop'         => ['attr' => '', 'close' => 0],
-
-        'detail'      => ['attr' => 'name', 'close' => 0],
-//        'detail'      => ['attr' => '', 'close' => 0],
+        'detail'        => ['attr' => 'name', 'close' => 0],
+        
         
     ];
 
     // id
-    public function tagId(): string
+    public function tagId(array $tag, string $content): string
     {
         return '{$article.id}';
     }
 
-    public function tagTitle(): string
+    public function tagTitle(array $tag, string $content): string
     {
         return '{$article.title}';
     }
 
-    public function tagContent(): string
+    public function tagContent(array $tag, string $content): string
     {
         return '{$article.content|raw}';
     }
 
-    public function tagAuther(): string
+    public function tagAuthor(array $tag, string $content): string
     {
         return '{$article.user.nickname ?: $article.user.name}';
     }
 
-    public function tagPv()
+    public function tagAuthor_id(array $tag, string $content): string
+    {
+        return '{$article.user.id}';
+    }
+
+    public function tagAuthor_avatar(array $tag, string $content): string
+    {
+        return '{$article.user.user_img}';
+    }
+
+    public function tagAuthor_link(array $tag, string $content): string
+    {
+        return '{:url("user_home",["id"=>$article.user.id])->domain(true)}';
+    }
+
+    public function tagPv(array $tag, string $content)
     {
         return '{$article.pv}';
     }
 
-    public function tagComment_num(): string
+    public function tagComment_num(array $tag, string $content): string
     {
         return '{$article.comments_count}';
     }
 
-    public function tagTitle_color(): string
+    public function tagTitle_color(array $tag, string $content): string
     {
         return '{$article.title_color  ?: "#333"}';
     }
 
-    public function tagKeywords(): string
+    public function tagKeywords(array $tag, string $content): string
     {
         return '{$article.keywords ?: $article.title}';
     }
 
-    public function tagDescription(): string
+    public function tagDescription(array $tag, string $content): string
     {
         return '{$article.description}';
     }
 
-    public function tagLink(): string
+    public function tagLink(array $tag, string $content): string
+    {
+        return '{:url(\'detail\', [\'ename\' => $article.cate.ename,\'id\' => $article.id])->domain(true)}';
+    }
+
+    public function tagUrl(array $tag, string $content): string
     {
         return '{$article.url}';
     }
 
-    public function tagTime(): string
+    public function tagTime(array $tag, string $content): string
     {
         return '{$article.create_time}';
     }
 
-    public function tagUptime(): string
+    public function tagUptime(array $tag, string $content): string
     {
         return '{$article.update_time}';
     }
 
-    // 详情分类
-    public function tagCate($tag): string
+    public function tagIs_top(array $tag, string $content): string
     {
-        if($tag['name'] == 'name')
-        {
-            return '{$article.cate.catename}';
-        }
-
-        if($tag['name'] == 'ename')
-        {
-            return '{$article.cate.ename}';
-        }
-
-        if($tag['name'] == 'id')
-        {
-            return '{$article.cate_id}';
-        }
-
-        if($tag['name'] == 'link')
-        {
-            return '{:url(\'cate\',[\'ename\'=>$article.cate.ename])}';
-        }
-
-        return '';
+        return '{$article.is_top}';
     }
 
-    public function tagUser($tag)
+    public function tagHas_img(array $tag, string $content): string
     {
-        if($tag['name'] == 'link') {
-            return '{:url("user/home",["id"=>'.'$'.'article.user.id'.'])->domain(true)}';
-        }
-        return '{$article.user.' . $tag['name'] . '}';
+        return '{$article.has_img}';
     }
 
-    public function tagCateName()
+    public function tagHas_video(array $tag, string $content): string
+    {
+        return '{$article.has_video}';
+    }
+
+    public function tagCate_name(array $tag, string $content)
     {
         return '{$article.cate.catename}';
     }
 
-    public function tagCateename()
+    public function tagCate_ename(array $tag, string $content)
+    {
+        return '{$article.cate.ename}';
+    }
+
+    public function tagCate_id(array $tag, string $content)
     {
         return '{$article.cate.id}';
     }
 
-    // 详情
-//    public function tagDetail($tag)
-//    {
-//        return '{$article.' . $tag['name'] . '}';
-//    }
+
+    // field of detail page
+    public function tagField($tag)
+    {
+        return '{$article.' . $tag['name'] . '}';
+    }
+
+    // category info of detail page
+    public function tagCate(array $tag, string $content): string
+    {
+        $result = match($tag['name']) {
+            "id" => '{$article.cate_id}',
+            "name" => '{$article.cate.catename}',
+            "ename" => '{$article.cate.ename}',
+            "link" => '{:url(\'cate\',[\'ename\'=>$article.cate.ename])->domain(true)}',
+            default => ''
+        };
+
+        return $result;
+
+    }
+
+    // user info of detail page
+    public function tagUser(array $tag, string $content)
+    {
+        $result = match($tag['name']) {
+            'id' => '{$article.user.id}',
+            'name' => '{$article.user.name}',
+            'nick' => '{$article.user.nickname}',
+            'avatar' => '{$article.user.user_img}',
+            'vip' => '{$article.user.vip}',
+            'link'  => '{:url("user_home",["id"=>$article.user.id])->domain(true)}',
+            default => ''
+        };
+
+        return $result;
+
+        // return '{$article.user.' . $tag['name'] . '}';
+    }
 
     // 详情
-    public function tagDetail($tag)
+    public function tagDetail(array $tag, string $content)
     {
         $parseStr = '{assign name="id" value="$Request.param.id" /}';
         $parseStr .= '<?php ';
@@ -170,7 +223,7 @@ class Article extends TagLib
     }
 
 
-    public function tagIstop($tag): string
+    public function tagIs_tops(array $tag, string $content): string
     {
         //dump($this->article);
         $parseStr = '{if($article.is_top == 0)}';
@@ -182,7 +235,7 @@ class Article extends TagLib
     }
 
     // 评论
-     public function tagComment2($tag, $content): string
+     public function tagComment2(array $tag, string $content): string
      {
          $parse = '<?php ';
          $parse .= ' ?>';
@@ -193,7 +246,7 @@ class Article extends TagLib
      }
 
     // 评论
-    public function tagComment($tag, $content): string
+    public function tagComment(array $tag, string $content): string
     {
         $parse = '<?php ';
         $parse .= ' ?>';
@@ -203,13 +256,26 @@ class Article extends TagLib
         return $parse;
     }
 
-    // 分类列表
-    public function tagList($tag, $content): string
+    public function tagList(array $tag, string $content): string
     {
-        $parse = '{volist name="artList['.'\'data\''.']" id="article" empty= "还没有内容"}';
-        $parse .= $content;
-        $parse .= '{/volist}';
+        $type = isset($tag['type']) ? $tag['type'] : '';
+        $parse = match($type){
+            "top" => '<?php $__articles__ = \app\facade\Article::getTops(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
+            "hot" => '<?php $__articles__ = \app\facade\Article::getHots(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
+            "index" => '<?php $__articles__ = \app\facade\Article::getIndexs(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
+            default => '{assign name="ename" value="$Request.param.ename" /}{assign name="page" value="$Request.param.page ?? 1" /}{assign name="type" value="$Request.param.type ?? \'all\'" /}<?php $__articles__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type)[\'data\']; ?> {volist name="__articles__" id="article"}' .$content. '{/volist}'
+        };
+
+        // $parse = '{assign name="id" value="$Request.param.id" /}';
+        // $parse .= '<?php ';
+        // $parse .= '$__articles__ = \app\facade\Article::getTops();';
+        // $parse .= ' \?\>';
+        // $parse .= '{volist name="__articles__" id="article"}';
+        // $parse .= $content;
+        // $parse .= '{/volist}';
+        
         return $parse;
+
     }
 
 }

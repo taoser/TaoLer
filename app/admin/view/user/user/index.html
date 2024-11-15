@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 	<head>
 		<meta charset="UTF-8">
-		<title>新增页面</title>
+		<title>用户页面</title>
 		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 	</head>
 <body>
@@ -92,8 +92,9 @@
 			</ul>
 		</script>
 		<script type="text/html" id="user-bar">
-			<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-		    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+			<button class="pear-btn pear-btn-primary pear-btn-sm" title="编辑" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+		    <button class="pear-btn pear-btn-danger pear-btn-sm" title="删除" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+			<button class="pear-btn pear-btn-warm pear-btn-sm" title="清空资源" lay-event="clear"><i class="layui-icon layui-icon-clear"></i></button>
 		</script>
 
 		<script type="text/html" id="user-enable">
@@ -206,7 +207,7 @@
 							title: '操作',
 							toolbar: '#user-bar',
 							align: 'center',
-							width: 130
+							width: 160
 						}
 					]
 				]
@@ -272,6 +273,8 @@
 						window.remove(obj);
 					} else if (obj.event === 'edit') {
 						window.edit(obj);
+					} else if(obj.event === 'clear') {
+						window.clear(obj);
 					}
 				});
 
@@ -425,6 +428,38 @@
 						let loading = layer.load();
 						$.ajax({
 							url: "{:url('user.user/delete')}?id=" + obj.data['id'],
+							dataType: 'json',
+							type: 'delete',
+							success: function(result) {
+								layer.close(loading);
+								if (result.code === 0) {
+									layer.msg(result.msg, {
+										icon: 1,
+										time: 1000
+									}, function() {
+										obj.del();
+									});
+								} else {
+									layer.msg(result.msg, {
+										icon: 2,
+										time: 1000
+									});
+								}
+							}
+						})
+					});
+				}
+
+				window.clear = function(obj) {
+					
+					layer.confirm('确定要清空该用户资源', {
+						icon: 3,
+						title: '提示'
+					}, function(index) {
+						layer.close(index);
+						let loading = layer.load();
+						$.ajax({
+							url: "{:url('user.user/clear')}?id=" + obj.data['id'],
 							dataType: 'json',
 							type: 'delete',
 							success: function(result) {

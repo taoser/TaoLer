@@ -20,6 +20,7 @@ class Taoler extends TagLib
         'snav'      => ['attr' => '', 'close' => 1],
         'gnav'      => ['attr' => '', 'close' => 1],
         'if'        => ['condition', 'expression' => true, 'close' => 1],
+        'list'      => ['attr' => 'type', 'close' => 1, 'expression' => true],
 
     ];
 
@@ -65,6 +66,28 @@ class Taoler extends TagLib
         return $parseStr;
 
 //        return '{if'.$tag.'}} '.$content.' {/if}';
+
+    }
+
+    public function tagList(array $tag, string $content): string
+    {
+        $type = isset($tag['type']) ? $tag['type'] : '';
+        $parse = match($type){
+            "top" => '<?php $__articles__ = \app\facade\Article::getTops(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
+            "hot" => '<?php $__articles__ = \app\facade\Article::getHots(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
+            "index" => '<?php $__articles__ = \app\facade\Article::getIndexs(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
+            default => '{assign name="ename" value="$Request.param.ename" /}{assign name="page" value="$Request.param.page ?? 1" /}{assign name="type" value="$Request.param.type ?? \'all\'" /}<?php $__articles__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type)[\'data\']; ?> {volist name="__articles__" id="article"}' .$content. '{/volist}'
+        };
+
+        // $parse = '{assign name="id" value="$Request.param.id" /}';
+        // $parse .= '<?php ';
+        // $parse .= '$__articles__ = \app\facade\Article::getTops();';
+        // $parse .= ' \?\>';
+        // $parse .= '{volist name="__articles__" id="article"}';
+        // $parse .= $content;
+        // $parse .= '{/volist}';
+        
+        return $parse;
 
     }
 

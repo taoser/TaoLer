@@ -19,7 +19,7 @@ class Cate extends TagLib
         'bro_name'      => ['attr' => '', 'close' => 0],
         'bro_ename'     => ['attr' => '', 'close' => 0],
         'bro_url'       => ['attr' => '', 'close' => 0],
-        'list'          => ['attr' => '', 'close' => 1]
+        'clist'          => ['attr' => '']
     ];
 
 
@@ -49,9 +49,10 @@ class Cate extends TagLib
         return '{$brother.url}';
     }
 
-    public function tagList($tag, $content): string
+    public function tagClist($tag, $content): string
     {
         //$paras = ;
+        return '';
     }
 
 
