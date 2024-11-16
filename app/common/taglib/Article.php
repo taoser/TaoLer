@@ -29,6 +29,7 @@ class Article extends TagLib
         'pv'            => ['attr' => '', 'close' => 0],
         'title_color'   => ['attr' => '', 'close' => 0],
         'comment_num'   => ['attr' => '', 'close' => 0],
+        'comments_count'=> ['attr' => '', 'close' => 0],
         'keywords'      => ['attr' => '', 'close' => 0],
         'description'   => ['attr' => '', 'close' => 0],
         'link'          => ['attr' => '', 'close' => 0],
@@ -106,6 +107,11 @@ class Article extends TagLib
         return '{$article.comments_count}';
     }
 
+    public function tagComments_count(array $tag, string $content): string
+    {
+        return '{$article.comments_count}';
+    }
+
     public function tagTitle_color(array $tag, string $content): string
     {
         return '{$article.title_color  ?: "#333"}';
@@ -156,24 +162,24 @@ class Article extends TagLib
         return '{$article.has_video}';
     }
 
-    public function tagCate_name(array $tag, string $content)
+    public function tagCate_name(array $tag, string $content): string
     {
         return '{$article.cate.catename}';
     }
 
-    public function tagCate_ename(array $tag, string $content)
+    public function tagCate_ename(array $tag, string $content): string
     {
         return '{$article.cate.ename}';
     }
 
-    public function tagCate_id(array $tag, string $content)
+    public function tagCate_id(array $tag, string $content): string
     {
         return '{$article.cate.id}';
     }
 
 
     // field of detail page
-    public function tagField($tag)
+    public function tagField($tag): string
     {
         return '{$article.' . $tag['name'] . '}';
     }
@@ -194,7 +200,7 @@ class Article extends TagLib
     }
 
     // user info of detail page
-    public function tagUser(array $tag, string $content)
+    public function tagUser(array $tag, string $content): string
     {
         $result = match($tag['name']) {
             'id' => '{$article.user.id}',
@@ -212,7 +218,7 @@ class Article extends TagLib
     }
 
     // 详情
-    public function tagDetail(array $tag, string $content)
+    public function tagDetail(array $tag, string $content): string
     {
         $parseStr = '{assign name="id" value="$Request.param.id" /}';
         $parseStr .= '<?php ';
@@ -260,10 +266,14 @@ class Article extends TagLib
     {
         $type = isset($tag['type']) ? $tag['type'] : '';
         $parse = match($type){
-            "top" => '<?php $__articles__ = \app\facade\Article::getTops(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
-            "hot" => '<?php $__articles__ = \app\facade\Article::getHots(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
-            "index" => '<?php $__articles__ = \app\facade\Article::getIndexs(); ?> {volist name="__articles__" id="article"}' .$content. '{/volist}',
-            default => '{assign name="ename" value="$Request.param.ename" /}{assign name="page" value="$Request.param.page ?? 1" /}{assign name="type" value="$Request.param.type ?? \'all\'" /}<?php $__articles__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type)[\'data\']; ?> {volist name="__articles__" id="article"}' .$content. '{/volist}'
+            "top" => '<?php $__TOPS__ = \app\facade\Article::getTops(); ?> {volist name="__TOPS__" id="article"}' .$content. '{/volist}',
+            "hot" => '<?php $__HOTS__ = \app\facade\Article::getHots(); ?> {volist name="__HOTS__" id="article"}' .$content. '{/volist}',
+            "index" => '<?php $__INDEXS__ = \app\facade\Article::getIndexs(); ?> {volist name="__INDEXS__" id="article"}' .$content. '{/volist}',
+            default => '{assign name="ename" value="$Request.param.ename" /}
+                        {assign name="page" value="$Request.param.page ?? 1" /}
+                        {assign name="type" value="$Request.param.type ?? \'all\'" /}
+                        <?php $__LISTS__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type); ?> 
+                        {volist name="__LISTS__[\'data\']" id="article"}' . $content . '{/volist}'
         };
 
         // $parse = '{assign name="id" value="$Request.param.id" /}';

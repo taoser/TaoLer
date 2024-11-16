@@ -20,9 +20,9 @@
  <!-- 百度JavaScript结构化 -->
  <script type="application/ld+json">{"@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld","@id": "{$Request.domain}{$Request.url}","title": "{$article.title}","images": ["{:getOnepic($article.content)}"],"description": "{$article.description ?? ''}","pubDate": "{$article.create_time|date='c'}","upDate": "{$article.update_time|date='c'}"}</script>
  <!-- 特效丶样式 -->
- <link rel="stylesheet" href="{$Request.domain}/view/common/blog/css/style.css" type="text/css" charset="utf-8"/>
+ <link rel="stylesheet" href="/static/view/taoler/blog/css/style.css" type="text/css" charset="utf-8"/>
  <script type='text/javascript' src="/static/jquery-3.6.0.min.js"></script>
- <script type='text/javascript' src="{$Request.domain}/view/common/blog/js/view-image.min.js"></script>
+ <script type='text/javascript' src="/static/view/taoler/blog/js/view-image.min.js"></script>
  <script>window.ViewImage && ViewImage.init('.post-content img');</script>
 {/block}
 {block name="column"}<div class="layui-hide-xs">{include file="index/public/column" /}</div>{/block}
@@ -49,16 +49,11 @@
 							</div>
 							<div class="border-theme bg-primary"></div>
 						</div>
-						{:hook('taoplayerdiv')}
 						<article class="post-content detail-body" itemprop="articleBody" view-image>
 							{article:content}
 						</article>
 						<!-- 文章末尾 -->
-						{notempty name="$article.upzip"}
-						{if (session('?user_name'))}
-							<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-						{/if}
-						{/notempty}
+
 						<!-- 解密文件 -->
 						{empty name="passJieMi"}
 						{if($article.read_type == 1)}
@@ -90,7 +85,7 @@
 					</section>
 					<div class="card-footer text-center mt-4">
 						<a href="javascript:" style="color: #FFF !important;" data-img="/qrcode/?text={$Request.domain}{$Request.url}&size=200" data-title="手机扫一扫继续阅读" data-desc="微信或浏览器均可" class="single-popup shangzan mr-3 text-muted text-xs">手机浏览</a>
-						<a href="javascript:" style="color: #FFF !important;" data-img="{:hook('qqKefu','dashang')}" data-title="赞赏支持一下站长" data-desc="微信赞赏扫码" class="single-popup shangzan text-muted text-xs">赞赏支持</a>
+						<a href="javascript:" style="color: #FFF !important;" data-img="" data-title="赞赏支持一下站长" data-desc="微信赞赏扫码" class="single-popup shangzan text-muted text-xs">赞赏支持</a>
 						<div class="text-center text-muted text-xs" style="margin-top: 30px;">
 							"作者已被打赏 0 次"
 						</div>
@@ -280,16 +275,16 @@
 						<dt class="function_t">热门文章</dt>
 						<dd class="function_c">
 							<ul>
-								{volist name="artHot" id="vo"}
+								{article:list type="hot"}
 								<li style="display: block;">
 									<div class="list-body fanpian">
-										<a href="{$vo.url}" target="_blank">{$vo.title}</a>
+										<a href="{article:link /}" target="_blank">{$article.title}</a>
 									</div>
 									<div class="list-footer">
-										<div class="text-muted text-xs"><time class="d-inline-block">{$vo.create_time|date='Y-m-d'}</time></div>
+										<div class="text-muted text-xs"><time class="d-inline-block">{$article.create_time|date='Y-m-d'}</time></div>
 									</div>
 								</li>
-								{/volist}
+								{/article:list}
 							</ul>
 						</dd>
 					</dl>
@@ -328,7 +323,7 @@
 
 {block name="script"}
 
-<script type='text/javascript' src="{$Request.domain}/view/common/blog/js/theme.js"></script>
+<script type='text/javascript' src="/static/view/taoler/blog/js/theme.js"></script>
 
 <script>
 	var collectionFind = "{:url('Collection/find')}",

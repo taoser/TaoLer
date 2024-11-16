@@ -197,6 +197,9 @@ class Article extends Model
                 ];
 
                 $artHot = self::field('id,cate_id,title,create_time')
+                ->with(['cate' => function($query){
+                    $query->field('id,ename,catename');
+                }])
                 ->withCount('comments')
                 ->where($where)
                 //->whereYear('create_time')
@@ -211,6 +214,9 @@ class Article extends Model
                 ];
 
                 $artHot = self::field('id,cate_id,title,create_time')
+                ->with(['cate' => function($query){
+                    $query->field('id,ename,catename');
+                }])
                 ->withCount('comments')
                 ->where($where)
                 ->whereMonth('create_time')

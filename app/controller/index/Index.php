@@ -65,15 +65,6 @@ class Index extends IndexBaseController
 		// 	$lawyer = $lawyers[$k];
 		// }
 
-		//置顶文章
-		$artTop = Article::getTops(5);
-        //首页文章列表,显示10个
-        $indexArticles = Article::getIndexs();
-
-		View::assign([
-			'artTop'	=>	$artTop,
-			'artList'	=>	$indexArticles,
-		]);
 
 		return View::fetch();
     }

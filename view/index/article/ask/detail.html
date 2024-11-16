@@ -25,8 +25,8 @@
 				{//图标}
 				<div class="user-questions">
 					<a class="user-avatar" href="{article:user name='link' /}">
-						<img src="{article:atarav /}" alt="{article:auther /}" />
-						<cite>{article:auther} </cite>
+						<img src="{article:author_avatar /}" alt="{article:author /}" />
+						<cite>{article:author /} </cite>
 					</a>
 					<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px">{$article.update_time|date="Y-h-d H:i"}</span>
 					<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>
@@ -46,15 +46,9 @@
 				{//问题内容}
 				<div style="margin: 10px 0; font-size: 16px; font-weight: bold; color: rgb(161, 155, 155)">问题描述：</div>
 
-				{:hook('taoplayerdiv')}
 				<article class="detail-body photos" id="content">{article:content}</article>
-				{notempty name="$article.upzip"}
-					{if (session('?user_name'))}
-					<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-					{/if}
-				{/notempty}
 
-					{//解密文件}
+				{//解密文件}
 				{empty name="passJieMi"}
 					{if($article.read_type == 1)}
 					<div id="jiemi" style="text-align:center">

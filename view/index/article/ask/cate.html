@@ -47,7 +47,7 @@
 							<h2><a href="{article:link}"  style="color:{article:title_color};">{article:title}</a></h2>
 							<div class="que-user-info">
 								<a href="{article:user name='link'}" class="que-avatar">
-									<cite>{article:auther /}</cite>
+									<cite>{article:author /}</cite>
 								</a>
 								{$article.create_time|date='Y-m-d'}
 								{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
@@ -98,12 +98,12 @@
         // })
 
 	  //执行一个laypage实例
-		laypage.render({
+	  laypage.render({
 			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
-			,count: "{$artList['total']}" //数据总数，从服务端得到
+			,count: "{$__LISTS__.total}" //数据总数，从服务端得到
 			,groups: 1
-			,limit: "{$artList['per_page']}"
-			,curr : "{$artList['current_page']}"
+			,limit: "{$__LISTS__['per_page']}"
+			,curr : "{$__LISTS__['current_page']}"
 			,first: false
     		,last: false
 			,groups: 5

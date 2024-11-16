@@ -35,7 +35,7 @@ class Category extends IndexBaseController
 		
         //分类列表
 		$articles = $this->model::getArticlesByCategoryEname($ename, $page, $type);
-
+// dump($articles);
 		//	热议文章
 		$artHot = Article::getHots(10);
 
@@ -52,9 +52,9 @@ class Category extends IndexBaseController
 			'ename'		=> $ename,
 			'cateinfo'	=> $cateInfo,
 			'type'		=> $type,
-			'artList'	=> $articles,
+			// 'artList'	=> $articles,
 			// 'articles'	=> $articles,
-			'artHot'	=> $artHot,
+			// 'artHot'	=> $artHot,
 			'path'		=> $path
 		];
 

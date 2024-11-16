@@ -19,7 +19,7 @@
 	<link rel="shortcut icon" type="image/x-icon" href="{$Request.domain}/favicon.ico"/>
 	<link rel="apple-touch-icon" sizes="180x180" href=""/>
 	<link rel="apple-touch-icon-precomposed" href=""/>
-	<link rel="stylesheet" href="{$Request.domain}/view/common/blog/css/style.css" type="text/css" charset="utf-8"/>
+	<link rel="stylesheet" href="{$Request.domain}/static/view/taoler/blog/css/style.css" type="text/css" charset="utf-8"/>
 	<script src="/static/jquery-3.6.0.min.js"></script>
 {/block}
 
@@ -92,16 +92,16 @@
 						<dt class="function_t">热门文章</dt>
 						<dd class="function_c">
 							<ul>
-								{volist name="artHot" id="vo"}
+								{article:list type="hot"}
 								<li style="display: block;">
 									<div class="list-body fanpian">
-										<a href="{$Request.domain}{$vo.url}" target="_blank">{$vo.title}</a>
+										<a href="{article:link /}" target="_blank">{$article.title}</a>
 									</div>
 									<div class="list-footer">
-										<div class="text-muted text-xs"><time class="d-inline-block">{$vo.create_time|date='Y-m-d'}</time></div>
+										<div class="text-muted text-xs"><time class="d-inline-block">{$article.create_time|date='Y-m-d'}</time></div>
 									</div>
 								</li>
-								{/volist}
+								{/article:list}
 							</ul>
 						</dd>
 					</dl>
@@ -117,21 +117,21 @@
 {/block}
 {block name="script"}
 
-<script type='text/javascript' src="{$Request.domain}/view/common/blog/js/theme.js"></script>
+<script type='text/javascript' src="/static/view/taoler/blog/js/theme.js"></script>
 <script>
 	layui.use(['laypage'], function(){
 		var laypage = layui.laypage;
 		//执行一个laypage实例
 		laypage.render({
 			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
-			,count: "{$artList['total']}" //数据总数，从服务端得到
+			,count: "{$__LISTS__.total}" //数据总数，从服务端得到
 			,groups: 1
-			,limit: "{$artList['per_page']}"
-			,curr : "{$artList['current_page']}"
+			,limit: "{$__LISTS__['per_page']}"
+			,curr : "{$__LISTS__['current_page']}"
 			,first: false
     		,last: false
 			,groups: 5
-			,layout: ['prev', 'page','next','count','skip']
+			,layout: ['prev', 'page','next','count', 'skip']
 			//获取起始页
 			,jump: function(obj, first){
 				//首次不执行
