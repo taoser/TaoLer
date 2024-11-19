@@ -170,7 +170,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getTops(int $num)
+    public function getTops(int $num = 5)
     {
         return Cache::remember('top_article', function() use($num){
             // $topIdArr = $this::where(['status' => '1', 'is_top' => '1'])->limit($num)->column('id');
@@ -202,7 +202,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getIndexs(int $num)
+    public function getIndexs(int $num = 10)
     {
         return Cache::remember('idx_article', function() use($num){
             $data = $this::field('id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time')
@@ -234,7 +234,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getHots(int $num)
+    public function getHots(int $num = 10)
     {
         return Cache::remember('article_hot', function() use($num){
             $comments = Comment::field('article_id, count(*) as count')

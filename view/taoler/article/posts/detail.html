@@ -33,12 +33,12 @@
 						{article:cate name="name" /}
 					{/if}
 					</span>
-					{if ($article.is_top == 1)}
+					{eq name="article.is_top" value="1"}
 					<span class="layui-badge layui-bg-black">{:lang('top')}</span>
-					{/if}
-					{if ($article.is_hot == 1)}
+					{/eq}
+					{eq name="article.is_hot" value="1"}
 					<span class="layui-badge layui-bg-red">{:lang('hot')}</span>
-					{/if}
+					{/eq}
 					<span id="LAY_jieAdmin" data-id="{article:id /}" data-colurl="{:url('collection/find')}"></span>
 					<span class="fly-list-nums"> 
 						<a href="#comment">
@@ -51,16 +51,16 @@
 				{//作者}
 				<div class="detail-about">
 					<a class="fly-avatar" href="{article:user name='link' /}">
-					<img src="{article:user name='user_img' /}" alt="{article:user name='name' /}">
+					<img src="{article:author_avatar /}" alt="{article:user name='name' /}">
 					{if($article.user.vip > 0)}
 					<i class="iconfont icon-renzheng" title="认证信息"></i>
 					{/if}
 					</a>
 					<div class="fly-detail-user">
-					<a href="{article:user name='link' /}" class="fly-link"><cite>{article:auther}</cite></a>
+					<a href="{article:author_link /}" class="fly-link"><cite>{article:author /}</cite></a>
 					</div>
 					<div class="detail-hits">
-					<span class="post-time" data="{$article.update_time}" style="padding-top: 5px;">{article:uptime}</span>
+					<span class="post-time" data="{article:uptime /}" style="padding-top: 5px;">{article:uptime}</span>
 					{:hook('ipShow',$article.user.city)}
 					</div>
 				</div>

@@ -41,17 +41,6 @@ class Index extends BaseController
 		// $b= $weixin->index();
 		// var_dump($a,$b);
 		
-		//置顶文章
-		$artTop = Article::getTops(5);
-        //首页文章列表,显示10个
-        $artList = Article::getIndexs(10);
-
-
-		View::assign([
-			'artTop'	=>	$artTop,
-			'artList'	=>	$artList
-		]);
-
 		return View::fetch();
     }
 

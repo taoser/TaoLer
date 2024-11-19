@@ -86,7 +86,7 @@
 					</section>
 					<div class="card-footer text-center mt-4">
 						<a href="javascript:" style="color: #FFF !important;" data-img="/qrcode/?text={$Request.domain}{$Request.url}&size=200" data-title="手机扫一扫继续阅读" data-desc="微信或浏览器均可" class="single-popup shangzan mr-3 text-muted text-xs">手机浏览</a>
-						<a href="javascript:" style="color: #FFF !important;" data-img="{:hook('qqKefu','dashang')}" data-title="赞赏支持一下站长" data-desc="微信赞赏扫码" class="single-popup shangzan text-muted text-xs">赞赏支持</a>
+						<a href="javascript:" style="color: #FFF !important;" data-img="" data-title="赞赏支持一下站长" data-desc="微信赞赏扫码" class="single-popup shangzan text-muted text-xs">赞赏支持</a>
 						<div class="text-center text-muted text-xs" style="margin-top: 30px;">
 							"作者已被打赏 0 次"
 						</div>
@@ -269,7 +269,6 @@
 				<div class="theiaStickySidebar">
 					{//广告}
 					<!--博客详情广告赞助位-->
-					{:hook('ads_blog_detail_rimg')}
 
 					{//热门文章}
 					<dl class="function" id="rongkeji_remenwenzhang">
@@ -508,7 +507,4 @@
 </script>
 
 <!-- 插件hook位 -->
-{:hook('addonhook_detail_js')}
-{:hook('callme_foot')}
-
 {/block}

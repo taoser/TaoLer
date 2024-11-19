@@ -105,7 +105,7 @@ layui.use(['form','layer'],function(){
 			layer.close(loading);
 				if(res.code === 0){
 					toast.success({title:"成功消息",message: res.msg});
-					location.href = res.url;
+					// location.href = res.url;
 				} else {
 					layer.open({title:"注册失败",content:res.msg,icon:5,anim:6});
 					$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
