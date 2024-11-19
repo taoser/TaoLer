@@ -13,6 +13,7 @@ declare (strict_types = 1);
 namespace think\exception;
 
 use Exception;
+use ReflectionClass;
 use think\App;
 use think\console\Output;
 use think\db\exception\DataNotFoundException;
@@ -26,9 +27,6 @@ use Throwable;
  */
 class Handle
 {
-    /** @var App */
-    protected $app;
-
     protected $ignoreReport = [
         HttpException::class,
         HttpResponseException::class,
@@ -39,9 +37,8 @@ class Handle
 
     protected $isJson = false;
 
-    public function __construct(App $app)
+    public function __construct(protected App $app)
     {
-        $this->app = $app;
     }
 
     /**
@@ -100,7 +97,7 @@ class Handle
      * @param Throwable $e
      * @return Response
      */
-    public function render($request, Throwable $e): Response
+    public function render(Request $request, Throwable $e): Response
     {
         $this->isJson = $request->isJson();
         if ($e instanceof HttpResponseException) {
@@ -150,49 +147,71 @@ class Handle
      */
     protected function convertExceptionToArray(Throwable $exception): array
     {
-        if ($this->app->isDebug()) {
-            // 调试模式，获取详细的错误信息
-            $traces        = [];
-            $nextException = $exception;
-            do {
-                $traces[] = [
-                    'name'    => get_class($nextException),
-                    'file'    => $nextException->getFile(),
-                    'line'    => $nextException->getLine(),
-                    'code'    => $this->getCode($nextException),
-                    'message' => $this->getMessage($nextException),
-                    'trace'   => $nextException->getTrace(),
-                    'source'  => $this->getSourceCode($nextException),
-                ];
-            } while ($nextException = $nextException->getPrevious());
-            $data = [
-                'code'    => $this->getCode($exception),
-                'message' => $this->getMessage($exception),
-                'traces'  => $traces,
-                'datas'   => $this->getExtendData($exception),
-                'tables'  => [
-                    'GET Data'            => $this->app->request->get(),
-                    'POST Data'           => $this->app->request->post(),
-                    'Files'               => $this->app->request->file(),
-                    'Cookies'             => $this->app->request->cookie(),
-                    'Session'             => $this->app->exists('session') ? $this->app->session->all() : [],
-                    'Server/Request Data' => $this->app->request->server(),
-                ],
-            ];
-        } else {
-            // 部署模式仅显示 Code 和 Message
-            $data = [
-                'code'    => $this->getCode($exception),
-                'message' => $this->getMessage($exception),
-            ];
+        return $this->app->isDebug() ? $this->getDebugMsg($exception) : $this->getDeployMsg($exception);
+    }
 
-            if (!$this->app->config->get('app.show_error_msg')) {
-                // 不显示详细错误信息
-                $data['message'] = $this->app->config->get('app.error_message');
-            }
+    /**
+     * 获取部署模式异常数据
+     * @access protected
+     * @param Throwable $exception
+     * @return array
+     */
+    protected function getDeployMsg(Throwable $exception): array
+    {
+        $data = [
+            'code'    => $this->getCode($exception),
+            'message' => $this->getMessage($exception),
+        ];
+
+        $reflectionClass = new ReflectionClass($exception);
+        $alwaysMsg       = $reflectionClass->getAttributes(AlwaysErrorMsg::class);
+
+        if (empty($alwaysMsg) && !$this->app->config->get('app.show_error_msg')) {
+            // 不显示详细错误信息
+            $data['message'] = $this->app->config->get('app.error_message');
         }
 
         return $data;
+    }
+
+    /**
+     * 收集调试模式异常数据
+     * @access protected
+     * @param Throwable $exception
+     * @return array
+     */
+    protected function getDebugMsg(Throwable $exception): array
+    {
+        // 调试模式，获取详细的错误信息
+        $traces        = [];
+        $nextException = $exception;
+
+        do {
+            $traces[] = [
+                'name'    => $nextException::class,
+                'file'    => $nextException->getFile(),
+                'line'    => $nextException->getLine(),
+                'code'    => $this->getCode($nextException),
+                'message' => $this->getMessage($nextException),
+                'trace'   => $nextException->getTrace(),
+                'source'  => $this->getSourceCode($nextException),
+            ];
+        } while ($nextException = $nextException->getPrevious());
+
+        return [
+            'code'    => $this->getCode($exception),
+            'message' => $this->getMessage($exception),
+            'traces'  => $traces,
+            'datas'   => $this->getExtendData($exception),
+            'tables'  => [
+                'GET Data'            => $this->app->request->get(),
+                'POST Data'           => $this->app->request->post(),
+                'Files'               => $this->app->request->file(),
+                'Cookies'             => $this->app->request->cookie(),
+                'Session'             => $this->app->exists('session') ? $this->app->session->all() : [],
+                'Server/Request Data' => $this->app->request->server(),
+            ],
+        ];
     }
 
     /**
@@ -261,10 +280,10 @@ class Handle
 
         $lang = $this->app->lang;
 
-        if (strpos($message, ':')) {
+        if (str_contains($message, ':')) {
             $name    = strstr($message, ':', true);
             $message = $lang->has($name) ? $lang->get($name) . strstr($message, ':') : $message;
-        } elseif (strpos($message, ',')) {
+        } elseif (str_contains($message, ',')) {
             $name    = strstr($message, ',', true);
             $message = $lang->has($name) ? $lang->get($name) . ':' . substr(strstr($message, ','), 1) : $message;
         } elseif ($lang->has($message)) {

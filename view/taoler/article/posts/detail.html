@@ -33,12 +33,21 @@
 						{article:cate name="name" /}
 					{/if}
 					</span>
+<<<<<<< HEAD
 					{if ($article.is_top == 1)}
 					<span class="layui-badge layui-bg-black">{:lang('top')}</span>
 					{/if}
 					{if ($article.is_hot == 1)}
 					<span class="layui-badge layui-bg-red">{:lang('hot')}</span>
 					{/if}
+=======
+					{eq name="article.is_top" value="1"}
+					<span class="layui-badge layui-bg-black">{:lang('top')}</span>
+					{/eq}
+					{eq name="article.is_hot" value="1"}
+					<span class="layui-badge layui-bg-red">{:lang('hot')}</span>
+					{/eq}
+>>>>>>> 3.0
 					<span id="LAY_jieAdmin" data-id="{article:id /}" data-colurl="{:url('collection/find')}"></span>
 					<span class="fly-list-nums"> 
 						<a href="#comment">
@@ -51,22 +60,34 @@
 				{//作者}
 				<div class="detail-about">
 					<a class="fly-avatar" href="{article:user name='link' /}">
+<<<<<<< HEAD
 					<img src="{article:user name='user_img' /}" alt="{article:user name='name' /}">
+=======
+					<img src="{article:author_avatar /}" alt="{article:user name='name' /}">
+>>>>>>> 3.0
 					{if($article.user.vip > 0)}
 					<i class="iconfont icon-renzheng" title="认证信息"></i>
 					{/if}
 					</a>
 					<div class="fly-detail-user">
+<<<<<<< HEAD
 					<a href="{article:user name='link' /}" class="fly-link"><cite>{article:auther}</cite></a>
 					</div>
 					<div class="detail-hits">
 					<span class="post-time" data="{$article.update_time}" style="padding-top: 5px;">{article:uptime}</span>
+=======
+					<a href="{article:author_link /}" class="fly-link"><cite>{article:author /}</cite></a>
+					</div>
+					<div class="detail-hits">
+					<span class="post-time" data="{article:uptime /}" style="padding-top: 5px;">{article:uptime}</span>
+>>>>>>> 3.0
 					{:hook('ipShow',$article.user.city)}
 					</div>
 				</div>
 				<hr>
 
 				{//内容}
+<<<<<<< HEAD
 				{:hook('taoplayerdiv')}
 				<article class="detail-body photos" id="content">{article:content}</article>
 				{//下载}
@@ -75,6 +96,10 @@
 					<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
 				{/if}
 				{/notempty}
+=======
+
+				<article class="detail-body photos" id="content">{article:content}</article>
+>>>>>>> 3.0
 
 				{//解密文件}
 				{empty name="passJieMi"}
@@ -263,8 +288,11 @@
 </div>
 {include file="public/menu" /}
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 3.0
 {/block}
 
 
@@ -412,6 +440,7 @@
 			});
 		});
 
+<<<<<<< HEAD
 		// 下载附件
 		$('#zip-download').click(function (){
 			var id = "{$article.id}";
@@ -425,6 +454,8 @@
 			});
 		});
 
+=======
+>>>>>>> 3.0
 		// 评论分页
 		laypage.render({
 			elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
@@ -448,11 +479,14 @@
 	});
 </script>
 
+<<<<<<< HEAD
 <!-- 插件hook位 -->
 {:hook('addonhook_detail_js')}
 <!-- 插件hook位 -->
 {:hook('addonhook_detail')}
 
+=======
+>>>>>>> 3.0
 {//图片点击放大}
 {include file="/public/images-click" /}
 

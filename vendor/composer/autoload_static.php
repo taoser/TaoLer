@@ -4,11 +4,12 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
+class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
 {
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+<<<<<<< HEAD
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
@@ -18,6 +19,14 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
         'b33e3d135e5d9e47d845c576147bda89' => __DIR__ . '/..' . '/php-di/php-di/src/functions.php',
+=======
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
+        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+>>>>>>> 3.0
         '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         '8c783b3a3de2f6d9177022b5ccdcc841' => __DIR__ . '/..' . '/yansongda/pay/src/Functions.php',
@@ -33,18 +42,19 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
-            'think\\migration\\' => 16,
-            'think\\composer\\' => 15,
             'think\\captcha\\' => 14,
             'think\\app\\' => 10,
             'think\\' => 6,
             'taoser\\think\\' => 13,
             'taoser\\' => 7,
         ),
+<<<<<<< HEAD
         'l' => 
         array (
             'liliuwei\\social\\' => 16,
         ),
+=======
+>>>>>>> 3.0
         'a' => 
         array (
             'app\\' => 4,
@@ -61,7 +71,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         ),
         'S' => 
         array (
+<<<<<<< HEAD
             'Symfony\\Polyfill\\Php80\\' => 23,
+=======
+>>>>>>> 3.0
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
@@ -78,9 +91,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
-            'Psr\\Cache\\' => 10,
-            'PhpDocReader\\' => 13,
-            'Phinx\\' => 6,
             'PHPSocketIO\\' => 12,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
@@ -92,16 +102,16 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             'League\\MimeTypeDetection\\' => 25,
             'League\\Flysystem\\' => 17,
-            'Laravel\\SerializableClosure\\' => 28,
-        ),
-        'J' => 
-        array (
-            'Jaeger\\' => 7,
         ),
         'I' => 
         array (
+<<<<<<< HEAD
             'Invoker\\' => 8,
             'Intervention\\Image\\' => 19,
+=======
+            'Intervention\\Image\\' => 19,
+            'Intervention\\Gif\\' => 17,
+>>>>>>> 3.0
             'Illuminate\\Contracts\\' => 21,
             'Illuminate\\Container\\' => 21,
         ),
@@ -123,15 +133,11 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         ),
         'D' => 
         array (
-            'DI\\' => 3,
             'DASPRiD\\Enum\\' => 13,
         ),
         'C' => 
         array (
             'Channel\\' => 8,
-            'Cache\\TagInterop\\' => 17,
-            'Cache\\Adapter\\Filesystem\\' => 25,
-            'Cache\\Adapter\\Common\\' => 21,
         ),
         'B' => 
         array (
@@ -152,14 +158,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/topthink/think-trace/src',
         ),
-        'think\\migration\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-migration/src',
-        ),
-        'think\\composer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-installer/src',
-        ),
         'think\\captcha\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-captcha/src',
@@ -170,10 +168,11 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         ),
         'think\\' => 
         array (
-            0 => __DIR__ . '/..' . '/topthink/framework/src/think',
+            0 => __DIR__ . '/..' . '/topthink/think-template/src',
             1 => __DIR__ . '/..' . '/topthink/think-helper/src',
             2 => __DIR__ . '/..' . '/topthink/think-orm/src',
-            3 => __DIR__ . '/..' . '/topthink/think-template/src',
+            3 => __DIR__ . '/..' . '/topthink/framework/src/think',
+            4 => __DIR__ . '/..' . '/topthink/think-filesystem/src',
         ),
         'taoser\\think\\' => 
         array (
@@ -184,10 +183,13 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
             0 => __DIR__ . '/..' . '/taoser/think-addons/src',
             1 => __DIR__ . '/..' . '/taoser/think-setarr/src',
         ),
+<<<<<<< HEAD
         'liliuwei\\social\\' => 
         array (
             0 => __DIR__ . '/..' . '/liliuwei/thinkphp-social/src',
         ),
+=======
+>>>>>>> 3.0
         'app\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
@@ -208,10 +210,13 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
+<<<<<<< HEAD
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
+=======
+>>>>>>> 3.0
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
@@ -226,7 +231,7 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         ),
         'QL\\' => 
         array (
-            0 => __DIR__ . '/..' . '/jaeger/querylist/src',
+            0 => __DIR__ . '/..' . '/jaeger/querylist',
         ),
         'Psr\\SimpleCache\\' => 
         array (
@@ -234,12 +239,17 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         ),
         'Psr\\Log\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+            0 => __DIR__ . '/..' . '/psr/log/src',
         ),
         'Psr\\Http\\Message\\' => 
         array (
+<<<<<<< HEAD
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
             1 => __DIR__ . '/..' . '/psr/http-message/src',
+=======
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+>>>>>>> 3.0
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -253,6 +263,7 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
+<<<<<<< HEAD
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
@@ -265,6 +276,8 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/topthink/think-migration/phinx',
         ),
+=======
+>>>>>>> 3.0
         'PHPSocketIO\\' => 
         array (
             0 => __DIR__ . '/..' . '/workerman/phpsocket.io/src',
@@ -285,17 +298,21 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
         ),
-        'Laravel\\SerializableClosure\\' => 
+        'Intervention\\Image\\' => 
         array (
-            0 => __DIR__ . '/..' . '/laravel/serializable-closure/src',
+            0 => __DIR__ . '/..' . '/intervention/image/src',
         ),
-        'Jaeger\\' => 
+        'Intervention\\Gif\\' => 
         array (
-            0 => __DIR__ . '/..' . '/jaeger/g-http/src',
+            0 => __DIR__ . '/..' . '/intervention/gif/src',
         ),
-        'Invoker\\' => 
+        'Illuminate\\Contracts\\' => 
         array (
-            0 => __DIR__ . '/..' . '/php-di/invoker/src',
+            0 => __DIR__ . '/..' . '/illuminate/contracts',
+        ),
+        'Illuminate\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/container',
         ),
         'Intervention\\Image\\' => 
         array (
@@ -337,10 +354,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         array (
             0 => __DIR__ . '/..' . '/endroid/qr-code/src',
         ),
-        'DI\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/php-di/php-di/src',
-        ),
         'DASPRiD\\Enum\\' => 
         array (
             0 => __DIR__ . '/..' . '/dasprid/enum/src',
@@ -348,18 +361,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'Channel\\' => 
         array (
             0 => __DIR__ . '/..' . '/workerman/channel/src',
-        ),
-        'Cache\\TagInterop\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/cache/tag-interop',
-        ),
-        'Cache\\Adapter\\Filesystem\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/cache/filesystem-adapter',
-        ),
-        'Cache\\Adapter\\Common\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/cache/adapter-common',
         ),
         'BaconQrCode\\' => 
         array (
@@ -372,7 +373,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
     );
 
     public static $classMap = array (
-        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Callback' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'CallbackBody' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'CallbackParam' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
@@ -383,10 +383,6 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
         'DOMDocumentWrapper' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'DOMEvent' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'ICallbackNamed' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
-        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
-        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
-        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'phpQuery' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'phpQueryEvents' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'phpQueryObject' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
@@ -396,10 +392,10 @@ class ComposerStaticInit1b32198725235c8d6500c87262ef30c2
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1b32198725235c8d6500c87262ef30c2::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1b32198725235c8d6500c87262ef30c2::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit1b32198725235c8d6500c87262ef30c2::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit1b32198725235c8d6500c87262ef30c2::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca::$classMap;
 
         }, null, ClassLoader::class);
     }

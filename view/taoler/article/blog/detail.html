@@ -33,14 +33,21 @@
 
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md8" itemscope itemType="">
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3.0
             	<div class="post card">
 					<section class="card-body">
 						<div class="post-header border-bottom mb-4 pb-4">
 							<h1 class="h3 mb-3" itemprop="headline">{article:title /}</h1>
 							<div class="meta d-flex align-items-center text-xs text-muted">
 								<div class="d-inline-block" itemprop="author" itemscope="" itemtype="">
+<<<<<<< HEAD
 									<a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">{article:auther}</span></a>
+=======
+									<a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">{article:author}</span></a>
+>>>>>>> 3.0
 									<a href="{article:cate name='link'}" target="_blank" class="text-muted" rel="category">{article:cate name="name"}</a>
 									<time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d h:m:s'}" itemprop="datePublished">{article:uptime}</time>
 								</div>
@@ -52,6 +59,7 @@
 						</div>
 
 						<article class="post-content detail-body" itemprop="articleBody" view-image>
+<<<<<<< HEAD
 							{article:content}
 						</article>
 						<!-- 文章末尾 -->
@@ -60,6 +68,12 @@
 							<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
 						{/if}
 						{/notempty}
+=======
+						{article:content}
+						</article>
+						<!-- 文章末尾 -->
+
+>>>>>>> 3.0
 						<!-- 解密文件 -->
 						{empty name="passJieMi"}
 						{if($article.read_type == 1)}
@@ -268,10 +282,16 @@
 						</div>
 					</div>
 				</section>
+<<<<<<< HEAD
             </div>
 
             <div class="sidebar layui-col-md4 d-none d-lg-block">
 
+=======
+
+            </div>
+            <div class="sidebar layui-col-md4 d-none d-lg-block">
+>>>>>>> 3.0
 				<div class="theiaStickySidebar">
 					{//作者}
 					<dl class="function" id="rongkeji_User">
@@ -314,7 +334,10 @@
 
 					{//广告}
 					<!--博客详情广告赞助位-->
+<<<<<<< HEAD
 					{:hook('ads_blog_detail_rimg')}
+=======
+>>>>>>> 3.0
 
 					{//热门文章}
 					<dl class="function" id="rongkeji_remenwenzhang">
@@ -348,12 +371,20 @@
 						</dd>
 					</dl>
 					{/if}
+<<<<<<< HEAD
 					{//友情链接}
 					<!--博客详情友链-->
 					{:hook('ads_blog_detail_flink')}
 
 				</div>
 
+=======
+
+					{//友情链接}
+					<!--博客详情友链-->
+
+				</div>
+>>>>>>> 3.0
         	</div>
         </div>
     </div>
@@ -516,6 +547,7 @@
 			});
 		});
 
+<<<<<<< HEAD
 		//下载
 		$('#zip-download').click(function (){
 		var id = "{$article.id}";
@@ -549,12 +581,37 @@
 			});
 			}
 		},
+=======
+
+		// 评论分页
+		laypage.render({
+			elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
+			count: "{$article.comments_count}", //数据总数，从服务端得到
+			limit: 10,
+			curr: "{$page}",
+			//获取起始页
+			jump: function (obj, first) {
+				var page = obj.curr;
+				var limit = obj.limit;
+				var  url = "{:url('article_detail',['id' => $article.id ,'ename' =>$article['cate']['ename']])}";
+				var id = "{$article.id}";
+				//首次不执行
+				if (!first) {
+				$.post("{:url('article/detail')}", { id: id, page: page }, function () {
+					location.href = url + '?page=' + page + '#flyReply';
+				});
+				}
+			}
+>>>>>>> 3.0
 		});
 
 	});
 </script>
 
 <!-- 插件hook位 -->
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 3.0
 {/block}

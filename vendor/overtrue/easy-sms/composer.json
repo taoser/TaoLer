@@ -4,6 +4,7 @@
     "type": "library",
     "require": {
         "guzzlehttp/guzzle": "^6.2 || ^7.0",
+<<<<<<< HEAD
         "php": ">=5.6",
         "ext-json": "*"
     },
@@ -12,6 +13,16 @@
         "mockery/mockery": "~1.3.3 || ^1.4.2",
         "brainmaestro/composer-git-hooks": "^2.8",
         "jetbrains/phpstorm-attributes": "^1.0"
+=======
+        "php": ">=8.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5.8",
+        "mockery/mockery": "^1.4.2",
+        "jetbrains/phpstorm-attributes": "^1.0",
+        "friendsofphp/php-cs-fixer": "^3.54"
+>>>>>>> 3.0
     },
     "autoload": {
         "psr-4": {
@@ -24,6 +35,7 @@
         }
     },
     "license": "MIT",
+<<<<<<< HEAD
     "authors": [{
         "name": "overtrue",
         "email": "i@overtrue.me"
@@ -52,6 +64,15 @@
             "cghooks add --ignore-lock",
             "cghooks update"
         ],
+=======
+    "authors": [
+        {
+            "name": "overtrue",
+            "email": "i@overtrue.me"
+        }
+    ],
+    "scripts": {
+>>>>>>> 3.0
         "phpstan": "phpstan analyse",
         "check-style": "php-cs-fixer fix --using-cache=no --diff --config=.php-cs-fixer.dist.php --dry-run --allow-risky=yes --ansi",
         "fix-style": "php-cs-fixer fix --using-cache=no --config=.php-cs-fixer.dist.php --allow-risky=yes --ansi",

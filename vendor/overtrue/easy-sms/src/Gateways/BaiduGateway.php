@@ -26,6 +26,7 @@ class BaiduGateway extends Gateway
 {
     use HasHttpRequest;
 
+<<<<<<< HEAD
     const ENDPOINT_HOST = 'smsv3.bj.baidubce.com';
 
     const ENDPOINT_URI = '/api/v3/sendSms';
@@ -35,10 +36,22 @@ class BaiduGateway extends Gateway
     const DEFAULT_EXPIRATION_IN_SECONDS = 1800; //签名有效期默认1800秒
 
     const SUCCESS_CODE = 1000;
+=======
+    public const ENDPOINT_HOST = 'smsv3.bj.baidubce.com';
+
+    public const ENDPOINT_URI = '/api/v3/sendSms';
+
+    public const BCE_AUTH_VERSION = 'bce-auth-v1';
+
+    public const DEFAULT_EXPIRATION_IN_SECONDS = 1800; // 签名有效期默认1800秒
+
+    public const SUCCESS_CODE = 1000;
+>>>>>>> 3.0
 
     /**
      * Send message.
      *
+<<<<<<< HEAD
      * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
      * @param \Overtrue\EasySms\Contracts\MessageInterface     $message
      * @param \Overtrue\EasySms\Support\Config                 $config
@@ -46,6 +59,11 @@ class BaiduGateway extends Gateway
      * @return array
      *
      * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException ;
+=======
+     * @return array
+     *
+     * @throws GatewayErrorException ;
+>>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
@@ -56,12 +74,20 @@ class BaiduGateway extends Gateway
             'contentVar' => $message->getData($this),
         ];
         if (!empty($params['contentVar']['custom'])) {
+<<<<<<< HEAD
             //用户自定义参数，格式为字符串，状态回调时会回传该值
+=======
+            // 用户自定义参数，格式为字符串，状态回调时会回传该值
+>>>>>>> 3.0
             $params['custom'] = $params['contentVar']['custom'];
             unset($params['contentVar']['custom']);
         }
         if (!empty($params['contentVar']['userExtId'])) {
+<<<<<<< HEAD
             //通道自定义扩展码，上行回调时会回传该值，其格式为纯数字串。默认为不开通，请求时无需设置该参数。如需开通请联系客服申请
+=======
+            // 通道自定义扩展码，上行回调时会回传该值，其格式为纯数字串。默认为不开通，请求时无需设置该参数。如需开通请联系客服申请
+>>>>>>> 3.0
             $params['userExtId'] = $params['contentVar']['userExtId'];
             unset($params['contentVar']['userExtId']);
         }
@@ -73,7 +99,11 @@ class BaiduGateway extends Gateway
             'content-type' => 'application/json',
             'x-bce-date' => $datetime,
         ];
+<<<<<<< HEAD
         //获得需要签名的数据
+=======
+        // 获得需要签名的数据
+>>>>>>> 3.0
         $signHeaders = $this->getHeadersToSign($headers, ['host', 'x-bce-date']);
 
         $headers['Authorization'] = $this->generateSign($signHeaders, $datetime, $config);
@@ -90,8 +120,11 @@ class BaiduGateway extends Gateway
     /**
      * Build endpoint url.
      *
+<<<<<<< HEAD
      * @param \Overtrue\EasySms\Support\Config $config
      *
+=======
+>>>>>>> 3.0
      * @return string
      */
     protected function buildEndpoint(Config $config)
@@ -102,9 +135,13 @@ class BaiduGateway extends Gateway
     /**
      * Generate Authorization header.
      *
+<<<<<<< HEAD
      * @param array                            $signHeaders
      * @param int                              $datetime
      * @param \Overtrue\EasySms\Support\Config $config
+=======
+     * @param int $datetime
+>>>>>>> 3.0
      *
      * @return string
      */
@@ -142,15 +179,22 @@ class BaiduGateway extends Gateway
     /**
      * 生成标准化 http 请求头串.
      *
+<<<<<<< HEAD
      * @param array $headers
      *
+=======
+>>>>>>> 3.0
      * @return string
      */
     protected function getCanonicalHeaders(array $headers)
     {
         $headerStrings = [];
         foreach ($headers as $name => $value) {
+<<<<<<< HEAD
             //trim后再encode，之后使用':'号连接起来
+=======
+            // trim后再encode，之后使用':'号连接起来
+>>>>>>> 3.0
             $headerStrings[] = rawurlencode(strtolower(trim($name))).':'.rawurlencode(trim($value));
         }
 
@@ -162,9 +206,12 @@ class BaiduGateway extends Gateway
     /**
      * 根据 指定的 keys 过滤应该参与签名的 header.
      *
+<<<<<<< HEAD
      * @param array $headers
      * @param array $keys
      *
+=======
+>>>>>>> 3.0
      * @return array
      */
     protected function getHeadersToSign(array $headers, array $keys)

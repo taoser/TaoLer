@@ -26,6 +26,7 @@ class YunpianGateway extends Gateway
 {
     use HasHttpRequest;
 
+<<<<<<< HEAD
     const ENDPOINT_TEMPLATE = 'https://%s.yunpian.com/%s/%s/%s.%s';
 
     const ENDPOINT_VERSION = 'v2';
@@ -40,6 +41,18 @@ class YunpianGateway extends Gateway
      * @return array
      *
      * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException ;
+=======
+    public const ENDPOINT_TEMPLATE = 'https://%s.yunpian.com/%s/%s/%s.%s';
+
+    public const ENDPOINT_VERSION = 'v2';
+
+    public const ENDPOINT_FORMAT = 'json';
+
+    /**
+     * @return array
+     *
+     * @throws GatewayErrorException ;
+>>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
@@ -48,7 +61,11 @@ class YunpianGateway extends Gateway
         $option = [
             'form_params' => [
                 'apikey' => $config->get('api_key'),
+<<<<<<< HEAD
                 'mobile' => $to->getUniversalNumber()
+=======
+                'mobile' => $to->getUniversalNumber(),
+>>>>>>> 3.0
             ],
             'exceptions' => false,
         ];
@@ -60,18 +77,30 @@ class YunpianGateway extends Gateway
             $templateData = $message->getData($this);
             $templateData = isset($templateData) ? $templateData : [];
             foreach ($templateData as $key => $value) {
+<<<<<<< HEAD
                 $data[] = urlencode('#'.$key.'#') . '=' . urlencode($value);
+=======
+                $data[] = urlencode('#'.$key.'#').'='.urlencode($value);
+>>>>>>> 3.0
             }
 
             $option['form_params'] = array_merge($option['form_params'], [
                 'tpl_id' => $template,
+<<<<<<< HEAD
                 'tpl_value' => implode('&', $data)
+=======
+                'tpl_value' => implode('&', $data),
+>>>>>>> 3.0
             ]);
         } else {
             $content = $message->getContent($this);
             $signature = $config->get('signature', '');
             $option['form_params'] = array_merge($option['form_params'], [
+<<<<<<< HEAD
                 'text' => 0 === \stripos($content, '【') ? $content : $signature.$content
+=======
+                'text' => 0 === \stripos($content, '【') ? $content : $signature.$content,
+>>>>>>> 3.0
             ]);
         }
 

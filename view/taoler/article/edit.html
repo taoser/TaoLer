@@ -5,6 +5,7 @@
 {block name="column"}{/block}
 {block name="content"}
 <div class="layui-container fly-marginTop">
+<<<<<<< HEAD
   <div class="fly-panel" pad20 style="padding-top: 5px;">
     <!--<div class="fly-none">没有权限</div>-->
     <div class="layui-form layui-form-pane">
@@ -108,6 +109,111 @@
       </div>
     </div>
   </div>
+=======
+	<div class="fly-panel" pad20 style="padding-top: 5px;">
+		<!--<div class="fly-none">没有权限</div>-->
+		<div class="layui-form layui-form-pane">
+			<div class="layui-tab layui-tab-brief" lay-filter="user">
+				<ul class="layui-tab-title">
+					<li class="layui-this">{:lang('edit post')}</li>
+				</ul>
+				<div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+					<div class="layui-tab-item layui-show">
+					
+						<input type="hidden" name="id" value="{$article.id}">
+						<div class="layui-row layui-col-space15 layui-form-item">
+							<div class="layui-col-md3">
+							<label class="layui-form-label">{:lang('special column')}</label>
+							<div class="layui-input-block">
+								{if ($user.auth == 1)}
+								<div id="CateId" class="xm-select-demo"></div>
+								{else /}
+								<input type="text" name="cate_id"  class="layui-input layui-hide" disabled value="{$article.cate_id}">
+								<input type="text" class="layui-input" disabled value="{$article.cate.catename}">
+								{/if}
+							</div>
+							</div>
+							<div class="layui-col-md8">
+								<label for="L_title" class="layui-form-label">{:lang('title')}</label>
+								<div class="layui-input-block">
+									<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$article.title}">
+									<input type="hidden" id="L_title_color"  name="title_color" autocomplete="off" class="layui-input" value="{$article.title_color ?? '#333'}">
+								</div>
+							</div>
+							{if ($user.auth == 1)}
+							<div class="layui-col-md1">
+								<div id="color"></div>
+								<div id="test9" style="margin-left: 30px;"></div>
+							</div>
+							{/if}
+						</div>
+
+						<div class="layui-row layui-col-space15 layui-form-item" id="LAY_quiz">
+							<div class="layui-col-md3">
+							<label class="layui-form-label">阅读权限</label>
+							<div class="layui-input-block">
+								<select name="read_type">
+								<option value="0" {if($article.read_type == 0)} selected {/if}>开放阅读</option>
+								<option value="1" {if($article.read_type == 1)} selected {/if}>密码加密</option>
+								<option value="2" {if($article.read_type == 2)} selected {/if}>回帖阅读</option>
+								<option value="3" {if($article.read_type == 3)} selected {/if}>购买阅读</option>
+								</select>
+							</div>
+							</div>
+							<div class="layui-col-md3">
+								<label class="layui-form-label" >密码</label>
+								<div class="layui-input-block">
+									<input type="text" value="{$article.art_pass ?? ''}" name="art_pass" autocomplete="off" class="layui-input" />
+								</div>
+							</div>
+						</div>
+
+						<div class="layui-form-item layui-form-text">
+							<div class="layui-input-block">
+							<textarea id="L_content" name="content" lay-verify="" placeholder="详细内容"  class="layui-textarea taonyeditor" style="height: 260px;">{$article.content}</textarea>
+							</div>
+						</div>
+						<div class="layui-form-item layui-hide">
+							<label class="layui-form-label">{:lang('描述')}</label>
+							<div class="layui-input-block">
+							<textarea name="description" class="layui-textarea" placeholder="SEO描述">{$article.description}</textarea>
+							</div>
+						</div>
+						{//关键词}
+						<div class="layui-form-item layui-hide">
+							<label class="layui-form-label">{:lang('添加关键词')}</label>
+							<div class="layui-input-block">
+								<input type="text" class="layui-input" name="keywords" value="{$article.keywords}" placeholder="多个英文逗号隔开" title="添加关键词" />
+							</div>
+						</div>
+						{//tag}
+						<div class="layui-form-item">
+							<label class="layui-form-label">{:lang('add tags')}</label>
+							<div class="layui-input-block">
+								<div id="tag"></div>
+							</div>
+						</div>
+						{if config('taoler.config.post_captcha') == 1}
+						<div class="layui-form-item">
+							<label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
+							<div class="layui-input-inline">
+							<input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
+							</div>
+							<div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important;">
+							<img id="captcha" src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random();" style="float:left; cursor:pointer;"  alt="captcha" />
+							</div>
+						</div>
+						{/if}
+						<div class="layui-form-item">
+							<button type="submit" class="layui-btn" lay-filter="article-edit" lay-submit id="edit">{:lang('post now')}</button>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+>>>>>>> 3.0
 </div>
 {include file="public/menu" /}
 {/block}
@@ -243,11 +349,14 @@
   });
 </script>
 {// 编辑器}
+<<<<<<< HEAD
 {:hook('taonyeditor')}
 {:hook('ueditor')}
 {// 百度标题词条}
 {:hook('seoBaiduTitle')}
 {// 百度关键词}
 {:hook('seoBaiduKeywords')}
+=======
+>>>>>>> 3.0
 
 {/block}

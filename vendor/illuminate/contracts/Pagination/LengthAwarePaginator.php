@@ -2,6 +2,16 @@
 
 namespace Illuminate\Contracts\Pagination;
 
+<<<<<<< HEAD
+=======
+/**
+ * @template TKey of array-key
+ *
+ * @template-covariant TValue
+ *
+ * @extends Paginator<TKey, TValue>
+ */
+>>>>>>> 3.0
 interface LengthAwarePaginator extends Paginator
 {
     /**

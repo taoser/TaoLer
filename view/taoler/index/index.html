@@ -32,16 +32,12 @@
 				<ul class="fly-list">
 					{if config('taoler.config.top_show') == 1}
 						{// 列表}
-						{volist name="artTop" id="top"}
 						{include file="public/index-topforum" /}
-						{/volist}
 					{else /}
 						{// 滚动}
 						<div class="layui-carousel" id="ID-carousel">
 							<div carousel-item>
-								{volist name="artTop" id="top"}
 								{include file="public/index-topforum" /}
-								{/volist}
 							</div>
 						</div>
 					{/if}
@@ -50,11 +46,11 @@
 
 			<!--文章列表-->
 			<section id="main" class="list-home list-grid list-grid-padding">
-				{volist name="artList" id="article"}
+				{article:list type="index"}
 				<article class="list-item block card-plain">
 					{if getOnepic($article.content)}
 					<figure class="media media-3x2  d-none d-md-block">
-						<a class="media-content" href="{article:link /}" title="{article:title /}">
+						<a class="media-content" href="{article:url /}" title="{article:title /}">
 							<img src="{:getOnepic($article.content)}" alt="{article:title /}">
 						</a>
 					</figure>
@@ -62,35 +58,38 @@
 					<div class="list-width list-content">
 						<div class="list-body">
 							<h3>
-								<a href="{article:link /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
+								<a href="{article:url /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
 							</h3>
 							<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
+<<<<<<< HEAD
 								<p class="h-3x">{$article.description}</p>
+=======
+								<p class="h-3x">{article:description /}</p>
+>>>>>>> 3.0
 							</div>
 						</div>
 						<div class="list-footer">
 							<div class="d-flex flex-fill align-items-center text-muted text-xs">
-								<time class="d-inline-block" datetime="{$article.create_time}">{$article.create_time|date='Y-m-d'}</time>
+								<time class="d-inline-block" datetime="{$article.create_time}">{article:time /}</time>
 								<div class="d-inline-block mx-1 mx-md-2">
-									<a href="{:url('cate',['ename'=>$article.cate.ename])}" class="text-muted">{$article.cate.catename}</a>
+									<a href="{article:cate name='link' /}" class="text-muted">{article:cate_name /}</a>
 								</div>
 								<div class="d-inline-block">
-									<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:auther /}</a>
-									{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
-									{$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
-									{$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
-									{$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
-									{$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+									<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:author /}</a>
+									{eq name="article.has_img" value="1"} <span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>{/eq}
+									{eq name="article.has_video" value="1"} <span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>{/eq}
+									{eq name="article.has_audio" value="1"} <span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>{/eq}
+									{eq name="article.read_type" value="1"} <span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>{/eq}
 								</div>
 								<div class="flex-fill"></div>
 								<div class="mx-1">
-									<span class="text-muted"><i class="iconfont icon-pinglun1" title="回答"></i> {$article.comments_count}</span>
+									<span class="text-muted"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num}</span>
 								</div>
 							</div>
 						</div>
 					</div>
 				</article>
-				{/volist}
+				{/article:list}
 			</section>
 
 			<!--更多帖子-->
@@ -107,7 +106,10 @@
 		{//右栏}
 		<div class="layui-col-md4">
 			<!-- 插件hook位 -->
+<<<<<<< HEAD
 			{:hook('addonhook_index')}
+=======
+>>>>>>> 3.0
 		</div>
 	</div>
 </div>

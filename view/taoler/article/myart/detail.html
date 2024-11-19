@@ -39,7 +39,11 @@
 							<h1 class="h3 mb-3" itemprop="headline">{article:title /}</h1>
 							<div class="meta d-flex align-items-center text-xs text-muted">
 								<div class="d-inline-block" itemprop="author" itemscope="" itemtype="">
+<<<<<<< HEAD
 									<a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">{article:auther}</span></a>
+=======
+									<a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">{article:author}</span></a>
+>>>>>>> 3.0
 									<a href="{article:cate name='link'}" target="_blank" class="text-muted" rel="category">{article:cate name="name"}</a>
 									<time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d h:m:s'}" itemprop="datePublished">{article:uptime}</time>
 								</div>
@@ -49,6 +53,7 @@
 							</div>
 							<div class="border-theme bg-primary"></div>
 						</div>
+<<<<<<< HEAD
 						{:hook('taoplayerdiv')}
 						<article class="post-content detail-body" itemprop="articleBody" view-image>
 							{article:content}
@@ -59,6 +64,14 @@
 							<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
 						{/if}
 						{/notempty}
+=======
+
+						<article class="post-content detail-body" itemprop="articleBody" view-image>
+						{article:content}
+						</article>
+						<!-- 文章末尾 -->
+	
+>>>>>>> 3.0
 						<!-- 解密文件 -->
 						{empty name="passJieMi"}
 						{if($article.read_type == 1)}
@@ -269,13 +282,19 @@
 				</section>
 
             </div>
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 3.0
             <div class="sidebar layui-col-md4 d-none d-lg-block">
 				<div class="theiaStickySidebar">
 					{//广告}
 					<!--博客详情广告赞助位-->
+<<<<<<< HEAD
 					{:hook('ads_blog_detail_rimg')}
+=======
+>>>>>>> 3.0
 
 					{//热门文章}
 					<dl class="function" id="rongkeji_remenwenzhang">
@@ -514,5 +533,8 @@
 </script>
 
 <!-- 插件hook位 -->
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3.0
 {/block}

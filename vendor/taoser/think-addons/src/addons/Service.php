@@ -39,7 +39,11 @@ class Service extends \think\Service
         $this->loadConfig();
         // 绑定插件容器
         $this->app->bind('addons', Service::class);
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 3.0
     }
 
     public function boot()
@@ -56,19 +60,32 @@ class Service extends \think\Service
                 $middlewaresArr = [];
 
                 // 注册插件公共中间件
+<<<<<<< HEAD
             if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
                 $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
+=======
+                if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
+                    $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
+>>>>>>> 3.0
 //
 //                    // addons目录下全局中间件，对所有addons都生效
 //                    //$middleware = (array) include $this->app->addons->getAddonsPath() . 'middleware.php';
 //                    // 执行addons全局中间件
 //                    //$route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware($middleware);
 //                    //$middlewaresArr = array_merge($middlewaresArr, $middleware);
+<<<<<<< HEAD
             }
 
 
 //            $middlewareDir = $this->app->addons->getAddonsPath() . $addon. DIRECTORY_SEPARATOR . 'middleware' .  DIRECTORY_SEPARATOR;
                     // 如果插件下存在middleware文件夹
+=======
+                }
+
+
+//            $middlewareDir = $this->app->addons->getAddonsPath() . $addon. DIRECTORY_SEPARATOR . 'middleware' .  DIRECTORY_SEPARATOR;
+                // 如果插件下存在middleware文件夹
+>>>>>>> 3.0
 //            if(is_dir($middlewareDir)) {
 //                //配置
 //                $middleware_dir = scandir($middlewareDir);
@@ -164,7 +181,7 @@ class Service extends \think\Service
         }
     }
 
-     /**
+    /**
      * 加载插件配置文件
      */
     private function loadConfig()
@@ -177,7 +194,7 @@ class Service extends \think\Service
                 if (in_array($childname, ['.', '..', 'public', 'view'])) {
                     continue;
                 }
-             
+
                 $commands = [];
                 //配置文件
                 $addons_config_dir = $this->addons_path . $name . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR;

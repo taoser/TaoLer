@@ -1,6 +1,56 @@
 CHANGELOG
 =========
 
+7.1
+---
+
+ * Add support for new DOM extension classes in `DOMCaster`
+
+7.0
+---
+
+ * Add argument `$label` to `VarDumper::dump()`
+ * Require explicit argument when calling `VarDumper::setHandler()`
+ * Remove display of backtrace in `Twig_Template`, only `Twig\Template` is supported
+
+6.4
+---
+
+ * Dump uninitialized properties
+
+6.3
+---
+
+ * Add caster for `WeakMap`
+ * Add support of named arguments to `dd()` and `dump()` to display the argument name
+ * Add support for `Relay\Relay`
+ * Add display of invisible characters
+
+6.2
+---
+
+ * Add support for `FFI\CData` and `FFI\CType`
+ * Deprecate calling `VarDumper::setHandler()` without arguments
+
+5.4
+---
+
+ * Add ability to style integer and double values independently
+ * Add casters for Symfony's UUIDs and ULIDs
+ * Add support for `Fiber`
+
+5.2.0
+-----
+
+ * added support for PHPUnit `--colors` option
+ * added `VAR_DUMPER_FORMAT=server` env var value support
+ * prevent replacing the handler when the `VAR_DUMPER_FORMAT` env var is set
+
+5.1.0
+-----
+
+ * added `RdKafka` support
+
 4.4.0
 -----
 

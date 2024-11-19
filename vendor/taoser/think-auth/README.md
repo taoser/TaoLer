@@ -1,11 +1,11 @@
 # thinkphp-auth
 
-ThinkPHP6权限Auth扩展
+ThinkPHP8权限Auth扩展
 
 ## 安装
 
 ~~~php
-//thinkphp6.0
+//thinkphp8.0
 composer require taoser/think-auth
 ~~~
 

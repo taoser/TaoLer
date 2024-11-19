@@ -94,6 +94,7 @@
 	  var laypage = layui.laypage;
 	  
    //执行一个laypage实例
+<<<<<<< HEAD
 		laypage.render({
 			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
 			,count: "{$artList['total']}" //数据总数，从服务端得到
@@ -103,6 +104,18 @@
 			,first: false
     		,last: false
 			,layout: ['prev', 'page','next','count']
+=======
+   laypage.render({
+			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+			,count: "{$__LISTS__.total}" //数据总数，从服务端得到
+			,groups: 1
+			,limit: "{$__LISTS__['per_page']}"
+			,curr : "{$__LISTS__['current_page']}"
+			,first: false
+    		,last: false
+			,groups: 5
+			,layout: ['prev', 'page','next','count', 'skip']
+>>>>>>> 3.0
 			//获取起始页
 			,jump: function(obj, first){
 				//首次不执行

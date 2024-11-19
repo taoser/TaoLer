@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2021 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -30,12 +30,6 @@ class RuleGroup extends Rule
     protected $rules = [];
 
     /**
-     * 是否已经解析
-     * @var bool
-     */
-    protected $hasParsed;
-
-    /**
      * MISS路由
      * @var RuleItem
      */
@@ -54,13 +48,19 @@ class RuleGroup extends Rule
     protected $alias;
 
     /**
+     * 是否已经解析
+     * @var bool
+     */
+    protected $hasParsed;
+
+    /**
      * 架构函数
      * @access public
-     * @param Route          $router 路由对象
-     * @param RuleGroup|null $parent 上级对象
-     * @param string         $name   分组名称
-     * @param mixed          $rule   分组路由
-     * @param bool           $lazy   延迟解析
+     * @param  Route     $router 路由对象
+     * @param  RuleGroup $parent 上级对象
+     * @param  string    $name   分组名称
+     * @param  mixed     $rule   分组路由
+     * @param  bool      $lazy   延迟解析
      */
     public function __construct(Route $router, RuleGroup $parent = null, string $name = '', $rule = null, bool $lazy = false)
     {
@@ -88,7 +88,7 @@ class RuleGroup extends Rule
      */
     protected function setFullName(): void
     {
-        if (false !== strpos($this->name, ':')) {
+        if (str_contains($this->name, ':')) {
             $this->name = preg_replace(['/\[\:(\w+)\]/', '/\:(\w+)/'], ['<\1?>', '<\1>'], $this->name);
         }
 
@@ -170,9 +170,7 @@ class RuleGroup extends Rule
             }
         }
 
-        if (!empty($option['dispatcher'])) {
-            $result = $this->parseRule($request, '', $option['dispatcher'], $url, $option);
-        } elseif ($miss = $this->getMissRule($method)) {
+        if ($miss = $this->getMissRule($method)) {
             // 未匹配所有路由的路由规则处理
             $result = $miss->parseRule($request, '', $miss->getRoute(), $url, $miss->getOption());
         } else {
@@ -229,10 +227,6 @@ class RuleGroup extends Rule
      */
     public function parseGroupRule($rule): void
     {
-        if (is_null($rule)) {
-            return;
-        }
-
         if (is_string($rule) && is_subclass_of($rule, Dispatch::class)) {
             $this->dispatcher($rule);
             return;
@@ -262,7 +256,7 @@ class RuleGroup extends Rule
      */
     protected function checkMergeRuleRegex(Request $request, array &$rules, string $url, bool $completeMatch)
     {
-        $depr  = $this->router->config('pathinfo_depr');
+        $depr  = $this->config('pathinfo_depr');
         $url   = $depr . str_replace('|', $depr, $url);
         $regex = [];
         $items = [];
@@ -277,7 +271,7 @@ class RuleGroup extends Rule
 
                 $complete = $item->getOption('complete_match', $completeMatch);
 
-                if (false === strpos($rule, '<')) {
+                if (!str_contains($rule, '<')) {
                     if (0 === strcasecmp($rule, $url) || (!$complete && 0 === strncasecmp($rule, $url, strlen($rule)))) {
                         return $item->checkRule($request, $url, []);
                     }
@@ -328,7 +322,7 @@ class RuleGroup extends Rule
 
             if (!isset($pos)) {
                 foreach ($regex as $key => $item) {
-                    if (0 === strpos(str_replace(['\/', '\-', '\\' . $depr], ['/', '-', $depr], $item), $match[0])) {
+                    if (str_starts_with(str_replace(['\/', '\-', '\\' . $depr], ['/', '-', $depr], $item), $match[0])) {
                         $pos = $key;
                         break;
                     }
@@ -353,7 +347,25 @@ class RuleGroup extends Rule
     }
 
     /**
-     * 获取分组的MISS路由
+     * 注册MISS路由
+     * @access public
+     * @param  string|Closure $route  路由地址
+     * @param  string         $method 请求类型
+     * @return RuleItem
+     */
+    public function miss(string | Closure $route, string $method = '*'): RuleItem
+    {
+        // 创建路由规则实例
+        $method   = strtolower($method);
+        $ruleItem = new RuleItem($this->router, $this, null, '', $route, $method);
+
+        $this->miss[$method] = $ruleItem->setMiss();
+
+        return $ruleItem;
+    }
+
+    /**
+     * 添加分组下的MISS路由
      * @access public
      * @param  string $method 请求类型
      * @return RuleItem|null
@@ -368,23 +380,6 @@ class RuleGroup extends Rule
             return null;
         }
         return $miss;
-    }
-
-    /**
-     * 注册MISS路由
-     * @access public
-     * @param  string|Closure $route  路由地址
-     * @param  string         $method 请求类型
-     * @return RuleItem
-     */
-    public function miss($route, string $method = '*') : RuleItem
-    {
-        // 创建路由规则实例
-        $ruleItem = new RuleItem($this->router, $this, null, '', $route, strtolower($method));
-
-        $this->miss[$method] = $ruleItem->setMiss();
-
-        return $ruleItem;
     }
 
     /**
@@ -427,7 +422,6 @@ class RuleGroup extends Rule
     public function addRuleItem(Rule $rule)
     {
         $this->rules[] = $rule;
-
         return $this;
     }
 
@@ -492,7 +486,7 @@ class RuleGroup extends Rule
 
         return array_filter($this->rules, function ($item) use ($method) {
             $ruleMethod = $item->getMethod();
-            return '*' == $ruleMethod || false !== strpos($ruleMethod, $method);
+            return '*' == $ruleMethod || str_contains($ruleMethod, $method);
         });
     }
 

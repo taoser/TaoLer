@@ -51,7 +51,7 @@
                 <input type="checkbox" name="remember" title="{:lang('remember password')}" lay-skin="primary"  lay-filter="remember" value="1">
               </div>
               <div class="layui-form-item">
-                <button type="submit" name="submit" class="layui-btn" lay-filter="user" lay-submit id="login">{:lang('login now')}</button>
+                <button type="submit" name="submit" class="layui-btn" lay-filter="user-login" lay-submit id="login">{:lang('login now')}</button>
                 <span style="padding-left:20px;">
                   <a href="{$Request.domain}{:url('user_forget')}">{:lang('forget password')}？</a>
                 </span>
@@ -72,6 +72,7 @@
 
 {block name="script"}
 <script>
+<<<<<<< HEAD
 	$(function() {
 		$('#login').click(function() {
 			var loadIndex = layer.load(2);
@@ -79,18 +80,43 @@
 				type:"post",
 				url:"{:url('login/index')}",
 				data:$('form').serialize(),
+=======
+    layui.use(function(){
+        var form = layui.form;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+
+        form.on('submit(user-login)',function(data){
+            var field = data.field;
+            var loadIndex = layer.load(2);
+			$.ajax({
+				type:"post",
+				url:"{:url('login/index')}",
+				data:field,
+>>>>>>> 3.0
 				daType:"json",
 				success:function (res){
 					layer.close(loadIndex);
 					if (res.code === 0) {
+<<<<<<< HEAD
 						layui.data('tao-user', {
 							key: 'token',
 							value: res.data.token
 						});
+=======
+                        if(res.data.token) {
+                            layui.data('tao-user', {
+                                key: 'token',
+                                value: res.data.token
+                            });
+                        }
+						
+>>>>>>> 3.0
 						toast.success({title:"成功消息",message: res.msg});
 						location.href = res.data.url;
 					} else {
 						toast.error({title:"失败消息",message:res.msg});
+<<<<<<< HEAD
 						layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 					}
 				}
@@ -102,5 +128,20 @@
 	layui.jquery('#captcha').on('click',function(){
 		layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 	})
+=======
+						$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+					}
+				}
+			});
+            
+			return false;
+        })
+
+        // 更新验证码
+        $('#captcha').on('click',function(){
+            $('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+        })
+    })
+>>>>>>> 3.0
 </script>
 {/block}

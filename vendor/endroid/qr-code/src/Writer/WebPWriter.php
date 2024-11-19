@@ -11,11 +11,19 @@ use Endroid\QrCode\Writer\Result\GdResult;
 use Endroid\QrCode\Writer\Result\ResultInterface;
 use Endroid\QrCode\Writer\Result\WebPResult;
 
+<<<<<<< HEAD
 final class WebPWriter extends AbstractGdWriter
 {
     public const WRITER_OPTION_QUALITY = 'quality';
 
     public function write(QrCodeInterface $qrCode, LogoInterface $logo = null, LabelInterface $label = null, array $options = []): ResultInterface
+=======
+final readonly class WebPWriter extends AbstractGdWriter
+{
+    public const WRITER_OPTION_QUALITY = 'quality';
+
+    public function write(QrCodeInterface $qrCode, ?LogoInterface $logo = null, ?LabelInterface $label = null, array $options = []): ResultInterface
+>>>>>>> 3.0
     {
         if (!isset($options[self::WRITER_OPTION_QUALITY])) {
             $options[self::WRITER_OPTION_QUALITY] = -1;

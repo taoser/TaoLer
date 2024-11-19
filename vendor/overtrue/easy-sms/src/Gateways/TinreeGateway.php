@@ -11,11 +11,19 @@
 
 namespace Overtrue\EasySms\Gateways;
 
+<<<<<<< HEAD
 use Overtrue\EasySms\Support\Config;
 use Overtrue\EasySms\Traits\HasHttpRequest;
 use Overtrue\EasySms\Contracts\MessageInterface;
 use Overtrue\EasySms\Contracts\PhoneNumberInterface;
 use Overtrue\EasySms\Exceptions\GatewayErrorException;
+=======
+use Overtrue\EasySms\Contracts\MessageInterface;
+use Overtrue\EasySms\Contracts\PhoneNumberInterface;
+use Overtrue\EasySms\Exceptions\GatewayErrorException;
+use Overtrue\EasySms\Support\Config;
+use Overtrue\EasySms\Traits\HasHttpRequest;
+>>>>>>> 3.0
 
 /**
  * Class TinreeGateway.
@@ -26,6 +34,7 @@ class TinreeGateway extends Gateway
 {
     use HasHttpRequest;
 
+<<<<<<< HEAD
     const ENDPOINT_URL = 'http://api.tinree.com/api/v2/single_send';
 
     /**
@@ -36,6 +45,14 @@ class TinreeGateway extends Gateway
      * @return array
      *
      * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException
+=======
+    public const ENDPOINT_URL = 'http://api.tinree.com/api/v2/single_send';
+
+    /**
+     * @return array
+     *
+     * @throws GatewayErrorException
+>>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
@@ -61,7 +78,10 @@ class TinreeGateway extends Gateway
      * 构建发送内容
      * 用 data 数据合成内容，或者直接使用 data 的值
      *
+<<<<<<< HEAD
      * @param MessageInterface $message
+=======
+>>>>>>> 3.0
      * @return string
      */
     protected function buildContent(MessageInterface $message)
@@ -69,7 +89,11 @@ class TinreeGateway extends Gateway
         $data = $message->getData($this);
 
         if (is_array($data)) {
+<<<<<<< HEAD
             return implode("##", $data);
+=======
+            return implode('##', $data);
+>>>>>>> 3.0
         }
 
         return $data;

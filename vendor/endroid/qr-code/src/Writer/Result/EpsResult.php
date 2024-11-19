@@ -11,7 +11,11 @@ final class EpsResult extends AbstractResult
     public function __construct(
         MatrixInterface $matrix,
         /** @var array<string> $lines */
+<<<<<<< HEAD
         private array $lines
+=======
+        private readonly array $lines,
+>>>>>>> 3.0
     ) {
         parent::__construct($matrix);
     }

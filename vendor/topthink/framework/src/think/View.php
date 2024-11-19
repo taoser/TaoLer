@@ -2,16 +2,17 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2021 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace think;
 
+use think\contract\TemplateHandlerInterface;
 use think\helper\Arr;
 
 /**
@@ -39,7 +40,7 @@ class View extends Manager
      * 获取模板引擎
      * @access public
      * @param string $type 模板引擎类型
-     * @return $this
+     * @return TemplateHandlerInterface
      */
     public function engine(string $type = null)
     {
@@ -53,7 +54,7 @@ class View extends Manager
      * @param mixed        $value 变量值
      * @return $this
      */
-    public function assign($name, $value = null)
+    public function assign(string|array $name, $value = null)
     {
         if (is_array($name)) {
             $this->data = array_merge($this->data, $name);
@@ -115,11 +116,7 @@ class View extends Manager
     {
         // 页面缓存
         ob_start();
-        if (PHP_VERSION > 8.0) {
-            ob_implicit_flush(false);
-        } else {
-            ob_implicit_flush(0);
-        }
+        ob_implicit_flush(false);
 
         // 渲染输出
         try {
@@ -187,5 +184,4 @@ class View extends Manager
     {
         return $this->app->config->get('view.type', 'php');
     }
-
 }

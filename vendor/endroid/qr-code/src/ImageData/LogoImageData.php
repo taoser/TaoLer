@@ -6,15 +6,24 @@ namespace Endroid\QrCode\ImageData;
 
 use Endroid\QrCode\Logo\LogoInterface;
 
-class LogoImageData
+final class LogoImageData
 {
     private function __construct(
+<<<<<<< HEAD
         private string $data,
         private \GdImage|null $image,
         private string $mimeType,
         private int $width,
         private int $height,
         private bool $punchoutBackground
+=======
+        private readonly string $data,
+        private ?\GdImage $image,
+        private readonly string $mimeType,
+        private readonly int $width,
+        private readonly int $height,
+        private readonly bool $punchoutBackground,
+>>>>>>> 3.0
     ) {
     }
 
@@ -113,12 +122,21 @@ class LogoImageData
     private static function detectMimeTypeFromUrl(string $url): string
     {
         $headers = get_headers($url, true);
+<<<<<<< HEAD
+=======
 
-        if (!is_array($headers) || !isset($headers['Content-Type'])) {
+        if (!is_array($headers)) {
+            throw new \Exception(sprintf('Could not retrieve headers to determine content type for logo URL "%s"', $url));
+        }
+>>>>>>> 3.0
+
+        $headers = array_combine(array_map('strtolower', array_keys($headers)), $headers);
+
+        if (!isset($headers['content-type'])) {
             throw new \Exception(sprintf('Content type could not be determined for logo URL "%s"', $url));
         }
 
-        return is_array($headers['Content-Type']) ? $headers['Content-Type'][1] : $headers['Content-Type'];
+        return is_array($headers['content-type']) ? $headers['content-type'][1] : $headers['content-type'];
     }
 
     private static function detectMimeTypeFromPath(string $path): string

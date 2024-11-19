@@ -2,40 +2,34 @@
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
-            "version": "2.0.8",
-            "version_normalized": "2.0.8.0",
+            "version": "v3.0.1",
+            "version_normalized": "3.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Bacon/BaconQrCode.git",
-                "reference": "8674e51bb65af933a5ffaf1c308a660387c35c22"
+                "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/8674e51bb65af933a5ffaf1c308a660387c35c22",
-                "reference": "8674e51bb65af933a5ffaf1c308a660387c35c22",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/f9cc1f52b5a463062251d666761178dbdb6b544f",
+                "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f",
+                "shasum": ""
             },
             "require": {
                 "dasprid/enum": "^1.0.3",
                 "ext-iconv": "*",
-                "php": "^7.1 || ^8.0"
+                "php": "^8.1"
             },
             "require-dev": {
-                "phly/keep-a-changelog": "^2.1",
-                "phpunit/phpunit": "^7 | ^8 | ^9",
-                "spatie/phpunit-snapshot-assertions": "^4.2.9",
-                "squizlabs/php_codesniffer": "^3.4"
+                "phly/keep-a-changelog": "^2.12",
+                "phpunit/phpunit": "^10.5.11 || 11.0.4",
+                "spatie/phpunit-snapshot-assertions": "^5.1.5",
+                "squizlabs/php_codesniffer": "^3.9"
             },
             "suggest": {
                 "ext-imagick": "to generate QR code images"
             },
-            "time": "2022-12-07T17:46:57+00:00",
+            "time": "2024-10-01T13:55:55+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -59,213 +53,9 @@
             "homepage": "https://github.com/Bacon/BaconQrCode",
             "support": {
                 "issues": "https://github.com/Bacon/BaconQrCode/issues",
-                "source": "https://github.com/Bacon/BaconQrCode/tree/2.0.8"
+                "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.1"
             },
             "install-path": "../bacon/bacon-qr-code"
-        },
-        {
-            "name": "cache/adapter-common",
-            "version": "1.3.0",
-            "version_normalized": "1.3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-cache/adapter-common.git",
-                "reference": "8788309be72aa7be69b88cdc0687549c74a7d479"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-cache/adapter-common/zipball/8788309be72aa7be69b88cdc0687549c74a7d479",
-                "reference": "8788309be72aa7be69b88cdc0687549c74a7d479",
-                "shasum": ""
-            },
-            "require": {
-                "cache/tag-interop": "^1.0",
-                "php": ">=7.4",
-                "psr/cache": "^1.0 || ^2.0",
-                "psr/log": "^1.0 || ^2.0 || ^3.0",
-                "psr/simple-cache": "^1.0"
-            },
-            "require-dev": {
-                "cache/integration-tests": "^0.17",
-                "phpunit/phpunit": "^7.5.20 || ^9.5.10"
-            },
-            "time": "2022-01-15T15:47:19+00:00",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Cache\\Adapter\\Common\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Aaron Scherer",
-                    "email": "aequasi@gmail.com",
-                    "homepage": "https://github.com/aequasi"
-                },
-                {
-                    "name": "Tobias Nyholm",
-                    "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
-                }
-            ],
-            "description": "Common classes for PSR-6 adapters",
-            "homepage": "http://www.php-cache.com/en/latest/",
-            "keywords": [
-                "cache",
-                "psr-6",
-                "tag"
-            ],
-            "support": {
-                "source": "https://github.com/php-cache/adapter-common/tree/1.3.0"
-            },
-            "install-path": "../cache/adapter-common"
-        },
-        {
-            "name": "cache/filesystem-adapter",
-            "version": "1.2.0",
-            "version_normalized": "1.2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-cache/filesystem-adapter.git",
-                "reference": "f1faaae40aaa696ef899cef6f6888aedb90b419b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-cache/filesystem-adapter/zipball/f1faaae40aaa696ef899cef6f6888aedb90b419b",
-                "reference": "f1faaae40aaa696ef899cef6f6888aedb90b419b",
-                "shasum": ""
-            },
-            "require": {
-                "cache/adapter-common": "^1.0",
-                "league/flysystem": "^1.0",
-                "php": ">=7.4",
-                "psr/cache": "^1.0 || ^2.0",
-                "psr/simple-cache": "^1.0"
-            },
-            "provide": {
-                "psr/cache-implementation": "^1.0",
-                "psr/simple-cache-implementation": "^1.0"
-            },
-            "require-dev": {
-                "cache/integration-tests": "^0.17",
-                "phpunit/phpunit": "^7.5.20 || ^9.5.10"
-            },
-            "time": "2022-01-15T15:47:19+00:00",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Cache\\Adapter\\Filesystem\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Aaron Scherer",
-                    "email": "aequasi@gmail.com",
-                    "homepage": "https://github.com/aequasi"
-                },
-                {
-                    "name": "Tobias Nyholm",
-                    "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
-                }
-            ],
-            "description": "A PSR-6 cache implementation using filesystem. This implementation supports tags",
-            "homepage": "http://www.php-cache.com/en/latest/",
-            "keywords": [
-                "cache",
-                "filesystem",
-                "psr-6",
-                "tag"
-            ],
-            "support": {
-                "source": "https://github.com/php-cache/filesystem-adapter/tree/1.2.0"
-            },
-            "install-path": "../cache/filesystem-adapter"
-        },
-        {
-            "name": "cache/tag-interop",
-            "version": "1.1.0",
-            "version_normalized": "1.1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-cache/tag-interop.git",
-                "reference": "b062b1d735357da50edf8387f7a8696f3027d328"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-cache/tag-interop/zipball/b062b1d735357da50edf8387f7a8696f3027d328",
-                "reference": "b062b1d735357da50edf8387f7a8696f3027d328",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.5 || ^7.0 || ^8.0",
-                "psr/cache": "^1.0 || ^2.0"
-            },
-            "time": "2021-12-31T10:03:23+00:00",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Cache\\TagInterop\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Tobias Nyholm",
-                    "email": "tobias.nyholm@gmail.com",
-                    "homepage": "https://github.com/nyholm"
-                },
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com",
-                    "homepage": "https://github.com/nicolas-grekas"
-                }
-            ],
-            "description": "Framework interoperable interfaces for tags",
-            "homepage": "https://www.php-cache.com/en/latest/",
-            "keywords": [
-                "cache",
-                "psr",
-                "psr6",
-                "tag"
-            ],
-            "support": {
-                "issues": "https://github.com/php-cache/tag-interop/issues",
-                "source": "https://github.com/php-cache/tag-interop/tree/1.1.0"
-            },
-            "install-path": "../cache/tag-interop"
         },
         {
             "name": "dasprid/enum",
@@ -322,6 +112,7 @@
         },
         {
             "name": "endroid/qr-code",
+<<<<<<< HEAD
             "version": "4.8.5",
             "version_normalized": "4.8.5.0",
             "source": {
@@ -341,11 +132,33 @@
             },
             "conflict": {
                 "khanamiryan/qrcode-detector-decoder": "^1.0.6"
+=======
+            "version": "6.0.3",
+            "version_normalized": "6.0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/endroid/qr-code.git",
+                "reference": "bdbb06e767efe9abe3c00461662b4059a6cd0b55"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/endroid/qr-code/zipball/bdbb06e767efe9abe3c00461662b4059a6cd0b55",
+                "reference": "bdbb06e767efe9abe3c00461662b4059a6cd0b55",
+                "shasum": ""
+            },
+            "require": {
+                "bacon/bacon-qr-code": "^3.0",
+                "php": "^8.2"
+>>>>>>> 3.0
             },
             "require-dev": {
-                "endroid/quality": "dev-master",
+                "endroid/quality": "dev-main",
                 "ext-gd": "*",
+<<<<<<< HEAD
                 "khanamiryan/qrcode-detector-decoder": "^1.0.4||^2.0.2",
+=======
+                "khanamiryan/qrcode-detector-decoder": "^2.0.2",
+>>>>>>> 3.0
                 "setasign/fpdf": "^1.8.2"
             },
             "suggest": {
@@ -354,11 +167,15 @@
                 "roave/security-advisories": "Makes sure package versions with known security issues are not installed",
                 "setasign/fpdf": "Enables you to use the PDF writer"
             },
+<<<<<<< HEAD
             "time": "2023-09-29T14:03:20+00:00",
+=======
+            "time": "2024-10-29T19:28:52+00:00",
+>>>>>>> 3.0
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.x-dev"
+                    "dev-main": "6.x-dev"
                 }
             },
             "installation-source": "dist",
@@ -388,7 +205,11 @@
             ],
             "support": {
                 "issues": "https://github.com/endroid/qr-code/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/endroid/qr-code/tree/4.8.5"
+=======
+                "source": "https://github.com/endroid/qr-code/tree/6.0.3"
+>>>>>>> 3.0
             },
             "funding": [
                 {
@@ -800,6 +621,7 @@
         },
         {
             "name": "illuminate/container",
+<<<<<<< HEAD
             "version": "v11.31.0",
             "version_normalized": "11.31.0.0",
             "source": {
@@ -1010,11 +832,40 @@
                 "guzzlehttp/guzzle": "^6.0 || ^7.0"
             },
             "time": "2024-03-24T14:55:49+00:00",
+=======
+            "version": "v11.32.0",
+            "version_normalized": "11.32.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/container.git",
+                "reference": "6e31eb49e9c9e68356a55cd8f18fb8830b8158cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/6e31eb49e9c9e68356a55cd8f18fb8830b8158cd",
+                "reference": "6e31eb49e9c9e68356a55cd8f18fb8830b8158cd",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^11.0",
+                "php": "^8.2",
+                "psr/container": "^1.1.1|^2.0.1"
+            },
+            "provide": {
+                "psr/container-implementation": "1.1|2.0"
+            },
+            "time": "2024-11-14T15:31:35+00:00",
+>>>>>>> 3.0
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "11.x-dev"
+                }
+            },
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "Jaeger\\": "src"
+                    "Illuminate\\Container\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1023,36 +874,243 @@
             ],
             "authors": [
                 {
-                    "name": "Jaeger",
-                    "email": "JaegerCode@gmail.com"
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
                 }
             ],
-            "description": "Simple Http client base on GuzzleHttp",
+            "description": "The Illuminate Container package.",
+            "homepage": "https://laravel.com",
             "support": {
+<<<<<<< HEAD
                 "issues": "https://github.com/jae-jae/GHttp/issues",
                 "source": "https://github.com/jae-jae/GHttp/tree/V1.7.3"
+=======
+                "issues": "https://github.com/laravel/framework/issues",
+                "source": "https://github.com/laravel/framework"
+>>>>>>> 3.0
             },
-            "install-path": "../jaeger/g-http"
+            "install-path": "../illuminate/container"
         },
         {
-            "name": "jaeger/phpquery-single",
-            "version": "1.1.1",
-            "version_normalized": "1.1.1.0",
+            "name": "illuminate/contracts",
+            "version": "v11.32.0",
+            "version_normalized": "11.32.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jae-jae/phpQuery-single.git",
-                "reference": "39a650ade692a6b480c22220dce0c198d6a946fb"
+                "url": "https://github.com/illuminate/contracts.git",
+                "reference": "44c15aec6ea0d997e0885aa5b04876fe8a141433"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jae-jae/phpQuery-single/zipball/39a650ade692a6b480c22220dce0c198d6a946fb",
-                "reference": "39a650ade692a6b480c22220dce0c198d6a946fb",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/44c15aec6ea0d997e0885aa5b04876fe8a141433",
+                "reference": "44c15aec6ea0d997e0885aa5b04876fe8a141433",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2",
+                "psr/container": "^1.1.1|^2.0.1",
+                "psr/simple-cache": "^1.0|^2.0|^3.0"
+            },
+            "time": "2024-11-15T15:40:33+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "11.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Contracts\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Illuminate Contracts package.",
+            "homepage": "https://laravel.com",
+            "support": {
+                "issues": "https://github.com/laravel/framework/issues",
+                "source": "https://github.com/laravel/framework"
+            },
+            "install-path": "../illuminate/contracts"
+        },
+        {
+            "name": "intervention/gif",
+            "version": "4.2.0",
+            "version_normalized": "4.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Intervention/gif.git",
+                "reference": "42c131a31b93c440ad49061b599fa218f06f93be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Intervention/gif/zipball/42c131a31b93c440ad49061b599fa218f06f93be",
+                "reference": "42c131a31b93c440ad49061b599fa218f06f93be",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1",
+                "phpunit/phpunit": "^10.0",
+                "slevomat/coding-standard": "~8.0",
+                "squizlabs/php_codesniffer": "^3.8"
+            },
+            "time": "2024-09-20T13:35:02+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Intervention\\Gif\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Vogel",
+                    "email": "oliver@intervention.io",
+                    "homepage": "https://intervention.io/"
+                }
+            ],
+            "description": "Native PHP GIF Encoder/Decoder",
+            "homepage": "https://github.com/intervention/gif",
+            "keywords": [
+                "animation",
+                "gd",
+                "gif",
+                "image"
+            ],
+            "support": {
+                "issues": "https://github.com/Intervention/gif/issues",
+                "source": "https://github.com/Intervention/gif/tree/4.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/interventionio",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/Intervention",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/interventionphp",
+                    "type": "ko_fi"
+                }
+            ],
+            "install-path": "../intervention/gif"
+        },
+        {
+            "name": "intervention/image",
+            "version": "3.9.1",
+            "version_normalized": "3.9.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Intervention/image.git",
+                "reference": "b496d1f6b9f812f96166623358dfcafb8c3b1683"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/b496d1f6b9f812f96166623358dfcafb8c3b1683",
+                "reference": "b496d1f6b9f812f96166623358dfcafb8c3b1683",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "intervention/gif": "^4.2",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.6",
+                "phpstan/phpstan": "^1",
+                "phpunit/phpunit": "^10.0",
+                "slevomat/coding-standard": "~8.0",
+                "squizlabs/php_codesniffer": "^3.8"
+            },
+            "suggest": {
+                "ext-exif": "Recommended to be able to read EXIF data properly."
+            },
+            "time": "2024-10-27T10:15:54+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Intervention\\Image\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Vogel",
+                    "email": "oliver@intervention.io",
+                    "homepage": "https://intervention.io/"
+                }
+            ],
+            "description": "PHP image manipulation",
+            "homepage": "https://image.intervention.io/",
+            "keywords": [
+                "gd",
+                "image",
+                "imagick",
+                "resize",
+                "thumbnail",
+                "watermark"
+            ],
+            "support": {
+                "issues": "https://github.com/Intervention/image/issues",
+                "source": "https://github.com/Intervention/image/tree/3.9.1"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/interventionio",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/Intervention",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/interventionphp",
+                    "type": "ko_fi"
+                }
+            ],
+            "install-path": "../intervention/image"
+        },
+        {
+            "name": "jaeger/phpquery-single",
+            "version": "0.9.9",
+            "version_normalized": "0.9.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jae-jae/phpQuery-single.git",
+                "reference": "6c12e3a1648dc619f16920f96082f397d74e0127"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jae-jae/phpQuery-single/zipball/6c12e3a1648dc619f16920f96082f397d74e0127",
+                "reference": "6c12e3a1648dc619f16920f96082f397d74e0127",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2022-03-26T15:01:16+00:00",
+            "time": "2017-12-07T02:13:37+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1080,12 +1138,13 @@
             "homepage": "http://code.google.com/p/phpquery/",
             "support": {
                 "issues": "https://github.com/jae-jae/phpQuery-single/issues",
-                "source": "https://github.com/jae-jae/phpQuery-single/tree/1.1.1"
+                "source": "https://github.com/jae-jae/phpQuery-single/tree/master"
             },
             "install-path": "../jaeger/phpquery-single"
         },
         {
             "name": "jaeger/querylist",
+<<<<<<< HEAD
             "version": "V4.4.0",
             "version_normalized": "4.4.0.0",
             "source": {
@@ -1110,11 +1169,34 @@
                 "phpunit/phpunit": "^8.5"
             },
             "time": "2024-04-28T07:34:31+00:00",
+=======
+            "version": "V3.2.1",
+            "version_normalized": "3.2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jae-jae/QueryList.git",
+                "reference": "1a7864dcf8d979d6d57a2a3508f2dd62ce3233d6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jae-jae/QueryList/zipball/1a7864dcf8d979d6d57a2a3508f2dd62ce3233d6",
+                "reference": "1a7864dcf8d979d6d57a2a3508f2dd62ce3233d6",
+                "shasum": ""
+            },
+            "require": {
+                "jaeger/phpquery-single": "^0.9",
+                "php": ">=5.3.0"
+            },
+            "suggest": {
+                "monolog/monolog": "Log support"
+            },
+            "time": "2017-06-09T04:25:07+00:00",
+>>>>>>> 3.0
             "type": "library",
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "QL\\": "src"
+                    "QL\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1127,7 +1209,7 @@
                     "email": "JaegerCode@gmail.com"
                 }
             ],
-            "description": "Simple, elegant, extensible PHP Web Scraper (crawler/spider),Use the css3 dom selector,Based on phpQuery! 简洁、优雅、可扩展的PHP采集工具(爬虫)，基于phpQuery。",
+            "description": "QueryList是基于phpQuery的无比强大的PHP采集工具",
             "homepage": "http://querylist.cc",
             "keywords": [
                 "QueryList",
@@ -1136,17 +1218,16 @@
             ],
             "support": {
                 "issues": "https://github.com/jae-jae/QueryList/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/jae-jae/QueryList/tree/V4.4.0"
+=======
+                "source": "https://github.com/jae-jae/QueryList/tree/master"
+>>>>>>> 3.0
             },
-            "funding": [
-                {
-                    "url": "https://opencollective.com/querylist",
-                    "type": "open_collective"
-                }
-            ],
             "install-path": "../jaeger/querylist"
         },
         {
+<<<<<<< HEAD
             "name": "laravel/serializable-closure",
             "version": "v1.3.6",
             "version_normalized": "1.3.6.0",
@@ -1211,64 +1292,50 @@
             "install-path": "../laravel/serializable-closure"
         },
         {
+=======
+>>>>>>> 3.0
             "name": "league/flysystem",
-            "version": "1.1.10",
-            "version_normalized": "1.1.10.0",
+            "version": "2.5.0",
+            "version_normalized": "2.5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "3239285c825c152bcc315fe0e87d6b55f5972ed1"
+                "reference": "8aaffb653c5777781b0f7f69a5d937baf7ab6cdb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/3239285c825c152bcc315fe0e87d6b55f5972ed1",
-                "reference": "3239285c825c152bcc315fe0e87d6b55f5972ed1",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8aaffb653c5777781b0f7f69a5d937baf7ab6cdb",
+                "reference": "8aaffb653c5777781b0f7f69a5d937baf7ab6cdb",
+                "shasum": ""
             },
             "require": {
-                "ext-fileinfo": "*",
-                "league/mime-type-detection": "^1.3",
-                "php": "^7.2.5 || ^8.0"
+                "ext-json": "*",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^7.2 || ^8.0"
             },
             "conflict": {
-                "league/flysystem-sftp": "<1.0.6"
+                "guzzlehttp/ringphp": "<1.1.1"
             },
             "require-dev": {
-                "phpspec/prophecy": "^1.11.1",
-                "phpunit/phpunit": "^8.5.8"
+                "async-aws/s3": "^1.5",
+                "async-aws/simple-s3": "^1.0",
+                "aws/aws-sdk-php": "^3.132.4",
+                "composer/semver": "^3.0",
+                "ext-fileinfo": "*",
+                "ext-ftp": "*",
+                "friendsofphp/php-cs-fixer": "^3.2",
+                "google/cloud-storage": "^1.23",
+                "phpseclib/phpseclib": "^2.0",
+                "phpstan/phpstan": "^0.12.26",
+                "phpunit/phpunit": "^8.5 || ^9.4",
+                "sabre/dav": "^4.1"
             },
-            "suggest": {
-                "ext-ftp": "Allows you to use FTP server storage",
-                "ext-openssl": "Allows you to use FTPS server storage",
-                "league/flysystem-aws-s3-v2": "Allows you to use S3 storage with AWS SDK v2",
-                "league/flysystem-aws-s3-v3": "Allows you to use S3 storage with AWS SDK v3",
-                "league/flysystem-azure": "Allows you to use Windows Azure Blob storage",
-                "league/flysystem-cached-adapter": "Flysystem adapter decorator for metadata caching",
-                "league/flysystem-eventable-filesystem": "Allows you to use EventableFilesystem",
-                "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
-                "league/flysystem-sftp": "Allows you to use SFTP server storage via phpseclib",
-                "league/flysystem-webdav": "Allows you to use WebDAV storage",
-                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter",
-                "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
-                "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
-            },
-            "time": "2022-10-04T09:16:37+00:00",
+            "time": "2022-09-17T21:02:32+00:00",
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev"
-                }
-            },
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "League\\Flysystem\\": "src/"
+                    "League\\Flysystem\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1278,37 +1345,39 @@
             "authors": [
                 {
                     "name": "Frank de Jonge",
-                    "email": "info@frenky.net"
+                    "email": "info@frankdejonge.nl"
                 }
             ],
-            "description": "Filesystem abstraction: Many filesystems, one API.",
+            "description": "File storage abstraction for PHP",
             "keywords": [
-                "Cloud Files",
                 "WebDAV",
-                "abstraction",
                 "aws",
                 "cloud",
-                "copy.com",
-                "dropbox",
-                "file systems",
+                "file",
                 "files",
                 "filesystem",
                 "filesystems",
                 "ftp",
-                "rackspace",
-                "remote",
                 "s3",
                 "sftp",
                 "storage"
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/1.1.10"
+                "source": "https://github.com/thephpleague/flysystem/tree/2.5.0"
             },
             "funding": [
                 {
-                    "url": "https://offset.earth/frankdejonge",
-                    "type": "other"
+                    "url": "https://ecologi.com/frankdejonge",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
+                    "type": "tidelift"
                 }
             ],
             "install-path": "../league/flysystem"
@@ -1373,84 +1442,52 @@
             "install-path": "../league/mime-type-detection"
         },
         {
-            "name": "liliuwei/thinkphp-social",
-            "version": "v1.3",
-            "version_normalized": "1.3.0.0",
+            "name": "overtrue/easy-sms",
+            "version": "3.0.1",
+            "version_normalized": "3.0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/liliuwei/thinkphp-social.git",
-                "reference": "2067fc2c2cc3b3d109602bc19c3e5a99c5f4c970"
+                "url": "https://github.com/overtrue/easy-sms.git",
+                "reference": "b97d8b785ae07fe8c181de8d9d1f7f146a5977f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liliuwei/thinkphp-social/zipball/2067fc2c2cc3b3d109602bc19c3e5a99c5f4c970",
-                "reference": "2067fc2c2cc3b3d109602bc19c3e5a99c5f4c970",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/overtrue/easy-sms/zipball/b97d8b785ae07fe8c181de8d9d1f7f146a5977f7",
+                "reference": "b97d8b785ae07fe8c181de8d9d1f7f146a5977f7",
+                "shasum": ""
             },
             "require": {
-                "php": ">=5.6.0",
-                "topthink/framework": "^5.1 || ^6.0",
-                "topthink/think-installer": "^2.0"
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^6.2 || ^7.0",
+                "php": ">=8.0"
             },
-            "time": "2021-01-13T05:11:12+00:00",
-            "type": "think-extend",
-            "extra": {
-                "think-config": {
-                    "social": "src/config/config.php"
-                },
-                "think": {
-                    "config": {
-                        "social": "src/config/config.php"
-                    }
-                }
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.54",
+                "jetbrains/phpstorm-attributes": "^1.0",
+                "mockery/mockery": "^1.4.2",
+                "phpunit/phpunit": "^9.5.8"
             },
+            "time": "2024-07-16T06:07:02+00:00",
+            "type": "library",
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "liliuwei\\social\\": "src/"
+                    "Overtrue\\EasySms\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "Apache-2.0"
+                "MIT"
             ],
             "authors": [
                 {
-                    "name": "liliuwei",
-                    "email": "974829947@qq.com"
+                    "name": "overtrue",
+                    "email": "i@overtrue.me"
                 }
             ],
-            "description": "适用于thinkphp5.1和6.0的社会化登录扩展",
-            "keywords": [
-                "Facebook登录",
-                "Gitee登录",
-                "Github登录",
-                "Google登录",
-                "Oschina登录",
-                "QQ登录",
-                "oauth",
-                "think-social",
-                "thinkphp",
-                "thinkphp-social",
-                "thinkphp5.1",
-                "thinkphp6.0",
-                "小米登录",
-                "微信登录",
-                "抖音登录",
-                "新浪登录",
-                "淘宝登录",
-                "百度登录",
-                "第三方授权登录",
-                "谷歌登录",
-                "钉钉登录"
-            ],
+            "description": "The easiest way to send short message.",
             "support": {
+<<<<<<< HEAD
                 "issues": "https://github.com/liliuwei/thinkphp-social/issues",
                 "source": "https://github.com/liliuwei/thinkphp-social/tree/v1.3"
             },
@@ -1574,138 +1611,18 @@
             "support": {
                 "issues": "https://github.com/PHP-DI/Invoker/issues",
                 "source": "https://github.com/PHP-DI/Invoker/tree/2.3.4"
+=======
+                "issues": "https://github.com/overtrue/easy-sms/issues",
+                "source": "https://github.com/overtrue/easy-sms/tree/3.0.1"
+>>>>>>> 3.0
             },
             "funding": [
                 {
-                    "url": "https://github.com/mnapoli",
+                    "url": "https://github.com/overtrue",
                     "type": "github"
                 }
             ],
-            "install-path": "../php-di/invoker"
-        },
-        {
-            "name": "php-di/php-di",
-            "version": "6.4.0",
-            "version_normalized": "6.4.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PHP-DI/PHP-DI.git",
-                "reference": "ae0f1b3b03d8b29dff81747063cbfd6276246cc4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/ae0f1b3b03d8b29dff81747063cbfd6276246cc4",
-                "reference": "ae0f1b3b03d8b29dff81747063cbfd6276246cc4",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/serializable-closure": "^1.0",
-                "php": ">=7.4.0",
-                "php-di/invoker": "^2.0",
-                "php-di/phpdoc-reader": "^2.0.1",
-                "psr/container": "^1.0"
-            },
-            "provide": {
-                "psr/container-implementation": "^1.0"
-            },
-            "require-dev": {
-                "doctrine/annotations": "~1.10",
-                "friendsofphp/php-cs-fixer": "^2.4",
-                "mnapoli/phpunit-easymock": "^1.2",
-                "ocramius/proxy-manager": "^2.11.2",
-                "phpstan/phpstan": "^0.12",
-                "phpunit/phpunit": "^9.5"
-            },
-            "suggest": {
-                "doctrine/annotations": "Install it if you want to use annotations (version ~1.2)",
-                "ocramius/proxy-manager": "Install it if you want to use lazy injection (version ~2.0)"
-            },
-            "time": "2022-04-09T16:46:38+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "files": [
-                    "src/functions.php"
-                ],
-                "psr-4": {
-                    "DI\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "The dependency injection container for humans",
-            "homepage": "https://php-di.org/",
-            "keywords": [
-                "PSR-11",
-                "container",
-                "container-interop",
-                "dependency injection",
-                "di",
-                "ioc",
-                "psr11"
-            ],
-            "support": {
-                "issues": "https://github.com/PHP-DI/PHP-DI/issues",
-                "source": "https://github.com/PHP-DI/PHP-DI/tree/6.4.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/mnapoli",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/php-di/php-di",
-                    "type": "tidelift"
-                }
-            ],
-            "install-path": "../php-di/php-di"
-        },
-        {
-            "name": "php-di/phpdoc-reader",
-            "version": "2.2.1",
-            "version_normalized": "2.2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PHP-DI/PhpDocReader.git",
-                "reference": "66daff34cbd2627740ffec9469ffbac9f8c8185c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/PhpDocReader/zipball/66daff34cbd2627740ffec9469ffbac9f8c8185c",
-                "reference": "66daff34cbd2627740ffec9469ffbac9f8c8185c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2.0"
-            },
-            "require-dev": {
-                "mnapoli/hard-mode": "~0.3.0",
-                "phpunit/phpunit": "^8.5|^9.0"
-            },
-            "time": "2020-10-12T12:39:22+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "PhpDocReader\\": "src/PhpDocReader"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PhpDocReader parses @var and @param values in PHP docblocks (supports namespaced class names with the same resolution rules as PHP)",
-            "keywords": [
-                "phpdoc",
-                "reflection"
-            ],
-            "support": {
-                "issues": "https://github.com/PHP-DI/PhpDocReader/issues",
-                "source": "https://github.com/PHP-DI/PhpDocReader/tree/2.2.1"
-            },
-            "install-path": "../php-di/phpdoc-reader"
+            "install-path": "../overtrue/easy-sms"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -1792,6 +1709,7 @@
             "install-path": "../phpmailer/phpmailer"
         },
         {
+<<<<<<< HEAD
             "name": "psr/cache",
             "version": "2.0.0",
             "version_normalized": "2.0.0.0",
@@ -1844,31 +1762,32 @@
             "install-path": "../psr/cache"
         },
         {
+=======
+>>>>>>> 3.0
             "name": "psr/container",
-            "version": "1.1.2",
-            "version_normalized": "1.1.2.0",
+            "version": "2.0.2",
+            "version_normalized": "2.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/container.git",
-                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea"
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/513e0666f7216c7459170d56df27dfcefe1689ea",
-                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/php-fig/container/zipball/c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "shasum": ""
             },
             "require": {
                 "php": ">=7.4.0"
             },
-            "time": "2021-11-05T16:50:12+00:00",
+            "time": "2021-11-05T16:47:00+00:00",
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
@@ -1896,7 +1815,7 @@
             ],
             "support": {
                 "issues": "https://github.com/php-fig/container/issues",
-                "source": "https://github.com/php-fig/container/tree/1.1.2"
+                "source": "https://github.com/php-fig/container/tree/2.0.2"
             },
             "install-path": "../psr/container"
         },
@@ -2079,13 +1998,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/php-fig/http-message/zipball/cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
                 "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "shasum": ""
             },
             "require": {
                 "php": "^7.2 || ^8.0"
@@ -2130,39 +2043,33 @@
         },
         {
             "name": "psr/log",
-            "version": "1.1.4",
-            "version_normalized": "1.1.4.0",
+            "version": "3.0.2",
+            "version_normalized": "3.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/d49695b909c3b7628b6289db5479a1c204601f11",
-                "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/php-fig/log/zipball/f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=8.0.0"
             },
-            "time": "2021-05-03T11:20:27+00:00",
+            "time": "2024-09-11T13:17:53+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "3.x-dev"
                 }
             },
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "Psr\\Log\\": "Psr/Log/"
+                    "Psr\\Log\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2183,39 +2090,33 @@
                 "psr-3"
             ],
             "support": {
-                "source": "https://github.com/php-fig/log/tree/1.1.4"
+                "source": "https://github.com/php-fig/log/tree/3.0.2"
             },
             "install-path": "../psr/log"
         },
         {
             "name": "psr/simple-cache",
-            "version": "1.0.1",
-            "version_normalized": "1.0.1.0",
+            "version": "3.0.0",
+            "version_normalized": "3.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/simple-cache.git",
-                "reference": "408d5eafb83c57f6365a3ca330ff23aa4a5fa39b"
+                "reference": "764e0b3939f5ca87cb904f570ef9be2d78a07865"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/simple-cache/zipball/408d5eafb83c57f6365a3ca330ff23aa4a5fa39b",
-                "reference": "408d5eafb83c57f6365a3ca330ff23aa4a5fa39b",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/php-fig/simple-cache/zipball/764e0b3939f5ca87cb904f570ef9be2d78a07865",
+                "reference": "764e0b3939f5ca87cb904f570ef9be2d78a07865",
+                "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=8.0.0"
             },
-            "time": "2017-10-23T01:57:42+00:00",
+            "time": "2021-10-29T13:26:27+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "3.0.x-dev"
                 }
             },
             "installation-source": "dist",
@@ -2231,7 +2132,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interfaces for simple caching",
@@ -2242,6 +2143,9 @@
                 "psr-16",
                 "simple-cache"
             ],
+            "support": {
+                "source": "https://github.com/php-fig/simple-cache/tree/3.0.0"
+            },
             "install-path": "../psr/simple-cache"
         },
         {
@@ -2445,6 +2349,7 @@
             "install-path": "../symfony/polyfill-mbstring"
         },
         {
+<<<<<<< HEAD
             "name": "symfony/polyfill-php72",
             "version": "v1.31.0",
             "version_normalized": "1.31.0.0",
@@ -2595,48 +2500,38 @@
             "install-path": "../symfony/polyfill-php80"
         },
         {
+=======
+>>>>>>> 3.0
             "name": "symfony/var-dumper",
-            "version": "v4.4.47",
-            "version_normalized": "4.4.47.0",
+            "version": "v7.1.8",
+            "version_normalized": "7.1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "1069c7a3fca74578022fab6f81643248d02f8e63"
+                "reference": "7bb01a47b1b00428d32b5e7b4d3b2d1aa58d3db8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/1069c7a3fca74578022fab6f81643248d02f8e63",
-                "reference": "1069c7a3fca74578022fab6f81643248d02f8e63",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/7bb01a47b1b00428d32b5e7b4d3b2d1aa58d3db8",
+                "reference": "7bb01a47b1b00428d32b5e7b4d3b2d1aa58d3db8",
+                "shasum": ""
             },
             "require": {
-                "php": ">=7.1.3",
-                "symfony/polyfill-mbstring": "~1.0",
-                "symfony/polyfill-php72": "~1.5",
-                "symfony/polyfill-php80": "^1.16"
+                "php": ">=8.2",
+                "symfony/polyfill-mbstring": "~1.0"
             },
             "conflict": {
-                "phpunit/phpunit": "<4.8.35|<5.4.3,>=5.0",
-                "symfony/console": "<3.4"
+                "symfony/console": "<6.4"
             },
             "require-dev": {
                 "ext-iconv": "*",
-                "symfony/console": "^3.4|^4.0|^5.0",
-                "symfony/process": "^4.4|^5.0",
-                "twig/twig": "^1.43|^2.13|^3.0.4"
+                "symfony/console": "^6.4|^7.0",
+                "symfony/http-kernel": "^6.4|^7.0",
+                "symfony/process": "^6.4|^7.0",
+                "symfony/uid": "^6.4|^7.0",
+                "twig/twig": "^3.0.4"
             },
-            "suggest": {
-                "ext-iconv": "To convert non-UTF-8 strings to UTF-8 (or symfony/polyfill-iconv in case ext-iconv cannot be used).",
-                "ext-intl": "To show region name in time zone dump",
-                "symfony/console": "To use the ServerDumpCommand and/or the bin/var-dump-server script"
-            },
-            "time": "2022-10-03T15:15:11+00:00",
+            "time": "2024-11-08T15:46:42+00:00",
             "bin": [
                 "Resources/bin/var-dump-server"
             ],
@@ -2674,7 +2569,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v4.4.47"
+                "source": "https://github.com/symfony/var-dumper/tree/v7.1.8"
             },
             "funding": [
                 {
@@ -2694,6 +2589,7 @@
         },
         {
             "name": "symfony/var-exporter",
+<<<<<<< HEAD
             "version": "v5.4.45",
             "version_normalized": "5.4.45.0",
             "source": {
@@ -2705,16 +2601,35 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/var-exporter/zipball/862700068db0ddfd8c5b850671e029a90246ec75",
                 "reference": "862700068db0ddfd8c5b850671e029a90246ec75",
+=======
+            "version": "v6.4.13",
+            "version_normalized": "6.4.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/var-exporter.git",
+                "reference": "0f605f72a363f8743001038a176eeb2a11223b51"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/0f605f72a363f8743001038a176eeb2a11223b51",
+                "reference": "0f605f72a363f8743001038a176eeb2a11223b51",
+>>>>>>> 3.0
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.5",
-                "symfony/polyfill-php80": "^1.16"
+                "php": ">=8.1",
+                "symfony/deprecation-contracts": "^2.5|^3"
             },
             "require-dev": {
-                "symfony/var-dumper": "^4.4.9|^5.0.9|^6.0"
+                "symfony/property-access": "^6.4|^7.0",
+                "symfony/serializer": "^6.4|^7.0",
+                "symfony/var-dumper": "^5.4|^6.0|^7.0"
             },
+<<<<<<< HEAD
             "time": "2024-09-25T14:11:13+00:00",
+=======
+            "time": "2024-09-25T14:18:03+00:00",
+>>>>>>> 3.0
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2747,10 +2662,16 @@
                 "export",
                 "hydrate",
                 "instantiate",
+                "lazy-loading",
+                "proxy",
                 "serialize"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/var-exporter/tree/v5.4.45"
+=======
+                "source": "https://github.com/symfony/var-exporter/tree/v6.4.13"
+>>>>>>> 3.0
             },
             "funding": [
                 {
@@ -2770,27 +2691,27 @@
         },
         {
             "name": "taoser/think-addons",
-            "version": "v1.0.9",
-            "version_normalized": "1.0.9.0",
+            "version": "v2.2.0",
+            "version_normalized": "2.2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/taoser/think-addons.git",
-                "reference": "00112adf200b897deecbd1bbabc33ad22377b008"
+                "reference": "ffea70378f6108d2f54ecc80d87900b63da979c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/taoser/think-addons/zipball/00112adf200b897deecbd1bbabc33ad22377b008",
-                "reference": "00112adf200b897deecbd1bbabc33ad22377b008",
+                "url": "https://api.github.com/repos/taoser/think-addons/zipball/ffea70378f6108d2f54ecc80d87900b63da979c7",
+                "reference": "ffea70378f6108d2f54ecc80d87900b63da979c7",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1.0",
-                "symfony/var-exporter": "^5.4",
-                "topthink/framework": "^6.0",
+                "php": ">=8.0.0",
+                "symfony/var-exporter": "^6.0",
+                "topthink/framework": "^8.0",
                 "topthink/think-helper": "^3.0.0",
-                "topthink/think-view": "^1.0"
+                "topthink/think-view": "^2.0"
             },
-            "time": "2023-06-10T05:08:45+00:00",
+            "time": "2024-06-16T09:10:29+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2821,39 +2742,33 @@
                     "email": "changlin_zhao@qq.com"
                 }
             ],
-            "description": "The ThinkPHP6 Addons Package",
+            "description": "The ThinkPHP8 Addons Package",
             "support": {
                 "issues": "https://github.com/taoser/think-addons/issues",
-                "source": "https://github.com/taoser/think-addons/tree/v1.0.9"
+                "source": "https://github.com/taoser/think-addons/tree/v2.2.0"
             },
             "install-path": "../taoser/think-addons"
         },
         {
             "name": "taoser/think-auth",
-            "version": "v1.0.1",
-            "version_normalized": "1.0.1.0",
+            "version": "v2.0.0",
+            "version_normalized": "2.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/taoser/think-auth.git",
-                "reference": "d3aa853b7d2a34624bcc566150105f2815e68ad0"
+                "reference": "db57156530dd8e2c020afc6e64abc1ad64e9e06c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/taoser/think-auth/zipball/d3aa853b7d2a34624bcc566150105f2815e68ad0",
-                "reference": "d3aa853b7d2a34624bcc566150105f2815e68ad0",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/taoser/think-auth/zipball/db57156530dd8e2c020afc6e64abc1ad64e9e06c",
+                "reference": "db57156530dd8e2c020afc6e64abc1ad64e9e06c",
+                "shasum": ""
             },
             "require": {
-                "php": ">=7.1.0",
-                "topthink/framework": "^6.0"
+                "php": ">=8.0.0",
+                "topthink/framework": "^8.0"
             },
-            "time": "2023-02-26T03:08:39+00:00",
+            "time": "2023-08-02T06:28:49+00:00",
             "type": "think-extend",
             "extra": {
                 "think": {
@@ -2882,33 +2797,33 @@
             "homepage": "https://github.com/taoser/think-auth",
             "keywords": [
                 "think-auth",
-                "thinkphp6"
+                "thinkphp8"
             ],
             "support": {
                 "issues": "https://github.com/taoser/think-auth/issues",
-                "source": "https://github.com/taoser/think-auth/tree/v1.0.1"
+                "source": "https://github.com/taoser/think-auth/tree/v2.0.0"
             },
             "install-path": "../taoser/think-auth"
         },
         {
             "name": "taoser/think-setarr",
-            "version": "v0.0.3",
-            "version_normalized": "0.0.3.0",
+            "version": "v0.0.5",
+            "version_normalized": "0.0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/taoser/think-setarr.git",
-                "reference": "6651c31ef42417a6294ef08e6fb970917b7e7f86"
+                "reference": "e436e2d855c2014dae19cbdecfd3d6c57c04aca8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/taoser/think-setarr/zipball/6651c31ef42417a6294ef08e6fb970917b7e7f86",
-                "reference": "6651c31ef42417a6294ef08e6fb970917b7e7f86",
+                "url": "https://api.github.com/repos/taoser/think-setarr/zipball/e436e2d855c2014dae19cbdecfd3d6c57c04aca8",
+                "reference": "e436e2d855c2014dae19cbdecfd3d6c57c04aca8",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.0"
             },
-            "time": "2022-04-16T23:08:43+00:00",
+            "time": "2022-05-09T04:22:56+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2929,12 +2844,13 @@
             "description": "php confing",
             "support": {
                 "issues": "https://github.com/taoser/think-setarr/issues",
-                "source": "https://github.com/taoser/think-setarr/tree/v0.0.3"
+                "source": "https://github.com/taoser/think-setarr/tree/v0.0.5"
             },
             "install-path": "../taoser/think-setarr"
         },
         {
             "name": "topthink/framework",
+<<<<<<< HEAD
             "version": "v6.1.5",
             "version_normalized": "6.1.5.0",
             "source": {
@@ -2946,26 +2862,43 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/top-think/framework/zipball/57d1950a1844ef8d3098ea290032aeb92e2e32c3",
                 "reference": "57d1950a1844ef8d3098ea290032aeb92e2e32c3",
+=======
+            "version": "v8.0.4",
+            "version_normalized": "8.0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/framework.git",
+                "reference": "846432655a82614a874cdaaac7be6870940b14d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/framework/zipball/846432655a82614a874cdaaac7be6870940b14d2",
+                "reference": "846432655a82614a874cdaaac7be6870940b14d2",
+>>>>>>> 3.0
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": ">=7.2.5",
-                "psr/container": "~1.0",
+                "php": ">=8.0.0",
+                "psr/container": "^2.0",
                 "psr/http-message": "^1.0",
-                "psr/log": "~1.0",
-                "psr/simple-cache": "^1.0",
-                "topthink/think-helper": "^3.1.1",
-                "topthink/think-orm": "^2.0|^3.0"
+                "psr/log": "^1.0|^2.0|^3.0",
+                "psr/simple-cache": "^1.0|^2.0|^3.0",
+                "topthink/think-helper": "^3.1",
+                "topthink/think-orm": "^3.0"
             },
             "require-dev": {
                 "guzzlehttp/psr7": "^2.1.0",
                 "mikey179/vfsstream": "^1.6",
                 "mockery/mockery": "^1.2",
-                "phpunit/phpunit": "^7.0"
+                "phpunit/phpunit": "^9.5"
             },
+<<<<<<< HEAD
             "time": "2024-04-16T02:01:19+00:00",
+=======
+            "time": "2024-07-29T03:24:24+00:00",
+>>>>>>> 3.0
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2997,7 +2930,11 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/framework/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/top-think/framework/tree/v6.1.5"
+=======
+                "source": "https://github.com/top-think/framework/tree/v8.0.4"
+>>>>>>> 3.0
             },
             "install-path": "../topthink/framework"
         },
@@ -3058,6 +2995,7 @@
             "install-path": "../topthink/think-captcha"
         },
         {
+<<<<<<< HEAD
             "name": "topthink/think-helper",
             "version": "v3.1.9",
             "version_normalized": "3.1.9.0",
@@ -3068,6 +3006,67 @@
             },
             "dist": {
                 "type": "zip",
+=======
+            "name": "topthink/think-filesystem",
+            "version": "v2.0.2",
+            "version_normalized": "2.0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-filesystem.git",
+                "reference": "c08503232fcae0c3c7fefae5e6b5c841ffe09f2f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/think-filesystem/zipball/c08503232fcae0c3c7fefae5e6b5c841ffe09f2f",
+                "reference": "c08503232fcae0c3c7fefae5e6b5c841ffe09f2f",
+                "shasum": ""
+            },
+            "require": {
+                "league/flysystem": "^2.0",
+                "topthink/framework": "^6.1|^8.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "^1.6",
+                "mockery/mockery": "^1.2",
+                "phpunit/phpunit": "^8.0"
+            },
+            "time": "2023-02-08T01:23:42+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "think\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "yunwuxin",
+                    "email": "448901948@qq.com"
+                }
+            ],
+            "description": "The ThinkPHP6.1 Filesystem Package",
+            "support": {
+                "issues": "https://github.com/top-think/think-filesystem/issues",
+                "source": "https://github.com/top-think/think-filesystem/tree/v2.0.2"
+            },
+            "install-path": "../topthink/think-filesystem"
+        },
+        {
+            "name": "topthink/think-helper",
+            "version": "v3.1.9",
+            "version_normalized": "3.1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-helper.git",
+                "reference": "d554a0a62e4c7034abc7343ee866005c3f399ae2"
+            },
+            "dist": {
+                "type": "zip",
+>>>>>>> 3.0
                 "url": "https://api.github.com/repos/top-think/think-helper/zipball/d554a0a62e4c7034abc7343ee866005c3f399ae2",
                 "reference": "d554a0a62e4c7034abc7343ee866005c3f399ae2",
                 "shasum": ""
@@ -3107,6 +3106,7 @@
             "install-path": "../topthink/think-helper"
         },
         {
+<<<<<<< HEAD
             "name": "topthink/think-installer",
             "version": "v2.0.5",
             "version_normalized": "2.0.5.0",
@@ -3221,6 +3221,8 @@
             "install-path": "../topthink/think-migration"
         },
         {
+=======
+>>>>>>> 3.0
             "name": "topthink/think-multi-app",
             "version": "v1.0.17",
             "version_normalized": "1.0.17.0",
@@ -3233,13 +3235,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/4055a6187296ac16c0bc7bbab4ed5d92f82f791c",
                 "reference": "4055a6187296ac16c0bc7bbab4ed5d92f82f791c",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "shasum": ""
             },
             "require": {
                 "php": ">=7.1.0",
@@ -3279,6 +3275,7 @@
         },
         {
             "name": "topthink/think-orm",
+<<<<<<< HEAD
             "version": "v2.0.62",
             "version_normalized": "2.0.62.0",
             "source": {
@@ -3290,20 +3287,40 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/top-think/think-orm/zipball/e53bfea572a133039ad687077120de5521af617f",
                 "reference": "e53bfea572a133039ad687077120de5521af617f",
+=======
+            "version": "v3.0.30",
+            "version_normalized": "3.0.30.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-orm.git",
+                "reference": "6d8bcc86c3f9aba5a92010c17b68aeb8ad05ad3a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/6d8bcc86c3f9aba5a92010c17b68aeb8ad05ad3a",
+                "reference": "6d8bcc86c3f9aba5a92010c17b68aeb8ad05ad3a",
+>>>>>>> 3.0
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-pdo": "*",
-                "php": ">=7.1.0",
-                "psr/log": "^1.0|^2.0",
-                "psr/simple-cache": "^1.0|^2.0",
+                "php": ">=8.0.0",
+                "psr/log": ">=1.0",
+                "psr/simple-cache": ">=1.0",
                 "topthink/think-helper": "^3.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7|^8|^9.5"
+                "phpunit/phpunit": "^9.6|^10"
             },
+<<<<<<< HEAD
             "time": "2024-09-22T06:17:47+00:00",
+=======
+            "suggest": {
+                "ext-mongodb": "provide mongodb support"
+            },
+            "time": "2024-11-07T09:12:00+00:00",
+>>>>>>> 3.0
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3324,19 +3341,24 @@
                     "email": "liu21st@gmail.com"
                 }
             ],
-            "description": "think orm",
+            "description": "the PHP Database&ORM Framework",
             "keywords": [
                 "database",
                 "orm"
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/top-think/think-orm/tree/v2.0.62"
+=======
+                "source": "https://github.com/top-think/think-orm/tree/v3.0.30"
+>>>>>>> 3.0
             },
             "install-path": "../topthink/think-orm"
         },
         {
             "name": "topthink/think-template",
+<<<<<<< HEAD
             "version": "v2.0.10",
             "version_normalized": "2.0.10.0",
             "source": {
@@ -3348,13 +3370,30 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/top-think/think-template/zipball/2b28c9f787c94f6c22312c9fe97dd3d926c03e1c",
                 "reference": "2b28c9f787c94f6c22312c9fe97dd3d926c03e1c",
+=======
+            "version": "v3.0.1",
+            "version_normalized": "3.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-template.git",
+                "reference": "672b131681a8a2c54e5bc2b56bfd4bc7cf674d08"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/think-template/zipball/672b131681a8a2c54e5bc2b56bfd4bc7cf674d08",
+                "reference": "672b131681a8a2c54e5bc2b56bfd4bc7cf674d08",
+>>>>>>> 3.0
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1.0",
-                "psr/simple-cache": "^1.0"
+                "php": ">=8.0.0",
+                "psr/simple-cache": ">=1.0"
             },
+<<<<<<< HEAD
             "time": "2024-08-12T05:48:57+00:00",
+=======
+            "time": "2023-04-07T02:42:15+00:00",
+>>>>>>> 3.0
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3375,7 +3414,11 @@
             "description": "the php template engine",
             "support": {
                 "issues": "https://github.com/top-think/think-template/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/top-think/think-template/tree/v2.0.10"
+=======
+                "source": "https://github.com/top-think/think-template/tree/v3.0.1"
+>>>>>>> 3.0
             },
             "install-path": "../topthink/think-template"
         },
@@ -3392,13 +3435,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/top-think/think-trace/zipball/136cd5d97e8bdb780e4b5c1637c588ed7ca3e142",
                 "reference": "136cd5d97e8bdb780e4b5c1637c588ed7ca3e142",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "shasum": ""
             },
             "require": {
                 "php": ">=7.1.0",
@@ -3441,30 +3478,24 @@
         },
         {
             "name": "topthink/think-view",
-            "version": "v1.0.14",
-            "version_normalized": "1.0.14.0",
+            "version": "v2.0.0",
+            "version_normalized": "2.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-view.git",
-                "reference": "edce0ae2c9551ab65f9e94a222604b0dead3576d"
+                "reference": "d2a076011c96d2edd8016703a827fb54b2683c62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-view/zipball/edce0ae2c9551ab65f9e94a222604b0dead3576d",
-                "reference": "edce0ae2c9551ab65f9e94a222604b0dead3576d",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/top-think/think-view/zipball/d2a076011c96d2edd8016703a827fb54b2683c62",
+                "reference": "d2a076011c96d2edd8016703a827fb54b2683c62",
+                "shasum": ""
             },
             "require": {
-                "php": ">=7.1.0",
-                "topthink/think-template": "^2.0"
+                "php": ">=8.0.0",
+                "topthink/think-template": "^3.0"
             },
-            "time": "2019-11-06T11:40:13+00:00",
+            "time": "2023-02-25T12:18:09+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3483,6 +3514,10 @@
                 }
             ],
             "description": "thinkphp template driver",
+            "support": {
+                "issues": "https://github.com/top-think/think-view/issues",
+                "source": "https://github.com/top-think/think-view/tree/v2.0.0"
+            },
             "install-path": "../topthink/think-view"
         },
         {
@@ -3526,6 +3561,7 @@
             "name": "workerman/gateway-worker",
             "version": "v3.1.17",
             "version_normalized": "3.1.17.0",
+<<<<<<< HEAD
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/GatewayWorker.git",
@@ -3617,22 +3653,119 @@
             "name": "workerman/phpsocket.io",
             "version": "v1.1.18",
             "version_normalized": "1.1.18.0",
+=======
+>>>>>>> 3.0
             "source": {
                 "type": "git",
-                "url": "https://github.com/walkor/phpsocket.io.git",
-                "reference": "b89b3f2ed44f6f79fd9895e2d198b52b3fb4783b"
+                "url": "https://github.com/walkor/GatewayWorker.git",
+                "reference": "89478a15d1f2a8fe48070e631af977bbebeaf0d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/b89b3f2ed44f6f79fd9895e2d198b52b3fb4783b",
-                "reference": "b89b3f2ed44f6f79fd9895e2d198b52b3fb4783b",
+                "url": "https://api.github.com/repos/walkor/GatewayWorker/zipball/89478a15d1f2a8fe48070e631af977bbebeaf0d8",
+                "reference": "89478a15d1f2a8fe48070e631af977bbebeaf0d8",
                 "shasum": ""
             },
             "require": {
+                "php": ">=7.0",
+                "workerman/workerman": "^4.0.30"
+            },
+            "time": "2024-03-07T01:55:27+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "GatewayWorker\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "homepage": "http://www.workerman.net",
+            "keywords": [
+                "communication",
+                "distributed"
+            ],
+            "support": {
+                "issues": "https://github.com/walkor/GatewayWorker/issues",
+                "source": "https://github.com/walkor/GatewayWorker/tree/v3.1.17"
+            },
+            "funding": [
+                {
+                    "url": "https://opencollective.com/walkor",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://www.patreon.com/walkor",
+                    "type": "patreon"
+                }
+            ],
+            "install-path": "../workerman/gateway-worker"
+        },
+        {
+            "name": "workerman/gatewayclient",
+            "version": "v3.1.0",
+            "version_normalized": "3.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/walkor/GatewayClient.git",
+                "reference": "a001220da39086566d398c1b46c4fc53fc94aa77"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/walkor/GatewayClient/zipball/a001220da39086566d398c1b46c4fc53fc94aa77",
+                "reference": "a001220da39086566d398c1b46c4fc53fc94aa77",
+                "shasum": ""
+            },
+            "time": "2024-03-07T01:56:10+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "GatewayClient\\": "./"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "homepage": "http://www.workerman.net",
+            "support": {
+                "issues": "https://github.com/walkor/GatewayClient/issues",
+                "source": "https://github.com/walkor/GatewayClient/tree/v3.1.0"
+            },
+            "install-path": "../workerman/gatewayclient"
+        },
+        {
+            "name": "workerman/phpsocket.io",
+            "version": "v2.1.1",
+            "version_normalized": "2.1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/walkor/phpsocket.io.git",
+                "reference": "b074c56dd7b42336ae3f62ced5fe2ad7f15fec4b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/walkor/phpsocket.io/zipball/b074c56dd7b42336ae3f62ced5fe2ad7f15fec4b",
+                "reference": "b074c56dd7b42336ae3f62ced5fe2ad7f15fec4b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
                 "workerman/channel": ">=1.0.0",
                 "workerman/workerman": "^4.0.0"
             },
-            "time": "2023-06-16T01:41:34+00:00",
+            "require-dev": {
+                "squizlabs/php_codesniffer": "^3.7"
+            },
+            "time": "2024-11-08T16:44:40+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3644,13 +3777,21 @@
             "license": [
                 "MIT"
             ],
-            "homepage": "http://www.workerman.net",
+            "description": "A server side alternative implementation of socket.io in PHP based on Workerman",
+            "homepage": "https://www.workerman.net",
             "keywords": [
-                "Socket.io"
+                "Socket.io",
+                "async",
+                "non-blocking",
+                "phpsocket.io",
+                "server",
+                "sockets",
+                "stream",
+                "workerman"
             ],
             "support": {
                 "issues": "https://github.com/walkor/phpsocket.io/issues",
-                "source": "https://github.com/walkor/phpsocket.io/tree/v1.1.18"
+                "source": "https://github.com/walkor/phpsocket.io/tree/v2.1.1"
             },
             "funding": [
                 {
@@ -4005,6 +4146,8 @@
     ],
     "dev": true,
     "dev-package-names": [
+        "symfony/polyfill-mbstring",
+        "symfony/var-dumper",
         "topthink/think-trace"
     ]
 }

@@ -30,16 +30,25 @@ class Chuanglanv1Gateway extends Gateway
     /**
      * 国际短信
      */
+<<<<<<< HEAD
     const INT_URL = 'http://intapi.253.com/send/json';
+=======
+    public const INT_URL = 'http://intapi.253.com/send/json';
+>>>>>>> 3.0
 
     /**
      * URL模板
      */
+<<<<<<< HEAD
     const ENDPOINT_URL_TEMPLATE = 'https://smssh1.253.com/msg/%s/json';
+=======
+    public const ENDPOINT_URL_TEMPLATE = 'https://smssh1.253.com/msg/%s/json';
+>>>>>>> 3.0
 
     /**
      * 支持单发、群发短信
      */
+<<<<<<< HEAD
     const CHANNEL_NORMAL_CODE = 'v1/send';
 
     /**
@@ -52,6 +61,16 @@ class Chuanglanv1Gateway extends Gateway
      * @param MessageInterface $message
      * @param Config $config
      *
+=======
+    public const CHANNEL_NORMAL_CODE = 'v1/send';
+
+    /**
+     * 单号码对应单内容批量下发.
+     */
+    public const CHANNEL_VARIABLE_CODE = 'variable';
+
+    /**
+>>>>>>> 3.0
      * @return array
      *
      * @throws GatewayErrorException
@@ -64,11 +83,19 @@ class Chuanglanv1Gateway extends Gateway
         $params = [
             'account' => $config->get('account'),
             'password' => $config->get('password'),
+<<<<<<< HEAD
             'report' => $config->get('needstatus') ?? false
         ];
 
         if (86 != $IDDCode) {
             $params['mobile'] = $to->getIDDCode() . $to->getNumber();
+=======
+            'report' => $config->get('needstatus') ?? false,
+        ];
+
+        if (86 != $IDDCode) {
+            $params['mobile'] = $to->getIDDCode().$to->getNumber();
+>>>>>>> 3.0
             $params['account'] = $config->get('intel_account') ?: $config->get('account');
             $params['password'] = $config->get('intel_password') ?: $config->get('password');
         }
@@ -91,7 +118,10 @@ class Chuanglanv1Gateway extends Gateway
     }
 
     /**
+<<<<<<< HEAD
      * @param Config $config
+=======
+>>>>>>> 3.0
      * @param int $IDDCode
      *
      * @return string
@@ -110,11 +140,16 @@ class Chuanglanv1Gateway extends Gateway
     }
 
     /**
+<<<<<<< HEAD
      * @param Config $config
      * @param int $IDDCode
      *
      * @return mixed
      *
+=======
+     * @param int $IDDCode
+     *
+>>>>>>> 3.0
      * @throws InvalidArgumentException
      */
     protected function getChannel(Config $config, $IDDCode)
@@ -133,8 +168,12 @@ class Chuanglanv1Gateway extends Gateway
 
     /**
      * @param string $content
+<<<<<<< HEAD
      * @param Config $config
      * @param int $IDDCode
+=======
+     * @param int    $IDDCode
+>>>>>>> 3.0
      *
      * @return string|string
      *

@@ -3,7 +3,10 @@
 <p align="center">:calling: 一款满足你的多种发送需求的短信发送组件</p>
 
 <p align="center">
+<<<<<<< HEAD
 <a href="https://travis-ci.org/overtrue/easy-sms"><img src="https://travis-ci.org/overtrue/easy-sms.svg?branch=master" alt="Build Status"></a>
+=======
+>>>>>>> 3.0
 <a href="https://packagist.org/packages/overtrue/easy-sms"><img src="https://poser.pugx.org/overtrue/easy-sms/v/stable.svg" alt="Latest Stable Version"></a>
 <a href="https://packagist.org/packages/overtrue/easy-sms"><img src="https://poser.pugx.org/overtrue/easy-sms/v/unstable.svg" alt="Latest Unstable Version"></a>
 <a href="https://scrutinizer-ci.com/g/overtrue/easy-sms/?branch=master"><img src="https://scrutinizer-ci.com/g/overtrue/easy-sms/badges/coverage.png?b=master" alt="Code Coverage"></a>
@@ -15,7 +18,10 @@
 <a href="https://github.com/sponsors/overtrue"><img src="https://github.com/overtrue/overtrue/blob/master/sponsor-me-button-s.svg?raw=true" alt="Sponsor me" style="max-width: 100%;"></a>
 </p>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3.0
 ## 特点
 
 1. 支持目前市面多家服务商
@@ -45,7 +51,10 @@
 - [创蓝云智](https://www.chuanglan.com/)
 - [融云](http://www.rongcloud.cn)
 - [天毅无线](http://www.85hu.com/)
+<<<<<<< HEAD
 - [阿凡达数据](http://www.avatardata.cn/)
+=======
+>>>>>>> 3.0
 - [华为云](https://www.huaweicloud.com/product/msgsms.html)
 - [网易云信](https://yunxin.163.com/sms)
 - [云之讯](https://www.ucpaas.com/index.html)
@@ -69,14 +78,22 @@
 ## 安装
 
 ```shell
+<<<<<<< HEAD
 $ composer require "overtrue/easy-sms"
+=======
+composer require "overtrue/easy-sms"
+>>>>>>> 3.0
 ```
 
 **For Laravel notification**
 
 如果你喜欢使用 [Laravel Notification](https://laravel.com/docs/5.8/notifications), 可以考虑直接使用朋友封装的拓展包：
 
+<<<<<<< HEAD
 https://github.com/yl/easysms-notification-channel
+=======
+<https://github.com/yl/easysms-notification-channel>
+>>>>>>> 3.0
 
 ## 使用
 
@@ -204,6 +221,10 @@ $easySms->send(13188888888, [
 ## 返回值
 
 由于使用多网关发送，所以返回值为一个数组，结构如下：
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 ```php
 [
     'yunpian' => [
@@ -473,6 +494,10 @@ $easySms->send($phone_number, [
         'timestamp' => false, // 是否启用时间戳
     ],
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 ### [百度云](https://cloud.baidu.com/)
 
 短信内容使用 `template` + `data`
@@ -535,6 +560,10 @@ $easySms->send($phone_number, [
         'channel' => \Overtrue\EasySms\Gateways\Chuanglanv1Gateway::CHANNEL_NORMAL_CODE,
     ],
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 发送示例：
 
 ```php
@@ -553,6 +582,10 @@ $easySms->send(18888888888, [
         'channel' => \Overtrue\EasySms\Gateways\Chuanglanv1Gateway::CHANNEL_VARIABLE_CODE,
     ],
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 发送示例：
 
 ```php
@@ -611,7 +644,10 @@ $easySms->send(18888888888, [
     ],
 ```
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3.0
 ### [腾讯云 SMS](https://cloud.tencent.com/product/sms)
 
 短信内容使用 `template` + `data`
@@ -636,6 +672,7 @@ $easySms->send(18888888888, [
 ]);
 ```
 
+<<<<<<< HEAD
 ### [阿凡达数据](http://www.avatardata.cn/)
 
 短信内容使用 `template` + `data`
@@ -646,6 +683,8 @@ $easySms->send(18888888888, [
     ],
 ```
 
+=======
+>>>>>>> 3.0
 ### [华为云 SMS](https://www.huaweicloud.com/product/msgsms.html)
 
 短信内容使用 `template` + `data`
@@ -710,6 +749,10 @@ $easySms->send(18888888888, [
     ],
 ]);
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 通知模板短信
 
 ```php
@@ -722,7 +765,10 @@ $easySms->send(18888888888, [
 ]);
 ```
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3.0
 ### [云之讯](https://www.ucpaas.com/index.html)
 
 短信内容使用 `template` + `data`
@@ -783,7 +829,13 @@ $easySms->send(18888888888, [
     ],
 ]);
 ```
+<<<<<<< HEAD
 ### [Ucloud](https://www.ucloud.cn/)
+=======
+
+### [Ucloud](https://www.ucloud.cn/)
+
+>>>>>>> 3.0
 短信使用 `template` + `data`
 
 ```php
@@ -806,8 +858,13 @@ $easySms->send(18888888888, [
 
 ```
 
+<<<<<<< HEAD
 
 ### [短信宝](http://www.smsbao.com/)
+=======
+### [短信宝](http://www.smsbao.com/)
+
+>>>>>>> 3.0
 短信使用 `content`
 
 ```php
@@ -825,6 +882,10 @@ $easySms->send(18888888888, [
 ```
 
 ### [摩杜云](https://www.moduyun.com/)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 短信使用 `template` + `data`
 
 ```php
@@ -952,6 +1013,10 @@ $easySms->send(18888888888, [
 ```
 
 发送示例：
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 ```php
 $easySms->send(18888888888, [
     'content'  => '您的验证码为: 6379',
@@ -984,6 +1049,10 @@ $easySms->send(18888888888, [
 ```
 
 发送示例2：
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 ```php
 $easySms->send(18888888888, [
     'template' => 'SMS_123456', // 模板ID
@@ -1017,6 +1086,10 @@ $easySms->send(18888888888, [
     'content'  => '您的验证码为: 6379',
 ]);
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.0
 ## :heart: 支持我
 
 [![Sponsor me](https://github.com/overtrue/overtrue/blob/master/sponsor-me.svg?raw=true)](https://github.com/sponsors/overtrue)
@@ -1029,7 +1102,10 @@ Many thanks to Jetbrains for kindly providing a license for me to work on this a
 
 [![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/overtrue)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3.0
 ## PHP 扩展包开发
 
 > 想知道如何从零开始构建 PHP 扩展包？

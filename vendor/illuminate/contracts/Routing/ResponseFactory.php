@@ -112,7 +112,11 @@ interface ResponseFactory
     /**
      * Create a new redirect response to a named route.
      *
+<<<<<<< HEAD
      * @param  string  $route
+=======
+     * @param  \BackedEnum|string  $route
+>>>>>>> 3.0
      * @param  mixed  $parameters
      * @param  int  $status
      * @param  array  $headers

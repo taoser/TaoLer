@@ -218,4 +218,10 @@ $conf = SetArr::name('app')->delete($del);
 
 ```
 
+### 清理空数组
+
+```
+Set::name('app')->clearNullArr();
+```
+
 详细参考 [作者](http://wiki.aieok.com)

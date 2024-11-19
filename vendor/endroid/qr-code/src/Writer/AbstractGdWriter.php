@@ -8,28 +8,56 @@ use Endroid\QrCode\Bacon\MatrixFactory;
 use Endroid\QrCode\Exception\ValidationException;
 use Endroid\QrCode\ImageData\LabelImageData;
 use Endroid\QrCode\ImageData\LogoImageData;
+<<<<<<< HEAD
 use Endroid\QrCode\Label\Alignment\LabelAlignmentLeft;
 use Endroid\QrCode\Label\Alignment\LabelAlignmentRight;
 use Endroid\QrCode\Label\LabelInterface;
 use Endroid\QrCode\Logo\LogoInterface;
 use Endroid\QrCode\QrCodeInterface;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeNone;
+=======
+use Endroid\QrCode\Label\LabelAlignment;
+use Endroid\QrCode\Label\LabelInterface;
+use Endroid\QrCode\Logo\LogoInterface;
+use Endroid\QrCode\Matrix\MatrixInterface;
+use Endroid\QrCode\QrCodeInterface;
+use Endroid\QrCode\RoundBlockSizeMode;
+>>>>>>> 3.0
 use Endroid\QrCode\Writer\Result\GdResult;
 use Endroid\QrCode\Writer\Result\ResultInterface;
 use Zxing\QrReader;
 
+<<<<<<< HEAD
 abstract class AbstractGdWriter implements WriterInterface, ValidatingWriterInterface
 {
     public function write(QrCodeInterface $qrCode, LogoInterface $logo = null, LabelInterface $label = null, array $options = []): ResultInterface
+=======
+abstract readonly class AbstractGdWriter implements WriterInterface, ValidatingWriterInterface
+{
+    protected function getMatrix(QrCodeInterface $qrCode): MatrixInterface
+    {
+        $matrixFactory = new MatrixFactory();
+
+        return $matrixFactory->create($qrCode);
+    }
+
+    public function write(QrCodeInterface $qrCode, ?LogoInterface $logo = null, ?LabelInterface $label = null, array $options = []): ResultInterface
+>>>>>>> 3.0
     {
         if (!extension_loaded('gd')) {
             throw new \Exception('Unable to generate image: please check if the GD extension is enabled and configured correctly');
         }
 
+<<<<<<< HEAD
         $matrixFactory = new MatrixFactory();
         $matrix = $matrixFactory->create($qrCode);
 
         $baseBlockSize = $qrCode->getRoundBlockSizeMode() instanceof RoundBlockSizeModeNone ? 10 : intval($matrix->getBlockSize());
+=======
+        $matrix = $this->getMatrix($qrCode);
+
+        $baseBlockSize = RoundBlockSizeMode::None === $qrCode->getRoundBlockSizeMode() ? 10 : intval($matrix->getBlockSize());
+>>>>>>> 3.0
         $baseImage = imagecreatetruecolor($matrix->getBlockCount() * $baseBlockSize, $matrix->getBlockCount() * $baseBlockSize);
 
         if (!$baseImage) {
@@ -178,9 +206,15 @@ abstract class AbstractGdWriter implements WriterInterface, ValidatingWriterInte
         $x = intval(imagesx($targetImage) / 2 - $labelImageData->getWidth() / 2);
         $y = imagesy($targetImage) - $label->getMargin()->getBottom();
 
+<<<<<<< HEAD
         if ($label->getAlignment() instanceof LabelAlignmentLeft) {
             $x = $label->getMargin()->getLeft();
         } elseif ($label->getAlignment() instanceof LabelAlignmentRight) {
+=======
+        if (LabelAlignment::Left === $label->getAlignment()) {
+            $x = $label->getMargin()->getLeft();
+        } elseif (LabelAlignment::Right === $label->getAlignment()) {
+>>>>>>> 3.0
             $x = imagesx($targetImage) - $labelImageData->getWidth() - $label->getMargin()->getRight();
         }
 

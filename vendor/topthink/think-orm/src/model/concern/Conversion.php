@@ -1,8 +1,9 @@
 <?php
+
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2019 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -20,86 +21,78 @@ use think\model\Collection as ModelCollection;
 use think\model\relation\OneToOne;
 
 /**
- * 模型数据转换处理
+ * 模型数据转换处理.
  */
 trait Conversion
 {
     /**
-     * 数据输出显示的属性
+     * 数据输出显示的属性.
+     *
      * @var array
      */
     protected $visible = [];
 
     /**
-     * 数据输出隐藏的属性
+     * 数据输出隐藏的属性.
+     *
      * @var array
      */
     protected $hidden = [];
 
     /**
-     * 数据输出需要追加的属性
+     * 数据输出需要追加的属性.
+     *
      * @var array
      */
     protected $append = [];
 
     /**
-     * 场景
+     * 场景.
+     *
      * @var array
      */
     protected $scene = [];
 
     /**
-     * 数据输出字段映射
+     * 数据输出字段映射.
+     *
      * @var array
      */
     protected $mapping = [];
 
     /**
-     * 数据集对象名
+     * 数据集对象名.
+     *
      * @var string
      */
     protected $resultSetType;
 
     /**
-     * 数据命名是否自动转为驼峰
+     * 数据命名是否自动转为驼峰.
+     *
      * @var bool
      */
     protected $convertNameToCamel;
 
     /**
-     * 转换数据为驼峰命名（用于输出）
-     * @access public
-     * @param  bool $toCamel 是否自动驼峰命名
+     * 转换数据为驼峰命名（用于输出）.
+     *
+     * @param bool $toCamel 是否自动驼峰命名
+     *
      * @return $this
      */
     public function convertNameToCamel(bool $toCamel = true)
     {
         $this->convertNameToCamel = $toCamel;
-        return $this;
-    }
-
-    /**
-     * 设置需要附加的输出属性
-     * @access public
-     * @param  array $append   属性列表
-     * @param  bool  $merge    是否合并
-     * @return $this
-     */
-    public function append(array $append = [], bool $merge = false)
-    {
-        if ($merge) {
-            $this->append = array_merge($this->append, $append);
-        } else {
-            $this->append = $append;
-        }
 
         return $this;
     }
 
     /**
-     * 设置输出层场景
-     * @access public
-     * @param  string $scene  场景名称
+     * 设置输出层场景.
+     *
+     * @param string $scene 场景名称
+     *
      * @return $this
      */
     public function scene(string $scene)
@@ -117,22 +110,20 @@ trait Conversion
     }
 
     /**
-     * 设置附加关联对象的属性
-     * @access public
-     * @param  string       $attr    关联属性
-     * @param  string|array $append  追加属性名
-     * @return $this
+     * 设置附加关联对象的属性.
+     *
+     * @param string       $attr   关联属性
+     * @param string|array $append 追加属性名
+     *
      * @throws Exception
+     *
+     * @return $this
      */
     public function appendRelationAttr(string $attr, array $append)
     {
         $relation = Str::camel($attr);
 
-        if (isset($this->relation[$relation])) {
-            $model = $this->relation[$relation];
-        } else {
-            $model = $this->getRelationData($this->$relation());
-        }
+        $model = $this->relation[$relation] ?? $this->getRelationData($this->$relation());
 
         if ($model instanceof Model) {
             foreach ($append as $key => $attr) {
@@ -141,7 +132,7 @@ trait Conversion
                     throw new Exception('bind attr has exists:' . $key);
                 }
 
-                $this->data[$key] = $model->$attr;
+                $this->data[$key] = $model->getAttr($attr);
             }
         }
 
@@ -149,45 +140,55 @@ trait Conversion
     }
 
     /**
-     * 设置需要隐藏的输出属性
-     * @access public
-     * @param  array $hidden   属性列表
-     * @param  bool  $merge    是否合并
+     * 设置需要附加的输出属性.
+     *
+     * @param array $append 属性列表
+     * @param bool  $merge  是否合并
+     *
      * @return $this
      */
-    public function hidden(array $hidden = [], bool $merge = false)
+    public function append(array $append, bool $merge = false)
     {
-        if ($merge) {
-            $this->hidden = array_merge($this->hidden, $hidden);
-        } else {
-            $this->hidden = $hidden;
-        }
+        $this->append = $merge ? array_merge($this->append, $append) : $append;
 
         return $this;
     }
 
     /**
-     * 设置需要输出的属性
-     * @access public
-     * @param  array $visible
-     * @param  bool  $merge    是否合并
+     * 设置需要隐藏的输出属性.
+     *
+     * @param array $hidden 属性列表
+     * @param bool  $merge  是否合并
+     *
      * @return $this
      */
-    public function visible(array $visible = [], bool $merge = false)
+    public function hidden(array $hidden, bool $merge = false)
     {
-        if ($merge) {
-            $this->visible = array_merge($this->visible, $visible);
-        } else {
-            $this->visible = $visible;
-        }
+        $this->hidden = $merge ? array_merge($this->hidden, $hidden) : $hidden;
 
         return $this;
     }
 
     /**
-     * 设置属性的映射输出
-     * @access public
-     * @param  array $map
+     * 设置需要输出的属性.
+     *
+     * @param array $visible
+     * @param bool  $merge   是否合并
+     *
+     * @return $this
+     */
+    public function visible(array $visible, bool $merge = false)
+    {
+        $this->visible = $merge ? array_merge($this->visible, $visible) : $visible;
+
+        return $this;
+    }
+
+    /**
+     * 设置属性的映射输出.
+     *
+     * @param array $map
+     *
      * @return $this
      */
     public function mapping(array $map)
@@ -198,35 +199,40 @@ trait Conversion
     }
 
     /**
-     * 转换当前模型对象为数组
-     * @access public
+     * 转换当前模型对象为数组.
+     *
      * @return array
      */
     public function toArray(): array
     {
         $item = $visible = $hidden = [];
+
         $hasVisible = false;
 
         foreach ($this->visible as $key => $val) {
             if (is_string($val)) {
-                if (strpos($val, '.')) {
-                    [$relation, $name] = explode('.', $val);
+                if (str_contains($val, '.')) {
+                    [$relation, $name]    = explode('.', $val);
                     $visible[$relation][] = $name;
                 } else {
                     $visible[$val] = true;
-                    $hasVisible = true;
+                    $hasVisible    = true;
                 }
+            } else {
+                $visible[$key] = $val;
             }
         }
 
         foreach ($this->hidden as $key => $val) {
             if (is_string($val)) {
-                if (strpos($val, '.')) {
-                    [$relation, $name] = explode('.', $val);
+                if (str_contains($val, '.')) {
+                    [$relation, $name]   = explode('.', $val);
                     $hidden[$relation][] = $name;
                 } else {
                     $hidden[$val] = true;
                 }
+            } else {
+                $hidden[$key] = $val;
             }
         }
 
@@ -247,13 +253,27 @@ trait Conversion
                     $val->hidden($hidden[$key], true);
                 }
                 // 关联模型对象
-                if (!isset($hidden[$key]) || true !== $hidden[$key]) {
+                if (!array_key_exists($key, $this->relation) || (array_key_exists($key, $this->with) && (!isset($hidden[$key]) || true !== $hidden[$key]))) {
                     $item[$key] = $val->toArray();
                 }
             } elseif (isset($visible[$key])) {
                 $item[$key] = $this->getAttr($key);
             } elseif (!isset($hidden[$key]) && !$hasVisible) {
                 $item[$key] = $this->getAttr($key);
+            } elseif (in_array($key, $this->json)) {
+                if (isset($hidden[$key]) && is_array($hidden[$key])) {
+                    // 隐藏JSON属性
+                    foreach ($hidden[$key] as $name) {
+                        if (is_array($val)) {
+                            unset($val[$name]);
+                        } else {
+                            unset($val->$name);
+                        }
+                    }
+                    $item[$key] = $val;
+                } elseif (!isset($hidden[$key])) {
+                    $item[$key] = $val;
+                }
             }
 
             if (isset($this->mapping[$key])) {
@@ -277,20 +297,20 @@ trait Conversion
         return $item;
     }
 
-    protected function appendAttrToArray(array &$item, $key, $name, array $visible, array $hidden)
+    protected function appendAttrToArray(array &$item, $key, array | string $name, array $visible, array $hidden): void
     {
         if (is_array($name)) {
             // 批量追加关联对象属性
             $relation   = $this->getRelationWith($key, $hidden, $visible);
             $item[$key] = $relation ? $relation->append($name)->toArray() : [];
-        } elseif (strpos($name, '.')) {
+        } elseif (str_contains($name, '.')) {
             // 追加单个关联对象属性
-            [$key, $attr]   = explode('.', $name);
-            $relation       = $this->getRelationWith($key, $hidden, $visible);
-            $item[$key]     = $relation ? $relation->append([$attr])->toArray() : [];
+            [$key, $attr] = explode('.', $name);
+            $relation     = $this->getRelationWith($key, $hidden, $visible);
+            $item[$key]   = $relation ? $relation->append([$attr])->toArray() : [];
         } else {
-            $value          = $this->getAttr($name);
-            $item[$name]    = $value;
+            $value       = $this->getAttr($name);
+            $item[$name] = $value;
 
             $this->getBindAttrValue($name, $value, $item);
         }
@@ -298,7 +318,7 @@ trait Conversion
 
     protected function getRelationWith(string $key, array $hidden, array $visible)
     {
-        $relation   = $this->getRelation($key, true);
+        $relation = $this->getRelation($key, true);
         if ($relation) {
             if (isset($visible[$key])) {
                 $relation->visible($visible[$key]);
@@ -338,9 +358,10 @@ trait Conversion
     }
 
     /**
-     * 转换当前模型对象为JSON字符串
-     * @access public
-     * @param  integer $options json参数
+     * 转换当前模型对象为JSON字符串.
+     *
+     * @param int $options json参数
+     *
      * @return string
      */
     public function toJson(int $options = JSON_UNESCAPED_UNICODE): string
@@ -354,24 +375,24 @@ trait Conversion
     }
 
     // JsonSerializable
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
 
     /**
      * 转换数据集为数据集对象
-     * @access public
-     * @param  array|Collection $collection 数据集
-     * @param  string           $resultSetType 数据集类
+     *
+     * @param array|Collection $collection    数据集
+     * @param string           $resultSetType 数据集类
+     *
      * @return Collection
      */
-    public function toCollection(iterable $collection = [], string $resultSetType = null): Collection
+    public function toCollection(iterable $collection = [], ?string $resultSetType = null): Collection
     {
         $resultSetType = $resultSetType ?: $this->resultSetType;
 
-        if ($resultSetType && false !== strpos($resultSetType, '\\')) {
+        if ($resultSetType && str_contains($resultSetType, '\\')) {
             $collection = new $resultSetType($collection);
         } else {
             $collection = new ModelCollection($collection);
@@ -379,5 +400,4 @@ trait Conversion
 
         return $collection;
     }
-
 }

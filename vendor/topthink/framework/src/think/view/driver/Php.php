@@ -2,13 +2,13 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2021 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace think\view\driver;
 
@@ -48,7 +48,6 @@ class Php implements TemplateHandlerInterface
 
     /**
      * 检测是否存在模板文件
-     * @access public
      * @param string $template 模板文件或者模板规则
      * @return bool
      */
@@ -64,7 +63,6 @@ class Php implements TemplateHandlerInterface
 
     /**
      * 渲染模板文件
-     * @access public
      * @param string $template 模板文件
      * @param array  $data     模板变量
      * @return void
@@ -90,7 +88,6 @@ class Php implements TemplateHandlerInterface
 
     /**
      * 渲染模板内容
-     * @access public
      * @param string $content 模板内容
      * @param array  $data    模板变量
      * @return void
@@ -105,7 +102,6 @@ class Php implements TemplateHandlerInterface
 
     /**
      * 自动定位模板文件
-     * @access private
      * @param string $template 模板文件规则
      * @return string
      */
@@ -114,7 +110,7 @@ class Php implements TemplateHandlerInterface
         $request = $this->app->request;
 
         // 获取视图根目录
-        if (strpos($template, '@')) {
+        if (str_contains($template, '@')) {
             // 跨应用调用
             [$app, $template] = explode('@', $template);
         }
@@ -134,10 +130,10 @@ class Php implements TemplateHandlerInterface
 
         $depr = $this->config['view_depr'];
 
-        if (0 !== strpos($template, '/')) {
+        if (!str_starts_with($template, '/')) {
             $template   = str_replace(['/', ':'], $depr, $template);
             $controller = $request->controller();
-            if (strpos($controller, '.')) {
+            if (str_contains($controller, '.')) {
                 $pos        = strrpos($controller, '.');
                 $controller = substr($controller, 0, $pos) . '.' . Str::snake(substr($controller, $pos + 1));
             } else {
@@ -156,7 +152,7 @@ class Php implements TemplateHandlerInterface
                     }
 
                     $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
-                } elseif (false === strpos($template, $depr)) {
+                } elseif (!str_contains($template, $depr)) {
                     $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
                 }
             }
@@ -169,7 +165,6 @@ class Php implements TemplateHandlerInterface
 
     /**
      * 配置模板引擎
-     * @access private
      * @param array $config 参数
      * @return void
      */
@@ -180,7 +175,6 @@ class Php implements TemplateHandlerInterface
 
     /**
      * 获取模板引擎配置
-     * @access public
      * @param string $name 参数名
      * @return mixed
      */

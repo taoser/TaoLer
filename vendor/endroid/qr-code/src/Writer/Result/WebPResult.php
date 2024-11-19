@@ -8,12 +8,21 @@ use Endroid\QrCode\Matrix\MatrixInterface;
 
 final class WebPResult extends GdResult
 {
+<<<<<<< HEAD
     private int $quality;
 
     public function __construct(MatrixInterface $matrix, \GdImage $image, int $quality = -1)
     {
         parent::__construct($matrix, $image);
         $this->quality = $quality;
+=======
+    public function __construct(
+        MatrixInterface $matrix,
+        \GdImage $image,
+        private readonly int $quality = -1,
+    ) {
+        parent::__construct($matrix, $image);
+>>>>>>> 3.0
     }
 
     public function getString(): string

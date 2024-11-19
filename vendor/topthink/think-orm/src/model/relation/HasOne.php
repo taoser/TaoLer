@@ -1,8 +1,9 @@
 <?php
+
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2019 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -17,17 +18,17 @@ use think\db\BaseQuery as Query;
 use think\Model;
 
 /**
- * HasOne 关联类
+ * HasOne 关联类.
  */
 class HasOne extends OneToOne
 {
     /**
-     * 架构函数
-     * @access public
-     * @param  Model  $parent     上级模型对象
-     * @param  string $model      模型名
-     * @param  string $foreignKey 关联外键
-     * @param  string $localKey   当前模型主键
+     * 架构函数.
+     *
+     * @param Model  $parent     上级模型对象
+     * @param string $model      模型名
+     * @param string $foreignKey 关联外键
+     * @param string $localKey   当前模型主键
      */
     public function __construct(Model $parent, string $model, string $foreignKey, string $localKey)
     {
@@ -35,7 +36,7 @@ class HasOne extends OneToOne
         $this->model      = $model;
         $this->foreignKey = $foreignKey;
         $this->localKey   = $localKey;
-        $this->query      = (new $model)->db();
+        $this->query      = (new $model())->db();
 
         if (get_class($parent) == $model) {
             $this->selfRelation = true;
@@ -43,18 +44,19 @@ class HasOne extends OneToOne
     }
 
     /**
-     * 延迟获取关联数据
-     * @access public
-     * @param  array   $subRelation 子关联名
-     * @param  Closure $closure     闭包查询条件
+     * 延迟获取关联数据.
+     *
+     * @param array   $subRelation 子关联名
+     * @param Closure $closure     闭包查询条件
+     *
      * @return Model
      */
-    public function getRelation(array $subRelation = [], Closure $closure = null)
+    public function getRelation(array $subRelation = [], ?Closure $closure = null)
     {
         $localKey = $this->localKey;
 
         if ($closure) {
-            $closure($this->getClosureType($closure));
+            $closure($this->query);
         }
 
         // 判断关联类型执行查询
@@ -72,44 +74,47 @@ class HasOne extends OneToOne
 
             $relationModel->setParent(clone $this->parent);
         } else {
-            $relationModel = $this->getDefaultModel();
+            $default       = $this->query->getOptions('default_model');
+            $relationModel = $this->getDefaultModel($default);
         }
 
         return $relationModel;
     }
 
     /**
-     * 创建关联统计子查询
-     * @access public
-     * @param  Closure $closure 闭包
-     * @param  string  $aggregate 聚合查询方法
-     * @param  string  $field 字段
-     * @param  string  $name 统计字段别名
+     * 创建关联统计子查询.
+     *
+     * @param Closure $closure   闭包
+     * @param string  $aggregate 聚合查询方法
+     * @param string  $field     字段
+     * @param string  $name      统计字段别名
+     *
      * @return string
      */
-    public function getRelationCountQuery(Closure $closure = null, string $aggregate = 'count', string $field = '*', string &$name = null): string
+    public function getRelationCountQuery(?Closure $closure = null, string $aggregate = 'count', string $field = '*', ?string &$name = null): string
     {
         if ($closure) {
-            $closure($this->getClosureType($closure), $name);
+            $closure($this->query, $name);
         }
 
         return $this->query
-            ->whereExp($this->foreignKey, '=' . $this->parent->getTable() . '.' . $this->localKey)
+            ->whereExp($this->foreignKey, '=' . $this->parent->getTable(true) . '.' . $this->localKey)
             ->fetchSql()
             ->$aggregate($field);
     }
 
     /**
      * 关联统计
-     * @access public
-     * @param  Model   $result  数据对象
-     * @param  Closure $closure 闭包
-     * @param  string  $aggregate 聚合查询方法
-     * @param  string  $field 字段
-     * @param  string  $name 统计字段别名
-     * @return integer
+     *
+     * @param Model   $result    数据对象
+     * @param Closure $closure   闭包
+     * @param string  $aggregate 聚合查询方法
+     * @param string  $field     字段
+     * @param string  $name      统计字段别名
+     *
+     * @return int
      */
-    public function relationCount(Model $result, Closure $closure = null, string $aggregate = 'count', string $field = '*', string &$name = null)
+    public function relationCount(Model $result, ?Closure $closure = null, string $aggregate = 'count', string $field = '*', ?string &$name = null)
     {
         $localKey = $this->localKey;
 
@@ -118,7 +123,7 @@ class HasOne extends OneToOne
         }
 
         if ($closure) {
-            $closure($this->getClosureType($closure), $name);
+            $closure($this->query, $name);
         }
 
         return $this->query
@@ -127,16 +132,17 @@ class HasOne extends OneToOne
     }
 
     /**
-     * 根据关联条件查询当前模型
-     * @access public
-     * @param  string  $operator 比较操作符
-     * @param  integer $count    个数
-     * @param  string  $id       关联表的统计字段
-     * @param  string  $joinType JOIN类型
-     * @param  Query   $query    Query对象
+     * 根据关联条件查询当前模型.
+     *
+     * @param string $operator 比较操作符
+     * @param int    $count    个数
+     * @param string $id       关联表的统计字段
+     * @param string $joinType JOIN类型
+     * @param Query  $query    Query对象
+     *
      * @return Query
      */
-    public function has(string $operator = '>=', int $count = 1, string $id = '*', string $joinType = '', Query $query = null): Query
+    public function has(string $operator = '>=', int $count = 1, string $id = '*', string $joinType = '', ?Query $query = null): Query
     {
         $table      = $this->query->getTable();
         $model      = class_basename($this->parent);
@@ -157,15 +163,16 @@ class HasOne extends OneToOne
     }
 
     /**
-     * 根据关联条件查询当前模型
-     * @access public
-     * @param  mixed  $where 查询条件（数组或者闭包）
-     * @param  mixed  $fields   字段
-     * @param  string $joinType JOIN类型
-     * @param  Query  $query    Query对象
+     * 根据关联条件查询当前模型.
+     *
+     * @param mixed  $where    查询条件（数组或者闭包）
+     * @param mixed  $fields   字段
+     * @param string $joinType JOIN类型
+     * @param Query  $query    Query对象
+     *
      * @return Query
      */
-    public function hasWhere($where = [], $fields = null, string $joinType = '', Query $query = null): Query
+    public function hasWhere($where = [], $fields = null, string $joinType = '', ?Query $query = null): Query
     {
         $table    = $this->query->getTable();
         $model    = class_basename($this->parent);
@@ -185,25 +192,29 @@ class HasOne extends OneToOne
         $query      = $query ?: $this->parent->db();
 
         return $query->alias($model)
+            ->via($model)
             ->field($fields)
             ->join([$table => $relation], $model . '.' . $this->localKey . '=' . $relation . '.' . $this->foreignKey, $joinType ?: $this->joinType)
             ->when($softDelete, function ($query) use ($softDelete, $relation) {
                 $query->where($relation . strstr($softDelete[0], '.'), '=' == $softDelete[1][0] ? $softDelete[1][1] : null);
             })
-            ->where($where);
+            ->where(function ($query) use ($where) {
+                $query->where($where);
+            });
     }
 
     /**
-     * 预载入关联查询（数据集）
-     * @access protected
-     * @param  array   $resultSet   数据集
-     * @param  string  $relation    当前关联名
-     * @param  array   $subRelation 子关联名
-     * @param  Closure $closure     闭包
-     * @param  array   $cache       关联缓存
+     * 预载入关联查询（数据集）.
+     *
+     * @param array   $resultSet   数据集
+     * @param string  $relation    当前关联名
+     * @param array   $subRelation 子关联名
+     * @param Closure $closure     闭包
+     * @param array   $cache       关联缓存
+     *
      * @return void
      */
-    protected function eagerlySet(array &$resultSet, string $relation, array $subRelation = [], Closure $closure = null, array $cache = []): void
+    protected function eagerlySet(array &$resultSet, string $relation, array $subRelation = [], ?Closure $closure = null, array $cache = []): void
     {
         $localKey   = $this->localKey;
         $foreignKey = $this->foreignKey;
@@ -218,16 +229,24 @@ class HasOne extends OneToOne
 
         if (!empty($range)) {
             $this->query->removeWhereField($foreignKey);
+            $default      = $this->query->getOptions('default_model');
+            $defaultModel = $this->getDefaultModel($default);
 
             $data = $this->eagerlyWhere([
                 [$foreignKey, 'in', $range],
             ], $foreignKey, $subRelation, $closure, $cache);
 
+            // 动态绑定参数
+            $bindAttr = $this->query->getOptions('bind_attr');
+            if ($bindAttr) {
+                $this->bind($bindAttr);
+            }
+
             // 关联数据封装
             foreach ($resultSet as $result) {
                 // 关联模型
                 if (!isset($data[$result->$localKey])) {
-                    $relationModel = $this->getDefaultModel();
+                    $relationModel = $defaultModel;
                 } else {
                     $relationModel = $data[$result->$localKey];
                     $relationModel->setParent(clone $result);
@@ -246,16 +265,17 @@ class HasOne extends OneToOne
     }
 
     /**
-     * 预载入关联查询（数据）
-     * @access protected
-     * @param  Model   $result      数据对象
-     * @param  string  $relation    当前关联名
-     * @param  array   $subRelation 子关联名
-     * @param  Closure $closure     闭包
-     * @param  array   $cache       关联缓存
+     * 预载入关联查询（数据）.
+     *
+     * @param Model   $result      数据对象
+     * @param string  $relation    当前关联名
+     * @param array   $subRelation 子关联名
+     * @param Closure $closure     闭包
+     * @param array   $cache       关联缓存
+     *
      * @return void
      */
-    protected function eagerlyOne(Model $result, string $relation, array $subRelation = [], Closure $closure = null, array $cache = []): void
+    protected function eagerlyOne(Model $result, string $relation, array $subRelation = [], ?Closure $closure = null, array $cache = []): void
     {
         $localKey   = $this->localKey;
         $foreignKey = $this->foreignKey;
@@ -268,7 +288,8 @@ class HasOne extends OneToOne
 
         // 关联模型
         if (!isset($data[$result->$localKey])) {
-            $relationModel = $this->getDefaultModel();
+            $default       = $this->query->getOptions('default_model');
+            $relationModel = $this->getDefaultModel($default);
         } else {
             $relationModel = $data[$result->$localKey];
             $relationModel->setParent(clone $result);
@@ -278,6 +299,12 @@ class HasOne extends OneToOne
         // 设置关联属性
         $result->setRelation($relation, $relationModel);
 
+        // 动态绑定参数
+        $bindAttr = $this->query->getOptions('bind_attr');
+        if ($bindAttr) {
+            $this->bind($bindAttr);
+        }
+
         if (!empty($this->bindAttr)) {
             // 绑定关联属性
             $this->bindAttr($result, $relationModel);
@@ -286,8 +313,8 @@ class HasOne extends OneToOne
     }
 
     /**
-     * 执行基础查询（仅执行一次）
-     * @access protected
+     * 执行基础查询（仅执行一次）.
+     *
      * @return void
      */
     protected function baseQuery(): void

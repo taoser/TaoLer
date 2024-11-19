@@ -1,6 +1,6 @@
 # ThinkORM
 
-基于PHP7.1+ 和PDO实现的ORM，支持多数据库，2.0版本主要特性包括：
+基于PHP8.0+ 和PDO实现的ORM，支持多数据库，3.0版本主要特性包括：
 
 * 基于PDO和PHP强类型实现
 * 支持原生查询和查询构造器
@@ -24,4 +24,4 @@ composer require topthink/think-orm
 
 ## 文档
 
-详细参考 [ThinkORM开发指南](https://www.kancloud.cn/manual/think-orm/content)
+详细参考 [ThinkORM开发指南](https://doc.thinkphp.cn/@think-orm)

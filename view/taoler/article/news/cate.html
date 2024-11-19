@@ -22,7 +22,11 @@
 					<article class="list-item block card-plain">
 						{if getOnepic($article.content)}
 						<figure class="media media-3x2 col-4 col-md-4 d-none d-md-block">
+<<<<<<< HEAD
 							<a class="media-content" href="{article:link /}" title="{article:title /}">
+=======
+							<a class="media-content" href="{article:url /}" title="{article:title /}">
+>>>>>>> 3.0
 							<img src="{:getOnepic($article.content)}" width="233" height="155" alt="{article:title /}">
 							</a>
 						</figure>
@@ -30,7 +34,11 @@
 						<div class="list-width list-content">
 							<div class="list-body">
 								<h3>
+<<<<<<< HEAD
 									<a href="{article:link /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
+=======
+									<a href="{article:url /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
+>>>>>>> 3.0
 								</h3>
 								<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
 									<p class="h-3x">{:getArtContent($article.content)}</p>
@@ -43,7 +51,11 @@
 										<i class="text-primary">·</i>
 									</div>
 									<div class="d-inline-block">
+<<<<<<< HEAD
 										<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:auther /}</a>
+=======
+										<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:author /}" rel="category">{article:author /}</a>
+>>>>>>> 3.0
 										{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
 										{$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
 										{$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
@@ -54,7 +66,11 @@
 									</div>
 									<div class="flex-fill"></div>
 									<div class="mx-1">
+<<<<<<< HEAD
 										<a href="{article:link /}" class="text-muted">阅读全文</a>
+=======
+										<a href="{article:url /}" class="text-muted">阅读全文</a>
+>>>>>>> 3.0
 									</div>
 								</div>
 							</div>
@@ -67,7 +83,10 @@
 		</div>
 		<div class="layui-col-md4">
 			<!-- 插件hook位 -->
+<<<<<<< HEAD
 			{:hook('addonhook_list')}
+=======
+>>>>>>> 3.0
 		</div>
 	</div>
 </div>
@@ -79,6 +98,7 @@
 	  var laypage = layui.laypage;
 	  //执行一个laypage实例
 	  laypage.render({
+<<<<<<< HEAD
       elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
       ,count: "{$artList['total']}" //数据总数，从服务端得到
 	  ,groups: 1
@@ -94,6 +114,25 @@
         }
       }
 	  });
+=======
+			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+			,count: "{$__LISTS__.total}" //数据总数，从服务端得到
+			,groups: 1
+			,limit: "{$__LISTS__['per_page']}"
+			,curr : "{$__LISTS__['current_page']}"
+			,first: false
+    		,last: false
+			,groups: 5
+			,layout: ['prev', 'page','next','count', 'skip']
+			//获取起始页
+			,jump: function(obj, first){
+				//首次不执行
+				if(!first){
+					window.location.href = '{$path}/'+obj.curr+'.html'; //跳转
+				}
+			}
+	  	})
+>>>>>>> 3.0
 	});
 </script>
 {/block}

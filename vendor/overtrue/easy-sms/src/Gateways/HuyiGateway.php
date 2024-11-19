@@ -26,6 +26,7 @@ class HuyiGateway extends Gateway
 {
     use HasHttpRequest;
 
+<<<<<<< HEAD
     const ENDPOINT_URL = 'http://106.ihuyi.com/webservice/sms.php?method=Submit';
 
     const ENDPOINT_FORMAT = 'json';
@@ -40,6 +41,18 @@ class HuyiGateway extends Gateway
      * @return array
      *
      * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException ;
+=======
+    public const ENDPOINT_URL = 'http://106.ihuyi.com/webservice/sms.php?method=Submit';
+
+    public const ENDPOINT_FORMAT = 'json';
+
+    public const SUCCESS_CODE = 2;
+
+    /**
+     * @return array
+     *
+     * @throws GatewayErrorException ;
+>>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {

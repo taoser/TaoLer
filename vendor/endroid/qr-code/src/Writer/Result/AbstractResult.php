@@ -9,7 +9,11 @@ use Endroid\QrCode\Matrix\MatrixInterface;
 abstract class AbstractResult implements ResultInterface
 {
     public function __construct(
+<<<<<<< HEAD
         private MatrixInterface $matrix
+=======
+        private readonly MatrixInterface $matrix,
+>>>>>>> 3.0
     ) {
     }
 

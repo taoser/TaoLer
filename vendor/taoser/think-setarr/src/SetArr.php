@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-14 16:05:35
- * @LastEditTime: 2022-07-03 04:30:15
+ * @LastEditTime: 2022-04-17 07:04:31
  * @LastEditors: TaoLer
- * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\vendor\taoser\think-setarr\src\SetArr.php
+ * @Description: Config配置文件设置
+ * @FilePath: \undefinede:\github\think-setarr\src\SetArr.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 namespace taoser;
@@ -219,7 +219,6 @@ class SetArr
 								//$kpats = '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/';
 								// 添加一维数组，数组中有元素匹配到最后一个数组，没有数组，匹配到数组开头[
 								$kpats = self::getArrSonCount(config(self::$configName.'.'.$k)) ? '/\''.$k.'\'\s*=>\s*\[[^\[|\]]*,\r?\n/' : '/\''.$k.'\'\s*=>\s*\[\r?\n/';
-
 								preg_match($kpats,self::$str,$arrk);
 
 								if(!is_int($kk)) {
@@ -785,16 +784,22 @@ class SetArr
 				}
 			}
 
-			/* 匹配空数组
-				*	'key' => [
-				*		],
-				*/ 
-			$nullArray = '/[^\n]*\'\w+\'\s*=>\s*\[\s*\]{1}\S*\,?\r?\n/m';
-			//preg_match($nullArray,self::$str,$arr);
-			//self::$str = preg_replace($nullArray, '', self::$str);
+			// 是否清理空数组？
 
 		}
 		//写入配置
+		return  file_put_contents(self::$configFile, self::$str) ? true : false;
+	}
+	
+	/* 匹配空数组
+	*	'key' => [
+	*		],
+	*/ 
+	public static function clearNullArr()
+	{
+		$nullArray = '/[^\n]*\'\w+\'\s*=>\s*\[\s*\]{1}\S*\,?\r?\n/m';
+		//preg_match($nullArray,self::$str,$arr);
+		self::$str = preg_replace($nullArray, '', self::$str);
 		return  file_put_contents(self::$configFile, self::$str) ? true : false;
 	}
 

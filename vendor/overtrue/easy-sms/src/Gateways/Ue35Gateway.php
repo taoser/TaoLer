@@ -26,15 +26,24 @@ class Ue35Gateway extends Gateway
 {
     use HasHttpRequest;
 
+<<<<<<< HEAD
     const ENDPOINT_HOST = 'sms.ue35.cn';
 
     const ENDPOINT_URI = '/sms/interface/sendmess.htm';
 
     const SUCCESS_CODE = 1;
+=======
+    public const ENDPOINT_HOST = 'sms.ue35.cn';
+
+    public const ENDPOINT_URI = '/sms/interface/sendmess.htm';
+
+    public const SUCCESS_CODE = 1;
+>>>>>>> 3.0
 
     /**
      * Send message.
      *
+<<<<<<< HEAD
      * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
      * @param \Overtrue\EasySms\Contracts\MessageInterface     $message
      * @param \Overtrue\EasySms\Support\Config                 $config
@@ -42,6 +51,11 @@ class Ue35Gateway extends Gateway
      * @return array
      *
      * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException ;
+=======
+     * @return array
+     *
+     * @throws GatewayErrorException ;
+>>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {

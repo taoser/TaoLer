@@ -19,8 +19,11 @@ interface StrategyInterface
     /**
      * Apply the strategy and return result.
      *
+<<<<<<< HEAD
      * @param array $gateways
      *
+=======
+>>>>>>> 3.0
      * @return array
      */
     public function apply(array $gateways);

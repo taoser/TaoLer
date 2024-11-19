@@ -26,6 +26,7 @@ class KingttoGateway extends Gateway
 {
     use HasHttpRequest;
 
+<<<<<<< HEAD
     const ENDPOINT_URL = 'http://101.201.41.194:9999/sms.aspx';
 
     const ENDPOINT_METHOD = 'send';
@@ -35,6 +36,13 @@ class KingttoGateway extends Gateway
      * @param MessageInterface     $message
      * @param Config               $config
      *
+=======
+    public const ENDPOINT_URL = 'http://101.201.41.194:9999/sms.aspx';
+
+    public const ENDPOINT_METHOD = 'send';
+
+    /**
+>>>>>>> 3.0
      * @return \Psr\Http\Message\ResponseInterface|array|string
      *
      * @throws GatewayErrorException

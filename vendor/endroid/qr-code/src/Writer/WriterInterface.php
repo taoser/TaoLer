@@ -12,5 +12,9 @@ use Endroid\QrCode\Writer\Result\ResultInterface;
 interface WriterInterface
 {
     /** @param array<string, mixed> $options */
+<<<<<<< HEAD
     public function write(QrCodeInterface $qrCode, LogoInterface $logo = null, LabelInterface $label = null, array $options = []): ResultInterface;
+=======
+    public function write(QrCodeInterface $qrCode, ?LogoInterface $logo = null, ?LabelInterface $label = null, array $options = []): ResultInterface;
+>>>>>>> 3.0
 }

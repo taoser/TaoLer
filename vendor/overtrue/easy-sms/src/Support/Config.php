@@ -16,7 +16,11 @@ use ArrayAccess;
 /**
  * Class Config.
  */
+<<<<<<< HEAD
 class Config implements ArrayAccess
+=======
+class Config implements \ArrayAccess
+>>>>>>> 3.0
 {
     /**
      * @var array
@@ -25,8 +29,11 @@ class Config implements ArrayAccess
 
     /**
      * Config constructor.
+<<<<<<< HEAD
      *
      * @param array $config
+=======
+>>>>>>> 3.0
      */
     public function __construct(array $config = [])
     {
@@ -37,9 +44,12 @@ class Config implements ArrayAccess
      * Get an item from an array using "dot" notation.
      *
      * @param string $key
+<<<<<<< HEAD
      * @param mixed  $default
      *
      * @return mixed
+=======
+>>>>>>> 3.0
      */
     public function get($key, $default = null)
     {

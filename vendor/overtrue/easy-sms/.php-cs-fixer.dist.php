@@ -2,6 +2,7 @@
 
 return (new PhpCsFixer\Config())
     ->setRules([
+<<<<<<< HEAD
         '@PSR12' => true,
         'binary_operator_spaces' => true,
         'blank_line_after_opening_tag' => true,
@@ -40,6 +41,9 @@ return (new PhpCsFixer\Config())
                 'property',
             ],
         ],
+=======
+        '@Symfony' => true,
+>>>>>>> 3.0
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

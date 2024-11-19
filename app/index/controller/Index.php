@@ -17,11 +17,19 @@ use think\facade\Db;
 use app\facade\Article;
 use app\common\lib\Msgres;
 
+<<<<<<< HEAD
 // use addons\pay\controller\AlipayFactory;
 use addons\pay\controller\WeixinFactory;
 
 //use app\common\lib\Near;
 
+=======
+//use addons\pay\controller\AlipayFactory;
+//use addons\pay\controller\WeixinFactory;
+
+// use app\common\lib\Near;
+use think\facade\Cache;
+>>>>>>> 3.0
 class Index extends BaseController
 {
     /**
@@ -37,6 +45,7 @@ class Index extends BaseController
 		// echo "My public IP address is: " . $ip;
 		// $alipay = AlipayFactory::createPayMethod();
 		// $weixin = WeixinFactory::createPayMethod();
+<<<<<<< HEAD
 		// dump($weixin);
 		// $a = $alipay->index();
 		// $b= $weixin->index();
@@ -82,6 +91,12 @@ class Index extends BaseController
 		];
 		View::assign($vs);
 
+=======
+		// $a = $alipay->index();
+		// $b= $weixin->index();
+		// var_dump($a,$b);
+		
+>>>>>>> 3.0
 		return View::fetch();
     }
 
@@ -101,7 +116,7 @@ class Index extends BaseController
 			if($lang){
 				return Msgres::success();
 			}
-		}else {
+		} else {
 			return Msgres::error('illegal_request');
 		}
 	}

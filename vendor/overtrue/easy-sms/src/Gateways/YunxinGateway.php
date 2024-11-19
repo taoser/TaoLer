@@ -28,19 +28,30 @@ class YunxinGateway extends Gateway
 {
     use HasHttpRequest;
 
+<<<<<<< HEAD
     const ENDPOINT_TEMPLATE = 'https://api.netease.im/%s/%s.action';
 
     const ENDPOINT_ACTION = 'sendCode';
 
     const SUCCESS_CODE = 200;
+=======
+    public const ENDPOINT_TEMPLATE = 'https://api.netease.im/%s/%s.action';
+
+    public const ENDPOINT_ACTION = 'sendCode';
+
+    public const SUCCESS_CODE = 200;
+>>>>>>> 3.0
 
     /**
      * Send a short message.
      *
+<<<<<<< HEAD
      * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
      * @param \Overtrue\EasySms\Contracts\MessageInterface     $message
      * @param \Overtrue\EasySms\Support\Config                 $config
      *
+=======
+>>>>>>> 3.0
      * @return array
      *
      * @throws GatewayErrorException
@@ -62,7 +73,11 @@ class YunxinGateway extends Gateway
                 $params = $this->buildVerifyCodeParams($to, $message);
 
                 break;
+<<<<<<< HEAD
             case "sendTemplate":
+=======
+            case 'sendTemplate':
+>>>>>>> 3.0
                 $params = $this->buildTemplateParams($to, $message, $config);
 
                 break;
@@ -89,9 +104,12 @@ class YunxinGateway extends Gateway
     }
 
     /**
+<<<<<<< HEAD
      * @param $resource
      * @param $function
      *
+=======
+>>>>>>> 3.0
      * @return string
      */
     protected function buildEndpoint($resource, $function)
@@ -102,8 +120,11 @@ class YunxinGateway extends Gateway
     /**
      * Get the request headers.
      *
+<<<<<<< HEAD
      * @param Config $config
      *
+=======
+>>>>>>> 3.0
      * @return array
      */
     protected function buildHeaders(Config $config)
@@ -121,10 +142,13 @@ class YunxinGateway extends Gateway
     }
 
     /**
+<<<<<<< HEAD
      * @param PhoneNumberInterface $to
      * @param MessageInterface     $message
      * @param Config               $config
      *
+=======
+>>>>>>> 3.0
      * @return array
      */
     public function buildSendCodeParams(PhoneNumberInterface $to, MessageInterface $message, Config $config)
@@ -143,9 +167,12 @@ class YunxinGateway extends Gateway
     }
 
     /**
+<<<<<<< HEAD
      * @param PhoneNumberInterface $to
      * @param MessageInterface     $message
      *
+=======
+>>>>>>> 3.0
      * @return array
      *
      * @throws GatewayErrorException
@@ -165,11 +192,15 @@ class YunxinGateway extends Gateway
     }
 
     /**
+<<<<<<< HEAD
      * @param PhoneNumberInterface $to
      * @param MessageInterface $message
      * @param Config $config
      * @return array
      *
+=======
+     * @return array
+>>>>>>> 3.0
      */
     public function buildTemplateParams(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
@@ -178,10 +209,17 @@ class YunxinGateway extends Gateway
         $template = $message->getTemplate($this);
 
         return [
+<<<<<<< HEAD
             'templateid'=>$template,
             'mobiles'=>json_encode([$to->getUniversalNumber()]),
             'params'=>array_key_exists('params',$data) ? json_encode($data['params']) : '',
             'needUp'=>$config->get('need_up', false)
+=======
+            'templateid' => $template,
+            'mobiles' => json_encode([$to->getUniversalNumber()]),
+            'params' => array_key_exists('params', $data) ? json_encode($data['params']) : '',
+            'needUp' => $config->get('need_up', false),
+>>>>>>> 3.0
         ];
     }
 }

@@ -40,7 +40,7 @@ class Schema extends Command
                 return;
             }
             $table = $input->getOption('table');
-            if (false === strpos($table, '.')) {
+            if (!str_contains($table, '.')) {
                 $dbName = $connection->getConfig('database');
             } else {
                 [$dbName, $table] = explode('.', $table);
@@ -64,15 +64,23 @@ class Schema extends Command
             $list = is_dir($path) ? scandir($path) : [];
 
             foreach ($list as $file) {
-                if (0 === strpos($file, '.')) {
+                if (str_starts_with($file, '.')) {
                     continue;
                 }
 
                 $class = '\\' . $namespace . '\\model\\' . pathinfo($file, PATHINFO_FILENAME);
+<<<<<<< HEAD
                 if (!class_exists($class)) {
                     continue;
                 }
                 
+=======
+                
+                if (!class_exists($class)) {
+                    continue;
+                }
+
+>>>>>>> 3.0
                 $this->buildModelSchema($class);
             }
         }

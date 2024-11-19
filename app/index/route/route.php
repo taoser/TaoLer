@@ -51,6 +51,10 @@ Route::group(function () {
 	Route::rule('postcode$','login/postcode');
 	Route::rule('sentemailcode$','login/sentMailCode');
 	Route::rule('respass$','login/respass');
+<<<<<<< HEAD
+=======
+	
+>>>>>>> 3.0
 });
 
 // comment
@@ -72,7 +76,6 @@ Route::get('tag','tag/getAllTag')->name('get_all_tag');
 Route::get('arttag','tag/getArticleTag')->name('get_art_tag');
 
 Route::rule('search/[:keywords]', 'index/search'); // 搜索
-
 
 // article分类和详情路由 ！放到最后！
 Route::group(function () use($detail_as, $cate_as){

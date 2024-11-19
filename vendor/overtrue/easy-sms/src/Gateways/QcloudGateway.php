@@ -11,6 +11,10 @@
 
 namespace Overtrue\EasySms\Gateways;
 
+<<<<<<< HEAD
+=======
+use GuzzleHttp\Psr7\Uri;
+>>>>>>> 3.0
 use Overtrue\EasySms\Contracts\MessageInterface;
 use Overtrue\EasySms\Contracts\PhoneNumberInterface;
 use Overtrue\EasySms\Exceptions\GatewayErrorException;
@@ -26,6 +30,7 @@ class QcloudGateway extends Gateway
 {
     use HasHttpRequest;
 
+<<<<<<< HEAD
     const ENDPOINT_URL = 'https://sms.tencentcloudapi.com';
 
     const ENDPOINT_HOST = 'sms.tencentcloudapi.com';
@@ -48,6 +53,24 @@ class QcloudGateway extends Gateway
      * @return array
      *
      * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException ;
+=======
+    public const ENDPOINT_URL = 'https://sms.tencentcloudapi.com';
+
+    public const ENDPOINT_SERVICE = 'sms';
+
+    public const ENDPOINT_METHOD = 'SendSms';
+
+    public const ENDPOINT_VERSION = '2021-01-11';
+
+    public const ENDPOINT_REGION = 'ap-guangzhou';
+
+    public const ENDPOINT_FORMAT = 'json';
+
+    /**
+     * @return array
+     *
+     * @throws GatewayErrorException ;
+>>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
@@ -60,7 +83,11 @@ class QcloudGateway extends Gateway
         $phone = !\is_null($to->getIDDCode()) ? strval($to->getUniversalNumber()) : $to->getNumber();
         $params = [
             'PhoneNumberSet' => [
+<<<<<<< HEAD
                 $phone
+=======
+                $phone,
+>>>>>>> 3.0
             ],
             'SmsSdkAppId' => $this->config->get('sdk_app_id'),
             'SignName' => $signName,
@@ -70,10 +97,19 @@ class QcloudGateway extends Gateway
 
         $time = time();
 
+<<<<<<< HEAD
         $result = $this->request('post', self::ENDPOINT_URL, [
             'headers' => [
                 'Authorization' => $this->generateSign($params, $time),
                 'Host' => self::ENDPOINT_HOST,
+=======
+        $endpoint = $this->config->get('endpoint', self::ENDPOINT_URL);
+
+        $result = $this->request('post', $endpoint, [
+            'headers' => [
+                'Authorization' => $this->generateSign($params, $time),
+                'Host' => (new Uri($endpoint))->getHost(),
+>>>>>>> 3.0
                 'Content-Type' => 'application/json; charset=utf-8',
                 'X-TC-Action' => self::ENDPOINT_METHOD,
                 'X-TC-Region' => $this->config->get('region', self::ENDPOINT_REGION),
@@ -89,7 +125,11 @@ class QcloudGateway extends Gateway
 
         if (!empty($result['Response']['SendStatusSet'])) {
             foreach ($result['Response']['SendStatusSet'] as $group) {
+<<<<<<< HEAD
                 if ($group['Code'] != 'Ok') {
+=======
+                if ('Ok' != $group['Code']) {
+>>>>>>> 3.0
                     throw new GatewayErrorException($group['Message'], 400, $result);
                 }
             }
@@ -101,12 +141,17 @@ class QcloudGateway extends Gateway
     /**
      * Generate Sign.
      *
+<<<<<<< HEAD
      * @param array  $params
+=======
+     * @param array $params
+>>>>>>> 3.0
      *
      * @return string
      */
     protected function generateSign($params, $timestamp)
     {
+<<<<<<< HEAD
         $date = gmdate("Y-m-d", $timestamp);
         $secretKey = $this->config->get('secret_key');
         $secretId = $this->config->get('secret_id');
@@ -118,10 +163,26 @@ class QcloudGateway extends Gateway
             'host:' . self::ENDPOINT_HOST."\n"."\n".
             'content-type;host'."\n".
             hash("SHA256", json_encode($params));
+=======
+        $date = gmdate('Y-m-d', $timestamp);
+        $secretKey = $this->config->get('secret_key');
+        $secretId = $this->config->get('secret_id');
+        $endpoint = $this->config->get('endpoint', self::ENDPOINT_URL);
+        $host = (new Uri($endpoint))->getHost();
+
+        $canonicalRequest = 'POST'."\n".
+            '/'."\n".
+            ''."\n".
+            'content-type:application/json; charset=utf-8'."\n".
+            'host:'.$host."\n\n".
+            'content-type;host'."\n".
+            hash('SHA256', json_encode($params));
+>>>>>>> 3.0
 
         $stringToSign =
             'TC3-HMAC-SHA256'."\n".
             $timestamp."\n".
+<<<<<<< HEAD
             $date . '/'. self::ENDPOINT_SERVICE .'/tc3_request'."\n".
             hash("SHA256", $canonicalRequest);
 
@@ -133,5 +194,18 @@ class QcloudGateway extends Gateway
         return 'TC3-HMAC-SHA256'
             ." Credential=". $secretId ."/". $date . '/'. self::ENDPOINT_SERVICE .'/tc3_request'
             .", SignedHeaders=content-type;host, Signature=".$signature;
+=======
+            $date.'/'.self::ENDPOINT_SERVICE.'/tc3_request'."\n".
+            hash('SHA256', $canonicalRequest);
+
+        $secretDate = hash_hmac('SHA256', $date, 'TC3'.$secretKey, true);
+        $secretService = hash_hmac('SHA256', self::ENDPOINT_SERVICE, $secretDate, true);
+        $secretSigning = hash_hmac('SHA256', 'tc3_request', $secretService, true);
+        $signature = hash_hmac('SHA256', $stringToSign, $secretSigning);
+
+        return 'TC3-HMAC-SHA256'
+            .' Credential='.$secretId.'/'.$date.'/'.self::ENDPOINT_SERVICE.'/tc3_request'
+            .', SignedHeaders=content-type;host, Signature='.$signature;
+>>>>>>> 3.0
     }
 }
