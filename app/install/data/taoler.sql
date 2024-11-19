@@ -69,6 +69,7 @@ CREATE TABLE `tao_article`  (
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `media` json NULL COMMENT '媒体image,video,audio',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE COMMENT '文章的用户索引',
   INDEX `cate_id`(`cate_id` ASC) USING BTREE COMMENT '文章分类索引',
