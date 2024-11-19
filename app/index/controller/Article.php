@@ -83,9 +83,9 @@ class Article extends BaseController
 		$artDetail->inc('pv', 1)->save();
 		$pv = Db::name('article')->where('id',$id)->value('pv');
         $artDetail->pv = $pv;
-
+	
 		// 3.设置内容的tag内链
-		$artDetail->content = $this->setArtTagLink($artDetail->content);
+		// $artDetail->content = $this->setArtTagLink($artDetail->content);
 
 		//	热议文章
 		$artHot = $this->model->getHots(10);
