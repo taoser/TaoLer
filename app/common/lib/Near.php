@@ -10,12 +10,12 @@ namespace app\common\lib;
  */
 class Near
 {
-    function getNearestParkingSpot($latitude, $longitude, $parkingSpots) {
+    public static function getNearestParkingSpot($latitude, $longitude, $parkingSpots) {
         $nearestSpot = null;
         $nearestDistance = 0;
      
         foreach ($parkingSpots as $spot) {
-            $distance = $this->haversineGreatCircleDistance(
+            $distance = self::haversineGreatCircleDistance(
                 $latitude,
                 $longitude,
                 $spot['latitude'],
@@ -31,7 +31,7 @@ class Near
         return $nearestSpot;
     }
      
-    function haversineGreatCircleDistance($latitude1, $longitude1, $latitude2, $longitude2) {
+    public static function haversineGreatCircleDistance($latitude1, $longitude1, $latitude2, $longitude2) {
         $earthRadius = 6371; // 单位为公里
      
         $latitude1 = deg2rad($latitude1);
