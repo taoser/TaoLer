@@ -21,54 +21,16 @@
 	  
 	    {include file="public/filter" /}
         <ul class="fly-list">
-<<<<<<< HEAD
-		    {volist name="artList['data']" id="art"}
-          <li>
-            <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
-              <img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
-            </a>
-            <h2><a href="{$Request.domain}{$art.url}"  style="color: {$art['title_color'] ?? '#333'};">{$art.title}</a></h2>
-=======
 		    {article:list}
           <li>
             <a href="{article:user name='link' /}" class="fly-avatar">
               <img src="{article:author_avatar /}" alt="{article:author /}">
             </a>
             <h2><a href="{article:link /}"  style="color: {article:title_color ?? '#333'};">{article:title}</a></h2>
->>>>>>> 3.0
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
               <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
               {/if}
-<<<<<<< HEAD
-                <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
-              <cite>{$art.user.nickname ?: $art.user.name}</cite>
-              <i>{$art.create_time|date='Y-m-d'}</i>
-              <!--
-              <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
-              {if($art.user.vip > 0)}
-                      <i class="layui-badge fly-badge-vip">vip{$art.user.vip}</i>
-              {/if}
-              -->
-              </a>
-                {$art.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
-                {$art.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
-                {$art.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
-                {$art.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
-                {$art.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
-              <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
-              {if ($art.jie == 1)}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/if}
-              <span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}</span>
-            </div>
-            <div class="fly-list-badge">
-            {if ($art.is_hot == 1)}
-            <i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i>
-            <span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span>
-            {/if}
-            </div>
-          </li>
-		    {/volist}	
-=======
                 <a href="{article:user name='link' /}" link>
               <cite>{article:author /}</cite>
               <i>{article:time /}</i>
@@ -89,7 +51,6 @@
             </div>
           </li>
           {/article:list}	
->>>>>>> 3.0
         </ul>
 		<div style="text-align: center" id="pages"></div>
       </div>
@@ -99,21 +60,12 @@
         {:hook('ads_cate_rimg')}
         <dl class="fly-panel fly-list-one layui-hide-xs">
         <dt class="fly-panel-title">{:lang('hot post list')}</dt>
-<<<<<<< HEAD
-        {volist name="artHot" id="vo"}
-		    <dd>
-          <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
-          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-        </dd>
-		    {/volist} 
-=======
         {article:list type="hot"}
 		<dd>
           <a href="{article:link /}">{article:title /}</a>
           <span><i class="iconfont icon-pinglun1"></i> {$article.comments_count}</span>
         </dd>
 		{/article:list} 
->>>>>>> 3.0
       </dl>
         <!--列表广告赞助位-->
         {:hook('ads_cate_support')}
@@ -125,20 +77,6 @@
 {block name="script"}
 <script>
     layui.use(['laypage'], function(){
-<<<<<<< HEAD
-	  var laypage = layui.laypage;
-	  
-	  //执行一个laypage实例
-		laypage.render({
-			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
-			,count: "{$artList['total']}" //数据总数，从服务端得到
-			,groups: 1
-			,limit: "{$artList['per_page']}"
-			,curr : "{$artList['current_page']}"
-			,first: false
-    		,last: false
-			,layout: ['prev', 'page','next','count']
-=======
 	  	var laypage = layui.laypage;
 	  
 	  	//执行一个laypage实例
@@ -152,7 +90,6 @@
     		,last: false
 			,groups: 5
 			,layout: ['prev', 'page','next','count', 'skip']
->>>>>>> 3.0
 			//获取起始页
 			,jump: function(obj, first){
 				//首次不执行

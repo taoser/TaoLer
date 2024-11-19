@@ -3,10 +3,6 @@
 <p align="center">:calling: 一款满足你的多种发送需求的短信发送组件</p>
 
 <p align="center">
-<<<<<<< HEAD
-<a href="https://travis-ci.org/overtrue/easy-sms"><img src="https://travis-ci.org/overtrue/easy-sms.svg?branch=master" alt="Build Status"></a>
-=======
->>>>>>> 3.0
 <a href="https://packagist.org/packages/overtrue/easy-sms"><img src="https://poser.pugx.org/overtrue/easy-sms/v/stable.svg" alt="Latest Stable Version"></a>
 <a href="https://packagist.org/packages/overtrue/easy-sms"><img src="https://poser.pugx.org/overtrue/easy-sms/v/unstable.svg" alt="Latest Unstable Version"></a>
 <a href="https://scrutinizer-ci.com/g/overtrue/easy-sms/?branch=master"><img src="https://scrutinizer-ci.com/g/overtrue/easy-sms/badges/coverage.png?b=master" alt="Code Coverage"></a>
@@ -18,10 +14,6 @@
 <a href="https://github.com/sponsors/overtrue"><img src="https://github.com/overtrue/overtrue/blob/master/sponsor-me-button-s.svg?raw=true" alt="Sponsor me" style="max-width: 100%;"></a>
 </p>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 3.0
 ## 特点
 
 1. 支持目前市面多家服务商
@@ -51,10 +43,6 @@
 - [创蓝云智](https://www.chuanglan.com/)
 - [融云](http://www.rongcloud.cn)
 - [天毅无线](http://www.85hu.com/)
-<<<<<<< HEAD
-- [阿凡达数据](http://www.avatardata.cn/)
-=======
->>>>>>> 3.0
 - [华为云](https://www.huaweicloud.com/product/msgsms.html)
 - [网易云信](https://yunxin.163.com/sms)
 - [云之讯](https://www.ucpaas.com/index.html)

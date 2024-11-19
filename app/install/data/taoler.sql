@@ -61,19 +61,6 @@ CREATE TABLE `tao_article`  (
   `has_img` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '1有图0无图',
   `has_video` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '1有视频0无',
   `has_audio` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '1有音频0无',
-<<<<<<< HEAD
-  `pv` int NOT NULL DEFAULT 0 COMMENT '浏览量',
-  `jie` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '0未结1已结',
-  `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '关键词',
-  `description` tinytext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'seo描述',
-  `read_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '阅读权限0开放1回复可读2密码可读3私密',
-  `art_pass` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文章加密密码',
-  `title_color` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标题颜色',
-  `title_font` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标题字形',
-  `create_time` int NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` int NOT NULL DEFAULT 0 COMMENT '删除时间',
-=======
   `read_type` enum('0','1','2','3') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '阅读权限0开放1回复可读2密码可读3私密',
   `status` enum('0','1','-1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '状态1显示0待审-1禁止',
   `title_color` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '标题颜色',
@@ -82,16 +69,11 @@ CREATE TABLE `tao_article`  (
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
->>>>>>> 3.0
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE COMMENT '文章的用户索引',
   INDEX `cate_id`(`cate_id` ASC) USING BTREE COMMENT '文章分类索引',
   INDEX `idx_article_create_time`(`create_time` DESC) USING BTREE COMMENT '创建时间'
-<<<<<<< HEAD
-) ENGINE = InnoDB AUTO_INCREMENT = 89 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;
-=======
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;
->>>>>>> 3.0
 
 -- ----------------------------
 -- Table structure for tao_auth_group

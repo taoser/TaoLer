@@ -72,15 +72,6 @@
 
 {block name="script"}
 <script>
-<<<<<<< HEAD
-	$(function() {
-		$('#login').click(function() {
-			var loadIndex = layer.load(2);
-			$.ajax({
-				type:"post",
-				url:"{:url('login/index')}",
-				data:$('form').serialize(),
-=======
     layui.use(function(){
         var form = layui.form;
         var layer = layui.layer;
@@ -93,17 +84,10 @@
 				type:"post",
 				url:"{:url('login/index')}",
 				data:field,
->>>>>>> 3.0
 				daType:"json",
 				success:function (res){
 					layer.close(loadIndex);
 					if (res.code === 0) {
-<<<<<<< HEAD
-						layui.data('tao-user', {
-							key: 'token',
-							value: res.data.token
-						});
-=======
                         if(res.data.token) {
                             layui.data('tao-user', {
                                 key: 'token',
@@ -111,24 +95,10 @@
                             });
                         }
 						
->>>>>>> 3.0
 						toast.success({title:"成功消息",message: res.msg});
 						location.href = res.data.url;
 					} else {
 						toast.error({title:"失败消息",message:res.msg});
-<<<<<<< HEAD
-						layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-					}
-				}
-			});
-			return false;
-		});
-	});
-	// 更新验证码
-	layui.jquery('#captcha').on('click',function(){
-		layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-	})
-=======
 						$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 					}
 				}
@@ -142,6 +112,5 @@
             $('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
         })
     })
->>>>>>> 3.0
 </script>
 {/block}

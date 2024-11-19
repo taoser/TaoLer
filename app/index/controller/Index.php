@@ -17,19 +17,11 @@ use think\facade\Db;
 use app\facade\Article;
 use app\common\lib\Msgres;
 
-<<<<<<< HEAD
-// use addons\pay\controller\AlipayFactory;
-use addons\pay\controller\WeixinFactory;
-
-//use app\common\lib\Near;
-
-=======
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
 
 // use app\common\lib\Near;
 use think\facade\Cache;
->>>>>>> 3.0
 class Index extends BaseController
 {
     /**
@@ -45,58 +37,10 @@ class Index extends BaseController
 		// echo "My public IP address is: " . $ip;
 		// $alipay = AlipayFactory::createPayMethod();
 		// $weixin = WeixinFactory::createPayMethod();
-<<<<<<< HEAD
-		// dump($weixin);
-		// $a = $alipay->index();
-		// $b= $weixin->index();
-		// var_dump($b);
-
-		// $hook['hook_name'] = 'thinkphp';
-		// $hook['hook_type'] = 1;
-		// $hook['template'] = 'taoler';
-		// $hook['sort'] = 111;
-		// $hook['create_time'] = time();
-		// $hook['param'] = [
-		// 	'article_id'    => '$article.id',
-		// 	'uid' => 1,
-		// ];
-		// Db::name('addon_hook')
-		// 	->json(['param'])
-		// 	->insert($hook);
-
-		// $lawyers = Db::name('addon_lawyer')
-		// //->json(['begood'])
-		// ->where('begood','like', '%1%')
-		// ->select()
-		// ->toArray();
-
-		// $count = count($lawyers);
-
-		// if($count) {
-		// 	$k = rand(0,$count - 1) ;
-		// 	$lawyer = $lawyers[$k];
-		// }
-
-	
-		$types = input('type');
-		//置顶文章
-		$artTop = Article::getArtTop(5);
-        //首页文章列表,显示10个
-        $artList = Article::getArtList(10);
-
-		$vs = [
-			'artTop'	=>	$artTop,
-			'artList'	=>	$artList,
-			'type'		=>	$types
-		];
-		View::assign($vs);
-
-=======
 		// $a = $alipay->index();
 		// $b= $weixin->index();
 		// var_dump($a,$b);
 		
->>>>>>> 3.0
 		return View::fetch();
     }
 

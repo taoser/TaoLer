@@ -51,10 +51,7 @@ Route::group(function () {
 	Route::rule('postcode$','login/postcode');
 	Route::rule('sentemailcode$','login/sentMailCode');
 	Route::rule('respass$','login/respass');
-<<<<<<< HEAD
-=======
 	
->>>>>>> 3.0
 });
 
 // comment

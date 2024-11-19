@@ -10,10 +10,6 @@ use think\facade\Cache;
 use think\facade\Session;
 use think\facade\Config;
 use think\db\Query;
-<<<<<<< HEAD
-use Exception;
-=======
->>>>>>> 3.0
 
 class Article extends Model
 {
@@ -22,42 +18,24 @@ class Article extends Model
         'id'            => 'int',
         'title'         => 'string',
         'content'       => 'mediumtext',
-<<<<<<< HEAD
-        'status'        => 'enum',
-        'cate_id'       => 'int',
-        'user_id'       => 'int',
-        'goods_detail_id' => 'int',
-=======
         'keywords'      => 'varchar',
         'description'   => 'text',
         'cate_id'       => 'int',
         'user_id'       => 'int',
         'pv'            => 'int',
         'jie'           => 'enum',
->>>>>>> 3.0
         'is_top'        => 'enum',
         'is_hot'        => 'enum',
         'is_reply'      => 'enum',
         'has_img'       => 'enum',
         'has_video'     => 'enum',
         'has_audio'     => 'enum',
-<<<<<<< HEAD
-        'pv'            => 'int',
-        'jie'           => 'enum',
-        'keywords'      => 'varchar',
-        'description'   => 'text',
-        'read_type'     => 'tinyint',
-        'art_pass'      => 'varchar',
-        'title_color'   => 'varchar',
-        'title_font'    => 'varchar',
-=======
         'read_type'     => 'enum',
         'status'        => 'enum',
         'title_color'   => 'varchar',
         'art_pass'      => 'varchar',
         'goods_detail_id' => 'int',
         'media'         => 'json',
->>>>>>> 3.0
         'create_time'   => 'int',
         'update_time'   => 'int',
         'delete_time'   => 'int',
@@ -69,11 +47,7 @@ class Article extends Model
 	//开启自动设置
 	protected $auto = [];
 	//仅新增有效
-<<<<<<< HEAD
-	protected $insert = ['create_time', 'status'=>1, 'is_top'=>'0', 'is_hot'=>'0'];
-=======
 	protected $insert = ['create_time', 'status' => '1', 'is_top' => '0', 'is_hot' => '0'];
->>>>>>> 3.0
 	//仅更新有效
 	protected $update = ['update_time'];
 	
@@ -198,18 +172,11 @@ class Article extends Model
      */
     public function getTops(int $num = 5)
     {
-<<<<<<< HEAD
-        return Cache::remember('topArticle', function() use($num){
-            $topIdArr = $this::where(['is_top' => 1, 'status' => 1])->limit($num)->column('id');
-             return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type')
-                ->whereIn('id', $topIdArr)
-=======
         return Cache::remember('top_article', function() use($num){
             // $topIdArr = $this::where(['status' => '1', 'is_top' => '1'])->limit($num)->column('id');
              return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type')
                 // ->whereIn('id', $topIdArr)
                 ->where(['status' => '1', 'is_top' => '1'])
->>>>>>> 3.0
                 ->with([
                     'cate' => function (Query $query) {
                         $query->field('id,catename,ename');
@@ -218,20 +185,13 @@ class Article extends Model
                         $query->field('id,name,nickname,user_img');
                     }
                 ])
-<<<<<<< HEAD
-=======
                 ->limit($num)
->>>>>>> 3.0
                 ->withCount(['comments'])
                 ->order('id', 'desc')
                 ->append(['url'])
                 ->select()
                 ->toArray();
-<<<<<<< HEAD
-        },600);
-=======
         }, 600);
->>>>>>> 3.0
     }
 
     /**
@@ -244,13 +204,8 @@ class Article extends Model
      */
     public function getIndexs(int $num = 10)
     {
-<<<<<<< HEAD
-        return Cache::remember('indexArticle', function() use($num){
-            $data = $this::field('id,title,title_color,cate_id,user_id,content,description,create_time,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
-=======
         return Cache::remember('idx_article', function() use($num){
             $data = $this::field('id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time')
->>>>>>> 3.0
             ->with([
             'cate' => function(Query $query){
                 $query->field('id,catename,ename,detpl');
@@ -259,11 +214,7 @@ class Article extends Model
                 $query->field('id,name,nickname,user_img');
 			} ])
             ->withCount(['comments'])
-<<<<<<< HEAD
-            ->where('status', 1)
-=======
             ->where('status', '1')
->>>>>>> 3.0
             ->order('id','desc')
             ->limit($num)
             ->hidden(['art_pass'])
@@ -287,14 +238,8 @@ class Article extends Model
     {
         return Cache::remember('article_hot', function() use($num){
             $comments = Comment::field('article_id, count(*) as count')
-<<<<<<< HEAD
-            ->hasWhere('article',['status' => 1])
-            ->group('article_id')
-            ->order('count','desc')
-=======
             ->hasWhere('article', ['status' => '1'])
             ->group('article_id')
->>>>>>> 3.0
             ->limit($num)
             ->select();
 
@@ -320,11 +265,7 @@ class Article extends Model
             } else {
                 // pv数
                 $where = [
-<<<<<<< HEAD
-                    ['status', '=', 1]
-=======
                     ['status', '=', '1']
->>>>>>> 3.0
                 ];
 
                 $artHot = $this::field('id,cate_id,title,create_time')
@@ -351,11 +292,7 @@ class Article extends Model
         return Cache::remember('article_'.$id, function() use($id){
             //查询文章
             return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,keywords,description,read_type,art_pass,title_color,create_time,update_time')
-<<<<<<< HEAD
-            ->where(['status'=>1])
-=======
             ->where(['status' => 1])
->>>>>>> 3.0
             ->with([
                 'cate' => function(Query $query){
                     $query->field('id,catename,ename,detpl');
@@ -381,11 +318,7 @@ class Article extends Model
      * @return mixed
      * @throws \Throwable
      */
-<<<<<<< HEAD
-    public function getCateList(string $ename, int $page = 1, string $type = 'all', int $limit = 15)
-=======
     public function getCateList(string $ename, string $type, int $page = 1, int $limit = 15)
->>>>>>> 3.0
     {
         $where = [];
         $cateId = Cate::where('status', 1)->where('ename', $ename)->value('id');
@@ -656,15 +589,6 @@ class Article extends Model
                     $where[] = ['status', '=', 1];
                     break;
                 case '2':
-<<<<<<< HEAD
-                    $where[] = ['is_top', '=', '1'];
-                    break;
-                case '3':
-                    $where[] = ['is_hot', '=', '1'];
-                    break;
-                case '4':
-                    $where[] = ['is_reply', '=', '1'];
-=======
                     $where[] = ['is_top', '=', 1];
                     break;
                 case '3':
@@ -672,7 +596,6 @@ class Article extends Model
                     break;
                 case '4':
                     $where[] = ['is_reply', '=', 1];
->>>>>>> 3.0
                     break;
                 case '5':
                     $where[] = ['status', '=', -1];

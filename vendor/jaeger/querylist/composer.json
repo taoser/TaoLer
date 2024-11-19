@@ -4,16 +4,8 @@
     "keywords":["QueryList","phpQuery","spider"],
     "homepage": "http://querylist.cc",
     "require": {
-<<<<<<< HEAD
-        "PHP":">=8.0",
-        "jaeger/phpquery-single": "^1",
-        "jaeger/g-http": "^1.1",
-        "ext-dom": "*",
-        "symfony/var-dumper": ">3.4"
-=======
         "PHP":">=5.3.0",
         "jaeger/phpquery-single": "^0.9"
->>>>>>> 3.0
     },
     "suggest":{
     	"monolog/monolog":"Log support"
@@ -29,23 +21,5 @@
         "psr-4":{
             "QL\\":""
         }
-<<<<<<< HEAD
-    },
-    "autoload-dev": {
-        "files": [
-            "src/Collect/Support/helpers.php",
-            "src/Collect/Support/alias.php"
-        ],
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^8.5"
-    },
-    "scripts": {
-        "test": "./vendor/bin/phpunit"
-=======
->>>>>>> 3.0
     }
 }

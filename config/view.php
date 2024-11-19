@@ -22,16 +22,4 @@ return [
     'taglib_begin'  => '{',
     // 标签库标签结束标记
     'taglib_end'    => '}',
-<<<<<<< HEAD
-    // 去除空格和换行
-    'strip_space'   => true,
-	// 默认过滤方法 用于普通标签输出
-	'default_filter' => 'htmlspecialchars',
-	//模板输出替换
-	'tpl_replace_string'  =>  [
-    '__STATIC__'=>'/static/layui',
-	'__JS__' => '/static/res/',
-	]
-=======
->>>>>>> 3.0
 ];

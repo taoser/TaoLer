@@ -42,18 +42,6 @@ class Article extends BaseController
 		// 分类信息
 		$cateInfo = $cate->getCateInfo($ename);
 
-<<<<<<< HEAD
-		if(is_null($cateInfo)  && $ename != 'all') {
-			// 抛出 HTTP 异常
-			throw new \think\exception\HttpException(404, '没有可访问的数据！');
-		}
-		
-        //分类列表
-		$artList = $this->model->getCateList($ename,$page,$type,);
-
-		//	热议文章
-		$artHot = $this->model->getArtHot(10);
-=======
 		if(is_null($cateInfo) && $ename != 'all') {
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '没有可访问的数据！');
@@ -62,7 +50,6 @@ class Article extends BaseController
 		//分页url
 		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
 		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
->>>>>>> 3.0
 
 		//分页url
 		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
@@ -73,11 +60,6 @@ class Article extends BaseController
 			'ename'		=> $ename,
 			'cateinfo'	=> $cateInfo,
 			'type'		=> $type,
-<<<<<<< HEAD
-			'artList'	=> $artList,
-			'artHot'	=> $artHot,
-=======
->>>>>>> 3.0
 			'path'		=> $path
 		];
 
@@ -98,11 +80,7 @@ class Article extends BaseController
         if(is_null($artDetail)) throw new \think\exception\HttpException(404, '无内容');
 
 		// 2.pv
-<<<<<<< HEAD
-		$artDetail->inc('pv')->update();
-=======
 		$artDetail->inc('pv', 1)->save();
->>>>>>> 3.0
 		$pv = Db::name('article')->where('id',$id)->value('pv');
         $artDetail->pv = $pv;
 
@@ -110,11 +88,7 @@ class Article extends BaseController
 		$artDetail->content = $this->setArtTagLink($artDetail->content);
 
 		//	热议文章
-<<<<<<< HEAD
-		$artHot = $this->model->getArtHot(10);
-=======
 		$artHot = $this->model->getHots(10);
->>>>>>> 3.0
 
 		// 5.赞列表
 		$userZanList = [];
@@ -158,17 +132,10 @@ class Article extends BaseController
 		//评论
 		$comment = new Comment();
 		$comments = $comment->getComment($id, $page);
-<<<<<<< HEAD
-		//最新评论时间
-		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
-		
-
-=======
 
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
 		
->>>>>>> 3.0
 		View::assign([
 			'article'		=> $artDetail,
 			'artHot'	=> $artHot,
@@ -218,18 +185,6 @@ class Article extends BaseController
                 return Msgres::error($validate->getError());
             }
 
-<<<<<<< HEAD
-			// 处理图片内容
-			$data['content'] = $this->downUrlPicsReaplace($data['content']);
-			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-            $data['description'] = strip_tags($this->filterEmoji($data['description']));
-
-			
-            // 获取分类ename,appname
-            $cateName = Db::name('cate')->field('ename,appname')->find($data['cate_id']);
-
-=======
 			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
             $data['description'] = strip_tags($this->filterEmoji($data['description']));
@@ -258,7 +213,6 @@ class Article extends BaseController
             // 获取分类ename,appname
             $cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
 
->>>>>>> 3.0
 			// vip每天可免费发帖数
 			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
 
@@ -285,11 +239,7 @@ class Article extends BaseController
 					Db::name('user')->where('id', $this->uid)->update(['point' => $point]);
 				}
 			}
-<<<<<<< HEAD
-			
-=======
 			// halt($data);
->>>>>>> 3.0
             $result = $this->model->add($data);
             if ($result['code'] == 1) {
 				// 记录每天发帖量

@@ -1,15 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'taoser/taoler',
-<<<<<<< HEAD
-        'pretty_version' => '2.3.10.x-dev',
-        'version' => '2.3.10.9999999-dev',
-        'reference' => 'ff76cb76075a27f9969d9b89ecb669544e8b5e0f',
-=======
         'pretty_version' => '3.0.x-dev',
         'version' => '3.0.9999999.9999999-dev',
         'reference' => '9650ecf87779a72e62188758b65fb1d7ae898b81',
->>>>>>> 3.0
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -35,15 +29,9 @@
             'dev_requirement' => false,
         ),
         'endroid/qr-code' => array(
-<<<<<<< HEAD
-            'pretty_version' => '4.8.5',
-            'version' => '4.8.5.0',
-            'reference' => '0db25b506a8411a5e1644ebaa67123a6eb7b6a77',
-=======
             'pretty_version' => '6.0.3',
             'version' => '6.0.3.0',
             'reference' => 'bdbb06e767efe9abe3c00461662b4059a6cd0b55',
->>>>>>> 3.0
             'type' => 'library',
             'install_path' => __DIR__ . '/../endroid/qr-code',
             'aliases' => array(),
@@ -86,42 +74,9 @@
             'dev_requirement' => false,
         ),
         'illuminate/container' => array(
-<<<<<<< HEAD
-            'pretty_version' => 'v11.31.0',
-            'version' => '11.31.0.0',
-            'reference' => '06dfc614aff58384b28ba5ad191f6a02d6b192cb',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../illuminate/container',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'illuminate/contracts' => array(
-            'pretty_version' => 'v11.31.0',
-            'version' => '11.31.0.0',
-            'reference' => '56312862af937bd6da8e6dc8bbd88188dfb478f8',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../illuminate/contracts',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'intervention/image' => array(
-            'pretty_version' => '2.7.2',
-            'version' => '2.7.2.0',
-            'reference' => '04be355f8d6734c826045d02a1079ad658322dad',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../intervention/image',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'jaeger/g-http' => array(
-            'pretty_version' => 'V1.7.3',
-            'version' => '1.7.3.0',
-            'reference' => '035fe0ff6e3e0390769647ce14694875bf02cf22',
-=======
             'pretty_version' => 'v11.32.0',
             'version' => '11.32.0.0',
             'reference' => '6e31eb49e9c9e68356a55cd8f18fb8830b8158cd',
->>>>>>> 3.0
             'type' => 'library',
             'install_path' => __DIR__ . '/../illuminate/container',
             'aliases' => array(),
@@ -164,32 +119,14 @@
             'dev_requirement' => false,
         ),
         'jaeger/querylist' => array(
-<<<<<<< HEAD
-            'pretty_version' => 'V4.4.0',
-            'version' => '4.4.0.0',
-            'reference' => '6492f1512a0206a2f144658d91aaae8957f1c1a3',
-=======
             'pretty_version' => 'V3.2.1',
             'version' => '3.2.1.0',
             'reference' => '1a7864dcf8d979d6d57a2a3508f2dd62ce3233d6',
->>>>>>> 3.0
             'type' => 'library',
             'install_path' => __DIR__ . '/../jaeger/querylist',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-<<<<<<< HEAD
-        'laravel/serializable-closure' => array(
-            'pretty_version' => 'v1.3.6',
-            'version' => '1.3.6.0',
-            'reference' => 'f865a58ea3a0107c336b7045104c75243fa59d96',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../laravel/serializable-closure',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-=======
->>>>>>> 3.0
         'league/flysystem' => array(
             'pretty_version' => '2.5.0',
             'version' => '2.5.0.0',
@@ -208,57 +145,12 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-<<<<<<< HEAD
-        'liliuwei/thinkphp-social' => array(
-            'pretty_version' => 'v1.3',
-            'version' => '1.3.0.0',
-            'reference' => '2067fc2c2cc3b3d109602bc19c3e5a99c5f4c970',
-            'type' => 'think-extend',
-            'install_path' => __DIR__ . '/../liliuwei/thinkphp-social',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'overtrue/easy-sms' => array(
-            'pretty_version' => '2.7.1',
-            'version' => '2.7.1.0',
-            'reference' => 'd71d32f6631dda4c0da09c2831ff110a1c19873c',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../overtrue/easy-sms',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'php-di/invoker' => array(
-            'pretty_version' => '2.3.4',
-            'version' => '2.3.4.0',
-            'reference' => '33234b32dafa8eb69202f950a1fc92055ed76a86',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../php-di/invoker',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'php-di/php-di' => array(
-            'pretty_version' => '6.4.0',
-            'version' => '6.4.0.0',
-            'reference' => 'ae0f1b3b03d8b29dff81747063cbfd6276246cc4',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../php-di/php-di',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'php-di/phpdoc-reader' => array(
-            'pretty_version' => '2.2.1',
-            'version' => '2.2.1.0',
-            'reference' => '66daff34cbd2627740ffec9469ffbac9f8c8185c',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../php-di/phpdoc-reader',
-=======
         'overtrue/easy-sms' => array(
             'pretty_version' => '3.0.1',
             'version' => '3.0.1.0',
             'reference' => 'b97d8b785ae07fe8c181de8d9d1f7f146a5977f7',
             'type' => 'library',
             'install_path' => __DIR__ . '/../overtrue/easy-sms',
->>>>>>> 3.0
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -271,24 +163,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-<<<<<<< HEAD
-        'psr/cache' => array(
-            'pretty_version' => '2.0.0',
-            'version' => '2.0.0.0',
-            'reference' => '213f9dbc5b9bfbc4f8db86d2838dc968752ce13b',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../psr/cache',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'psr/cache-implementation' => array(
-            'dev_requirement' => false,
-            'provided' => array(
-                0 => '^1.0',
-            ),
-        ),
-=======
->>>>>>> 3.0
         'psr/container' => array(
             'pretty_version' => '2.0.2',
             'version' => '2.0.2.0',
@@ -302,10 +176,6 @@
             'dev_requirement' => false,
             'provided' => array(
                 0 => '1.1|2.0',
-<<<<<<< HEAD
-                1 => '^1.0',
-=======
->>>>>>> 3.0
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -405,29 +275,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-mbstring',
             'aliases' => array(),
-<<<<<<< HEAD
-            'dev_requirement' => false,
-        ),
-        'symfony/polyfill-php72' => array(
-            'pretty_version' => 'v1.31.0',
-            'version' => '1.31.0.0',
-            'reference' => 'fa2ae56c44f03bed91a39bfc9822e31e7c5c38ce',
-            'type' => 'metapackage',
-            'install_path' => NULL,
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'symfony/polyfill-php80' => array(
-            'pretty_version' => 'v1.31.0',
-            'version' => '1.31.0.0',
-            'reference' => '60328e362d4c2c802a54fcbf04f9d3fb892b4cf8',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../symfony/polyfill-php80',
-            'aliases' => array(),
-            'dev_requirement' => false,
-=======
             'dev_requirement' => true,
->>>>>>> 3.0
         ),
         'symfony/var-dumper' => array(
             'pretty_version' => 'v7.1.8',
@@ -439,30 +287,18 @@
             'dev_requirement' => true,
         ),
         'symfony/var-exporter' => array(
-<<<<<<< HEAD
-            'pretty_version' => 'v5.4.45',
-            'version' => '5.4.45.0',
-            'reference' => '862700068db0ddfd8c5b850671e029a90246ec75',
-=======
             'pretty_version' => 'v6.4.13',
             'version' => '6.4.13.0',
             'reference' => '0f605f72a363f8743001038a176eeb2a11223b51',
->>>>>>> 3.0
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/var-exporter',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'taoser/taoler' => array(
-<<<<<<< HEAD
-            'pretty_version' => '2.3.10.x-dev',
-            'version' => '2.3.10.9999999-dev',
-            'reference' => 'ff76cb76075a27f9969d9b89ecb669544e8b5e0f',
-=======
             'pretty_version' => '3.0.x-dev',
             'version' => '3.0.9999999.9999999-dev',
             'reference' => '9650ecf87779a72e62188758b65fb1d7ae898b81',
->>>>>>> 3.0
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -496,15 +332,9 @@
             'dev_requirement' => false,
         ),
         'topthink/framework' => array(
-<<<<<<< HEAD
-            'pretty_version' => 'v6.1.5',
-            'version' => '6.1.5.0',
-            'reference' => '57d1950a1844ef8d3098ea290032aeb92e2e32c3',
-=======
             'pretty_version' => 'v8.0.4',
             'version' => '8.0.4.0',
             'reference' => '846432655a82614a874cdaaac7be6870940b14d2',
->>>>>>> 3.0
             'type' => 'library',
             'install_path' => __DIR__ . '/../topthink/framework',
             'aliases' => array(),
@@ -537,27 +367,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-<<<<<<< HEAD
-        'topthink/think-installer' => array(
-            'pretty_version' => 'v2.0.5',
-            'version' => '2.0.5.0',
-            'reference' => '38ba647706e35d6704b5d370c06f8a160b635f88',
-            'type' => 'composer-plugin',
-            'install_path' => __DIR__ . '/../topthink/think-installer',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'topthink/think-migration' => array(
-            'pretty_version' => 'v3.1.1',
-            'version' => '3.1.1.0',
-            'reference' => '22c44058e1454f3af1d346e7f6524fbe654de7fb',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../topthink/think-migration',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-=======
->>>>>>> 3.0
         'topthink/think-multi-app' => array(
             'pretty_version' => 'v1.0.17',
             'version' => '1.0.17.0',
@@ -568,30 +377,18 @@
             'dev_requirement' => false,
         ),
         'topthink/think-orm' => array(
-<<<<<<< HEAD
-            'pretty_version' => 'v2.0.62',
-            'version' => '2.0.62.0',
-            'reference' => 'e53bfea572a133039ad687077120de5521af617f',
-=======
             'pretty_version' => 'v3.0.30',
             'version' => '3.0.30.0',
             'reference' => '6d8bcc86c3f9aba5a92010c17b68aeb8ad05ad3a',
->>>>>>> 3.0
             'type' => 'library',
             'install_path' => __DIR__ . '/../topthink/think-orm',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'topthink/think-template' => array(
-<<<<<<< HEAD
-            'pretty_version' => 'v2.0.10',
-            'version' => '2.0.10.0',
-            'reference' => '2b28c9f787c94f6c22312c9fe97dd3d926c03e1c',
-=======
             'pretty_version' => 'v3.0.1',
             'version' => '3.0.1.0',
             'reference' => '672b131681a8a2c54e5bc2b56bfd4bc7cf674d08',
->>>>>>> 3.0
             'type' => 'library',
             'install_path' => __DIR__ . '/../topthink/think-template',
             'aliases' => array(),
@@ -619,18 +416,6 @@
             'pretty_version' => 'v1.2.1',
             'version' => '1.2.1.0',
             'reference' => '78ba6093764c8e2d2952c7bb53a52b2472da1bc7',
-<<<<<<< HEAD
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../workerman/channel',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'workerman/gateway-worker' => array(
-            'pretty_version' => 'v3.1.17',
-            'version' => '3.1.17.0',
-            'reference' => '89478a15d1f2a8fe48070e631af977bbebeaf0d8',
-=======
->>>>>>> 3.0
             'type' => 'library',
             'install_path' => __DIR__ . '/../workerman/gateway-worker',
             'aliases' => array(),

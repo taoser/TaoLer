@@ -2,42 +2,8 @@
 ***
 `QueryList`是一个基于`phpQuery`的通用列表采集类,是一个简单、 灵活、强大的采集工具，采集任何复杂的页面     基本上就一句话就能搞定了。
 
-<<<<<<< HEAD
-# QueryList 
-`QueryList` is a simple, elegant, extensible PHP  Web Scraper (crawler/spider) ,based on phpQuery.
-
-[API Documentation](https://github.com/jae-jae/QueryList/wiki) 
-
-[中文文档](README-ZH.md)
-
-## Features
-- Have the same CSS3 DOM selector as jQuery
-- Have the same DOM manipulation API as jQuery
-- Have a generic list crawling program
-- Have a strong HTTP request suite, easy to achieve such as: simulated landing, forged browser, HTTP proxy and other complex network requests
-- Have a messy code solution
-- Have powerful content filtering, you can use the jQuey selector to filter content
-- Has a high degree of modular design, scalability and strong
-- Have an expressive API
-- Has a wealth of plug-ins
-
-Through plug-ins you can easily implement things like:
-- Multithreaded crawl
-- Crawl JavaScript dynamic rendering page (PhantomJS/headless WebKit)
-- Image downloads to local
-- Simulate browser behavior such as submitting Form forms
-- Web crawler
-- .....
-
-## Requirements
-- PHP >= 8.0
-
-## Installation
-By Composer installation:
-=======
 # QueryList 安装
 通过`composer`安装:
->>>>>>> 3.0
 ```
 composer require jaeger/querylist
 ```

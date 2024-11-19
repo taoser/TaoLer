@@ -9,24 +9,12 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-<<<<<<< HEAD
-        '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
-        'b33e3d135e5d9e47d845c576147bda89' => __DIR__ . '/..' . '/php-di/php-di/src/functions.php',
-=======
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
->>>>>>> 3.0
         '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         '8c783b3a3de2f6d9177022b5ccdcc841' => __DIR__ . '/..' . '/yansongda/pay/src/Functions.php',
@@ -48,13 +36,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             'taoser\\think\\' => 13,
             'taoser\\' => 7,
         ),
-<<<<<<< HEAD
-        'l' => 
-        array (
-            'liliuwei\\social\\' => 16,
-        ),
-=======
->>>>>>> 3.0
         'a' => 
         array (
             'app\\' => 4,
@@ -71,10 +52,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         ),
         'S' => 
         array (
-<<<<<<< HEAD
-            'Symfony\\Polyfill\\Php80\\' => 23,
-=======
->>>>>>> 3.0
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
@@ -105,13 +82,8 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         ),
         'I' => 
         array (
-<<<<<<< HEAD
-            'Invoker\\' => 8,
-            'Intervention\\Image\\' => 19,
-=======
             'Intervention\\Image\\' => 19,
             'Intervention\\Gif\\' => 17,
->>>>>>> 3.0
             'Illuminate\\Contracts\\' => 21,
             'Illuminate\\Container\\' => 21,
         ),
@@ -183,13 +155,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             0 => __DIR__ . '/..' . '/taoser/think-addons/src',
             1 => __DIR__ . '/..' . '/taoser/think-setarr/src',
         ),
-<<<<<<< HEAD
-        'liliuwei\\social\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/liliuwei/thinkphp-social/src',
-        ),
-=======
->>>>>>> 3.0
         'app\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
@@ -210,13 +175,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
-<<<<<<< HEAD
-        'Symfony\\Polyfill\\Php80\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ),
-=======
->>>>>>> 3.0
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
@@ -243,13 +201,8 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         ),
         'Psr\\Http\\Message\\' => 
         array (
-<<<<<<< HEAD
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
-=======
             0 => __DIR__ . '/..' . '/psr/http-message/src',
             1 => __DIR__ . '/..' . '/psr/http-factory/src',
->>>>>>> 3.0
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -263,21 +216,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-<<<<<<< HEAD
-        'Psr\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/cache/src',
-        ),
-        'PhpDocReader\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/php-di/phpdoc-reader/src/PhpDocReader',
-        ),
-        'Phinx\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-migration/phinx',
-        ),
-=======
->>>>>>> 3.0
         'PHPSocketIO\\' => 
         array (
             0 => __DIR__ . '/..' . '/workerman/phpsocket.io/src',

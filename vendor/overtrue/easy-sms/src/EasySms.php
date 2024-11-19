@@ -27,11 +27,7 @@ use Overtrue\EasySms\Support\Config;
 class EasySms
 {
     /**
-<<<<<<< HEAD
-     * @var \Overtrue\EasySms\Support\Config
-=======
      * @var Config
->>>>>>> 3.0
      */
     protected $config;
 
@@ -51,11 +47,7 @@ class EasySms
     protected $gateways = [];
 
     /**
-<<<<<<< HEAD
-     * @var \Overtrue\EasySms\Messenger
-=======
      * @var Messenger
->>>>>>> 3.0
      */
     protected $messenger;
 
@@ -66,11 +58,6 @@ class EasySms
 
     /**
      * Constructor.
-<<<<<<< HEAD
-     *
-     * @param array $config
-=======
->>>>>>> 3.0
      */
     public function __construct(array $config)
     {
@@ -80,16 +67,6 @@ class EasySms
     /**
      * Send a message.
      *
-<<<<<<< HEAD
-     * @param string|array                                       $to
-     * @param \Overtrue\EasySms\Contracts\MessageInterface|array $message
-     * @param array                                              $gateways
-     *
-     * @return array
-     *
-     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
-     * @throws \Overtrue\EasySms\Exceptions\NoGatewayAvailableException
-=======
      * @param string|array           $to
      * @param MessageInterface|array $message
      *
@@ -97,7 +74,6 @@ class EasySms
      *
      * @throws InvalidArgumentException
      * @throws Exceptions\NoGatewayAvailableException
->>>>>>> 3.0
      */
     public function send($to, $message, array $gateways = [])
     {
@@ -117,15 +93,9 @@ class EasySms
      *
      * @param string|null $name
      *
-<<<<<<< HEAD
-     * @return \Overtrue\EasySms\Contracts\GatewayInterface
-     *
-     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
-=======
      * @return GatewayInterface
      *
      * @throws InvalidArgumentException
->>>>>>> 3.0
      */
     public function gateway($name)
     {
@@ -141,15 +111,9 @@ class EasySms
      *
      * @param string|null $strategy
      *
-<<<<<<< HEAD
-     * @return \Overtrue\EasySms\Contracts\StrategyInterface
-     *
-     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
-=======
      * @return StrategyInterface
      *
      * @throws InvalidArgumentException
->>>>>>> 3.0
      */
     public function strategy($strategy = null)
     {
@@ -175,20 +139,11 @@ class EasySms
     /**
      * Register a custom driver creator Closure.
      *
-<<<<<<< HEAD
-     * @param string   $name
-     * @param \Closure $callback
-     *
-     * @return $this
-     */
-    public function extend($name, Closure $callback)
-=======
      * @param string $name
      *
      * @return $this
      */
     public function extend($name, \Closure $callback)
->>>>>>> 3.0
     {
         $this->customCreators[$name] = $callback;
 
@@ -196,11 +151,7 @@ class EasySms
     }
 
     /**
-<<<<<<< HEAD
-     * @return \Overtrue\EasySms\Support\Config
-=======
      * @return Config
->>>>>>> 3.0
      */
     public function getConfig()
     {
@@ -208,11 +159,7 @@ class EasySms
     }
 
     /**
-<<<<<<< HEAD
-     * @return \Overtrue\EasySms\Messenger
-=======
      * @return Messenger
->>>>>>> 3.0
      */
     public function getMessenger()
     {
@@ -224,18 +171,10 @@ class EasySms
      *
      * @param string $name
      *
-<<<<<<< HEAD
-     * @throws \InvalidArgumentException
-     *
-     * @return GatewayInterface
-     *
-     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
-=======
      * @return GatewayInterface
      *
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
->>>>>>> 3.0
      */
     protected function createGateway($name)
     {
@@ -267,15 +206,9 @@ class EasySms
      * @param string $gateway
      * @param array  $config
      *
-<<<<<<< HEAD
-     * @return \Overtrue\EasySms\Contracts\GatewayInterface
-     *
-     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
-=======
      * @return GatewayInterface
      *
      * @throws InvalidArgumentException
->>>>>>> 3.0
      */
     protected function makeGateway($gateway, $config)
     {
@@ -309,11 +242,6 @@ class EasySms
      *
      * @param string $gateway
      * @param array  $config
-<<<<<<< HEAD
-     *
-     * @return mixed
-=======
->>>>>>> 3.0
      */
     protected function callCustomCreator($gateway, $config)
     {
@@ -321,15 +249,9 @@ class EasySms
     }
 
     /**
-<<<<<<< HEAD
-     * @param string|\Overtrue\EasySms\Contracts\PhoneNumberInterface $number
-     *
-     * @return \Overtrue\EasySms\Contracts\PhoneNumberInterface|string
-=======
      * @param string|PhoneNumberInterface $number
      *
      * @return PhoneNumberInterface|string
->>>>>>> 3.0
      */
     protected function formatPhoneNumber($number)
     {
@@ -341,15 +263,9 @@ class EasySms
     }
 
     /**
-<<<<<<< HEAD
-     * @param array|string|\Overtrue\EasySms\Contracts\MessageInterface $message
-     *
-     * @return \Overtrue\EasySms\Contracts\MessageInterface
-=======
      * @param array|string|MessageInterface $message
      *
      * @return MessageInterface
->>>>>>> 3.0
      */
     protected function formatMessage($message)
     {
@@ -368,17 +284,9 @@ class EasySms
     }
 
     /**
-<<<<<<< HEAD
-     * @param array $gateways
-     *
-     * @return array
-     *
-     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
-=======
      * @return array
      *
      * @throws InvalidArgumentException
->>>>>>> 3.0
      */
     protected function formatGateways(array $gateways)
     {

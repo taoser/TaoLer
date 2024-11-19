@@ -36,8 +36,6 @@ class Article extends TagLib
         'url'           => ['attr' => '', 'close' => 0],
         'time'          => ['attr' => '', 'close' => 0],
         'uptime'        => ['attr' => '', 'close' => 0],
-<<<<<<< HEAD
-=======
         'is_top'        => ['attr' => '', 'close' => 0],
         'has_img'       => ['attr' => '', 'close' => 0],
         'has_video'     => ['attr' => '', 'close' => 0],
@@ -47,7 +45,6 @@ class Article extends TagLib
         'cate_id'       => ['attr' => '', 'close' => 0],
 
         'field'         => ['attr' => 'name', 'close' => 0],
->>>>>>> 3.0
 
         'cate'          => ['attr' => 'name', 'close' => 0],
         'user'          => ['attr' => 'name', 'close' => 0],
@@ -145,17 +142,7 @@ class Article extends TagLib
         return '{$article.create_time}';
     }
 
-<<<<<<< HEAD
-    public function tagUptime(): string
-    {
-        return '{$article.update_time}';
-    }
-
-    // 详情分类
-    public function tagCate($tag): string
-=======
     public function tagUptime(array $tag, string $content): string
->>>>>>> 3.0
     {
         return '{$article.update_time}';
     }

@@ -2,8 +2,6 @@
 
 namespace Illuminate\Contracts\Pagination;
 
-<<<<<<< HEAD
-=======
 /**
  * @template TKey of array-key
  *
@@ -11,7 +9,6 @@ namespace Illuminate\Contracts\Pagination;
  *
  * @extends Paginator<TKey, TValue>
  */
->>>>>>> 3.0
 interface LengthAwarePaginator extends Paginator
 {
     /**
