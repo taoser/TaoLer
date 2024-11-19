@@ -36,7 +36,7 @@
 					<article class="list-item block card-plain">
 						{if getOnepic($article.content)}
 						<figure class="media media-3x2 col-4 col-md-4 d-none d-md-block">
-							<a class="media-content" href="{article:link /}" title="{article:title /}">
+							<a class="media-content" href="{article:url /}" title="{article:title /}">
 								<img src="{:getOnepic($article.content)}" width="233" height="155" alt="{article:title /}">
 							</a>
 						</figure>
@@ -44,7 +44,7 @@
 						<div class="list-width list-content">
 							<div class="list-body">
 								<h3>
-									<a href="{article:link /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
+									<a href="{article:url /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
 								</h3>
 								<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
 									<p class="h-3x">{:getArtContent($article.content)}</p>
@@ -57,7 +57,7 @@
 									<i class="text-primary">·</i>
 									</div>
 									<div class="d-inline-block">
-									<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:auther /}</a>
+									<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:author /}" rel="category">{article:author /}</a>
 										{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
 										{$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
 										{$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
@@ -65,7 +65,7 @@
 									</div>
 									<div class="flex-fill"></div>
 									<div class="mx-1">
-									<a href="{article:link /}" class="text-muted">阅读全文</a>
+									<a href="{article:url /}" class="text-muted">阅读全文</a>
 									</div>
 								</div>
 							</div>

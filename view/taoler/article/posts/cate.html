@@ -18,20 +18,20 @@
 		<div class="layui-col-md8">
 			<div class="fly-panel" style="margin-bottom: 0;">
 				<ul class="fly-list">
-					{volist name="artList['data']" id="art"}
+					{article:list}
 					<li>
 						<a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
 							<img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
 						</a>
 						<h2>
-							<a href="{$Request.domain}{$art.url}"  style="color:{$art.title_color ?? '#333'};">{$art.title}</a>
+							<a href="{$art.url}"  style="color:{$art.title_color ?? '#333'};">{$art.title}</a>
 						</h2>
 						
 						<div class="fly-list-info">
 							{if config('taoler.config.cate_show') == 1}
 							<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
 							{/if}
-							<a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
+							<a href="{:url('user/home',['id'=>$art.user.id])}" link>
 								<cite>{$art.user.nickname ?: $art.user.name}</cite>
 								<i>{$art.create_time|date='Y-m-d'}</i>
 							</a>
@@ -51,7 +51,7 @@
 							{/if}
 						</div>
 					</li>
-					{/volist}	
+					{/article:list}	
 				</ul>
 				<div style="text-align: center" id="pages"></div>
 			</div>

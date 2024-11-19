@@ -25,8 +25,8 @@
 				{//图标}
 				<div class="user-questions">
 					<a class="user-avatar" href="{article:user name='link' /}">
-						<img src="{article:user name='user_img' /}" alt="{article:user name='name' /}" />
-						<cite>{article:auther} </cite>
+						<img src="{article:author_avatar' /}" alt="{article:user name='name' /}" />
+						<cite>{article:author /} </cite>
 					</a>
 					<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px">{$article.update_time|date="Y-h-d H:i"}</span>
 					<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>
@@ -46,22 +46,22 @@
 				{//问题内容}
 				<div style="margin: 10px 0; font-size: 16px; font-weight: bold; color: rgb(161, 155, 155)">问题描述：</div>
 
-				<article class="detail-body photos" id="content">{article:content}</article>
+				<article class="detail-body photos" id="content">{article:content /}</article>
 
-					{//解密文件}
+				{//解密文件}
 				{empty name="passJieMi"}
-					{if($article.read_type == 1)}
-					<div id="jiemi" style="text-align:center">
-						<button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
-					</div>
-					{/if}
+				{if($article.read_type == 1)}
+				<div id="jiemi" style="text-align:center">
+					<button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
+				</div>
+				{/if}
 				{/empty}
 
 				{notempty name="tags"}
-					<div style="margin-top: 15px">标签
-					{volist name="tags" id="vo" }
+				<div style="margin-top: 15px">标签
+				{volist name="tags" id="vo" }
 					<a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
-					{/volist}
+				{/volist}
 					</div>
 				{/notempty}
 

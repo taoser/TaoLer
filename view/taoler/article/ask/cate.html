@@ -44,10 +44,10 @@
 							<span >阅读</span>
 						</div>
 						<div class="que-body">
-							<h2><a href="{article:link}"  style="color:{article:title_color};">{article:title}</a></h2>
+							<h2><a href="{article:url /}"  style="color:{article:title_color /};">{article:title /}</a></h2>
 							<div class="que-user-info">
 								<a href="{article:user name='link'}" class="que-avatar">
-									<cite>{article:auther /}</cite>
+									<cite>{article:author /}</cite>
 								</a>
 								{$article.create_time|date='Y-m-d'}
 								{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
@@ -73,7 +73,7 @@
 				<div class="fly-panel-main">
 					<ul>
 						{volist name="hotTag" id="vo"}
-						<li style="padding:10px;display:inline-block;height: 15px;"><a href="{$Request.domain}{$vo.url}">{$vo.name}</a></li>
+						<li style="padding:10px;display:inline-block;height: 15px;"><a href="{$vo.url}">{$vo.name}</a></li>
 						{/volist}
 					</ul>
 				</div>

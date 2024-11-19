@@ -3,6 +3,7 @@ declare (strict_types = 1);
 
 namespace app\common\model;
 
+use Exception;
 use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Cache;
@@ -169,7 +170,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getArtTop(int $num)
+    public function getTops(int $num)
     {
         return Cache::remember('top_article', function() use($num){
             // $topIdArr = $this::where(['status' => '1', 'is_top' => '1'])->limit($num)->column('id');
@@ -201,7 +202,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getArtList(int $num)
+    public function getIndexs(int $num)
     {
         return Cache::remember('idx_article', function() use($num){
             $data = $this::field('id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time')
@@ -233,7 +234,7 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getArtHot(int $num)
+    public function getHots(int $num)
     {
         return Cache::remember('article_hot', function() use($num){
             $comments = Comment::field('article_id, count(*) as count')
@@ -317,9 +318,17 @@ class Article extends Model
      * @return mixed
      * @throws \Throwable
      */
-    public function getCateList(string $ename, string $type, int $page = 1)
+    public function getCateList(string $ename, string $type, int $page = 1, int $limit = 15)
     {
         $where = [];
+        $cateId = Cate::where('status', 1)->where('ename', $ename)->value('id');
+
+        if(!is_null($cateId)){
+            $where[] = ['cate_id' ,'=', $cateId];
+        }
+
+        $where[] = ['status', '=', 1];
+
         switch ($type) {
             //查询文章,15个分1页
             case 'jie':
@@ -336,104 +345,57 @@ class Article extends Model
                 break;
         }
 
-        $where[] = ['status', '=', '1'];
-
-        // ··································
-        $cateId = Cate::where('ename',$ename)->value('id');
-        if(!is_null($cateId)){
-            $where[] = ['cate_id' ,'=', $cateId];
-        }
-
-        $count = (int) Cache::remember('cate_count_'.$ename, function() use($where){
-            return $this->where($where)->count();
+        // 文章分类总数
+        $count = (int) Cache::remember("cate_count_{$ename}_{$type}", function() use($where){
+            return $this::where($where)->count();
         });
 
+        $data = [];
 
-        return Cache::remember('cate_list_'.$ename.$type.$page, function() use($where,$ename,$page,$count) {
-            // 默认排序
-            $order = ['id' => 'desc'];
-            if($page === 1) {
-                // 第一页定位
-                if(count($where)) {
-                    $maxId = (int)$this->where($where)->max('id');
-                } else {
-                    $maxId = $this->order('id', 'desc')->value('id');
-                }
-                $where[] = ['id', '<=', $maxId];
-            } else {
-                // 非第一页，可以获取前分页标记
-                $opage = Session::get('opage');
+        // 总共页面数
+        $lastPage = (int) ceil($count / $limit); // 向上取整
+ 
+        if($count) {
 
-                switch($page) {
-                    // next
-                    case $page > $opage['opg']:
-                        $where[] = ['id', '<=', $opage['lid'] - 1];
-                        break;
-                    // up
-                    case $page < $opage['opg']:
-                        $where[] = ['id', '>=', $opage['fid'] + 1];
-                        $order = ['id' => 'asc']; // 向上翻页时正序
-                        break;
-                }
+            if($page > $lastPage) {
+                throw new Exception('no data');
             }
 
-//             $list = $this::field('id')->where($where)->order(['id'=>'desc'])->paginate([
-//                 'list_rows' => 15,
-//                 'page' => $page
-//             ]);
+            $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit) {
+                $articles = Article::field('id')->where($where)->order('id', 'desc')->page($page, $limit)->select();
+                $ids = $articles->toArray();
+                $idArr = array_column($ids, 'id');
 
-//             $idArr = [];
-//             if($list['total'] > 0) {
-//                 foreach($list['data'] as $v) {
-//                     $idArr[] = $v['id'];
-//                 }
-//             }
-
-            $data = $this::field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
-            ->with([
-                'cate' => function($query) {
-                    $query->field('id,catename,ename');
-                },
-                'user' => function($query){
-                    $query->field('id,name,nickname,user_img,vip');
-                }
-            ])->withCount(['comments'])
-                //->where('id','in',$idArr)
-                //->order(['id'=>'desc'])
-                ->where($where)
-                ->order($order)
-                ->limit(15)
+                $list =  Article::field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
+                ->with([
+                    'cate' => function(Query $query) {
+                        $query->field('id,catename,ename');
+                    },
+                    'user' => function(Query $query){
+                        $query->field('id,name,nickname,user_img,vip');
+                    }
+                ])
+                ->withCount(['comments'])
+                ->whereIn('id', $idArr)
+                ->order('id', 'desc')
+                ->select()
                 ->append(['url'])
                 ->hidden(['art_pass'])
-                ->select()
                 ->toArray();
 
-                // 向上翻页反转
-            if($page != 1 && $page < $opage['opg']) {
-                $data = array_reverse($data);
-            }
+                return $list;
+                
+            }, 600);
+        }
 
-            if($count) {
-                // 翻页定位
-                Session::set('opage',['opg' => $page, 'fid' => $data[0]['id'], 'lid' => end($data)['id']]);
-            }
-            
-            // return [
-            //     'total' => $list['total'],
-            //     'per_page' => $list['per_page'],
-            //     'current_page' => $list['current_page'],
-            //     'last_page' => $list['last_page'],
-            //     'data' => $data
-            // ];
+        return [
+            'total' => $count,
+            'per_page' => $limit,
+            'current_page' => $page,
+            'last_page' => $lastPage,
+            'data' => $data
+        ];
 
-            return [
-                'total' => $count,
-                'per_page' => 15,
-                'current_page' => $page,
-                'data' => $data
-            ];
-
-        }, 600);
     }
 
     // 获取用户发帖列表

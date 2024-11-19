@@ -40,49 +40,12 @@ class Index extends BaseController
 		// $a = $alipay->index();
 		// $b= $weixin->index();
 		// var_dump($a,$b);
-
-		// $hook['hook_name'] = 'thinkphp';
-		// $hook['hook_type'] = 1;
-		// $hook['template'] = 'taoler';
-		// $hook['sort'] = 111;
-		// $hook['create_time'] = time();
-		// $hook['param'] = [
-		// 	'article_id'    => '$article.id',
-		// 	'uid' => 1,
-		// ];
-		// Db::name('addon_hook')
-		// 	->json(['param'])
-		// 	->insert($hook);
-
-		// $lawyers = Db::name('addon_lawyer')
-		// //->json(['begood'])
-		// ->where('begood','like', '%1%')
-		// ->select()
-		// ->toArray();
-
-		// $count = count($lawyers);
-
-		// if($count) {
-		// 	$k = rand(0,$count - 1) ;
-		// 	$lawyer = $lawyers[$k];
-		// }
-
-// $data = [
-// 	['msg' => '111','id' => 1],
-// 	['msg' => '111', 'id' => 1],
-// ];
-
-// Cache::set('data', $data);
-// Cache::delete('data');
-// $ddd = Cache::get('data');
-// halt($ddd);
-
 		
 		//置顶文章
-		$artTop = Article::getArtTop(5);
+		$artTop = Article::getTops(5);
         //首页文章列表,显示10个
-        $artList = Article::getArtList(10);
-// halt($artList);
+        $artList = Article::getIndexs(10);
+
 
 		View::assign([
 			'artTop'	=>	$artTop,

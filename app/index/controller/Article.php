@@ -42,7 +42,7 @@ class Article extends BaseController
 		// 分类信息
 		$cateInfo = $cate->getCateInfo($ename);
 
-		if(is_null($cateInfo)) {
+		if(is_null($cateInfo) && $ename != 'all') {
 			// 抛出 HTTP 异常
 			throw new \think\exception\HttpException(404, '没有可访问的数据！');
 		}
@@ -51,7 +51,7 @@ class Article extends BaseController
 		$artList = $this->model->getCateList($ename,$type,$page);
 
 		//	热议文章
-		$artHot = $this->model->getArtHot(10);
+		$artHot = $this->model->getHots(10);
 
 		//分页url
 		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
@@ -92,7 +92,7 @@ class Article extends BaseController
 		$artDetail->content = $this->setArtTagLink($artDetail->content);
 
 		//	热议文章
-		$artHot = $this->model->getArtHot(10);
+		$artHot = $this->model->getHots(10);
 
 		// 5.赞列表
 		$userZanList = [];

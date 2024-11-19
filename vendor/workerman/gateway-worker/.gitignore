@@ -1,0 +1,7 @@
+.buildpath
+.project
+.settings
+.idea
+vendor
+.vscode
+composer.lock
