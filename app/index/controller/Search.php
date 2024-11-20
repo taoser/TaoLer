@@ -24,16 +24,13 @@ class Search extends BaseController
         $ser = Request::only(['keywords']);
 		$artList = Article::getSearchKeyWord($ser['keywords']);
         $counts = $artList->count();
-        //	查询热议
-        $artHot = Article::getArtHot(10);
 
         $searchs = [
             'artList' => $artList,
             'keywords' => $ser['keywords'],
-            'counts' => $counts,
-            'artHot'=>$artHot,
-            'jspage'=>''
+            'counts' => $counts
         ];
+        
         View::assign($searchs);
 		return View::fetch('search');
 	}

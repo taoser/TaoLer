@@ -237,7 +237,7 @@ class Article extends Model
      */
     public function getHots(int $num = 10)
     {
-        return Cache::remember('article_hot', function() use($num){
+        $hots =  Cache::remember('article_hot', function() use($num){
 
             $comment = Db::name('comment')
             ->alias('c')
@@ -252,7 +252,7 @@ class Article extends Model
             ->toArray();
 
             $idArr = array_column($comment, 'article_id');
-
+            
             $where = [];
             if(count($idArr)) {
                 // 评论数
@@ -283,8 +283,11 @@ class Article extends Model
                 ->append(['url'])
                 ->select();
             }
+
             return $artHot;
         }, 3600);
+
+        return $hots;
     }
 
     /**
