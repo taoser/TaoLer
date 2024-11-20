@@ -26,7 +26,7 @@
             <a href="{article:user name='link' /}" class="fly-avatar">
               <img src="{article:author_avatar /}" alt="{article:author /}">
             </a>
-            <h2><a href="{article:link /}"  style="color: {article:title_color ?? '#333'};">{article:title}</a></h2>
+            <h2><a href="{article:url /}"  style="color: {article:title_color ?? '#333'};">{article:title}</a></h2>
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
               <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
@@ -57,18 +57,6 @@
     </div>
     <div class="layui-col-md4">
         <!--列表广告图片位-->
-        {:hook('ads_cate_rimg')}
-        <dl class="fly-panel fly-list-one layui-hide-xs">
-        <dt class="fly-panel-title">{:lang('hot post list')}</dt>
-        {article:list type="hot"}
-		<dd>
-          <a href="{article:link /}">{article:title /}</a>
-          <span><i class="iconfont icon-pinglun1"></i> {$article.comments_count}</span>
-        </dd>
-		{/article:list} 
-      </dl>
-        <!--列表广告赞助位-->
-        {:hook('ads_cate_support')}
     </div>
   </div>
 </div>
