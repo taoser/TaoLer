@@ -20,9 +20,9 @@
 			<div class="fly-panel" style="margin-bottom: 0;">
 				<div class="layui-tab layui-tab-card" style="margin-top: 0px;">
 					<ul class="layui-tab-title">
-					<li {if condition="$type eq 'all'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} "  >{:lang('all')}</a></li>
-					<li {if condition="$type eq 'jie'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} ">{:lang('end')}</a></li>
-					<li {if condition="$type eq 'wait'" } class="layui-this" {/if}><a href="{$Request.domain}{:url('cate_type',['ename' => $Request.param.ename,'type' => 'wait',])}">{:lang('未解决')}</a>	</li>
+					<li {if condition="$Request.param.type eq 'all'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} "  >{:lang('all')}</a></li>
+					<li {if condition="$Request.param.type eq 'jie'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} ">{:lang('end')}</a></li>
+					<li {if condition="$Request.param.type eq 'wait'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'wait',])}">{:lang('未解决')}</a>	</li>
 					</ul>
 				</div>
 				<ul class="question-list">

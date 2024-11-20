@@ -43,7 +43,8 @@ class Comment extends Model
     public function getComment(int $id, int $page)
     {
         $comment = Cache::remember("comment_{$id}_{$page}", function() use($id, $page){
-            return $this->withTrashed()->with(['user'=>function($query){
+            return $this->withTrashed()
+            ->with(['user'=>function($query){
                 $query->field('id,name,user_img,sign,city,vip');
             }])
                 ->where(['article_id'=>(int)$id,'status'=>1])

@@ -48,14 +48,12 @@ class Article extends BaseController
 		}
 
 		//分页url
-		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
+		$url = (string) url('cate_page',['ename'=>$ename, 'type'=>$type, 'page'=>$page]);
 		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
 
 
 		$assignArr = [
-			'ename'		=> $ename,
 			'cateinfo'	=> $cateInfo,
-			'type'		=> $type,
 			'path'		=> $path
 		];
 
