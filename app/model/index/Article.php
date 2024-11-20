@@ -8,6 +8,7 @@ use think\model\concern\SoftDelete;
 use think\facade\Cache;
 use think\facade\Session;
 use think\db\Query;
+use think\facade\Db;
 
 class Article extends Model
 {
@@ -178,17 +179,21 @@ class Article extends Model
      */
     public static function getHots(int $num = 10)
     {
-        return Cache::remember('article_hot', function() use($num){
-            $comments = Comment::field('article_id, count(*) as count')
-            ->hasWhere('article', ['status' => 1])
-            ->group('article_id')
+        $hots = Cache::remember('article_hot', function() use($num){
+            $comment = Db::name('comment')
+            ->alias('c')
+            ->field('c.article_id, count(*) as count')
+            ->join('article a', 'c.article_id = a.id')
+            ->where(['c.status' => 1, 'c.delete_time' => 0])
+            ->where(['a.status' => 1, 'a.delete_time' => 0])
+            ->group('c.article_id')
+            ->order('count', 'desc')
             ->limit($num)
-            ->select();
+            ->select()
+            ->toArray();
 
-            $idArr = [];
-            foreach($comments as $v) {
-                $idArr[] = $v->article_id;
-            }
+            $idArr = array_column($comment, 'article_id');
+
             $where = [];
             if(count($idArr)) {
                 // 评论数
@@ -227,6 +232,8 @@ class Article extends Model
             }
             return $artHot->toArray();
         }, 3600);
+
+        return $hots;
     }
 
     /**

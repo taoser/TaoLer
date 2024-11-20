@@ -11,12 +11,12 @@
 
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
+use app\controller\index\IndexBaseController;
 use think\facade\View;
 use think\facade\Request;
 use app\facade\Article;
 
-class Search extends BaseController
+class Search extends IndexBaseController
 {
     //搜索功能
 	public function getSearch()
@@ -24,15 +24,11 @@ class Search extends BaseController
         $ser = Request::only(['keywords']);
 		$artList = Article::getSearchKeyWord($ser['keywords']);
         $counts = $artList->count();
-        //	查询热议
-        $artHot = Article::getArtHot(10);
 
         $searchs = [
             'artList' => $artList,
             'keywords' => $ser['keywords'],
-            'counts' => $counts,
-            'artHot'=>$artHot,
-            'jspage'=>''
+            'counts' => $counts
         ];
         View::assign($searchs);
 		return View::fetch('search');
