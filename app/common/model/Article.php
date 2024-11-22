@@ -10,6 +10,7 @@ use think\facade\Cache;
 use think\facade\Session;
 use think\facade\Config;
 use think\db\Query;
+use think\facade\Db;
 
 class Article extends Model
 {
@@ -236,17 +237,22 @@ class Article extends Model
      */
     public function getHots(int $num = 10)
     {
-        return Cache::remember('article_hot', function() use($num){
-            $comments = Comment::field('article_id, count(*) as count')
-            ->hasWhere('article', ['status' => '1'])
-            ->group('article_id')
-            ->limit($num)
-            ->select();
+        $hots =  Cache::remember('article_hot', function() use($num){
 
-            $idArr = [];
-            foreach($comments as $v) {
-                $idArr[] = $v->article_id;
-            }
+            $comment = Db::name('comment')
+            ->alias('c')
+            ->field('c.article_id, count(*) as count')
+            ->join('article a', 'c.article_id = a.id')
+            ->where(['c.status' => 1, 'c.delete_time' => 0])
+            ->where(['a.status' => 1, 'a.delete_time' => 0])
+            ->group('c.article_id')
+            ->order('count', 'desc')
+            ->limit($num)
+            ->select()
+            ->toArray();
+
+            $idArr = array_column($comment, 'article_id');
+            
             $where = [];
             if(count($idArr)) {
                 // 评论数
@@ -258,7 +264,7 @@ class Article extends Model
                 ->withCount('comments')
                 ->where($where)
                 //->whereYear('create_time')
-                // ->order('comments_count','desc')
+                ->order('comments_count','desc')
                 ->append(['url'])
                 ->select();
 
@@ -277,8 +283,11 @@ class Article extends Model
                 ->append(['url'])
                 ->select();
             }
+
             return $artHot;
         }, 3600);
+
+        return $hots;
     }
 
     /**
@@ -482,10 +491,12 @@ class Article extends Model
                 ['article_id','<>',$id]
             ])->column('article_id');
 
-            $tags = $this::field('id,cate_id,user_id,title,content,create_time,pv,read_type,art_pass')->whereIn('id', $arrId)
+            $tags = $this::field('id,cate_id,user_id,title,content,create_time,pv,read_type,art_pass')
+            ->whereIn('id', $arrId)
             ->where(['status'=>1])
-            ->with(['user' => function($query){
-                $query->field('id,name,user_img');
+            ->with([
+                'user' => function($query){
+                    $query->field('id,name,user_img');
                 },'cate' => function($query){
                     $query->field('id,catename');
                 }

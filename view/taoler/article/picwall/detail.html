@@ -403,7 +403,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
     } else {
       $.ajax({
         type: "post",
-        url: "{:url('article/comment')}",
+        url: "{:url('comment/add')}",
         data: filed,
         dataType: "json",
         success:function (data) {

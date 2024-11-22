@@ -12,6 +12,6 @@ class LoginCheck
 			return $next($request);
 		}
 		
-		return redirect((string) url('login/index'));
+		return redirect((string) url('user_login'));
     }
 }

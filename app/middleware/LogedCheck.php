@@ -9,7 +9,7 @@ class LogedCheck
     {
 		//已登陆跳出
 		if(Session::has('user_id')){
-			return redirect((string) url('user/index'));
+			return redirect((string) url('user_index'));
 		}
 		return $next($request);
     }

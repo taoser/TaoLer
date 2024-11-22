@@ -43,17 +43,8 @@
     </div>
     {//右栏}
     <div class="layui-col-md4">
-      <dl class="fly-panel fly-list-one">
-        <dt class="fly-panel-title">本周热议</dt>
-        {volist name="artHot" id="vo"  empty="还没有帖子"}
-        <dd>
-          <a href="{$Request.domain}{$vo.url}">{$vo.title}</a>
-          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-        </dd>
-        {/volist}
-      </dl>
       <!--自定义广告-->
-      {:hook('ads_index_rimg')}
+
     </div>
   </div>
 </div>

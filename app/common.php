@@ -313,4 +313,26 @@ if (!function_exists('__')) {
     }
 }
 
+function advanced_compress_html_js($code) {
+    // 去除html注释
+    $code = preg_replace('~<!--.*?-->~s', '', $code);
+    // // 去除单行注释 不包括网址中的//
+    // $code = preg_replace('~(?:^|[^:])//.*$~m', '', $code);
+    // // 去除多行注释
+    $code = preg_replace('/\/\*.*?\*\//s', '', $code);
+    // halt($code);
+    // 先处理JavaScript部分，合并变量声明（简单示例）
+    // $jsPattern = '/var\s+([a-zA-Z_][a-zA-Z0 - 9_]*)\s*=\s*([^;]+);\s*var\s+([a-zA - Z_][a-zA - Z0 - 9_]*)\s*=\s*([^;]+);/';
+    // $code = preg_replace($jsPattern, 'var $1 = $2; var $3 = $4;', $code);
+    // 处理HTML标签属性，去除属性值前后多余的空格
+    // $htmlPattern = '/(\<[a - zA - Z]+)(\s+[a - zA - Z_]+="\s*([^"]+)\s*")/';
+    // $code = preg_replace($htmlPattern, '$1 $2', $code);
+    // 去除换行符和制表符等空白字符（与之前类似）
+    $code = str_replace("\n", "", $code);
+    $code = str_replace("\t", "", $code);
+    // $code = preg_replace('/\s+/', ' ', $code);
+
+    return $code;
+}
+
 

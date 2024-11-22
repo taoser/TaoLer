@@ -118,10 +118,10 @@ class Admin extends AdminController
 			//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
 			if($admin){
 				$res = ['code'=>0,'msg'=>'添加成功'];
-			}else{
+			} else {
 				$res = ['code'=>-1,'msg'=>'添加失败'];
 			}
-		return json($res);
+			return json($res);
 		}
 		//$auth_group = Db::name('auth_group')->select();
 		//View::assign(['auth_group'=>$auth_group]);

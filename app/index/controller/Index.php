@@ -40,8 +40,12 @@ class Index extends BaseController
 		// $a = $alipay->index();
 		// $b= $weixin->index();
 		// var_dump($a,$b);
-		
-		return View::fetch();
+
+		$html = View::fetch();
+
+		$this->buildHtml($html);
+
+		return $html;
     }
 
     public function jump()
