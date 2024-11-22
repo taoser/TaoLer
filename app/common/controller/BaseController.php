@@ -173,4 +173,38 @@ class BaseController extends BaseCtrl
 		return $sysInfo;
     }
 
+	/**
+	 * 纯静态化html 到 /public/static_html/
+	 *
+	 * @param [string] $staticFilePath
+	 * @param [string] $content
+	 * @return void
+	 */
+	protected function buildHtml(string $content, string $staticFilePath = ''): void
+	{
+		if(config('taoler.config.static_html')) {
+
+			if($staticFilePath == '') {
+				$url = $this->request->baseUrl();
+				if(str_contains($url, '.html')) {
+					$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/'));
+				} else {
+					// 首页路径
+					$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/') . 'index.html');
+				}
+			}
+
+			if(!file_exists($staticFilePath)) {
+				// 检测模板目录
+				$dir = dirname($staticFilePath);
+				if (!is_dir($dir)) {
+					mkdir($dir, 0755, true);
+				}
+				// 压缩
+				$content = advanced_compress_html_js($content);
+				file_put_contents($staticFilePath, $content);
+			}
+		}
+	}
+
 }

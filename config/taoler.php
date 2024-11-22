@@ -16,13 +16,11 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.0.6',
+    'version'   => '3.0.7',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
 	'salt'		=> 'taoler',
-	// 数据库备份目录
-	'databasebackdir' => app()->getRootPath() .'data/',
 
 	// 项目配置
 	'config'	=>[
@@ -56,6 +54,8 @@ return [
         'nav_top'   => 1,
         // 置顶文章显示方式1列表0滑动
         'top_show'   => 1,
+		// 网站静态化
+		'static_html' => 1,
 
 	],
 

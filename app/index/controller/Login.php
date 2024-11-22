@@ -18,18 +18,16 @@ use Symfony\Component\VarExporter\Internal\Exporter;
 
 class Login extends BaseController
 {
-	protected $user = null;
+	protected $users = null;
 	//已登陆中间件检测
 	protected $middleware = [
-	    'logedcheck' => ['except' 	=> ['index'] ]
+	    'logedcheck' => ['except' 	=> ['index','status'] ]
     ];
 
 	public function __construct(\think\App $app)
 	{
 		parent::__construct($app);
-		$this->user = new User();
-		//给模板中JScace文件赋值
-		View::assign(['jspage'=>'']);
+		$this->users = new User();
 	}
 
     //用户登陆
@@ -93,7 +91,7 @@ class Login extends BaseController
 						  
 				}
 
-				$res = $this->user->login($data);
+				$res = $this->users->login($data);
 				
 			} catch (ValidateException $e) {
 				return json(['code'=>-1,'msg'=>$e->getError()]);
@@ -147,7 +145,7 @@ class Login extends BaseController
 			}
 
 			try{
-				$this->user->reg($data);
+				$this->users->reg($data);
 				return json([
 					'code' => 0,
 					'msg'=> '注册成功',
@@ -176,7 +174,7 @@ class Login extends BaseController
 				return json(['code'=>-1,'msg'=>$e->getError()]);
 			}
 			//查询用户
-			$user = $this->user::field('id,name')->where('email',$data['email'])->find();
+			$user = $this->users::field('id,name')->where('email',$data['email'])->find();
 			if(is_null($user)) {
 				return json(['code' =>-1,'msg'=>'邮箱错误或不存在']);
 			}
@@ -250,7 +248,7 @@ class Login extends BaseController
 			
 			$data['uid'] = Cache::get('userid');
 			
-			$res = $this->user->respass($data);
+			$res = $this->users->respass($data);
 				if ($res == 1) {
 					return json(['code'=> 0, 'msg'=> '修改成功', 'url'=>(string) url('login/index')]);
 				} else {
@@ -286,6 +284,20 @@ class Login extends BaseController
 			return json($res);
 		}
 		
+	}
+
+	public function status() {
+		$user = $this->user;
+		if(empty($user)) {
+			return json(['code' => 0]);
+		}
+
+		$data = [
+			'name' => $user['name'],
+			'avatar' => $user['user_img'],
+			'user_home' => (string) url('user_home', ['id' => $user['id']])
+		];
+		return json(['code' => 1, 'msg' => 'ok', 'data' => $data]);
 	}
 
 }

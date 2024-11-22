@@ -5,7 +5,7 @@
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \github\TaoLer\view\taoler\index\public\base.html
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ * Copyright (c) 2020~2025 https://www.aieok.com All rights reserved.
 -->
 <!DOCTYPE html>
 <html>
@@ -67,6 +67,40 @@
 	}).extend({
 		fly: 'index'
 	}).use('fly');
+
+	$.get("{:url('login_status')}", function(res) {
+		if(res.code === 0) {
+			var LOGHTML = `<li class="layui-nav-item"><a class="layui-icon layui-icon-username" style="font-size: 20px;" href="{:url('user_login')}"></a></li>
+				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_login')}">{:lang('login')}</a></li>
+				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_reg')}">{:lang('register')}</a></li>
+				<li class="layui-nav-item layui-hide-xs layui-hide">
+					<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
+						<option value="cn" {if cookie('think_lang') == 'zh-cn'} selected {/if} >{:lang('chinese')}</option>
+						<option value="tw" {if cookie('think_lang') == 'zh-tw'} selected {/if} >{:lang('tChinese')}</option>
+						<option value="en" {if cookie('think_lang') == 'en-us'} selected {/if} >{:lang('english')}</option>
+					</select>
+				</li>`;
+		} else {
+			var LOGHTML = `{if ($Request.action=='user')}
+			<li class="layui-nav-item"><a href="/">{:lang('home page')}</a></li>
+			{/if}
+			<li class="layui-nav-item" lay-unselect>
+				<a class="fly-nav-avatar" href="{:url('user/index')}"><cite class="layui-hide-xs">${res.data.name}</cite><img src="${res.data.avatar}"></a>
+				<dl class="layui-nav-child">
+					<dd><a href="{:url('user/index')}"><i class="layui-icon layui-icon-username"></i>{:lang('user center')}</a></dd>
+					<dd><a href="{:url('user/set')}"><i class="layui-icon layui-icon-set"></i>{:lang('set info')}</a></dd>
+					<dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi"></i>{:lang('my message')}</a></dd>
+					<dd><a href="${res.data.user_home}"><i class="layui-icon layui-icon-home"></i>{:lang('my page')}</a></dd>
+					<dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" id="logout" style="text-align: center;">{:lang('logout')}</a></dd>
+				</dl>
+			</li>`;
+		}
+
+		$('.fly-nav-user').append(LOGHTML);
+		// 渲染导航组件
+		element.render('nav', 'header-filter-nav');
+	  })
+
 </script>
 {block name="script"}{/block}
 {:hook('addon_hooks')}

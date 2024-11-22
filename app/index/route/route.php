@@ -9,7 +9,6 @@
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 use think\facade\Route;
-use think\facade\Request;
 
 //详情页URL别称
 $detail_as = config('taoler.url_rewrite.article_as');
@@ -25,48 +24,50 @@ Route::get('message/nums$','message/nums')->name('user_message');
 Route::get('tag/:ename', 'Tag/list')->name('tag_list');
 
 // 用户中心
-Route::group(function () {
-	Route::get('u/:id$', 'user/home')->name('user_home'); 
-	Route::get('user/index', 'user/index');
-	Route::get('user/set', 'user/set');
-	Route::get('user/message$', 'user/message');
-	Route::get('user/post', 'user/post');
-	Route::get('user/article','user/artList');
-	Route::post('user/editpv','user/editPv');
-	Route::post('user/updatetime','user/updateTime');
-	Route::get('user/coll','user/collList');
-	Route::get('user/colldel','user/collDel');
-	Route::get('user/setpass','user/setPass');
-	Route::get('user/activate','user/activate');
-	Route::get('user/active','user/active');
-	Route::get('user/uploadHeadImg','user/uploadHeadImg');
-	Route::get('logout', 'user/logout');
-});
+Route::group('user',function () {
+	Route::get(':id$', 'home')->name('user_home'); 
+	Route::get('index$', 'index')->name('user_index');
+	Route::get('set$', 'set');
+	Route::get('message$', 'message');
+	Route::get('post$', 'post');
+	Route::get('article$','artList');
+	Route::post('editpv$','editPv');
+	Route::post('updatetime$','updateTime');
+	Route::get('coll$','collList');
+	Route::get('colldel$','collDel');
+	Route::get('setpass$','setPass');
+	Route::get('activate$','activate');
+	Route::get('active$','active');
+	Route::get('uploadHeadImg$','uploadHeadImg');
+	Route::get('logout$', 'logout');
+})->prefix('user/')->pattern([
+	'id'   => '\d+',
+]);
 
 // 登录注册
 Route::group(function () {
-	Route::rule('user/login$','login/index')->name('user_login');
-	Route::rule('user/forget$','login/forget')->name('user_forget');
-	Route::rule('user/reg$','Login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
-	Route::rule('postcode$','login/postcode');
-	Route::rule('sentemailcode$','login/sentMailCode');
-	Route::rule('respass$','login/respass');
-	
-});
+	Route::rule('user_login$','index')->name('user_login');
+	Route::rule('user_forget$','forget')->name('user_forget');
+	Route::rule('user_reg$','reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
+	Route::rule('postcode$','postcode');
+	Route::rule('sentemailcode$','sentMailCode');
+	Route::rule('respass$','respass');
+	Route::get('login_status', 'status')->name('login_status');
+})->prefix('login/');
 
 // comment
 Route::rule('comment/edit/[:id]','comment/edit');
 
 // article
-Route::group('art',function () use($detail_as,$cate_as){
-	Route::rule('add/[:cate]','Article/add')->name('add_article');
-	Route::rule('delete/[:id]','Article/delete');
-	Route::rule('tags','Article/tags')->allowCrossDomain();
-	Route::rule('edit/[:id]','Article/edit');
-	Route::get('article/catetree','Article/getCateTree');
-	Route::get('download/[:id]','Article/download');
+Route::group('art',function (){
+	Route::rule('add/[:cate]','add')->name('add_article');
+	Route::rule('delete/[:id]','delete');
+	Route::rule('tags','tags')->allowCrossDomain();
+	Route::rule('edit/[:id]','edit');
+	Route::get('article/catetree','getCateTree');
+	Route::get('download/[:id]','download');
 
-});
+})->prefix('article/');
 
 //tag
 Route::get('tag','tag/getAllTag')->name('get_all_tag');

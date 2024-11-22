@@ -12,7 +12,7 @@ layui.define(['layer', 'form', 'util'], function(exports){
   ,util = layui.util
   ,device = layui.device()
   var uid = layui.cache.user.uid;
-  var login = $('.fly-nav-user').attr('userlogin');
+//   var login = $('.fly-nav-user').attr('userlogin');
 
   //阻止IE7以下访问
   if(device.ie && device.ie < 8){
@@ -318,25 +318,19 @@ layui.define(['layer', 'form', 'util'], function(exports){
   });
   
   //添加文章
-  $('#add_post').click(function() {
-	  if (layui.cache.user.uid !== -1) {
-		  loading = layer.load(2, {
-            shade: [0.2, '#000']
-      });
-		  location.href = articleAdd;
-		} else {
-			layer.msg('请先登陆',{
-				icon:5,
-				time:2000
-			},function () {
-				location.href = login;
-			});
-		}
-		return false;
-  });
+    $('#add_post').click(function() {
+        if (layui.cache.user.uid !== -1) {
+            loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+
+            location.href = articleAdd;
+        }
+        return false;
+    });
   
   //退出登录
-    $('.logi_logout').click(function() {
+  $('.fly-nav-user').on('click','#logout', function() {
         loading = layer.load(2, {
             shade: [0.2, '#000']
         });
