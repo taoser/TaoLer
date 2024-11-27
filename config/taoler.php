@@ -16,11 +16,13 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.0.8',
+    'version'   => '3.0.9',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
 	'salt'		=> 'taoler',
+	// 分表单表数量 默认100W
+	'single_table_num' => 10000 * 100 / 10000,
 
 	// 项目配置
 	'config'	=>[
@@ -55,7 +57,7 @@ return [
         // 置顶文章显示方式1列表0滑动
         'top_show'   => 1,
 		// 网站静态化
-		'static_html' => 1,
+		'static_html' => 0,
 
 	],
 

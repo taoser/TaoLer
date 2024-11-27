@@ -9,6 +9,7 @@ h1,h2,h3 {font-weight: 400;}
 /* 布局 */
 .layui-mm{position: fixed; top: 100px; bottom: 0;}
 .site-menu{box-shadow: none; border-left: none;}
+.article-content{min-height: calc(100vh - 230px);}
 
 /* 文档 */
 .site-fix{position: fixed; top: 0; bottom: 0; z-index: 666; min-height: 0; overflow: hidden;  background-color: #fff;}
@@ -593,7 +594,7 @@ body .layui-edit-face  .layui-layer-content{padding:0; background-color:#fff; co
 
 
 /* 用户中心 */
-body .fly-user-main{position: relative; min-height: 600px;}
+body .fly-user-main{position: relative; min-height: calc(100vh - 215px);}
 .fly-user-main>.layui-nav{position: absolute; left: 0; top: 0; z-index: 10000; height: 100%; padding: 2px 0;}
 .fly-user-main>.layui-nav .layui-icon{position: relative; top: 2px; font-size: 20px; margin-right: 10px;}
 .fly-user-main>.fly-panel{min-height: 575px; margin: 0 0 10px 215px;}

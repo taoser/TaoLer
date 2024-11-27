@@ -126,7 +126,7 @@
     var artId = "{$article.id}";
 
     // 分类选择
-      $.get("{:url('article/getCateTree')}",function(res){
+      $.get("{:url('get_cate_tree')}",function(res){
             // 渲染下拉树
             xmSelect.render({
                 el: '#CateId',

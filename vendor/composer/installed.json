@@ -587,8 +587,8 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v11.32.0",
-            "version_normalized": "11.32.0.0",
+            "version": "v11.33.2",
+            "version_normalized": "11.33.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -641,8 +641,8 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.32.0",
-            "version_normalized": "11.32.0.0",
+            "version": "v11.33.2",
+            "version_normalized": "11.33.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -2144,20 +2144,21 @@
         },
         {
             "name": "topthink/framework",
-            "version": "v8.0.4",
-            "version_normalized": "8.0.4.0",
+            "version": "v8.1.0",
+            "version_normalized": "8.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "846432655a82614a874cdaaac7be6870940b14d2"
+                "reference": "d51fd2b96a8a5d030e08b4976dc6029684ad4403"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/framework/zipball/846432655a82614a874cdaaac7be6870940b14d2",
-                "reference": "846432655a82614a874cdaaac7be6870940b14d2",
+                "url": "https://api.github.com/repos/top-think/framework/zipball/d51fd2b96a8a5d030e08b4976dc6029684ad4403",
+                "reference": "d51fd2b96a8a5d030e08b4976dc6029684ad4403",
                 "shasum": ""
             },
             "require": {
+                "ext-ctype": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "php": ">=8.0.0",
@@ -2166,7 +2167,7 @@
                 "psr/log": "^1.0|^2.0|^3.0",
                 "psr/simple-cache": "^1.0|^2.0|^3.0",
                 "topthink/think-helper": "^3.1",
-                "topthink/think-orm": "^3.0"
+                "topthink/think-orm": "^3.0|^4.0"
             },
             "require-dev": {
                 "guzzlehttp/psr7": "^2.1.0",
@@ -2174,7 +2175,7 @@
                 "mockery/mockery": "^1.2",
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2024-07-29T03:24:24+00:00",
+            "time": "2024-11-21T05:43:58+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2206,29 +2207,29 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/framework/issues",
-                "source": "https://github.com/top-think/framework/tree/v8.0.4"
+                "source": "https://github.com/top-think/framework/tree/v8.1.0"
             },
             "install-path": "../topthink/framework"
         },
         {
             "name": "topthink/think-captcha",
-            "version": "v3.0.10",
-            "version_normalized": "3.0.10.0",
+            "version": "v3.0.11",
+            "version_normalized": "3.0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-captcha.git",
-                "reference": "4673be9cd6e74845fd13c882a65809c697f79668"
+                "reference": "4f24f560a31011329e3d144732e5370d7676b3fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/4673be9cd6e74845fd13c882a65809c697f79668",
-                "reference": "4673be9cd6e74845fd13c882a65809c697f79668",
+                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/4f24f560a31011329e3d144732e5370d7676b3fb",
+                "reference": "4f24f560a31011329e3d144732e5370d7676b3fb",
                 "shasum": ""
             },
             "require": {
                 "topthink/framework": "^6.0|^8.0"
             },
-            "time": "2024-08-13T03:20:19+00:00",
+            "time": "2024-11-22T12:59:35+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2262,7 +2263,7 @@
             "description": "captcha package for thinkphp",
             "support": {
                 "issues": "https://github.com/top-think/think-captcha/issues",
-                "source": "https://github.com/top-think/think-captcha/tree/v3.0.10"
+                "source": "https://github.com/top-think/think-captcha/tree/v3.0.11"
             },
             "install-path": "../topthink/think-captcha"
         },
@@ -2317,17 +2318,17 @@
         },
         {
             "name": "topthink/think-helper",
-            "version": "v3.1.9",
-            "version_normalized": "3.1.9.0",
+            "version": "v3.1.10",
+            "version_normalized": "3.1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-helper.git",
-                "reference": "d554a0a62e4c7034abc7343ee866005c3f399ae2"
+                "reference": "ac66cc0859a12cd5d73258f50f338aadc95e9b46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-helper/zipball/d554a0a62e4c7034abc7343ee866005c3f399ae2",
-                "reference": "d554a0a62e4c7034abc7343ee866005c3f399ae2",
+                "url": "https://api.github.com/repos/top-think/think-helper/zipball/ac66cc0859a12cd5d73258f50f338aadc95e9b46",
+                "reference": "ac66cc0859a12cd5d73258f50f338aadc95e9b46",
                 "shasum": ""
             },
             "require": {
@@ -2336,7 +2337,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2024-10-15T02:24:05+00:00",
+            "time": "2024-11-21T01:47:51+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2360,30 +2361,30 @@
             "description": "The ThinkPHP6 Helper Package",
             "support": {
                 "issues": "https://github.com/top-think/think-helper/issues",
-                "source": "https://github.com/top-think/think-helper/tree/v3.1.9"
+                "source": "https://github.com/top-think/think-helper/tree/v3.1.10"
             },
             "install-path": "../topthink/think-helper"
         },
         {
             "name": "topthink/think-multi-app",
-            "version": "v1.0.17",
-            "version_normalized": "1.0.17.0",
+            "version": "v1.1.0",
+            "version_normalized": "1.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-multi-app.git",
-                "reference": "4055a6187296ac16c0bc7bbab4ed5d92f82f791c"
+                "reference": "46df2e8be05ea02ae40f32140d656133aedfe4a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/4055a6187296ac16c0bc7bbab4ed5d92f82f791c",
-                "reference": "4055a6187296ac16c0bc7bbab4ed5d92f82f791c",
+                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/46df2e8be05ea02ae40f32140d656133aedfe4a5",
+                "reference": "46df2e8be05ea02ae40f32140d656133aedfe4a5",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1.0",
                 "topthink/framework": "^6.0|^8.0"
             },
-            "time": "2023-03-29T02:04:29+00:00",
+            "time": "2024-11-22T04:11:23+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -2411,7 +2412,7 @@
             "description": "thinkphp multi app support",
             "support": {
                 "issues": "https://github.com/top-think/think-multi-app/issues",
-                "source": "https://github.com/top-think/think-multi-app/tree/v1.0.17"
+                "source": "https://github.com/top-think/think-multi-app/tree/v1.1.0"
             },
             "install-path": "../topthink/think-multi-app"
         },
@@ -2478,24 +2479,24 @@
         },
         {
             "name": "topthink/think-template",
-            "version": "v3.0.1",
-            "version_normalized": "3.0.1.0",
+            "version": "v3.0.2",
+            "version_normalized": "3.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-template.git",
-                "reference": "672b131681a8a2c54e5bc2b56bfd4bc7cf674d08"
+                "reference": "0b88bd449f0f7626dd75b05f557c8bc208c08b0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-template/zipball/672b131681a8a2c54e5bc2b56bfd4bc7cf674d08",
-                "reference": "672b131681a8a2c54e5bc2b56bfd4bc7cf674d08",
+                "url": "https://api.github.com/repos/top-think/think-template/zipball/0b88bd449f0f7626dd75b05f557c8bc208c08b0c",
+                "reference": "0b88bd449f0f7626dd75b05f557c8bc208c08b0c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0.0",
                 "psr/simple-cache": ">=1.0"
             },
-            "time": "2023-04-07T02:42:15+00:00",
+            "time": "2024-10-16T03:41:06+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2516,7 +2517,7 @@
             "description": "the php template engine",
             "support": {
                 "issues": "https://github.com/top-think/think-template/issues",
-                "source": "https://github.com/top-think/think-template/tree/v3.0.1"
+                "source": "https://github.com/top-think/think-template/tree/v3.0.2"
             },
             "install-path": "../topthink/think-template"
         },
@@ -2954,17 +2955,17 @@
         },
         {
             "name": "yansongda/pay",
-            "version": "v3.7.10",
-            "version_normalized": "3.7.10.0",
+            "version": "v3.7.11",
+            "version_normalized": "3.7.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yansongda/pay.git",
-                "reference": "0aea5b2ddcd3f017fc7e7124dd1d157b7810b16c"
+                "reference": "0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yansongda/pay/zipball/0aea5b2ddcd3f017fc7e7124dd1d157b7810b16c",
-                "reference": "0aea5b2ddcd3f017fc7e7124dd1d157b7810b16c",
+                "url": "https://api.github.com/repos/yansongda/pay/zipball/0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb",
+                "reference": "0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb",
                 "shasum": ""
             },
             "require": {
@@ -2994,7 +2995,7 @@
                 "symfony/psr-http-message-bridge": "^2.1",
                 "symfony/var-dumper": "^5.1"
             },
-            "time": "2024-09-11T03:25:00+00:00",
+            "time": "2024-11-23T03:29:59+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {

@@ -28,12 +28,12 @@ class User extends BaseController
 	
 	
 	// 我的发帖list
-	public function artList()
+	public function myArticles()
 	{
         $param = Request::only(['page','limit']);
 		$myArticle = Article::field('id,cate_id,title,status,pv,create_time,update_time')
             ->withCount(['comments'])
-            ->where(['user_id'=>$this->uid])
+            ->where(['user_id' => $this->uid])
             ->order('update_time','desc')
             ->paginate([
                 'list_rows' => $param['limit'],
@@ -46,13 +46,13 @@ class User extends BaseController
 			$res['count'] = $count;
 			foreach($myArticle as $v){
 				$res['data'][] = ['id'=>$v['id'],
-				'title'	=> htmlspecialchars($v['title']),
-				'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename, $v->cate->appname),
-				'status'	=> $this->artStatus($v['status']),
-				'ctime'		=> $v['create_time'],
-				'utime'		=> $v['update_time'],
-				'pv'		=> $v['pv'],
-				'datas'		=> $v['comments_count'].'答'
+					'title'	=> htmlspecialchars($v['title']),
+					'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename, $v->cate->appname),
+					'status'	=> $this->artStatus($v['status']),
+					'ctime'		=> $v['create_time'],
+					'utime'		=> $v['update_time'],
+					'pv'		=> $v['pv'],
+					'datas'		=> $v['comments_count'].'答'
 				];
 			} 
 			return json($res);
@@ -79,7 +79,7 @@ class User extends BaseController
 	}
 	
 	// 收藏list
-	public function collList()
+	public function myCollect()
 	{
 		//收藏的帖子
 		$collect = Collection::with(['article'=>function($query){

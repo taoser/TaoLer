@@ -119,7 +119,7 @@ layui.use(['fly'], function () {
 		upload = layui.upload;
 
     	// 分类选择
-      	$.get("{:url('article/getCateTree')}",function(res){
+      	$.get("{:url('get_cate_tree')}",function(res){
         	var cid = "{$cid}";
             // 渲染下拉树
             xmSelect.render({

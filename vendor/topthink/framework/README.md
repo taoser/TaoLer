@@ -1,10 +1,8 @@
 ![](https://www.thinkphp.cn/uploads/images/20230630/300c856765af4d8ae758c503185f8739.png)
 
-# ThinkPHP 8.0
+# ThinkPHP 8
 
 [![build](https://github.com/top-think/framework/actions/workflows/build.yml/badge.svg?branch=8.0)](https://github.com/top-think/framework/actions)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/top-think/framework/badges/quality-score.png?b=8.0)](https://scrutinizer-ci.com/g/top-think/framework/?branch=8.0)
-[![Code Coverage](https://scrutinizer-ci.com/g/top-think/framework/badges/coverage.png?b=8.0)](https://scrutinizer-ci.com/g/top-think/framework/?branch=8.0)
 [![Total Downloads](https://poser.pugx.org/topthink/framework/downloads)](https://packagist.org/packages/topthink/framework)
 [![Latest Stable Version](https://poser.pugx.org/topthink/framework/v/stable)](https://packagist.org/packages/topthink/framework)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.0-8892BF.svg)](http://www.php.net/)
@@ -17,7 +15,7 @@
 - 依赖`think-orm`3.0 版本
 - `6.0`/`6.1`无缝升级
 
-> ThinkPHP8.0 的运行环境要求 PHP8.0+
+> ThinkPHP8 的运行环境要求 PHP8.0+
 
 现在开始，你可以使用官方提供的[ThinkChat](https://chat.topthink.com/)，让你在学习 ThinkPHP 的旅途中享受私人 AI 助理服务！
 
@@ -28,6 +26,9 @@ ThinkPHP 生态服务由[顶想云](https://www.topthink.com)（TOPThink Cloud�
 ## 文档
 
 [完全开发手册](https://doc.thinkphp.cn)
+
+基于官方手册的数据训练和提供精准解答服务
+[官方专家智能体](https://chat.topthink.com/chat/eorole)
 
 ## 赞助商
 
@@ -76,7 +77,7 @@ ThinkPHP 遵循 Apache2 开源协议发布，并提供免费使用。
 
 本项目包含的第三方源码和二进制文件之版权信息另行标注。
 
-版权所有 Copyright © 2006-2023 by ThinkPHP (http://thinkphp.cn) All rights reserved。
+版权所有 Copyright © 2006-2024 by ThinkPHP (http://thinkphp.cn) All rights reserved。
 
 ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 

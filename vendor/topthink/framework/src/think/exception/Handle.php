@@ -13,7 +13,6 @@ declare (strict_types = 1);
 namespace think\exception;
 
 use Exception;
-use ReflectionClass;
 use think\App;
 use think\console\Output;
 use think\db\exception\DataNotFoundException;
@@ -35,7 +34,9 @@ class Handle
         ValidateException::class,
     ];
 
-    protected $isJson = false;
+    protected $showErrorMsg = [
+
+    ];
 
     public function __construct(protected App $app)
     {
@@ -59,13 +60,13 @@ class Handle
                     'message' => $this->getMessage($exception),
                     'code'    => $this->getCode($exception),
                 ];
-                $log = "[{$data['code']}]{$data['message']}[{$data['file']}:{$data['line']}]";
+                $log  = "[{$data['code']}]{$data['message']}[{$data['file']}:{$data['line']}]";
             } else {
                 $data = [
                     'code'    => $this->getCode($exception),
                     'message' => $this->getMessage($exception),
                 ];
-                $log = "[{$data['code']}]{$data['message']}";
+                $log  = "[{$data['code']}]{$data['message']}";
             }
 
             if ($this->app->config->get('log.record_trace')) {
@@ -74,7 +75,8 @@ class Handle
 
             try {
                 $this->app->log->record($log, 'error');
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+            }
         }
     }
 
@@ -99,13 +101,12 @@ class Handle
      */
     public function render(Request $request, Throwable $e): Response
     {
-        $this->isJson = $request->isJson();
         if ($e instanceof HttpResponseException) {
             return $e->getResponse();
         } elseif ($e instanceof HttpException) {
-            return $this->renderHttpException($e);
+            return $this->renderHttpException($request, $e);
         } else {
-            return $this->convertExceptionToResponse($e);
+            return $this->convertExceptionToResponse($request, $e);
         }
     }
 
@@ -128,7 +129,7 @@ class Handle
      * @param HttpException $e
      * @return Response
      */
-    protected function renderHttpException(HttpException $e): Response
+    protected function renderHttpException(Request $request, HttpException $e): Response
     {
         $status   = $e->getStatusCode();
         $template = $this->app->config->get('app.http_exception_template');
@@ -136,7 +137,7 @@ class Handle
         if (!$this->app->isDebug() && !empty($template[$status])) {
             return Response::create($template[$status], 'view', $status)->assign(['e' => $e]);
         } else {
-            return $this->convertExceptionToResponse($e);
+            return $this->convertExceptionToResponse($request, $e);
         }
     }
 
@@ -151,6 +152,22 @@ class Handle
     }
 
     /**
+     * 是否显示错误信息
+     * @param \Throwable $exception
+     * @return bool
+     */
+    protected function isShowErrorMsg(Throwable $exception)
+    {
+        foreach ($this->showErrorMsg as $class) {
+            if ($exception instanceof $class) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * 获取部署模式异常数据
      * @access protected
      * @param Throwable $exception
@@ -158,20 +175,18 @@ class Handle
      */
     protected function getDeployMsg(Throwable $exception): array
     {
-        $data = [
-            'code'    => $this->getCode($exception),
-            'message' => $this->getMessage($exception),
-        ];
-
-        $reflectionClass = new ReflectionClass($exception);
-        $alwaysMsg       = $reflectionClass->getAttributes(AlwaysErrorMsg::class);
-
-        if (empty($alwaysMsg) && !$this->app->config->get('app.show_error_msg')) {
+        $showErrorMsg = $this->isShowErrorMsg($exception);
+        if ($showErrorMsg || $this->app->config->get('app.show_error_msg', false)) {
+            $message = $this->getMessage($exception);
+        } else {
             // 不显示详细错误信息
-            $data['message'] = $this->app->config->get('app.error_message');
+            $message = $this->app->config->get('app.error_message');
         }
 
-        return $data;
+        return [
+            'code'    => $this->getCode($exception),
+            'message' => $message,
+        ];
     }
 
     /**
@@ -214,17 +229,22 @@ class Handle
         ];
     }
 
+    protected function isJson(Request $request, Throwable $exception)
+    {
+        return $request->isJson();
+    }
+
     /**
      * @access protected
      * @param Throwable $exception
      * @return Response
      */
-    protected function convertExceptionToResponse(Throwable $exception): Response
+    protected function convertExceptionToResponse(Request $request, Throwable $exception): Response
     {
-        if (!$this->isJson) {
-            $response = Response::create($this->renderExceptionContent($exception));
-        } else {
+        if ($this->isJson($request, $exception)) {
             $response = Response::create($this->convertExceptionToArray($exception), 'json');
+        } else {
+            $response = Response::create($this->renderExceptionContent($exception));
         }
 
         if ($exception instanceof HttpException) {

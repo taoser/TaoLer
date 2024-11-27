@@ -10,11 +10,6 @@
  */
 use think\facade\Route;
 
-//详情页URL别称
-$detail_as = config('taoler.url_rewrite.article_as');
-//分类别称
-$cate_as = config('taoler.url_rewrite.cate_as');
-
 Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 Route::rule('/', 'index'); // 首页访问路由
 
@@ -25,15 +20,15 @@ Route::get('tag/:ename', 'Tag/list')->name('tag_list');
 
 // 用户中心
 Route::group('user',function () {
-	Route::get(':id$', 'home')->name('user_home'); 
+	Route::get('<id>$', 'home')->name('user_home'); 
 	Route::get('index$', 'index')->name('user_index');
 	Route::get('set$', 'set');
 	Route::get('message$', 'message');
 	Route::get('post$', 'post');
-	Route::get('article$','artList');
+	Route::get('article$','myArticles');
 	Route::post('editpv$','editPv');
 	Route::post('updatetime$','updateTime');
-	Route::get('coll$','collList');
+	Route::get('mycoll$','myCollect');
 	Route::get('colldel$','collDel');
 	Route::get('setpass$','setPass');
 	Route::get('activate$','activate');
@@ -59,15 +54,10 @@ Route::group(function () {
 Route::rule('comment/edit/[:id]','comment/edit');
 
 // article
-Route::group('art',function (){
-	Route::rule('add/[:cate]','add')->name('add_article');
-	Route::rule('delete/[:id]','delete');
-	Route::rule('tags','tags')->allowCrossDomain();
-	Route::rule('edit/[:id]','edit');
-	Route::get('article/catetree','getCateTree');
-	Route::get('download/[:id]','download');
+// Route::group('art',function (){
+	
 
-})->prefix('article/');
+// })->prefix('article/');
 
 //tag
 Route::get('tag','tag/getAllTag')->name('get_all_tag');
@@ -76,16 +66,26 @@ Route::get('arttag','tag/getArticleTag')->name('get_art_tag');
 Route::rule('search/[:keywords]', 'index/search'); // 搜索
 
 // article分类和详情路由 ！放到最后！
-Route::group(function () use($detail_as, $cate_as){
+Route::group(function (){
+
+	Route::rule('article/add/<cate?>','add')->name('add_article');
+	Route::rule('article/delete/<id>$','delete');
+	Route::rule('article/tags','tags')->allowCrossDomain();
+	Route::rule('article/edit/<id>$','edit');
+	Route::get('article/catetree','getCateTree')->name('get_cate_tree');
+
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
-	Route::get($detail_as . ':id$', 'article/detail')->name('article_detail');
-    Route::get($detail_as . '<id>/<page>$', 'article/detail')->name('article_comment');
-    //分类
-	Route::get($cate_as . '<ename>$','article/cate')->name('cate')->cache(180);
-	Route::get($cate_as . '<ename>/<type>$', 'article/cate')->name('cate_type');
-	// 分页路由
-	Route::get($cate_as . '<ename>/<type>/<page>$', 'article/cate')->name('cate_page');
-})->pattern([
+	// 详情
+	$detail_as = config('taoler.url_rewrite.article_as') ?: 'detail/'; //详情页URL别称
+	Route::get($detail_as . '<id>$', 'detail')->name('article_detail');
+    Route::get($detail_as . '<id>/<page>$', 'detail')->name('article_comment');
+    // 分类
+	$cate_as = config('taoler.url_rewrite.cate_as') ?: 'category/'; //分类别称
+	Route::get($cate_as . '<ename>$','cate')->name('cate')->cache(180);
+	Route::get($cate_as . '<ename>/<type>$', 'cate')->name('cate_type');
+	Route::get($cate_as . '<ename>/<type>/<page>$', 'cate')->name('cate_page');
+
+})->prefix('article/')->pattern([
 		'ename' => '[\w|\-]+',
 		'type' => '\w+',
 		'page'   => '\d+',

@@ -75,9 +75,9 @@ class Article extends BaseController
 
 		// 2.pv
 		$artDetail->inc('pv', 1)->save();
-		$pv = Db::name('article')->where('id',$id)->value('pv');
+		$pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
         $artDetail->pv = $pv;
-	
+
 		// 3.设置内容的tag内链
 		// $artDetail->content = $this->setArtTagLink($artDetail->content);
 
@@ -92,10 +92,10 @@ class Article extends BaseController
 				$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
 			}
 		}
-
+		
         // 被赞
         $zanCount = Db::name('user_zan')->where('user_id', $artDetail['user_id'])->cache(true)->count();
-
+		
 		// 标签
 		$tags = [];
 		$relationArticle = []; //相关帖子
@@ -109,7 +109,7 @@ class Article extends BaseController
 			//相关帖子
 			$relationArticle =  $this->model->getRelationTags($artTags[0]['tag_id'],$id,5);
 		}
-
+		
 		//上一篇下一篇
 		$upDownArt =  $this->model->getPrevNextArticle($id,$artDetail['cate_id']);
 		if(empty($upDownArt['previous'])) {
@@ -122,14 +122,14 @@ class Article extends BaseController
         } else {
             $next = '<a href="' . $upDownArt['next']['url'] . '" rel="prev">' . $upDownArt['next']['title'] . '</a>';
         }
-
+		
 		//评论
 		$comment = new Comment();
 		$comments = $comment->getComment($id, $page);
-
+		
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
-		
+		// halt($lrDate_time);
 		View::assign([
 			'article'		=> $artDetail,
 			'artHot'	=> $artHot,
@@ -266,6 +266,7 @@ class Article extends BaseController
                 hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 				hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
 
+				$this->removeIndexHtml();
 				return Msgres::success($result['msg'], $url);
             }
             return Msgres::error('add_error');
@@ -302,73 +303,78 @@ class Article extends BaseController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function edit($id)
+    public function edit()
     {
-		$article = $this->model->find($id);
+		$id = input('id');
+		$article = $this->model->setSuffix($this->byIdGetSuffix($id))->find($id);
+
+		$this->removeDetailHtml($article);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id','cate_id','title','title_color','read_type','art_pass','content','upzip','keywords','description','captcha']);
+			$data = Request::only(['id','cate_id','title','title_color','read_type','art_pass','content','keywords','description','captcha']);
+			
 			$tagId = input('tagid');	
 			
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
 			{				
 				if(!captcha_check($data['captcha'])){
-				 return json(['code'=>-1,'msg'=> '验证码失败']);
+					return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
 			//调用验证器
 			$validate = new \app\common\validate\Article(); 
 			$res = $validate->scene('Artadd')->check($data);
 			
-			if(true !== $res){
+			if(!$res){
                 return Msgres::error($validate->getError());
-			} else {
-				//获取内容图片音视频标识
-				$iva= $this->hasIva($data['content']);
-				$data = array_merge($data,$iva);
-
-				$data['content'] = $this->downUrlPicsReaplace($data['content']);
-				// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-				$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-                $data['description'] = strip_tags($this->filterEmoji($data['description']));
-
-				$result = $article->edit($data);
-				if($result == 1) {
-					//处理标签
-					if(!empty($tagId)) {
-						$tagIdArr = explode(',',$tagId);
-						$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
-						foreach($artTags as $aid => $tid) {
-							if(!in_array($tid, $tagIdArr)){
-								//删除被取消的tag
-								Db::name('taglist')->delete($aid);
-							}
-						}
-						//查询保留的标签
-						$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
-						$tagArr = [];
-						foreach($tagIdArr as $tid) {
-							if(!in_array($tid, $artTags)){
-								//新标签
-								$tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
-							}
-						}
-						//更新新标签
-						Db::name('taglist')->insertAll($tagArr);
-					}
-					
-                    //删除原有缓存显示编辑后内容
-                    Cache::delete('article_'.$id);
-                    Session::delete('art_pass_'.$id);
-
-                    $link = $this->getRouteUrl((int) $id, $article->cate->ename);
-
-                    hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-					return Msgres::success('edit_success',$link);
-				}
-                return Msgres::error($result);
 			}
+
+			//获取内容图片音视频标识
+			$iva= $this->hasIva($data['content']);
+			$data = array_merge($data,$iva);
+
+			$data['content'] = $this->downUrlPicsReaplace($data['content']);
+			// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+			$data['description'] = strip_tags($this->filterEmoji($data['description']));
+
+			$result = $article->edit($data);
+			if($result == 1) {
+				//处理标签
+				if(!empty($tagId)) {
+					$tagIdArr = explode(',',$tagId);
+					$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
+					foreach($artTags as $aid => $tid) {
+						if(!in_array($tid, $tagIdArr)){
+							//删除被取消的tag
+							Db::name('taglist')->delete($aid);
+						}
+					}
+					//查询保留的标签
+					$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
+					$tagArr = [];
+					foreach($tagIdArr as $tid) {
+						if(!in_array($tid, $artTags)){
+							//新标签
+							$tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
+						}
+					}
+					//更新新标签
+					Db::name('taglist')->insertAll($tagArr);
+				}
+				
+				//删除原有缓存显示编辑后内容
+				Cache::delete('article_'.$id);
+				Session::delete('art_pass_'.$id);
+
+				$link = $this->getRouteUrl((int) $id, $article->cate->ename);
+
+				hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+				return Msgres::success('edit_success',$link);
+			}
+
+			return Msgres::error($result);
 		}
 			
         View::assign(['article'=>$article]);

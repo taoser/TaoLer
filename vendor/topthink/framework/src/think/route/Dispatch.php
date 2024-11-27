@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace think\route;
 
@@ -30,7 +30,7 @@ abstract class Dispatch
      */
     protected $app;
 
-    public function __construct(protected Request $request, protected Rule $rule, protected $dispatch, protected array $param = [])
+    public function __construct(protected Request $request, protected Rule $rule, protected $dispatch, protected array $param = [], protected array $option = [])
     {
     }
 
@@ -85,11 +85,16 @@ abstract class Dispatch
      */
     protected function doRouteAfter(): void
     {
-        $option = $this->rule->getOption();
+        $option = $this->option;
 
         // 添加中间件
         if (!empty($option['middleware'])) {
-            $this->app->middleware->import($option['middleware'], 'route');
+            if (isset($option['without_middleware'])) {
+                $middleware = !empty($option['without_middleware']) ? array_diff($option['middleware'], $option['without_middleware']) : [];
+            } else {
+                $middleware = $option['middleware'];
+            }
+            $this->app->middleware->import($middleware, 'route');
         }
 
         if (!empty($option['append'])) {
@@ -111,6 +116,21 @@ abstract class Dispatch
         if (isset($option['validate'])) {
             $this->autoValidate($option['validate']);
         }
+    }
+
+    /**
+     * 获取操作的绑定参数
+     * @access protected
+     * @return array
+     */
+    protected function getActionBindVars(): array
+    {
+        $bind = $this->rule->config('action_bind_param');
+        return match ($bind) {
+            'route' => $this->param,
+            'param' => $this->request->param(),
+            default => array_merge($this->request->get(), $this->param),
+        };
     }
 
     /**

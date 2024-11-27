@@ -11,8 +11,9 @@ use think\facade\Session;
 use think\facade\Config;
 use think\db\Query;
 use think\facade\Db;
+use app\observer\ArticleObserver;
 
-class Article extends Model
+class Article extends BaseModel
 {
     // 设置字段信息
     protected $schema = [
@@ -42,6 +43,12 @@ class Article extends Model
         'delete_time'   => 'int',
     ];
 
+    protected $eventObserver = ArticleObserver::class;
+
+    // 表后缀
+    // protected $suffix = '';
+    
+
     protected $autoWriteTimestamp = true; //开启自动时间戳
     protected $createTime = 'create_time';
     protected $updateTime = 'update_time';
@@ -59,6 +66,101 @@ class Article extends Model
 
     // 设置json类型字段
 	protected $json = ['media'];
+
+
+    /**
+     * 获取所有分表的后缀数组
+     * ['_1','_2','_3']
+     * @return array
+     */
+    public static function getTablesSfx1(): array
+    {
+        $suffixArr = [];
+        $tableArr = self::getTables();
+        if(count($tableArr)) {
+            $suffixArr = array_map(function ($element) {
+                $lastUnderscorePos = strrpos($element, '_');
+                if ($lastUnderscorePos!== false) {
+                    return substr($element, $lastUnderscorePos);
+                }
+                return $element;
+            }, $tableArr);
+        }
+
+        return array_reverse($suffixArr);
+    }
+
+    /**
+     * 获取子表数组
+     * ['tao_article_1','tao_article_2','tao_article_3']
+     * @return array
+     */
+    public static function getTables1(): array
+    {
+        $tables = [];
+        // 表前缀
+        $prefix = config('database.connections.mysql.prefix') . 'article';
+        $sql = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME REGEXP '{$prefix}_[0-9]+';";
+        $sqlTables = Db::query($sql);
+        // 是否有子数据表
+        if(count($sqlTables)){
+            $tables = array_column($sqlTables,'TABLE_NAME');
+        }
+
+        return $tables;
+    }
+
+    /**
+     * 自动获取分表后缀 新增时不用传参，自动判定maxID，查询 编辑 删除时必须传id值
+     * '_1','_2'
+     * @param integer|null $id
+     * @return string
+     */
+    public static function getSfx1(?int $id = null): string
+    {
+        $suffix = '';
+        // 增加数据时，判定是否需要新建数据库
+        if($id === null) {
+            // 表前缀
+            $prefix = config('database.connections.mysql.prefix') . 'article';
+            $sql = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME REGEXP '{$prefix}_[0-9]+';";
+		    $tables = Db::query($sql);
+			// 是否有子数据表
+            if(count($tables)){
+                $arr = array_column($tables,'TABLE_NAME');
+				$lastTableName = end($arr);
+				// 数据库最大id
+                $maxId = (int) Db::table($lastTableName)->max('id');
+				if($maxId === 0) {
+					// 数据库为空
+					$nameArr = explode("_", $lastTableName);
+					// 当前空表序号
+					$num =  (int) end($nameArr);
+					// 空表前最大ID
+					$maxId = 100 * $num;
+				}
+            } else {
+				// 仅有一张article表
+                $maxId = (int) DB::name('article')->max('id');
+            }
+
+			// 表后缀数字（层级）
+            $num = (int) floor($maxId / 100);
+            
+        } else {
+			// 查、改、删
+            $num = (int) floor(($id - 1) / 100);
+        }
+
+        if($num > 0) {
+            // 数据表后缀
+            $suffix = "_{$num}";
+        }
+
+        return $suffix;
+    }
+
+
 	
     //文章关联栏目表
     public function cate()
@@ -96,21 +198,6 @@ class Article extends Model
 		return $this->hasMany(Taglist::class);
 	}
 
-    // 模型事件，写入前
-    public static function onBeforeWrite($user)
-    {
-    	// if ('thinkphp' == $user->name) {
-        // 	return false;
-        // }
-    }
-
-    // 模型事件，写入后
-    public static function onAfterWrite($user)
-    {
-    	// if ('thinkphp' == $user->name) {
-        // 	return false;
-        // }
-    }
 
     /**
      * 添加
@@ -123,19 +210,6 @@ class Article extends Model
         // 超级管理员无需审核
 		$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.posts_check');
 		$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
-        // $this->status = $data['status'];
-        // $this->user_id = $data['user_id'];
-        // $this->cate_id = $data['cate_id'];
-        // $this->title = $data['title'];
-        // $this->title_color = $data['title_color'];
-        // $this->content = $data['content'];
-        // $this->read_type = $data['read_type'];
-        // $this->art_pass = $data['art_pass'];
-        // $this->keywords = $data['keywords'];
-        // $this->description = $data['description'];
-        // $this->has_img = $data['has_img'];
-        // $this->has_video = $data['has_video'];
-        // $this->media = $data['media'];
 		$result = $this->save($data);
 		if($result) {
 			return ['code' => 1, 'msg' => $msg, 'data' => ['status' => $data['status'], 'id'=> $this->id]];
@@ -154,8 +228,7 @@ class Article extends Model
      */
 	public function edit(array $data)
 	{
-		$article = $this::find($data['id']);
-		$result = $article->save($data);
+		$result = $this->save($data);
 		if($result) {
 			return 1;
 		} else {
@@ -299,6 +372,7 @@ class Article extends Model
     public function getArtDetail(int $id)
     {
         return Cache::remember('article_'.$id, function() use($id){
+            $this->setSuffix(self::byIdGetSuffix($id));
             //查询文章
             return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,keywords,description,read_type,art_pass,title_color,create_time,update_time')
             ->where(['status' => 1])
@@ -701,6 +775,7 @@ class Article extends Model
             return (string) url('article_detail',['id' => $data['id'],'ename' => $ename]);
         }
         return (string) url('article_detail',['id' => $data['id']]);
+        
     }
 
     // 内容是否加密
