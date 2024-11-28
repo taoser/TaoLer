@@ -304,11 +304,14 @@ class Category extends BaseModel
 // $limit = 5;
 // $page = 3;
 
-        $m = self::getSuffixMap(['status' => 1], 'Article');
-        halt($m);
+        // $m = self::getSuffixMap(['status' => 1]);
+        // halt($m);
 
         // 文章分类总数
         $map = Cache::remember("cate_count_{$ename}_{$type}", function() use($where){
+
+
+            return self::getSuffixMap($where, Article::class);
             
             // 单个分表统计数 倒叙
             $counts = [];

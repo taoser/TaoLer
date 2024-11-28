@@ -45,8 +45,7 @@ class Index extends BaseController
 // 		$a = $this->getSfx();
 // halt($a);
 
-
-$c = Category::getArticlesByCategoryEname('posts');
+// $c = Category::getArticlesByCategoryEname('posts');
 // halt($c);
 		$html = View::fetch();
 

@@ -118,25 +118,35 @@ class BaseModel extends Model
         return $suffix;
     }
 
-    public static function getSuffixMap(array $where = [], ?string $tableName = null)
+    /**
+     * 查询表及分表 统计 总计 后缀名 后缀统计
+     *
+     * @param array $where 查询条件 
+     * @param [type] $class 类
+     * @return void
+     */
+    public static function getSuffixMap(array $where = [], $class = null)
     {
-        $arr = explode('_',self::getTable());
-        // dump(end($arr));
-        // $MODEL_NAME = !is_null($tableName) ? ucfirst($tableName)::class : static::class;
-        if(is_null($tableName)) {
-            $MODEL_NAME =static::class;
-        } else {
-            $reflectionClass = new \ReflectionClass($tableName);
-            $instance = $reflectionClass->newInstanceArgs();
-            $MODEL_NAME = $instance;
-        }
+        $MODEL_CLASS_NAME = !is_null($class) ? $class : static::class;
         // 单个分表统计数 倒叙
         $counts = [];
         // 数据总和
         $totals = 0;
 
+        // 处理类名和表名
+        if(is_null($class)) {
+            $MODEL_CLASS_NAME = static::class;
+            $tableArr = explode('_',static::getTable());
+            $tableName = end($tableArr);
+        } else {
+            $MODEL_CLASS_NAME = $class;
+            $parts = explode('\\', $class);
+            $lastPart = end($parts);
+            $tableName = strtolower($lastPart);
+        }
+        
         // 得到所有的分表后缀 倒叙排列
-        $suffixArr = self::getSubTablesSuffix($MODEL_NAME);
+        $suffixArr = self::getSubTablesSuffix($tableName);
         // 主表没有后缀，添加到分表数组中
         $suffixArr[] = '';
 
@@ -145,7 +155,7 @@ class BaseModel extends Model
 
         if($suffixCount) {
             foreach($suffixArr as $sfx) {
-                $total = $MODEL_NAME::suffix($sfx)->where($where)->count();
+                $total = $MODEL_CLASS_NAME::suffix($sfx)->where($where)->count();
                 $counts[] = $total;
                 $totals += $total;
             }

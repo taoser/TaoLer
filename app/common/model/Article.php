@@ -278,26 +278,98 @@ class Article extends BaseModel
      */
     public function getIndexs(int $num = 10)
     {
-        return Cache::remember('idx_article', function() use($num){
-            $data = $this::field('id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time')
-            ->with([
-            'cate' => function(Query $query){
-                $query->field('id,catename,ename,detpl');
-            },
-			'user' => function(Query $query){
-                $query->field('id,name,nickname,user_img');
-			} ])
-            ->withCount(['comments'])
-            ->where('status', '1')
-            ->order('id','desc')
-            ->limit($num)
-            ->hidden(['art_pass'])
-            ->append(['url'])
-            ->select();
+        $indexs = Cache::remember('idx_article', function() use($num){
 
-            return $data->hidden(['art_pass'])->toArray();
-		},120);
+            $map = self::getSuffixMap(['status' => 1], Article::class);
 
+            $field = 'id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time';
+            // 判断是否有多个表
+            if($map['suffixCount'] > 1) {
+
+                // 分表数量够
+                if($map['counts'][0] >= $num) {
+                    $data = $this::suffix($map['suffixArr'][0])->field($field)
+                        ->with([
+                        'cate' => function(Query $query){
+                            $query->field('id,catename,ename,detpl');
+                        },
+                        'user' => function(Query $query){
+                            $query->field('id,name,nickname,user_img');
+                        } ])
+                        ->withCount(['comments'])
+                        ->where('status', '1')
+                        ->order('id','desc')
+                        ->hidden(['art_pass'])
+                        ->append(['url'])
+                        ->limit($num)
+                        ->select()
+                        ->toArray();
+
+                } else {
+                    // 第一个分表 数量不够 取第二个分表数
+                    $data = $this::suffix($map['suffixArr'][0])->field($field)
+                        ->with([
+                        'cate' => function(Query $query){
+                            $query->field('id,catename,ename,detpl');
+                        },
+                        'user' => function(Query $query){
+                            $query->field('id,name,nickname,user_img');
+                        } ])
+                        ->withCount(['comments'])
+                        ->where('status', '1')
+                        ->order('id','desc')
+                        ->hidden(['art_pass'])
+                        ->append(['url'])
+                        ->limit($map['counts'][0])
+                        ->select()
+                        ->toArray();
+
+                    $data1 = $this::suffix($map['suffixArr'][0])->field($field)
+                        ->with([
+                        'cate' => function(Query $query){
+                            $query->field('id,catename,ename,detpl');
+                        },
+                        'user' => function(Query $query){
+                            $query->field('id,name,nickname,user_img');
+                        } ])
+                        ->withCount(['comments'])
+                        ->where('status', '1')
+                        ->order('id','desc')
+                        ->hidden(['art_pass'])
+                        ->append(['url'])
+                        ->limit($num - $map['counts'][0])
+                        ->select()
+                        ->toArray();
+
+                    $data = array_merge($data, $data1);
+                }
+            } else {
+                // 单表
+                $data = $this::field($field)
+                    ->with([
+                    'cate' => function(Query $query){
+                        $query->field('id,catename,ename,detpl');
+                    },
+                    'user' => function(Query $query){
+                        $query->field('id,name,nickname,user_img');
+                    } ])
+                    ->withCount(['comments'])
+                    ->where('status', '1')
+                    ->order('id','desc')
+                    ->hidden(['art_pass'])
+                    ->append(['url'])
+                    ->limit($num)
+                    ->select()
+                    ->toArray();
+            }
+
+            // return $data->hidden(['art_pass'])->toArray();
+
+            return $data;
+
+		}, 120);
+
+        return $indexs;
     }
 
     /**
