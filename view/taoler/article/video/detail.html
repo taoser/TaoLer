@@ -56,7 +56,7 @@
 
 		      <div class="fly-list-nums">
                 点赞
-			    <a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$article.comments_count}</a><i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
+			    <a href="#comment"><i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$comments.total}</a><i class="iconfont" title="浏览">&#xe60b;</i>{$pv}
 		      </div>
         </div>
 
@@ -130,7 +130,6 @@
             </a>
           </div>
           <div class="questions">
-            <span class="layui-badge layui-bg-green">回答 {$article.user.comments_count}</span> <span class="layui-badge layui-bg-green">发表 {$article.user.article_count}</span>
             <span class="layui-badge layui-bg-green">+ 关注</span>
           </div>
         </div>
@@ -262,7 +261,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
   // 评论分页
   laypage.render({
     elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-    count: "{$article.comments_count}", //数据总数，从服务端得到
+    count: "{$comments.total}", //数据总数，从服务端得到
     limit: 10,
     curr: "{$page}",
     //获取起始页

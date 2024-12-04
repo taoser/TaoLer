@@ -103,8 +103,6 @@ class Article extends BaseController
 			}
 		}
 
-        // 被赞
-        $zanCount = Db::name('user_zan')->where('user_id', $artDetail['user_id'])->cache(true)->count();
 
 		// 标签
 		$tags = [];
@@ -153,7 +151,6 @@ class Article extends BaseController
 			'cid' 			=> $id,
 			'lrDate_time' 	=> $lrDate_time,
 			'userZanList' 	=> $userZanList,
-			'zanCount'    	=> $zanCount,
             'passJieMi'   	=> session('art_pass_'.$id)
 		]);
 

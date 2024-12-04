@@ -290,10 +290,9 @@ class Article extends Model
                     $query->field('id,catename,ename,detpl');
                 },
                 'user' => function(Query $query){
-                    $query->field('id,name,nickname,user_img,area_id,vip,city')->withCount(['article','comments']);
+                    $query->field('id,name,nickname,user_img,area_id,vip,city');
                 }
             ])
-            ->withCount(['comments'])
             ->hidden(['art_pass'])
             ->append(['url'])
             ->find($id);
