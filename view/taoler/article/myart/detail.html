@@ -267,9 +267,7 @@
 						</div>
 					</div>
 				</section>
-
             </div>
-
 
             <div class="sidebar layui-col-md4 d-none d-lg-block">
 				<div class="theiaStickySidebar">
@@ -325,6 +323,7 @@
 </main>
 
 {include file="public/menu" /}
+{:hook('callme_foot', ['aid' => $article.id, 'uid' => $article.user_id])}
 
 {/block}
 
@@ -373,6 +372,7 @@
 		// 评论
 		form.on('submit(user-comment)',function (data){
 			comment(data.field);
+			return false;
 		});
 		// 提交回复
 		form.on('submit(submit-user-comment)', function(data){
@@ -416,7 +416,7 @@
 			var index = layer.load(1);
 			$.ajax({
 				type: "post",
-				url: "{:url('article/comment')}",
+				url: "{:url('comment/add')}",
 				data: data,
 				dataType: "json",
 				success:function (res) {

@@ -633,9 +633,13 @@ class Container implements ArrayAccess, ContainerContract
      */
     protected function rebound($abstract)
     {
+        if (! $callbacks = $this->getReboundCallbacks($abstract)) {
+            return;
+        }
+
         $instance = $this->make($abstract);
 
-        foreach ($this->getReboundCallbacks($abstract) as $callback) {
+        foreach ($callbacks as $callback) {
             $callback($this, $instance);
         }
     }
@@ -836,7 +840,9 @@ class Container implements ArrayAccess, ContainerContract
         // Before returning, we will also set the resolved flag to "true" and pop off
         // the parameter overrides for this build. After those two things are done
         // we will be ready to return back the fully constructed class instance.
-        $this->resolved[$abstract] = true;
+        if (! $needsContextualBuild) {
+            $this->resolved[$abstract] = true;
+        }
 
         array_pop($this->with);
 

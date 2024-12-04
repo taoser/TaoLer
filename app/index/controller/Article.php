@@ -89,7 +89,7 @@ class Article extends BaseController
         $artDetail->pv = $pv;
 
 		// 3.设置内容的tag内链
-		$artDetail->content = $this->setArtTagLink($artDetail->content);
+		//$artDetail->content = $this->setArtTagLink($artDetail->content);
 
 		//	热议文章
 		$artHot = $this->model->getArtHot(10);

@@ -382,16 +382,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v6.10.1",
+            "version": "v6.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "500501c2ce893c824c801da135d02661199f60c5"
+                "reference": "30c19ed0f3264cb660ea496895cfb6ef7ee3653b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/500501c2ce893c824c801da135d02661199f60c5",
-                "reference": "500501c2ce893c824c801da135d02661199f60c5",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/30c19ed0f3264cb660ea496895cfb6ef7ee3653b",
+                "reference": "30c19ed0f3264cb660ea496895cfb6ef7ee3653b",
                 "shasum": ""
             },
             "require": {
@@ -439,9 +439,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v6.10.1"
+                "source": "https://github.com/firebase/php-jwt/tree/v6.10.2"
             },
-            "time": "2024-05-18T18:05:11+00:00"
+            "time": "2024-11-24T11:22:49+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -770,16 +770,16 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v11.31.0",
+            "version": "v11.34.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
-                "reference": "06dfc614aff58384b28ba5ad191f6a02d6b192cb"
+                "reference": "b057b0bbb38d7c7524df1ca5c38e7318f4c64d26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/container/zipball/06dfc614aff58384b28ba5ad191f6a02d6b192cb",
-                "reference": "06dfc614aff58384b28ba5ad191f6a02d6b192cb",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/b057b0bbb38d7c7524df1ca5c38e7318f4c64d26",
+                "reference": "b057b0bbb38d7c7524df1ca5c38e7318f4c64d26",
                 "shasum": ""
             },
             "require": {
@@ -817,20 +817,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-10-11T15:30:11+00:00"
+            "time": "2024-11-21T20:07:31+00:00"
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.31.0",
+            "version": "v11.34.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "56312862af937bd6da8e6dc8bbd88188dfb478f8"
+                "reference": "184317f701ba20ca265e36808ed54b75b115972d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/56312862af937bd6da8e6dc8bbd88188dfb478f8",
-                "reference": "56312862af937bd6da8e6dc8bbd88188dfb478f8",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/184317f701ba20ca265e36808ed54b75b115972d",
+                "reference": "184317f701ba20ca265e36808ed54b75b115972d",
                 "shasum": ""
             },
             "require": {
@@ -865,7 +865,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-09-22T15:08:08+00:00"
+            "time": "2024-11-25T15:33:38+00:00"
         },
         {
             "name": "intervention/image",
@@ -897,16 +897,16 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "2.4-dev"
-                },
                 "laravel": {
-                    "providers": [
-                        "Intervention\\Image\\ImageServiceProvider"
-                    ],
                     "aliases": {
                         "Image": "Intervention\\Image\\Facades\\Image"
-                    }
+                    },
+                    "providers": [
+                        "Intervention\\Image\\ImageServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
                 }
             },
             "autoload": {
@@ -1100,16 +1100,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.3.6",
+            "version": "v1.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96"
+                "reference": "4f48ade902b94323ca3be7646db16209ec76be3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/f865a58ea3a0107c336b7045104c75243fa59d96",
-                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/4f48ade902b94323ca3be7646db16209ec76be3d",
+                "reference": "4f48ade902b94323ca3be7646db16209ec76be3d",
                 "shasum": ""
             },
             "require": {
@@ -1157,7 +1157,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2024-11-11T17:06:04+00:00"
+            "time": "2024-11-14T18:34:49+00:00"
         },
         {
             "name": "league/flysystem",
@@ -1625,16 +1625,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v6.9.2",
+            "version": "v6.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "a7b17b42fa4887c92146243f3d2f4ccb962af17c"
+                "reference": "2f5c94fe7493efc213f643c23b1b1c249d40f47e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/a7b17b42fa4887c92146243f3d2f4ccb962af17c",
-                "reference": "a7b17b42fa4887c92146243f3d2f4ccb962af17c",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/2f5c94fe7493efc213f643c23b1b1c249d40f47e",
+                "reference": "2f5c94fe7493efc213f643c23b1b1c249d40f47e",
                 "shasum": ""
             },
             "require": {
@@ -1694,7 +1694,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.9.2"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.9.3"
             },
             "funding": [
                 {
@@ -1702,7 +1702,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-09T10:07:50+00:00"
+            "time": "2024-11-24T18:04:13+00:00"
         },
         {
             "name": "psr/cache",
@@ -2158,16 +2158,16 @@
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1"
+                "reference": "74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1",
-                "reference": "0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6",
+                "reference": "74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6",
                 "shasum": ""
             },
             "require": {
@@ -2205,7 +2205,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.5.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -2221,7 +2221,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-18T09:32:20+00:00"
+            "time": "2024-09-25T14:20:29+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -2827,16 +2827,16 @@
         },
         {
             "name": "topthink/think-captcha",
-            "version": "v3.0.10",
+            "version": "v3.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-captcha.git",
-                "reference": "4673be9cd6e74845fd13c882a65809c697f79668"
+                "reference": "4f24f560a31011329e3d144732e5370d7676b3fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/4673be9cd6e74845fd13c882a65809c697f79668",
-                "reference": "4673be9cd6e74845fd13c882a65809c697f79668",
+                "url": "https://api.github.com/repos/top-think/think-captcha/zipball/4f24f560a31011329e3d144732e5370d7676b3fb",
+                "reference": "4f24f560a31011329e3d144732e5370d7676b3fb",
                 "shasum": ""
             },
             "require": {
@@ -2874,22 +2874,22 @@
             "description": "captcha package for thinkphp",
             "support": {
                 "issues": "https://github.com/top-think/think-captcha/issues",
-                "source": "https://github.com/top-think/think-captcha/tree/v3.0.10"
+                "source": "https://github.com/top-think/think-captcha/tree/v3.0.11"
             },
-            "time": "2024-08-13T03:20:19+00:00"
+            "time": "2024-11-22T12:59:35+00:00"
         },
         {
             "name": "topthink/think-helper",
-            "version": "v3.1.9",
+            "version": "v3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-helper.git",
-                "reference": "d554a0a62e4c7034abc7343ee866005c3f399ae2"
+                "reference": "ac66cc0859a12cd5d73258f50f338aadc95e9b46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-helper/zipball/d554a0a62e4c7034abc7343ee866005c3f399ae2",
-                "reference": "d554a0a62e4c7034abc7343ee866005c3f399ae2",
+                "url": "https://api.github.com/repos/top-think/think-helper/zipball/ac66cc0859a12cd5d73258f50f338aadc95e9b46",
+                "reference": "ac66cc0859a12cd5d73258f50f338aadc95e9b46",
                 "shasum": ""
             },
             "require": {
@@ -2920,9 +2920,9 @@
             "description": "The ThinkPHP6 Helper Package",
             "support": {
                 "issues": "https://github.com/top-think/think-helper/issues",
-                "source": "https://github.com/top-think/think-helper/tree/v3.1.9"
+                "source": "https://github.com/top-think/think-helper/tree/v3.1.10"
             },
-            "time": "2024-10-15T02:24:05+00:00"
+            "time": "2024-11-21T01:47:51+00:00"
         },
         {
             "name": "topthink/think-installer",
@@ -3028,16 +3028,16 @@
         },
         {
             "name": "topthink/think-multi-app",
-            "version": "v1.0.17",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-multi-app.git",
-                "reference": "4055a6187296ac16c0bc7bbab4ed5d92f82f791c"
+                "reference": "f93c604d5cfac2b613756273224ee2f88e457b88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/4055a6187296ac16c0bc7bbab4ed5d92f82f791c",
-                "reference": "4055a6187296ac16c0bc7bbab4ed5d92f82f791c",
+                "url": "https://api.github.com/repos/top-think/think-multi-app/zipball/f93c604d5cfac2b613756273224ee2f88e457b88",
+                "reference": "f93c604d5cfac2b613756273224ee2f88e457b88",
                 "shasum": ""
             },
             "require": {
@@ -3070,9 +3070,9 @@
             "description": "thinkphp multi app support",
             "support": {
                 "issues": "https://github.com/top-think/think-multi-app/issues",
-                "source": "https://github.com/top-think/think-multi-app/tree/v1.0.17"
+                "source": "https://github.com/top-think/think-multi-app/tree/v1.1.1"
             },
-            "time": "2023-03-29T02:04:29+00:00"
+            "time": "2024-11-25T08:52:44+00:00"
         },
         {
             "name": "topthink/think-orm",
@@ -3247,16 +3247,16 @@
         },
         {
             "name": "workerman/gateway-worker",
-            "version": "v3.1.17",
+            "version": "v3.1.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/GatewayWorker.git",
-                "reference": "89478a15d1f2a8fe48070e631af977bbebeaf0d8"
+                "reference": "8d371770cb0dbd8166b94d6049a6a497c13476df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/GatewayWorker/zipball/89478a15d1f2a8fe48070e631af977bbebeaf0d8",
-                "reference": "89478a15d1f2a8fe48070e631af977bbebeaf0d8",
+                "url": "https://api.github.com/repos/walkor/GatewayWorker/zipball/8d371770cb0dbd8166b94d6049a6a497c13476df",
+                "reference": "8d371770cb0dbd8166b94d6049a6a497c13476df",
                 "shasum": ""
             },
             "require": {
@@ -3285,7 +3285,7 @@
             ],
             "support": {
                 "issues": "https://github.com/walkor/GatewayWorker/issues",
-                "source": "https://github.com/walkor/GatewayWorker/tree/v3.1.17"
+                "source": "https://github.com/walkor/GatewayWorker/tree/v3.1.18"
             },
             "funding": [
                 {
@@ -3297,7 +3297,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-03-07T01:55:27+00:00"
+            "time": "2024-12-01T09:51:00+00:00"
         },
         {
             "name": "workerman/gatewayclient",
@@ -3380,16 +3380,16 @@
         },
         {
             "name": "workerman/workerman",
-            "version": "v4.2.0",
+            "version": "v4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/workerman.git",
-                "reference": "df513f3fd274811ebb8358d05d7cec19ee8bd3e1"
+                "reference": "cafb5a43d93d7d30a16b32a57948581cca993562"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/workerman/zipball/df513f3fd274811ebb8358d05d7cec19ee8bd3e1",
-                "reference": "df513f3fd274811ebb8358d05d7cec19ee8bd3e1",
+                "url": "https://api.github.com/repos/walkor/workerman/zipball/cafb5a43d93d7d30a16b32a57948581cca993562",
+                "reference": "cafb5a43d93d7d30a16b32a57948581cca993562",
                 "shasum": ""
             },
             "require": {
@@ -3439,7 +3439,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-07T08:31:33+00:00"
+            "time": "2024-11-24T11:45:37+00:00"
         },
         {
             "name": "yansongda/artful",
@@ -3517,16 +3517,16 @@
         },
         {
             "name": "yansongda/pay",
-            "version": "v3.7.10",
+            "version": "v3.7.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yansongda/pay.git",
-                "reference": "0aea5b2ddcd3f017fc7e7124dd1d157b7810b16c"
+                "reference": "0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yansongda/pay/zipball/0aea5b2ddcd3f017fc7e7124dd1d157b7810b16c",
-                "reference": "0aea5b2ddcd3f017fc7e7124dd1d157b7810b16c",
+                "url": "https://api.github.com/repos/yansongda/pay/zipball/0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb",
+                "reference": "0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb",
                 "shasum": ""
             },
             "require": {
@@ -3586,7 +3586,7 @@
                 "issues": "https://github.com/yansongda/pay/issues",
                 "source": "https://github.com/yansongda/pay"
             },
-            "time": "2024-09-11T03:25:00+00:00"
+            "time": "2024-11-23T03:29:59+00:00"
         },
         {
             "name": "yansongda/supports",

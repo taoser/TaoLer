@@ -9,7 +9,9 @@ use think\facade\Cache;
 use think\facade\Session;
 use think\facade\Config;
 use think\db\Query;
+use think\facade\Db;
 use Exception;
+
 
 class Article extends Model
 {
@@ -199,7 +201,6 @@ class Article extends Model
             ->where('status', 1)
             ->order('id','desc')
             ->limit($num)
-            ->hidden(['art_pass'])
             ->append(['url'])
             ->select();
 
@@ -216,20 +217,25 @@ class Article extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getArtHot(int $num)
+    public function getArtHot(int $num = 10)
     {
-        return Cache::remember('article_hot', function() use($num){
-            $comments = Comment::field('article_id, count(*) as count')
-            ->hasWhere('article',['status' => 1])
-            ->group('article_id')
-            ->order('count','desc')
-            ->limit($num)
-            ->select();
+        $hots =  Cache::remember('article_hot', function() use($num){
 
-            $idArr = [];
-            foreach($comments as $v) {
-                $idArr[] = $v->article_id;
-            }
+            $comment = Db::name('comment')
+            ->alias('c')
+            ->field('c.article_id, count(*) as count')
+            ->whereMonth('c.create_time')
+            ->join('article a', 'c.article_id = a.id')
+            ->where(['c.status' => 1, 'c.delete_time' => 0])
+            ->where(['a.status' => 1, 'a.delete_time' => 0])
+            ->group('c.article_id')
+            ->order('count', 'desc')
+            ->limit($num)
+            ->select()
+            ->toArray();
+
+            $idArr = array_column($comment, 'article_id');
+            
             $where = [];
             if(count($idArr)) {
                 // 评论数
@@ -241,14 +247,14 @@ class Article extends Model
                 ->withCount('comments')
                 ->where($where)
                 //->whereYear('create_time')
-                // ->order('comments_count','desc')
+                ->order('comments_count','desc')
                 ->append(['url'])
                 ->select();
 
             } else {
                 // pv数
                 $where = [
-                    ['status', '=', 1]
+                    ['status', '=', '1']
                 ];
 
                 $artHot = $this::field('id,cate_id,title,create_time')
@@ -260,8 +266,11 @@ class Article extends Model
                 ->append(['url'])
                 ->select();
             }
+
             return $artHot;
         }, 3600);
+
+        return $hots;
     }
 
     /**
