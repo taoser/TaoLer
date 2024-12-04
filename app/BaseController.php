@@ -152,18 +152,18 @@ abstract class BaseController
 
     /**
      * 非admin应用的文章url路由地址
-     * @param int $aid
+     * @param int|string $aid
      * @param $ename
      * @return string
      */
-    protected function getRouteUrl(int $aid, $ename = '')
+    protected function getRouteUrl(int|string $aid, $ename = '')
     {
         $domain = $this->getDomain();
         $appName = app('http')->getName();
         $articleUrl = (string) url('article_detail', ['id' => $aid]);
         // 详情动态路由，$aid, $ename
         if(config('taoler.url_rewrite.article_as') == '<ename>/'){
-            $articleUrl = (string) url('article_detail', ['id' => (int) $aid, 'ename'=> $ename]);
+            $articleUrl = (string) url('article_detail', ['id' => $aid, 'ename' => $ename]);
         }
 
 //        // 判断应用是否绑定域名

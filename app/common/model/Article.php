@@ -3,6 +3,7 @@ declare (strict_types = 1);
 
 namespace app\common\model;
 
+use addons\ads\model\Slider;
 use Exception;
 use think\Model;
 use think\model\concern\SoftDelete;
@@ -12,6 +13,9 @@ use think\facade\Config;
 use think\db\Query;
 use think\facade\Db;
 use app\observer\ArticleObserver;
+use app\common\lib\IdEncode;
+use app\facade\Sqids;
+use think\facade\Request;
 
 class Article extends BaseModel
 {
@@ -66,7 +70,6 @@ class Article extends BaseModel
 
     // 设置json类型字段
 	protected $json = ['media'];
-
 
     /**
      * 获取所有分表的后缀数组
@@ -279,7 +282,7 @@ class Article extends BaseModel
     public function getIndexs(int $num = 10)
     {
         $indexs = Cache::remember('idx_article', function() use($num){
-
+            
             $map = self::getSuffixMap(['status' => 1], Article::class);
 
             $field = 'id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time';
@@ -300,6 +303,7 @@ class Article extends BaseModel
                         ->where('status', '1')
                         ->order('id','desc')
                         ->hidden(['art_pass'])
+                        ->append(['enid'])
                         ->append(['url'])
                         ->limit($num)
                         ->select()
@@ -319,6 +323,7 @@ class Article extends BaseModel
                         ->where('status', '1')
                         ->order('id','desc')
                         ->hidden(['art_pass'])
+                        ->append(['enid'])
                         ->append(['url'])
                         ->limit($map['counts'][0])
                         ->select()
@@ -336,6 +341,7 @@ class Article extends BaseModel
                         ->where('status', '1')
                         ->order('id','desc')
                         ->hidden(['art_pass'])
+                        ->append(['enid'])
                         ->append(['url'])
                         ->limit($num - $map['counts'][0])
                         ->select()
@@ -357,6 +363,7 @@ class Article extends BaseModel
                     ->where('status', '1')
                     ->order('id','desc')
                     ->hidden(['art_pass'])
+                    ->append(['enid'])
                     ->append(['url'])
                     ->limit($num)
                     ->select()
@@ -364,6 +371,13 @@ class Article extends BaseModel
             }
 
             // return $data->hidden(['art_pass'])->toArray();
+
+            // if(config('taoler.id_status') === 1) {
+            //     $sqids = new Sqids(config('taoler.id_alphabet'), config('taoler.id_minlength'));
+            //     foreach($data as $k => $v) {
+            //         $data[$k]['id'] = $sqids->encode([$v['id']]);
+            //     }
+            // }
 
             return $data;
 
@@ -441,8 +455,13 @@ class Article extends BaseModel
      * @return mixed
      * @throws \Throwable
      */
-    public function getArtDetail(int $id)
+    public function getArtDetail(int|string $id)
     {
+        if(is_string($id)) {
+            $id = IdEncode::decode($id);
+        }
+
+        // halt($id);
         return Cache::remember('article_'.$id, function() use($id){
             $this->setSuffix(self::byIdGetSuffix($id));
             //查询文章
@@ -837,17 +856,19 @@ class Article extends BaseModel
         }
 
         return ['data' => $data, 'count' => $count];
-     }
+    }
 
     // 两种模式 获取url
-    public function getUrlAttr($value,$data)
+    public function getUrlAttr($value, $data)
     {
+        $data['id'] = IdEncode::encode($data['id']);
+        
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
             $ename = Cate::where('id', $data['cate_id'])->cache(true)->value('ename');
-            return (string) url('article_detail',['id' => $data['id'],'ename' => $ename]);
+            return (string) url('article_detail', ['id' => $data['id'],'ename' => $ename]);
         }
+
         return (string) url('article_detail',['id' => $data['id']]);
-        
     }
 
     // 内容是否加密
@@ -859,6 +880,5 @@ class Article extends BaseModel
         }
         return $value;
     }
-
 
 }

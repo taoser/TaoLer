@@ -56,6 +56,7 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
+            'Sqids\\' => 6,
         ),
         'Q' => 
         array (
@@ -141,11 +142,11 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         ),
         'think\\' => 
         array (
-            0 => __DIR__ . '/..' . '/topthink/think-filesystem/src',
-            1 => __DIR__ . '/..' . '/topthink/think-orm/src',
-            2 => __DIR__ . '/..' . '/topthink/think-template/src',
-            3 => __DIR__ . '/..' . '/topthink/think-helper/src',
-            4 => __DIR__ . '/..' . '/topthink/framework/src/think',
+            0 => __DIR__ . '/..' . '/topthink/framework/src/think',
+            1 => __DIR__ . '/..' . '/topthink/think-filesystem/src',
+            2 => __DIR__ . '/..' . '/topthink/think-helper/src',
+            3 => __DIR__ . '/..' . '/topthink/think-orm/src',
+            4 => __DIR__ . '/..' . '/topthink/think-template/src',
         ),
         'taoser\\think\\' => 
         array (
@@ -187,6 +188,10 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         'Symfony\\Component\\VarDumper\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
+        ),
+        'Sqids\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sqids/sqids/src',
         ),
         'QL\\' => 
         array (

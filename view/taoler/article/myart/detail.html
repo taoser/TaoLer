@@ -319,12 +319,11 @@
 
 {include file="public/menu" /}
 
+{:hook('callme_foot', ['aid' => $article.id, 'uid' => $article.user_id])}
 {/block}
 
 {block name="script"}
-
 <script type='text/javascript' src="{$Request.domain}/view/common/blog/js/theme.js"></script>
-
 <script>
 	var collectionFind = "{:url('Collection/find')}",
 		collection = "{:url('collection/')}",
@@ -507,4 +506,5 @@
 </script>
 
 <!-- 插件hook位 -->
+
 {/block}

@@ -125,7 +125,7 @@ class BaseModel extends Model
      * @param [type] $class 类
      * @return void
      */
-    public static function getSuffixMap(array $where = [], $class = null)
+    public static function getSuffixMap(array $where = [], ?string $class = null)
     {
         $MODEL_CLASS_NAME = !is_null($class) ? $class : static::class;
         // 单个分表统计数 倒叙

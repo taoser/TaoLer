@@ -15,6 +15,7 @@ use app\common\model\Comment;
 use app\common\model\UserZan;
 use app\common\model\PushJscode;
 use app\common\lib\Msgres;
+use app\common\lib\IdEncode;
 
 class Article extends BaseController
 {
@@ -38,7 +39,7 @@ class Article extends BaseController
 		$ename = Request::param('ename');
 		$type = Request::param('type','all');
 		$page = Request::param('page',1);
-
+// halt($ename);
 		// 分类信息
 		$cateInfo = $cate->getCateInfo($ename);
 
@@ -67,6 +68,8 @@ class Article extends BaseController
     public function detail()
     {
 		$id = input('id');
+		$id = IdEncode::decode($id);
+
 		$page = input('page',1);
 
 		// 1.内容
@@ -306,8 +309,10 @@ class Article extends BaseController
     public function edit()
     {
 		$id = input('id');
+		// $id = IdEncode::decode($id);
+// halt($id);
 		$article = $this->model->setSuffix($this->byIdGetSuffix($id))->find($id);
-
+// halt($article);
 		$this->removeDetailHtml($article);
 		
 		if(Request::isAjax()){
@@ -367,8 +372,10 @@ class Article extends BaseController
 				//删除原有缓存显示编辑后内容
 				Cache::delete('article_'.$id);
 				Session::delete('art_pass_'.$id);
-
-				$link = $this->getRouteUrl((int) $id, $article->cate->ename);
+				// halt($id);
+				$id = IdEncode::encode((int)$id);
+				
+				$link = $this->getRouteUrl($id, $article->cate->ename);
 
 				hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 				return Msgres::success('edit_success',$link);

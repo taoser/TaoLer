@@ -8,7 +8,7 @@ use think\db\Query;
 use think\facade\Cache;
 use think\facade\Session;
 use think\facade\Db;
-
+use Sqids\Sqids;
 
 class Category extends BaseModel
 {
@@ -387,9 +387,9 @@ class Category extends BaseModel
                         ->withCount(['comments'])
                         ->whereIn('id', $idArr)
                         ->order('id', 'desc')
-                        ->select()
                         ->append(['url'])
                         ->hidden(['art_pass'])
+                        ->select()
                         ->toArray();
                         
                         $datas = array_merge($datas, $list);
@@ -416,9 +416,9 @@ class Category extends BaseModel
                         ->withCount(['comments'])
                         ->whereIn('id', $idArr)
                         ->order('id', 'desc')
-                        ->select()
                         ->append(['url'])
                         ->hidden(['art_pass'])
+                        ->select()
                         ->toArray();
                         
                         $datas = array_merge($datas, $list);
@@ -457,6 +457,13 @@ class Category extends BaseModel
                 return $datas;
 
             }, 600);
+        }
+
+        if(config('taoler.id_status') === 1) {
+            $sqids = new Sqids(config('taoler.id_alphabet'), config('taoler.id_minlength'));
+            foreach($data as $k => $v) {
+                $data[$k]['id'] = $sqids->encode([$v['id']]);
+            }
         }
 
         return [

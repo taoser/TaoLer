@@ -17,6 +17,7 @@ use think\facade\Db;
 use app\facade\Article;
 use app\common\lib\Msgres;
 use app\common\model\Category;
+use Sqids\Sqids;
 
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
@@ -45,8 +46,20 @@ class Index extends BaseController
 // 		$a = $this->getSfx();
 // halt($a);
 
+// $sqids = new Sqids('', 8);
+// $ID1 = $sqids->encode([123]);
+// $ID = $sqids->decode($ID1);
+// halt($ID);
+
+// $a = new Article();
+// $b = Article::getIndexs();
+// halt($b);
+
 // $c = Category::getArticlesByCategoryEname('posts');
 // halt($c);
+
+
+
 		$html = View::fetch();
 
 		$this->buildHtml($html);

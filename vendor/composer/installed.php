@@ -3,7 +3,7 @@
         'name' => 'taoser/taoler',
         'pretty_version' => '3.0.x-dev',
         'version' => '3.0.9999999.9999999-dev',
-        'reference' => '6a68d349136283b81e1f0139768842c222ed9d02',
+        'reference' => 'aad47d30ee41e85fe519f457dcdb0f33e54b1e6d',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -259,6 +259,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'sqids/sqids' => array(
+            'pretty_version' => '0.4.1',
+            'version' => '0.4.1.0',
+            'reference' => 'ff3d1214c0c2119ae4b676cc00f3abb22f61da42',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../sqids/sqids',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'symfony/deprecation-contracts' => array(
             'pretty_version' => 'v3.5.0',
             'version' => '3.5.0.0',
@@ -298,7 +307,7 @@
         'taoser/taoler' => array(
             'pretty_version' => '3.0.x-dev',
             'version' => '3.0.9999999.9999999-dev',
-            'reference' => '6a68d349136283b81e1f0139768842c222ed9d02',
+            'reference' => 'aad47d30ee41e85fe519f457dcdb0f33e54b1e6d',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

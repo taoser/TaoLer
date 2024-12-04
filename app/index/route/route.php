@@ -71,25 +71,27 @@ Route::group(function (){
 	Route::rule('article/add/<cate?>','add')->name('add_article');
 	Route::rule('article/delete/<id>$','delete');
 	Route::rule('article/tags','tags')->allowCrossDomain();
-	Route::rule('article/edit/<id>$','edit');
+	Route::rule('article/edit/<id>$','edit')->name('article_edit');
 	Route::get('article/catetree','getCateTree')->name('get_cate_tree');
 
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
-	// 详情
-	$detail_as = config('taoler.url_rewrite.article_as') ?: 'detail/'; //详情页URL别称
-	Route::get($detail_as . '<id>$', 'detail')->name('article_detail');
-    Route::get($detail_as . '<id>/<page>$', 'detail')->name('article_comment');
+
     // 分类
 	$cate_as = config('taoler.url_rewrite.cate_as') ?: 'category/'; //分类别称
 	Route::get($cate_as . '<ename>$','cate')->name('cate')->cache(180);
 	Route::get($cate_as . '<ename>/<type>$', 'cate')->name('cate_type');
 	Route::get($cate_as . '<ename>/<type>/<page>$', 'cate')->name('cate_page');
 
+	// 详情
+	$detail_as = config('taoler.url_rewrite.article_as') ?: 'detail/'; //详情页URL别称
+	Route::get($detail_as . '<id>$', 'detail')->name('article_detail');
+    Route::get($detail_as . '<id>/<page>$', 'detail')->name('article_comment');
+
 })->prefix('article/')->pattern([
 		'ename' => '[\w|\-]+',
 		'type' => '\w+',
 		'page'   => '\d+',
-		'id'   => '\d+',
+		'id'   => '\w+',
 	]);
 			
 

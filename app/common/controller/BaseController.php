@@ -16,6 +16,7 @@ use think\facade\Request;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Cache;
+use app\common\lib\IdEncode;
 use app\BaseController as BaseCtrl;
 
 /**
@@ -217,12 +218,16 @@ class BaseController extends BaseCtrl
 	{
 		if(config('taoler.config.static_html')) {
 
+			$id = IdEncode::encode((int)$article['id']);
+
 			if(config('taoler.url_rewrite.article_as') == '<ename>/') {
-				$url = (string) url('article_detail',['id' => $article['id'],'ename' =>$article->cate->ename]);
+				$url = (string) url('article_detail',['id' => $id,'ename' => $article->cate->ename]);
 			} else {
-				$url = (string) url('article_detail',['id' => $article['id']]);
+				$url = (string) url('article_detail',['id' => $id]);
 			}
+	
 			$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/'));
+
 			if(file_exists($staticFilePath) && is_file($staticFilePath)) {
 				unlink($staticFilePath);
 			}
