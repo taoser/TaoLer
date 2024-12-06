@@ -418,6 +418,7 @@ class RuleGroup extends Rule
     public function class(string $class)
     {
         $this->bind = '\\' . $class;
+        $this->prefix('\\' . $class . '@');
         return $this;
     }
 
@@ -430,6 +431,7 @@ class RuleGroup extends Rule
     public function controller(string $controller)
     {
         $this->bind = '@' . $controller;
+        $this->prefix($controller . '/');
         return $this;
     }
 
@@ -442,6 +444,7 @@ class RuleGroup extends Rule
     public function namespace(string $namespace)
     {
         $this->bind = ':' . $namespace;
+        $this->prefix($namespace . '\\');
         return $this;
     }
 
@@ -454,6 +457,7 @@ class RuleGroup extends Rule
     public function layer(string $layer)
     {
         $this->bind = '/' . $layer;
+        $this->prefix($layer . '/');
         return $this;
     }
 

@@ -26,7 +26,7 @@ class Cate extends TagLib
     public function tagBrother($tag, $content): string
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
-        $parse .= '{php}$__brotherCate__ = \app\facade\Cate::getBrotherCate($ename);{/php}';
+        $parse .= '{php}$__brotherCate__ = \app\facade\Category::getBrotherCate($ename);{/php}';
         $parse .= '{volist name="__brotherCate__" id="brother"}';
         $parse .= $content;
         $parse .= '{/volist}';

@@ -123,7 +123,7 @@
 						<div class="card-body pt-4">
 							{//评论内容}
 							<div class="mb-3" id="flyReply">
-							文章评论 <small class="font-theme text-muted">({article:comment_num})</small>
+							文章评论 <small class="font-theme text-muted">({$comments.total})</small>
 								<ul class="jieda" id="jieda">
 									{article:comment}
 									<li data-id="{comment:id /}" class="jieda-daan">
@@ -286,20 +286,6 @@
 									<div class="p-3">
 										<div class="h6 mb-2">{$article.user.name}</div>
 										<div class="text-xs text-secondary mb-4">本站内容禁止任何人采集</div>
-										<div class="row g-0 text-center">
-											<div class="col">
-												<div class="font-theme h5">{$article.user.article_count}</div>
-												<div class="text-xs text-muted">文章</div>
-											</div>
-											<div class="col">
-												<div class="font-theme h5">{$article.user.comments_count}</div>
-												<div class="text-xs text-muted">评论</div>
-											</div>
-											<div class="col">
-												<div class="font-theme h5">{$zanCount}</div>
-												<div class="text-xs text-muted">被赞</div>
-											</div>
-										</div>
 									</div>
 								</div>
 							</div>
@@ -314,16 +300,16 @@
 						<dt class="function_t">热门文章</dt>
 						<dd class="function_c">
 							<ul>
-								{volist name="artHot" id="vo"}
+								{article:list type="hot"}
 								<li style="display: block;">
 									<div class="list-body fanpian">
-										<a href="{$vo.url}" target="_blank">{$vo.title}</a>
+										<a href="{$article.url}" target="_blank">{article:title /}</a>
 									</div>
 									<div class="list-footer">
-										<div class="text-muted text-xs"><time class="d-inline-block">{$vo.create_time|date='Y-m-d'}</time></div>
+										<div class="text-muted text-xs"><time class="d-inline-block">{$article.create_time|date='Y-m-d'}</time></div>
 									</div>
 								</li>
-								{/volist}
+								{/article:list}
 							</ul>
 						</dd>
 					</dl>
@@ -351,7 +337,7 @@
     </div>
 
     {//crud管理模块}
-    {include file="/public/crud" /}
+    
 
 </main>
 
@@ -512,20 +498,20 @@
 		// 评论分页
 		laypage.render({
 			elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-			count: "{$article.comments_count}", //数据总数，从服务端得到
+			count: "{$comments.total}", //数据总数，从服务端得到
 			limit: 10,
 			curr: "{$page}",
 			//获取起始页
 			jump: function (obj, first) {
 				var page = obj.curr;
 				var limit = obj.limit;
-				var  url = "{:url('article_detail',['id' => $article.id ,'ename' =>$article['cate']['ename']])}";
+				var  url = "{:url('article_detail',['id' => $article.id ,'ename' => $article['cate_ename']])}";
 				var id = "{$article.id}";
 				//首次不执行
 				if (!first) {
-				$.post("{:url('article/detail')}", { id: id, page: page }, function () {
-					location.href = url + '?page=' + page + '#flyReply';
-				});
+					$.post("{:url('article/detail')}", { id: id, page: page }, function () {
+						location.href = url + '?page=' + page + '#flyReply';
+					});
 				}
 			}
 		});

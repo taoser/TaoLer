@@ -8,9 +8,9 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Db;
 use think\facade\Config;
-use app\common\model\Comment as CommentModel;
-use app\common\model\Article;
-use app\common\model\UserZan;
+use app\index\model\Comment as CommentModel;
+use app\index\model\Article;
+use app\index\model\UserZan;
 use taoler\com\Message;
 
 

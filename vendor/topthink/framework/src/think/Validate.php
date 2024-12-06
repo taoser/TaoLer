@@ -1720,15 +1720,16 @@ class Validate
 
     /**
      * 获取错误信息
-     * @param string $field 验证字段
+     * @param bool  $withKey 是否包含字段信息
      * @return array|string
      */
-    public function getError(?string $field = null)
+    public function getError(bool $withKey = false)
     {
-        if ($field) {
-            return $this->error[$field] ?? '';
-        }
-        return $this->error;
+        if ($withKey || count($this->error) > 1 ) {
+            // 批量验证
+            return $this->error;
+        } 
+        return empty($this->error) ? '' : array_values($this->error)[0];
     }
 
     /**

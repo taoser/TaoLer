@@ -1,14 +1,10 @@
 <?php
 namespace app\index\Controller;
 
-use app\common\controller\BaseController;
-use app\common\lib\Msgres;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
-use think\facade\Db;
 use think\facade\Request;
 use think\facade\Session;
-use think\facade\Cookie;
 use think\facade\Cache;
 use think\facade\View;
 use think\facade\Config;
@@ -16,7 +12,7 @@ use app\common\model\User;
 use Exception;
 use Symfony\Component\VarExporter\Internal\Exporter;
 
-class Login extends BaseController
+class Login extends IndexBaseController
 {
 	protected $users = null;
 	//已登陆中间件检测

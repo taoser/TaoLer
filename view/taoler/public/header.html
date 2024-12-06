@@ -11,7 +11,7 @@
 		{if config('taoler.config.nav_top')  != 0}
 		{taoler:nav}
 			<li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
-				<a href="{nav:link /}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
+				<a href="{nav:link /}">{nav:title /} {eq name="nav.is_hot" value="1"} <span class="layui-badge-dot"></span> {/eq}</a>
 				{notempty name="nav.children"}
 				<dl class="layui-nav-child"> <!-- 二级菜单 -->
 					{taoler:snav}

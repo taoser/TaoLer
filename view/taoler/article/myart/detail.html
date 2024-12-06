@@ -123,7 +123,7 @@
 						<div class="card-body pt-4">
 							{//评论内容}
 							<div class="mb-3" id="flyReply">
-							文章评论 <small class="font-theme text-muted">({article:comment_num})</small>
+							文章评论 <small class="font-theme text-muted">({$comments.total})</small>
 								<ul class="jieda" id="jieda">
 									{article:comment}
 									<li data-id="{comment:id /}" class="jieda-daan">
@@ -275,16 +275,16 @@
 						<dt class="function_t">热门文章</dt>
 						<dd class="function_c">
 							<ul>
-								{volist name="artHot" id="vo"}
+								{article:list type="hot"}
 								<li style="display: block;">
 									<div class="list-body fanpian">
-										<a href="{$vo.url}" target="_blank">{$vo.title}</a>
+										<a href="{$article.url}" target="_blank">{article:title /}</a>
 									</div>
 									<div class="list-footer">
-										<div class="text-muted text-xs"><time class="d-inline-block">{$vo.create_time|date='Y-m-d'}</time></div>
+										<div class="text-muted text-xs"><time class="d-inline-block">{$article.create_time|date='Y-m-d'}</time></div>
 									</div>
 								</li>
-								{/volist}
+								{/article:list}
 							</ul>
 						</dd>
 					</dl>
@@ -467,24 +467,10 @@
 			});
 		});
 
-		//下载
-		$('#zip-download').click(function (){
-		var id = "{$article.id}";
-			$.ajax({
-				type:"post",
-				url:"{:url('article/download')}",
-				data:{id:id},
-				success:function (data) {
-				location.href = "{:url('article/download',['id'=>$article.id])}"; 
-				}
-			});
-		});
-
-
 		// 评论分页
 		laypage.render({
 		elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-		count: "{$article.comments_count}", //数据总数，从服务端得到
+		count: "{$comments.total}", //数据总数，从服务端得到
 		limit: 10,
 		curr: "{$page}",
 		//获取起始页

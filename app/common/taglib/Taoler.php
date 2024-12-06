@@ -27,7 +27,7 @@ class Taoler extends TagLib
     public function tagNav($tag, $content): string
     {
         $id = $tag['id'] ?? 'nav';
-        $parse = '{php}$__cate__ = \app\facade\Cate::getNav();{/php}';
+        $parse = '{php}$__cate__ = \app\facade\Category::getNav();{/php}';
         $parse .= '{volist name="__cate__" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';

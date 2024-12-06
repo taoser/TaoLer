@@ -1,0 +1,408 @@
+<?php
+
+namespace app\index\model;
+
+use app\common\model\BaseModel;
+use Exception;
+use think\db\exception\DbException;
+use think\db\Query;
+use think\facade\Db;
+use think\facade\Cache;
+use think\facade\Session;
+
+use Sqids\Sqids;
+
+class Category extends BaseModel
+{
+    // 表名
+    protected $name = 'cate';
+
+    // 新的数量, 数据介于两表之间分量时使用
+    protected static $newLimit;
+    // 当前分页数据偏移量
+    protected static $offset;
+    // 当前用到的数据总和
+    protected static $currentTotalNum = 0;
+
+
+    //关联文章
+	public function article()
+    {
+        return $this->hasMany(Article::class);
+    }
+	
+	// 查询类别信息
+	public function getCateInfo(string $ename)
+	{
+		return $this->field('ename,catename,detpl,desc')
+        ->where('ename', $ename)
+        ->where('status', '1')
+        ->cache('cate_'.$ename, 600)
+        ->find();
+	}
+
+    // ID查询类别信息
+    public function getCateInfoById(int $id)
+    {
+        return $this->field('id,catename,ename,detpl,pid,icon,sort,desc')->find($id);
+    }
+
+    // 查询子分类
+    public function getSubCate(string $ename)
+    {
+        return $this->field('ename,catename')->where('pid', $this::where('ename', $ename)->value('id'))->select();
+    }
+
+    // 查询兄弟分类
+    public function getBrotherCate(string $ename)
+    {
+        return $this->field('id,ename,catename')->where('pid', $this::where('ename', $ename)->value('pid'))->append(['url'])->order('sort asc')->select();
+    }
+
+    /**
+     * 删除分类
+     * @param $id
+     * @return int|string
+     * @throws DbException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+	public function del($id)
+	{
+		$cates = $this->field('id,pid')->with('article')->find($id);
+		$sonCate = $this::where('pid',$cates['id'])->count();
+		if($sonCate > 0) {
+            return '存在子分类，无法删除';
+		}
+        $res = $cates->together(['article'])->delete();
+        return $res ? 1 : '删除失败';
+	}
+
+    // 分类表
+    public function getList()
+    {
+        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,status,is_hot,desc')->cache(3600)->select()->toArray();
+        if(count($data)) {
+            // 排序
+            $cmf_arr = array_column($data, 'sort');
+            array_multisort($cmf_arr, SORT_ASC, $data);
+            return json(['code'=>0,'msg'=>'ok', 'count' => count($data),'data'=>$data]);
+        }
+        return json(['code'=>-1,'msg'=>'no data','data'=>'']);
+    }
+
+    // 如果菜单下无内容，URl不能点击
+    public function menu()
+    {
+        try {
+            return $this->where(['status' => 1])
+                ->cache(3600)
+                ->append(['url'])
+                ->select()
+                ->toArray();
+        } catch (DbException $e) {
+            return $e->getMessage();
+        }
+
+    }
+
+    // 分类导航菜单
+    public function getNav()
+    {
+        try {
+            $cateList = $this->where('status', '1')
+                ->cache(3600)
+                ->append(['url'])
+                ->select()
+                ->toArray();
+            // 排序
+            $cmf_arr = array_column($cateList, 'sort');
+            array_multisort($cmf_arr, SORT_ASC, $cateList);
+            return getTree($cateList);
+        } catch (DbException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * 导航子菜单
+     *
+     * @param string $ename 父导航英文名
+     * @return array
+     */
+    public function getSubnav(string $ename) : array
+    {
+        $subCateArray = Cache::remember("subnav_{$ename}", function() use($ename){
+			$subCateList = []; // 没有点击任何分类，点击首页获取全部分类信息
+			//1.查询父分类id
+			$pCate = Db::name('cate')
+			->field('id,pid,ename,catename,is_hot')
+			->where(['ename' => $ename,'status'=>1,'delete_time'=>0])
+			->find();
+
+			if(!is_null($pCate)) {
+				// 点击分类，获取子分类信息
+				$parentId = $pCate['id'];
+
+				$subCate = Db::name('cate')
+				->field('id,ename,catename,is_hot,pid')
+				->where(['pid'=>$parentId,'status'=>1,'delete_time'=>0])
+				->select()
+				->toArray();
+					
+				if(!empty($subCate)) { 
+					// 有子分类
+					$subCateList = array2tree($subCate);
+				} else {
+					//无子分类
+					if($pCate['pid'] == 0) {
+						//一级菜单
+						$subCateList[] = $pCate;
+					} else {
+						//子菜单下如果无子菜单，则显示全部兄弟分类
+						$parament = Db::name('cate')
+						->field('id,ename,catename,is_hot,pid')
+						->where(['pid'=>$pCate['pid'],'status'=>1,'delete_time'=>0])
+						->order(['sort' => 'asc'])
+						->select()
+						->toArray();
+
+						$subCateList = array2tree($parament);
+					}
+				}
+			}
+
+			return $subCateList;
+		});
+		
+		return $subCateArray;
+    }
+
+    /**
+     * 分类文章
+     *
+     * @param string $ename 英文别名
+     * @param integer $page 页码
+     * @param string $type 筛选类型
+     * @param integer $limit 每页数
+     * @return array
+     */
+    public static function getArticlesByCategoryEname(string $ename, int $page = 1, string $type = 'all', int $limit = 15): array
+    {
+
+        // 查询条件
+        $where = [];
+        // 数据
+        $data = [];
+
+        $cateId = self::where('status', 1)->where('ename', $ename)->value('id');
+
+        if(!is_null($cateId)){
+            $where[] = ['cate_id' ,'=', $cateId];
+        }
+
+        $where[] = ['status', '=', 1];
+        switch ($type) {
+            //查询文章,15个分1页
+            case 'jie':
+                $where[] = ['jie','=', '1'];
+                break;
+            case 'hot':
+                $where[] = ['is_hot','=', '1'];
+                break;
+            case 'top':
+                $where[] = ['is_top' ,'=', '1'];
+                break;
+            case 'wait':
+                $where[] = ['jie','=', '0'];
+                break;
+        }
+
+// $limit = 5;
+// $page = 3;
+
+        // $m = self::getSuffixMap(['status' => 1]);
+        // halt($m);
+
+        // 文章分类总数
+        $map = Cache::remember("cate_count_{$ename}_{$type}", function() use($where){
+
+
+            return self::getSuffixMap($where, Article::class);
+            
+            // 单个分表统计数 倒叙
+            $counts = [];
+            // 数据总和
+            $totals = 0;
+
+            // 得到所有的分表后缀 倒叙排列
+            $suffixArr = self::getSubTablesSuffix('article');
+            // 主表没有后缀，添加到分表数组中
+            $suffixArr[] = '';
+
+            // 表综合
+            $suffixCount = count($suffixArr);
+
+            if($suffixCount) {
+                foreach($suffixArr as $sfx) {
+                    $total = Article::suffix($sfx)->where($where)->count();
+                    $counts[] = $total;
+                    $totals += $total;
+                }
+            }
+
+            return [
+                'counts'    => $counts,
+                'totals'    => $totals,
+                'suffixArr' => $suffixArr,
+                'suffixCount' => $suffixCount
+            ];
+        });
+
+
+        // 总共页面数
+        $lastPage = (int) ceil($map['totals'] / $limit); // 向上取整
+ 
+        if($map['totals']) {
+
+            if($page > $lastPage) {
+                throw new Exception('no data');
+            }
+
+            $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit, $map) {
+
+                $datas = [];
+                // 最大偏移量
+                $maxNum = $page * $limit;
+                // 开始时的偏移量
+                self::$offset = ($page - 1) * $limit;
+                // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
+                self::$newLimit = $limit;
+
+
+                for($i = 0; $i < $map['suffixCount']; $i++) {
+
+                    self::$currentTotalNum += $map['counts'][$i];
+
+                    // 1.可以完全取到 在第一组分表中就可以完全查询到
+                    if((self::$currentTotalNum - $maxNum) >= 0){
+                        // echo 123;
+                    
+                        $articles = Article::suffix($map['suffixArr'][$i])->field('id')->where($where)->order('id', 'desc')->limit(self::$offset, self::$newLimit)->select();
+                        $ids = $articles->toArray();
+                        $idArr = array_column($ids, 'id');
+
+                        $list =  Article::suffix($map['suffixArr'][$i])->field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
+                        ->with([
+                            'cate' => function(Query $query) {
+                                $query->field('id,catename,ename');
+                            },
+                            'user' => function(Query $query){
+                                $query->field('id,name,nickname,user_img,vip');
+                            }
+                        ])
+                        ->withCount(['comments'])
+                        ->whereIn('id', $idArr)
+                        ->order('id', 'desc')
+                        ->append(['url'])
+                        ->hidden(['art_pass'])
+                        ->select()
+                        ->toArray();
+                        
+                        $datas = array_merge($datas, $list);
+                        break;
+                    } 
+
+                    // 2.数据介于2表之间 第一组和第二组各取部分数据
+                    if((self::$currentTotalNum - $maxNum) < 0 && ($maxNum - self::$currentTotalNum - $limit) < 0 ) {
+                        // echo 234;
+
+                        $articles = Article::suffix($map['suffixArr'][$i])->field('id')->where($where)->order('id', 'desc')->limit(self::$offset, self::$newLimit)->select();
+                        $ids = $articles->toArray();
+                        $idArr = array_column($ids, 'id');
+
+                        $list =  Article::suffix($map['suffixArr'][$i])->field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
+                        ->with([
+                            'cate' => function(Query $query) {
+                                $query->field('id,catename,ename');
+                            },
+                            'user' => function(Query $query){
+                                $query->field('id,name,nickname,user_img,vip');
+                            }
+                        ])
+                        ->withCount(['comments'])
+                        ->whereIn('id', $idArr)
+                        ->order('id', 'desc')
+                        ->append(['url'])
+                        ->hidden(['art_pass'])
+                        ->select()
+                        ->toArray();
+                        
+                        $datas = array_merge($datas, $list);
+                        
+                        // 介于2表之间 第二张表分量从0开始
+                        self::$offset = 0;
+                        // 第二张表分量数
+                        self::$newLimit = $page * $limit - self::$currentTotalNum;
+            
+                    }
+
+                    // 3.第一组完全取不到 数据没有在第一组，刚好从第二组开头取, 只能从后面一组从0开始继续找 ，需要跳过当次循环
+                    if($maxNum - self::$currentTotalNum - $limit == 0) {
+
+                        // echo 345;
+
+                        self::$offset = 0;
+                    }
+
+                    // 4.第一组完全取不到 且不是从第二组开头找，需要跳过当次循环
+                    if((self::$currentTotalNum - $maxNum < 0) && ($maxNum - self::$currentTotalNum - $limit > 0) ) {
+
+                        // echo 456;
+
+                        // 第一组可分页面数
+                        $p = (int) floor(self::$currentTotalNum  / self::$newLimit);
+                        // 第一组余量数
+                        $n = self::$currentTotalNum  % self::$newLimit;
+
+                        // 第二组的偏移量
+                        self::$offset = ($page - 1 - $p) * self::$newLimit - $n;
+                    }               
+
+                }          
+               
+                return $datas;
+
+            }, 600);
+        }
+
+        // if(config('taoler.id_status') === 1) {
+        //     $sqids = new Sqids(config('taoler.id_alphabet'), config('taoler.id_minlength'));
+        //     foreach($data as $k => $v) {
+        //         $data[$k]['id'] = $sqids->encode([$v['id']]);
+        //     }
+        // }
+
+        return [
+            'total' => $map['totals'],
+            'per_page' => $limit,
+            'current_page' => $page,
+            'last_page' => $lastPage,
+            'data' => $data
+        ];
+
+    }
+
+    // 获取url
+    public function getUrlAttr($value,$data)
+    {
+        // 栏目下存在帖子，则返回正常url,否则为死链
+        $articleCount = Article::where('cate_id', $data['id'])->cache(true)->count();
+        if($articleCount > 0) {
+            return (string) url('cate',['ename' => $data['ename']]);
+        }
+        return 'javascript:void(0);';
+    }
+
+
+}

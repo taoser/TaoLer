@@ -1,7 +1,7 @@
 <?php
 namespace app\observer;
 
-use app\common\model\Article;
+use app\index\model\Article;
 use think\facade\Db;
 use Exception;
 
@@ -58,6 +58,11 @@ class ArticleObserver
     {
         // dump($article->id);
         // $article->setSuffix($this->byIdGetSuffix($article->id));
+    }
+
+    public function BeforeDelete(Article $article)
+    {
+        $article->setSuffix($this->byIdGetSuffix($article->id));
     }
 
     /**

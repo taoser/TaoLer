@@ -42,7 +42,7 @@
 					<span id="LAY_jieAdmin" data-id="{article:id /}" data-colurl="{:url('collection/find')}"></span>
 					<span class="fly-list-nums"> 
 						<a href="#comment">
-						<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{article:comment_num /}
+						<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{$comments.total}
 						</a>
 						<i class="iconfont" title="浏览">&#xe60b;</i>{article:pv /}
 					</span>
@@ -123,7 +123,7 @@
 
 			{//评论内容}
 			<div class="fly-panel detail-box" id="flyReply">
-			<span style="font-size:18px;">评论 {$article.comments_count}</span>
+			<span style="font-size:18px;">评论 {$comments.total}</span>
 			<ul class="jieda" id="jieda">
 				{article:comment}
 					<li data-id="{comment:id /}" class="jieda-daan">
@@ -240,10 +240,6 @@
 					<a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
 					<img class="" src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}" />
 					</a>
-				</div>
-				<div class="questions">
-					<span class="layui-badge layui-bg-green">回答 {$article.user.comments_count}</span>
-					<span class="layui-badge layui-bg-green">发表 {$article.user.article_count}</span>
 				</div>
 			</div>
 		</div>

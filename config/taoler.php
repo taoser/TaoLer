@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.0.9',
+    'version'   => '3.1.0',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
