@@ -261,7 +261,7 @@
 	var collectionFind = "{:url('collection/find')}",
 		collection = "{:url('collection/')}",
 		articleJieset = "{:url('Article/jieset')}",
-		articleDelete = "{:url('Article/delete')}",
+		articleDelete = "{:url('article/delete')}",
 		commentJiedaZan = "{:url('Comment/jiedaZan')}",
 		commentJiedaCai = "{:url('Comment/jiedaCai')}",
 		commentGetDa = "{:url('Comment/getDa')}",
@@ -270,7 +270,7 @@
 		langCollection = "{:lang('collection')}",
 		langCancelCollection = "{:lang('cancel collection')}";
 
-	layui.use(['laypage'], function(){
+	layui.use(['laypage','jie'], function(){
 		var $ = layui.jquery
 		,form = layui.form
 		,uid = layui.cache.user.uid

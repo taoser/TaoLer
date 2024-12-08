@@ -79,7 +79,7 @@ layui.define('fly', function(exports){
       layer.confirm('确认删除该贴么？', function(index){
       layer.close(index);
       $.ajax({
-          type:'get',
+          type:'post',
           url:articleDelete,
           data:{id: div.data('id')},
           dataType:'json',
@@ -136,6 +136,7 @@ layui.define('fly', function(exports){
 
   $('body').on('click', '.jie-admin', function(){
     var othis = $(this), type = othis.attr('type');
+    console.log(type)
     gather.jieAdmin[type] && gather.jieAdmin[type].call(this, othis.parent());
   });
 

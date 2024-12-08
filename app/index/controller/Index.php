@@ -14,6 +14,7 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\common\lib\Msgres;
+use app\index\model\Article;
 
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
@@ -40,7 +41,15 @@ class Index extends IndexBaseController
 // 		$a = $this->getSfx();
 // halt($a);
 
-
+// $s = Article::where('id', '>=', 10 + 1) // >= <= 条件可以使用索引
+// ->where([
+// 	['cate_id', '=', 1],
+// 	['status', '=',1]
+// ])
+// ->order('id asc')
+// ->fetchSql(true)
+// ->value('id');
+// dump($s);
 
 // $c = Category::getArticlesByCategoryEname('posts');
 // halt($c);

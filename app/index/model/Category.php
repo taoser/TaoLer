@@ -8,9 +8,7 @@ use think\db\exception\DbException;
 use think\db\Query;
 use think\facade\Db;
 use think\facade\Cache;
-use think\facade\Session;
-
-use Sqids\Sqids;
+use app\common\lib\IdEncode;
 
 class Category extends BaseModel
 {
@@ -32,13 +30,20 @@ class Category extends BaseModel
     }
 	
 	// 查询类别信息
-	public function getCateInfo(string $ename)
+	public static function getCateInfoByEname(string $ename)
 	{
-		return $this->field('ename,catename,detpl,desc')
+		$cate = self::field('id,ename,catename,detpl,desc')
         ->where('ename', $ename)
         ->where('status', '1')
-        ->cache('cate_'.$ename, 600)
+        ->cache('cate_'.$ename, 3600)
         ->find();
+
+        // 抛出 HTTP 异常
+        if(is_null($cate) && $ename != 'all') {
+			throw new \think\exception\HttpException(404, '没有可访问的数据！');
+		}
+
+        return $cate;
 	}
 
     // ID查询类别信息
@@ -179,7 +184,7 @@ class Category extends BaseModel
     }
 
     /**
-     * 分类文章
+     * 分类文章，支持分表分页
      *
      * @param string $ename 英文别名
      * @param integer $page 页码
@@ -189,16 +194,15 @@ class Category extends BaseModel
      */
     public static function getArticlesByCategoryEname(string $ename, int $page = 1, string $type = 'all', int $limit = 15): array
     {
+        $cate = self::getCateInfoByEname($ename);
 
         // 查询条件
         $where = [];
         // 数据
         $data = [];
 
-        $cateId = self::where('status', 1)->where('ename', $ename)->value('id');
-
-        if(!is_null($cateId)){
-            $where[] = ['cate_id' ,'=', $cateId];
+        if(!empty($cate['id'])){
+            $where[] = ['cate_id' ,'=', $cate['id']];
         }
 
         $where[] = ['status', '=', 1];
@@ -218,8 +222,8 @@ class Category extends BaseModel
                 break;
         }
 
-// $limit = 5;
-// $page = 3;
+        // $limit = 5;
+        // $page = 3;
 
         // $m = self::getSuffixMap(['status' => 1]);
         // halt($m);
@@ -230,6 +234,7 @@ class Category extends BaseModel
 
             return self::getSuffixMap($where, Article::class);
             
+            // 以下是原理--------------------
             // 单个分表统计数 倒叙
             $counts = [];
             // 数据总和
@@ -269,7 +274,7 @@ class Category extends BaseModel
                 throw new Exception('no data');
             }
 
-            $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit, $map) {
+            $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit, $map, $cate) {
 
                 $datas = [];
                 // 最大偏移量
@@ -279,6 +284,7 @@ class Category extends BaseModel
                 // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
                 self::$newLimit = $limit;
 
+                $field = 'id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass';
 
                 for($i = 0; $i < $map['suffixCount']; $i++) {
 
@@ -288,23 +294,26 @@ class Category extends BaseModel
                     if((self::$currentTotalNum - $maxNum) >= 0){
                         // echo 123;
                     
-                        $articles = Article::suffix($map['suffixArr'][$i])->field('id')->where($where)->order('id', 'desc')->limit(self::$offset, self::$newLimit)->select();
+                        $articles = Article::suffix($map['suffixArr'][$i])
+                        ->field('id')
+                        ->where($where)
+                        ->order('id', 'desc')
+                        ->limit(self::$offset, self::$newLimit)
+                        ->select();
+
                         $ids = $articles->toArray();
                         $idArr = array_column($ids, 'id');
 
-                        $list =  Article::suffix($map['suffixArr'][$i])->field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
+                        $list =  Article::suffix($map['suffixArr'][$i])
+                        ->field($field)
+                        ->whereIn('id', $idArr)
                         ->with([
-                            'cate' => function(Query $query) {
-                                $query->field('id,catename,ename');
-                            },
                             'user' => function(Query $query){
                                 $query->field('id,name,nickname,user_img,vip');
                             }
                         ])
                         ->withCount(['comments'])
-                        ->whereIn('id', $idArr)
                         ->order('id', 'desc')
-                        ->append(['url'])
                         ->hidden(['art_pass'])
                         ->select()
                         ->toArray();
@@ -317,23 +326,25 @@ class Category extends BaseModel
                     if((self::$currentTotalNum - $maxNum) < 0 && ($maxNum - self::$currentTotalNum - $limit) < 0 ) {
                         // echo 234;
 
-                        $articles = Article::suffix($map['suffixArr'][$i])->field('id')->where($where)->order('id', 'desc')->limit(self::$offset, self::$newLimit)->select();
+                        $articles = Article::suffix($map['suffixArr'][$i])
+                        ->field('id')
+                        ->where($where)
+                        ->order('id', 'desc')
+                        ->limit(self::$offset, self::$newLimit)
+                        ->select();
                         $ids = $articles->toArray();
                         $idArr = array_column($ids, 'id');
 
-                        $list =  Article::suffix($map['suffixArr'][$i])->field('id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass')
+                        $list =  Article::suffix($map['suffixArr'][$i])
+                        ->field($field)
+                        ->whereIn('id', $idArr)
                         ->with([
-                            'cate' => function(Query $query) {
-                                $query->field('id,catename,ename');
-                            },
                             'user' => function(Query $query){
                                 $query->field('id,name,nickname,user_img,vip');
                             }
                         ])
                         ->withCount(['comments'])
-                        ->whereIn('id', $idArr)
                         ->order('id', 'desc')
-                        ->append(['url'])
                         ->hidden(['art_pass'])
                         ->select()
                         ->toArray();
@@ -369,19 +380,29 @@ class Category extends BaseModel
                         self::$offset = ($page - 1 - $p) * self::$newLimit - $n;
                     }               
 
-                }          
+                }
+                
+                // 路由设置模式
+                $routeRewrite = (config('taoler.url_rewrite.article_as') == '<ename>/');
                
+                // 往datas数组中追加cate和url 减少查询
+                foreach($datas as &$da) {
+                    $da['cate'] = ['catename' => $cate['catename'], 'ename' => $cate['ename']];
+
+                    $id = IdEncode::encode($da['id']);
+                    if($routeRewrite) {
+                        $da['url'] = (string) url('article_detail', ['id' => $id,'ename' => $cate['ename']]);
+                    } else {
+                        $da['url'] = (string) url('article_detail', ['id' => $id]);
+                    } 
+                }
+
+                unset($da);
+
                 return $datas;
 
             }, 600);
         }
-
-        // if(config('taoler.id_status') === 1) {
-        //     $sqids = new Sqids(config('taoler.id_alphabet'), config('taoler.id_minlength'));
-        //     foreach($data as $k => $v) {
-        //         $data[$k]['id'] = $sqids->encode([$v['id']]);
-        //     }
-        // }
 
         return [
             'total' => $map['totals'],
@@ -394,15 +415,9 @@ class Category extends BaseModel
     }
 
     // 获取url
-    public function getUrlAttr($value,$data)
+    public function getUrlAttr($value, $data)
     {
-        // 栏目下存在帖子，则返回正常url,否则为死链
-        $articleCount = Article::where('cate_id', $data['id'])->cache(true)->count();
-        if($articleCount > 0) {
-            return (string) url('cate',['ename' => $data['ename']]);
-        }
-        return 'javascript:void(0);';
+        return (string) url('cate', ['ename' => $data['ename']]);
     }
-
 
 }

@@ -36,16 +36,11 @@ class Article extends IndexBaseController
 	{
 		//动态参数
 		$ename = $this->request->param('ename');
-		$type = $this->request->param('type','all');
-		$page = $this->request->param('page/d',1);
+		$type = $this->request->param('type', 'all');
+		$page = $this->request->param('page/d', 1);
 
 		// 分类信息
-		$cateInfo = Category::getCateInfo($ename);
-
-		if(is_null($cateInfo) && $ename != 'all') {
-			// 抛出 HTTP 异常
-			throw new \think\exception\HttpException(404, '没有可访问的数据！');
-		}
+		$cateInfo = Category::getCateInfoByEname($ename);
 
 		//分页url
 		$url = (string) url('cate_page',['ename'=>$ename, 'type'=>$type, 'page'=>$page]);
@@ -54,6 +49,7 @@ class Article extends IndexBaseController
 
 		$assignArr = [
 			'cateinfo'	=> $cateInfo,
+			'cate'	=> $cateInfo,
 			'path'		=> $path
 		];
 
@@ -77,7 +73,7 @@ class Article extends IndexBaseController
         if(is_null($artDetail)) throw new \think\exception\HttpException(404, '无内容');
 		
 		// 2.pv
-		$artDetail->inc('pv', 1)->save();
+		$artDetail->setInc('pv', 1, 60);
 		$pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
         $artDetail->pv = $pv;
 
@@ -432,18 +428,17 @@ class Article extends IndexBaseController
     public function delete(): Json
 	{
 		$id = $this->request->param('id');
-		
-		if(Request::isAjax()){
 
-            try {
-                $arr = explode(",", $id);
-                $this->model->remove($arr);
-            } catch (\Exception $e) {
-                return json(['code'=>-1,'msg' => $e->getMessage()]);
-            }
-
-			return json(['code' => 0, 'msg' => '删除成功']);
+		try {
+			$arr = explode(",", $id);
+			$ids = array_map('intval', $arr);
+			$this->model::remove($ids);
+				
+		} catch (\Exception $e) {
+			return json(['code'=>-1,'msg' => $e->getMessage()]);
 		}
+
+		return json(['code' => 0, 'msg' => '删除成功']);
 	}
 
 	/**

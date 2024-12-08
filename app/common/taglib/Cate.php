@@ -15,11 +15,14 @@ use think\template\TagLib;
 class Cate extends TagLib
 {
     protected $tags = [
+        'catename'      => ['attr' => '', 'close' => 0],
+        'ename'         => ['attr' => '', 'close' => 0],
+        'desc'          => ['attr' => '', 'close' => 0],
         'brother'       => ['attr' => '', 'close' => 1],
         'bro_name'      => ['attr' => '', 'close' => 0],
         'bro_ename'     => ['attr' => '', 'close' => 0],
         'bro_url'       => ['attr' => '', 'close' => 0],
-        'clist'          => ['attr' => '']
+        'clist'         => ['attr' => '']
     ];
 
 
@@ -32,6 +35,19 @@ class Cate extends TagLib
         $parse .= '{/volist}';
         return $parse;
 
+    }
+
+    public function tagCatename($tag): string
+    {
+        return '{$cate.catename}';
+    }
+    public function tagEname($tag): string
+    {
+        return '{$cate.catename}';
+    }
+    public function tagDesc($tag): string
+    {
+        return '{$cate.catename}';
     }
 
     public function tagBro_name($tag): string

@@ -67,6 +67,9 @@ class Article extends BaseModel
     // 设置json类型字段
 	protected $json = ['media'];
 
+    // 延迟写入pv
+    protected $lazyFields = ['pv'];
+
     /**
      * 获取所有分表的后缀数组
      * ['_1','_2','_3']
@@ -241,9 +244,12 @@ class Article extends BaseModel
     {
         try {
             foreach($ids as $id){
-                $article = $this->with('comments')->find((int) $id);
+                $this->setSuffix(self::byIdGetSuffix($id));
+                $article = $this->find($id);
                 $article->together(['comments'])->delete();
+                $article->delete();
             }
+            
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
@@ -472,6 +478,7 @@ class Article extends BaseModel
             $this->setSuffix(self::byIdGetSuffix($id));
             //查询文章
             return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,keywords,description,read_type,art_pass,title_color,create_time,update_time')
+            ->where('id', $id)
             ->where('status', '1')
             ->with([
                 'cate' => function(Query $query){
@@ -483,7 +490,7 @@ class Article extends BaseModel
             ])
             ->hidden(['art_pass'])
             ->append(['url'])
-            ->find($id);
+            ->find();
             
         }, 600);
 
@@ -711,27 +718,31 @@ class Article extends BaseModel
     public function getPrevNextArticle($id, $cid)
     {
         //上一篇
-        $pIds = $this::where([
-            ['id', '>=', $id], // >= <= 条件可以使用索引
+        $pId = $this::where('id', '>=', $id + 1) // >= <= 条件可以使用索引
+        ->where([
             ['cate_id', '=', $cid],
             ['status', '=',1]
-        ])->order('id asc')->limit(2)->column('id');
+        ])
+        ->order('id asc')
+        ->value('id');
 
-        if(count($pIds) === 2) {
-            $previous = $this::field('id,title,cate_id')->append(['url'])->find($pIds[1])->toArray();
+        if(!is_null($pId)) {
+            $previous = $this::field('id,title,cate_id')->append(['url'])->find($pId)->toArray();
         } else {
             $previous = [];
         }
   
         //下一篇
-        $nids = $this::where([
-            ['id', '<=', $id],
+        $nId = $this::where('id', '<=', $id - 1)
+        ->where([
             ['cate_id', '=', $cid],
             ['status', '=',1]
-        ])->order('id desc')->limit(2)->column('id');
+        ])
+        ->order('id desc')
+        ->value('id');
 
-        if(count($nids) === 2) {
-            $next = $this::field('id,title,cate_id')->append(['url'])->find($nids[1])->toArray();
+        if(!is_null($nId)) {
+            $next = $this::field('id,title,cate_id')->append(['url'])->find($nId)->toArray();
         } else {
             $next = [];
         }
