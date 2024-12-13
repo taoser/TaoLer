@@ -20,7 +20,8 @@
         {/if}
         <span class="layui-btn layui-btn-xs jie-admin" type="del" title="删除"><i class="layui-icon layui-icon-delete"></i></span>
       {/if}
-      {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
+      
+      {if (session('user_name') == $article.user.name  || ($user.auth  ?? ''))}
       <a  href="{:url('article_edit', ['id' => $article.id])}" title="编辑"><span class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-edit"></i></span></a>
       {/if}
     </div>

@@ -10,7 +10,6 @@
 
 namespace app\admin\controller;
 
-use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
@@ -23,7 +22,7 @@ use taoler\com\Api;
 use app\common\lib\facade\HttpHelper;
 use app\common\model\Comment;
 
-class Index extends AdminController
+class Index extends AdminBaseController
 {
 
 	protected $sys_version;

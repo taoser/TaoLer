@@ -79,9 +79,9 @@
         </div>
 	    {//评论}
         <div class="fly-panel detail-box" id="flyReply">
-        <span style="font-size:18px;">评论 {$comments->count()}</span>
+        <span style="font-size:18px;">评论 {comment:count /}</span>
         <ul class="jieda" id="jieda">
-        {volist name="comments['data']" id="vo" empty= ""}
+            {comment:list}
             <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
@@ -113,7 +113,7 @@
                 </div>
             </div>
             </li>
-        {/volist} 
+            {/comment:list}
         </ul>
         <div style="text-align: center">{$comments|raw}</div>
         {if condition="$article.is_reply == 1"}

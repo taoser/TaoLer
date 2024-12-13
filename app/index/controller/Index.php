@@ -50,6 +50,7 @@ class Index extends IndexBaseController
 // ->fetchSql(true)
 // ->value('id');
 // dump($s);
+// $d = Article::getRelationArticle(1);
 
 // $c = Category::getArticlesByCategoryEname('posts');
 // halt($c);

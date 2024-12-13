@@ -19,7 +19,7 @@ class Taglist extends BaseModel
     public function article()
 	{
 		//评论关联文章
-		return $this->belongsTo('Article','article_id','id');
+		return $this->belongsTo(Article::class);
 	}
 
 

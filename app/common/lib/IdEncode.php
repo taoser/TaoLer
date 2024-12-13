@@ -28,11 +28,12 @@ class IdEncode
     }
 
     // ID解密
-    public static function decode(string|int $string): int
+    public static function decode(string|int $idStr): int
     {
-        if(config('taoler.id_status') === 1) {
-            return self::getInstance()->decode($string)[0];
+        if(config('taoler.id_status') === 1 && is_string($idStr)) {
+            return self::getInstance()->decode($idStr)[0];
         }
-        return $string;
+
+        return $idStr;
     }
 }

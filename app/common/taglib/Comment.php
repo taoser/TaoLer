@@ -22,6 +22,8 @@ class Comment extends TagLib
      */
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
+        'list'      => ['attr' => '', 'close' => 1],
+        'count'     => ['attr' => '', 'close' => 0],
         'id'        => ['attr' => '', 'close' => 0],
         'content'   => ['attr' => '', 'close' => 0],
         'time'      => ['attr' => '', 'close' => 0],
@@ -33,6 +35,28 @@ class Comment extends TagLib
         'usign'     => ['attr' => '', 'close' => 0],
     ];
 
+    // 评论
+    public function tagList(array $tag, string $content): string
+    {
+        $parse = '{assign name="page" value="$Request.param.page ?? 1" /}';
+        $parse .= '<?php if(!isset($__COMMENTS__)) $__COMMENTS__ = \app\facade\comment::getComments($article[\'id\'], $page);';
+        $parse .= ' ?>';
+        $parse .= '{volist name="__COMMENTS__[\'data\']" id="comment" empty= "还没有内容"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+
+        return $parse;
+    }
+
+    public function tagCount(array $tag, string $content): string
+    {
+        $parse = '{assign name="page" value="$Request.param.page ?? 1" /}';
+        $parse .= '<?php if(!isset($__COMMENTS__)) $__COMMENTS__ = \app\facade\comment::getComments($article[\'id\'], $page);';
+        $parse .= ' ?>';
+        $parse .= '{$__COMMENTS__.count}';
+        return $parse;
+
+    }
 
     public function tagId()
     {

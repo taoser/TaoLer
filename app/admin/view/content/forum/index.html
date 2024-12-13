@@ -83,26 +83,26 @@
 	</script>
 	<script type="text/html" id="titleTpl">
         <ul>
-          <li><a href="{{- d.url }}" target="_blank"><strong>{{- d.title }}</strong></a></li>
-          <li>类别：{{ d.cate }}</li>
-          <li>{{ d.poster }} - {{ d.posttime }}</li>
+          <li><a href="{{- d.aurl }}" target="_blank"><strong>{{- d.title }}</strong></a></li>
+          <li>类别：{{ d.cate.catename }}</li>
+          <li>{{ d.user.name }} - {{ d.create_time }}</li>
         </ul>
     </script>
 
 	<script type="text/html" id="avatarTpl">
-		<div><img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= "{{ d.avatar }}"></div>
+		<div><img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= "{{ d.user.user_img }}"></div>
 	</script>
 	<script type="text/html" id="forum-istop">
-		<input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.top == 1 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.is_top == 1 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonHot">
-		<input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isHot" {{ d.hot == 1 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isHot" {{ d.is_hot == 1 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonReply">
-		<input type="checkbox" name="is_reply" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isReply" {{ d.reply == 0 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_reply" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isReply" {{ d.is_reply == 0 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonCheck">
-		<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{ d.check == 1 ? 'checked' : '' }}>
+		<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.status == 0 ? '待审' : '禁止' }}" {{ d.status == 1 ? 'checked' : '' }}>
 	</script>
 
 	<script type="text/html" id="forum-table-bar">
@@ -117,8 +117,10 @@
 		const FORUM_List = "{:url('content.forum/list')}";
 
 		layui.use(['toast','common','xmSelect'], function(){
-			var $ = layui.jquery, form = layui.form, table = layui.table;
-			let common = layui.common;
+			var $ = layui.jquery;
+			var form = layui.form;
+			var table = layui.table;
+			var common = layui.common;
 			var toast = layui.toast;
 			var xmSelect = layui.xmSelect;
 
@@ -126,13 +128,13 @@
 				[
 				{type: 'checkbox'}
 				,{field: 'id', width: 80, title: 'ID', sort: true}
-				,{field: 'avatar', title: '头像', width: 80, templet: '#avatarTpl'}
+				,{title: '头像', width: 80, templet: '#avatarTpl'}
 				,{title: '详情', minWidth: 200, templet: '#titleTpl'}
 				,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
-				,{field: 'top', title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
-				,{field: 'hot', title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
-				,{field: 'reply', title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
-				,{field: 'check', title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
+				,{ title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
+				,{title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
+				,{title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
+				,{title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
 				,{title: '操作', width: 110, align: 'center', toolbar: '#forum-table-bar'}
 				]
 			];
@@ -140,13 +142,7 @@
 			table.render({
 				elem: '#forum-table',
 				url: FORUM_List,
-				page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
-					curr: 1, //设定初始在第 5 页
-					groups: 1, //只显示 1 个连续页码
-					first: false, //不显示首页
-					last: false //不显示尾页
-				},
+				page: true,
 				cols: cols,
 				height: function(){
 					var otherHeight = $('.layui-card-body:first').outerHeight(); // 自定义其他区域的高度

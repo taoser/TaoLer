@@ -55,4 +55,9 @@ class Tag extends BaseModel
        return false;
     }
 
+    public function getUrlAttr($value, $data)
+    {
+        return (string) url('tag_list',['ename' => $data['ename']]);
+    }
+
 }

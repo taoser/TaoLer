@@ -63,83 +63,34 @@ class Article extends IndexBaseController
     public function detail()
     {
 		$id = $this->request->param('id');
-		$page = $this->request->param('page',1);
-
+		// dump($this->request);
+		$commentPage = $this->request->param('page',1);
 		$id = IdEncode::decode($id);
 
 		// 1.内容
-        $artDetail = $this->model::getDetail($id);
-
-        if(is_null($artDetail)) throw new \think\exception\HttpException(404, '无内容');
+        $detail = $this->model::getDetail($id);
 		
 		// 2.pv
-		$artDetail->setInc('pv', 1, 60);
+		$detail->setInc('pv', 1, 60);
 		$pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
-        $artDetail->pv = $pv;
+        $detail->pv = $pv;
 
 		// 3.设置内容的tag内链
-		// $artDetail->content = $this->setArtTagLink($artDetail->content);
-
-		
-		// 5.赞列表
-		$userZanList = [];
-		$userZan = UserZan::where(['article_id'=>$id,'type'=>1])->cache(true)->select();
-		if(count($userZan)) {
-			foreach($userZan as $v){
-				$userZanList[] = ['userImg'=>$v->user->user_img,'name'=>$v->user->name];
-			}
-		}
-		
-		
-		// 标签
-		$tags = [];
-		$relationArticle = []; //相关帖子
-        $artTags = Db::name('taglist')->where('article_id', $id)->cache(true)->select();
-		if(count($artTags)) {
-			foreach($artTags as $v) {
-				$tag = Db::name('tag')->find($v['tag_id']);
-				if(!is_null($tag)) 
-				$tags[] = ['name'=>$tag['name'],'url'=> (string) url('tag_list',['ename'=>$tag['ename']])];
-			}
-			//相关帖子
-			$relationArticle =  $this->model::getRelationTags($artTags[0]['tag_id'],$id,5);
-		}
-		
-		//上一篇下一篇
-		$upDownArt =  $this->model::getPrevNextArticle($id,$artDetail['cate_id']);
-		if(empty($upDownArt['previous'])) {
-            $previous = '前面已经没有了！';
-        } else {
-            $previous = '<a href="' . $upDownArt['previous']['url'] . '" rel="prev">' . $upDownArt['previous']['title'] . '</a>';
-        }
-		if(empty($upDownArt['next'])) {
-            $next = '已经是最新的内容了!';
-        } else {
-            $next = '<a href="' . $upDownArt['next']['url'] . '" rel="prev">' . $upDownArt['next']['title'] . '</a>';
-        }
-		
-		//评论
-		$comments = Comment::getComment($id, $page);
+		// $artDetail->content = $this->setArtTagLink($artDetail->content);		
 		
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
 		// halt($lrDate_time);
 		View::assign([
-			'article'		=> $artDetail,
+			'article'		=> $detail,
 			'pv'			=> $pv,
-			'tags'			=> $tags,
-			'relationArticle' => $relationArticle,
-			'previous'		=> $previous,
-			'next'			=> $next,
-			'page'			=> $page,
-			'comments'		=> $comments,
+			'page'			=> $commentPage,
 			'cid' 			=> $id,
 			'lrDate_time' 	=> $lrDate_time,
-			'userZanList' 	=> $userZanList,
             'passJieMi'   	=> session('art_pass_'.$id)
 		]);
 
-		$html = View::fetch('article/'.$artDetail['cate']['detpl'].'/detail');
+		$html = View::fetch('article/'.$detail['cate']['detpl'].'/detail');
 		
 		$this->buildHtml($html);
 		

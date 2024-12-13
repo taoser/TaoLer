@@ -72,24 +72,23 @@
               {/if}
               {/empty}
 
-              {notempty name="tags"}
               <div style="margin-top: 15px">标签
-                {volist name="tags" id="vo" }
-                <a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
-                {/volist}
+                {article:tag}
+                <a href="{$tag.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius"># {$tag.name}</span></a>
+                {/article:tag}
               </div>
-              {/notempty}
+
               <div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
                 <p style="line-height:200%;">{$sysInfo.state|raw}</p>
               </div>
               <div style="margin-top: 20px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
               <div class="detail-zan">
+                {article:zan}
+                <span><img src="{$zan.avatar}"></span>
+                {/article:zan}
                 <span class="jieda-zan" type="zan" id="article-zan">
-                  点赞 <i class="iconfont icon-zan"></i> <em>{:count($userZanList)}</em>
+                  点赞 <i class="iconfont icon-zan"></i> <em>{:count($__ZAN__)}</em>
                 </span>
-                {volist name="userZanList" id="vo" }
-                  <span><img src="{$vo.userImg}"></span>
-                {/volist}
               </div>
             </section>
 
@@ -127,9 +126,9 @@
               <div class="card-body pt-4">
                 {//评论内容}
                 <div class="mb-3" id="flyReply">
-                  文章评论 <small class="font-theme text-muted">({$comments.total})</small>
+                  文章评论 <small class="font-theme text-muted">({comment:count /})</small>
                   <ul class="jieda" id="jieda">
-                    {article:comment}
+                    {comment:list}
                     <li data-id="{$vo.id}" class="jieda-daan">
                       <a name="item-1111111111"></a>
                       <div class="detail-about detail-about-reply">
@@ -164,7 +163,7 @@
                       <hr style="width:90%;border:1px dotted red;height:1px;margin:5px 0px;"; />
                       <div>{comment:usign /}</div>
                     </li>
-                    {/article:comment}
+                    {/comment:list}
                   </ul>
                   <div style="text-align: center" id="pages"></div>
                 </div>
@@ -423,7 +422,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
     // 评论分页
     laypage.render({
       elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-      count: "{$comments.total}", //数据总数，从服务端得到
+      count: "{comment:count /}", //数据总数，从服务端得到
       limit: 10,
       curr: "{$page}",
       //获取起始页

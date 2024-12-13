@@ -16,7 +16,7 @@ Route::rule('/', 'index'); // 首页访问路由
 Route::get('index/reply$','index/reply')->name('user_reply');
 Route::rule('search','Search/getSearch')->name('user_search');
 Route::get('message/nums$','message/nums')->name('user_message');
-Route::get('tag/:ename', 'Tag/list')->name('tag_list');
+
 
 // 用户中心
 Route::group('user',function () {
@@ -62,6 +62,7 @@ Route::rule('comment/edit/[:id]','comment/edit');
 //tag
 Route::get('tag','tag/getAllTag')->name('get_all_tag');
 Route::get('arttag','tag/getArticleTag')->name('get_art_tag');
+Route::get('tag/:ename', 'Tag/list')->name('tag_list');
 
 Route::rule('search/[:keywords]', 'index/search'); // 搜索
 

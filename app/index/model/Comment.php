@@ -23,59 +23,63 @@ class Comment extends BaseModel
 	protected $deleteTime = 'delete_time';
 	protected $defaultSoftDelete = 0;
 	
+    //评论关联文章
 	public function article()
 	{
-		//评论关联文章
 		return $this->belongsTo(Article::class);
 	}
 	
+    //评论关联用户
 	public function user()
 	{
-		//评论关联用户
 		return $this->belongsTo(User::class);
 	}
 
-	/**
-     * article的评论
+    /**
+     * article comments
      *
-     * @param integer $id
+     * @param integer $id article_id
      * @param integer $page
-     * @return void
+     * @param integer $limit
+     * @return array
      */
-    public function getComment(int $id, int $page)
+    public function getComments(int $id, int|string $page = 1, int $limit = 15): array
     {
-        $comment = Cache::remember("comment_{$id}_{$page}", function() use($id, $page){
-            return $this->withTrashed()
-            ->with(['user'=>function($query){
-                $query->field('id,name,user_img,sign,city,vip');
-            }])
-                ->where(['article_id'=>(int)$id,'status'=>1])
+        if(is_string($page)){
+            $page = (int) $page;
+        }
+
+        $datas = Cache::remember("comments_{$id}_{$page}", function() use($id, $page, $limit) {
+            $data = [];
+            $offset = ($page - 1) * $limit;
+            $comments = self::field('id')
+                ->withTrashed()
+                ->where('article_id', $id)
+                ->where('status', '1')
+                ->order('id', 'desc')
+                ->limit($offset, $limit)
+                ->select();
+    
+            $ids = $comments->toArray();
+            $idArr = array_column($ids, 'id');
+    
+            $count = count($idArr);
+            
+            if($count) {
+                $data = self::whereIn('id', $idArr)
+                ->with(['user'=>function($query){
+                    $query->field('id,name,user_img,sign,city,vip');
+                }])
                 ->order(['cai'=>'asc','create_time'=>'asc'])
-                //->paginate(['list_rows'=>10, 'page'=>$page])
                 ->append(['touser'])
                 ->select()
                 ->toArray();
-        },10);
-        
-
-        foreach ($comment as $k => $v) {
-            if(empty($v['content'])){
-                unset($comment[$k]);
             }
-        }
 
-        if(count($comment)) {
-            $data['data'] = getTree($comment);
-            $data['total'] = count($data['data']);
-
-            $arr = array_chunk($data['data'], 10);
-            //当前页
-            $page = $page - 1;
-            return ['total' => $data['total'], 'data' => $arr[$page]];
-        } else {
-            return ['total' => 0, 'data' => ''];
-        }
-
+            return ['count' => $count, 'data' => getTree($data)];
+        }, 600);
+        
+        return $datas;
     }
 
     //回帖榜

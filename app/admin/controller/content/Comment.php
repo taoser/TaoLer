@@ -15,7 +15,7 @@ use think\App;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\common\model\Comment as CommentModel;
+use app\index\model\Comment as CommentModel;
 
 
 
@@ -27,7 +27,7 @@ class Comment extends AdminController
     public function __construct(App $app)
     {
         parent::__construct($app);
-        $this->model = new \app\common\model\Comment();
+        $this->model = new CommentModel();
     }
 
 

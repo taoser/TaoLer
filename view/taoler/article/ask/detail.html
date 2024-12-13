@@ -30,7 +30,7 @@
 					</a>
 					<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px">{$article.update_time|date="Y-h-d H:i"}</span>
 					<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>
-					{$comments.total}
+					{comment:count /}
 					<i class="iconfont" title="浏览">&#xe60b;</i>
 					{$pv}
 					{if ($article.jie == 0) }
@@ -57,13 +57,12 @@
 				{/if}
 				{/empty}
 
-				{notempty name="tags"}
 				<div style="margin-top: 15px">标签
-				{volist name="tags" id="vo" }
-					<a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
-				{/volist}
-					</div>
-				{/notempty}
+				{article:tag}
+				<a href="{$tag.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$tag.name}</span></a>
+				{/article:tag}
+				</div>
+
 
 				<div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125)">
 					<p style="line-height:200%;">{$sysInfo.state|raw}</p>
@@ -77,11 +76,11 @@
 
 			{//评论内容}
 			<section class="fly-panel detail-box" id="flyReply">
-				<span style="font-size:18px;">评论 {$comments.total}</span>
+				<span style="font-size:18px;">评论 {comment:count /}</span>
 
 				<ul class="jieda" id="jieda">
-					{article:comment}
-					<li data-id="{comment:id /}" class="jieda-daan">
+					{comment:list}
+					<li data-id="{$comment.id}" class="jieda-daan">
 						<div class="detail-about detail-about-reply">
 							<a class="fly-avatar" href="{comment:ulink /}">
 								<img src="{comment:uimg /}" alt="{comment:uname}">
@@ -195,7 +194,7 @@
 							{/if}
 						</div>
 					</li>
-					{/article:comment}
+					{/comment:list}
 				</ul>
 				<div style="text-align: center" id="pages"></div>
 			</section>
@@ -353,7 +352,7 @@
     // 评论分页
     laypage.render({
 		elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-		count: "{$comments.total}", //数据总数，从服务端得到
+		count: "{comment:count /}", //数据总数，从服务端得到
 		limit: 10,
 		curr: "{$page}",
 		//获取起始页

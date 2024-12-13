@@ -52,6 +52,13 @@ class Article extends TagLib
         
 
         'list'          => ['attr' => '', 'close' => 1],
+        'prev'          => ['attr' => '', 'close' => 1],
+        'next'          => ['attr' => '', 'close' => 1],
+
+        'tag'           => ['attr' => '', 'close' => 1],
+        'rela'          => ['attr' => '', 'close' => 1],
+        'zan'           => ['attr' => '', 'close' => 1],
+        'zan_count'     => ['attr' => '', 'close' => 0],
 
 
         'comment'       => ['attr' => ''],
@@ -196,7 +203,6 @@ class Article extends TagLib
         };
 
         return $result;
-
     }
 
     // user info of detail page
@@ -286,6 +292,60 @@ class Article extends TagLib
         
         return $parse;
 
+    }
+
+    // 前一篇
+    public function tagPrev(array $tag, string $content): string
+    {
+        $parse = '<?php $__PREV__ = \app\facade\Article::getPrev($article[\'id\'], $article[\'cate_id\']); ?>';
+        $parse .= '{volist name="__PREV__" id="prev"}' . $content . '{/volist}';
+            
+        return $parse;
+    }
+
+    // 后一篇
+    public function tagNext(array $tag, string $content): string
+    {
+        $parse = '<?php $__NEXT__ = \app\facade\Article::getNext($article[\'id\'], $article[\'cate_id\']); ?>';
+        $parse .= '{volist name="__NEXT__" id="next"}' . $content . '{/volist}';
+            
+        return $parse;
+    }
+
+    // 标签tag
+    public function tagTag(array $tag, string $content): string
+    {
+        $parse = '<?php $__TAGS__ = \app\facade\Article::getTags($article[\'id\']); ?>';
+        $parse .= '{volist name="__TAGS__" id="tag"} {notempty name="__TAGS__"}' . $content . '{/notempty}{/volist}';
+            
+        return $parse;
+    }
+
+    // 相关文章
+    public function tagRela(array $tag, string $content): string
+    {
+        $parse = '<?php $__RELA__ = \app\facade\Article::getRelationArticle($article[\'id\']); ?>';
+        $parse .= '{volist name="__RELA__" id="rela"} {notempty name="__RELA__"}' . $content . '{/notempty}{/volist}';
+            
+        return $parse;
+    }
+
+    // 点赞列表
+    public function tagZan(array $tag, string $content): string
+    {
+        $parse = '<?php if(!isset($__ZAN__)) $__ZAN__ = \app\facade\Article::getArticleZanList($article[\'id\']); ?>';
+        $parse .= '{volist name="__ZAN__.data" id="zan"} {notempty name="__ZAN__"}' . $content . '{/notempty}{/volist}';
+            
+        return $parse;
+    }
+
+    // 点赞列表统计
+    public function tagZan_count(array $tag, string $content): string
+    {
+        $parse = '<?php if(!isset($__ZAN__)) $__ZAN__ = \app\facade\Article::getArticleZanList($article[\'id\']); ?>';
+        $parse .= '{$__ZAN__.count}';
+            
+        return $parse;
     }
 
 }

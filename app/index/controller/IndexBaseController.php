@@ -188,45 +188,4 @@ class IndexBaseController extends \app\BaseController
 		}
 	}
 
-	/**
-	 * // 查、改、删 tabname
-	 *
-	 * @param integer $id
-	 * @return string
-	 */
-	protected function getTableName(int $id) : string
-	{
-		
-		$suffix = '';
-		$num = (int) floor(($id - 1) / 100);
-		if($num > 0) {
-			// 数据表后缀
-            $suffix = "_{$num}";
-		}
-
-		// 表名
-		$tableName = config('database.connections.mysql.prefix') . 'article' . $suffix; 
-		return $tableName;
-	}
-
-	/**
-     * 查、改、删时需要传入id,获取所在表的后缀
-     *
-     * @param integer $id
-     * @return string
-     */
-    protected function byIdGetSuffix(int $id): string
-    {
-        // 数据表后缀为空时，id在主表中
-        $suffix = '';
-        $num = (int) floor(($id - 1) / config('taoler.single_table_num'));
-        // num > 0, id在对应子表中
-        if($num > 0) {
-            //数据表后缀
-            $suffix = "_{$num}";
-        }
-
-        return $suffix;
-    }
-
 }

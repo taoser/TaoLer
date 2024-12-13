@@ -16,7 +16,7 @@ use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\common\model\Tag as TagModel;
+use app\index\model\Tag as TagModel;
 
 class Tag extends AdminController
 {

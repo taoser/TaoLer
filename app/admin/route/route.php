@@ -11,14 +11,7 @@
 use think\facade\Route;
 
 // 动态详情页URL别称
-$detail_as = config('taoler.url_rewrite.article_as');
 
-Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
-Route::get("$detail_as<id>$", '\app\index\controller\Article@detail')
-->pattern([
-    //'name' => '\w+',
-    'id'   => '\d+',
-])
-->name('article_detail');
+// Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 
 
