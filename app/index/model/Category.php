@@ -384,17 +384,32 @@ class Category extends BaseModel
                 
                 // 路由设置模式
                 $routeRewrite = (config('taoler.url_rewrite.article_as') == '<ename>/');
-               
-                // 往datas数组中追加cate和url 减少查询
-                foreach($datas as &$da) {
-                    $da['cate'] = ['catename' => $cate['catename'], 'ename' => $cate['ename']];
 
-                    $id = IdEncode::encode($da['id']);
-                    if($routeRewrite) {
-                        $da['url'] = (string) url('article_detail', ['id' => $id,'ename' => $cate['ename']]);
-                    } else {
-                        $da['url'] = (string) url('article_detail', ['id' => $id]);
-                    } 
+                if(!is_null($cate)) {
+                    // 往datas数组中追加cate和url 减少查询
+                    foreach($datas as &$da) {
+                        $da['cate'] = ['catename' => $cate['catename'], 'ename' => $cate['ename']];
+
+                        $id = IdEncode::encode($da['id']);
+                        if($routeRewrite) {
+                            $da['url'] = (string) url('article_detail', ['id' => $id,'ename' => $cate['ename']])->domain(true);
+                        } else {
+                            $da['url'] = (string) url('article_detail', ['id' => $id])->domain(true);
+                        } 
+                    }
+                } else {
+                    // 往datas数组中追加cate和url 减少查询
+                    foreach($datas as &$da) {
+                        $category = self::field('catename,ename')->where('id', $da['cate_id'])->cache(true)->find();
+                        $da['cate'] = ['catename' => $category['catename'], 'ename' => $category['ename']];
+
+                        $id = IdEncode::encode($da['id']);
+                        if($routeRewrite) {
+                            $da['url'] = (string) url('article_detail', ['id' => $id,'ename' => $category['ename']])->domain(true);
+                        } else {
+                            $da['url'] = (string) url('article_detail', ['id' => $id])->domain(true);
+                        } 
+                    }
                 }
 
                 unset($da);

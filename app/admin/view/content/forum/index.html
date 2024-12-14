@@ -164,7 +164,7 @@
 		// 动态分类
 		function getSelectCate() {
 			// 分类选择
-			$.get("{:url('content.forum/getCateList')}", function(res){
+			$.get("{:url('content.forum/getCateTree')}", function(res){
 				// 渲染下拉树
 				xmSelect.render({
 					el: '#CateId',

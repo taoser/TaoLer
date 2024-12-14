@@ -572,16 +572,16 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v11.34.2",
+            "version": "v11.35.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
-                "reference": "b057b0bbb38d7c7524df1ca5c38e7318f4c64d26"
+                "reference": "4a777578ce2388384565bf5c8e76881f0da68e54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/container/zipball/b057b0bbb38d7c7524df1ca5c38e7318f4c64d26",
-                "reference": "b057b0bbb38d7c7524df1ca5c38e7318f4c64d26",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/4a777578ce2388384565bf5c8e76881f0da68e54",
+                "reference": "4a777578ce2388384565bf5c8e76881f0da68e54",
                 "shasum": ""
             },
             "require": {
@@ -619,11 +619,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-11-21T20:07:31+00:00"
+            "time": "2024-12-08T15:40:56+00:00"
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.34.2",
+            "version": "v11.35.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -2315,16 +2315,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v3.0.30",
+            "version": "v3.0.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "6d8bcc86c3f9aba5a92010c17b68aeb8ad05ad3a"
+                "reference": "b75d534d8fa01122a7197f65c868b19f52a69fbb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/6d8bcc86c3f9aba5a92010c17b68aeb8ad05ad3a",
-                "reference": "6d8bcc86c3f9aba5a92010c17b68aeb8ad05ad3a",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/b75d534d8fa01122a7197f65c868b19f52a69fbb",
+                "reference": "b75d534d8fa01122a7197f65c868b19f52a69fbb",
                 "shasum": ""
             },
             "require": {
@@ -2367,9 +2367,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v3.0.30"
+                "source": "https://github.com/top-think/think-orm/tree/v3.0.31"
             },
-            "time": "2024-11-07T09:12:00+00:00"
+            "time": "2024-12-10T13:38:40+00:00"
         },
         {
             "name": "topthink/think-template",
@@ -2983,8 +2983,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -3141,12 +3141,12 @@
             "type": "library",
             "extra": {
                 "think": {
-                    "services": [
-                        "think\\trace\\Service"
-                    ],
                     "config": {
                         "trace": "src/config.php"
-                    }
+                    },
+                    "services": [
+                        "think\\trace\\Service"
+                    ]
                 }
             },
             "autoload": {

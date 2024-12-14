@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.1.0',
+    'version'   => '3.1.1',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
@@ -63,7 +63,7 @@ return [
         // 置顶文章显示方式1列表0滑动
         'top_show'   => 1,
 		// 网站静态化
-		'static_html' => 0,
+		'static_html'   => 0,
 
 	],
 

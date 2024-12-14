@@ -203,6 +203,13 @@
 										</div>
 										<div class="layui-form-mid layui-word-aux">勾选需审核</div>
 									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">HTML静态化：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="static_html" lay-skin="primary" value=1 {if config('taoler.config.static_html') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选静态化</div>
+									</div>
 									<hr>
 									<div class="layui-form-item">
 										<label class="layui-form-label">注册验证：</label>

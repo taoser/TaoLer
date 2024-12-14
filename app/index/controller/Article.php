@@ -286,8 +286,8 @@ class Article extends IndexBaseController
 		$id = $this->request->param('id/d');
 		// $id = IdEncode::decode($id);
 // halt($id);
-		$article = $this->model::setSuffix($this->byIdGetSuffix($id))->find($id);
-// halt($article);
+		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
+
 		$this->removeDetailHtml($article);
 		
 		if(Request::isAjax()){
@@ -374,7 +374,7 @@ class Article extends IndexBaseController
 	/**
 	 * 单条或者多条删除
 	 *
-	 * @return void
+	 * @return Json
 	 */
     public function delete(): Json
 	{
@@ -403,44 +403,59 @@ class Article extends IndexBaseController
         return $this->uploadFiles($type);
     }
 
-	// 文章置顶、加精、评论状态
-	public function jieset()
+	/**
+	 * 文章置顶、加精、评论状态
+	 *
+	 * @return Json
+	 */
+	public function jieset(): Json
 	{
-		$data = Request::param();
-		$article = $this->model::field('id,is_top,is_hot,is_reply')->find($data['id']);
-		switch ($data['field']){
+		$param = Request::only(['id/d','field','rank/d']);
+		
+		$article = $this->model::suffix($this->byIdGetSuffix($param['id']))
+		->field('id,is_top,is_hot,is_reply')
+		->find($param['id']);
+		
+		switch ($param['field']){
             case  'top':
-                if($data['rank']==1){
-                    $article->save(['is_top' => 1]);
-                    $res = ['status'=>0,'msg'=>'置顶成功'];
+                if($param['rank']==1){
+					$data = ['is_top' => 1];
+                    $msg = '置顶成功';
                 } else {
-                    $article->save(['is_top' => 0]);
-                    $res = ['status'=>0,'msg'=>'置顶已取消'];
+                    $data = ['is_top' => 0];
+                    $msg = '置顶已取消';
                 }
             break;
             case 'hot':
-                if($data['rank']==1){
-                    $article->save(['is_hot' => 1]);
-                    $res = ['status'=>0,'msg'=>'加精成功'];
+                if($param['rank']==1){
+                    $data = ['is_hot' => 1];
+                    $msg ='加精成功';
                 } else {
-                    $article->save(['is_hot' => 0]);
-                    $res = ['status'=>0,'msg'=>'加精已取消'];
+                    $data = ['is_hot' => 0];
+                    $msg ='加精已取消';
                 }
             break;
             case 'reply':
-                if($data['rank']==1){
-                    $article->save(['is_reply' => 1]);
-                    $res = ['status'=>0,'msg'=>'禁评成功'];
+                if($param['rank']==1){
+                    $data = ['is_reply' => '1'];
+                    $msg ='禁评成功';
                 } else {
-                    $article->save(['is_reply' => 0]);
-                    $res = ['status'=>0,'msg'=>'禁评已取消'];
+                    $data = ['is_reply' => '0'];
+                    $msg ='禁评已取消';
                 }
         }
-        //删除本贴设置缓存显示编辑后内容
-        Cache::delete('article_'.$data['id']);
-		//清除文章tag缓存
-		Cache::tag('tagArtDetail')->clear();
-		return json($res);	
+		
+		try{
+			$article->edit($data);
+			//删除本贴设置缓存显示编辑后内容
+			Cache::delete('article_'.$param['id']);
+			//清除文章tag缓存
+			Cache::tag('tagArtDetail')->clear();
+		} catch(Exception $e) {
+			return json(['status' => 1, 'msg' => $e->getMessage()]);
+		}
+		
+		return json(['status' => 0, 'msg' => $msg]);	
 	}
 	
 	// 改变标题颜色

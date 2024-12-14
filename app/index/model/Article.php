@@ -11,7 +11,6 @@ use think\db\Query;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Session;
-use think\facade\Config;
 use app\observer\ArticleObserver;
 use app\common\lib\IdEncode;
 use Symfony\Component\VarExporter\Internal\Exporter;
@@ -597,10 +596,20 @@ class Article extends BaseModel
             ->column('article_id');
 
             $data = [];
-            foreach($articleIdArr as $id) {
-                $data[] = self::suffix(self::byIdGetSuffix($id))->field('id,title,cate_id')->where('id', $id)->append(['url'])->find();
-            }
+            if(count($articleIdArr)) {
+                foreach($articleIdArr as $id) {
+                    $article = self::suffix(self::byIdGetSuffix($id))
+                    ->field('id,title,cate_id')
+                    ->where('id', $id)
+                    ->append(['url'])
+                    ->find();
 
+                    if(!is_null($article)) {
+                        $data[] = $article;
+                    }
+                }
+            }
+            
             return $data;
         }, 3600);
     }

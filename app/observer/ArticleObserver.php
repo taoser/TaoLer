@@ -57,7 +57,7 @@ class ArticleObserver
     public function onBeforeUpdate(Article $article)
     {
         // dump($article->id);
-        // $article->setSuffix($this->byIdGetSuffix($article->id));
+        $article->setSuffix($this->byIdGetSuffix($article->id));
     }
 
     public function BeforeDelete(Article $article)

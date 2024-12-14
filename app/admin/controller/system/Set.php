@@ -110,9 +110,11 @@ class Set extends AdminController
 		$conf = Config::get('taoler.config');
 		if(Request::isPost()){
 			$data = Request::param();
+			// halt($data);
 			if(!isset($data['regist_check'])) $data['regist_check'] =1;
 			if(!isset($data['posts_check'])) $data['posts_check'] =1;
 			if(!isset($data['commnets_check'])) $data['commnets_check'] =1;
+			
 			foreach($conf as $c=>$f){
 				if(array_key_exists($c,$data)){
 					$conf[$c] = (int) $data[$c];

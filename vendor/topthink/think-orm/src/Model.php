@@ -392,7 +392,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
      */
     public function getSuffix(): string
     {
-        return $this->suffix ?: '';
+        return $this->suffix ?? '';
     }
 
     /**
