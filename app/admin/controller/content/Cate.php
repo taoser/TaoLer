@@ -10,25 +10,23 @@
 
 namespace app\admin\controller\content;
 
-use app\common\controller\AdminController;
-use think\App;
+use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use taoler\com\Files;
-use app\common\lib\Msgres;
-use app\common\model\Cate as CateModel;
+use app\index\model\Category;
 
 
 
-class Cate extends AdminController
+class Cate extends AdminBaseController
 {
     protected $model;
 
-    public function __construct(App $app)
+    public function initialize()
     {
-        parent::__construct($app);
-        $this->model = new CateModel();
+        parent::initialize();
+        $this->model = new Category();
     }
 
     /**

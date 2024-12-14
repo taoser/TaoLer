@@ -8,9 +8,9 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Db;
 use think\facade\Config;
-use app\common\model\Comment as CommentModel;
-use app\common\model\Article;
-use app\common\model\UserZan;
+use app\index\model\Comment as CommentModel;
+use app\index\model\Article;
+use app\index\model\UserZan;
 use taoler\com\Message;
 
 
@@ -29,8 +29,8 @@ class Comment extends BaseController
 			$data = Request::only(['content','article_id','pid','to_user_id']);
             $data['user_id'] = $this->uid;
 			$sendId = $data['user_id'];
-
-			$art = Db::name('article')->field('id,status,is_reply,delete_time')->find($data['article_id']);
+			$table = $this->getTableName($data['article_id']);
+			$art = Db::table($table)->field('id,status,is_reply,delete_time')->find($data['article_id']);
 
 			if($art['delete_time'] != 0 || $art['status'] != 1 || $art['is_reply'] != 1){
 				return json(['code'=>-1, 'msg'=>'评论不可用状态']);
@@ -45,7 +45,7 @@ class Comment extends BaseController
 			//用户留言存入数据库
 			if (CommentModel::create($data)) {
 				//站内信
-				$article = Db::name('article')->field('id,title,user_id,cate_id')->where('id',$data['article_id'])->find();
+				$article = Db::table($table)->field('id,title,user_id,cate_id')->where('id',$data['article_id'])->find();
                 // 获取分类ename,appname
                 $cateName = Db::name('cate')->field('ename,appname')->find($article['cate_id']);
 				//$link = (string) url('article_detail',['id'=>$data['article_id']]);

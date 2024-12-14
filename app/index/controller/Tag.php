@@ -35,13 +35,12 @@ class Tag extends BaseController
         $artList = Article::getAllTags($tag['id']);
 
         //	查询热议
-        $artHot = Article::getArtHot(10);
+        $artHot = Article::getHots(10);
 
         $assign = [
             'tag'       => $tag,
             'artList'   => $artList,
-            'artHot'    => $artHot,
-            'jspage'    => ''
+            'artHot'    => $artHot
         ];
 
         View::assign($assign);

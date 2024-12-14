@@ -10,26 +10,25 @@
 
 namespace app\admin\controller\content;
 
-use app\common\controller\AdminController;
-use app\common\model\Article;
-use app\facade\Cate;
-use think\App;
+use app\admin\controller\AdminBaseController;
+use app\index\model\Article;
+use app\facade\Category;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
-use taoler\com\Files;
 use app\common\lib\Msgres;
 use think\response\Json;
+use Exception;
 
 
-class Forum extends AdminController
+class Forum extends AdminBaseController
 {
     protected $model;
 
-    public function __construct(App $app)
+    public function initialize()
     {
-        parent::__construct($app);
+        parent::initialize();
         $this->model = new Article();
     }
 
@@ -44,32 +43,42 @@ class Forum extends AdminController
 
     public function list()
     {
-        $data = Request::only(['id','name','title','sec','cate_id']);
+        $data = Request::only(['id/d','name','title','sec','cate_id/d']);
         
-        $list = $this->model->getAllStatusList($data, (int)input('limit'), (int)input('page'));
-        
-        $res = [];
-        if(count($list['data'])){
-            foreach($list['data'] as $v) {
-                $res['data'][] = [
-                    'id'        => $v['id'],
-                    'poster'    => $v['user']['name'],
-                    'avatar'    => $v['user']['user_img'],
-                    'title'     => htmlspecialchars($v['title']),
-                    'cate'      => $v['cate']['catename'],
-                    'url'       => $this->getArticleUrl($v['id'], 'index', $v['cate']['ename']),
-                    'content'   => strip_tags($v['description']),
-                    'posttime'  => $v['update_time'],
-                    'top'       => $v['is_top'],
-                    'hot'       => $v['is_hot'],
-                    'reply'     => $v['is_reply'],
-                    'check'     => $v['status']
-                ];
-            }
-            //return json(['code' =>0, 'msg' => 'ok', 'count' => $list['total'], 'data' => $res['data']]);
-            return json(['code' =>0, 'msg' => 'ok', 'count' => $list['count'], 'data' => $res['data'], 'oldPage' => (int)input('page')]);
+        $list = $this->model->getFilterList($data, (int)input('page'), (int)input('limit'));
+        if($list['total']) {
+            return json(['code' => 0, 'msg' => 'ok', 'data' => $list['data'], 'count' => $list['total']]);
         }
-        return json(['code' =>-1, 'msg' => 'no data']);
+        
+        return json(['code' => -1, 'msg' => 'no data']);
+    }
+
+    /**
+     * 分类树
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getCateTree()
+    {
+        $cateList = Category::field('id,pid,catename,sort')
+        ->where('status', 1)
+        ->select()
+        ->toArray();
+
+        $list =  getTree($cateList);
+        // 排序
+        $cmf_arr = array_column($list, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $list);
+        
+        $count = count($list);
+        $tree = [];
+        if($count){
+            $tree = ['code'=>0, 'msg'=>'ok','data' => $list, 'count' => $count];
+        }
+
+        return json($tree);
     }
 
     /**
@@ -102,7 +111,7 @@ class Forum extends AdminController
             // 获取分类ename,appname
             $cateEname = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
 
-            $result = $this->model->add($data);
+            $result =  $this->model::add($data);
             if ($result['code'] == 1) {
                 // 获取到的最新ID
                 $aid = $result['data']['id'];
@@ -142,9 +151,13 @@ class Forum extends AdminController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function edit($id)
+    public function edit()
     {
-        $article = Article::find($id);
+        $id = $this->request->param('id/d');
+		// $id = IdEncode::decode($id);
+// halt($id);
+		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
+        // halt($article);
         if(Request::isAjax()){
 
             $data = Request::only(['id','cate_id','title','title_color','content','upzip','keywords','description','captcha']);
@@ -164,37 +177,41 @@ class Forum extends AdminController
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
             $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
             $data['description'] = strip_tags($this->filterEmoji($data['description']));
-            $result = $article->edit($data);
-            if($result == 1) {
-                //处理标签
-                $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
-                if(isset($tagId)) {
-                    $tagIdArr = explode(',',$tagId);
-                    foreach($artTags as $aid => $tid) {
-                        if(!in_array($tid,$tagIdArr)){
-                            //删除被取消的tag
-                            Db::name('taglist')->delete($aid);
-                        }
+
+            try{
+				$article->edit($data);
+			} catch(Exception $e) {
+				return json(['code' => -1, 'msg' => $e->getMessage()]);
+			}
+
+            //处理标签
+            $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
+            if(isset($tagId)) {
+                $tagIdArr = explode(',',$tagId);
+                foreach($artTags as $aid => $tid) {
+                    if(!in_array($tid,$tagIdArr)){
+                        //删除被取消的tag
+                        Db::name('taglist')->delete($aid);
                     }
-                    //查询保留的标签
-                    $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
-                    $tagArr = [];
-                    foreach($tagIdArr as $tid) {
-                        if(!in_array($tid, $artTags)){
-                            //新标签
-                            $tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
-                        }
-                    }
-                    //更新新标签
-                    Db::name('taglist')->insertAll($tagArr);
                 }
-                //删除原有缓存显示编辑后内容
-                Cache::delete('article_'.$id);
-                $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
-                hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-                return Msgres::success('edit_success',$link);
+                //查询保留的标签
+                $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
+                $tagArr = [];
+                foreach($tagIdArr as $tid) {
+                    if(!in_array($tid, $artTags)){
+                        //新标签
+                        $tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
+                    }
+                }
+                //更新新标签
+                Db::name('taglist')->insertAll($tagArr);
             }
-            return Msgres::error($result);
+            //删除原有缓存显示编辑后内容
+            Cache::delete('article_'.$id);
+            $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
+            hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+            return Msgres::success('edit_success',$link);
+            
         }
 
         View::assign(['article'=>$article]);
@@ -226,12 +243,16 @@ class Forum extends AdminController
 	 */
 	public function check()
 	{
-		$param = Request::only(['id','name','value']);
-		$data = ['id'=>$param['id'],$param['name']=>$param['value']];
+		$param = Request::only(['id/d','name','value']);
+
 		//获取状态
-		$res = Db::name('article')->save($data);
-		Cache::delete('article_'.$data['id']);
+		$res = Db::table($this->getTableName($param['id']))->save([
+            'id' => $param['id'],
+            $param['name'] => $param['value']
+        ]);
+
 		if($res){
+            Cache::delete('article_'.$param['id']);
 			return json(['code'=>0,'msg'=>'设置成功','icon'=>6]);
 		}else {
 			return json(['code'=>-1,'msg'=>'失败啦','icon'=>6]);
@@ -301,7 +322,7 @@ class Forum extends AdminController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-	public function getCateTree()
+	public function getCategoryTree()
 	{
 		//
 		$cate = Db::name('cate')->field('id,pid,catename,ename,sort')->order(['id' => 'ASC','sort' => 'ASC'])->where(['delete_time'=>0])->select()->toArray();
@@ -321,9 +342,9 @@ class Forum extends AdminController
      * 分类
      * @return \think\response\Json
      */
-    public function getCateList()
+    public function getCategoryList()
     {
-        $cateList = Cate::field('id,pid,catename,sort')->where(['status' => 1])->select()->toArray();
+        $cateList = Category::field('id,pid,catename,sort')->where(['status' => 1])->select()->toArray();
         // 排序
         $cmf_arr = array_column($cateList, 'sort');
         array_multisort($cmf_arr, SORT_ASC, $cateList);

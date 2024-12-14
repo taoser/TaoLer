@@ -5,15 +5,9 @@ namespace app;
 
 use think\App;
 use think\exception\ValidateException;
-use think\response\Json;
 use think\Validate;
-use think\Response;
-use think\exception\HttpResponseException;
 use think\facade\Db;
 use think\facade\Request;
-use think\facade\Lang;
-use think\facade\View;
-use taoser\SetArr;
 use app\common\lib\Uploads;
 
 /**
@@ -107,6 +101,47 @@ abstract class BaseController
         return $v->failException(true)->check($data);
     }
 
+    /**
+	 * // 查、改、删 tabname
+	 *
+	 * @param integer $id
+	 * @return string
+	 */
+	protected function getTableName(int $id) : string
+	{
+		
+		$suffix = '';
+		$num = (int) floor(($id - 1) / 100);
+		if($num > 0) {
+			// 数据表后缀
+            $suffix = "_{$num}";
+		}
+
+		// 表名
+		$tableName = config('database.connections.mysql.prefix') . 'article' . $suffix; 
+		return $tableName;
+	}
+
+	/**
+     * 查、改、删时需要传入id,获取所在表的后缀
+     *
+     * @param integer $id
+     * @return string
+     */
+    protected function byIdGetSuffix(int $id): string
+    {
+        // 数据表后缀为空时，id在主表中
+        $suffix = '';
+        $num = (int) floor(($id - 1) / config('taoler.single_table_num'));
+        // num > 0, id在对应子表中
+        if($num > 0) {
+            //数据表后缀
+            $suffix = "_{$num}";
+        }
+
+        return $suffix;
+    }
+
     //显示网站设置
     protected function getSystem()
     {
@@ -152,18 +187,18 @@ abstract class BaseController
 
     /**
      * 非admin应用的文章url路由地址
-     * @param int $aid
+     * @param int|string $aid
      * @param $ename
      * @return string
      */
-    protected function getRouteUrl(int $aid, $ename = '')
+    protected function getRouteUrl(int|string $aid, $ename = '')
     {
         $domain = $this->getDomain();
         $appName = app('http')->getName();
         $articleUrl = (string) url('article_detail', ['id' => $aid]);
         // 详情动态路由，$aid, $ename
         if(config('taoler.url_rewrite.article_as') == '<ename>/'){
-            $articleUrl = (string) url('article_detail', ['id' => (int) $aid, 'ename'=> $ename]);
+            $articleUrl = (string) url('article_detail', ['id' => $aid, 'ename' => $ename]);
         }
 
 //        // 判断应用是否绑定域名

@@ -60,7 +60,7 @@ class Snav extends TagLib
 
     public function tagTitle(): string
     {
-        return '{:cookie(\'think_lang\') == \'en-us\' ? $snav.ename : $snav.catename}';
+        return '{$snav.catename}';
     }
 
     public function tagDetpl(): string

@@ -10,19 +10,16 @@
  */
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\facade\Article;
 use app\common\lib\Msgres;
+use app\index\model\Article;
 
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
 
-// use app\common\lib\Near;
-use think\facade\Cache;
-class Index extends BaseController
+class Index extends IndexBaseController
 {
     /**
      * 首页
@@ -40,6 +37,23 @@ class Index extends BaseController
 		// $a = $alipay->index();
 		// $b= $weixin->index();
 		// var_dump($a,$b);
+
+// 		$a = $this->getSfx();
+// halt($a);
+
+// $s = Article::where('id', '>=', 10 + 1) // >= <= 条件可以使用索引
+// ->where([
+// 	['cate_id', '=', 1],
+// 	['status', '=',1]
+// ])
+// ->order('id asc')
+// ->fetchSql(true)
+// ->value('id');
+// dump($s);
+// $d = Article::getRelationArticle(1);
+
+// $c = Category::getArticlesByCategoryEname('posts');
+// halt($c);
 
 		$html = View::fetch();
 

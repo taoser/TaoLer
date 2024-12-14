@@ -15,7 +15,7 @@
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 
 {block name="content"}
-<div class="layui-container">
+<div class="layui-container article-content">
     <div class="layui-row layui-col-space15">
 		<div class="layui-col-md8 content detail">
 			<section class="fly-panel detail-box">
@@ -35,7 +35,7 @@
 					</a>
 					<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px">{$article.update_time|date="Y-h-d H:i"}</span>
 					<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>
-					{$article:comments_count}
+					{comment:count /}
 					<i class="iconfont" title="浏览">&#xe60b;</i>
 					{$pv}
 					{if ($article.jie == 0) }
@@ -86,14 +86,21 @@
 				{/if}
 				{/empty}
 
-				{notempty name="tags"}
 				<div style="margin-top: 15px">标签
+<<<<<<< HEAD
 				{volist name="tags" id="vo" }
 					<a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
 				{/volist}
 >>>>>>> 3.0
 					</div>
 				{/notempty}
+=======
+				{article:tag}
+				<a href="{$tag.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$tag.name}</span></a>
+				{/article:tag}
+				</div>
+
+>>>>>>> 3.0
 
 				<div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125)">
 					<p style="line-height:200%;">{$sysInfo.state|raw}</p>
@@ -107,11 +114,11 @@
 
 			{//评论内容}
 			<section class="fly-panel detail-box" id="flyReply">
-				<span style="font-size:18px;">评论 {$article.comments_count}</span>
+				<span style="font-size:18px;">评论 {comment:count /}</span>
 
 				<ul class="jieda" id="jieda">
-					{article:comment}
-					<li data-id="{comment:id /}" class="jieda-daan">
+					{comment:list}
+					<li data-id="{$comment.id}" class="jieda-daan">
 						<div class="detail-about detail-about-reply">
 							<a class="fly-avatar" href="{comment:ulink /}">
 								<img src="{comment:uimg /}" alt="{comment:uname}">
@@ -225,7 +232,7 @@
 							{/if}
 						</div>
 					</li>
-					{/article:comment}
+					{/comment:list}
 				</ul>
 				<div style="text-align: center" id="pages"></div>
 			</section>
@@ -257,7 +264,6 @@
 					</a>
 				</div>
 				<div class="questions">
-					<span class="layui-badge layui-bg-green">回答 {$article.user.comments_count}</span> <span class="layui-badge layui-bg-green">提问 {$article.user.article_count}</span>
 					<span class="layui-badge layui-bg-green">+ 关注</span>
 				</div>
 				</div>
@@ -265,7 +271,7 @@
 		</div>
 
 		{//crud管理模块}
-		{include file="/public/crud" /}
+		
     </div>
   <!--底部栏-->
 </div>
@@ -384,7 +390,7 @@
     // 评论分页
     laypage.render({
 		elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-		count: "{$article.comments_count}", //数据总数，从服务端得到
+		count: "{comment:count /}", //数据总数，从服务端得到
 		limit: 10,
 		curr: "{$page}",
 		//获取起始页

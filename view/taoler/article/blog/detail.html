@@ -83,13 +83,11 @@
 						{/if}
 						{/empty}
 						<!-- 标签 -->
-						{notempty name="tags"}
 						<div style="margin-top: 15px">标签
-							{volist name="tags" id="vo" }
-							<a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
-							{/volist}
+							{article:tag}
+							<a href="{$tag.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius"># {$tag.name}</span></a>
+							{/article:tag}
 						</div>
-						{/notempty}
 						<div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
 							<p style="line-height:200%;">{$sysInfo.state|raw}</p>
 						</div>
@@ -97,10 +95,10 @@
 							本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a>
 						</div>
 						<div class="detail-zan">
-							<span class="jieda-zan" type="zan" id="article-zan">点赞 <i class="iconfont icon-zan"></i> <em>{:count($userZanList)}</em></span>
-							{volist name="userZanList" id="vo" }
-							<span><img src="{$vo.userImg}"></span>
-							{/volist}
+							{article:zan}
+							<span><img src="{$zan.avatar}"></span>
+							{/article:zan}
+							<span class="jieda-zan" type="zan" id="article-zan">点赞 <i class="iconfont icon-zan"></i> <em>{:count($__ZAN__)}</em></span>
 						</div>
 					</section>
 					<div class="card-footer text-center mt-4">
@@ -113,28 +111,32 @@
             	</div>
 
 				<div class="post card block d-flex p-4">
-					<span class="d-inline-block text-muted mr-2 fanpian pb-2 mb-2"> # 上一篇： {$previous|raw}</span>
-					<span class="d-inline-block text-muted mr-2 fanpian"># 下一篇： {$next|raw}</span>
+					{article:prev}
+					<span class="d-inline-block text-muted mr-2 fanpian pb-2 mb-2"> # 上一篇： <a href="{$prev.url}" rel="prev">{$prev.title}</a></span>
+					{/article:prev}
+					{article:next}
+					<span class="d-inline-block text-muted mr-2 fanpian"># 下一篇： <a href="{$next.url}" rel="prev">{$next.title}</a></span>
+					{/article:next}
 				</div>
 				<!-- 相关文章 -->
-				{notempty name="relationArticle"}
+				 
 				<section class="list-related">
 					<div class="content-related card">
 						<div class="card-body">
 							<div class="mb-3">相关文章</div>
 							<div class="list list-dots my-n2">
-								{volist name="relationArticle" id="vo"}
-									<div class="list-item py-2">
-										<a href="{$Request.domain}/{$vo.url}" target="_blank" class="list-title fanpian" title="{$vo.title}" rel="bookmark">
-											{$vo.title}
-										</a>
-									</div>
-								{/volist}
+								{article:rela}
+								<div class="list-item py-2">
+									<a href="{$rela.url}" target="_blank" class="list-title fanpian" title="{$rela.title}" rel="bookmark">
+										{$rela.title}
+									</a>
+								</div>
+								{/article:rela}
 							</div>
 						</div>
 					</div>
 				</section>
-				{/notempty}
+
 
 				<!-- 评论 -->
 				<section class="comments">
@@ -142,9 +144,9 @@
 						<div class="card-body pt-4">
 							{//评论内容}
 							<div class="mb-3" id="flyReply">
-							文章评论 <small class="font-theme text-muted">({article:comment_num})</small>
+							文章评论 <small class="font-theme text-muted">({comment:count /})</small>
 								<ul class="jieda" id="jieda">
-									{article:comment}
+									{comment:list}
 									<li data-id="{comment:id /}" class="jieda-daan">
 										<div class="detail-about detail-about-reply">
 											<a class="fly-avatar" href="{comment:ulink /}"><img src="{comment:uimg /}" alt="{comment:uname}"></a>
@@ -247,7 +249,7 @@
 											{/if}
 										</div>
 									</li>
-									{/article:comment}
+									{/comment:list}
 								</ul>
 								<div style="text-align: center" id="pages"></div>
 							</div>
@@ -312,20 +314,6 @@
 									<div class="p-3">
 										<div class="h6 mb-2">{$article.user.name}</div>
 										<div class="text-xs text-secondary mb-4">本站内容禁止任何人采集</div>
-										<div class="row g-0 text-center">
-											<div class="col">
-												<div class="font-theme h5">{$article.user.article_count}</div>
-												<div class="text-xs text-muted">文章</div>
-											</div>
-											<div class="col">
-												<div class="font-theme h5">{$article.user.comments_count}</div>
-												<div class="text-xs text-muted">评论</div>
-											</div>
-											<div class="col">
-												<div class="font-theme h5">{$zanCount}</div>
-												<div class="text-xs text-muted">被赞</div>
-											</div>
-										</div>
 									</div>
 								</div>
 							</div>
@@ -344,16 +332,16 @@
 						<dt class="function_t">热门文章</dt>
 						<dd class="function_c">
 							<ul>
-								{volist name="artHot" id="vo"}
+								{article:list type="hot"}
 								<li style="display: block;">
 									<div class="list-body fanpian">
-										<a href="{$vo.url}" target="_blank">{$vo.title}</a>
+										<a href="{$article.url}" target="_blank">{article:title /}</a>
 									</div>
 									<div class="list-footer">
-										<div class="text-muted text-xs"><time class="d-inline-block">{$vo.create_time|date='Y-m-d'}</time></div>
+										<div class="text-muted text-xs"><time class="d-inline-block">{$article.create_time|date='Y-m-d'}</time></div>
 									</div>
 								</li>
-								{/volist}
+								{/article:list}
 							</ul>
 						</dd>
 					</dl>
@@ -390,7 +378,7 @@
     </div>
 
     {//crud管理模块}
-    {include file="/public/crud" /}
+    
 
 </main>
 
@@ -586,20 +574,20 @@
 		// 评论分页
 		laypage.render({
 			elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-			count: "{$article.comments_count}", //数据总数，从服务端得到
+			count: "{comment:count /}", //数据总数，从服务端得到
 			limit: 10,
 			curr: "{$page}",
 			//获取起始页
 			jump: function (obj, first) {
 				var page = obj.curr;
 				var limit = obj.limit;
-				var  url = "{:url('article_detail',['id' => $article.id ,'ename' =>$article['cate']['ename']])}";
+				var  url = "{:url('article_detail',['id' => $article.id ,'ename' => $article['cate_ename']])}";
 				var id = "{$article.id}";
 				//首次不执行
 				if (!first) {
-				$.post("{:url('article/detail')}", { id: id, page: page }, function () {
-					location.href = url + '?page=' + page + '#flyReply';
-				});
+					$.post("{:url('article/detail')}", { id: id, page: page }, function () {
+						location.href = url + '?page=' + page + '#flyReply';
+					});
 				}
 			}
 >>>>>>> 3.0

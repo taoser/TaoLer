@@ -261,6 +261,17 @@ class Kuaishou
     {
         return json_decode($this->curl_post($this->sendMsgUrl . $access_token, http_build_query($data)), true);
     }
+
+    public function notify()
+    {
+        $pay = \Applet\Pay\Factory::getInstance('Kuaishou')->init($config);
+        $status = $pay->notifyCheck(); //验证
+        if ($status) {
+            $order = $pay->getNotifyOrder(); //订单数据
+            //$order['data']['out_order_no']//平台订单号
+            echo json_encode(['result' => 1, 'message_id' => $order['message_id']]);exit;
+        }
+    }
     /**
      * curl post json传递
      *

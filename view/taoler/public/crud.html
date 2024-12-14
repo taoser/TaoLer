@@ -19,10 +19,11 @@
         <span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;" title="可评">评</span>
         {/if}
         <span class="layui-btn layui-btn-xs jie-admin" type="del" title="删除"><i class="layui-icon layui-icon-delete"></i></span>
-        {/if}
-        {if(session('user_name')==$article.user.name  || ($user.auth  ?? ''))}
-        <a  href="{$Request.domain}{:url('article/edit',['id'=>$article.id])}" title="编辑"><span class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-edit"></i></span></a>
-        {/if}
+      {/if}
+      
+      {if (session('user_name') == $article.user.name  || ($user.auth  ?? ''))}
+      <a  href="{:url('article_edit', ['id' => $article.id])}" title="编辑"><span class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-edit"></i></span></a>
+      {/if}
     </div>
   </div>
 {/if}

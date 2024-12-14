@@ -15,9 +15,8 @@ use think\facade\Request;
 use think\facade\Session;
 use app\admin\validate\Admin;
 use think\exception\ValidateException;
-use app\common\controller\AdminController;
 
-class Login extends AdminController
+class Login extends AdminBaseController
 {
 	// 登录
 	public function index()

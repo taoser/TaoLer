@@ -111,18 +111,6 @@
 {block name="script"}
 <script src="/static/xm-select.js"></script>
 <script>
-<<<<<<< HEAD
-  layui.use(['fly'], function () {
-    var $ = layui.jquery,
-      fly = layui.fly,
-      form = layui.form,
-      colorpicker = layui.colorpicker,
-      upload = layui.upload;
-
-    // 分类选择
-      $.get("{:url('article/getCateTree')}",function(res){
-        var cid = "{$cid}";
-=======
 layui.use(['fly'], function () {
     var $ = layui.jquery,
 		fly = layui.fly,
@@ -131,9 +119,8 @@ layui.use(['fly'], function () {
 		upload = layui.upload;
 
     	// 分类选择
-      	$.get("{:url('article/getCateTree')}",function(res){
+      	$.get("{:url('get_cate_tree')}",function(res){
         	var cid = "{$cid}";
->>>>>>> 3.0
             // 渲染下拉树
             xmSelect.render({
                 el: '#CateId',
@@ -158,31 +145,6 @@ layui.use(['fly'], function () {
                 },
                 tips: '请选择'
             });
-<<<<<<< HEAD
-      });
-    
-    // tag标签
-    $(function(){
-      //1.渲染标签
-      var addTags = xmSelect.render({
-        el: '#tag',
-        name: 'tagid',
-        layVerify: '',
-        layVerType: 'msg',
-        paging: true,
-        pageSize: 5,
-        data: []
-      });
-      //2.动态标签赋值
-      $.get("{:url('get_all_tag')}",function(res){
-        if(res.code === 0){
-          addTags.update({
-            data: res.data,
-            autoRow: true,
-          })
-        }
-      });
-=======
     	});
     
     // tag标签
@@ -207,7 +169,6 @@ layui.use(['fly'], function () {
 				})
 			}
 		});
->>>>>>> 3.0
     });
 
     // 改变标题颜色
@@ -224,28 +185,6 @@ layui.use(['fly'], function () {
 
     // 发布文章
     form.on("submit(article-add)", function (data) {
-<<<<<<< HEAD
-      var field = data.field;
-      var loadIndex = layer.load(2);
-      $.ajax({
-        type: "post",
-        url: "{:url('article/add')}",
-        data: field,
-        dataType: "json",
-        success: function (res) {
-          layer.close(loadIndex);
-          if (res.code === 0) {
-            toast.success({title:"成功消息",message: res.msg});
-            location.href = res.url;
-          } else {
-            toast.error({title:"失败消息",message:res.msg});
-            $("#captcha").attr("src", "{:captcha_src()}?" + Math.random());
-          }
-          layer.close(index);
-        },
-      });
-      return false;
-=======
 		var field = data.field;
 		var loadIndex = layer.load(2);
 		$.ajax({
@@ -265,21 +204,10 @@ layui.use(['fly'], function () {
 			},
 		});
 		return false;
->>>>>>> 3.0
     });
 
   });
 </script>
 {// 编辑器}
-<<<<<<< HEAD
-{:hook('ueditor')}
-{:hook('taonyeditor')}
-
-{// 百度标题词条}
-{:hook('seoBaiduTitle')}
-{// 百度关键词}
-{:hook('seoBaiduKeywords')}
-=======
->>>>>>> 3.0
 
 {/block}

@@ -101,38 +101,37 @@
                 var xmSelect = layui.xmSelect;
 
                 $(function(){
-                  //1.渲染标签
-                  var addTags = xmSelect.render({
-                    el: '#tag',
-                    name: 'tagid',
-                    layVerify: '',
-                    layVerType: 'msg',
-                    paging: true,
-                    pageSize: 5,
-                    data: []
+                    //1.渲染标签
+                    var addTags = xmSelect.render({
+                        el: '#tag',
+                        name: 'tagid',
+                        layVerify: '',
+                        layVerType: 'msg',
+                        paging: true,
+                        pageSize: 5,
+                        data: []
                   });
-                  //2.动态赋值
-                  $.get("{:url('content.tag/getArticleTag')}",{id:artId},function(res){
-                    if(res.code === 0){
-                      addTags.setValue(
-                        res.data
-                      )
-                    }
-                  });
-                  //3.动态标签赋值
-                  $.get("{:url('content.tag/getAllTag')}",function(res){
-                    if(res.code === 0){
-                      addTags.update({
-                        data: res.data,
-                        autoRow: true,
-                      })
-                    }
-                  });
+                    //2.动态赋值
+                    $.get("{:url('content.tag/getArticleTag')}",{id:artId},function(res){
+                        if(res.code === 0){
+                            addTags.setValue(
+                            res.data
+                            )
+                        }
+                    });
+                    //3.动态标签赋值
+                    $.get("{:url('content.tag/getAllTag')}",function(res){
+                        if(res.code === 0){
+                            addTags.update({
+                            data: res.data,
+                            autoRow: true,
+                            })
+                        }
+                    });
                 })
 
-
                 // 分类选择
-                $.get("{:url('content.forum/getCateList')}",function(res){
+                $.get("{:url('content.forum/getCateTree')}",function(res){
                     var INITCID = "{$article.cate_id}";
                     // 渲染下拉树
                     xmSelect.render({

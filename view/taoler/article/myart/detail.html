@@ -39,11 +39,7 @@
 							<h1 class="h3 mb-3" itemprop="headline">{article:title /}</h1>
 							<div class="meta d-flex align-items-center text-xs text-muted">
 								<div class="d-inline-block" itemprop="author" itemscope="" itemtype="">
-<<<<<<< HEAD
-									<a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">{article:auther}</span></a>
-=======
 									<a href="{$Request.domain}" target="_blank" class="text-muted" itemprop="url"><span itemprop="name">{article:author}</span></a>
->>>>>>> 3.0
 									<a href="{article:cate name='link'}" target="_blank" class="text-muted" rel="category">{article:cate name="name"}</a>
 									<time class="d-inline-block" datetime="{$article.create_time|date='Y-m-d h:m:s'}" itemprop="datePublished">{article:uptime}</time>
 								</div>
@@ -53,25 +49,12 @@
 							</div>
 							<div class="border-theme bg-primary"></div>
 						</div>
-<<<<<<< HEAD
-						{:hook('taoplayerdiv')}
-						<article class="post-content detail-body" itemprop="articleBody" view-image>
-							{article:content}
-						</article>
-						<!-- 文章末尾 -->
-						{notempty name="$article.upzip"}
-						{if (session('?user_name'))}
-							<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-						{/if}
-						{/notempty}
-=======
 
 						<article class="post-content detail-body" itemprop="articleBody" view-image>
 						{article:content}
 						</article>
 						<!-- 文章末尾 -->
 	
->>>>>>> 3.0
 						<!-- 解密文件 -->
 						{empty name="passJieMi"}
 						{if($article.read_type == 1)}
@@ -80,14 +63,14 @@
 							</div>
 						{/if}
 						{/empty}
+
 						<!-- 标签 -->
-						{notempty name="tags"}
 						<div style="margin-top: 15px">标签
-							{volist name="tags" id="vo" }
-							<a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
-							{/volist}
+							{article:tag}
+							<a href="{$tag.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius"># {$tag.name}</span></a>
+							{/article:tag}
 						</div>
-						{/notempty}
+
 						<div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125);">
 							<p style="line-height:200%;">{$sysInfo.state|raw}</p>
 						</div>
@@ -95,10 +78,10 @@
 							本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a>
 						</div>
 						<div class="detail-zan">
-							<span class="jieda-zan" type="zan" id="article-zan">点赞 <i class="iconfont icon-zan"></i> <em>{:count($userZanList)}</em></span>
-							{volist name="userZanList" id="vo" }
-							<span><img src="{$vo.userImg}"></span>
-							{/volist}
+							{article:zan}
+							<span><img src="{$zan.avatar}"></span>
+							{/article:zan}
+							<span class="jieda-zan" type="zan" id="article-zan">点赞 <i class="iconfont icon-zan"></i> <em>{:count($__ZAN__)}</em></span>
 						</div>
 					</section>
 					<div class="card-footer text-center mt-4">
@@ -111,28 +94,31 @@
             	</div>
 
 				<div class="post card block d-flex p-4">
-					<span class="d-inline-block text-muted mr-2 fanpian pb-2 mb-2"> # 上一篇： {$previous|raw}</span>
-					<span class="d-inline-block text-muted mr-2 fanpian"># 下一篇： {$next|raw}</span>
+					{article:prev}
+					<span class="d-inline-block text-muted mr-2 fanpian pb-2 mb-2"> # 上一篇： <a href="{$prev.url}" rel="prev">{$prev.title}</a></span>
+					{/article:prev}
+					{article:next}
+					<span class="d-inline-block text-muted mr-2 fanpian"># 下一篇： <a href="{$next.url}" rel="prev">{$next.title}</a></span>
+					{/article:next}
 				</div>
 				<!-- 相关文章 -->
-				{notempty name="relationArticle"}
+				
 				<section class="list-related">
 					<div class="content-related card">
 						<div class="card-body">
 							<div class="mb-3">相关文章</div>
 							<div class="list list-dots my-n2">
-								{volist name="relationArticle" id="vo"}
-									<div class="list-item py-2">
-										<a href="{$Request.domain}/{$vo.url}" target="_blank" class="list-title fanpian" title="{$vo.title}" rel="bookmark">
-											{$vo.title}
-										</a>
-									</div>
-								{/volist}
+								{article:rela}
+								<div class="list-item py-2">
+									<a href="{$rela.url}" target="_blank" class="list-title fanpian" title="{$rela.title}" rel="bookmark">
+										{$rela.title}
+									</a>
+								</div>
+								{/article:rela}
 							</div>
 						</div>
 					</div>
 				</section>
-				{/notempty}
 
 				<!-- 评论 -->
 				<section class="comments">
@@ -140,9 +126,9 @@
 						<div class="card-body pt-4">
 							{//评论内容}
 							<div class="mb-3" id="flyReply">
-							文章评论 <small class="font-theme text-muted">({article:comment_num})</small>
+							文章评论 <small class="font-theme text-muted">({comment:count /})</small>
 								<ul class="jieda" id="jieda">
-									{article:comment}
+									{comment:list}
 									<li data-id="{comment:id /}" class="jieda-daan">
 										<div class="detail-about detail-about-reply">
 											<a class="fly-avatar" href="{comment:ulink /}"><img src="{comment:uimg /}" alt="{comment:uname}"></a>
@@ -245,7 +231,7 @@
 											{/if}
 										</div>
 									</li>
-									{/article:comment}
+									{/comment:list}
 								</ul>
 								<div style="text-align: center" id="pages"></div>
 							</div>
@@ -282,35 +268,26 @@
 				</section>
 
             </div>
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 3.0
             <div class="sidebar layui-col-md4 d-none d-lg-block">
 				<div class="theiaStickySidebar">
 					{//广告}
 					<!--博客详情广告赞助位-->
-<<<<<<< HEAD
-					{:hook('ads_blog_detail_rimg')}
-=======
->>>>>>> 3.0
 
 					{//热门文章}
 					<dl class="function" id="rongkeji_remenwenzhang">
 						<dt class="function_t">热门文章</dt>
 						<dd class="function_c">
 							<ul>
-								{volist name="artHot" id="vo"}
+								{article:list type="hot"}
 								<li style="display: block;">
 									<div class="list-body fanpian">
-										<a href="{$vo.url}" target="_blank">{$vo.title}</a>
+										<a href="{$article.url}" target="_blank">{article:title /}</a>
 									</div>
 									<div class="list-footer">
-										<div class="text-muted text-xs"><time class="d-inline-block">{$vo.create_time|date='Y-m-d'}</time></div>
+										<div class="text-muted text-xs"><time class="d-inline-block">{$article.create_time|date='Y-m-d'}</time></div>
 									</div>
 								</li>
-								{/volist}
+								{/article:list}
 							</ul>
 						</dd>
 					</dl>
@@ -345,12 +322,11 @@
 
 {include file="public/menu" /}
 
+{:hook('callme_foot', ['aid' => $article.id, 'uid' => $article.user_id])}
 {/block}
 
 {block name="script"}
-
 <script type='text/javascript' src="{$Request.domain}/view/common/blog/js/theme.js"></script>
-
 <script>
 	var collectionFind = "{:url('Collection/find')}",
 		collection = "{:url('collection/')}",
@@ -494,24 +470,10 @@
 			});
 		});
 
-		//下载
-		$('#zip-download').click(function (){
-		var id = "{$article.id}";
-			$.ajax({
-				type:"post",
-				url:"{:url('article/download')}",
-				data:{id:id},
-				success:function (data) {
-				location.href = "{:url('article/download',['id'=>$article.id])}"; 
-				}
-			});
-		});
-
-
 		// 评论分页
 		laypage.render({
 		elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-		count: "{$article.comments_count}", //数据总数，从服务端得到
+		count: "{comment:count /}", //数据总数，从服务端得到
 		limit: 10,
 		curr: "{$page}",
 		//获取起始页
@@ -533,8 +495,5 @@
 </script>
 
 <!-- 插件hook位 -->
-<<<<<<< HEAD
 
-=======
->>>>>>> 3.0
 {/block}

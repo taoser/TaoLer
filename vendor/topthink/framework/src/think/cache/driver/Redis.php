@@ -15,6 +15,7 @@ namespace think\cache\driver;
 use DateInterval;
 use DateTimeInterface;
 use think\cache\Driver;
+use think\exception\InvalidCacheException;
 
 class Redis extends Driver
 {
@@ -26,16 +27,17 @@ class Redis extends Driver
      * @var array
      */
     protected $options = [
-        'host'       => '127.0.0.1',
-        'port'       => 6379,
-        'password'   => '',
-        'select'     => 0,
-        'timeout'    => 0,
-        'expire'     => 0,
-        'persistent' => false,
-        'prefix'     => '',
-        'tag_prefix' => 'tag:',
-        'serialize'  => [],
+        'host'        => '127.0.0.1',
+        'port'        => 6379,
+        'password'    => '',
+        'select'      => 0,
+        'timeout'     => 0,
+        'expire'      => 0,
+        'persistent'  => false,
+        'prefix'      => '',
+        'tag_prefix'  => 'tag:',
+        'serialize'   => [],
+        'fail_delete' => false,
     ];
 
     /**
@@ -117,10 +119,15 @@ class Redis extends Driver
         $value = $this->handler()->get($key);
 
         if (false === $value || is_null($value)) {
-            return $default;
+            return $this->getDefaultValue($name, $default);
         }
 
-        return $this->unserialize($value);
+        try {
+            return $this->unserialize($value);
+        } catch (InvalidCacheException $e) {
+            return $this->getDefaultValue($name, $default, true);
+
+        }
     }
 
     /**
@@ -238,5 +245,10 @@ class Redis extends Driver
         $name = $this->getTagKey($tag);
         $key  = $this->getCacheKey($name);
         return $this->handler()->sMembers($key);
+    }
+
+    public function __call($method, $args)
+    {
+        return call_user_func_array([$this->handler(), $method], $args);
     }
 }

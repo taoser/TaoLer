@@ -16,6 +16,7 @@ use think\facade\Request;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Cache;
+use app\common\lib\IdEncode;
 use app\BaseController as BaseCtrl;
 
 /**
@@ -206,5 +207,88 @@ class BaseController extends BaseCtrl
 			}
 		}
 	}
+
+	/**
+	 * 编辑时 删除原有的静态html
+	 *
+	 * @param [object] $article 对象
+	 * @return void
+	 */
+	protected function removeDetailHtml(object $article): void
+	{
+		if(config('taoler.config.static_html')) {
+
+			$id = IdEncode::encode((int)$article['id']);
+
+			if(config('taoler.url_rewrite.article_as') == '<ename>/') {
+				$url = (string) url('article_detail',['id' => $id,'ename' => $article->cate->ename]);
+			} else {
+				$url = (string) url('article_detail',['id' => $id]);
+			}
+	
+			$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/'));
+
+			if(file_exists($staticFilePath) && is_file($staticFilePath)) {
+				unlink($staticFilePath);
+			}
+		}
+	}
+
+	/**
+	 * 编辑时 删除原有的静态html
+	 *
+	 * @param [object] $article 对象
+	 * @return void
+	 */
+	protected function removeIndexHtml(): void
+	{
+		if(config('taoler.config.static_html')) {
+			$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/index.html');
+			if(file_exists($staticFilePath) && is_file($staticFilePath)) {
+				unlink($staticFilePath);
+			}
+		}
+	}
+
+	/**
+	 * // 查、改、删 tabname
+	 *
+	 * @param integer $id
+	 * @return string
+	 */
+	protected function getTableName(int $id) : string
+	{
+		
+		$suffix = '';
+		$num = (int) floor(($id - 1) / 100);
+		if($num > 0) {
+			// 数据表后缀
+            $suffix = "_{$num}";
+		}
+
+		// 表名
+		$tableName = config('database.connections.mysql.prefix') . 'article' . $suffix; 
+		return $tableName;
+	}
+
+	/**
+     * 查、改、删时需要传入id,获取所在表的后缀
+     *
+     * @param integer $id
+     * @return string
+     */
+    protected function byIdGetSuffix(int $id): string
+    {
+        // 数据表后缀为空时，id在主表中
+        $suffix = '';
+        $num = (int) floor(($id - 1) / config('taoler.single_table_num'));
+        // num > 0, id在对应子表中
+        if($num > 0) {
+            //数据表后缀
+            $suffix = "_{$num}";
+        }
+
+        return $suffix;
+    }
 
 }

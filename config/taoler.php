@@ -16,11 +16,19 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.0.8',
+    'version'   => '3.1.1',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
 	'salt'		=> 'taoler',
+	// 分表单表数量 默认100W
+	'single_table_num' => 10000 * 100 / 10000,
+	// id字段加密开关 1开启0关闭
+	'id_status'	=> 1,
+	// id加密字母表
+	'id_alphabet' => 'TBJi7WOsvkS4CfGg6A8wmloZr3KR1M5eQnxctqh0IzVpyEHLuaNX2FdPDUbYj9',
+	// id加密最小长度
+	'id_minlength' => 8,
 
 	// 项目配置
 	'config'	=>[
@@ -55,7 +63,7 @@ return [
         // 置顶文章显示方式1列表0滑动
         'top_show'   => 1,
 		// 网站静态化
-		'static_html' => 1,
+		'static_html'   => 0,
 
 	],
 

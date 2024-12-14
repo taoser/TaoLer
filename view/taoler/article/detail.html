@@ -6,7 +6,7 @@
 {block name="link"}<link rel="stylesheet" href="{$Request.domain}/static/res/css/plyr.css" charset="utf-8">{/block}
 {block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
 {block name="content"}
-<div class="layui-container">
+<div class="layui-container article-content">
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md9 content detail">
         <div class="fly-panel detail-box">
@@ -33,8 +33,8 @@
             </div>
             {//作者}
             <div class="detail-about">
-                <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
-                <img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
+                <a class="fly-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
+                <img src="{$article.user.user_img}" alt="{$article.user.name}">
                 <i class="iconfont icon-renzheng" title="认证信息"></i>
                 </a>
                 <div class="fly-detail-user">
@@ -79,9 +79,9 @@
         </div>
 	    {//评论}
         <div class="fly-panel detail-box" id="flyReply">
-        <span style="font-size:18px;">评论 {$comments->count()}</span>
+        <span style="font-size:18px;">评论 {comment:count /}</span>
         <ul class="jieda" id="jieda">
-        {volist name="comments['data']" id="vo" empty= ""}
+            {comment:list}
             <li data-id="{$vo.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
@@ -113,7 +113,7 @@
                 </div>
             </div>
             </li>
-        {/volist} 
+            {/comment:list}
         </ul>
         <div style="text-align: center">{$comments|raw}</div>
         {if condition="$article.is_reply == 1"}
@@ -284,20 +284,6 @@ layui.use(['fly', 'colorpicker','plyr'], function(){
 			content: "<img src='/qrcode/?text={$Request.domain}{:url('article/detail',['id' => $article.id])}&size=230'>"
 		});
 	}
-
-    //推送百度收录服务
-    (function(){
-        var bp = document.createElement('script');
-        var curProtocol = window.location.protocol.split(':')[0];
-        if (curProtocol === 'https') {
-            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-        }
-        else {
-            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-        }
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(bp, s);
-    })();
 
 </script>
 {/block}

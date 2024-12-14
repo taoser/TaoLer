@@ -10,20 +10,18 @@
 
 namespace app\admin\controller;
 
-use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Request;
 use think\facade\Cache;
-use think\facade\Lang;
 use app\admin\model\Cunsult;
 use think\facade\Config;
 use taoler\com\Api;
 use app\common\lib\facade\HttpHelper;
-use app\common\model\Comment;
+use app\index\model\Comment;
 
-class Index extends AdminController
+class Index extends AdminBaseController
 {
 
 	protected $sys_version;

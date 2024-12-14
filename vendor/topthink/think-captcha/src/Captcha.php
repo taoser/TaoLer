@@ -87,7 +87,7 @@ class Captcha
      * 配置验证码
      * @param string|null $config
      */
-    protected function configure(string $config = null): void
+    protected function configure(?string $config = null): void
     {
         if (is_null($config)) {
             $config = $this->config->get('captcha', []);
@@ -175,7 +175,7 @@ class Captcha
      * @param null|string $config
      * @return Response|array
      */
-    public function create(string $config = null)
+    public function create(?string $config = null)
     {
         $this->configure($config);
 
