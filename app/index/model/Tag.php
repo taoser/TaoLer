@@ -13,9 +13,44 @@ namespace app\index\model;
 
 use Exception;
 use app\common\model\BaseModel;
+use app\index\model\Taglist;
+use think\facade\Db;
 
 class Tag extends BaseModel
 {
+
+    public function getTagByEname(string $ename)
+    {
+        return self::field('id,name,keywords,description,title')->where('ename', $ename)->cache(true)->find();
+    }
+
+    /**
+     * 热门标签
+     *
+     * @return array
+     */
+    public function getHots(): array
+    {
+        $data = [];
+
+        $tagList = TagList::fieldRaw('tag_id, count(*) as counts')
+        ->group('tag_id')
+        ->order('counts', 'desc')
+        ->limit(30)
+        ->select()
+        ->column('tag_id');
+
+        $count = count($tagList);
+        if($count) {
+            $data = self::field('name,ename')
+            ->whereIn('id', $tagList)
+            ->append(['url'])
+            ->select()
+            ->toArray();
+        }
+
+        return ['count' => $count, 'data' => $data];
+    }
 
 
     public function getTagList()
@@ -57,7 +92,7 @@ class Tag extends BaseModel
 
     public function getUrlAttr($value, $data)
     {
-        return (string) url('tag_list',['ename' => $data['ename']]);
+        return (string) url('tag_list', ['ename' => $data['ename']])->domain(true);
     }
 
 }

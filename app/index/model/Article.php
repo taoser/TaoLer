@@ -639,33 +639,6 @@ class Article extends BaseModel
         }, 3600);
     }
 
-        /**
-     * 标签列表
-     *
-     * @param [type] $tagId 标签id
-     * @param [type] $limit 输出数量
-     * @return array
-     */
-    public function getAllTags($tagId)
-    {
-        $arrId = Taglist::where('tag_id', $tagId)->column('article_id');
-
-        $allTags = $this::field('id,user_id,cate_id,title,create_time,is_hot')->where('id','in', $arrId)
-        ->with(['user' => function($query){
-            $query->field('id,name,nickname,user_img,area_id,vip');
-        },'cate' => function($query){
-            $query->field('id,catename,ename');
-        }])
-        ->where(['status'=>1])
-        ->order('id desc')
-        ->limit(20)
-        ->append(['url'])
-        ->select()
-        ->toArray();
-    
-        return $allTags;
-    }
-
     /**
      * 相关文章(标签)
      * 相同标签文章，不包含自己

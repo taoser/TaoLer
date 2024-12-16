@@ -55,6 +55,11 @@ class Index extends IndexBaseController
 // $c = Category::getArticlesByCategoryEname('posts');
 // halt($c);
 
+// $t = new \app\index\model\Tag();
+// $h = $t->getHots();
+
+// dump($h);
+
 		$html = View::fetch();
 
 		$this->buildHtml($html);

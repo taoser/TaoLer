@@ -60,9 +60,13 @@ Route::rule('comment/edit/[:id]','comment/edit');
 // })->prefix('article/');
 
 //tag
-Route::get('tag','tag/getAllTag')->name('get_all_tag');
-Route::get('arttag','tag/getArticleTag')->name('get_art_tag');
-Route::get('tag/:ename', 'Tag/list')->name('tag_list');
+Route::get('tag$','tag/getAllTag')->name('get_all_tag');
+Route::get('arttag$','tag/getArticleTag')->name('get_art_tag');
+
+Route::group(function (){
+	Route::get('tag/<ename>$', 'list')->name('tag_list');
+})->prefix('tag/');
+
 
 Route::rule('search/[:keywords]', 'index/search'); // 搜索
 

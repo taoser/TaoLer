@@ -51,7 +51,7 @@ class IndexBaseController extends \app\BaseController
 
 		$this->user = $this->userInfo();
 
-		$this->adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
+		$this->adminEmail = Db::name('user')->where('id',1)->cache('adminEmail',3600)->value('email');
 
 		//系统配置
 		$this->showSystem();
@@ -75,36 +75,15 @@ class IndexBaseController extends \app\BaseController
 		return $user;
     }
 
-	//热门标签
-	protected function getHotTag()
-	{
-		//热门标签
-		//return Article::getHotTags();
-        //转换为字符串
-		// $tagStr = implode(",",$tags);
-		//转换为数组并去重
-		// return array_unique(explode(",",$tagStr));
-		$allTags = Db::name('tag')->field('name,ename')->cache(true)->select();
-		$tagHot = [];
-        foreach($allTags as $v) {
-            $tagHot[] = ['name'=>$v['name'],'url'=> (string) url('tag_list',['ename'=>$v['ename']])];
-        }
-        
-        return $tagHot;
-
-	}
 	
 	//显示网站设置
     protected function showSystem()
     {
         //1.查询分类表获取所有分类
 		$sysInfo = $this->getSystem();
-		//获取热门标签
-		$hotTag = $this->getHotTag();
 
 		$assign = [
 			'sysInfo'	=> $sysInfo,
-			'hotTag'	=> $hotTag,
 			'host'		=> Request::domain() . '/'
 		];
 		
@@ -124,7 +103,9 @@ class IndexBaseController extends \app\BaseController
 		if(config('taoler.config.static_html')) {
 
 			if($staticFilePath == '') {
-				$url = $this->request->baseUrl();
+				$baseUrl = $this->request->baseUrl();
+// dump($url);
+				$url = preg_replace('/\.html.*/', '.html', $baseUrl);
 				if(str_contains($url, '.html')) {
 					$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/'));
 				} else {
@@ -132,7 +113,7 @@ class IndexBaseController extends \app\BaseController
 					$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/') . 'index.html');
 				}
 			}
-
+// dump($staticFilePath);
 			if(!file_exists($staticFilePath)) {
 				// 检测模板目录
 				$dir = dirname($staticFilePath);

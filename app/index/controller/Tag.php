@@ -10,15 +10,19 @@
  */
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
 use app\facade\Article;
 use think\facade\View;
-use think\facade\Request;
 use think\facade\Db;
-use app\common\model\Tag as TagModel;
+use app\facade\Tag as TagModel;
+use app\facade\TagList;
 
-class Tag extends BaseController
+class Tag extends IndexBaseController
 {
+    public function initialize()
+    {
+        parent::initialize();
+
+    }
     //
     public function index()
     {
@@ -28,22 +32,15 @@ class Tag extends BaseController
     // 获取tag列表
     public function List()
     {
-        //
-        $tagEname = Request::param('ename');
-        $tag = Db::name('tag')->where('ename', $tagEname)->find();
+        $tagEname = $this->request->param('ename');
+        // $page = $this->request->param('page', 1);
+        // $limit = $this->request->param('limit', 15);
 
-        $artList = Article::getAllTags($tag['id']);
+        $tag = TagModel::getTagByEname($tagEname);
 
-        //	查询热议
-        $artHot = Article::getHots(10);
 
-        $assign = [
-            'tag'       => $tag,
-            'artList'   => $artList,
-            'artHot'    => $artHot
-        ];
+        View::assign('tag', $tag);
 
-        View::assign($assign);
         return View::fetch('index');
     }
 
@@ -56,7 +53,7 @@ class Tag extends BaseController
     {
         $data = [];
         $tagModel = new TagModel;
-        $tags = $tagModel->getTagList();
+        $tags = $tagModel::getTagList();
         foreach($tags as $tag) {
             $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
         }

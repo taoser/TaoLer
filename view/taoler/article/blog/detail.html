@@ -317,18 +317,18 @@
 					</dl>
 
 					{//标签}
-					{if count($hotTag) > 0}
+					
 					<dl class="function" id="rongkeji_retags">
 						<dt class="function_t">热门标签</dt>
 						<dd class="function_c">
 							<ul>
-								{volist name="hotTag" id="vo"}
-								<li><a href="{$vo.url}" rel="tag">{$vo.name}</a></li>
-								{/volist}
+								{article:hotag}
+								<li><a href="{$hotag.url}" rel="tag">{$hotag.name}</a></li>
+								{/article:hotag}
 							</ul>
 						</dd>
 					</dl>
-					{/if}
+					
 
 					{//友情链接}
 					<!--博客详情友链-->

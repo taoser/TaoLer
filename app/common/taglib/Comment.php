@@ -39,7 +39,7 @@ class Comment extends TagLib
     public function tagList(array $tag, string $content): string
     {
         $parse = '{assign name="page" value="$Request.param.page ?? 1" /}';
-        $parse .= '<?php if(!isset($__COMMENTS__)) $__COMMENTS__ = \app\facade\comment::getComments($article[\'id\'], $page);';
+        $parse .= '<?php if(!isset($__COMMENTS__)) $__COMMENTS__ = \app\facade\Comment::getComments($article[\'id\'], $page);';
         $parse .= ' ?>';
         $parse .= '{volist name="__COMMENTS__[\'data\']" id="comment" empty= "还没有内容"}';
         $parse .= $content;
@@ -51,7 +51,7 @@ class Comment extends TagLib
     public function tagCount(array $tag, string $content): string
     {
         $parse = '{assign name="page" value="$Request.param.page ?? 1" /}';
-        $parse .= '<?php if(!isset($__COMMENTS__)) $__COMMENTS__ = \app\facade\comment::getComments($article[\'id\'], $page);';
+        $parse .= '<?php if(!isset($__COMMENTS__)) $__COMMENTS__ = \app\facade\Comment::getComments($article[\'id\'], $page);';
         $parse .= ' ?>';
         $parse .= '{$__COMMENTS__.count}';
         return $parse;
