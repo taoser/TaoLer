@@ -25,7 +25,7 @@ class Article extends TagLib
         'author'        => ['attr' => '', 'close' => 0],
         'author_id'     => ['attr' => '', 'close' => 0],
         'author_avatar' => ['attr' => '', 'close' => 0],
-        'author_link' => ['attr' => '', 'close' => 0],
+        'author_link'   => ['attr' => '', 'close' => 0],
         'pv'            => ['attr' => '', 'close' => 0],
         'title_color'   => ['attr' => '', 'close' => 0],
         'comment_num'   => ['attr' => '', 'close' => 0],
@@ -239,7 +239,6 @@ class Article extends TagLib
 
     public function tagIs_tops(array $tag, string $content): string
     {
-        //dump($this->article);
         $parseStr = '{if($article.is_top == 0)}';
         $parseStr .= '<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1" style="background-color: #ccc" title="置顶">顶</span>';
         $parseStr .= '{else /}';
@@ -284,17 +283,8 @@ class Article extends TagLib
                         <?php $__LISTS__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type); ?> 
                         {volist name="__LISTS__[\'data\']" id="article"}' . $content . '{/volist}'
         };
-
-        // $parse = '{assign name="id" value="$Request.param.id" /}';
-        // $parse .= '<?php ';
-        // $parse .= '$__articles__ = \app\facade\Article::getTops();';
-        // $parse .= ' \?\>';
-        // $parse .= '{volist name="__articles__" id="article"}';
-        // $parse .= $content;
-        // $parse .= '{/volist}';
         
         return $parse;
-
     }
 
     // 前一篇

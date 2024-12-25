@@ -10,7 +10,7 @@
 
 namespace app\admin\controller\addon;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use app\common\lib\SqlFile;
 use app\common\lib\Zip;
 use think\Exception;
@@ -25,14 +25,9 @@ use app\common\lib\facade\HttpHelper;
 use app\common\lib\FileHelper;
 
 
-class Addons extends AdminController
+class Addons extends AdminBaseController
 {
     protected $menu = [];
-
-    public function __construct()
-    {
-        //
-    }
 
     /**
      * 浏览插件

@@ -26,8 +26,8 @@ class Tag extends TagLib
         'count'     => ['attr' => '', 'close' => 0],
         'id'        => ['attr' => '', 'close' => 0],
         'name'      => ['attr' => '', 'close' => 0],
-        'keywords'      => ['attr' => '', 'close' => 0],
-        'description'   => ['attr' => '', 'close' => 0],
+        'keywords'  => ['attr' => '', 'close' => 0],
+        'description'=> ['attr' => '', 'close' => 0],
         'title'      => ['attr' => '', 'close' => 0],
     ];
 

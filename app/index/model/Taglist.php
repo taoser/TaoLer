@@ -61,7 +61,7 @@ class Taglist extends BaseModel
                 ->toArray();
             }
 
-            return ['count' => count($data), 'data' => $data, 'title' => $tag['name']];
+            return ['count' => count($data), 'data' => $data];
         }, 1200);
     }
 

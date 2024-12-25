@@ -10,11 +10,10 @@
  */
 namespace app\index\controller;
 
-use app\facade\Article;
 use think\facade\View;
-use think\facade\Db;
 use app\facade\Tag as TagModel;
 use app\facade\TagList;
+use think\response\Json;
 
 class Tag extends IndexBaseController
 {
@@ -23,13 +22,18 @@ class Tag extends IndexBaseController
         parent::initialize();
 
     }
+
     //
     public function index()
     {
         return View::fetch();
     }
 
-    // 获取tag列表
+    /**
+     * 获取tag列表
+     *
+     * @return void
+     */
     public function List()
     {
         $tagEname = $this->request->param('ename');
@@ -37,7 +41,6 @@ class Tag extends IndexBaseController
         // $limit = $this->request->param('limit', 15);
 
         $tag = TagModel::getTagByEname($tagEname);
-
 
         View::assign('tag', $tag);
 
@@ -49,25 +52,28 @@ class Tag extends IndexBaseController
      *
      * @return void
      */
-    public function getAllTag()
+    public function getAllTag(): Json
     {
         $data = [];
-        $tagModel = new TagModel;
-        $tags = $tagModel::getTagList();
+        $tags = TagModel::getTagList();
         foreach($tags as $tag) {
             $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
         }
         return json(['code'=>0,'data'=>$data]);
     }
 
-    public function getArticleTag($id)
+    /**
+     * 文章tag
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function getArticleTag($id): Json
     {
-        //
         $data = [];
-        $artTags = Db::name('taglist')->where('article_id',$id)->select();
-        // halt($artTags);
+        $artTags = TagList::where('article_id',$id)->select();
         foreach($artTags as $v) {
-            $tag = Db::name('tag')->find($v['tag_id']);
+            $tag = TagModel::find($v['tag_id']);
             if(!is_null($tag))
             $data[] = ['name'=>$tag['name'],'value'=>$tag['id']];
         }

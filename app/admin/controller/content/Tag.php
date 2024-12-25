@@ -15,39 +15,40 @@ namespace app\admin\controller\content;
 use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Request;
-use think\facade\Db;
-use app\index\model\Tag as TagModel;
+use app\facade\TagList;
+use app\facade\Tag as TagModel;
+use think\response\Json;
 
 class Tag extends AdminController
 {
-
-
-    // public function __construct(TagModel $tagModel)
-    // {
-        
-    //     $this->tagModel = new TagModel;
-    // }
 
     public function index()
     {
         return View::fetch('index');
     }
 
-    public function list()
+    /**
+     * 数据列表
+     *
+     * @return void
+     */
+    public function list(): Json
     {
-        $arr = [];
-        $tag = new TagModel;
-        $tags = $tag->getTagList();
-        // dump($tags);
-        if(count($tags)) {
-            $arr = ['code'=>0, 'msg'=>'', 'count' => count($tags)];
-            foreach($tags as $k=>$v) {
-                $arr['data'][] = ['id'=>$v['id'],'name'=>$v['name'], 'ename'=>$v['ename'], 'keywords'=>$v['keywords'], 'description'=>$v['description'], 'title'=>$v['title'],'time'=>$v['create_time']];
-            }
-        } else {
-            $arr = ['code'=>-1, 'msg'=>'没有数据'];
-        }
-        return json($arr);
+        $page = $this->request->param('page/d', 1);
+        $limit = $this->request->param('limit/d', 10);
+    
+        $tags = TagModel::getTagList($page, $limit);
+
+        if($tags['data']){
+            return json([
+                'code'  => 0,
+                'msg'   => 'ok',
+                'count' => $tags['total'],
+                'data'  => $tags['data']
+            ]);
+        };
+
+        return json([ 'code'=>-1, 'msg'=>'no data']);
     }
 
     public function add()
@@ -57,8 +58,7 @@ class Tag extends AdminController
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
-            $tagModel = new TagModel;
-            $res = $tagModel->saveTag($data);
+            $res = TagModel::save($data);
             if($res == true){
                 return json(['code'=>0,'msg'=>'设置成功']);
             }
@@ -68,24 +68,25 @@ class Tag extends AdminController
 
     public function edit()
     {
-        $tagModel = new TagModel;
-        
+
         if(Request::isAjax()) {
-            $data = Request::only(['name','ename','id','keywords','description','title']);
+            $data = Request::only(['name','ename','id/d','keywords','description','title']);
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
             try{
-                $tagModel::update($data);
+                TagModel::update($data);
                 return json(['code'=>0,'msg'=>'设置成功']);
             } catch(\Exception $e) {
                 return json(['code'=>-1,'msg'=>$e->getMessage()]);
             }
         }
 
-        $tag = $tagModel->getTag(input('id'));
+        $id = $this->request->param('id/d');
+        $tag = TagModel::find($id);
 
         View::assign('tag',$tag);
-        return view();
+
+        return View::fetch();
     }
 
     /**
@@ -94,8 +95,7 @@ class Tag extends AdminController
      */
     public function delete()
     {
-        $tagModel = new TagModel;
-        $res = $tagModel->delTag(input('id'));
+        $res = TagModel::del((int)input('id'));
         if($res){
             return json(['code'=>0,'msg'=>'删除成功']);
         }
@@ -110,8 +110,7 @@ class Tag extends AdminController
     public function getAllTag()
     {
         $data = [];
-        $tagModel = new TagModel;
-        $tags = $tagModel->getTagList();
+        $tags = TagModel::getTagList();
         foreach($tags as $tag) {
             $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
         }
@@ -120,14 +119,13 @@ class Tag extends AdminController
 
     public function getArticleTag($id)
     {
-        //
         $data = [];
-        $artTags = Db::name('taglist')->where('article_id',$id)->select();
-        // halt($artTags);
+        $artTags = TagList::where('article_id', $id)->select();
+
         foreach($artTags as $v) {
-            $tag = Db::name('tag')->find($v['tag_id']);
+            $tag = TagModel::find($v['tag_id']);
             if(!is_null($tag))
-            $data[] = ['name'=>$tag['name'],'value'=>$tag['id']];
+            $data[] = ['name' => $tag['name'],'value' => $tag['id']];
         }
         
         return json(['code'=>0,'data'=>$data]);

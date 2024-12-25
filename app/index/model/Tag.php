@@ -13,12 +13,17 @@ namespace app\index\model;
 
 use Exception;
 use app\common\model\BaseModel;
-use app\index\model\Taglist;
-use think\facade\Db;
+use app\facade\Taglist;
 
 class Tag extends BaseModel
 {
 
+    /**
+     * ename查询
+     *
+     * @param string $ename
+     * @return void
+     */
     public function getTagByEname(string $ename)
     {
         return self::field('id,name,keywords,description,title')->where('ename', $ename)->cache(true)->find();
@@ -53,27 +58,19 @@ class Tag extends BaseModel
     }
 
 
-    public function getTagList()
+    /**
+     * 管理端数据
+     *
+     * @param integer $page
+     * @param integer $limit
+     * @return array
+     */
+    public function getTagList(int $page, int $limit): array
     {
-        //
-        return $this::select()->toArray();
-    }
-
-    public function getTag($id)
-    {
-        //
-        return $this::find($id);
-    }
-
-   
-    public function saveTag($data)
-    {
-        $res = $this->save($data);
-        if($res == true) {
-            return true;
-        } else {
-            return false;
-        }
+        return self::paginate([
+            'list_rows' => $limit,
+            'page'      => $page
+        ])->toArray();
     }
 
     /**
@@ -81,7 +78,7 @@ class Tag extends BaseModel
      * @param $id
      * @return bool
      */
-    public function delTag($id)
+    public function del($id)
     {
         $res = $this::destroy($id);
        if($res) {

@@ -9,12 +9,11 @@ use think\facade\Cache;
 use think\facade\Session;
 use think\facade\Config;
 use app\facade\Category;
-use app\facade\Comment;
-use app\index\model\UserZan;
 use app\index\model\PushJscode;
 use app\common\lib\Msgres;
 use app\common\lib\IdEncode;
 use think\Response\Json;
+use app\index\validate\Article as ArticleValidate;
 use Exception;
 
 class Article extends IndexBaseController
@@ -120,9 +119,9 @@ class Article extends IndexBaseController
 			}
 
 			// 验证器
-			$validate = new \app\common\validate\Article;
+			$validate = new ArticleValidate();
             $result = $validate->scene('Artadd')->check($data);
-            if (true !== $result) {
+            if (!$result) {
                 return Msgres::error($validate->getError());
             }
 
@@ -303,7 +302,7 @@ class Article extends IndexBaseController
 				};
 			}
 			//调用验证器
-			$validate = new \app\common\validate\Article(); 
+			$validate = new ArticleValidate(); 
 			$res = $validate->scene('Artadd')->check($data);
 			if(!$res){
                 return Msgres::error($validate->getError());

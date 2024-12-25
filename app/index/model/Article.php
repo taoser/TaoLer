@@ -13,7 +13,6 @@ use think\facade\Cache;
 use think\facade\Session;
 use app\observer\ArticleObserver;
 use app\common\lib\IdEncode;
-use Symfony\Component\VarExporter\Internal\Exporter;
 use think\facade\Route;
 
 class Article extends BaseModel

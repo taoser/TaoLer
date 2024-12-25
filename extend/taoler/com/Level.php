@@ -3,8 +3,8 @@
 namespace taoler\com;
 
 use think\facade\Db;
-use app\common\model\Vip;
-use app\common\model\User;
+use app\index\model\Vip;
+use app\index\model\User;
 
 class Level
 {	

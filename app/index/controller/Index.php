@@ -14,7 +14,6 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\common\lib\Msgres;
-use app\index\model\Article;
 
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
@@ -59,7 +58,9 @@ class Index extends IndexBaseController
 // $h = $t->getHots();
 
 // dump($h);
-
+// echo 'JIT Enabled: ' . (filter_var(ini_get('zend_enable_jit'), FILTER_VALIDATE_BOOLEAN) ? 'Yes' : 'No');
+// phpinfo();
+dump(time());
 		$html = View::fetch();
 
 		$this->buildHtml($html);
