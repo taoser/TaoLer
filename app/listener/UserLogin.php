@@ -13,7 +13,7 @@ declare (strict_types = 1);
 namespace app\listener;
 
 use think\facade\Log;
-use app\common\model\User;
+use app\facade\User;
 use app\common\lib\facade\HttpHelper;
 
 class UserLogin

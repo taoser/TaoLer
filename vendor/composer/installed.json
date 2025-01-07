@@ -587,8 +587,8 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v11.35.1",
-            "version_normalized": "11.35.1.0",
+            "version": "v11.37.0",
+            "version_normalized": "11.37.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -641,8 +641,8 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.35.1",
-            "version_normalized": "11.35.1.0",
+            "version": "v11.37.0",
+            "version_normalized": "11.37.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -763,17 +763,17 @@
         },
         {
             "name": "intervention/image",
-            "version": "3.9.1",
-            "version_normalized": "3.9.1.0",
+            "version": "3.10.2",
+            "version_normalized": "3.10.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "b496d1f6b9f812f96166623358dfcafb8c3b1683"
+                "reference": "1c68e5fdf443374f3580c5b920a7f177eccdab85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/b496d1f6b9f812f96166623358dfcafb8c3b1683",
-                "reference": "b496d1f6b9f812f96166623358dfcafb8c3b1683",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/1c68e5fdf443374f3580c5b920a7f177eccdab85",
+                "reference": "1c68e5fdf443374f3580c5b920a7f177eccdab85",
                 "shasum": ""
             },
             "require": {
@@ -783,15 +783,15 @@
             },
             "require-dev": {
                 "mockery/mockery": "^1.6",
-                "phpstan/phpstan": "^1",
-                "phpunit/phpunit": "^10.0",
+                "phpstan/phpstan": "^2",
+                "phpunit/phpunit": "^10.0 || ^11.0",
                 "slevomat/coding-standard": "~8.0",
                 "squizlabs/php_codesniffer": "^3.8"
             },
             "suggest": {
                 "ext-exif": "Recommended to be able to read EXIF data properly."
             },
-            "time": "2024-10-27T10:15:54+00:00",
+            "time": "2025-01-04T07:31:37+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -822,7 +822,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/3.9.1"
+                "source": "https://github.com/Intervention/image/tree/3.10.2"
             },
             "funding": [
                 {
@@ -2592,17 +2592,17 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v3.0.31",
-            "version_normalized": "3.0.31.0",
+            "version": "v3.0.33",
+            "version_normalized": "3.0.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "b75d534d8fa01122a7197f65c868b19f52a69fbb"
+                "reference": "6e0ea679f7448ff9c8906606462505597681e22e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/b75d534d8fa01122a7197f65c868b19f52a69fbb",
-                "reference": "b75d534d8fa01122a7197f65c868b19f52a69fbb",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/6e0ea679f7448ff9c8906606462505597681e22e",
+                "reference": "6e0ea679f7448ff9c8906606462505597681e22e",
                 "shasum": ""
             },
             "require": {
@@ -2619,7 +2619,7 @@
             "suggest": {
                 "ext-mongodb": "provide mongodb support"
             },
-            "time": "2024-12-10T13:38:40+00:00",
+            "time": "2024-12-19T01:52:44+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2647,7 +2647,7 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v3.0.31"
+                "source": "https://github.com/top-think/think-orm/tree/v3.0.33"
             },
             "install-path": "../topthink/think-orm"
         },
@@ -2795,23 +2795,23 @@
         },
         {
             "name": "workerman/channel",
-            "version": "v1.2.1",
-            "version_normalized": "1.2.1.0",
+            "version": "v1.2.2",
+            "version_normalized": "1.2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/channel.git",
-                "reference": "78ba6093764c8e2d2952c7bb53a52b2472da1bc7"
+                "reference": "1f9059ee78ca714908c30beba2736432c22a7867"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/channel/zipball/78ba6093764c8e2d2952c7bb53a52b2472da1bc7",
-                "reference": "78ba6093764c8e2d2952c7bb53a52b2472da1bc7",
+                "url": "https://api.github.com/repos/walkor/channel/zipball/1f9059ee78ca714908c30beba2736432c22a7867",
+                "reference": "1f9059ee78ca714908c30beba2736432c22a7867",
                 "shasum": ""
             },
             "require": {
                 "workerman/workerman": ">=4.0.12"
             },
-            "time": "2024-06-10T00:49:42+00:00",
+            "time": "2024-12-26T09:38:12+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2826,7 +2826,7 @@
             "homepage": "http://www.workerman.net",
             "support": {
                 "issues": "https://github.com/walkor/channel/issues",
-                "source": "https://github.com/walkor/channel/tree/v1.2.1"
+                "source": "https://github.com/walkor/channel/tree/v1.2.2"
             },
             "install-path": "../workerman/channel"
         },

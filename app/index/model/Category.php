@@ -284,7 +284,7 @@ class Category extends BaseModel
                 // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
                 self::$newLimit = $limit;
 
-                $field = 'id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass';
+                $field = 'id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,media';
 
                 for($i = 0; $i < $map['suffixCount']; $i++) {
 
@@ -395,7 +395,8 @@ class Category extends BaseModel
                             $da['url'] = (string) url('article_detail', ['id' => $id,'ename' => $cate['ename']])->domain(true);
                         } else {
                             $da['url'] = (string) url('article_detail', ['id' => $id])->domain(true);
-                        } 
+                        }
+                        $da['master_pic'] = isset($da['media']->image) ? $da['media']->image[0] : '';
                     }
                 } else {
                     // 往datas数组中追加cate和url 减少查询
@@ -408,7 +409,8 @@ class Category extends BaseModel
                             $da['url'] = (string) url('article_detail', ['id' => $id,'ename' => $category['ename']])->domain(true);
                         } else {
                             $da['url'] = (string) url('article_detail', ['id' => $id])->domain(true);
-                        } 
+                        }
+                        $da['master_pic'] = isset($da['media']->image) ? $da['media']->image[0] : '';
                     }
                 }
 

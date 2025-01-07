@@ -48,6 +48,24 @@ class User extends BaseModel
     {
         return $this->hasMany(Article::class);
     }
+
+    /**
+     * 根据标识符查询用户
+     *
+     * @param string $identifier 用户标识符（手机、邮箱或昵称）
+     * @return array|null
+     */
+    public function findUserByIdentifier($identifier)
+    {
+        // 判断输入的格式，进行相应查询
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            return $this->where('email', $identifier)->find();
+        } elseif (preg_match('/^1[3-9]\d{9}$/', $identifier)) {
+            return $this->where('phone', $identifier)->find();
+        } else {
+            return $this->where('nickname', $identifier)->find();
+        }
+    }
 	
 	//登陆校验
     public function login($data)

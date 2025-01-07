@@ -277,7 +277,7 @@ abstract class BaseQuery
 
     /**
      * 得到当前或者指定名称的数据表.
-     * @param bool $alias 是否返回数据表别名 
+     * @param bool $alias 是否返回数据表别名
      *
      * @return string|array|Raw
      */
@@ -1411,11 +1411,7 @@ abstract class BaseQuery
      *
      * @param array $data 主键数据
      *
-     * @throws Exception
-     * @throws ModelNotFoundException
-     * @throws DataNotFoundException
-     *
-     * @return Collection|array|static[]
+     * @return \think\model\Collection|\think\Collection
      */
     public function select(array $data = []): Collection
     {
@@ -1446,13 +1442,13 @@ abstract class BaseQuery
      * 查找单条记录.
      *
      * @param mixed   $data 主键数据
-     * @param Closure $closure 闭包数据
+     * @param ?Closure $closure 闭包数据
      *
      * @throws Exception
      * @throws ModelNotFoundException
      * @throws DataNotFoundException
      *
-     * @return mixed
+     * @return static|\think\Model|array|null
      */
     public function find($data = null, ?Closure $closure = null)
     {

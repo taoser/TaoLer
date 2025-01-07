@@ -25,7 +25,7 @@ class Article extends TagLib
         'author'        => ['attr' => '', 'close' => 0],
         'author_id'     => ['attr' => '', 'close' => 0],
         'author_avatar' => ['attr' => '', 'close' => 0],
-        'author_link' => ['attr' => '', 'close' => 0],
+        'author_link'   => ['attr' => '', 'close' => 0],
         'pv'            => ['attr' => '', 'close' => 0],
         'title_color'   => ['attr' => '', 'close' => 0],
         'comment_num'   => ['attr' => '', 'close' => 0],
@@ -39,6 +39,7 @@ class Article extends TagLib
         'is_top'        => ['attr' => '', 'close' => 0],
         'has_img'       => ['attr' => '', 'close' => 0],
         'has_video'     => ['attr' => '', 'close' => 0],
+        'master_pic'    => ['attr' => '', 'close' => 0],
 
         'cate_name'     => ['attr' => '', 'close' => 0],
         'cate_ename'    => ['attr' => '', 'close' => 0],
@@ -59,6 +60,8 @@ class Article extends TagLib
         'rela'          => ['attr' => '', 'close' => 1],
         'zan'           => ['attr' => '', 'close' => 1],
         'zan_count'     => ['attr' => '', 'close' => 0],
+        'hotag'          => ['attr' => '', 'close' => 1],
+        'hotag_count'    => ['attr' => '', 'close' => 0],
 
 
         'comment'       => ['attr' => ''],
@@ -169,6 +172,11 @@ class Article extends TagLib
         return '{$article.has_video}';
     }
 
+    public function tagMaster_pic(array $tag, string $content): string
+    {
+        return '{$article.master_pic}';
+    }
+
     public function tagCate_name(array $tag, string $content): string
     {
         return '{$article.cate.catename}';
@@ -237,7 +245,6 @@ class Article extends TagLib
 
     public function tagIs_tops(array $tag, string $content): string
     {
-        //dump($this->article);
         $parseStr = '{if($article.is_top == 0)}';
         $parseStr .= '<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1" style="background-color: #ccc" title="置顶">顶</span>';
         $parseStr .= '{else /}';
@@ -268,6 +275,7 @@ class Article extends TagLib
         return $parse;
     }
 
+    // 文章列表
     public function tagList(array $tag, string $content): string
     {
         $type = isset($tag['type']) ? $tag['type'] : '';
@@ -281,17 +289,8 @@ class Article extends TagLib
                         <?php $__LISTS__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type); ?> 
                         {volist name="__LISTS__[\'data\']" id="article"}' . $content . '{/volist}'
         };
-
-        // $parse = '{assign name="id" value="$Request.param.id" /}';
-        // $parse .= '<?php ';
-        // $parse .= '$__articles__ = \app\facade\Article::getTops();';
-        // $parse .= ' \?\>';
-        // $parse .= '{volist name="__articles__" id="article"}';
-        // $parse .= $content;
-        // $parse .= '{/volist}';
         
         return $parse;
-
     }
 
     // 前一篇
@@ -312,15 +311,6 @@ class Article extends TagLib
         return $parse;
     }
 
-    // 标签tag
-    public function tagTag(array $tag, string $content): string
-    {
-        $parse = '<?php $__TAGS__ = \app\facade\Article::getTags($article[\'id\']); ?>';
-        $parse .= '{volist name="__TAGS__" id="tag"} {notempty name="__TAGS__"}' . $content . '{/notempty}{/volist}';
-            
-        return $parse;
-    }
-
     // 相关文章
     public function tagRela(array $tag, string $content): string
     {
@@ -334,7 +324,7 @@ class Article extends TagLib
     public function tagZan(array $tag, string $content): string
     {
         $parse = '<?php if(!isset($__ZAN__)) $__ZAN__ = \app\facade\Article::getArticleZanList($article[\'id\']); ?>';
-        $parse .= '{volist name="__ZAN__.data" id="zan"} {notempty name="__ZAN__"}' . $content . '{/notempty}{/volist}';
+        $parse .= '{volist name="__ZAN__.data" id="zan"} {notempty name="__ZAN__.data"}' . $content . '{/notempty}{/volist}';
             
         return $parse;
     }
@@ -344,6 +334,33 @@ class Article extends TagLib
     {
         $parse = '<?php if(!isset($__ZAN__)) $__ZAN__ = \app\facade\Article::getArticleZanList($article[\'id\']); ?>';
         $parse .= '{$__ZAN__.count}';
+            
+        return $parse;
+    }
+
+    // 标签tag
+    public function tagTag(array $tag, string $content): string
+    {
+        $parse = '<?php $__TAGS__ = \app\facade\Article::getTags($article[\'id\']); ?>';
+        $parse .= '{volist name="__TAGS__" id="tag"} {notempty name="__TAGS__"}' . $content . '{/notempty}{/volist}';
+            
+        return $parse;
+    }
+
+    // 热门标签
+    public function tagHotag(array $tag, string $content): string
+    {
+        $parse = '<?php if(!isset($__HOTAG__)) $__HOTAG__ = \app\facade\Tag::getHots(); ?>';
+        $parse .= '{volist name="__HOTAG__.data" id="hotag"}{notempty name="__HOTAG__.data"}' . $content . '{/notempty}{/volist}';
+            
+        return $parse;
+    }
+
+    // 热门标签数量
+    public function tagHotag_count(array $tag, string $content): string
+    {
+        $parse = '<?php if(!isset($__HOTAG__)) $__HOTAG__ = \app\facade\Tag::getHots(); ?>';
+        $parse .= '{$__HOTAG__.count}';
             
         return $parse;
     }

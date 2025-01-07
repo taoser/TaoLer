@@ -9,10 +9,14 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Cookie;
 use think\facade\View;
-use app\common\model\Article;
-use app\common\model\Collection;
-use app\common\model\User as userModel;
+use app\facade\Article;
+use app\index\model\Collection;
+use app\facade\User as userModel;
+use Exception;
 use taoler\com\Message;
+use Intervention\Image\ImageManager;
+use think\facade\Config;
+use think\response\Json;
 
 class User extends BaseController
 {	
@@ -235,8 +239,8 @@ class User extends BaseController
 				if($data['email'] !== $mail){
 					$data['active'] = 0;
 				}
-                $user = new userModel;
-                $result = $user->setNew($data);
+
+                $result = userModel::setNew($data);
 				if($result == 1){
 					Cache::tag('user')->clear();
 				    return json(['code'=>0,'msg'=>'资料更新成功']);
@@ -250,39 +254,68 @@ class User extends BaseController
 		return View::fetch();
     }
 
-	//更换头像
-	public function uploadHeadImg()
+	/**
+	 * 更换头像
+	 *
+	 * @return Json
+	 */
+	public function uploadHeadImg(): Json
     {
-        $uploads = new \app\common\lib\Uploads();
-        $upRes = $uploads->put('file','head_img',1024,'image','uniqid');
-        $upHeadRes = $upRes->getData();
-        if($upHeadRes['status'] == 0){
-            $name_path = $upHeadRes['url'];
-            //$name = $file->hashName();
-			//$image = \think\Image::open("uploads/$name_path");
-			//$image->thumb(168, 168)->save("uploads/$name_path");
+		try{
 
-            //查出当前用户头像删除原头像并更新
+			$file = request()->file('file');
+			$relative_path = 'storage/' . $this->uid . '/head_img/';
+            $dir = public_path() . $relative_path;
+            $full_dir = str_replace("\\","/", $dir);
+            if (!is_dir($full_dir)) {
+                mkdir($full_dir, 0777, true);
+            }
+            $file = request()->file('file');
+            $info = $file->move($full_dir, $file->hashName('md5'));
+
+            $realPath = $info->getPathname();
+            $name = $info->getFilename();
+            $src = '/'.$relative_path.$name;
+
+			// create new image manager with gd driver
+			$manager = ImageManager::gd();
+
+			// open an image file
+			$image = $manager->read($realPath);
+
+			// resize image instance
+			$image->cover(120,120);
+
+			// insert a watermark
+			// $image->place('images/watermark.png');
+
+			// encode edited image
+			$encoded = $image->toPng();
+
+			// save encoded image
+			$encoded->save($realPath);
+
+			//查出当前用户头像删除原头像并更新
 			$imgPath = Db::name('user')->where('id',$this->uid)->value('user_img');
+
 			if(file_exists('.'.$imgPath)){
 				$dirPath    = dirname('.'.$imgPath);
 				if($dirPath !== './static/res/images/avatar'){ //防止删除默认头像
 					unlink('.'.$imgPath);
 				}
 			}
-            $result = Db::name('user')
-                ->where('id',$this->uid)
-                ->update(['user_img'=>$name_path]);
+
+            Db::name('user')
+			->where('id', $this->uid)
+			->update(['user_img' => $src]);
+
 			Cache::tag(['user','tagArtDetail','tagArt'])->clear();
-            if($result) {
-				$res = ['code'=>0,'msg'=>'头像更新成功'];
-            } else {
-                $res = ['code'=>1,'msg'=>'头像更新失败'];
-            }
-        } else {
-            $res = ['code'=>1,'msg'=>'上传错误'];
-        }
-		return json($res);
+
+		} catch(Exception $e) {
+			return json(['code' => 1,'msg'=>'头像更新失败'.$e->getMessage()]);
+		}
+
+		return json(['code' => 0,'msg'=>'头像更新成功']);
 	}
 
 
@@ -301,8 +334,7 @@ class User extends BaseController
 		//用户
 		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->find($id);
 	
-		$article = new Article();
-		$arts = $article->getUserArtList((int) $id);
+		$arts = Article::getUserArtList((int) $id);
 
 		//用户回答
 		// $commont = new Comment();
@@ -366,8 +398,8 @@ class User extends BaseController
                 return json(['code'=>-1,'msg' =>$validate->getError()]);
 
 			}
-			$user = new userModel;
-			$result = $user->setpass($data);
+
+			$result = userModel::setpass($data);
 			if($result == 1) {
 				Session::clear();
 				Cookie::delete('auth');

@@ -48,13 +48,13 @@
 			<section id="main" class="list-home list-grid list-grid-padding">
 				{article:list type="index"}
 				<article class="list-item block card-plain">
-					{if getOnepic($article.content)}
+					{eq name="article.has_img" value='1'}
 					<figure class="media media-3x2  d-none d-md-block">
 						<a class="media-content" href="{article:url /}" title="{article:title /}">
-							<img src="{:getOnepic($article.content)}" alt="{article:title /}">
+							<img src="{$article.master_pic}" alt="{article:title /}">
 						</a>
 					</figure>
-					{/if}
+					{/eq}
 					<div class="list-width list-content">
 						<div class="list-body">
 							<h3>

@@ -10,10 +10,10 @@
 
 namespace app\admin\controller\addon;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\facade\View;
 
-class Template extends AdminController
+class Template extends AdminBaseController
 {
 
     public function index()

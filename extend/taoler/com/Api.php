@@ -25,7 +25,7 @@ class Api
 		if($url == ''){
 			return json(['code'=>-1,'msg'=>'800']);
 		}
-		$ch =curl_init ();
+		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL, $url);
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT, 20);

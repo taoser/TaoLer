@@ -10,7 +10,7 @@
 
 namespace app\admin\controller\content;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\App;
 use think\facade\View;
 use think\facade\Request;
@@ -19,7 +19,7 @@ use app\index\model\Comment as CommentModel;
 
 
 
-class Comment extends AdminController
+class Comment extends AdminBaseController
 {
 
     protected $model;

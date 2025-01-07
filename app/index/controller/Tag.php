@@ -10,40 +10,40 @@
  */
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
-use app\facade\Article;
 use think\facade\View;
-use think\facade\Request;
-use think\facade\Db;
-use app\common\model\Tag as TagModel;
+use app\facade\Tag as TagModel;
+use app\facade\TagList;
+use think\response\Json;
 
-class Tag extends BaseController
+class Tag extends IndexBaseController
 {
+    public function initialize()
+    {
+        parent::initialize();
+
+    }
+
     //
     public function index()
     {
         return View::fetch();
     }
 
-    // 获取tag列表
+    /**
+     * 获取tag列表
+     *
+     * @return void
+     */
     public function List()
     {
-        //
-        $tagEname = Request::param('ename');
-        $tag = Db::name('tag')->where('ename', $tagEname)->find();
+        $tagEname = $this->request->param('ename');
+        // $page = $this->request->param('page', 1);
+        // $limit = $this->request->param('limit', 15);
 
-        $artList = Article::getAllTags($tag['id']);
+        $tag = TagModel::getTagByEname($tagEname);
 
-        //	查询热议
-        $artHot = Article::getHots(10);
+        View::assign('tag', $tag);
 
-        $assign = [
-            'tag'       => $tag,
-            'artList'   => $artList,
-            'artHot'    => $artHot
-        ];
-
-        View::assign($assign);
         return View::fetch('index');
     }
 
@@ -52,25 +52,28 @@ class Tag extends BaseController
      *
      * @return void
      */
-    public function getAllTag()
+    public function getAllTag(): Json
     {
         $data = [];
-        $tagModel = new TagModel;
-        $tags = $tagModel->getTagList();
+        $tags = TagModel::getTagList();
         foreach($tags as $tag) {
             $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
         }
         return json(['code'=>0,'data'=>$data]);
     }
 
-    public function getArticleTag($id)
+    /**
+     * 文章tag
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function getArticleTag($id): Json
     {
-        //
         $data = [];
-        $artTags = Db::name('taglist')->where('article_id',$id)->select();
-        // halt($artTags);
+        $artTags = TagList::where('article_id',$id)->select();
         foreach($artTags as $v) {
-            $tag = Db::name('tag')->find($v['tag_id']);
+            $tag = TagModel::find($v['tag_id']);
             if(!is_null($tag))
             $data[] = ['name'=>$tag['name'],'value'=>$tag['id']];
         }

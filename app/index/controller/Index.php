@@ -14,10 +14,11 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\common\lib\Msgres;
-use app\index\model\Article;
-
+use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
+
+
 
 class Index extends IndexBaseController
 {
@@ -54,6 +55,37 @@ class Index extends IndexBaseController
 
 // $c = Category::getArticlesByCategoryEname('posts');
 // halt($c);
+
+// $t = new \app\index\model\Tag();
+// $h = $t->getHots();
+
+// dump($h);
+// echo 'JIT Enabled: ' . (filter_var(ini_get('zend_enable_jit'), FILTER_VALIDATE_BOOLEAN) ? 'Yes' : 'No');
+// phpinfo();
+// dump(time());
+
+        // $user = Db::name('user')
+        //     ->alias('u')
+        //     ->join('addon_lawyer b','b.user_id= u.id')
+        //     ->field('u.id,b.name,user_img as avatar,chat_price,begood,licence_number,service_people')
+        //     ->find(1);
+
+        // $user = Db::name('user')
+        // ->alias('u')
+        // ->join('addon_lawyer l', 'u.id = l.user_id')
+        // ->field('u.id,l.name,user_img as avatar,tel')
+        // ->where('l.id', 2)
+        // ->find();
+
+        // halt($user);
+
+//         $array1 = array('a' => 1, 'b', 'c');
+// $array2 = array('d', 'e', 'f','a' => 2);
+// $result1 = array_merge($array1, $array2);
+// halt($result1);
+
+$o = new \app\api\controller\jida\Order;
+$list = $o->userlist();
 
 		$html = View::fetch();
 

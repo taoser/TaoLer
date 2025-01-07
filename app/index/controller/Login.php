@@ -1,29 +1,29 @@
 <?php
 namespace app\index\Controller;
 
-use app\common\validate\User as userValidate;
+use app\index\validate\User as UserValidate;
 use think\exception\ValidateException;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cache;
 use think\facade\View;
 use think\facade\Config;
-use app\common\model\User;
+use app\facade\User;
 use Exception;
-use Symfony\Component\VarExporter\Internal\Exporter;
 
 class Login extends IndexBaseController
 {
-	protected $users = null;
+	protected $userModel = null;
+
 	//已登陆中间件检测
 	protected $middleware = [
 	    'logedcheck' => ['except' 	=> ['index','status'] ]
     ];
 
-	public function __construct(\think\App $app)
+	public function initialize()
 	{
-		parent::__construct($app);
-		$this->users = new User();
+		parent::initialize();
+		$this->userModel = new User();
 	}
 
     //用户登陆
@@ -33,19 +33,22 @@ class Login extends IndexBaseController
         if(Session::has('user_id')){
             return redirect((string) url('user/index'));
         }
+		
 		//获取登录前访问页面refer
         $refer = str_replace(Request::domain(), '', Request::server('HTTP_REFERER'));
 
         if(Request::isAjax()) {
 			// 检验登录是否开放
-			if(config('taoler.config.is_login') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，网站维护中，暂时不能登录哦！']);
-            //登陆前数据校验
+			if(config('taoler.config.is_login') == 0 ) return json(['code' => -1,'msg' => 'Sorry, website maintenance, temporarily unable to log in!']);
+            
 			$data = Request::only(['name','email','phone','password','captcha','remember']);
+
+			//登陆前数据校验
 			if(Config::get('taoler.config.login_captcha') == 1) {				
 				//先校验验证码
 				if(!captcha_check($data['captcha'])){
-				 // 验证失败
-				 return json(['code'=>-1,'msg'=> '验证码失败']);
+					// 验证失败
+					return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
 						
@@ -61,9 +64,9 @@ class Login extends IndexBaseController
 					//手机验证登录
 					$data['phone'] = $data['name'];
 					unset($data['name']);
-					validate(userValidate::class)
-						->scene('loginPhone')
-						->check($data);
+					validate(UserValidate::class)
+					->scene('loginPhone')
+					->check($data);
 					
 					$data['name'] = $data['phone'];
 					unset($data['phone']);
@@ -73,28 +76,32 @@ class Login extends IndexBaseController
 					$data['email'] = $data['name'];
 					unset($data['name']);
 					
-					validate(userValidate::class)
-						->scene('loginEmail')
-						->check($data);
+					validate(UserValidate::class)
+					->scene('loginEmail')
+					->check($data);
 					
 					$data['name'] = $data['email'];
 					unset($data['email']);
 				} else {
 					//用户名name登陆验证
-					validate(userValidate::class)
-						->scene('loginName')
-						->check($data);
-						  
+					validate(UserValidate::class)
+					->scene('loginName')
+					->check($data);
 				}
 
-				$res = $this->users->login($data);
+				$res = $this->userModel::login($data);
 				
 			} catch (ValidateException $e) {
 				return json(['code'=>-1,'msg'=>$e->getError()]);
 			} catch(Exception $e) {
 				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
-			return json(['code' => 0, 'msg' => '登录成功', 'data' => ['token' => $res['token'], 'url' => $refer]]);
+
+			return json([
+				'code' => 0,
+				'msg' => '登录成功',
+				'data' => ['token' => $res['token'], 'url' => $refer]
+			]);
         }
 
         return View::fetch('login');
@@ -126,14 +133,14 @@ class Login extends IndexBaseController
 						// 验证失败
 				 		return json(['code' => -1,'msg' => '验证码不正确']);
 					}
-				} else {
-					return json(['code' => -1,'msg' => '验证码过期，请重试']);
 				}
+
+				return json(['code' => -1,'msg' => '验证码过期，请重试']);
 			}
 		
 			//校验场景中reg的方法数据
 			try{
-				validate(userValidate::class)
+				validate(UserValidate::class)
 					->scene('Reg')
 					->check($data);
 			} catch (ValidateException $e) {
@@ -141,13 +148,22 @@ class Login extends IndexBaseController
 			}
 
 			try{
-				$this->users->reg($data);
+				$this->userModel::reg($data);
+
 				return json([
 					'code' => 0,
 					'msg'=> '注册成功',
 					'url'=>(string) url('login/index')
 				]);
-			   if(Config::get('taoler.config.email_notice')) hook('mailtohook',[$this->showUser(1)['email'],'注册新用户通知','Hi亲爱的管理员:</br>新用户 <b>'.$data['name'].'</b> 刚刚注册了新的账号，请尽快处理。']);
+
+				if(Config::get('taoler.config.email_notice')){
+					hook('mailtohook',[
+						$this->$adminEmail,
+						'新用户注册通知',
+						"Hi亲爱的管理员:</br>新用户 <b>{$data['name']}</b> 刚刚注册了新的账号，请尽快处理。"
+					]);
+				}
+			   
 			} catch(\Exception $e){
 				return json(['code'=>-1,'msg'=>'注册失败！']);
 			}
@@ -163,14 +179,14 @@ class Login extends IndexBaseController
 			$data = Request::param();
 			
 			try{
-				validate(userValidate::class)
+				validate(UserValidate::class)
 					->scene('Forget')
 					->check($data);
 			} catch (ValidateException $e) {
 				return json(['code'=>-1,'msg'=>$e->getError()]);
 			}
 			//查询用户
-			$user = $this->users::field('id,name')->where('email',$data['email'])->find();
+			$user = $this->userModel::field('id,name')->where('email',$data['email'])->find();
 			if(is_null($user)) {
 				return json(['code' =>-1,'msg'=>'邮箱错误或不存在']);
 			}
@@ -206,7 +222,7 @@ class Login extends IndexBaseController
         if(Request::isAjax()){
 			$code = input('code');
 			try{
-				validate(userValidate::class)
+				validate(UserValidate::class)
 					->scene('Code')
 					->check($code);
 			} catch (ValidateException $e) {
@@ -235,7 +251,7 @@ class Login extends IndexBaseController
         if(Request::isAjax()){
             $data = Request::param();
 			try{
-				validate(userValidate::class)
+				validate(UserValidate::class)
 							->scene('Repass')
 							->check($data);
 			} catch (ValidateException $e) {
@@ -244,13 +260,14 @@ class Login extends IndexBaseController
 			
 			$data['uid'] = Cache::get('userid');
 			
-			$res = $this->users->respass($data);
-				if ($res == 1) {
-					return json(['code'=> 0, 'msg'=> '修改成功', 'url'=>(string) url('login/index')]);
-				} else {
-					return json(['code'=> -1, 'msg'=> '$res']);		
-				}
+			$res = $this->userModel::respass($data);
+			if ($res == 1) {
+				return json(['code'=> 0, 'msg'=> '修改成功', 'url'=>(string) url('login/index')]);
+			}
+
+			return json(['code'=> -1, 'msg'=> '$res']);		
         }
+
 		return View::fetch('forget');
 	}
 
@@ -293,6 +310,7 @@ class Login extends IndexBaseController
 			'avatar' => $user['user_img'],
 			'user_home' => (string) url('user_home', ['id' => $user['id']])
 		];
+
 		return json(['code' => 1, 'msg' => 'ok', 'data' => $data]);
 	}
 

@@ -430,10 +430,7 @@ trait Attribute
     public function setAttr(string $name, $value, array $data = []): void
     {
         if ($this->mapping) {
-            $key = array_search($name, $this->mapping);
-            if (is_string($key)) {
-                $name = $key;
-            }
+            $name = array_search($name, $this->mapping) ?: $name;
         }
 
         $name = $this->getRealFieldName($name);
@@ -534,9 +531,8 @@ trait Attribute
     {
         try {
             $relation = false;
-            if (isset($this->mapping[$name])) {
-                // 检查字段映射
-                $name  = $this->mapping[$name];
+            if ($this->mapping) {
+                $name = array_search($name, $this->mapping) ?: $name;
             }
             $value    = $this->getData($name);
         } catch (InvalidArgumentException $e) {

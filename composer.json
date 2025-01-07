@@ -1,11 +1,11 @@
 {
     "name": "taoser/taoler",
-    "description": "the new thinkphp taolerCMS system",
+    "description": "the new thinkphp TaoLerCMS system",
     "type": "project",
     "keywords": [
         "taoler",
         "thinkphp",
-        "ORM"
+        "CMS"
     ],
     "homepage": "https://www.aieok.com/",
     "license": "Apache-2.0",

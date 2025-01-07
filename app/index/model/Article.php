@@ -13,7 +13,6 @@ use think\facade\Cache;
 use think\facade\Session;
 use app\observer\ArticleObserver;
 use app\common\lib\IdEncode;
-use Symfony\Component\VarExporter\Internal\Exporter;
 use think\facade\Route;
 
 class Article extends BaseModel
@@ -281,7 +280,7 @@ class Article extends BaseModel
                 return [];
             }
 
-            return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type')
+            return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type,media')
                 ->whereIn('id', $idArr)
                 ->with([
                     'cate' => function (Query $query) {
@@ -293,7 +292,7 @@ class Article extends BaseModel
                 ])
                 ->withCount(['comments'])
                 ->order('id', 'desc')
-                ->append(['url'])
+                ->append(['url','master_pic'])
                 ->select()
                 ->toArray();
         }, 600);
@@ -313,7 +312,7 @@ class Article extends BaseModel
             
             $map = self::getSuffixMap(['status' => 1], Article::class);
 
-            $field = 'id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time';
+            $field = 'id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time,media';
             // 判断是否有多个表
             if($map['suffixCount'] > 1) {
 
@@ -332,7 +331,7 @@ class Article extends BaseModel
                         ->order('id','desc')
                         ->hidden(['art_pass'])
                         ->append(['enid'])
-                        ->append(['url'])
+                        ->append(['url','master_pic'])
                         ->limit($num)
                         ->select()
                         ->toArray();
@@ -352,7 +351,7 @@ class Article extends BaseModel
                         ->order('id','desc')
                         ->hidden(['art_pass'])
                         ->append(['enid'])
-                        ->append(['url'])
+                        ->append(['url','master_pic'])
                         ->limit($map['counts'][0])
                         ->select()
                         ->toArray();
@@ -370,7 +369,7 @@ class Article extends BaseModel
                         ->order('id','desc')
                         ->hidden(['art_pass'])
                         ->append(['enid'])
-                        ->append(['url'])
+                        ->append(['url','master_pic'])
                         ->limit($num - $map['counts'][0])
                         ->select()
                         ->toArray();
@@ -392,7 +391,7 @@ class Article extends BaseModel
                     ->order('id','desc')
                     ->hidden(['art_pass'])
                     ->append(['enid'])
-                    ->append(['url'])
+                    ->append(['url','master_pic'])
                     ->limit($num)
                     ->select()
                     ->toArray();
@@ -637,33 +636,6 @@ class Article extends BaseModel
 
             return ['count' => $count, 'data' => $data];
         }, 3600);
-    }
-
-        /**
-     * 标签列表
-     *
-     * @param [type] $tagId 标签id
-     * @param [type] $limit 输出数量
-     * @return array
-     */
-    public function getAllTags($tagId)
-    {
-        $arrId = Taglist::where('tag_id', $tagId)->column('article_id');
-
-        $allTags = $this::field('id,user_id,cate_id,title,create_time,is_hot')->where('id','in', $arrId)
-        ->with(['user' => function($query){
-            $query->field('id,name,nickname,user_img,area_id,vip');
-        },'cate' => function($query){
-            $query->field('id,catename,ename');
-        }])
-        ->where(['status'=>1])
-        ->order('id desc')
-        ->limit(20)
-        ->append(['url'])
-        ->select()
-        ->toArray();
-    
-        return $allTags;
     }
 
     /**
@@ -1200,6 +1172,20 @@ class Article extends BaseModel
         }
 
         return (string) url('article_detail',['id' => $data['id']])->domain(true);
+    }
+
+    /**
+     * 获取主图
+     *
+     * @param [type] $value
+     * @param [type] $data
+     * @return void
+     */
+    public function getMasterPicAttr($value, $data)
+    {
+        if(isset($data['media']->image)) {
+            return $data['media']->image[0];
+        }
     }
 
     /**

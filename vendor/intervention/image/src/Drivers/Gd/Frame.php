@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Intervention\Image\Drivers\Gd;
 
 use GdImage;
+use Intervention\Image\Drivers\AbstractFrame;
 use Intervention\Image\Exceptions\ColorException;
+use Intervention\Image\Exceptions\InputException;
 use Intervention\Image\Geometry\Rectangle;
 use Intervention\Image\Image;
 use Intervention\Image\Interfaces\DriverInterface;
@@ -13,7 +15,7 @@ use Intervention\Image\Interfaces\FrameInterface;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Interfaces\SizeInterface;
 
-class Frame implements FrameInterface
+class Frame extends AbstractFrame implements FrameInterface
 {
     /**
      * Create new frame instance
@@ -112,9 +114,14 @@ class Frame implements FrameInterface
      * {@inheritdoc}
      *
      * @see FrameInterface::setDispose()
+     * @throws InputException
      */
     public function setDispose(int $dispose): FrameInterface
     {
+        if (!in_array($dispose, [0, 1, 2, 3])) {
+            throw new InputException('Value for argument $dispose must be 0, 1, 2 or 3.');
+        }
+
         $this->dispose = $dispose;
 
         return $this;

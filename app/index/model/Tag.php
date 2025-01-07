@@ -13,32 +13,64 @@ namespace app\index\model;
 
 use Exception;
 use app\common\model\BaseModel;
+use app\facade\Taglist;
 
 class Tag extends BaseModel
 {
 
-
-    public function getTagList()
+    /**
+     * ename查询
+     *
+     * @param string $ename
+     * @return void
+     */
+    public function getTagByEname(string $ename)
     {
-        //
-        return $this::select()->toArray();
+        return self::field('id,name,keywords,description,title')->where('ename', $ename)->cache(true)->find();
     }
 
-    public function getTag($id)
+    /**
+     * 热门标签
+     *
+     * @return array
+     */
+    public function getHots(): array
     {
-        //
-        return $this::find($id);
-    }
+        $data = [];
 
-   
-    public function saveTag($data)
-    {
-        $res = $this->save($data);
-        if($res == true) {
-            return true;
-        } else {
-            return false;
+        $tagList = TagList::fieldRaw('tag_id, count(*) as counts')
+        ->group('tag_id')
+        ->order('counts', 'desc')
+        ->limit(30)
+        ->select()
+        ->column('tag_id');
+
+        $count = count($tagList);
+        if($count) {
+            $data = self::field('name,ename')
+            ->whereIn('id', $tagList)
+            ->append(['url'])
+            ->select()
+            ->toArray();
         }
+
+        return ['count' => $count, 'data' => $data];
+    }
+
+
+    /**
+     * 管理端数据
+     *
+     * @param integer $page
+     * @param integer $limit
+     * @return array
+     */
+    public function getTagList(int $page, int $limit): array
+    {
+        return self::paginate([
+            'list_rows' => $limit,
+            'page'      => $page
+        ])->toArray();
     }
 
     /**
@@ -46,7 +78,7 @@ class Tag extends BaseModel
      * @param $id
      * @return bool
      */
-    public function delTag($id)
+    public function del($id)
     {
         $res = $this::destroy($id);
        if($res) {
@@ -57,7 +89,7 @@ class Tag extends BaseModel
 
     public function getUrlAttr($value, $data)
     {
-        return (string) url('tag_list',['ename' => $data['ename']]);
+        return (string) url('tag_list', ['ename' => $data['ename']])->domain(true);
     }
 
 }

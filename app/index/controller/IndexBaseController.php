@@ -12,10 +12,12 @@ declare (strict_types = 1);
 
 namespace app\index\controller;
 
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\facade\Request;
 use think\facade\View;
 use think\facade\Db;
-use think\facade\Cache;
 use app\common\lib\IdEncode;
 
 /**
@@ -29,29 +31,30 @@ class IndexBaseController extends \app\BaseController
 	 *
 	 * @var int|null
 	 */
-	protected $uid = null;
+	protected int|null $uid = null;
 
 	/**
 	 * 登录用户信息
 	 *
 	 * @var array|object
 	 */
-	protected $user = [];
+	protected array|object $user = [];
 
-	protected $isLogin = false;
+	protected bool $isLogin = false;
 
-	protected $adminEmail;
+	protected string $adminEmail;
 
     /**
-	 * 初始化系统，导航，用户
-	 */
+     * 初始化系统，导航，用户
+     * @return void
+     */
     protected function initialize()
     {
 		$this->uid = session('?user_id') ? (int)session('user_id') : null;
 
 		$this->user = $this->userInfo();
 
-		$this->adminEmail = Db::name('user')->where('id',1)->cache(true)->value('email');
+		$this->adminEmail = Db::name('user')->where('id',1)->cache('adminEmail',3600)->value('email');
 
 		//系统配置
 		$this->showSystem();
@@ -66,45 +69,31 @@ class IndexBaseController extends \app\BaseController
     {
 		if($this->uid === null) return [];
 		//1.查询用户
-		$user = Db::name('user')
-		->alias('u')
-		->join('user_viprule v','v.vip = u.vip')
-		->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as create_time')
-		->cache(true)
-		->find($this->uid);
-		return $user;
+        try {
+            $user = Db::name('user')
+                ->alias('u')
+                ->join('user_viprule v', 'v.vip = u.vip')
+                ->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as create_time')
+                ->cache(true)
+                ->find($this->uid);
+
+        } catch (DataNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
+        } catch (DbException $e) {
+        }
+
+        return $user;
     }
 
-	//热门标签
-	protected function getHotTag()
-	{
-		//热门标签
-		//return Article::getHotTags();
-        //转换为字符串
-		// $tagStr = implode(",",$tags);
-		//转换为数组并去重
-		// return array_unique(explode(",",$tagStr));
-		$allTags = Db::name('tag')->field('name,ename')->cache(true)->select();
-		$tagHot = [];
-        foreach($allTags as $v) {
-            $tagHot[] = ['name'=>$v['name'],'url'=> (string) url('tag_list',['ename'=>$v['ename']])];
-        }
-        
-        return $tagHot;
-
-	}
 	
 	//显示网站设置
     protected function showSystem()
     {
         //1.查询分类表获取所有分类
 		$sysInfo = $this->getSystem();
-		//获取热门标签
-		$hotTag = $this->getHotTag();
 
 		$assign = [
 			'sysInfo'	=> $sysInfo,
-			'hotTag'	=> $hotTag,
 			'host'		=> Request::domain() . '/'
 		];
 		
@@ -112,19 +101,23 @@ class IndexBaseController extends \app\BaseController
 		return $sysInfo;
     }
 
-	/**
-	 * 纯静态化html 到 /public/static_html/
-	 *
-	 * @param [string] $staticFilePath
-	 * @param [string] $content
-	 * @return void
-	 */
+    /**
+     * 纯静态化html 到 /public/static_html/
+     *
+     * @param string $content
+     * @param string $staticFilePath
+     * @return void
+     */
 	protected function buildHtml(string $content, string $staticFilePath = ''): void
 	{
 		if(config('taoler.config.static_html')) {
 
 			if($staticFilePath == '') {
-				$url = $this->request->baseUrl();
+				$baseUrl = $this->request->baseUrl();
+// dump($url);
+				// 过滤掉html后面的参数
+				$url = preg_replace('/\.html.*/', '.html', $baseUrl);
+
 				if(str_contains($url, '.html')) {
 					$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/'));
 				} else {
@@ -132,13 +125,14 @@ class IndexBaseController extends \app\BaseController
 					$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/') . 'index.html');
 				}
 			}
-
+// dump($staticFilePath);
 			if(!file_exists($staticFilePath)) {
 				// 检测模板目录
 				$dir = dirname($staticFilePath);
 				if (!is_dir($dir)) {
 					mkdir($dir, 0755, true);
 				}
+
 				// 压缩
 				$content = advanced_compress_html_js($content);
 				file_put_contents($staticFilePath, $content);
@@ -146,12 +140,12 @@ class IndexBaseController extends \app\BaseController
 		}
 	}
 
-	/**
-	 * 编辑时 删除原有的静态html
-	 *
-	 * @param [object] $article 对象
-	 * @return void
-	 */
+    /**
+     * 编辑时 删除原有的静态html
+     *
+     * @param object $article
+     * @return void
+     */
 	protected function removeDetailHtml(object $article): void
 	{
 		if(config('taoler.config.static_html')) {
@@ -175,7 +169,6 @@ class IndexBaseController extends \app\BaseController
 	/**
 	 * 编辑时 删除原有的静态html
 	 *
-	 * @param [object] $article 对象
 	 * @return void
 	 */
 	protected function removeIndexHtml(): void
