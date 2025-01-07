@@ -107,7 +107,7 @@ class Upgrade extends AdminController
 	//升级前的版本检测
 	public function check()
 	{
-        $cy = Api::urlPost($this->sys['base_url'],['u'=>$this->sys['domain']]);
+        $cy = Api::urlPost($this->sys['base_url'],['u'=>$this->sys['domain'], 'key' => $this->sys['key']]);
         if($cy->code == 0 && $cy->level !== $this->sys['clevel']){
             Db::name('system')->cache('system')->update(['clevel'=>$cy->level,'id'=>1]);
         }

@@ -280,7 +280,7 @@ class Article extends BaseModel
                 return [];
             }
 
-            return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type')
+            return $this::field('id,title,title_color,cate_id,user_id,create_time,is_top,pv,has_img,has_video,has_audio,read_type,media')
                 ->whereIn('id', $idArr)
                 ->with([
                     'cate' => function (Query $query) {
@@ -292,7 +292,7 @@ class Article extends BaseModel
                 ])
                 ->withCount(['comments'])
                 ->order('id', 'desc')
-                ->append(['url'])
+                ->append(['url','master_pic'])
                 ->select()
                 ->toArray();
         }, 600);
@@ -312,7 +312,7 @@ class Article extends BaseModel
             
             $map = self::getSuffixMap(['status' => 1], Article::class);
 
-            $field = 'id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time';
+            $field = 'id,title,title_color,cate_id,user_id,content,description,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,create_time,media';
             // 判断是否有多个表
             if($map['suffixCount'] > 1) {
 
@@ -331,7 +331,7 @@ class Article extends BaseModel
                         ->order('id','desc')
                         ->hidden(['art_pass'])
                         ->append(['enid'])
-                        ->append(['url'])
+                        ->append(['url','master_pic'])
                         ->limit($num)
                         ->select()
                         ->toArray();
@@ -351,7 +351,7 @@ class Article extends BaseModel
                         ->order('id','desc')
                         ->hidden(['art_pass'])
                         ->append(['enid'])
-                        ->append(['url'])
+                        ->append(['url','master_pic'])
                         ->limit($map['counts'][0])
                         ->select()
                         ->toArray();
@@ -369,7 +369,7 @@ class Article extends BaseModel
                         ->order('id','desc')
                         ->hidden(['art_pass'])
                         ->append(['enid'])
-                        ->append(['url'])
+                        ->append(['url','master_pic'])
                         ->limit($num - $map['counts'][0])
                         ->select()
                         ->toArray();
@@ -391,7 +391,7 @@ class Article extends BaseModel
                     ->order('id','desc')
                     ->hidden(['art_pass'])
                     ->append(['enid'])
-                    ->append(['url'])
+                    ->append(['url','master_pic'])
                     ->limit($num)
                     ->select()
                     ->toArray();
@@ -1172,6 +1172,20 @@ class Article extends BaseModel
         }
 
         return (string) url('article_detail',['id' => $data['id']])->domain(true);
+    }
+
+    /**
+     * 获取主图
+     *
+     * @param [type] $value
+     * @param [type] $data
+     * @return void
+     */
+    public function getMasterPicAttr($value, $data)
+    {
+        if(isset($data['media']->image)) {
+            return $data['media']->image[0];
+        }
     }
 
     /**

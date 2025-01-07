@@ -210,6 +210,13 @@
 										</div>
 										<div class="layui-form-mid layui-word-aux">勾选静态化</div>
 									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">文章ID加密：</label>
+										<div class="layui-input-inline" style="width: 30px;">
+											<input type="checkbox" name="id_status" lay-skin="primary" value=1 {if config('taoler.config.id_status') == 1} checked {/if}>
+										</div>
+										<div class="layui-form-mid layui-word-aux">勾选ID加密</div>
+									</div>
 									<hr>
 									<div class="layui-form-item">
 										<label class="layui-form-label">注册验证：</label>

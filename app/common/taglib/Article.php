@@ -39,6 +39,7 @@ class Article extends TagLib
         'is_top'        => ['attr' => '', 'close' => 0],
         'has_img'       => ['attr' => '', 'close' => 0],
         'has_video'     => ['attr' => '', 'close' => 0],
+        'master_pic'    => ['attr' => '', 'close' => 0],
 
         'cate_name'     => ['attr' => '', 'close' => 0],
         'cate_ename'    => ['attr' => '', 'close' => 0],
@@ -169,6 +170,11 @@ class Article extends TagLib
     public function tagHas_video(array $tag, string $content): string
     {
         return '{$article.has_video}';
+    }
+
+    public function tagMaster_pic(array $tag, string $content): string
+    {
+        return '{$article.master_pic}';
     }
 
     public function tagCate_name(array $tag, string $content): string

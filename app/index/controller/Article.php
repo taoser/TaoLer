@@ -80,6 +80,7 @@ class Article extends IndexBaseController
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
 		// halt($lrDate_time);
+	
 		View::assign([
 			'article'		=> $detail,
 			'pv'			=> $pv,
@@ -134,21 +135,9 @@ class Article extends IndexBaseController
 			// $iva= $this->hasIva($data['content']);
 			// $data = array_merge($data, $iva);
 
-			$images = get_all_img($data['content']);
-			$video = get_one_video($data['content']);
-
-			$media = [];
-
-			if(!empty($images)) {
-				$media['image'] = $images;
-				$data['has_img'] = '1';
-			}
-			if(!empty($video)) {
-				$media['video'] = $video;
-				$data['has_video'] = '1';
-			}
-
-			$data['media'] = $media;
+			// 多媒体数据
+			$medisArr = $this->setMediaData($data['content']);
+			$data = array_merge($data, $medisArr);
 
             // 获取分类ename,appname
             $cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
@@ -308,14 +297,14 @@ class Article extends IndexBaseController
                 return Msgres::error($validate->getError());
 			}
 
-			//获取内容图片音视频标识
-			$iva= $this->hasIva($data['content']);
-			$data = array_merge($data,$iva);
 
 			$data['content'] = $this->downUrlPicsReaplace($data['content']);
 			// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 			$data['description'] = strip_tags($this->filterEmoji($data['description']));
+			// 多媒体数据
+			$medisArr = $this->setMediaData($data['content']);
+			$data = array_merge($data, $medisArr);
 
 			try{
 				$article->edit($data);
@@ -579,5 +568,34 @@ class Article extends IndexBaseController
         }
         return json(['code' => -1, 'msg' => '解密失败']);
     }
+
+	/**
+	 * 设置多媒体数据
+	 *
+	 * @param string $content
+	 * @return array
+	 */
+	protected function setMediaData(string $content): array {
+		$images = get_all_img($content);
+		$video = get_one_video($content);
+
+		$data = [];
+		$media = [];
+		if(!empty($images)) {
+			$media['image'] = $images;
+			$data['has_img'] = '1';
+		}
+		
+		if(!empty($video)) {
+			$media['video'] = $video;
+			$data['has_video'] = '1';
+		}
+
+		if(!empty($media)) {
+			$data['media'] = $media;
+		}
+
+		return $data;
+	}
 	
 }
