@@ -13,6 +13,7 @@ class Index extends BaseController
         if(file_exists('./install.lock')){
             echo '<script src="/static/layui/layui.js"></script>'.
                 '<script>var layer = layui.layer; layer.alert("TaoLer系统已被锁定。<br>如需重新安装，请删除public目录下的install.lock文件")</script>';
+                // return 'TaoLer系统已被锁定。如需重新安装，请删除public目录下的install.lock文件';
             die();
         }
     }
