@@ -19,25 +19,6 @@ final readonly class Matrix implements MatrixInterface
         private array $blockValues,
         int $size,
         int $margin,
-<<<<<<< HEAD
-        RoundBlockSizeModeInterface $roundBlockSizeMode
-    ) {
-        $this->blockSize = $size / $this->getBlockCount();
-        $this->innerSize = $size;
-        $this->outerSize = $size + 2 * $margin;
-
-        if ($roundBlockSizeMode instanceof RoundBlockSizeModeEnlarge) {
-            $this->blockSize = intval(ceil($this->blockSize));
-            $this->innerSize = intval($this->blockSize * $this->getBlockCount());
-            $this->outerSize = $this->innerSize + 2 * $margin;
-        } elseif ($roundBlockSizeMode instanceof RoundBlockSizeModeShrink) {
-            $this->blockSize = intval(floor($this->blockSize));
-            $this->innerSize = intval($this->blockSize * $this->getBlockCount());
-            $this->outerSize = $this->innerSize + 2 * $margin;
-        } elseif ($roundBlockSizeMode instanceof RoundBlockSizeModeMargin) {
-            $this->blockSize = intval(floor($this->blockSize));
-            $this->innerSize = intval($this->blockSize * $this->getBlockCount());
-=======
         RoundBlockSizeMode $roundBlockSizeMode,
     ) {
         $blockSize = $size / $this->getBlockCount();
@@ -59,7 +40,6 @@ final readonly class Matrix implements MatrixInterface
                 $blockSize = intval(floor($blockSize));
                 $innerSize = intval($blockSize * $this->getBlockCount());
                 break;
->>>>>>> 3.0
         }
 
         if ($blockSize < 1) {

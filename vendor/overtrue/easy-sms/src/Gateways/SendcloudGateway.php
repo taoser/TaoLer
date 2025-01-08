@@ -26,28 +26,14 @@ class SendcloudGateway extends Gateway
 {
     use HasHttpRequest;
 
-<<<<<<< HEAD
-    const ENDPOINT_TEMPLATE = 'http://www.sendcloud.net/smsapi/%s';
-=======
     public const ENDPOINT_TEMPLATE = 'http://www.sendcloud.net/smsapi/%s';
->>>>>>> 3.0
 
     /**
      * Send a short message.
      *
-<<<<<<< HEAD
-     * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
-     * @param \Overtrue\EasySms\Contracts\MessageInterface     $message
-     * @param \Overtrue\EasySms\Support\Config                 $config
-     *
-     * @return array
-     *
-     * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException
-=======
      * @return array
      *
      * @throws GatewayErrorException
->>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
@@ -75,11 +61,6 @@ class SendcloudGateway extends Gateway
     }
 
     /**
-<<<<<<< HEAD
-     * @param array $vars
-     *
-=======
->>>>>>> 3.0
      * @return string
      */
     protected function formatTemplateVars(array $vars)

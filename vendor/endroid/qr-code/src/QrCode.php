@@ -11,34 +11,6 @@ use Endroid\QrCode\Encoding\EncodingInterface;
 
 final readonly class QrCode implements QrCodeInterface
 {
-<<<<<<< HEAD
-    private EncodingInterface $encoding;
-    private ErrorCorrectionLevelInterface $errorCorrectionLevel;
-    private RoundBlockSizeModeInterface $roundBlockSizeMode;
-    private ColorInterface $foregroundColor;
-    private ColorInterface $backgroundColor;
-
-    public function __construct(
-        private string $data,
-        EncodingInterface $encoding = null,
-        ErrorCorrectionLevelInterface $errorCorrectionLevel = null,
-        private int $size = 300,
-        private int $margin = 10,
-        RoundBlockSizeModeInterface $roundBlockSizeMode = null,
-        ColorInterface $foregroundColor = null,
-        ColorInterface $backgroundColor = null
-    ) {
-        $this->encoding = $encoding ?? new Encoding('UTF-8');
-        $this->errorCorrectionLevel = $errorCorrectionLevel ?? new ErrorCorrectionLevelLow();
-        $this->roundBlockSizeMode = $roundBlockSizeMode ?? new RoundBlockSizeModeMargin();
-        $this->foregroundColor = $foregroundColor ?? new Color(0, 0, 0);
-        $this->backgroundColor = $backgroundColor ?? new Color(255, 255, 255);
-    }
-
-    public static function create(string $data): self
-    {
-        return new self($data);
-=======
     public function __construct(
         private string $data,
         private EncodingInterface $encoding = new Encoding('UTF-8'),
@@ -49,7 +21,6 @@ final readonly class QrCode implements QrCodeInterface
         private ColorInterface $foregroundColor = new Color(0, 0, 0),
         private ColorInterface $backgroundColor = new Color(255, 255, 255),
     ) {
->>>>>>> 3.0
     }
 
     public function getData(): string

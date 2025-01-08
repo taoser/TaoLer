@@ -1070,11 +1070,7 @@ class Template
                         break;
                     case 'htmlentities':
                         $name = 'htmlentities((string) ' . $name . ')';
-<<<<<<< HEAD
-                        break;                        
-=======
                         break;
->>>>>>> 3.0
                     case 'date':
                         $name = 'date(' . $args[1] . ',!is_numeric(' . $name . ')? strtotime(' . $name . ') : ' . $name . ')';
                         break;

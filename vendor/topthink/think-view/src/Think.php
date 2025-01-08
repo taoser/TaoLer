@@ -122,6 +122,7 @@ class Think
             // 获取模板文件名
             $template = $this->parseTemplate($template);
         }
+
         // 模板不存在 抛出异常
         if (!is_file($template)) {
             throw new TemplateNotFoundException('template not exists:' . $template, $template);
@@ -158,7 +159,7 @@ class Think
             // 跨模块调用
             list($app, $template) = explode('@', $template);
         }
-        
+
         if (isset($app)) {
             $view     = $this->config['view_dir_name'];
             $viewPath = $this->app->getBasePath() . $app . DIRECTORY_SEPARATOR . $view . DIRECTORY_SEPARATOR;
@@ -202,7 +203,6 @@ class Think
                 } elseif (false === strpos($template, $depr)) {
                     $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
                 }
-                
             }
         } else {
             $template = str_replace(['/', ':'], $depr, substr($template, 1));

@@ -26,24 +26,6 @@ class SubmailGateway extends Gateway
 {
     use HasHttpRequest;
 
-<<<<<<< HEAD
-    const ENDPOINT_TEMPLATE = 'https://api.mysubmail.com/%s.%s';
-
-    const ENDPOINT_FORMAT = 'json';
-
-    /**
-     * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
-     * @param \Overtrue\EasySms\Contracts\MessageInterface $message
-     * @param \Overtrue\EasySms\Support\Config $config
-     *
-     * @return array
-     *
-     * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException ;
-     */
-    public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
-    {
-        $isContent = !!$message->getContent($this);
-=======
     public const ENDPOINT_TEMPLATE = 'https://api.mysubmail.com/%s.%s';
 
     public const ENDPOINT_FORMAT = 'json';
@@ -56,7 +38,6 @@ class SubmailGateway extends Gateway
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
         $isContent = (bool) $message->getContent($this);
->>>>>>> 3.0
         if ($isContent) {
             $endpoint = $this->buildEndpoint($this->inChineseMainland($to) ? 'sms/send' : 'internationalsms/send');
             $params = [
@@ -102,11 +83,7 @@ class SubmailGateway extends Gateway
     /**
      * Check if the phone number belongs to chinese mainland.
      *
-<<<<<<< HEAD
-     * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
-=======
      * @param PhoneNumberInterface $to
->>>>>>> 3.0
      *
      * @return bool
      */

@@ -47,6 +47,7 @@ class UserLogin
             // } catch (\Exception $e) {
             //     // echo $e->getMessage();
             // }
+
             $data = [
                 'city' => $city,
                 'last_login_ip'		=> $ip,

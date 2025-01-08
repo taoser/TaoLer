@@ -19,17 +19,10 @@ use Overtrue\EasySms\Support\Config;
  */
 abstract class Gateway implements GatewayInterface
 {
-<<<<<<< HEAD
-    const DEFAULT_TIMEOUT = 5.0;
-
-    /**
-     * @var \Overtrue\EasySms\Support\Config
-=======
     public const DEFAULT_TIMEOUT = 5.0;
 
     /**
      * @var Config
->>>>>>> 3.0
      */
     protected $config;
 
@@ -45,11 +38,6 @@ abstract class Gateway implements GatewayInterface
 
     /**
      * Gateway constructor.
-<<<<<<< HEAD
-     *
-     * @param array $config
-=======
->>>>>>> 3.0
      */
     public function __construct(array $config)
     {
@@ -81,11 +69,7 @@ abstract class Gateway implements GatewayInterface
     }
 
     /**
-<<<<<<< HEAD
-     * @return \Overtrue\EasySms\Support\Config
-=======
      * @return Config
->>>>>>> 3.0
      */
     public function getConfig()
     {
@@ -93,11 +77,6 @@ abstract class Gateway implements GatewayInterface
     }
 
     /**
-<<<<<<< HEAD
-     * @param \Overtrue\EasySms\Support\Config $config
-     *
-=======
->>>>>>> 3.0
      * @return $this
      */
     public function setConfig(Config $config)
@@ -108,11 +87,6 @@ abstract class Gateway implements GatewayInterface
     }
 
     /**
-<<<<<<< HEAD
-     * @param $options
-     *
-=======
->>>>>>> 3.0
      * @return $this
      */
     public function setGuzzleOptions($options)
@@ -130,12 +104,6 @@ abstract class Gateway implements GatewayInterface
         return $this->options ?: $this->config->get('options', []);
     }
 
-<<<<<<< HEAD
-    /**
-     * {@inheritdoc}
-     */
-=======
->>>>>>> 3.0
     public function getName()
     {
         return \strtolower(str_replace([__NAMESPACE__.'\\', 'Gateway'], '', \get_class($this)));

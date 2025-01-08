@@ -8,11 +8,7 @@ final readonly class Font implements FontInterface
 {
     public function __construct(
         private string $path,
-<<<<<<< HEAD
-        private int $size = 16
-=======
         private int $size = 16,
->>>>>>> 3.0
     ) {
         $this->assertValidPath($path);
     }

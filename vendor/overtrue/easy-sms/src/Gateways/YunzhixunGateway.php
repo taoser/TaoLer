@@ -28,15 +28,6 @@ class YunzhixunGateway extends Gateway
 {
     use HasHttpRequest;
 
-<<<<<<< HEAD
-    const SUCCESS_CODE = '000000';
-
-    const FUNCTION_SEND_SMS = 'sendsms';
-
-    const FUNCTION_BATCH_SEND_SMS = 'sendsms_batch';
-
-    const ENDPOINT_TEMPLATE = 'https://open.ucpaas.com/ol/%s/%s';
-=======
     public const SUCCESS_CODE = '000000';
 
     public const FUNCTION_SEND_SMS = 'sendsms';
@@ -44,18 +35,10 @@ class YunzhixunGateway extends Gateway
     public const FUNCTION_BATCH_SEND_SMS = 'sendsms_batch';
 
     public const ENDPOINT_TEMPLATE = 'https://open.ucpaas.com/ol/%s/%s';
->>>>>>> 3.0
 
     /**
      * Send a short message.
      *
-<<<<<<< HEAD
-     * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
-     * @param \Overtrue\EasySms\Contracts\MessageInterface     $message
-     * @param \Overtrue\EasySms\Support\Config                 $config
-     *
-=======
->>>>>>> 3.0
      * @return array
      *
      * @throws GatewayErrorException
@@ -74,12 +57,6 @@ class YunzhixunGateway extends Gateway
     }
 
     /**
-<<<<<<< HEAD
-     * @param $resource
-     * @param $function
-     *
-=======
->>>>>>> 3.0
      * @return string
      */
     protected function buildEndpoint($resource, $function)
@@ -88,13 +65,6 @@ class YunzhixunGateway extends Gateway
     }
 
     /**
-<<<<<<< HEAD
-     * @param PhoneNumberInterface $to
-     * @param MessageInterface     $message
-     * @param Config               $config
-     *
-=======
->>>>>>> 3.0
      * @return array
      */
     protected function buildParams(PhoneNumberInterface $to, MessageInterface $message, Config $config)
@@ -113,12 +83,6 @@ class YunzhixunGateway extends Gateway
     }
 
     /**
-<<<<<<< HEAD
-     * @param $endpoint
-     * @param $params
-     *
-=======
->>>>>>> 3.0
      * @return array
      *
      * @throws GatewayErrorException

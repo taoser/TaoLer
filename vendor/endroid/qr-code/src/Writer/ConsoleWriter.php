@@ -11,15 +11,9 @@ use Endroid\QrCode\QrCodeInterface;
 use Endroid\QrCode\Writer\Result\ConsoleResult;
 use Endroid\QrCode\Writer\Result\ResultInterface;
 
-<<<<<<< HEAD
-final class ConsoleWriter implements WriterInterface
-{
-    public function write(QrCodeInterface $qrCode, LogoInterface $logo = null, LabelInterface $label = null, $options = []): ResultInterface
-=======
 final readonly class ConsoleWriter implements WriterInterface
 {
     public function write(QrCodeInterface $qrCode, ?LogoInterface $logo = null, ?LabelInterface $label = null, $options = []): ResultInterface
->>>>>>> 3.0
     {
         $matrixFactory = new MatrixFactory();
         $matrix = $matrixFactory->create($qrCode);

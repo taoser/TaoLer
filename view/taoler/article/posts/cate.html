@@ -18,15 +18,6 @@
 		<div class="layui-col-md8">
 			<div class="fly-panel" style="margin-bottom: 0;">
 				<ul class="fly-list">
-<<<<<<< HEAD
-					{volist name="artList['data']" id="art"}
-					<li>
-						<a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
-							<img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
-						</a>
-						<h2>
-							<a href="{$Request.domain}{$art.url}"  style="color:{$art.title_color ?? '#333'};">{$art.title}</a>
-=======
 					{article:list}
 					<li>
 						<a href="{article:author_link /}" class="fly-avatar">
@@ -34,36 +25,10 @@
 						</a>
 						<h2>
 							<a href="{article:url /}"  style="color:{article:title_color ?? '#333'};">{article:title /}</a>
->>>>>>> 3.0
 						</h2>
 						
 						<div class="fly-list-info">
 							{if config('taoler.config.cate_show') == 1}
-<<<<<<< HEAD
-							<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
-							{/if}
-							<a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
-								<cite>{$art.user.nickname ?: $art.user.name}</cite>
-								<i>{$art.create_time|date='Y-m-d'}</i>
-							</a>
-							
-							{//图标}
-							{$art.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
-							{$art.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
-							{$art.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
-							{$art.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
-							{$art.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
-							<span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {$art.pv}</span>
-							<span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {$art.comments_count}</span>
-						</div>
-						<div class="fly-list-badge">
-							{if ($art.is_hot == 1)}
-							<i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i><span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span>
-							{/if}
-						</div>
-					</li>
-					{/volist}	
-=======
 							<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? article.cate.ename : article.cate.catename}</a>
 							{/if}
 							<a href="{article:author_link /}" link>
@@ -81,18 +46,12 @@
 						</div>
 					</li>
 					{/article:list}	
->>>>>>> 3.0
 				</ul>
 				<div style="text-align: center" id="pages"></div>
 			</div>
 		</div>
 		<div class="layui-col-md4">
 			<!-- 插件hook位 -->
-<<<<<<< HEAD
-			{:hook('addonhook_list')}
-
-=======
->>>>>>> 3.0
 			{//热门标签}
 			<div class="fly-panel layui-hide-xs">
 				<div class="fly-panel-title">热门标签</div>
@@ -119,15 +78,6 @@
 		//执行一个laypage实例
 		laypage.render({
 			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
-<<<<<<< HEAD
-			,count: "{$artList['total']}" //数据总数，从服务端得到
-			,groups: 1
-			,limit: "{$artList['per_page']}"
-			,curr : "{$artList['current_page']}"
-			,first: false
-    		,last: false
-			,layout: ['prev', 'page','next','count']
-=======
 			,count: "{$__LISTS__.total}" //数据总数，从服务端得到
 			,groups: 1
 			,limit: "{$__LISTS__['per_page']}"
@@ -136,7 +86,6 @@
     		,last: false
 			,groups: 5
 			,layout: ['prev', 'page','next','count', 'skip']
->>>>>>> 3.0
 			//获取起始页
 			,jump: function(obj, first){
 				//首次不执行

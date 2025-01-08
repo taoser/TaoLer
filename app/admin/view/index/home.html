@@ -1,0 +1,540 @@
+{extend name="public/base" /}
+
+{block name="body"}  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md8">
+        <div class="layui-row layui-col-space15">
+          <div class="layui-col-md12">            
+            <div class="layui-card">
+              <div class="layui-card-header"><i class="layui-icon layui-icon-voice"></i><a id="up_version" lay-href="{:url('Upgrade/index')}"></a></div>
+            </div>
+          </div>
+          <div class="layui-col-md6">
+            <div class="layui-card">
+              <div class="layui-card-header">快捷方式</div>
+              <div class="layui-card-body">
+                
+                <div class="layui-carousel layadmin-carousel layadmin-shortcut">
+                  <div carousel-item>
+                    <ul class="layui-row layui-col-space10">
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:url('Forum/list')}">
+                          <i class="layui-icon layui-icon-list"></i>
+                          <cite>帖子</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:url('Forum/replys')}">
+                          <i class="layui-icon layui-icon-survey"></i>
+                          <cite>评论</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:url('Forum/tags')}">
+                          <i class="layui-icon layui-icon-template-1"></i>
+                          <cite>分类</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:url('Notice/index')}">
+                          <i class="layui-icon layui-icon-voice"></i>
+                          <cite>通知</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:url('Slider/index')}">
+                          <i class="layui-icon layui-icon-dollar"></i>
+                          <cite>广告</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:url('Database/index')}">
+                          <i class="layui-icon layui-icon-template-1"></i>
+                          <cite>备份</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:url('User/list')}">
+                          <i class="layui-icon layui-icon-user"></i>
+                          <cite>用户</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:url('Upgrade/index')}">
+                          <i class="layui-icon layui-icon-refresh"></i>
+                          <cite>更新</cite>
+                        </a>
+                      </li>
+                    </ul>
+                    
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="layui-col-md6">
+            <div class="layui-card">
+              <div class="layui-card-header">待办事项</div>
+              <div class="layui-card-body">
+
+                <div class="layui-carousel layadmin-carousel layadmin-backlog">
+                  <div carousel-item>
+                    <ul class="layui-row layui-col-space10">
+                      <li class="layui-col-xs6">
+                        <a lay-href="{:url('Forum/replys')}" class="layadmin-backlog-body">
+                          <h3>待审评论</h3>
+                          <p><cite>{$comms}</cite></p>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs6">
+                        <a lay-href="{:url('Forum/list')}" class="layadmin-backlog-body">
+                          <h3>待审帖子</h3>
+                          <p><cite>{$forums}</cite></p>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs6">
+                        <a lay-href="javascript:;" class="layadmin-backlog-body">
+                          <h3>待审商品</h3>
+                          <p><cite>0</cite></p>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs6">
+                        <a href="javascript:;" onclick="layer.tips('不跳转', this, {tips: 3});" class="layadmin-backlog-body">
+                          <h3>待发货</h3>
+                          <p><cite>0</cite></p>
+                        </a>
+                      </li>
+                    </ul>
+                    <ul class="layui-row layui-col-space10">
+                      <li class="layui-col-xs6">
+                        <a href="javascript:;" class="layadmin-backlog-body">
+                          <h3>待审友情链接</h3>
+                          <p><cite style="color: #FF5722;">5</cite></p>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="layui-col-md12">
+            <div class="layui-card">
+              <div class="layui-card-header">数据概览</div>
+              <div class="layui-card-body">
+                <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-dataview">
+                  <div carousel-item id="LAY-index-dataview">
+                    <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="layui-card">
+              <div class="layui-tab layui-tab-brief layadmin-latestData">
+                <ul class="layui-tab-title">
+				        <li class="layui-this">官方动态</li>
+                  <li>发送反馈</li>
+                  <li>今周发帖</li>
+                  <li>今周评论</li>
+                </ul>
+                <div class="layui-tab-content">
+            
+                  <div class="layui-tab-item layui-show">
+                    <table id="LAY-index-topnews"></table>
+                  </div>
+                  <div class="layui-tab-item  layui-form-text">
+                    <div class="layui-form  layui-form-pane">    
+                      <div class="layui-row layui-col-space12 layui-form-item" >
+                        <div class="layui-col-md5">
+                          <label class="layui-form-label">发送类型</label>
+                          <div class="layui-input-block">
+                          <select name="type" lay-verify="required" lay-filter="type"> 
+                            <option value="1">问题资讯</option>
+                            <option value="2">提交BUG</option>
+                          </select>
+                          </div>
+                        </div>
+                        <div class="layui-col-md7">
+                          <label for="L_title" class="layui-form-label">标题</label>
+                          <div class="layui-input-block">
+                            <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" >
+                          </div>
+                        </div>
+                      </div>
+                      <div class="layui-form-item layui-form-text">
+                        <div class="layui-input-block">		
+                        <textarea id="L_content" name="content" required lay-verify="content" autocomplete="off"  class="layui-textarea"></textarea>
+                        </div>
+                      </div>
+                      <div class="layui-form-item layui-hide">
+                        <input type="text" name="post" lay-verify="required" autocomplete="off" class="layui-input layui-hide" value="{$insurl}">
+                      </div>
+                      <div class="layui-form-item">
+                        <button type="submit" class="layui-btn " lay-filter="cunsult-add" lay-submit id="cunsult-add">立即发布</button>	  
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                    <table id="LAY-index-topreply" lay-filter="LAY-index-topreply"></table>
+                      <script type="text/html" id="tao-reply">
+                      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                      </script>
+                    </div>
+                  </div>
+          
+                  <div class="layui-tab-item">
+                    <table id="LAY-index-topSearch"></table>
+                  </div>
+                  <div class="layui-tab-item">
+                    <table id="LAY-index-topCard"></table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="layui-col-md4">
+        <div class="layui-card">
+          <div class="layui-card-header">版本信息</div>
+          <div class="layui-card-body layui-text">
+            <div class="layui-form">
+              <div class="layui-form-item">
+                <label class="layui-form-label">系统调试：</label>
+                <div class="layui-input-inline" style="width: 60px;">
+                  <input type="checkbox" name="sys-sys" lay-skin="switch" lay-text="开启|关闭" lay-filter="sys-sys" {if env('APP_DEBUG') == true} checked {/if}>
+                </div>
+              </div>
+            </div>
+            <table class="layui-table">
+              <colgroup>
+                <col width="100">
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td>当前系统</td>
+                  <td>
+                    <script type="text/html" template>
+                      <?php echo php_uname('s'); ?>
+                    </script>
+                 </td>
+                </tr>
+                <tr>
+                  <td>当前版本</td>
+                  <td>
+                    <script type="text/html" template>
+                     TaoLer_{:config('taoler.version')}
+                      <a href="https://www.aieok.com/article/doc/timeline.html" target="_blank">更新日志</a>
+                    </script>
+                  </td>
+                </tr>
+                <tr>
+                  <td>核心框架</td>
+                  <td>
+                    <script type="text/html" template>
+                      Thinkphp_{:think\\App::VERSION}
+                    </script>
+                 </td>
+                </tr>
+                <tr>
+                  <td>PHP版本</td>
+                  <td>
+                    <script type="text/html" template>
+                      PHP_{$Think.PHP_VERSION}
+                    </script>
+                 </td>
+                </tr>
+                <tr>
+                  <td>UI框架</td>
+                  <td>
+                    <script type="text/html" template>
+                      Layui-v{{ layui.v }}
+                    </script>
+                 </td>
+                </tr>
+				        <tr>
+                  <td>运行时间</td>
+                  <td>
+                    <script type="text/html" template>
+                      {$runTime}
+                    </script>
+                 </td>
+                </tr>
+				        <tr>
+                  <td>当前授权</td>
+                  <td>
+                    <script type="text/html" template>
+                      {$syscy}
+                    </script>
+                 </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="layui-card">
+          <div class="layui-card-header">效果报告</div>
+          <div class="layui-card-body layadmin-takerates">
+            <div class="layui-progress" lay-showPercent="yes">
+              <h3>转化率（日同比 28% <span class="layui-edge layui-edge-top" lay-tips="增长" lay-offset="-15"></span>）</h3>
+              <div class="layui-progress-bar" lay-percent="65%"></div>
+            </div>
+            <div class="layui-progress" lay-showPercent="yes">
+              <h3>签到率（日同比 11% <span class="layui-edge layui-edge-bottom" lay-tips="下降" lay-offset="-15"></span>）</h3>
+              <div class="layui-progress-bar" lay-percent="32%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="layui-card">
+          <div class="layui-card-header">实时监控</div>
+          <div class="layui-card-body layadmin-takerates">
+            <div class="layui-progress" lay-showPercent="yes">
+              <h3>CPU使用率</h3>
+              <div class="layui-progress-bar" lay-percent="58%"></div>
+            </div>
+            <div class="layui-progress" lay-showPercent="yes">
+              <h3>内存占用率</h3>
+              <div class="layui-progress-bar layui-bg-red" lay-percent="90%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="layui-card">
+          <div class="layui-card-header">产品动态</div>
+          <div class="layui-card-body">
+            <div class="layui-carousel layadmin-carousel layadmin-news" data-autoplay="true" data-anim="fade" lay-filter="news">
+              <div carousel-item>
+                <div><a href="/" target="_blank" class="layui-bg-red"> 快速上手文档</a></div>
+                <div><a href="/" target="_blank" class="layui-bg-green">会员讨论专区</a></div> 
+                <div><a href="/" target="_blank" class="layui-bg-blue">获得官方模板系统</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="layui-card">
+          <div class="layui-card-header">
+            作者心语
+            <i class="layui-icon layui-icon-tips" lay-tips="要支持的噢" lay-offset="5"></i>
+          </div>
+          <div class="layui-card-body layui-text layadmin-text">
+            <p>TaoLer，采用Thinkphp6.0最新版本为开发框架，代码简洁，运行高效，更新及时。layui是国内比较流行的前端框架，两者完美结合，您会拥有一个非常让人舒适的网站。</p>
+            <p>专注专一，大简其道！--本系统的特点，力争做到简洁，不臃肿，功能专一。不管是学习还是商用，都可以良好的运行。</p>
+			      <p>作者尽最大可能，长期进行项目的维护，做到长期可用。</p>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+{include file="public/user_login" /}
+{/block}
+{block name="js"}
+<script>
+  layui.config({
+    base: '/static/admin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'console','element', 'layedit','form','table','notify'],function(){
+		var $ = layui.jquery
+		,form = layui.form
+		,layedit = layui.layedit
+		,table = layui.table
+		,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+    var notify = layui.notify;
+
+    var api = {
+      userinfo: {
+        get: function () {
+          var userinfo = localStorage.getItem("taoleradmin_userinfo");
+          return userinfo ? JSON.parse(userinfo) : null;
+        },
+        set: function (data) {
+          if (data) {
+            localStorage.setItem("taoleradmin_userinfo", JSON.stringify(data));
+          } else {
+            localStorage.removeItem("taoleradmin_userinfo");
+          }
+        }
+      }
+    }
+		
+	var index = layedit.build('L_content', {
+		  height: 120 //设置编辑器高度
+		  ,tool: [
+		  'strong' //加粗
+		  ,'italic' //斜体
+		  ,'underline' //下划线
+		  ,'del' //删除线
+		  ,'|' //分割线
+		  ,'left' //左对齐
+		  ,'center' //居中对齐
+		  ,'right' //右对齐
+		  ,'link' //超链接
+		  ,'unlink' //清除链接
+		  ,'face' //表情
+		  //,'image' //插入图片
+		],
+		  
+		}); 
+		form.verify({
+		content: function(value){
+			return layedit.sync(index);
+		}
+	});
+
+    // 系统调试
+    form.on('switch(sys-sys)',function(data){
+      var status = data.elem.checked;
+      $.post("{:url('index/sysSys')}",{status:status},function(res){
+        if (res.code == 0) { notify.info(res.msg)} else {
+          notify.error(res.msg);
+        }
+      })
+    });
+	// 发送反馈
+    form.on('submit(cunsult-add)',function(data){
+      var field = data.field;
+      var userinfo = api.userinfo.get();
+      if(!userinfo) {
+        // 登录
+        layer.confirm('你当前还未登录TaoLer社区账号,请登录后操作!', {
+          title : '温馨提示',
+          btnAlign: 'c',
+          btn: ['立即登录'] //按钮
+        },function (index){
+          layer.close(index);
+          // 登录窗口
+          layer.open({
+            type: 1,
+            shadeClose: true,
+            title: '登录账号',
+            content: $("#user-info").html(),
+            area: ['400px','300px'],
+            btn: ['登录','注册'],
+            yes:function (index, layero) {
+              var url = "{:url('Addons/userLogin')}";
+              var data = {
+                name: $("#username", layero).val(),
+                password: $("#password", layero).val(),
+              };
+              if (!data.name || !data.password) {
+                notify.error('Account Or Password Cannot Empty');
+                return false;
+              }
+              $.ajax({
+                url: url, type: 'post', data: data, dataType: "json", success: function (res) {
+                  if (res.code === 0) {
+                    layer.close(index);
+                    api.userinfo.set(res.data);
+                    notify.success("登录成功", function (){
+                      location.reload();
+                    });
+
+                  } else {
+                    notify.alert(res.msg);
+                  }
+                }, error: function (res) {
+                  notify.error(res.msg);
+                }
+              })
+            },
+            btn2: function () {
+              return false;
+            },
+            success: function (layero, index) {
+              $(".layui-layer-btn1", layero).prop("href", "https://www.aieok.com/article/reg.html").prop("target", "_blank");
+            },
+            end: function () {
+              $("#login").hide();
+            },
+
+          });
+        });
+      } else {
+        field.id = userinfo.uid;
+        $.ajax({
+          type:"post",
+          url:"{:url('Index/cunsult')}",
+          data:field,
+          dataType:"json",
+          success:function (data){
+            if (data.code == 0) {
+              notify.success(data.msg, function(){location.reload()});
+            } else {
+              notify.error(res.msg);
+            }
+          }
+        });
+      }
+
+      return false;
+    });
+		
+    //监听工具条
+    table.on('tool(LAY-index-topreply)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('确定删除？', function(index){
+                $.ajax({
+                    type:'post',
+                    url:"{:url('Index/delReply')}",
+                    data:{id:data.id},
+                    dataType:'json',
+                    success:function(data){
+                        if(data.code == 0){
+                          notify.success(data.msg,function(){
+                                location.reload();
+                            });
+                        } else {
+                          notify.error(res.msg);
+                        }
+                    }
+                });
+                //obj.del();
+                table.reload('LAY-index-topreply');
+                layer.close(index);
+            });
+        }
+	});
+	
+	//加载版本检测
+	(function(){
+		$.get("{:url('Index/getVersion')}",function(data){
+			$('#up_version').html(data);
+		})
+	})();
+    // 用户信息清理
+    (function (){
+      var time = Date.parse(new Date());
+      var userinfo = api.userinfo.get();
+      if(userinfo) {
+        if(time > userinfo.expiretime *1000) {
+          api.userinfo.set();
+        }
+      }
+    })()
+
+	$('.layui-btn.layuiadmin-btn-oiltank').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });	
+		
+  });
+	var indexForums = "{:url('Index/forums')}",	//帖子
+	    indexReplys = "{:url('Index/replys')}",		//回复
+	    indexNews = "{:url('Index/news')}",	 //动态
+		indexReply = "{:url('Index/reply')}",	//反馈
+	    monthTime = "{$monthTime}",
+		monthUserCount = "{$monthUserCount}";
+  </script>
+{/block}

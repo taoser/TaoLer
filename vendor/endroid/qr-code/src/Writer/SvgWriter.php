@@ -74,8 +74,6 @@ final readonly class SvgWriter implements WriterInterface
         return $result;
     }
 
-<<<<<<< HEAD
-=======
     private function writePath(\SimpleXMLElement $xml, QrCodeInterface $qrCode, MatrixInterface $matrix): void
     {
         $path = '';
@@ -131,7 +129,6 @@ final readonly class SvgWriter implements WriterInterface
         }
     }
 
->>>>>>> 3.0
     /** @param array<string, mixed> $options */
     private function addLogo(LogoInterface $logo, SvgResult $result, array $options): void
     {

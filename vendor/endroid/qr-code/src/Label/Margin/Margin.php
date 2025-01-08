@@ -10,11 +10,7 @@ final readonly class Margin implements MarginInterface
         private int $top,
         private int $right,
         private int $bottom,
-<<<<<<< HEAD
-        private int $left
-=======
         private int $left,
->>>>>>> 3.0
     ) {
     }
 

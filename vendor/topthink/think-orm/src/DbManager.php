@@ -59,12 +59,8 @@ class DbManager
     protected $listen = [];
 
     /**
-<<<<<<< HEAD
-     * 查询次数
-=======
      * 查询次数.
      *
->>>>>>> 3.0
      * @var int
      */
     protected $queryTimes = 0;
@@ -177,15 +173,11 @@ class DbManager
     public function log(string $log, string $type = 'sql')
     {
         if ($this->log) {
-<<<<<<< HEAD
-            $this->log->log($type, $log);
-=======
             if ($this->log instanceof Closure) {
                 call_user_func_array($this->log, [$type, $log]);
             } else {
                 $this->log->log($type, $log);
             }
->>>>>>> 3.0
         }
     }
 
@@ -312,14 +304,8 @@ class DbManager
     }
 
     /**
-<<<<<<< HEAD
-     * 更新查询次数
-     * @deprecated
-     * @access public
-=======
      * 更新查询次数.
      * @deprecated
->>>>>>> 3.0
      * @return void
      */
     public function updateQueryTimes(): void
@@ -327,14 +313,8 @@ class DbManager
     }
 
     /**
-<<<<<<< HEAD
-     * 重置查询次数
-     * @deprecated
-     * @access public
-=======
      * 重置查询次数.
      * @deprecated
->>>>>>> 3.0
      * @return void
      */
     public function clearQueryTimes(): void
@@ -343,16 +323,9 @@ class DbManager
     }
 
     /**
-<<<<<<< HEAD
-     * 获得查询次数
-     * @deprecated
-     * @access public
-     * @return integer
-=======
      * 获得查询次数.
      * @deprecated
      * @return int
->>>>>>> 3.0
      */
     public function getQueryTimes(): int
     {

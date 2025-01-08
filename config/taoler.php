@@ -49,7 +49,7 @@ return [
 		// 登录验证码
 		'login_captcha'   => 1,
 		// 发帖验证码
-		'post_captcha'   => 1,
+		'post_captcha'   => 0,
 		// 显示分类
         'cate_show'   => 0,
 		// 显示用户归属地简称

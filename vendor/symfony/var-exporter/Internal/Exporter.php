@@ -73,13 +73,8 @@ class Exporter
                 goto handle_value;
             }
 
-<<<<<<< HEAD
-            $class = \get_class($value);
-            $reflector = Registry::$reflectors[$class] ?? Registry::getClassReflector($class);
-=======
             $class = $value::class;
             $reflector = Registry::$reflectors[$class] ??= Registry::getClassReflector($class);
->>>>>>> 3.0
             $properties = [];
 
             if ($reflector->hasMethod('__serialize')) {
@@ -95,11 +90,7 @@ class Exporter
                     $properties = $serializeProperties;
                 } else {
                     foreach ($serializeProperties as $n => $v) {
-<<<<<<< HEAD
-                        $c = \PHP_VERSION_ID >= 80100 && $reflector->hasProperty($n) && ($p = $reflector->getProperty($n))->isReadOnly() ? $p->class : 'stdClass';
-=======
                         $c = $reflector->hasProperty($n) && ($p = $reflector->getProperty($n))->isReadOnly() ? $p->class : 'stdClass';
->>>>>>> 3.0
                         $properties[$c][$n] = $v;
                     }
                 }

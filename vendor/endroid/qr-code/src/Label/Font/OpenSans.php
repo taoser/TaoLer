@@ -7,11 +7,7 @@ namespace Endroid\QrCode\Label\Font;
 final readonly class OpenSans implements FontInterface
 {
     public function __construct(
-<<<<<<< HEAD
-        private int $size = 16
-=======
         private int $size = 16,
->>>>>>> 3.0
     ) {
     }
 

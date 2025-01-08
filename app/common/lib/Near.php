@@ -32,11 +32,7 @@ class Near
         return $nearestSpot;
     }
      
-<<<<<<< HEAD
-    function haversineGreatCircleDistance($latitude1, $longitude1, $latitude2, $longitude2) {
-=======
     public static function haversineGreatCircleDistance($latitude1, $longitude1, $latitude2, $longitude2, $id = null) {
->>>>>>> 3.0
         $earthRadius = 6371; // 单位为公里
      
         $latitude1 = deg2rad($latitude1);

@@ -67,20 +67,12 @@ class Schema extends Command
                 if (str_starts_with($file, '.')) {
                     continue;
                 }
-
                 $class = '\\' . $namespace . '\\model\\' . pathinfo($file, PATHINFO_FILENAME);
-<<<<<<< HEAD
-                if (!class_exists($class)) {
-                    continue;
-                }
-                
-=======
                 
                 if (!class_exists($class)) {
                     continue;
                 }
 
->>>>>>> 3.0
                 $this->buildModelSchema($class);
             }
         }

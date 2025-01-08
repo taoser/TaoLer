@@ -178,11 +178,6 @@ class File extends Driver
             $data = gzcompress($data, 3);
         }
 
-<<<<<<< HEAD
-        $data   = "<?php\n//" . sprintf('%012d', $expire) . "\n exit();?>\n" . $data;
-
-        $result = file_put_contents($filename, $data, LOCK_EX);
-=======
         $data = "<?php\n//" . sprintf('%012d', $expire) . "\n exit();?>\n" . $data;
 
         if (str_contains($filename, '://') && !str_starts_with($filename, 'file://')) {
@@ -191,7 +186,6 @@ class File extends Driver
         } else {
             $result = file_put_contents($filename, $data, LOCK_EX);
         }
->>>>>>> 3.0
 
         if ($result) {
             clearstatcache();

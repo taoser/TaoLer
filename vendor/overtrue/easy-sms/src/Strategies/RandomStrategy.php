@@ -19,11 +19,6 @@ use Overtrue\EasySms\Contracts\StrategyInterface;
 class RandomStrategy implements StrategyInterface
 {
     /**
-<<<<<<< HEAD
-     * @param array $gateways
-     *
-=======
->>>>>>> 3.0
      * @return array
      */
     public function apply(array $gateways)

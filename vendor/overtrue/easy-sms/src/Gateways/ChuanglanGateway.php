@@ -30,46 +30,24 @@ class ChuanglanGateway extends Gateway
     /**
      * URL模板
      */
-<<<<<<< HEAD
-    const ENDPOINT_URL_TEMPLATE = 'https://%s.253.com/msg/send/json';
-=======
     public const ENDPOINT_URL_TEMPLATE = 'https://%s.253.com/msg/send/json';
->>>>>>> 3.0
 
     /**
      * 国际短信
      */
-<<<<<<< HEAD
-    const INT_URL = 'http://intapi.253.com/send/json';
-=======
     public const INT_URL = 'http://intapi.253.com/send/json';
->>>>>>> 3.0
 
     /**
      * 验证码渠道code.
      */
-<<<<<<< HEAD
-    const CHANNEL_VALIDATE_CODE = 'smsbj1';
-=======
     public const CHANNEL_VALIDATE_CODE = 'smsbj1';
->>>>>>> 3.0
 
     /**
      * 会员营销渠道code.
      */
-<<<<<<< HEAD
-    const CHANNEL_PROMOTION_CODE = 'smssh1';
-
-    /**
-     * @param PhoneNumberInterface $to
-     * @param MessageInterface     $message
-     * @param Config               $config
-     *
-=======
     public const CHANNEL_PROMOTION_CODE = 'smssh1';
 
     /**
->>>>>>> 3.0
      * @return array
      *
      * @throws GatewayErrorException
@@ -102,12 +80,7 @@ class ChuanglanGateway extends Gateway
     }
 
     /**
-<<<<<<< HEAD
-     * @param Config $config
-     * @param int    $IDDCode
-=======
      * @param int $IDDCode
->>>>>>> 3.0
      *
      * @return string
      *
@@ -125,14 +98,7 @@ class ChuanglanGateway extends Gateway
     }
 
     /**
-<<<<<<< HEAD
-     * @param Config $config
-     * @param int    $IDDCode
-     *
-     * @return mixed
-=======
      * @param int $IDDCode
->>>>>>> 3.0
      *
      * @throws InvalidArgumentException
      */
@@ -152,10 +118,6 @@ class ChuanglanGateway extends Gateway
 
     /**
      * @param string $content
-<<<<<<< HEAD
-     * @param Config $config
-=======
->>>>>>> 3.0
      * @param int    $IDDCode
      *
      * @return string|string

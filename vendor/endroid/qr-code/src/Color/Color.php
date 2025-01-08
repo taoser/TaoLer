@@ -10,11 +10,7 @@ final readonly class Color implements ColorInterface
         private int $red,
         private int $green,
         private int $blue,
-<<<<<<< HEAD
-        private int $alpha = 0
-=======
         private int $alpha = 0,
->>>>>>> 3.0
     ) {
     }
 

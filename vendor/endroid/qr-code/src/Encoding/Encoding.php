@@ -7,12 +7,6 @@ namespace Endroid\QrCode\Encoding;
 final readonly class Encoding implements EncodingInterface
 {
     public function __construct(
-<<<<<<< HEAD
-        private string $value
-    ) {
-        if (!in_array($value, mb_list_encodings())) {
-            throw new \Exception(sprintf('Invalid encoding "%s"', $value));
-=======
         private string $value,
     ) {
         if ('UTF-8' !== $value) {
@@ -23,7 +17,6 @@ final readonly class Encoding implements EncodingInterface
             if (!in_array($value, mb_list_encodings())) {
                 throw new \Exception(sprintf('Invalid encoding "%s": choose one of '.implode(', ', mb_list_encodings()), $value));
             }
->>>>>>> 3.0
         }
     }
 

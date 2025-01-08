@@ -95,10 +95,8 @@ abstract class Manager
             if (class_exists($class)) {
                 return $class;
             }
-        }catch(\Exception $e) {
-            throw new Exception($e->getMessage());
         }
-        
+
         throw new InvalidArgumentException("Driver [$type] not supported.");
     }
 

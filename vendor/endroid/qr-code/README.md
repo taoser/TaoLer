@@ -38,25 +38,6 @@ use Endroid\QrCode\Label\Font\OpenSans;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 
-<<<<<<< HEAD
-$result = Builder::create()
-    ->writer(new PngWriter())
-    ->writerOptions([])
-    ->data('Custom QR code contents')
-    ->encoding(new Encoding('UTF-8'))
-    ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-    ->size(300)
-    ->margin(10)
-    ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-    ->logoPath(__DIR__.'/assets/symfony.png')
-    ->logoResizeToWidth(50)
-    ->logoPunchoutBackground(true)
-    ->labelText('This is the label')
-    ->labelFont(new NotoSans(20))
-    ->labelAlignment(new LabelAlignmentCenter())
-    ->validateResult(false)
-    ->build();
-=======
 $builder = new Builder(
     writer: new PngWriter(),
     writerOptions: [],
@@ -76,7 +57,6 @@ $builder = new Builder(
 );
 
 $result = $builder->build();
->>>>>>> 3.0
 ```
 
 ## Usage: without using the builder
@@ -107,18 +87,11 @@ $qrCode = new QrCode(
 );
 
 // Create generic logo
-<<<<<<< HEAD
-$logo = Logo::create(__DIR__.'/assets/symfony.png')
-    ->setResizeToWidth(50)
-    ->setPunchoutBackground(true)
-;
-=======
 $logo = new Logo(
     path: __DIR__.'/assets/symfony.png',
     resizeToWidth: 50,
     punchoutBackground: true
 );
->>>>>>> 3.0
 
 // Create generic label
 $label = new Label(
@@ -167,10 +140,7 @@ found as a constant prefixed with WRITER_OPTION_ in the writer class.
   * `exclude_xml_declaration`: exclude XML declaration (default: false)
   * `exclude_svg_width_and_height`: exclude width and height (default: false)
   * `force_xlink_href`: forces xlink namespace in case of compatibility issues (default: false)
-<<<<<<< HEAD
-=======
   * `compact`: create using `path` element, otherwise use `defs` and `use` (default: true)
->>>>>>> 3.0
 * `WebPWriter`
   * `quality`: image quality (0-100, default: 80)
 
@@ -179,18 +149,12 @@ You can provide any writer options like this.
 ```php
 use Endroid\QrCode\Writer\SvgWriter;
 
-<<<<<<< HEAD
-$builder->writerOptions([
-    SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true
-]);
-=======
 $builder = new Builder(
     writer: new SvgWriter(),
     writerOptions: [
         SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true
     ]
 );
->>>>>>> 3.0
 ```
 
 ### Encoding

@@ -9,21 +9,12 @@ use Endroid\QrCode\Logo\LogoInterface;
 final class LogoImageData
 {
     private function __construct(
-<<<<<<< HEAD
-        private string $data,
-        private \GdImage|null $image,
-        private string $mimeType,
-        private int $width,
-        private int $height,
-        private bool $punchoutBackground
-=======
         private readonly string $data,
         private ?\GdImage $image,
         private readonly string $mimeType,
         private readonly int $width,
         private readonly int $height,
         private readonly bool $punchoutBackground,
->>>>>>> 3.0
     ) {
     }
 
@@ -122,13 +113,10 @@ final class LogoImageData
     private static function detectMimeTypeFromUrl(string $url): string
     {
         $headers = get_headers($url, true);
-<<<<<<< HEAD
-=======
 
         if (!is_array($headers)) {
             throw new \Exception(sprintf('Could not retrieve headers to determine content type for logo URL "%s"', $url));
         }
->>>>>>> 3.0
 
         $headers = array_combine(array_map('strtolower', array_keys($headers)), $headers);
 

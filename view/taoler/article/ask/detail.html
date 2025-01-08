@@ -25,13 +25,8 @@
 				{//图标}
 				<div class="user-questions">
 					<a class="user-avatar" href="{article:user name='link' /}">
-<<<<<<< HEAD
-						<img src="{article:user name='user_img' /}" alt="{article:user name='name' /}" />
-						<cite>{article:auther} </cite>
-=======
 						<img src="{article:author_avatar' /}" alt="{article:user name='name' /}" />
 						<cite>{article:author /} </cite>
->>>>>>> 3.0
 					</a>
 					<span class="user-post-time" data="{$article.create_time}" style="padding-top: 5px">{$article.update_time|date="Y-h-d H:i"}</span>
 					<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>
@@ -51,30 +46,6 @@
 				{//问题内容}
 				<div style="margin: 10px 0; font-size: 16px; font-weight: bold; color: rgb(161, 155, 155)">问题描述：</div>
 
-<<<<<<< HEAD
-				{:hook('taoplayerdiv')}
-				<article class="detail-body photos" id="content">{article:content}</article>
-				{notempty name="$article.upzip"}
-					{if (session('?user_name'))}
-					<button type="button" class="layui-btn layui-btn-xs" id="zip-download"><i class="layui-icon layui-icon-download-circle"></i>{:lang('download files')}: {$article.downloads}次</button>
-					{/if}
-				{/notempty}
-
-					{//解密文件}
-				{empty name="passJieMi"}
-					{if($article.read_type == 1)}
-					<div id="jiemi" style="text-align:center">
-						<button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
-					</div>
-					{/if}
-				{/empty}
-
-				{notempty name="tags"}
-					<div style="margin-top: 15px">标签
-					{volist name="tags" id="vo" }
-					<a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
-					{/volist}
-=======
 				<article class="detail-body photos" id="content">{article:content /}</article>
 
 				{//解密文件}
@@ -87,20 +58,11 @@
 				{/empty}
 
 				<div style="margin-top: 15px">标签
-<<<<<<< HEAD
-				{volist name="tags" id="vo" }
-					<a href="{$vo.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$vo.name}</span></a>
-				{/volist}
->>>>>>> 3.0
-					</div>
-				{/notempty}
-=======
 				{article:tag}
 				<a href="{$tag.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius">{$tag.name}</span></a>
 				{/article:tag}
 				</div>
 
->>>>>>> 3.0
 
 				<div style="margin: 20px 0px 15px 0px; color: rgb(130, 125, 125)">
 					<p style="line-height:200%;">{$sysInfo.state|raw}</p>
@@ -405,22 +367,6 @@
 		},
     });
 
-<<<<<<< HEAD
-    //下载
-    $("#zip-download").click(function () {
-		var id = "{$article.id}";
-		$.ajax({
-		type: "post",
-		url: "{:url('article/download')}",
-		data: { id: id },
-		success: function (data) {
-			location.href = "{:url('article/download',['id'=>$article.id])}";
-		}
-		});
-    });
-
-=======
->>>>>>> 3.0
     $("#jiemi").click(function (){
 		//判断登陆
 		if(uid == -1){
@@ -445,16 +391,5 @@
   });
 </script>
 
-<<<<<<< HEAD
-<!-- 插件hook位 -->
-{:hook('addonhook_detail_js')}
-<!-- 插件hook位 -->
-{:hook('addonhook_detail')}
-
-{//图片点击放大}
-{include file="/public/images-click" /}
-
-=======
->>>>>>> 3.0
 {/block}
 

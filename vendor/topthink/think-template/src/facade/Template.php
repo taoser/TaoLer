@@ -13,8 +13,7 @@ namespace think\facade;
 
 if (class_exists('think\Facade')) {
     class Facade extends \think\Facade
-    {
-    }
+    {}
 } else {
     class Facade
     {
@@ -32,8 +31,7 @@ if (class_exists('think\Facade')) {
          * @return string
          */
         protected static function getFacadeClass()
-        {
-        }
+        {}
 
         /**
          * 创建Facade实例
@@ -54,6 +52,7 @@ if (class_exists('think\Facade')) {
             }
 
             return self::$instance;
+
         }
 
         // 调用实际类的方法

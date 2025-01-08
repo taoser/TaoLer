@@ -26,20 +26,6 @@ class JuheGateway extends Gateway
 {
     use HasHttpRequest;
 
-<<<<<<< HEAD
-    const ENDPOINT_URL = 'http://v.juhe.cn/sms/send';
-
-    const ENDPOINT_FORMAT = 'json';
-
-    /**
-     * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
-     * @param \Overtrue\EasySms\Contracts\MessageInterface     $message
-     * @param \Overtrue\EasySms\Support\Config                 $config
-     *
-     * @return array
-     *
-     * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException ;
-=======
     public const ENDPOINT_URL = 'http://v.juhe.cn/sms/send';
 
     public const ENDPOINT_FORMAT = 'json';
@@ -48,7 +34,6 @@ class JuheGateway extends Gateway
      * @return array
      *
      * @throws GatewayErrorException ;
->>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
@@ -70,11 +55,6 @@ class JuheGateway extends Gateway
     }
 
     /**
-<<<<<<< HEAD
-     * @param array $vars
-     *
-=======
->>>>>>> 3.0
      * @return string
      */
     protected function formatTemplateVars(array $vars)

@@ -18,30 +18,19 @@ use Overtrue\EasySms\Support\Config;
 use Overtrue\EasySms\Traits\HasHttpRequest;
 
 /**
-<<<<<<< HEAD
- * Class SmsbaoGateway
- * @author iwindy <203962638@qq.com>
-=======
  * Class SmsbaoGateway.
  *
  * @author iwindy <203962638@qq.com>
  *
->>>>>>> 3.0
  * @see http://www.smsbao.com/openapi/
  */
 class SmsbaoGateway extends Gateway
 {
     use HasHttpRequest;
 
-<<<<<<< HEAD
-    const ENDPOINT_URL = 'http://api.smsbao.com/%s';
-
-    const SUCCESS_CODE = '0';
-=======
     public const ENDPOINT_URL = 'http://api.smsbao.com/%s';
 
     public const SUCCESS_CODE = '0';
->>>>>>> 3.0
 
     protected $errorStatuses = [
         '0' => '短信发送成功',
@@ -52,22 +41,14 @@ class SmsbaoGateway extends Gateway
         '41' => '余额不足',
         '42' => '帐户已过期',
         '43' => 'IP地址限制',
-<<<<<<< HEAD
-        '50' => '内容含有敏感词'
-=======
         '50' => '内容含有敏感词',
->>>>>>> 3.0
     ];
 
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {
         $data = $message->getContent($this);
 
-<<<<<<< HEAD
-        if (is_null($to->getIDDCode()) || $to->getIDDCode() == '86') {
-=======
         if (is_null($to->getIDDCode()) || '86' == $to->getIDDCode()) {
->>>>>>> 3.0
             $number = $to->getNumber();
             $action = 'sms';
         } else {
@@ -79,20 +60,12 @@ class SmsbaoGateway extends Gateway
             'u' => $config->get('user'),
             'p' => md5($config->get('password')),
             'm' => $number,
-<<<<<<< HEAD
-            'c' => $data
-=======
             'c' => $data,
->>>>>>> 3.0
         ];
 
         $result = $this->get($this->buildEndpoint($action), $params);
 
-<<<<<<< HEAD
-        if ($result !== self::SUCCESS_CODE) {
-=======
         if (self::SUCCESS_CODE !== $result) {
->>>>>>> 3.0
             throw new GatewayErrorException($this->errorStatuses[$result], $result);
         }
 

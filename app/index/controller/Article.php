@@ -45,10 +45,6 @@ class Article extends IndexBaseController
 		$url = (string) url('cate_page',['ename'=>$ename, 'type'=>$type, 'page'=>$page]);
 		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
 
-		//分页url
-		$url = (string) url('cate_page',['ename'=>$ename,'type'=>$type,'page'=>$page]);
-		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
-
 
 		$assignArr = [
 			'cateinfo'	=> $cateInfo,

@@ -26,28 +26,6 @@ class TianyiwuxianGateway extends Gateway
 {
     use HasHttpRequest;
 
-<<<<<<< HEAD
-    const ENDPOINT_TEMPLATE = 'http://jk.106api.cn/sms%s.aspx';
-
-    const ENDPOINT_ENCODE = 'UTF8';
-
-    const ENDPOINT_TYPE = 'send';
-
-    const ENDPOINT_FORMAT = 'json';
-
-    const SUCCESS_STATUS = 'success';
-
-    const SUCCESS_CODE = '0';
-
-    /**
-     * @param \Overtrue\EasySms\Contracts\PhoneNumberInterface $to
-     * @param \Overtrue\EasySms\Contracts\MessageInterface     $message
-     * @param \Overtrue\EasySms\Support\Config                 $config
-     *
-     * @return array
-     *
-     * @throws \Overtrue\EasySms\Exceptions\GatewayErrorException ;
-=======
     public const ENDPOINT_TEMPLATE = 'http://jk.106api.cn/sms%s.aspx';
 
     public const ENDPOINT_ENCODE = 'UTF8';
@@ -64,7 +42,6 @@ class TianyiwuxianGateway extends Gateway
      * @return array
      *
      * @throws GatewayErrorException ;
->>>>>>> 3.0
      */
     public function send(PhoneNumberInterface $to, MessageInterface $message, Config $config)
     {

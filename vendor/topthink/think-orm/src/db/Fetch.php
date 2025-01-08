@@ -345,10 +345,7 @@ class Fetch
                 $this->query->setOption('data', [$field => $condition]);
                 // 生成删除SQL语句
                 $sql = $this->builder->update($this->query);
-<<<<<<< HEAD
-=======
 
->>>>>>> 3.0
                 return $this->fetch($sql);
             }
         }

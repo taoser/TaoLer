@@ -24,30 +24,15 @@ class UcloudGateway extends Gateway
 {
     use HasHttpRequest;
 
-<<<<<<< HEAD
-    const ENDPOINT_URL = 'https://api.ucloud.cn';
-
-    const ENDPOINT_Action = 'SendUSMSMessage';
-
-    const SUCCESS_CODE = 0;
-=======
     public const ENDPOINT_URL = 'https://api.ucloud.cn';
 
     public const ENDPOINT_Action = 'SendUSMSMessage';
 
     public const SUCCESS_CODE = 0;
->>>>>>> 3.0
 
     /**
      * Send Message.
      *
-<<<<<<< HEAD
-     * @param PhoneNumberInterface $to
-     * @param MessageInterface     $message
-     * @param Config               $config
-     *
-=======
->>>>>>> 3.0
      * @return array
      *
      * @throws GatewayErrorException
@@ -68,13 +53,6 @@ class UcloudGateway extends Gateway
     /**
      * Build Params.
      *
-<<<<<<< HEAD
-     * @param PhoneNumberInterface $to
-     * @param MessageInterface     $message
-     * @param Config               $config
-     *
-=======
->>>>>>> 3.0
      * @return array
      */
     protected function buildParams(PhoneNumberInterface $to, MessageInterface $message, Config $config)

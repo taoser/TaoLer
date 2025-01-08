@@ -39,6 +39,7 @@ class Service extends \think\Service
         $this->loadConfig();
         // 绑定插件容器
         $this->app->bind('addons', Service::class);
+
     }
 
     public function boot()
