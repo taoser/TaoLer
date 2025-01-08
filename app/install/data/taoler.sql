@@ -492,7 +492,7 @@ CREATE TABLE `tao_system`  (
 -- ----------------------------
 -- Records of tao_system
 -- ----------------------------
-INSERT INTO `tao_system` VALUES (1, 'TaoLer', 'TaoLer社区-www.aieok.com', '', 'taoler', '/storage/logo/logo.png', '/static/res/images/logo-m.png', 10, 2048, 'image:png|gif|jpg|jpeg,application:zip|rar|docx,video:mp4,audio:mp3|m4a|mp4|mpeg,zip:zip,application/msword:docx', '<a href=\"https://www.aieok.com\" target=\"_blank\">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统.', '网站声明：<br>\n1.本站使用TaoLerCMS驱动，简单好用，深度SEO。<br>\n2.内容为用户提供如有侵权，请联系本站管理员删除。<br>\n3.原创内容转载请注明出处，否则一切后果自行承担。<br>', '1', '1', '1', '0.0.0.0-1', '', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 0, 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', 1641004619, 1678515271);
+INSERT INTO `tao_system` VALUES (1, 'TaoLer', 'TaoLer社区-www.aieok.com', '', 'taoler', '/storage/logo/logo.png', '/storage/logo/logo-m.png', 10, 2048, 'image:png|gif|jpg|jpeg,application:zip|rar|docx,video:mp4,audio:mp3|m4a|mp4|mpeg,zip:zip,application/msword:docx', '<a href=\"https://www.aieok.com\" target=\"_blank\">TaoLer</a>', 'TaoLer,轻社区系统,bbs,论坛,Thinkphp6,layui,fly模板,', '这是一个Taoler轻社区论坛系统.', '网站声明：<br>\n1.本站使用TaoLerCMS驱动，简单好用，深度SEO。<br>\n2.内容为用户提供如有侵权，请联系本站管理员删除。<br>\n3.原创内容转载请注明出处，否则一切后果自行承担。<br>', '1', '1', '1', '0.0.0.0-1', '', '管理员|admin|审核员|超级|垃圾', '1.6.3', '', 0, 'http://api.aieok.com', 'http://api.aieok.com/v1/cy', 'http://api.aieok.com/v1/upload/check', 'http://api.aieok.com/v1/upload/api', 1641004619, 1678515271);
 
 -- ----------------------------
 -- Table structure for tao_tag

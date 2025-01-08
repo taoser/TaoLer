@@ -17,7 +17,7 @@ use app\common\lib\Msgres;
 use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
-
+use yzh52521\EasyHttp\Http;
 
 
 class Index extends IndexBaseController
@@ -84,9 +84,22 @@ class Index extends IndexBaseController
 // $result1 = array_merge($array1, $array2);
 // halt($result1);
 
-$o = new \app\api\controller\jida\Order;
-$list = $o->userlist();
+// $o = new \app\api\controller\jida\Order;
+// $list = $o->userlist();
 
+// $city = '';
+// $longitude = '113.16378';
+// $latitude = '23.05282';
+// $key = config('jida.map_api.amap');
+// $address = Http::get("https://restapi.amap.com/v3/geocode/regeo?output=json&location={$longitude},{$latitude}&key={$key}&extensions=base")->json();
+// if(isset($address->status) && $address->status === '1') {
+//     if(empty($address->regeocode->addressComponent->city)) {
+//         $city = $address->regeocode->addressComponent->province;
+//     } else {
+//         $city = $address->regeocode->addressComponent->city;
+//     }
+// }
+// halt($city);
 		$html = View::fetch();
 
 		$this->buildHtml($html);

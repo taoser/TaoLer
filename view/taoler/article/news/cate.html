@@ -29,12 +29,12 @@
 						{/if}
 						<div class="list-width list-content">
 							<div class="list-body">
-								<h3>
-									<a href="{article:url /}" title="{article:title /}" class="list-title fanpian">{article:title /}</a>
-								</h3>
-								<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
-									<p class="h-3x">{:getArtContent($article.content)}</p>
-								</div>
+								<a href="{article:url /}" title="{article:title /}" >
+									<h3 class="list-title fanpian">{article:title /}</h3>
+									<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
+										<p class="h-3x">{:getArtContent($article.content)}</p>
+									</div>
+								</a>
 							</div>
 							<div class="list-footer">
 								<div class="d-flex flex-fill align-items-center text-muted text-xs">
