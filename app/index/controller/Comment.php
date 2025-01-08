@@ -1,7 +1,6 @@
 <?php
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Session;
@@ -14,7 +13,7 @@ use app\index\model\UserZan;
 use taoler\com\Message;
 
 
-class Comment extends BaseController
+class Comment extends IndexBaseController
 {
 	protected $middleware = ['logincheck'];
 

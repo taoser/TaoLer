@@ -24,7 +24,7 @@ define('DS', DIRECTORY_SEPARATOR);
 spl_autoload_register(function ($class) {
 
     $class = ltrim($class, '\\');
-
+    
     //$dir = App::getRootPath();
     $root_path = str_replace('\\','/', dirname(__DIR__));
     $dir = strstr($root_path, 'vendor', true);
@@ -206,14 +206,16 @@ if (!function_exists('set_addons_info')) {
         if (!isset($array['name']) || !isset($array['title']) || !isset($array['version'])) {
             throw new Exception("Failed to write plugin config");
         }
-        $res = array();
+        $res = [];
         foreach ($array as $key => $val) {
             if (is_array($val)) {
                 $res[] = "[$key]";
                 foreach ($val as $k => $v)
-                    $res[] = "$k = " . (is_numeric($v) ? $v : $v);
-            } else
-                $res[] = "$key = " . (is_numeric($val) ? $val : $val);
+                    $res[] = "$k = " . (is_float($val) ? sprintf("%.1f",$val) : $v);
+            } else {
+                //$res[] = "$key = " . (is_numeric($val) ? $val : $val);
+                $res[] = "$key = " . (is_float($val) ? sprintf("%.1f",$val) : $val);
+            } 
         }
 
         if ($handle = fopen($file, 'w')) {

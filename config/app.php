@@ -16,7 +16,10 @@ return [
     'default_timezone' => 'Asia/Shanghai',
 
     // 应用映射（自动多应用模式有效）
-    'app_map'          => [],
+    'app_map'          => [
+        // 'adminff' => 'admin',
+        'article' => 'index'
+    ],
     // 域名绑定（自动多应用模式有效）
     'domain_bind'      => [],
     // 禁止URL访问的应用列表（自动多应用模式有效）

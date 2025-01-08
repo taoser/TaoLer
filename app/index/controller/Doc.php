@@ -14,15 +14,12 @@ use app\common\controller\BaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use think\facade\Cache;
 use app\facade\Article;
-use app\common\model\User;
-use app\common\model\Cate;
-use app\common\model\Comment;
-use app\common\model\Slider;
+
+use app\index\model\Slider;
 
 
-class Doc extends BaseController
+class Doc extends IndexBaseController
 {	
 
     public function timeline()

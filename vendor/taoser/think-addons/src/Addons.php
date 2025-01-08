@@ -8,6 +8,10 @@ use think\App;
 use think\helper\Str;
 use think\facade\Config;
 use think\facade\View;
+use taoler\com\Files;
+use think\facade\Cache;
+use think\facade\Db;
+use think\facade\Template;
 
 abstract class Addons
 {
@@ -25,6 +29,8 @@ abstract class Addons
     protected $addon_config;
     // 插件信息
     protected $addon_info;
+    // 预先加载的标签库
+    protected $taglib_pre_load = '';
 
     /**
      * 插件构造函数
@@ -39,9 +45,13 @@ abstract class Addons
         $this->addon_path = $app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
         $this->addon_config = "addon_{$this->name}_config";
         $this->addon_info = "addon_{$this->name}_info";
-        $this->view = View::engine('Think');
+        // $this->taglib_pre_load = $this->getTagLib();
+        // $this->view = clone View::engine('Taoler');
+        $this->view = clone View::engine('Think');
         $this->view->config([
-            'view_path' => (php_uname('s') == 'Linux') ? $this->addon_path . 'view' . DIRECTORY_SEPARATOR : $this->addon_path . 'view'
+            'strip_space'   => true, // 去除空格和换行
+            'view_path' => $this->addon_path . 'view' . DIRECTORY_SEPARATOR,
+            // 'taglib_pre_load'   => $this->taglib_pre_load
         ]);
 
         // 控制器初始化
@@ -74,7 +84,8 @@ abstract class Addons
      */
     protected function fetch($template = '', $vars = [])
     {
-        return $this->view->fetch(DIRECTORY_SEPARATOR . $template, $vars);
+        // addons 插件视图此处必须加路径前缀/
+        return $this->view->fetch('/' . $template, $vars);
     }
 
     /**
@@ -119,6 +130,23 @@ abstract class Addons
         $this->view->engine($engine);
 
         return $this;
+    }
+
+    protected function getTagLib() {
+        return Cache::remember('addon_taglib', function(){
+            $tagsArr = []; 
+            //获取插件下标签 addons/taglib文件
+            $localAddons = Files::getDirName('../addons/');
+            foreach($localAddons as $v) {
+                $dir = root_path() . 'addons'. DIRECTORY_SEPARATOR . $v . DIRECTORY_SEPARATOR .'taglib';
+                if(!file_exists($dir)) continue;
+                $addons_taglib = Files::getAllFile($dir);
+                foreach ($addons_taglib as $a) {
+                    $tagsArr[] = str_replace('/','\\',strstr(strstr($a, 'addons'), '.php', true));
+                }
+            }
+            return implode(',', $tagsArr);
+        });
     }
 
     /**
@@ -172,8 +200,8 @@ abstract class Addons
 
         return $config;
     }
-
-    /**
+	
+	   /**
      * 设置插件信息数据
      * @param $name
      * @param array $value
@@ -181,7 +209,7 @@ abstract class Addons
      */
     final public function setInfo($name = '', $value = [])
     {
-        if (empty($name)) {
+        if(empty($name)) {
             $name = $this->getName();
         }
         $info = $this->getInfo($name);
@@ -195,4 +223,63 @@ abstract class Addons
 
     //必须卸载插件方法
     abstract public function uninstall();
+
+    // 写入管理位
+    protected function insert(array $hooks = []) {
+
+        $methods = (array)get_class_methods("\\addons\\" . $this->name . "\\Plugin");
+        if(!empty($hooks)) {
+            foreach($hooks as $k => $v) {
+                // 添加的方法不在类中跳过
+                if(!in_array($k, $methods)) {
+                    continue;
+                }
+
+                if(is_array($v)) {
+                    foreach($v as $j) {
+                        if(!is_int($j)) continue;
+                        $result = Db::name('addon_hook')->where([
+                            'hook_name' => $k,
+                            'hook_type' => $j
+                        ])->find();
+                        if(is_null($result)) {
+                            Db::name('addon_hook')->save([
+                                'hook_name' => $k,
+                                'hook_type' => $j
+                            ]);
+                        }
+                    }
+                } else {
+                    if(!is_int($v)) continue;
+                    $data = [
+                        'hook_name' => $k,
+                        'hook_type' => $v
+                    ];
+                    $res = Db::name('addon_hook')->where($data)->find();
+    
+                    if(is_null($res)) {
+                        Db::name('addon_hook')->save($data);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    // 移除管理位
+    protected function remove(array $hooks = []) {
+
+        if(!empty($hooks)) {
+            foreach($hooks as $k => $v) {
+                $res = Db::name('addon_hook')->where([
+                    'hook_name' => $k
+                ])->find();
+
+                if(!is_null($res)) {
+                    Db::name('addon_hook')->delete($res['id']);
+                }
+            }
+        }
+    }
+
 }

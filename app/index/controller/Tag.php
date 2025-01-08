@@ -12,7 +12,7 @@ namespace app\index\controller;
 
 use think\facade\View;
 use app\facade\Tag as TagModel;
-use app\facade\TagList;
+use app\facade\Taglist;
 use think\response\Json;
 
 class Tag extends IndexBaseController
@@ -71,7 +71,7 @@ class Tag extends IndexBaseController
     public function getArticleTag($id): Json
     {
         $data = [];
-        $artTags = TagList::where('article_id',$id)->select();
+        $artTags = Taglist::where('article_id',$id)->select();
         foreach($artTags as $v) {
             $tag = TagModel::find($v['tag_id']);
             if(!is_null($tag))

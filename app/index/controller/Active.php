@@ -1,14 +1,13 @@
 <?php
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Request;
 use think\facade\View;
 
 
-class Active extends BaseController
+class Active extends IndexBaseController
 {	
 
 	//api首页

@@ -10,6 +10,7 @@ use think\facade\View;
 use think\facade\Config;
 use app\facade\User;
 use Exception;
+use app\index\controller\IndexBaseController;
 
 class Login extends IndexBaseController
 {

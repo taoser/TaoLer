@@ -1,14 +1,13 @@
 <?php
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
 use think\facade\Session;
-use app\common\model\Collection as CollectionModel;
-use app\common\model\Article;
+use app\index\model\Collection as CollectionModel;
+use app\facade\Article;
 use think\facade\Request;
 use think\facade\Db;
 
-class Collection extends BaseController
+class Collection extends IndexBaseController
 {
 	//文章收藏
 	public function add(){

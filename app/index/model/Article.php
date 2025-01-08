@@ -583,15 +583,16 @@ class Article extends BaseModel
      * 相关文章
      *
      * @param integer $id 文章id
+     * @param integer $limit 数量
      * @return array
      */
-    public static function getRelationArticle(int $id): array
+    public static function getRelationArticle(int $id, int $limit = 5): array
     {
-        return Cache::remember('rela_'.$id, function() use($id){
+        return Cache::remember('rela_'.$id, function() use($id,$limit){
             $tagId = Taglist::where('article_id', $id)->value('tag_id');
             $articleIdArr = Taglist::where('tag_id', $tagId)
             ->where('article_id','<>', $id)
-            ->limit(5)
+            ->limit($limit)
             ->column('article_id');
 
             $data = [];
@@ -1226,37 +1227,37 @@ class Article extends BaseModel
         if($bind_admin) {
             // 1.应用绑定了域名
             if($app_bind) {
-                return $this->getDomain() . $url;
+                return $url;
             }
             // 2.应用进行了映射
             if($app_map){
-                return $this->getDomain() . '/' . $appName . $url;
+                return $appName . $url;
             }
             // 3.应用未绑定域名也未进行映射
-            return $this->getDomain() . '/' . $appName . $url;
+            return $appName . $url;
         }
 
         //2.admin进行了映射
         if($map_admin) {
             // 1.应用绑定了域名
             if($app_bind) {
-                return $this->getDomain() . str_replace($map_admin, '', $url);;
+                return str_replace($map_admin, '', $url);;
             }
             // 2.应用进行了映射
             if($app_map){
-                return $this->getDomain() . str_replace($map_admin, $app_map, $url);
+                return str_replace($map_admin, $app_map, $url);
             }
             // 3.应用未绑定域名也未进行映射
-            return  $this->getDomain() . str_replace($map_admin, $appName, $url);
+            return str_replace($map_admin, $appName, $url);
         }
         //3.admin未绑定域名也未映射
         // 1.应用绑定了域名
         if($app_bind) {
-            return $this->getDomain() . $url;
+            return $url;
         }
         // 2.应用进行了映射
         if($app_map){
-            return $this->getDomain() . str_replace('admin', $app_map, $url);
+            return str_replace('admin', $app_map, $url);
         }
         return str_replace('admin', $appName, $url);
         

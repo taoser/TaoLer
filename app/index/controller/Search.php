@@ -11,12 +11,11 @@
 
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
 use think\facade\View;
 use think\facade\Request;
 use app\facade\Article;
 
-class Search extends BaseController
+class Search extends IndexBaseController
 {
     //搜索功能
 	public function getSearch()
