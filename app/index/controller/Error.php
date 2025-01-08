@@ -2,9 +2,8 @@
 namespace app\index\controller;
 
 use think\facade\View;
-use app\common\controller\BaseController;
 
-class Error extends BaseController
+class Error extends IndexBaseController
 {
     public function __call($method, $args)
     {

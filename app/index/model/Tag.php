@@ -38,7 +38,7 @@ class Tag extends BaseModel
     {
         $data = [];
 
-        $tagList = TagList::fieldRaw('tag_id, count(*) as counts')
+        $tagList = Taglist::fieldRaw('tag_id, count(*) as counts')
         ->group('tag_id')
         ->order('counts', 'desc')
         ->limit(30)

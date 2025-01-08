@@ -111,7 +111,7 @@ abstract class BaseController
 	{
 		
 		$suffix = '';
-		$num = (int) floor(($id - 1) / 100);
+		$num = (int) floor(($id - 1) / config('taoler.single_table_num'));
 		if($num > 0) {
 			// 数据表后缀
             $suffix = "_{$num}";

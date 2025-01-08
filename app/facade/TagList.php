@@ -10,11 +10,11 @@ use think\Facade;
  * @method static array getArtList(int $num) 获取文章列表
  * @method static array getArtHot(int $num) 获取精华文章
  */
-class TagList extends Facade
+class Taglist extends Facade
 {
 	protected static function getFacadeClass()
 	{
-		return 'app\index\model\TagList';
+		return 'app\index\model\Taglist';
 	}
 
 }

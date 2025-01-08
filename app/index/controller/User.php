@@ -18,7 +18,7 @@ use Intervention\Image\ImageManager;
 use think\facade\Config;
 use think\response\Json;
 
-class User extends BaseController
+class User extends IndexBaseController
 {	
 	protected $middleware = [ 
     	'logincheck' => ['except' 	=> ['home'] ],

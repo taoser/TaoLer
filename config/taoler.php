@@ -16,13 +16,13 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.1.2',
+    'version'   => '3.1.3',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 分表单表数量 默认100W
-	'single_table_num' => 10000 * 100 / 10000,
+	'single_table_num' => 10000 * 100,
 	// id加密字母表
 	'id_alphabet' => 'TBJi7WOsvkS4CfGg6A8wmloZr3KR1M5eQnxctqh0IzVpyEHLuaNX2FdPDUbYj9',
 	// id加密最小长度

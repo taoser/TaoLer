@@ -11,7 +11,7 @@
 namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
-use app\index\model\Article;
+use app\facade\Article;
 use app\facade\Category;
 use think\facade\View;
 use think\facade\Request;
@@ -44,8 +44,11 @@ class Forum extends AdminBaseController
     public function list()
     {
         $data = Request::only(['id/d','name','title','sec','cate_id/d']);
+        $page = Request::param('page/d', 1);
+        $limit = Request::param('limit/d', 10);
         
-        $list = $this->model->getFilterList($data, (int)input('page'), (int)input('limit'));
+        $list = Article::getFilterList($data, $page, $limit);
+        
         if($list['total']) {
             return json(['code' => 0, 'msg' => 'ok', 'data' => $list['data'], 'count' => $list['total']]);
         }
