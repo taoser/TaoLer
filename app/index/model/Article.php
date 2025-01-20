@@ -13,6 +13,7 @@ use think\facade\Cache;
 use think\facade\Session;
 use app\observer\ArticleObserver;
 use app\common\lib\IdEncode;
+use Symfony\Component\VarExporter\Internal\Exporter;
 use think\facade\Route;
 
 class Article extends BaseModel
@@ -227,9 +228,9 @@ class Article extends BaseModel
      * 编辑
      *
      * @param array $data
-     * @return void
+     * @return bool
      */
-	public function edit(array $data)
+	public function edit(array $data): bool
 	{
 		$result = $this->save($data);
 
@@ -241,12 +242,12 @@ class Article extends BaseModel
 	}
 
     /**
-     * 多选和单选删除
-     *
+     * 选和单选删除
      * @param array $ids
-     * @return void
+     * @return bool
+     * @throws Exception
      */
-    public function remove(array $ids)
+    public function remove(array $ids): bool
     {
         try {
             foreach($ids as $id){
@@ -264,13 +265,11 @@ class Article extends BaseModel
 
     /**
      * 获取置顶文章
-     * @param int $num 列表数量
-     * @return mixed|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     *
+     * @param integer $num 数量
+     * @return array
      */
-    public function getTops(int $num = 5)
+    public function getTops(int $num = 5): array
     {
         return Cache::remember('top_article', function() use($num){
             $tops = Article::field('id')->where('is_top', '1')->where('status', '1')->limit($num)->select();
@@ -300,13 +299,11 @@ class Article extends BaseModel
 
     /**
      * 获取首页文章列表
-     * @param int $num 列表显示数量
-     * @return mixed|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @param int $num
+     * @return array
+     * @throws \Throwable
      */
-    public function getIndexs(int $num = 10)
+    public function getIndexs(int $num = 10): array
     {
         $indexs = Cache::remember('idx_article', function() use($num){
             
@@ -397,17 +394,7 @@ class Article extends BaseModel
                     ->toArray();
             }
 
-            // return $data->hidden(['art_pass'])->toArray();
-
-            // if(config('taoler.id_status') === 1) {
-            //     $sqids = new Sqids(config('taoler.id_alphabet'), config('taoler.id_minlength'));
-            //     foreach($data as $k => $v) {
-            //         $data[$k]['id'] = $sqids->encode([$v['id']]);
-            //     }
-            // }
-
             return $data;
-
 		}, 120);
 
         return $indexs;
@@ -415,13 +402,11 @@ class Article extends BaseModel
 
     /**
      * 热点文章
-     * @param int $num 热点列表数量 评论或者pv排序
-     * @return \think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @param int $num
+     * @return array
+     * @throws \Throwable
      */
-    public function getHots(int $num = 10)
+    public function getHots(int $num = 10): array
     {
         $hots =  Cache::remember('hots', function() use($num){
 
@@ -478,20 +463,24 @@ class Article extends BaseModel
         $detail = Cache::remember('article_'.$id, function() use($id){
             $this->setSuffix(self::byIdGetSuffix($id));
             //查询文章
-            return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,keywords,description,read_type,art_pass,title_color,create_time,update_time')
-            ->where('id', $id)
-            ->where('status', '1')
-            ->with([
-                'cate' => function(Query $query){
-                    $query->field('id,catename,ename,detpl');
-                },
-                'user' => function(Query $query){
-                    $query->field('id,name,nickname,user_img,area_id,vip,city');
-                }
-            ])
-            ->hidden(['art_pass'])
-            ->append(['url'])
-            ->findOrFail();
+            try{
+                return $this::field('id,title,content,status,cate_id,user_id,goods_detail_id,is_top,is_hot,is_reply,pv,jie,keywords,description,read_type,art_pass,title_color,create_time,update_time')
+                ->where('id', $id)
+                ->where('status', '1')
+                ->with([
+                    'cate' => function(Query $query){
+                        $query->field('id,catename,ename,detpl');
+                    },
+                    'user' => function(Query $query){
+                        $query->field('id,name,nickname,user_img,area_id,vip,city');
+                    }
+                ])
+                ->hidden(['art_pass'])
+                ->append(['url'])
+                ->findOrFail();
+            } catch(Exception $e) {
+                throw new Exception($e->getMessage());
+            }
             
         }, 600);
 
@@ -958,7 +947,6 @@ class Article extends BaseModel
     // 获取admin应用所有帖子状态内容
     public function getFilterList(array $data, int $page = 1, int $limit = 15)
     {
-        // dump($page);
         $where = [];
         if (!empty($data['sec'])) {
             switch ($data['sec']) {
@@ -1166,13 +1154,13 @@ class Article extends BaseModel
     public function getUrlAttr($value, $data)
     {
         $data['id'] = IdEncode::encode($data['id']);
-        
-        if(config('taoler.url_rewrite.article_as') == '<ename>/') {
+
+        if(empty(config('taoler.url_rewrite.article_as'))) {
             $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
-            return (string) url('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
+            return (string) Route::buildUrl('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
         }
 
-        return (string) url('article_detail',['id' => $data['id']])->domain(true);
+        return (string) Route::buildUrl('article_detail',['id' => $data['id']])->domain(true);
     }
 
     /**
@@ -1198,15 +1186,15 @@ class Article extends BaseModel
      */
     public function getAurlAttr($value, $data)
     {
-        $detail_as = config('taoler.url_rewrite.article_as') ?: 'detail/'; //详情页URL别称
+        $asName = config('taoler.url_rewrite.article_as'); //详情页URL别称
 
         $data['id'] = IdEncode::encode($data['id']);
         
-        if(config('taoler.url_rewrite.article_as') == '<ename>/') {
+        if(empty($asName)) {
             $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
             $url = (string) Route::buildUrl("{$ename}/{$data['id']}");
-        } else if(!empty(config('taoler.url_rewrite.article_as'))) {
-            $url = (string) Route::buildUrl(config('taoler.url_rewrite.article_as')."{$data['id']}");
+        } else if(!empty($asName)) {
+            $url = (string) Route::buildUrl($asName."{$data['id']}");
         } else {
             $url = (string) Route::buildUrl("{$data['id']}");
         }

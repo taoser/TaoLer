@@ -20,9 +20,9 @@ class CommentExtension extends AbstractExtension
     /**
      * Get all or one comment
      *
-     * @return mixed
+     * @return array<string>
      */
-    public function getComments()
+    public function getComments(): array
     {
         return $this->comments;
     }

@@ -6,6 +6,8 @@ use think\facade\Config;
 use think\facade\Filesystem;
 use think\exception\ValidateException;
 use think\facade\Db;
+use think\facade\Session;
+use think\facade\Request;
 
 class Uploads 
 {
@@ -226,7 +228,7 @@ class Uploads
                 ->check(['file'=>$file]);
 
         } catch (ValidateException $e) {
-            halt($e->getMessage());
+            
             return json(['status'=>-1,'msg'=>$e->getMessage()]);
         }
 
@@ -271,5 +273,15 @@ class Uploads
 
         return json(['code' => 1,'msg'=>'上传成功', 'data' => ['url'=> $name_path]]);
     }
+
+    // 文件上传进度
+    public function getProgress()
+    {
+        $totalSize = Session::get('total_size', 0);
+        $uploadedSize = Session::get('uploaded_size', 0);
+        $progress = ($uploadedSize / $totalSize) * 100;
+        return json(['progress' => $progress]);
+    }
+
 
 }

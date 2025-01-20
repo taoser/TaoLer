@@ -86,3 +86,8 @@ function get_radar_body(?Collection $payload): mixed
 {
     return $payload?->get('_body') ?? null;
 }
+
+function get_radar_headers(?Collection $payload): mixed
+{
+    return $payload?->get('_headers') ?? null;
+}

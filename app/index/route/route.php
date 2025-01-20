@@ -36,8 +36,8 @@ Route::group('user',function () {
 	Route::get('uploadHeadImg$','uploadHeadImg');
 	Route::get('logout$', 'logout');
 })->prefix('user/')->pattern([
-	'id'   => '\d+',
-]);
+		'id'   => '\d+',
+	]);
 
 // 登录注册
 Route::group(function () {
@@ -53,17 +53,10 @@ Route::group(function () {
 // comment
 Route::rule('comment/edit/[:id]','comment/edit');
 
-// article
-// Route::group('art',function (){
-	
-
-// })->prefix('article/');
-
 //tag
-Route::get('tag$','tag/getAllTag')->name('get_all_tag');
-Route::get('arttag$','tag/getArticleTag')->name('get_art_tag');
-
 Route::group(function (){
+	Route::get('tag$','getAllTag')->name('get_all_tag');
+	Route::get('arttag$','getArticleTag')->name('get_art_tag');
 	Route::get('tag/<ename>$', 'list')->name('tag_list');
 })->prefix('tag/');
 
@@ -80,23 +73,22 @@ Route::group(function (){
 	Route::get('article/catetree','getCateTree')->name('get_cate_tree');
 
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
-
-    // 分类
-	$cate_as = config('taoler.url_rewrite.cate_as') ?: 'category/'; //分类别称
-	Route::get($cate_as . '<ename>$','cate')->name('cate')->cache(180);
-	Route::get($cate_as . '<ename>/<type>$', 'cate')->name('cate_type');
-	Route::get($cate_as . '<ename>/<type>/<page>$', 'cate')->name('cate_page');
-
 	// 详情
-	$detail_as = config('taoler.url_rewrite.article_as') ?: 'detail/'; //详情页URL别称
-	Route::get($detail_as . '<id>$', 'detail')->name('article_detail');
-    Route::get($detail_as . '<id>/<page>$', 'detail')->name('article_comment');
+	$detail_as = config('taoler.url_rewrite.article_as') ?: '<ename>/'; //详情页URL别称
+	Route::get($detail_as.'<id>$', 'detail')->name('article_detail');
+	Route::get($detail_as.'<id>/<page>$', 'detail')->name('article_comment');
+	
+    // 分类
+	$cate_as = config('taoler.url_rewrite.cate_as'); //分类别称
+	Route::get($cate_as.'<ename>$','cate')->name('cate');
+	Route::get($cate_as.'<ename>/type-<type>$', 'cate')->name('cate_type');
+	Route::get($cate_as.'<ename>/type-<type>/<page>$', 'cate')->name('cate_page');
 
 })->prefix('article/')->pattern([
 		'ename' => '[\w|\-]+',
+		'id'   => '\w+',
 		'type' => '\w+',
 		'page'   => '\d+',
-		'id'   => '\w+',
 	]);
 			
 

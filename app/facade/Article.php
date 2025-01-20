@@ -6,9 +6,12 @@ use think\Facade;
 /**
  * Class Article
  * @package app\facade
- * @method static array getArtTop(int $num) 获取置顶文章
- * @method static array getArtList(int $num) 获取文章列表
- * @method static array getArtHot(int $num) 获取精华文章
+ * @method static array add(array $data) 添加文章
+ * @method static bool edit(array $data) 编辑文章
+ * @method static bool remove(array $ids) 多选删除
+ * @method static array getTopss(int $num) 置顶文章
+ * @method static array getIndexs(int $num) 首页文章
+ * @method static array getHots(int $num) 热点
  */
 class Article extends Facade
 {

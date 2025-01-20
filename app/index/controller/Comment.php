@@ -12,7 +12,6 @@ use app\index\model\Article;
 use app\index\model\UserZan;
 use taoler\com\Message;
 
-
 class Comment extends IndexBaseController
 {
 	protected $middleware = ['logincheck'];
@@ -28,15 +27,19 @@ class Comment extends IndexBaseController
 			$data = Request::only(['content','article_id','pid','to_user_id']);
             $data['user_id'] = $this->uid;
 			$sendId = $data['user_id'];
+
 			$table = $this->getTableName($data['article_id']);
+		
 			$art = Db::table($table)->field('id,status,is_reply,delete_time')->find($data['article_id']);
 
 			if($art['delete_time'] != 0 || $art['status'] != 1 || $art['is_reply'] != 1){
 				return json(['code'=>-1, 'msg'=>'评论不可用状态']);
 			}
+
 			if(empty($data['content'])){
 				return json(['code'=>-1, 'msg'=>'评论不能为空！']);
 			}
+
 			$superAdmin = Db::name('user')->where('id',$sendId)->value('auth');
 			$data['status'] = $superAdmin ? 1 : Config::get('taoler.config.commnets_check');
 			$msg = $data['status'] ? '留言成功' : '留言成功，请等待审核';

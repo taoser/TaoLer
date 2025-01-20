@@ -14,13 +14,16 @@ class Config
      * @param bool $autoOrientation
      * @param bool $decodeAnimation
      * @param mixed $blendingColor
+     * @param bool $strip
      * @return void
      */
     public function __construct(
         public bool $autoOrientation = true,
         public bool $decodeAnimation = true,
         public mixed $blendingColor = 'ffffff',
+        public bool $strip = false,
     ) {
+        //
     }
 
     /**
@@ -52,7 +55,7 @@ class Config
      */
     private function prepareOptions(array $options): array
     {
-        if (count($options) === 0) {
+        if ($options === []) {
             return $options;
         }
 

@@ -124,7 +124,7 @@ class LogicalScreenDescriptor extends AbstractEntity
      * @param bool $existance
      * @return self
      */
-    public function setGlobalColorTableExistance($existance = true): self
+    public function setGlobalColorTableExistance(bool $existance = true): self
     {
         $this->globalColorTableExistance = $existance;
 
@@ -147,7 +147,7 @@ class LogicalScreenDescriptor extends AbstractEntity
      * @param bool $sorted
      * @return self
      */
-    public function setGlobalColorTableSorted($sorted = true): self
+    public function setGlobalColorTableSorted(bool $sorted = true): self
     {
         $this->globalColorTableSorted = $sorted;
 
@@ -235,7 +235,7 @@ class LogicalScreenDescriptor extends AbstractEntity
      *
      * @return int
      */
-    public function getBitsPerPixel()
+    public function getBitsPerPixel(): int
     {
         return $this->bitsPerPixel;
     }

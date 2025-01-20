@@ -521,7 +521,7 @@ class Query extends BaseQuery
     {
         if (null === $data) {
             $data          = $this->options;
-            $data['table'] = $this->getConfig('database') . $this->getTable();
+            $data['table'] = $this->getConfig('database') . var_export($this->getTable(), true);
             unset($data['scope'], $data['default_model']);
             foreach (['AND', 'OR', 'XOR'] as $logic) {
                 if (isset($data['where'][$logic])) {

@@ -73,7 +73,7 @@ class Builder
      */
     public function setLoops(int $loops): self
     {
-        if (count($this->gif->getFrames()) === 0) {
+        if ($this->gif->getFrames() === []) {
             throw new Exception('Add at least one frame before setting the loop count');
         }
 

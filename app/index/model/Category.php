@@ -9,6 +9,7 @@ use think\db\Query;
 use think\facade\Db;
 use think\facade\Cache;
 use app\common\lib\IdEncode;
+use think\facade\Route;
 
 class Category extends BaseModel
 {
@@ -383,7 +384,7 @@ class Category extends BaseModel
                 }
                 
                 // 路由设置模式
-                $routeRewrite = (config('taoler.url_rewrite.article_as') == '<ename>/');
+                $routeRewrite = config('taoler.url_rewrite.article_as');
 
                 if(!is_null($cate)) {
                     // 往datas数组中追加cate和url 减少查询
@@ -391,10 +392,13 @@ class Category extends BaseModel
                         $da['cate'] = ['catename' => $cate['catename'], 'ename' => $cate['ename']];
 
                         $id = IdEncode::encode($da['id']);
-                        if($routeRewrite) {
-                            $da['url'] = (string) url('article_detail', ['id' => $id,'ename' => $cate['ename']])->domain(true);
+                        
+                        if(empty($routeRewrite)) {
+                            $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id,'ename' => $cate['ename']])->domain(true);
+                            // $da['url'] = (string) Route::buildUrl("{$cate['ename']}/{$id}")->domain(true);
                         } else {
-                            $da['url'] = (string) url('article_detail', ['id' => $id])->domain(true);
+                            $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id])->domain(true);
+                            // $da['url'] = (string) Route::buildUrl("{$routeRewrite}/{$id}")->domain(true);
                         }
                         $da['master_pic'] = isset($da['media']->image) ? $da['media']->image[0] : '';
                     }
@@ -405,11 +409,14 @@ class Category extends BaseModel
                         $da['cate'] = ['catename' => $category['catename'], 'ename' => $category['ename']];
 
                         $id = IdEncode::encode($da['id']);
-                        if($routeRewrite) {
-                            $da['url'] = (string) url('article_detail', ['id' => $id,'ename' => $category['ename']])->domain(true);
+                        if(empty($routeRewrite)) {
+                            $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id,'ename' => $category['ename']])->domain(true);
+                            // $da['url'] = (string) Route::buildUrl("/{$cate['ename']}/{$id}")->domain(true);
                         } else {
-                            $da['url'] = (string) url('article_detail', ['id' => $id])->domain(true);
+                            $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id])->domain(true);
+                            // $da['url'] = (string) Route::buildUrl("/{$routeRewrite}/{$id}")->domain(true);
                         }
+
                         $da['master_pic'] = isset($da['media']->image) ? $da['media']->image[0] : '';
                     }
                 }

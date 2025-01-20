@@ -242,14 +242,7 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom','common'], function(
       location.hash = layid;
     }
   });
-/*
-  //根据ip获取城市
-  if($('#L_city').val() === ''){
-    $.getScript('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js', function(){
-      $('#L_city').val(remote_ip_info.city||'');
-    });
-  }
-*/
+
   //上传图片
   if($('.upload-img')[0]){
     layui.use('upload', function(upload){
@@ -268,6 +261,15 @@ layui.define(['laypage', 'fly', 'element', 'flow', 'imgcom','common'], function(
 			}
         ,before: function(){
           avatarAdd.find('.loading').show();
+          element.progress('filter-demo', '0%'); // 进度条复位
+          layer.msg('上传中', {icon: 16, time: 0});
+        },
+        // 进度条
+        progress: function(n, elem, e){
+          element.progress('filter-demo', n + '%'); // 可配合 layui 进度条元素使用
+          if(n == 100){
+            layer.msg('上传完毕', {icon: 1});
+          }
         }
         ,done: function(res){
           if(res.code == 0){

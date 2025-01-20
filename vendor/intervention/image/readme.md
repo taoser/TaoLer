@@ -7,7 +7,7 @@
 [![Support me on Ko-fi](https://raw.githubusercontent.com/Intervention/image/develop/.github/images/support.svg)](https://ko-fi.com/interventionphp)
 
 Intervention Image is a **PHP image processing library** that provides a simple
-and expressive way to create, edit, and compose images. It features a universal
+and expressive way to create, edit, and compose images. It comes with a universal
 interface for the two most popular PHP image manipulation extensions. You can
 choose between the GD library or Imagick as the base layer for all operations.
 
@@ -20,7 +20,7 @@ choose between the GD library or Imagick as the base layer for all operations.
 ## Installation
 
 You can easily install this library using [Composer](https://getcomposer.org).
-Just request the package with the following command:
+Simply request the package with the following command:
 
 ```bash
 composer require intervention/image
@@ -60,12 +60,21 @@ $encoded->save('images/example.jpg');
 
 ## Requirements
 
+Before you begin with the installation make sure that your server environment
+supports the following requirements.
+
 - PHP >= 8.1
+- Mbstring PHP Extension
+- Image Processing PHP Extension
 
 ## Supported Image Libraries
 
+Depending on your environment Intervention Image lets you choose between
+different image processing extensions.
+
 - GD Library
 - Imagick PHP extension
+- [libvips](https://github.com/Intervention/image-driver-vips)
 
 ## Security
 

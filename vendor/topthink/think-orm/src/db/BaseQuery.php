@@ -177,6 +177,10 @@ abstract class BaseQuery
             $query->lazyFields($this->options['lazy_fields']);
         }
 
+        if (isset($this->options['alias'])) {
+            $query->alias($this->options['alias']);
+        }
+
         return $query;
     }
 
@@ -1002,7 +1006,7 @@ abstract class BaseQuery
             $key    = true;
         }
 
-        $this->options['cache'] = [$key, $expire, $tag ?: $this->getTable()];
+        $this->options['cache'] = [$key, $expire, $tag ?: var_export($this->getTable(), true)];
         return $this;
     }
 

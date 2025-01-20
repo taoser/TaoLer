@@ -55,8 +55,9 @@ class PlainTextExtensionEncoder extends AbstractEncoder
      */
     protected function encodeTexts(): string
     {
-        return implode('', array_map(function ($text) {
-            return pack('C', strlen($text)) . $text;
-        }, $this->source->getText()));
+        return implode('', array_map(
+            fn(string $text): string => pack('C', strlen($text)) . $text,
+            $this->source->getText(),
+        ));
     }
 }

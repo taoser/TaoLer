@@ -16,6 +16,7 @@ class ColorTable extends AbstractEntity
      */
     public function __construct(protected array $colors = [])
     {
+        //
     }
 
     /**
@@ -111,31 +112,16 @@ class ColorTable extends AbstractEntity
      */
     public function getLogicalSize(): int
     {
-        switch ($this->countColors()) {
-            case 4:
-                return 1;
-
-            case 8:
-                return 2;
-
-            case 16:
-                return 3;
-
-            case 32:
-                return 4;
-
-            case 64:
-                return 5;
-
-            case 128:
-                return 6;
-
-            case 256:
-                return 7;
-
-            default:
-                return 0;
-        }
+        return match ($this->countColors()) {
+            4 => 1,
+            8 => 2,
+            16 => 3,
+            32 => 4,
+            64 => 5,
+            128 => 6,
+            256 => 7,
+            default => 0,
+        };
     }
 
     /**

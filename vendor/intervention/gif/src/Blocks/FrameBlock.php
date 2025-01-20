@@ -37,49 +37,23 @@ class FrameBlock extends AbstractEntity
         protected ImageDescriptor $imageDescriptor = new ImageDescriptor(),
         protected ImageData $imageData = new ImageData()
     ) {
+        //
     }
 
     public function addEntity(AbstractEntity $entity): self
     {
-        switch (true) {
-            case $entity instanceof TableBasedImage:
-                $this->setTableBasedImage($entity);
-                break;
-
-            case $entity instanceof GraphicControlExtension:
-                $this->setGraphicControlExtension($entity);
-                break;
-
-            case $entity instanceof ImageDescriptor:
-                $this->setImageDescriptor($entity);
-                break;
-
-            case $entity instanceof ColorTable:
-                $this->setColorTable($entity);
-                break;
-
-            case $entity instanceof ImageData:
-                $this->setImageData($entity);
-                break;
-
-            case $entity instanceof PlainTextExtension:
-                $this->setPlainTextExtension($entity);
-                break;
-
-            case $entity instanceof NetscapeApplicationExtension:
-                $this->addApplicationExtension($entity);
-                break;
-
-            case $entity instanceof ApplicationExtension:
-                $this->addApplicationExtension($entity);
-                break;
-
-            case $entity instanceof CommentExtension:
-                $this->addCommentExtension($entity);
-                break;
-        }
-
-        return $this;
+        return match (true) {
+            $entity instanceof TableBasedImage => $this->setTableBasedImage($entity),
+            $entity instanceof GraphicControlExtension => $this->setGraphicControlExtension($entity),
+            $entity instanceof ImageDescriptor => $this->setImageDescriptor($entity),
+            $entity instanceof ColorTable => $this->setColorTable($entity),
+            $entity instanceof ImageData => $this->setImageData($entity),
+            $entity instanceof PlainTextExtension => $this->setPlainTextExtension($entity),
+            $entity instanceof NetscapeApplicationExtension,
+            $entity instanceof ApplicationExtension => $this->addApplicationExtension($entity),
+            $entity instanceof CommentExtension => $this->addCommentExtension($entity),
+            default => $this,
+        };
     }
 
     /**
@@ -259,9 +233,10 @@ class FrameBlock extends AbstractEntity
      */
     public function getNetscapeExtension(): ?NetscapeApplicationExtension
     {
-        $extensions = array_filter($this->applicationExtensions, function ($extension) {
-            return $extension instanceof NetscapeApplicationExtension;
-        });
+        $extensions = array_filter(
+            $this->applicationExtensions,
+            fn(ApplicationExtension $extension): bool => $extension instanceof NetscapeApplicationExtension,
+        );
 
         return count($extensions) ? reset($extensions) : null;
     }

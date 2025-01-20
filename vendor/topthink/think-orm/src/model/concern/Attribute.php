@@ -374,6 +374,10 @@ trait Attribute
                 return 1;
             }
 
+            if ($b instanceof Raw) {
+                return 0;
+            }
+
             return is_object($a) || $a != $b ? 1 : 0;
         });
 

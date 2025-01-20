@@ -34,14 +34,15 @@ class User extends IndexBaseController
 	// 我的发帖list
 	public function myArticles()
 	{
-        $param = Request::only(['page','limit']);
+		$page = Request::param('page/d', 1);
+		$limit = Request::param('limit/d', 20);
 		$myArticle = Article::field('id,cate_id,title,status,pv,create_time,update_time')
             ->withCount(['comments'])
             ->where(['user_id' => $this->uid])
             ->order('update_time','desc')
             ->paginate([
-                'list_rows' => $param['limit'],
-                'page' 		=> $param['page']
+                'list_rows' => $limit,
+                'page' 		=> $page
             ]);
 		$count = $myArticle->total();
 		$res = [];
@@ -261,18 +262,18 @@ class User extends IndexBaseController
 	 */
 	public function uploadHeadImg(): Json
     {
+		
 		try{
-
 			$file = request()->file('file');
+
 			$relative_path = 'storage/' . $this->uid . '/head_img/';
             $dir = public_path() . $relative_path;
             $full_dir = str_replace("\\","/", $dir);
             if (!is_dir($full_dir)) {
                 mkdir($full_dir, 0777, true);
             }
-            $file = request()->file('file');
+            
             $info = $file->move($full_dir, $file->hashName('md5'));
-
             $realPath = $info->getPathname();
             $name = $info->getFilename();
             $src = '/'.$relative_path.$name;
