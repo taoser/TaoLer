@@ -11,6 +11,7 @@ use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
 
 use function Yansongda\Artful\get_radar_body;
+use function Yansongda\Artful\get_radar_headers;
 use function Yansongda\Artful\get_radar_method;
 use function Yansongda\Artful\get_radar_url;
 
@@ -25,7 +26,7 @@ class AddRadarPlugin implements PluginInterface
         $rocket->setRadar(new Request(
             get_radar_method($payload) ?? 'POST',
             get_radar_url($payload),
-            $this->getHeaders(),
+            get_radar_headers($payload) ?? $this->getHeaders(),
             get_radar_body($payload),
         ));
 

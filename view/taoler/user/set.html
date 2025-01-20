@@ -63,18 +63,21 @@
 			</div>
 		</div>
       
-		<div class="layui-form layui-form-pane layui-tab-item">
+		<form class="layui-form layui-form-pane layui-tab-item" enctype="multipart/form-data" method="post">
 			<div class="layui-form-item">
 				<div class="avatar-add">
 				<p>建议尺寸168*168，支持jpg、png、gif，最大不能超过50KB</p>
 				<button type="button" class="layui-btn upload-img">
 					<i class="layui-icon">&#xe67c;</i>上传头像
 				</button>
-				<img src="{$user.user_img}">
-				<span class="loading"></span>
+				<img src="{$user.user_img}"><span class="loading"></span>
 				</div>
+				
 			</div>
-		</div>
+			<div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="filter-demo">
+				<div class="layui-progress-bar" lay-percent=""></div>
+			</div>
+		</form>
       
 		<form class="layui-form layui-form-pane layui-tab-item">
 			<input type="hidden" name="user_id" value="{:session('user_id')}">

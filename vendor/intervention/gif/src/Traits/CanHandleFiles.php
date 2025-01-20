@@ -25,7 +25,7 @@ trait CanHandleFiles
      */
     private static function hasNullBytes(string $string): bool
     {
-        return strpos($string, chr(0)) !== false;
+        return str_contains($string, chr(0));
     }
 
     /**

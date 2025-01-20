@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.1.3',
+    'version'   => '3.1.4',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
@@ -63,14 +63,14 @@ return [
 		// 网站静态化
 		'static_html'   => 0,
 		// id字段加密开关 1开启0关闭
-		'id_status'   => 0,
+		'id_status'   => 1,
 
 	],
 
 	// URL美化
 	'url_rewrite' => [
 		// 详情url
-		'article_as'   => '<ename>/',
+		'article_as'   => '',
 		// 分类url
 		'cate_as'   => '',
 	],

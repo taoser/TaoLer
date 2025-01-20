@@ -21,7 +21,7 @@ class IdEncode
     // ID加密成字符串
     public static function encode(int $id): int|string
     {
-        if(config('taoler.id_status') === 1) {
+        if(config('taoler.config.id_status') === 1) {
             return self::getInstance()->encode([$id]);
         }
         return $id;
@@ -30,7 +30,7 @@ class IdEncode
     // ID解密
     public static function decode(string|int $idStr): int
     {
-        if(config('taoler.id_status') === 1 && is_string($idStr)) {
+        if(config('taoler.config.id_status') === 1 && is_string($idStr)) {
             return self::getInstance()->decode($idStr)[0];
         }
 

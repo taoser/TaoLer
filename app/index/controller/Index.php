@@ -17,8 +17,6 @@ use app\common\lib\Msgres;
 use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
-use yzh52521\EasyHttp\Http;
-
 
 class Index extends IndexBaseController
 {
@@ -100,6 +98,8 @@ class Index extends IndexBaseController
 //     }
 // }
 // halt($city);
+
+
 		$html = View::fetch();
 
 		$this->buildHtml($html);

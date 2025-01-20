@@ -9,6 +9,7 @@ use think\Validate;
 use think\facade\Db;
 use think\facade\Request;
 use app\common\lib\Uploads;
+use app\common\lib\IdEncode;
 
 /**
  * 控制器基础类
@@ -195,11 +196,14 @@ abstract class BaseController
     {
         $domain = $this->getDomain();
         $appName = app('http')->getName();
-        $articleUrl = (string) url('article_detail', ['id' => $aid]);
+
+        $aid = IdEncode::decode($aid);
         // 详情动态路由，$aid, $ename
-        if(config('taoler.url_rewrite.article_as') == '<ename>/'){
-            $articleUrl = (string) url('article_detail', ['id' => $aid, 'ename' => $ename]);
+        if(empty(config('taoler.url_rewrite.article_as'))){
+            return (string) url('article_detail', ['id' => $aid, 'ename' => $ename])->domain(true);
         }
+
+        return (string) url('article_detail',['id' => $aid])->domain(true);
 
 //        // 判断应用是否绑定域名
 //        $app_bind = array_search($appName, config('app.domain_bind'));
@@ -207,7 +211,7 @@ abstract class BaseController
 //        $app_map = array_search($appName, config('app.app_map'));
 
         //a.appName不是admin
-        return $domain . $articleUrl;
+        // return $domain . $articleUrl;
     }
 
 

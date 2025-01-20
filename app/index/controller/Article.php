@@ -15,6 +15,7 @@ use app\common\lib\IdEncode;
 use think\Response\Json;
 use app\index\validate\Article as ArticleValidate;
 use Exception;
+use think\exception\HttpException;
 
 class Article extends IndexBaseController
 {
@@ -64,15 +65,20 @@ class Article extends IndexBaseController
 		$id = $this->request->param('id');
 		// dump($this->request);
 		$commentPage = $this->request->param('page',1);
-		$id = IdEncode::decode($id);
 
-		// 1.内容
-        $detail = $this->model::getDetail($id);
+		try{
+			$id = IdEncode::decode($id);
+			// 1.内容
+			$detail = $this->model::getDetail($id);
+	
+			// 2.pv
+			$detail->setInc('pv', 1);
+			$pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
+			$detail->pv = $pv;
+		} catch(Exception $e) {
+			throw new HttpException(404, $e->getMessage());
+		}
 		
-		// 2.pv
-		$detail->setInc('pv', 1, 60);
-		$pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
-        $detail->pv = $pv;
 
 		// 3.设置内容的tag内链
 		// $artDetail->content = $this->setArtTagLink($artDetail->content);		

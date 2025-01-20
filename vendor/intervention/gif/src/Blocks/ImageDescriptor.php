@@ -141,7 +141,7 @@ class ImageDescriptor extends AbstractEntity
      */
     public function isInterlaced(): bool
     {
-        return $this->interlaced === true;
+        return $this->interlaced;
     }
 
     /**
@@ -182,7 +182,7 @@ class ImageDescriptor extends AbstractEntity
      * @param bool $existance
      * @return self
      */
-    public function setLocalColorTableExistance($existance = true): self
+    public function setLocalColorTableExistance(bool $existance = true): self
     {
         $this->localColorTableExistance = $existance;
 
@@ -205,7 +205,7 @@ class ImageDescriptor extends AbstractEntity
      * @param bool $sorted
      * @return self
      */
-    public function setLocalColorTableSorted($sorted = true): self
+    public function setLocalColorTableSorted(bool $sorted = true): self
     {
         $this->localColorTableSorted = $sorted;
 

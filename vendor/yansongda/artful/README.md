@@ -17,7 +17,7 @@ Api RequesT Framework U Like - 你喜欢的 API 请求框架
 ## 安装
 
 ```shell
-composer require yansongda/artful:~1.0.0 -vvv
+composer require yansongda/artful:~1.1.0 -vvv
 ```
 
 ## 文档

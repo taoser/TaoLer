@@ -111,13 +111,13 @@ class Rectangle extends Polygon implements SizeInterface
             case 'center-top':
             case 'middle-top':
                 $x = intval(round($this->width() / 2)) + $offset_x;
-                $y = 0 + $offset_y;
+                $y = $offset_y;
                 break;
 
             case 'top-right':
             case 'right-top':
                 $x = $this->width() - $offset_x;
-                $y = 0 + $offset_y;
+                $y = $offset_y;
                 break;
 
             case 'left':
@@ -125,7 +125,7 @@ class Rectangle extends Polygon implements SizeInterface
             case 'left-middle':
             case 'center-left':
             case 'middle-left':
-                $x = 0 + $offset_x;
+                $x = $offset_x;
                 $y = intval(round($this->height() / 2)) + $offset_y;
                 break;
 
@@ -140,7 +140,7 @@ class Rectangle extends Polygon implements SizeInterface
 
             case 'bottom-left':
             case 'left-bottom':
-                $x = 0 + $offset_x;
+                $x = $offset_x;
                 $y = $this->height() - $offset_y;
                 break;
 
@@ -170,8 +170,8 @@ class Rectangle extends Polygon implements SizeInterface
             default:
             case 'top-left':
             case 'left-top':
-                $x = 0 + $offset_x;
-                $y = 0 + $offset_y;
+                $x = $offset_x;
+                $y = $offset_y;
                 break;
         }
 
@@ -368,13 +368,14 @@ class Rectangle extends Polygon implements SizeInterface
     /**
      * Show debug info for the current rectangle
      *
-     * @return array<string, int>
+     * @return array<string, int|object>
      */
     public function __debugInfo(): array
     {
         return [
             'width' => $this->width(),
             'height' => $this->height(),
+            'pivot' => $this->pivot,
         ];
     }
 }

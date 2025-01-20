@@ -113,8 +113,12 @@ class IndexBaseController extends \app\BaseController
 		if(config('taoler.config.static_html')) {
 
 			if($staticFilePath == '') {
-				$baseUrl = $this->request->baseUrl();
-// dump($url);
+				
+				// $baseUrl = $this->request->baseUrl();
+				$rootUrl = $this->request->rootUrl().'/';
+				$pathinfo = $this->request->pathinfo();
+				$baseUrl = $rootUrl.$pathinfo;
+
 				// 过滤掉html后面的参数
 				$url = preg_replace('/\.html.*/', '.html', $baseUrl);
 
@@ -125,7 +129,7 @@ class IndexBaseController extends \app\BaseController
 					$staticFilePath = str_replace("\\", '/', public_path(). 'static_html/' . ltrim($url, '/') . 'index.html');
 				}
 			}
-// dump($staticFilePath);
+
 			if(!file_exists($staticFilePath)) {
 				// 检测模板目录
 				$dir = dirname($staticFilePath);

@@ -36,6 +36,7 @@ class Splitter implements IteratorAggregate
      */
     public function __construct(protected GifDataStream $stream)
     {
+        //
     }
 
     /**
@@ -157,12 +158,10 @@ class Splitter implements IteratorAggregate
         $resources = [];
 
         foreach ($this->frames as $frame) {
-            if (is_a($frame, GifDataStream::class)) {
-                $resource = imagecreatefromstring($frame->encode());
-                imagepalettetotruecolor($resource);
-                imagesavealpha($resource, true);
-                $resources[] = $resource;
-            }
+            $resource = imagecreatefromstring($frame->encode());
+            imagepalettetotruecolor($resource);
+            imagesavealpha($resource, true);
+            $resources[] = $resource;
         }
 
         return $resources;

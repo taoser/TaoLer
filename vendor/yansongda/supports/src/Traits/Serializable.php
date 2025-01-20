@@ -49,7 +49,7 @@ trait Serializable
     {
         foreach ($data as $key => $item) {
             if (method_exists($this, 'set')) {
-                $this->set($key, $item);
+                $this->set(strval($key), $item);
             }
         }
 

@@ -58,6 +58,6 @@ class PlainTextExtension extends AbstractExtension
      */
     public function hasText(): bool
     {
-        return count($this->text) > 0;
+        return $this->text !== [];
     }
 }

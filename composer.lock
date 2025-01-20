@@ -572,7 +572,7 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v11.37.0",
+            "version": "v11.38.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -623,16 +623,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.37.0",
+            "version": "v11.38.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "184317f701ba20ca265e36808ed54b75b115972d"
+                "reference": "534b697fc1dd9fbdd9fbf2f33fc9dcbb943dea75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/184317f701ba20ca265e36808ed54b75b115972d",
-                "reference": "184317f701ba20ca265e36808ed54b75b115972d",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/534b697fc1dd9fbdd9fbf2f33fc9dcbb943dea75",
+                "reference": "534b697fc1dd9fbdd9fbf2f33fc9dcbb943dea75",
                 "shasum": ""
             },
             "require": {
@@ -667,28 +667,28 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-11-25T15:33:38+00:00"
+            "time": "2025-01-10T20:57:00+00:00"
         },
         {
             "name": "intervention/gif",
-            "version": "4.2.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/gif.git",
-                "reference": "42c131a31b93c440ad49061b599fa218f06f93be"
+                "reference": "6addac2c68b4bc0e37d0d3ccedda57eb84729c49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/gif/zipball/42c131a31b93c440ad49061b599fa218f06f93be",
-                "reference": "42c131a31b93c440ad49061b599fa218f06f93be",
+                "url": "https://api.github.com/repos/Intervention/gif/zipball/6addac2c68b4bc0e37d0d3ccedda57eb84729c49",
+                "reference": "6addac2c68b4bc0e37d0d3ccedda57eb84729c49",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.1"
             },
             "require-dev": {
-                "phpstan/phpstan": "^1",
-                "phpunit/phpunit": "^10.0",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^10.0 || ^11.0",
                 "slevomat/coding-standard": "~8.0",
                 "squizlabs/php_codesniffer": "^3.8"
             },
@@ -719,7 +719,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/gif/issues",
-                "source": "https://github.com/Intervention/gif/tree/4.2.0"
+                "source": "https://github.com/Intervention/gif/tree/4.2.1"
             },
             "funding": [
                 {
@@ -735,20 +735,20 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2024-09-20T13:35:02+00:00"
+            "time": "2025-01-05T10:52:39+00:00"
         },
         {
             "name": "intervention/image",
-            "version": "3.10.2",
+            "version": "3.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "1c68e5fdf443374f3580c5b920a7f177eccdab85"
+                "reference": "6b9ce4fc4485d30117e13935b25bc55a8b894a79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/1c68e5fdf443374f3580c5b920a7f177eccdab85",
-                "reference": "1c68e5fdf443374f3580c5b920a7f177eccdab85",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/6b9ce4fc4485d30117e13935b25bc55a8b894a79",
+                "reference": "6b9ce4fc4485d30117e13935b25bc55a8b894a79",
                 "shasum": ""
             },
             "require": {
@@ -758,7 +758,7 @@
             },
             "require-dev": {
                 "mockery/mockery": "^1.6",
-                "phpstan/phpstan": "^2",
+                "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^10.0 || ^11.0",
                 "slevomat/coding-standard": "~8.0",
                 "squizlabs/php_codesniffer": "^3.8"
@@ -795,7 +795,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/3.10.2"
+                "source": "https://github.com/Intervention/image/tree/3.11.0"
             },
             "funding": [
                 {
@@ -811,7 +811,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2025-01-04T07:31:37+00:00"
+            "time": "2025-01-18T15:42:14+00:00"
         },
         {
             "name": "jaeger/phpquery-single",
@@ -2054,16 +2054,16 @@
         },
         {
             "name": "topthink/framework",
-            "version": "v8.1.1",
+            "version": "v8.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "d301115ea77f33745b8d6659c74740c34fe53e9b"
+                "reference": "8faec5c9b7a7f2a66ca3140a57e81bd6cd37567c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/framework/zipball/d301115ea77f33745b8d6659c74740c34fe53e9b",
-                "reference": "d301115ea77f33745b8d6659c74740c34fe53e9b",
+                "url": "https://api.github.com/repos/top-think/framework/zipball/8faec5c9b7a7f2a66ca3140a57e81bd6cd37567c",
+                "reference": "8faec5c9b7a7f2a66ca3140a57e81bd6cd37567c",
                 "shasum": ""
             },
             "require": {
@@ -2071,12 +2071,13 @@
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "php": ">=8.0.0",
-                "psr/container": "^2.0",
                 "psr/http-message": "^1.0",
                 "psr/log": "^1.0|^2.0|^3.0",
                 "psr/simple-cache": "^1.0|^2.0|^3.0",
+                "topthink/think-container": "^3.0",
                 "topthink/think-helper": "^3.1",
-                "topthink/think-orm": "^3.0|^4.0"
+                "topthink/think-orm": "^3.0|^4.0",
+                "topthink/think-validate": "^3.0"
             },
             "require-dev": {
                 "guzzlehttp/psr7": "^2.1.0",
@@ -2114,9 +2115,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/framework/issues",
-                "source": "https://github.com/top-think/framework/tree/v8.1.1"
+                "source": "https://github.com/top-think/framework/tree/v8.1.2"
             },
-            "time": "2024-11-26T05:57:55+00:00"
+            "time": "2025-01-14T08:04:03+00:00"
         },
         {
             "name": "topthink/think-captcha",
@@ -2170,6 +2171,52 @@
                 "source": "https://github.com/top-think/think-captcha/tree/v3.0.11"
             },
             "time": "2024-11-22T12:59:35+00:00"
+        },
+        {
+            "name": "topthink/think-container",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-container.git",
+                "reference": "a24d442a02fb2a4716de232ff1a4f006c178a370"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/think-container/zipball/a24d442a02fb2a4716de232ff1a4f006c178a370",
+                "reference": "a24d442a02fb2a4716de232ff1a4f006c178a370",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0",
+                "psr/container": "^2.0",
+                "topthink/think-helper": "^3.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [],
+                "psr-4": {
+                    "think\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "liu21st",
+                    "email": "liu21st@gmail.com"
+                }
+            ],
+            "description": "PHP Container & Facade Manager",
+            "support": {
+                "issues": "https://github.com/top-think/think-container/issues",
+                "source": "https://github.com/top-think/think-container/tree/v3.0.1"
+            },
+            "time": "2025-01-07T08:19:23+00:00"
         },
         {
             "name": "topthink/think-filesystem",
@@ -2315,16 +2362,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v3.0.33",
+            "version": "v3.0.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "6e0ea679f7448ff9c8906606462505597681e22e"
+                "reference": "715e55da149fe32a12d68ef10e5b00e70bd3dbec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/6e0ea679f7448ff9c8906606462505597681e22e",
-                "reference": "6e0ea679f7448ff9c8906606462505597681e22e",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/715e55da149fe32a12d68ef10e5b00e70bd3dbec",
+                "reference": "715e55da149fe32a12d68ef10e5b00e70bd3dbec",
                 "shasum": ""
             },
             "require": {
@@ -2367,9 +2414,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v3.0.33"
+                "source": "https://github.com/top-think/think-orm/tree/v3.0.34"
             },
-            "time": "2024-12-19T01:52:44+00:00"
+            "time": "2025-01-14T06:03:33+00:00"
         },
         {
             "name": "topthink/think-template",
@@ -2413,17 +2460,61 @@
             "time": "2024-10-16T03:41:06+00:00"
         },
         {
-            "name": "topthink/think-view",
-            "version": "v2.0.0",
+            "name": "topthink/think-validate",
+            "version": "v3.0.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/top-think/think-view.git",
-                "reference": "d2a076011c96d2edd8016703a827fb54b2683c62"
+                "url": "https://github.com/top-think/think-validate.git",
+                "reference": "2729f938952a01e9d0e1a17d742b07fcf960ae31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-view/zipball/d2a076011c96d2edd8016703a827fb54b2683c62",
-                "reference": "d2a076011c96d2edd8016703a827fb54b2683c62",
+                "url": "https://api.github.com/repos/top-think/think-validate/zipball/2729f938952a01e9d0e1a17d742b07fcf960ae31",
+                "reference": "2729f938952a01e9d0e1a17d742b07fcf960ae31",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0",
+                "topthink/think-container": ">=3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/helper.php"
+                ],
+                "psr-4": {
+                    "think\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "liu21st",
+                    "email": "liu21st@gmail.com"
+                }
+            ],
+            "description": "think validate",
+            "support": {
+                "issues": "https://github.com/top-think/think-validate/issues",
+                "source": "https://github.com/top-think/think-validate/tree/v3.0.3"
+            },
+            "time": "2025-01-07T08:18:42+00:00"
+        },
+        {
+            "name": "topthink/think-view",
+            "version": "v2.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-view.git",
+                "reference": "e6a68e4179baf8d795700d62b710da86d7c3f783"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/think-view/zipball/e6a68e4179baf8d795700d62b710da86d7c3f783",
+                "reference": "e6a68e4179baf8d795700d62b710da86d7c3f783",
                 "shasum": ""
             },
             "require": {
@@ -2449,9 +2540,9 @@
             "description": "thinkphp template driver",
             "support": {
                 "issues": "https://github.com/top-think/think-view/issues",
-                "source": "https://github.com/top-think/think-view/tree/v2.0.0"
+                "source": "https://github.com/top-think/think-view/tree/v2.0.4"
             },
-            "time": "2023-02-25T12:18:09+00:00"
+            "time": "2025-01-10T08:49:57+00:00"
         },
         {
             "name": "workerman/channel",
@@ -2543,16 +2634,16 @@
         },
         {
             "name": "workerman/gatewayclient",
-            "version": "v3.1.0",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/GatewayClient.git",
-                "reference": "a001220da39086566d398c1b46c4fc53fc94aa77"
+                "reference": "5dfa435a5583ac1bd13d18a0f5a942867e23f536"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/GatewayClient/zipball/a001220da39086566d398c1b46c4fc53fc94aa77",
-                "reference": "a001220da39086566d398c1b46c4fc53fc94aa77",
+                "url": "https://api.github.com/repos/walkor/GatewayClient/zipball/5dfa435a5583ac1bd13d18a0f5a942867e23f536",
+                "reference": "5dfa435a5583ac1bd13d18a0f5a942867e23f536",
                 "shasum": ""
             },
             "type": "library",
@@ -2568,9 +2659,9 @@
             "homepage": "http://www.workerman.net",
             "support": {
                 "issues": "https://github.com/walkor/GatewayClient/issues",
-                "source": "https://github.com/walkor/GatewayClient/tree/v3.1.0"
+                "source": "https://github.com/walkor/GatewayClient/tree/v3.1.1"
             },
-            "time": "2024-03-07T01:56:10+00:00"
+            "time": "2025-01-15T06:35:41+00:00"
         },
         {
             "name": "workerman/phpsocket.io",
@@ -2697,16 +2788,16 @@
         },
         {
             "name": "yansongda/artful",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yansongda/artful.git",
-                "reference": "4118bce8a6cd506580dd36957c833ce222d0dc2e"
+                "reference": "bad726c6287aca219750823bff46f70287ec3995"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yansongda/artful/zipball/4118bce8a6cd506580dd36957c833ce222d0dc2e",
-                "reference": "4118bce8a6cd506580dd36957c833ce222d0dc2e",
+                "url": "https://api.github.com/repos/yansongda/artful/zipball/bad726c6287aca219750823bff46f70287ec3995",
+                "reference": "bad726c6287aca219750823bff46f70287ec3995",
                 "shasum": ""
             },
             "require": {
@@ -2725,7 +2816,7 @@
                 "hyperf/pimple": "^2.2",
                 "mockery/mockery": "^1.4",
                 "monolog/monolog": "^2.2",
-                "phpstan/phpstan": "^1.0.0",
+                "phpstan/phpstan": "^1.0.0 || ^2.0.0",
                 "phpunit/phpunit": "^9.0",
                 "symfony/event-dispatcher": "^5.2.0",
                 "symfony/http-foundation": "^5.2.0",
@@ -2767,7 +2858,7 @@
                 "issues": "https://github.com/yansongda/artful/issues",
                 "source": "https://github.com/yansongda/artful"
             },
-            "time": "2024-06-09T15:54:20+00:00"
+            "time": "2025-01-09T12:39:39+00:00"
         },
         {
             "name": "yansongda/pay",
@@ -2844,16 +2935,16 @@
         },
         {
             "name": "yansongda/supports",
-            "version": "v4.0.11",
+            "version": "v4.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yansongda/supports.git",
-                "reference": "c26a61c8bc2dbae6278693d8ec5d6771615e7674"
+                "reference": "308de376d20cb1cd4f959644793e0582ccd1ef6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yansongda/supports/zipball/c26a61c8bc2dbae6278693d8ec5d6771615e7674",
-                "reference": "c26a61c8bc2dbae6278693d8ec5d6771615e7674",
+                "url": "https://api.github.com/repos/yansongda/supports/zipball/308de376d20cb1cd4f959644793e0582ccd1ef6d",
+                "reference": "308de376d20cb1cd4f959644793e0582ccd1ef6d",
                 "shasum": ""
             },
             "require": {
@@ -2901,7 +2992,7 @@
                 "issues": "https://github.com/yansongda/supports/issues",
                 "source": "https://github.com/yansongda/supports"
             },
-            "time": "2024-11-06T08:18:03+00:00"
+            "time": "2025-01-08T08:55:20+00:00"
         },
         {
             "name": "yzh52521/easyhttp",

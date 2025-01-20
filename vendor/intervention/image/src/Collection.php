@@ -153,7 +153,7 @@ class Collection implements CollectionInterface, IteratorAggregate, Countable
             return $this->items[$query];
         }
 
-        if (is_string($query) && strpos($query, '.') === false) {
+        if (is_string($query) && !str_contains($query, '.')) {
             return array_key_exists($query, $this->items) ? $this->items[$query] : $default;
         }
 
@@ -185,7 +185,7 @@ class Collection implements CollectionInterface, IteratorAggregate, Countable
 
         return new self(
             array_map(
-                fn($item) => $callback($item),
+                fn(mixed $item) => $callback($item),
                 $this->items,
             )
         );
@@ -202,7 +202,7 @@ class Collection implements CollectionInterface, IteratorAggregate, Countable
         return new self(
             array_filter(
                 $this->items,
-                fn($item) => $callback($item),
+                fn(mixed $item) => $callback($item),
             )
         );
     }

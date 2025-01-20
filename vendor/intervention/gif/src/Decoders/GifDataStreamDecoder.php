@@ -41,7 +41,7 @@ class GifDataStreamDecoder extends AbstractDecoder
             );
         }
 
-        while ($this->viewNextByte() != Trailer::MARKER) {
+        while ($this->viewNextByte() !== Trailer::MARKER) {
             match ($this->viewNextBytes(2)) {
                 // trailing "global" comment blocks which are not part of "FrameBlock"
                 AbstractExtension::MARKER . CommentExtension::LABEL
