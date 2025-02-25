@@ -24,10 +24,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
     );
 
     public static $prefixLengthsPsr4 = array (
-        'y' => 
-        array (
-            'yzh52521\\EasyHttp\\' => 18,
-        ),
         't' => 
         array (
             'think\\view\\driver\\' => 18,
@@ -123,10 +119,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
     );
 
     public static $prefixDirsPsr4 = array (
-        'yzh52521\\EasyHttp\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yzh52521/easyhttp/src',
-        ),
         'think\\view\\driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-view/src',
@@ -145,13 +137,13 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         ),
         'think\\' => 
         array (
-            0 => __DIR__ . '/..' . '/topthink/think-filesystem/src',
-            1 => __DIR__ . '/..' . '/topthink/think-helper/src',
-            2 => __DIR__ . '/..' . '/topthink/think-template/src',
-            3 => __DIR__ . '/..' . '/topthink/think-container/src',
-            4 => __DIR__ . '/..' . '/topthink/think-validate/src',
-            5 => __DIR__ . '/..' . '/topthink/think-orm/src',
-            6 => __DIR__ . '/..' . '/topthink/framework/src/think',
+            0 => __DIR__ . '/..' . '/topthink/framework/src/think',
+            1 => __DIR__ . '/..' . '/topthink/think-container/src',
+            2 => __DIR__ . '/..' . '/topthink/think-filesystem/src',
+            3 => __DIR__ . '/..' . '/topthink/think-helper/src',
+            4 => __DIR__ . '/..' . '/topthink/think-orm/src',
+            5 => __DIR__ . '/..' . '/topthink/think-template/src',
+            6 => __DIR__ . '/..' . '/topthink/think-validate/src',
         ),
         'taoser\\think\\' => 
         array (

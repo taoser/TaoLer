@@ -88,25 +88,25 @@
 					//time: 2000,
                 	});
 				
-					$.get("{:url('system.upgrade/check')}",function (data){
-						if (data.code === 0) {
+					$.get("{:url('system.upgrade/check')}",function (res){
+						if (res.code === 0) {
 							//已件最新版本
 							layer.close(loading);
-							toast.info({title:"通知消息", message: data.msg ,position: 'topRight'})
-						} else if (data.code === 1) {
+							toast.info({title:"通知消息", message: res.msg ,position: 'topRight'})
+						} else if (res.code === 1) {
 							//可升级
 							layer.close(loading);
-							$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+data.data.upnum+'</span>个新版本：<span style="color:red">可更新至v' + data.data.version + ' [!重要:' + data.data.info + ']</span></div>');
+							$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+ res.data.up_num +'</span>个新版本：<span style="color:red">可更新至v' + res.data.version + ' [!重要:' + res.data.info + ']</span></div>');
 							$('button#upload-check').hide();
 							//更新系统
-							layer.confirm('更新v' + data.data.version + ',升级说明：<span style="color:red">[!重要：' + data.data.info + ']</span><br>确定升级？',{icon: 3, title:'升级系统'}, function(index){
+							layer.confirm('更新v' + res.data.version + ',升级说明：<span style="color:red">[!重要：' + res.data.info + ']</span><br>确定升级？',{icon: 3, title:'升级系统'}, function(index){
 								uploads();	//更新
 								layer.close(index);	//关闭load加载层
 							});
 						} else {
 							//服务器错误
 							layer.close(loading);
-							toast.error({title:"服务器错误",message:data.msg});
+							toast.error({title:"服务器错误",message:res.msg});
 						}
 					});
 					return false;	
@@ -115,10 +115,10 @@
 				//更新
 				function uploads(){
 					var load = layer.load();
-					$.get("{:url('system.upgrade/upload')}",function (data){
-							if (data.code == 0) {
+					$.get("{:url('system.upgrade/upload')}",function (res){
+							if (res.code == 0) {
 								layer.close(load);
-								layer.msg(data.msg,{
+								layer.msg(res.msg,{
 									icon:6,
 									time:2000
 								},function(){
@@ -126,7 +126,7 @@
 								});
 							} else {
 								layer.close(load);
-								toast.error({title:"服务器错误", message:data.msg})
+								toast.error({title:"服务器错误", message: res.msg})
 								return false;
 							}
 						}

@@ -24,7 +24,6 @@ use app\common\controller\AdminController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use taoler\com\Api;
 use taoler\com\Str;
 use taoler\com\Files;
 use think\facade\Config;
@@ -32,6 +31,7 @@ use think\facade\Log;
 use app\common\lib\SqlFile;
 use app\common\lib\Zip;
 use taoser\SetArr;
+use app\common\lib\facade\HttpHelper;
 
 
 class Upgrade extends AdminController
@@ -107,24 +107,14 @@ class Upgrade extends AdminController
 	//升级前的版本检测
 	public function check()
 	{
-        $cy = Api::urlPost($this->sys['base_url'],['u'=>$this->sys['domain'], 'key' => $this->sys['key']]);
+        $cy = HttpHelper::post($this->sys['base_url'],['u'=>$this->sys['domain'], 'key' => $this->sys['key']])->toJson();
+
         if($cy->code == 0 && $cy->level !== $this->sys['clevel']){
             Db::name('system')->cache('system')->update(['clevel'=>$cy->level,'id'=>1]);
         }
-        $versions = Api::urlPost($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version]);
-		// 判断服务器状态
-		$version_code = $versions->code;
-		if($version_code == -1){
-			$res = json(['code'=>$version_code,'msg'=>$versions->msg]);
-		}
-		if($version_code == 1){
-            $res = json(['code'=>$version_code,'msg'=>$versions->msg,'data'=>['version'=>$versions->version,'upnum'=>$versions->up_num,'info'=>$versions->info]]);
-		}
-		if($version_code == 0){
-            $res = json(['code'=>$version_code,'msg'=>$versions->msg]);
-		}
 
-        return $res;
+        $response = HttpHelper::post($this->sys['upcheck_url'],['pn'=>$this->pn,'ver'=>$this->sys_version])->toJson();
+        return json($response);
 	}
 	
     /**
@@ -133,7 +123,13 @@ class Upgrade extends AdminController
      */
     public function upload()
     {
-		$versions = Api::urlPost($this->sys['upgrade_url'],['url'=>$this->sys['domain'],'key'=>$this->sys['key'],'pn'=>$this->pn,'ver'=>$this->sys_version]);
+		$versions = HttpHelper::post($this->sys['upgrade_url'],[
+            'url'=>$this->sys['domain'],
+            'key'=>$this->sys['key'],
+            'pn'=>$this->pn,
+            'ver'=>$this->sys_version
+            ])->toJson();
+
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'check','progress'=>'0%','msg'=>'===>升级检测开始===>']);
 
 		//判断服务器状态
@@ -201,14 +197,16 @@ class Upgrade extends AdminController
         //更新系统的版本号了
         //更新php的版本号了(应该跟svn／git的版本号一致)
         //更新数据库的版本号了(应该跟svn／git的版本号一致)
-        $value = [
+		$res = SetArr::name('taoler')->edit([
             'version'    => $version_num
-        ];
-		$res = SetArr::name('taoler')->edit($value);
+        ]);
+
 		if(!$res){
 			return json(['code'=>-1,'msg'=>'代码更新成功,但版本写入失败']);
 		}
+
         Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'success','progress'=>'100%','msg'=>'升级成功！']);
+        
         //清理缓存
         $this->clearSysCache();
 		return json(['code'=>0,'msg'=>'升级成功']);

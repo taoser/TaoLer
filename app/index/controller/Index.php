@@ -29,6 +29,7 @@ class Index extends IndexBaseController
      */
     public function index()
     {
+      
 		// $ip = file_get_contents('https://myip.ipip.net');
 		// echo "My public IP address is: " . $ip;
 		// $alipay = AlipayFactory::createPayMethod();

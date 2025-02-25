@@ -2,25 +2,24 @@
 
 namespace app\common\lib;
 
-use yzh52521\EasyHttp\Http;
-use yzh52521\EasyHttp\Request;
-use yzh52521\EasyHttp\Response;
-use yzh52521\EasyHttp\RequestException;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Exception;
 
 class HttpHelper
 {
-    /**
-     * @var Http;
-     */
-    protected $http;
-
     protected $response;
 
+    private $client;
+
+    private $url;
+
+    private $options = [];
+
     public function __construct(){
-//        $this->http = new Http();
-        if(!$this->http) {
-            $this->http = new Request();
-        }
+        // verify 校验ssl, 填写cacert.pem路径或者false
+        $this->client = new Client(['verify' => 'cacert.pem']);
+        // $this->client = new Client(['verify' => false]);
     }
 
     /**
@@ -28,9 +27,10 @@ class HttpHelper
      * @param string $url
      * @return $this
      */
-    public function withHost(string $url = 'http://api.aieok.com'): HttpHelper
+    public function withHost(string $url = 'https://www.aieok.com/api'): HttpHelper
     {
-        $this->http = $this->http->withHost($url);
+        $this->url = $url;
+        
         return $this;
     }
 
@@ -39,9 +39,12 @@ class HttpHelper
      * @param array $data
      * @return $this
      */
-    public function withHeaders(array $data = []): HttpHelper
+    public function withHeaders(array $headers = []): HttpHelper
     {
-        $this->http = $this->http->withHeaders($data);
+        $this->options = array_merge_recursive($this->options, [
+            'headers' => $headers,
+        ]);
+
         return $this;
     }
 
@@ -51,14 +54,24 @@ class HttpHelper
      * @param array $data
      * @return $this
      */
-    public function get(string $url, array $data = []): HttpHelper
+    public function get(string $url, array $data = []): HttpHelper|null
     {
-        try {
-            $this->response = $this->http->get($url, $data);
-        } catch (\Exception $e) {
-            //echo $e->getMessage();
+        try{
+
+            $url = $this->url . $url;
+            if(!empty($data)) {
+                $this->options = array_merge($this->options, ['query' => $data]);
+            }
+            $this->response = $this->client->get($url, $this->options);
+
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            return null;   
+        } catch (RequestException $e) {
+            $this->handleException($e);
+            return null;
         }
-//        $this->response = $this->http->get($url, $data);
+
         return $this;
     }
 
@@ -68,14 +81,21 @@ class HttpHelper
      * @param array $data
      * @return $this
      */
-    public function post(string $url, array $data = [])
+    public function post(string $url, array $data = []): HttpHelper|null
     {
         try {
-            $this->response = $this->http->post($url, $data);
-        } catch (\Exception $e) {
-            //echo $e->getMessage();
+
+            $url = $this->url . $url;
+            $this->options = array_merge($this->options, ['json' => $data]);
+            $this->response = $this->client->post($url, $this->options);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            return null;
+        } catch (RequestException $e) {
+            $this->handleException($e);
+            return null;
         }
-//        $this->response = $this->http->post($url, $data);
+
         return $this;
     }
 
@@ -85,25 +105,19 @@ class HttpHelper
      */
     public function toJson()
     {
-        if($this->ok()) {
-            return $this->response->json();
-        } else {
-//            return json(['code' => -1, 'msg' => 'server failed']);
-            return json_decode('{"code": -1, "msg": "server failed"}');
-        }
+        $body = $this->response->getBody()->getContents();
+        return json_decode($body);
     }
 
     /**
      * 返回ARRAY数据
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        if($this->ok()) {
-            return $this->response->array();
-        } else {
-            return ['code' => -1, 'msg' => 'server failed'];
-        }
+        $body = $this->response->getBody()->getContents();
+
+        return json_decode($body, true);
     }
 
     /**
@@ -111,14 +125,28 @@ class HttpHelper
      */
     public function ok() : bool
     {
-//        return $this->response->status() === 200;
-//halt($this->response);
 
-      if($this->response !== null) {
-          return $this->response->status() === 200;
-      }
-      return false;
+        if($this->response !== null) {
+            return $this->response->getStatusCode() === 200;
+        }
 
+        return false;
+    }
+
+    /**
+     * 处理请求异常
+     * @param RequestException $e 异常对象
+     */
+    private function handleException(RequestException $e)
+    {
+        if ($e->hasResponse()) {
+            $this->response = $e->getResponse();
+            $statusCode = $this->response->getStatusCode();
+            $body = $this->response->getBody()->getContents();
+            echo "请求出错，状态码: {$statusCode}，响应内容: {$body}\n";
+        } else {
+            echo "请求出错: ". $e->getMessage(). "\n";
+        }
     }
 
 }

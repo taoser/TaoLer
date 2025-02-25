@@ -17,7 +17,6 @@ use think\facade\Request;
 use think\facade\Cache;
 use app\admin\model\Cunsult;
 use think\facade\Config;
-use taoler\com\Api;
 use app\common\lib\facade\HttpHelper;
 use app\index\model\Comment;
 
@@ -139,13 +138,13 @@ class Index extends AdminBaseController
      */
     public function sysUpgradeCheck()
     {
-        $data = ['pn'=>$this->pn,'ver'=>$this->sys_version];
-        $response = HttpHelper::withHost()->get('/v1/upload/check', $data)->toJson();
+        $response = HttpHelper::withHost()->get('/v1/upload/check', ['pn'=>$this->pn,'ver'=>$this->sys_version])->toJson();
+
         if($response->code !== -1){
             return $response->code ? "<span style='color:#b2aeae'>有{$response->up_num}个版本需更新,当前可更新至{$response->version}</span>" : $response->msg;
-        } else {
-            return lang('No new messages');
         }
+
+        return lang('No new messages');
     }
 
     /**
@@ -156,7 +155,12 @@ class Index extends AdminBaseController
     {
         if(empty($this->sys['key'])) return json(['code' => -1, 'msg' => '请配置网站KEY']);
         $data = ['u'=>$this->sys['domain'],'key'=>$this->sys['key']];
-        $response = HttpHelper::withHost()->get('/v1/cy', $data)->toJson();
+
+        $response = HttpHelper::withHost()
+		->get('/v1/cy', [
+			'u'=>$this->sys['domain'],
+			'key'=>$this->sys['key']
+		])->toJson();
 
         if($response->code == 0){
             Db::name('system')->save(['id' => 1, 'clevel' => $response->data->level]);
@@ -178,16 +182,24 @@ class Index extends AdminBaseController
 			->whereWeek('a.create_time')
 			->order('a.create_time', 'desc')
 			->paginate(10);
+
 			$res = [];
 			$count = $forumList->total();
+
 			if($count){
 				$res['code'] = 0;
 				$res['msg'] = '';
 				$res['count'] = $count;
 				foreach($forumList as $k=>$v){
 				    //$url = (string) str_replace("admin","index",$this->domain.url('article/detail',['id'=>$v['aid']]));
-					$url = $this->getRouteUrl($v['aid'],$v['ename']);
-				$res['data'][]= ['id'=>$url,'title'=>htmlspecialchars($v['title']),'name'=>$v['name'],'catename'=>$v['catename'],'pv'=>$v['pv']];
+					$url = $this->getRouteUrl($v['aid'], $v['ename']);
+
+					$res['data'][]= [
+						'id'		=>$url,
+						'title'		=>htmlspecialchars($v['title']),
+						'name'		=>$v['name'],
+						'catename'	=>$v['catename'],
+						'pv'		=>$v['pv']];
 				}
 			} else {
 				$res = ['code'=>-1,'msg'=>'本周还没有发帖！'];
@@ -228,39 +240,36 @@ class Index extends AdminBaseController
 	//动态信息
 	public function news()
 	{
-		$data = Request::only(['page', 'limit']);
-		$url = $this->api.'/v1/news?'.'page='.$data['page'].'&'.'limit='.$data['limit'];
+		$data = Request::only(['page/d', 'limit/d']);
+		
 		$news = Cache::get('news'.$data['page'].'_'.$data['limit']);
 		if(empty($news)){
-			$news = Api::urlGet($url);
+			$news = HttpHelper::withHost()->get('/v1/news', $data)->toJson();
 			if($news->code == 0){
-				Cache::set('news'.$data['page'].'_'.$data['limit'],$news,600);
+				Cache::set('news'.$data['page'].'_'.$data['limit'],$news, 600);
 			}
 		}
+
 		return $news;
 	}
 	
 	//提交反馈
 	public function cunsult()
 	{
-		$url = $this->api.'/v1/reply';
 		if(Request::isAjax()){
 			$data = Request::only(['type','title','content','post','uid']);
-			$apiRes = Api::urlPost($url,$data);
+
+			$response = HttpHelper::withHost()->post('/v1/reply', $data);
 			$data['poster'] = Session::get('admin_id');
 			unset($data['post']);
-			if($apiRes){
+
+			if($response->ok()){
+				$result = $response->toJson();
 				$res = Cunsult::create($data);
-				if($res->id){
-					//$result = mailto($mail,$data['title'],'我的问题类型是'.$data['type'].$data['content']);
-					$res = ['code'=>0,'msg'=>$apiRes->msg];
-				} else {
-					$res = ['code'=>0,'msg'=>$apiRes->msg];
-				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'失败，请稍后再试提交...'];
+				return json(['code'=>0,'msg' => $result->msg]);
 			}
-			return json($res);
+
+			return json(['code'=>-1,'msg'=>'失败，请稍后再试提交...']);
 		}
 		
 	}
