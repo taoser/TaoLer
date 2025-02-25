@@ -79,27 +79,31 @@ class Addons extends AdminBaseController
             return json(['code' => -1, 'msg' => '没有安装任何插件']);
         }
 
-        // 在线插件
-        $response = HttpHelper::withHost()->get('/v1/addonlist', $data);
-        $addons = $response->toJson();
+        try{
+            // 在线插件
+            $response = HttpHelper::withHost()->post('/v1/getaddonlist', $data);
+            if($response->ok()) {
+                $addons = $response->toJson();
+                // $data数据 与本地文件对比
+                $data = [];
+                foreach($addons->data as $v){
+                    if(in_array($v->name, $localAddons)) {
+                        $info = get_addons_info($v->name);
+                        //已安装
+                        $v->isInstall = 1;
+                        //判断是否有新版本
+                        if($v->version > $info['version']) $v->have_newversion = 1;
+                        $v->price =  $v->price ? $v->price : '免费';
+                    }
+                    $data[] = $v;
+                };
 
-        if($response->ok()) {
-            $res = ['code' => 0, 'msg' => 'ok', 'count' => $addons->count];
-            // $data数据 与本地文件对比
-            foreach($addons->data as $v){
-                if(in_array($v->name, $localAddons)) {
-                    $info = get_addons_info($v->name);
-                    //已安装
-                    $v->isInstall = 1;
-                    //判断是否有新版本
-                    if($v->version > $info['version']) $v->have_newversion = 1;
-                    $v->price =  $v->price ? $v->price : '免费';
-                }
-                $res['data'][] = $v;
-            };
-            return json($res);
+                return json(['code' => 0, 'msg' => 'ok', 'count' => $addons->count, 'data' => $data]);
+            }
+        } catch(Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
-        return json(['code' => -1, 'msg' => '未获取到服务器信息']);
+        
     }
 
     // 插件文件升级检查
@@ -208,7 +212,7 @@ class Addons extends AdminBaseController
             // 设置插件info
             set_addons_info($data['name'],['status' => 1,'install' => 1]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
 
@@ -221,7 +225,7 @@ class Addons extends AdminBaseController
         /**
      * 升级插件
      * @return Json
-     * @throws \Exception
+     * @throws Exception
      */
     public function upgrade()
     {
@@ -279,7 +283,7 @@ class Addons extends AdminBaseController
                 $this->insertMenu($menu, (int)$pid, 1);
             }
             
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
 
@@ -290,7 +294,7 @@ class Addons extends AdminBaseController
      * 卸载插件
      * @param string $name
      * @return Json
-     * @throws \Exception
+     * @throws Exception
      */
     public function uninstall(string $name = '')
     {
@@ -332,7 +336,7 @@ class Addons extends AdminBaseController
             if(file_exists($admin_validate)) Files::delDir($admin_validate);
             if(file_exists($addon_public)) Files::delDir($addon_public);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
 
@@ -357,7 +361,7 @@ class Addons extends AdminBaseController
                 $res = ['code'=>0,'msg'=>'已被禁用'];
             }
             $info['status']==1 ?$class->enabled():$class->disabled();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
 
@@ -368,7 +372,7 @@ class Addons extends AdminBaseController
      * 配置插件
      * @param $name
      * @return string|Json
-     * @throws \Exception
+     * @throws Exception
      */
     public function config()
     {
@@ -449,8 +453,8 @@ class Addons extends AdminBaseController
                 }
             }
 
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
 
         return true;
@@ -461,7 +465,7 @@ class Addons extends AdminBaseController
      * @param array $menu 菜单数组
      * @param string $module 插件模式 预留功能
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function removeMenu(array $menu, string $module = 'addon')
     {
@@ -479,8 +483,8 @@ class Addons extends AdminBaseController
                 }
             }
 
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
         return true;
     }
@@ -503,16 +507,16 @@ class Addons extends AdminBaseController
     public function pay()
     {
         $data = Request::only(['id','name','version','uid','price']);
-//        $url = $this->getSystem()['api_url'].'/v1/createOrder';
-//        $order = Api::urlPost($url,$data);
         $response = HttpHelper::withHost()->post('/v1/createOrder', $data);
         if ($response->ok()) {
-//            $orderData = json_decode(json_encode($response->toJson()->data),TRUE);
-            View::assign('orderData',$response->toArray()['data']);
+            $res = $response->toArray();
+
+            View::assign('orderData',$res['data']);
             return View::fetch();
-        } else {
-            return json($response->toJson());
+
         }
+
+        return json($response->toJson());
     }
 
     /**

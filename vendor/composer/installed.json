@@ -187,17 +187,17 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v6.10.2",
-            "version_normalized": "6.10.2.0",
+            "version": "v6.11.0",
+            "version_normalized": "6.11.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "30c19ed0f3264cb660ea496895cfb6ef7ee3653b"
+                "reference": "8f718f4dfc9c5d5f0c994cdfd103921b43592712"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/30c19ed0f3264cb660ea496895cfb6ef7ee3653b",
-                "reference": "30c19ed0f3264cb660ea496895cfb6ef7ee3653b",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/8f718f4dfc9c5d5f0c994cdfd103921b43592712",
+                "reference": "8f718f4dfc9c5d5f0c994cdfd103921b43592712",
                 "shasum": ""
             },
             "require": {
@@ -215,7 +215,7 @@
                 "ext-sodium": "Support EdDSA (Ed25519) signatures",
                 "paragonie/sodium_compat": "Support EdDSA (Ed25519) signatures when libsodium is not present"
             },
-            "time": "2024-11-24T11:22:49+00:00",
+            "time": "2025-01-23T05:11:06+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -247,7 +247,7 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v6.10.2"
+                "source": "https://github.com/firebase/php-jwt/tree/v6.11.0"
             },
             "install-path": "../firebase/php-jwt"
         },
@@ -587,17 +587,17 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v11.38.2",
-            "version_normalized": "11.38.2.0",
+            "version": "v11.44.0",
+            "version_normalized": "11.44.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
-                "reference": "4a777578ce2388384565bf5c8e76881f0da68e54"
+                "reference": "4dcc3fcbab92e734fc0c08d9cfd97f5a1aef18ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/container/zipball/4a777578ce2388384565bf5c8e76881f0da68e54",
-                "reference": "4a777578ce2388384565bf5c8e76881f0da68e54",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/4dcc3fcbab92e734fc0c08d9cfd97f5a1aef18ca",
+                "reference": "4dcc3fcbab92e734fc0c08d9cfd97f5a1aef18ca",
                 "shasum": ""
             },
             "require": {
@@ -608,7 +608,7 @@
             "provide": {
                 "psr/container-implementation": "1.1|2.0"
             },
-            "time": "2024-12-08T15:40:56+00:00",
+            "time": "2025-02-10T14:20:57+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -641,17 +641,17 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.38.2",
-            "version_normalized": "11.38.2.0",
+            "version": "v11.44.0",
+            "version_normalized": "11.44.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "534b697fc1dd9fbdd9fbf2f33fc9dcbb943dea75"
+                "reference": "b350a3cd8450846325cb49e1cbc1293598b18898"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/534b697fc1dd9fbdd9fbf2f33fc9dcbb943dea75",
-                "reference": "534b697fc1dd9fbdd9fbf2f33fc9dcbb943dea75",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/b350a3cd8450846325cb49e1cbc1293598b18898",
+                "reference": "b350a3cd8450846325cb49e1cbc1293598b18898",
                 "shasum": ""
             },
             "require": {
@@ -659,7 +659,7 @@
                 "psr/container": "^1.1.1|^2.0.1",
                 "psr/simple-cache": "^1.0|^2.0|^3.0"
             },
-            "time": "2025-01-10T20:57:00+00:00",
+            "time": "2025-02-10T14:20:57+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -763,17 +763,17 @@
         },
         {
             "name": "intervention/image",
-            "version": "3.11.0",
-            "version_normalized": "3.11.0.0",
+            "version": "3.11.1",
+            "version_normalized": "3.11.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "6b9ce4fc4485d30117e13935b25bc55a8b894a79"
+                "reference": "0f87254688e480fbb521e2a1ac6c11c784ca41af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/6b9ce4fc4485d30117e13935b25bc55a8b894a79",
-                "reference": "6b9ce4fc4485d30117e13935b25bc55a8b894a79",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/0f87254688e480fbb521e2a1ac6c11c784ca41af",
+                "reference": "0f87254688e480fbb521e2a1ac6c11c784ca41af",
                 "shasum": ""
             },
             "require": {
@@ -791,7 +791,7 @@
             "suggest": {
                 "ext-exif": "Recommended to be able to read EXIF data properly."
             },
-            "time": "2025-01-18T15:42:14+00:00",
+            "time": "2025-02-01T07:28:26+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -822,7 +822,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/3.11.0"
+                "source": "https://github.com/Intervention/image/tree/3.11.1"
             },
             "funding": [
                 {
@@ -1991,17 +1991,17 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v7.2.0",
-            "version_normalized": "7.2.0.0",
+            "version": "v7.2.3",
+            "version_normalized": "7.2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "c6a22929407dec8765d6e2b6ff85b800b245879c"
+                "reference": "82b478c69745d8878eb60f9a049a4d584996f73a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/c6a22929407dec8765d6e2b6ff85b800b245879c",
-                "reference": "c6a22929407dec8765d6e2b6ff85b800b245879c",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/82b478c69745d8878eb60f9a049a4d584996f73a",
+                "reference": "82b478c69745d8878eb60f9a049a4d584996f73a",
                 "shasum": ""
             },
             "require": {
@@ -2019,7 +2019,7 @@
                 "symfony/uid": "^6.4|^7.0",
                 "twig/twig": "^3.12"
             },
-            "time": "2024-11-08T15:48:14+00:00",
+            "time": "2025-01-17T11:39:41+00:00",
             "bin": [
                 "Resources/bin/var-dump-server"
             ],
@@ -2057,7 +2057,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v7.2.0"
+                "source": "https://github.com/symfony/var-dumper/tree/v7.2.3"
             },
             "funding": [
                 {
@@ -2801,24 +2801,24 @@
         },
         {
             "name": "topthink/think-validate",
-            "version": "v3.0.3",
-            "version_normalized": "3.0.3.0",
+            "version": "v3.0.4",
+            "version_normalized": "3.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-validate.git",
-                "reference": "2729f938952a01e9d0e1a17d742b07fcf960ae31"
+                "reference": "c39979efcce84230b65210026c378d250a67c911"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-validate/zipball/2729f938952a01e9d0e1a17d742b07fcf960ae31",
-                "reference": "2729f938952a01e9d0e1a17d742b07fcf960ae31",
+                "url": "https://api.github.com/repos/top-think/think-validate/zipball/c39979efcce84230b65210026c378d250a67c911",
+                "reference": "c39979efcce84230b65210026c378d250a67c911",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0",
                 "topthink/think-container": ">=3.0"
             },
-            "time": "2025-01-07T08:18:42+00:00",
+            "time": "2025-02-18T03:15:32+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2842,7 +2842,7 @@
             "description": "think validate",
             "support": {
                 "issues": "https://github.com/top-think/think-validate/issues",
-                "source": "https://github.com/top-think/think-validate/tree/v3.0.3"
+                "source": "https://github.com/top-think/think-validate/tree/v3.0.4"
             },
             "install-path": "../topthink/think-validate"
         },
@@ -3226,17 +3226,17 @@
         },
         {
             "name": "yansongda/pay",
-            "version": "v3.7.11",
-            "version_normalized": "3.7.11.0",
+            "version": "v3.7.13",
+            "version_normalized": "3.7.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yansongda/pay.git",
-                "reference": "0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb"
+                "reference": "6e1678f44acb91ba78900eb74e307de415a54e9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yansongda/pay/zipball/0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb",
-                "reference": "0c8bcb8f67b56fae6c852a5b3ec0a1793f5c8ddb",
+                "url": "https://api.github.com/repos/yansongda/pay/zipball/6e1678f44acb91ba78900eb74e307de415a54e9d",
+                "reference": "6e1678f44acb91ba78900eb74e307de415a54e9d",
                 "shasum": ""
             },
             "require": {
@@ -3259,14 +3259,14 @@
                 "jetbrains/phpstorm-attributes": "^1.1",
                 "mockery/mockery": "^1.4",
                 "monolog/monolog": "^2.2",
-                "phpstan/phpstan": "^1.0.0",
+                "phpstan/phpstan": "^1.0.0 || ^2.0.0",
                 "phpunit/phpunit": "^9.0",
                 "symfony/event-dispatcher": "^5.2.0",
                 "symfony/http-foundation": "^5.2.0",
                 "symfony/psr-http-message-bridge": "^2.1",
                 "symfony/var-dumper": "^5.1"
             },
-            "time": "2024-11-23T03:29:59+00:00",
+            "time": "2025-02-11T04:04:44+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3363,61 +3363,6 @@
                 "source": "https://github.com/yansongda/supports"
             },
             "install-path": "../yansongda/supports"
-        },
-        {
-            "name": "yzh52521/easyhttp",
-            "version": "v1.1.3",
-            "version_normalized": "1.1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/yuanzhihai/easyhttp.git",
-                "reference": "02bcf47eaf723520fa3905d0e6f1852168fe646c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/yuanzhihai/easyhttp/zipball/02bcf47eaf723520fa3905d0e6f1852168fe646c",
-                "reference": "02bcf47eaf723520fa3905d0e6f1852168fe646c",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "^6.0|^7.0",
-                "php": ">=7.2.5",
-                "psr/log": "^1.0|^2.0|^3.0"
-            },
-            "time": "2023-11-14T05:49:02+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "yzh52521\\EasyHttp\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "yzh52521",
-                    "email": "396751927@qq.com"
-                }
-            ],
-            "description": "EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持常见的HTTP请求、异步请求和并发请求，让你可以快速地使用 HTTP 请求与其他 Web 应用进行通信。",
-            "homepage": "https://github.com/yzh52521/easyhttp",
-            "keywords": [
-                "EasyHttp",
-                "curl",
-                "easy-http",
-                "http",
-                "php",
-                "php-http",
-                "phphttp"
-            ],
-            "support": {
-                "issues": "https://github.com/yuanzhihai/easyhttp/issues",
-                "source": "https://github.com/yuanzhihai/easyhttp/tree/v1.1.3"
-            },
-            "install-path": "../yzh52521/easyhttp"
         }
     ],
     "dev": true,

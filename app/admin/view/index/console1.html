@@ -343,21 +343,21 @@
 
 		count.up("value1", {
 			time: 4000,
-			num: {:hook('seoBaiduTongji',['name'=>'tpv']) ?: 0},
+			num: 0,
 			bit: 0,
 			regulator: 50
 		})
 
 		count.up("value2", {
 			time: 4000,
-			num: {:hook('seoBaiduTongji',['name'=>'tuv']) ?: 0},
+			num: 0,
 			bit: 0,
 			regulator: 50
 		})
 
 		count.up("value3", {
 			time: 4000,
-			num: {:hook('seoBaiduTongji',['name'=>'tip']) ?: 0},
+			num: 0,
 			bit: 0,
 			regulator: 50
 		})
@@ -365,15 +365,15 @@
 		count.up("value4", {
 			time: 4000,
 			bit: 2,
-			num: {:hook('seoBaiduTongji',['name'=>'tvt']) ?: 0},
+			num: 0,
 			regulator: 50
 		})
 
 		var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
 
 		const colorList = ["#9E87FF", '#73DDFF', '#fe9a8b', '#F56948', '#9E87FF']
-		var pv = "{:hook('seoBaiduTodayTime',['name'=>'pv']) ?: 0}";
-		var uv = "{:hook('seoBaiduTodayTime',['name'=>'uv']) ?: 0}";
+		var pv = "0,1,0,0,0,0,0,0,10,0";
+		var uv = "0,5,0,0,10,0,0,0,5,0";
 
 		var option = {
 			backgroundColor: '#fff',
