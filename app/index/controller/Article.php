@@ -235,7 +235,7 @@ class Article extends IndexBaseController
 			$link = $this->getRouteUrl((int) $aid, $cateName['ename']);
 			$url = $data['status'] ? $link : (string)url('index/');
 
-			hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+			// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 			hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
 
 			$this->removeIndexHtml();

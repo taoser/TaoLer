@@ -194,73 +194,73 @@
 
 		getSelectCate();
 
-			table.on('tool(forum-table)', function(obj) {
-				if (obj.event === 'remove') {
-					window.remove(obj);
-				} else if (obj.event === 'edit') {
-					window.edit(obj);
+		table.on('tool(forum-table)', function(obj) {
+			if (obj.event === 'remove') {
+				window.remove(obj);
+			} else if (obj.event === 'edit') {
+				window.edit(obj);
+			}
+		});
+
+		table.on('toolbar(forum-table)', function(obj) {
+			if (obj.event === 'add') {
+				window.add();
+			} else if (obj.event === 'refresh') {
+				window.refresh();
+			} else if (obj.event === 'batchRemove') {
+				window.batchRemove(obj);
+			} else if (obj.event === 'checkSelect') {
+				window.checkSelect(obj);
+			}
+		});
+
+		form.on('submit(forum-query)', function(data) {
+			table.reloadData('forum-table', {
+				where: data.field,
+				page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					curr: 1, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+				},
+				scrollPos: true,
+			})
+			return false;
+		});
+
+		// 监听置顶
+		form.on('switch(isTop)', function(obj){
+			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value:obj.elem.checked ? 1 : 0},function(res){
+				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+			});
+		});
+
+		// 监听加精
+		form.on('switch(isHot)', function(obj){
+			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
+				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+			});
+		});
+
+		// 监听回复
+		form.on('switch(isReply)', function(obj){
+			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
+				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+			});
+		});
+
+		// 监听审贴
+		form.on('switch(artStatus)', function(obj){
+			//layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
+			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
+				if(res.code === 0){
+					layer.msg(res.msg,{icon:res.icon,time:2000})
+				} else {
+					layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
 				}
 			});
-
-			table.on('toolbar(forum-table)', function(obj) {
-				if (obj.event === 'add') {
-					window.add();
-				} else if (obj.event === 'refresh') {
-					window.refresh();
-				} else if (obj.event === 'batchRemove') {
-					window.batchRemove(obj);
-				} else if (obj.event === 'checkSelect') {
-					window.checkSelect(obj);
-				}
-			});
-
-			form.on('submit(forum-query)', function(data) {
-				table.reloadData('forum-table', {
-					where: data.field,
-					page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-						layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
-						curr: 1, //设定初始在第 5 页
-						groups: 1, //只显示 1 个连续页码
-						first: false, //不显示首页
-						last: false //不显示尾页
-					},
-					scrollPos: true,
-				})
-				return false;
-			});
-
-			// 监听置顶
-			form.on('switch(isTop)', function(obj){
-				$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value:obj.elem.checked ? 1 : 0},function(res){
-					layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-				});
-			});
-
-			// 监听加精
-			form.on('switch(isHot)', function(obj){
-				$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
-					layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-				});
-			});
-
-			// 监听回复
-			form.on('switch(isReply)', function(obj){
-				$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
-					layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-				});
-			});
-
-			// 监听审贴
-			form.on('switch(artStatus)', function(obj){
-				//layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-				$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
-					if(res.code === 0){
-						layer.msg(res.msg,{icon:res.icon,time:2000})
-					} else {
-						layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
-					}
-				});
-			});
+		});
 
 		// 添加
 		window.add = function() {
@@ -274,13 +274,21 @@
 		}
 
 		window.edit = function(obj) {
-			layer.open({
-				type: 2,
-				title: '修改',
-				shade: 0.1,
-				area: ['100%', '100%'],
-				content: 'edit.html?id=' + obj.data.id
-			});
+			$.post("{:url('content.forum/edit')}", {"id": obj.data['id']}, function(res){
+				if(res.code === -1) {
+					layer.msg(res.msg,{icon:res.icon,time:2000})
+					return false
+				}
+				
+				layer.open({
+					type: 2,
+					title: '修改',
+					shade: 0.1,
+					area: ['100%', '100%'],
+					content: 'edit.html?id=' + obj.data.id
+				})
+			})
+			
 		}
 
 		window.remove = function(obj) {

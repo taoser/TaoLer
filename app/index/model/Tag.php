@@ -65,7 +65,7 @@ class Tag extends BaseModel
      * @param integer $limit
      * @return array
      */
-    public function getTagList(int $page, int $limit): array
+    public function getTagList(int $page = 1, int $limit = 10): array
     {
         return self::paginate([
             'list_rows' => $limit,

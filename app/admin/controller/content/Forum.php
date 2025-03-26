@@ -158,9 +158,10 @@ class Forum extends AdminBaseController
     {
         $id = $this->request->param('id/d');
 		// $id = IdEncode::decode($id);
-// halt($id);
+
 		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
-        // halt($article);
+        if(is_null($article)) return json(['code' => -1, 'msg' => '不能编辑！']);
+        
         if(Request::isAjax()){
 
             $data = Request::only(['id','cate_id','title','title_color','content','upzip','keywords','description','captcha']);
@@ -212,7 +213,7 @@ class Forum extends AdminBaseController
             //删除原有缓存显示编辑后内容
             Cache::delete('article_'.$id);
             $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
-            hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+            // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
             return Msgres::success('edit_success',$link);
             
         }

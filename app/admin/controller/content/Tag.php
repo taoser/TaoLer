@@ -110,13 +110,20 @@ class Tag extends AdminController
     public function getAllTag()
     {
         $data = [];
-        $tags = TagModel::getTagList();
-        foreach($tags as $tag) {
-            $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
+        $page = $this->request->param('page/d', 1);
+        $limit = $this->request->param('limit/d', 10);
+    
+        $tags = TagModel::getTagList($page, $limit);
+        if($tags['total'] > 0) {
+            foreach($tags['data'] as $tag) {
+                $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
+            }
         }
+        
         return json(['code'=>0,'data'=>$data]);
     }
 
+    // 文章的tag
     public function getArticleTag($id)
     {
         $data = [];

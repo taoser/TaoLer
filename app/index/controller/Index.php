@@ -17,6 +17,7 @@ use app\common\lib\Msgres;
 use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
+use app\common\lib\facade\HttpHelper;
 
 class Index extends IndexBaseController
 {
@@ -29,76 +30,17 @@ class Index extends IndexBaseController
      */
     public function index()
     {
-      
 		// $ip = file_get_contents('https://myip.ipip.net');
 		// echo "My public IP address is: " . $ip;
+    
 		// $alipay = AlipayFactory::createPayMethod();
 		// $weixin = WeixinFactory::createPayMethod();
 		// $a = $alipay->index();
 		// $b= $weixin->index();
 		// var_dump($a,$b);
 
-// 		$a = $this->getSfx();
-// halt($a);
 
-// $s = Article::where('id', '>=', 10 + 1) // >= <= 条件可以使用索引
-// ->where([
-// 	['cate_id', '=', 1],
-// 	['status', '=',1]
-// ])
-// ->order('id asc')
-// ->fetchSql(true)
-// ->value('id');
-// dump($s);
-// $d = Article::getRelationArticle(1);
-
-// $c = Category::getArticlesByCategoryEname('posts');
-// halt($c);
-
-// $t = new \app\index\model\Tag();
-// $h = $t->getHots();
-
-// dump($h);
 // echo 'JIT Enabled: ' . (filter_var(ini_get('zend_enable_jit'), FILTER_VALIDATE_BOOLEAN) ? 'Yes' : 'No');
-// phpinfo();
-// dump(time());
-
-        // $user = Db::name('user')
-        //     ->alias('u')
-        //     ->join('addon_lawyer b','b.user_id= u.id')
-        //     ->field('u.id,b.name,user_img as avatar,chat_price,begood,licence_number,service_people')
-        //     ->find(1);
-
-        // $user = Db::name('user')
-        // ->alias('u')
-        // ->join('addon_lawyer l', 'u.id = l.user_id')
-        // ->field('u.id,l.name,user_img as avatar,tel')
-        // ->where('l.id', 2)
-        // ->find();
-
-        // halt($user);
-
-//         $array1 = array('a' => 1, 'b', 'c');
-// $array2 = array('d', 'e', 'f','a' => 2);
-// $result1 = array_merge($array1, $array2);
-// halt($result1);
-
-// $o = new \app\api\controller\jida\Order;
-// $list = $o->userlist();
-
-// $city = '';
-// $longitude = '113.16378';
-// $latitude = '23.05282';
-// $key = config('jida.map_api.amap');
-// $address = Http::get("https://restapi.amap.com/v3/geocode/regeo?output=json&location={$longitude},{$latitude}&key={$key}&extensions=base")->json();
-// if(isset($address->status) && $address->status === '1') {
-//     if(empty($address->regeocode->addressComponent->city)) {
-//         $city = $address->regeocode->addressComponent->province;
-//     } else {
-//         $city = $address->regeocode->addressComponent->city;
-//     }
-// }
-// halt($city);
 
 
 		$html = View::fetch();

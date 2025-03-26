@@ -192,7 +192,12 @@ abstract class Addons
                 return $temp_arr;
             }
             foreach ($temp_arr as $key => $value) {
-                $config[$key] = $value['value'];
+                if(isset($value['value'])) {
+                    $config[$key] = $value['value'];
+                } else {
+                    $config[$key] = $value;
+                }
+                
             }
             unset($temp_arr);
         }

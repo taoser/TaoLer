@@ -39,7 +39,14 @@ class SocketIO
             class_alias('PHPSocketIO\Engine\Protocols\SocketIO', 'Protocols\SocketIO');
         }
         if ($port) {
-            $worker = new Worker('SocketIO://0.0.0.0:' . $port, $opts);
+            $host = '0.0.0.0';
+            if (isset($opts['host'])) {
+                $ip = trim($opts['host'], '[]');
+                if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                    $host = (strpos($ip, ':') !== false) ? "[$ip]" : $ip;
+                }
+            }
+            $worker = new Worker('SocketIO://' . $host . ':' . $port, $opts);
             $worker->name = 'PHPSocketIO';
 
             if (isset($opts['ssl'])) {
