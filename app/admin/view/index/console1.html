@@ -633,10 +633,10 @@
 
 		// 升级提醒
 		$(function (){
-			$.get("{:url('system.upgrade/check')}",function (data){
-				if (data.code === 1) {
+			$.get("{:url('system.upgrade/check')}",function (res){
+				if (res.code === 1) {
 					//可升级
-					layer.confirm('发现新版本V' + data.data.version + '，确定升级？', {icon: 3, title:'系统检测'}, function(index){
+					layer.confirm('发现新版本V' + res.data.version + '，确定升级？', {icon: 3, title:'系统检测'}, function(index){
 						var loadIndex = layer.load(0);
 						//更新
 						$.get("{:url('system.upgrade/upload')}",function (res){
