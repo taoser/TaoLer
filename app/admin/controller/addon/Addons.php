@@ -171,11 +171,12 @@ class Addons extends AdminBaseController
      */
     public function install(array $data = [])
     {
-        $data = Request::only(['name','version','uid','token']);
+        $data = Request::only(['name','version','uid/d','token']);
         $data['type'] = 'install';
         
         // 接口
         $response = HttpHelper::withHost()->post('/v1/getaddons', $data)->toJson();
+        // -2未付款 -1安装失败
         if($response->code < 0) return json($response);
 
         try{
@@ -378,8 +379,8 @@ class Addons extends AdminBaseController
     {
         $name = input('name');
         $config = get_addons_config($name);
-
         if(empty($config)) return json(['code'=>-1,'msg'=>'无配置项！无需操作']);
+
         if(Request::isAjax()){
             $params = Request::param('params/a',[],'trim');
 
@@ -413,7 +414,7 @@ class Addons extends AdminBaseController
         }
 
         //模板引擎初始化
-        $view = ['formData'=>$config,'title'=>'title'];
+        $view = ['formData' => $config, 'title' => 'title'];
         View::assign($view);
         $configFile = root_path() . 'addons' . DS . $name . DS . 'config.html';
         $viewFile = is_file($configFile) ? $configFile : '';
@@ -506,8 +507,10 @@ class Addons extends AdminBaseController
      */
     public function pay()
     {
-        $data = Request::only(['id','name','version','uid','price']);
+        $data = Request::only(['id','name','version','uid/d','price']);
+
         $response = HttpHelper::withHost()->post('/v1/createOrder', $data);
+
         if ($response->ok()) {
             $res = $response->toArray();
 
@@ -530,6 +533,7 @@ class Addons extends AdminBaseController
             'name'=>$param['name'],
             'uid'=> $param['userinfo']['uid'],
         ];
+
         $response = HttpHelper::withHost()->post('/v1/ispay', $data)->toJson();
         return json($response);
     }

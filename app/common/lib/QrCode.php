@@ -40,47 +40,7 @@ class QrCode
      * @param string $logoPath
      * @return string 返回图片src
      */
-    public function getQrcode(string $data, $labText = '', $logoPath = ''): string
-    {
-        //
-        if(empty($logoPath)) {
-            $result = Builder::create()
-                ->writer(new PngWriter())
-                ->writerOptions([])
-                ->data($data)
-                ->encoding(new Encoding('UTF-8'))
-                ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-                ->size(300)
-                ->margin(10)
-                ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-                ->labelText($labText)
-                ->labelFont(new NotoSans(20))
-                ->labelAlignment(new LabelAlignmentCenter())
-                ->build();
-        } else {
-            $result = Builder::create()
-                ->writer(new PngWriter())
-                ->writerOptions([])
-                ->data($data)
-                ->encoding(new Encoding('UTF-8'))
-                ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-                ->size(300)
-                ->margin(10)
-                ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-                ->logoPath($logoPath)
-                ->labelText($labText)
-                ->labelFont(new NotoSans(20))
-                ->labelAlignment(new LabelAlignmentCenter())
-                ->build();
-        }
-
-        header('Content-Type: ' . $result->getMimeType());
-        //$result->getString();
-        $imgsrc = $result->getDataUri();
-        return $imgsrc;
-    }
-
-    public function getQrcode2(string $data, string $labText = '', string $logoPath = ''): string {
+    public function getQrcode(string $data, string $labText = '', string $logoPath = ''): string {
         $builder = new Builder(
             writer: new PngWriter(),
             writerOptions: [],

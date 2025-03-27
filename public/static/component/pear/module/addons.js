@@ -93,14 +93,17 @@ layui.define(['toast','common'], function (exports) {
 
 	// 安装
 	var install = function (data, url, userLoginUrl, userIsPayUrl) {
-		var userinfo = api.userinfo.get(); // 检测权限
 
+		var userinfo = api.userinfo.get(); // 检测权限
 		if(userinfo) {
+
 			layer.confirm("确认安装吗？", "vcenter",function(index){
 				layer.close(index);
 				let loading = layer.load();
+
 				$.post(url, { name: data.name, version: data.version, uid: userinfo.uid, token: userinfo.token }, function (res) {
 					layer.close(loading);
+
 					// 需要支付
 					if (res.code === -2) {
 						layer.open({
@@ -110,16 +113,16 @@ layui.define(['toast','common'], function (exports) {
 							maxmin: true,
 							content: 'pay.html'+ "?id=" + data.id+ "&name=" + data.name + "&version=" + data.version + "&uid=" + userinfo.uid + "&price=" + data.price,
 							success: function (layero, index){
-							// 订单轮询
-							var intervalPay = setInterval(function() {
-								$.post(userIsPayUrl,{name:data.name, userinfo:userinfo},function (res){
-									if(res.code === 0) {
-										layer.close(index);
-										clearInterval(intervalPay);
-										install(data, url, userLoginUrl, userIsPayUrl);
-									}
-								});
-							}, 3000);
+								// 订单轮询
+								var intervalPay = setInterval(function() {
+									$.post(userIsPayUrl,{name:data.name, userinfo:userinfo}, function (result){
+										if(result.code === 0) {
+											layer.close(index);
+											clearInterval(intervalPay);
+											install(data, url, userLoginUrl, userIsPayUrl);
+										}
+									});
+								}, 3000);
 							}
 						});
 					}

@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.1.5',
+    'version'   => '3.1.8',
 	// 模板版本
 	'template_version' => '1.0.0',
 	// 加盐
@@ -41,15 +41,15 @@ return [
 		// 注册审核
 		'regist_check'   => 0,
 		// 发帖审核
-		'posts_check'   => 1,
+		'posts_check'   => 0,
 		// 评论审核
-		'commnets_check'   => 1,
+		'commnets_check'   => 0,
 		// 注册验证类型 1验证码2邮箱3手机短信
-		'regist_type'   => 0,
+		'regist_type'   => 2,
 		// 登录验证码
 		'login_captcha'   => 1,
 		// 发帖验证码
-		'post_captcha'   => 0,
+		'post_captcha'   => 1,
 		// 显示分类
         'cate_show'   => 0,
 		// 显示用户归属地简称
@@ -63,7 +63,7 @@ return [
 		// 网站静态化
 		'static_html'   => 0,
 		// id字段加密开关 1开启0关闭
-		'id_status'   => 1,
+		'id_status'   => 0,
 
 	],
 

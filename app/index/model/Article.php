@@ -432,7 +432,8 @@ class Article extends BaseModel
                 ->withCount('comments')
                 ->order('comments_count','desc')
                 ->append(['url'])
-                ->select();
+                ->select()
+                ->toArray();
 
             } else {
                 // pv数
@@ -443,7 +444,8 @@ class Article extends BaseModel
                 ->order('pv','desc')
                 ->limit($num)
                 ->append(['url'])
-                ->select();
+                ->select()
+                ->toArray();
             }
 
             return $artHot;
