@@ -11,12 +11,15 @@ class HttpHelper
     protected $response;
 
     private $client;
+    
+    private $host = '';
 
     private $url = '';
 
     private $options = [];
 
     public function __construct(){
+        
         // verify 校验ssl, 填写cacert.pem路径或者false
         if(file_exists(public_path().'cacert.pem')) {
             $this->client = new Client(['verify' => 'cacert.pem']);
@@ -32,7 +35,7 @@ class HttpHelper
      */
     public function withHost(string $url = 'https://www.aieok.com/api'): HttpHelper
     {
-        $this->url = $url;
+        $this->host = $url;
         
         return $this;
     }
@@ -61,7 +64,7 @@ class HttpHelper
     {
         try{
 
-            $this->url .= $url;
+            $this->url = $this->host . $url;
             if(!empty($data)) {
                 $this->options = array_merge($this->options, ['query' => $data]);
             }
@@ -88,9 +91,9 @@ class HttpHelper
     {
         try {
 
-            $this->url .= $url;
-            $this->options = array_merge($this->options, ['json' => $data]);
-            $this->response = $this->client->post($this->url, $this->options);
+            $this->url = $this->host . $url;
+            $this->options = array_merge($this->options, $data);
+            $this->response = $this->client->post($this->url, ['json' => $this->options]);
         } catch (Exception $e) {
             echo $e->getMessage();
             return null;
@@ -109,6 +112,7 @@ class HttpHelper
     public function toJson()
     {
         $body = $this->response->getBody()->getContents();
+        
         return json_decode($body);
     }
 

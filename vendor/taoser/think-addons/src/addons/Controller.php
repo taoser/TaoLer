@@ -50,7 +50,7 @@ class Controller
      * Addons constructor.
      * @param \think\App $app
      */
-    public function __construct(App $app = null)
+    public function __construct(App $app)
     {
         $this->app = $app;
         $this->request = $app->request;
