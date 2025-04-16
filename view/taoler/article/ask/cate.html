@@ -21,14 +21,14 @@
 				<div class="layui-tab layui-tab-card" style="margin-top: 0px;">
 					<ul class="layui-tab-title">
 					<li {if condition="$Request.param.type eq 'all'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} "  >{:lang('all')}</a></li>
-					<li {if condition="$Request.param.type eq 'jie'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} ">{:lang('end')}</a></li>
+					<li {if condition="$Request.param.type eq 'end'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'end'])} ">{:lang('end')}</a></li>
 					<li {if condition="$Request.param.type eq 'wait'" } class="layui-this" {/if}><a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'wait',])}">{:lang('未解决')}</a>	</li>
 					</ul>
 				</div>
 				<ul class="question-list">
 					{article:list}
 					<li>
-						{if ($article.jie == 1)}
+						{if ($article.flags.is_wait == 1)}
 						<div class="que-sta-jie">
 							<span>已解</span>
 							<span>&radic;</span>
@@ -44,18 +44,19 @@
 							<span >阅读</span>
 						</div>
 						<div class="que-body">
-							<h2><a href="{article:url /}" style="color:{article:title_color /};">{article:title /}</a></h2>
+							<h2><a href="{article:url /}" >{article:title /}</a></h2>
 							<div class="que-user-info">
 								<a href="{article:user name='link'}" class="que-avatar">
 									<cite>{article:author /}</cite>
 								</a>
 								{$article.create_time|date='Y-m-d'}
-								{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+								{gt name="article.has_image" value="0"}
+								'<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'
+								{/gt}
 								{$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
 								{$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
-								{$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
-								{$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
-								<span ><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num /}</span>
+								
+								<span ><i class="iconfont icon-pinglun1" title="回答"></i> {article:comments_num /}</span>
 							</div>
 						</div>
 					</li>

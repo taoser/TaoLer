@@ -1,53 +1,49 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>个人资料</title>
-	<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-	<link rel="stylesheet" href="/static/admin/css/other/person.css" />
-</head>
-<body class="pear-container">
+{extend name="public/form" /}
+
+{block name="head"}<link rel="stylesheet" href="/static/admin/css/other/person.css" />{/block}
+{block name="body"}
+
   <form class="layui-form" action="">
     <div class="mainBox">
-      <div class="main-container">
-				<div class="layui-form-item layui-hide">
-				  <input type="text" name="id" class="layui-input" value="{$admin.id}">
+      	<div class="main-container">
+			<div class="layui-form-item layui-hide">
+				<input type="text" name="id" class="layui-input" value="{$admin.id}">
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">我的角色</label>
+				<div class="layui-input-inline">
+					<input type="text" name="auth_group_id" value="{$authGroupTitle}" readonly class="layui-input layui-disabled" disabled>
 				</div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">我的角色</label>
-          <div class="layui-input-inline">
-            <input type="text" name="auth_group_id" value="{$authGroupTitle}" readonly class="layui-input layui-disabled" disabled>
-          </div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">用户名</label>
-          <div class="layui-input-inline">
-            <input type="text" name="username" value="{$admin.username}"  readonly class="layui-input layui-disabled">
-          </div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">昵称</label>
-          <div class="layui-input-inline">
-            <input type="text" name="nickname" value="{$admin.nickname}" lay-verify="nickname" autocomplete="off" placeholder="请输入昵称" class="layui-input">
-          </div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">性别</label>
-          <div class="layui-input-block">
-            <input type="radio" name="sex" value="0" {if condition="$admin['sex'] eq 0"} checked {/if} title="男">
-            <input type="radio" name="sex" value="1" {if condition="$admin['sex'] eq 1"} checked {/if} title="女">
-          </div>
-        </div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="username" value="{$admin.username}"  readonly class="layui-input layui-disabled">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">昵称</label>
+				<div class="layui-input-inline">
+					<input type="text" name="nickname" value="{$admin.nickname}" lay-verify="nickname" autocomplete="off" placeholder="请输入昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">性别</label>
+				<div class="layui-input-block">
+					<input type="radio" name="sex" value="0" {if condition="$admin['sex'] eq 0"} checked {/if} title="男">
+					<input type="radio" name="sex" value="1" {if condition="$admin['sex'] eq 1"} checked {/if} title="女">
+				</div>
+			</div>
         <!--div class="layui-form-item">
           <label class="layui-form-label">头像</label>
           <div class="layui-input-inline">
             <input name="avatar" lay-verify="required" id="LAY_avatarSrc" placeholder="图片地址" value="http://cdn.layui.com/avatar/168.jpg" class="layui-input">
           </div>
-          <div class="layui-input-inline layui-btn-container" style="width: auto;">
-            <button type="button" class="layui-btn layui-btn-primary" id="LAY_avatarUpload">
+          <div class="layui-input-inline pear-btn-container" style="width: auto;">
+            <button type="button" class="pear-btn pear-btn-primary" id="LAY_avatarUpload">
               <i class="layui-icon">&#xe67c;</i>上传图片
             </button>
-            <button class="layui-btn layui-btn-primary" layadmin-event="avartatPreview">查看图片</button >
+            <button class="pear-btn pear-btn-primary" layadmin-event="avartatPreview">查看图片</button >
           </div>
         </div-->
         <div class="layui-form-item">
@@ -84,43 +80,41 @@
       </div>
     </div>
   </form>
-  <script src="/static/component/layui/layui.js"></script>
-  <script src="/static/component/pear/pear.js"></script>
-  <script>
-    layui.use(['form', 'jquery'], function() {
-      let form = layui.form;
-      let $ = layui.jquery;
 
-      form.on('submit(userinfo-save)', function(data) {
-        $.ajax({
-          url: "{:url('system.admin/infoSet')}",
-          data: JSON.stringify(data.field),
-          dataType: 'json',
-          contentType: 'application/json',
-          type: 'post',
-          success: function(result) {
-            if (result.code === 0) {
-              layer.msg(result.msg, {
-                icon: 1,
-                time: 1000
-              }, function() {
-                parent.layer.close(parent.layer.getFrameIndex(window
-                  .name)); //关闭当前页
-                //parent.layui.table.reload("user-table");
-              });
-            } else {
-              layer.msg(result.msg, {
-                icon: 2,
-                time: 1000
-              });
-            }
-          }
-        })
-        return false;
-      });
-    })
-  </script>
-  <script>
-  </script>
-</body>
-</html>
+  {__block__}
+
+	<script>
+		layui.use(['form', 'jquery'], function() {
+			let form = layui.form;
+			let $ = layui.jquery;
+
+			form.on('submit(userinfo-save)', function(data) {
+				$.ajax({
+					url: "{:url('system.admin/infoSet')}",
+					data: JSON.stringify(data.field),
+					dataType: 'json',
+					contentType: 'application/json',
+					type: 'post',
+					success: function(result) {
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+							icon: 1,
+							time: 1000
+							}, function() {
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+							//parent.layui.table.reload("user-table");
+							});
+						} else {
+							layer.msg(result.msg, {
+							icon: 2,
+							time: 1000
+							});
+						}
+					}
+				})
+				return false;
+			});
+		})
+	</script>
+
+{/block}

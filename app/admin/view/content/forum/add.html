@@ -1,214 +1,202 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>新增帖子</title>
-  <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-    <style>
-        #L_title {position: relative;}
-        .bdsug {height: auto; position: absolute; left: 0; top: 30px; z-index: 100; background: #fff; border-radius: 0 0 10px 10px; border: 1px solid #dadade!important; border-top: 0!important; box-shadow: none;}
-        .bdsug ul{display: block;margin: 5px 2px 0; padding: 5px 0 7px; background: 0 0; border-top: 0px solid #f5f5f6;}
-        .bdsug ul>li{margin-top: 0;height:30px;line-height: 25px;}
-    </style>
-</head>
-    <body>
-        <form class="layui-form" action="">
-          <div class="mainBox">
-            <div class="main-container">
-                <div class="layui-row layui-col-space15 layui-form-item">
-                  <div class="layui-col-md3">
-                    <label class="layui-form-label">{:lang('special column')}</label>
-                    <div class="layui-input-block">
-                        <div id="CateId" class="xm-select-demo"></div>
-                    </div>
-                  </div>
-                  <div class="layui-col-md8">
-                    <label for="L_title" class="layui-form-label">{:lang('title')}</label>
-                    <div class="layui-input-block">
-                      <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;" value=""/>
-                      <input type="hidden" id="L_title_color" name="title_color" autocomplete="off" class="layui-input" />
-                    </div>
-                  </div>
-                  <div class="layui-col-md1">
-                    <div id="color"></div>
-                  </div>
-                </div>
+{extend name="public/form" /}
 
-                <div class="layui-form-item layui-form-text">
-                  <div class="layui-input-block">
-                    <textarea id="L_content" name="content" lay-verify="" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
-                  </div>
-                </div>
-                <div class="layui-form-item layui-inline">
-                    <label class="layui-form-label">{:lang('enclosure')}</label>
-                    <div class="layui-input-inline" style="width: 190px">
-                      <input type="text" class="layui-input" name="upzip" value="" placeholder="zip,image文件" title="上传附件" />
-                    </div>
-                    <button type="button" class="layui-btn" id="zip-button"><i class="layui-icon"></i>{:lang('uploads')}</button>
-                </div>
-                <div class="layui-form-item">
-                  <label class="layui-form-label">{:lang('描述')}</label>
-                  <div class="layui-input-block">
-                    <textarea name="description" class="layui-textarea" placeholder="SEO描述"></textarea>
-                  </div>
-                </div>
-                {//关键词}
-                <div class="layui-form-item">
-                    <label class="layui-form-label">{:lang('添加关键词')}</label>
-                    <div class="layui-input-block">
-                      <!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
-                      <input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="添加关键词" />
-                    </div>
-                </div>
-                {//tag}
-                <div class="layui-form-item">
-                    <label class="layui-form-label">{:lang('add tags')}</label>
-                    <div class="layui-input-block">
-                      <div id="tag"></div>
-                    </div>
-                </div>
-            </div>
-          </div>
-          <div class="bottom">
-            <div class="button-container">
-              <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="forum-save">
-                <i class="layui-icon layui-icon-ok"></i>
-                提交
-              </button>
-              <button type="reset" class="pear-btn pear-btn-sm">
-                <i class="layui-icon layui-icon-refresh"></i>
-                重置
-              </button>
-            </div>
-          </div>
-        </form>
+{block name="head"}
+<style>
+	#L_title {position: relative;}
+	.bdsug {height: auto; position: absolute; left: 0; top: 30px; z-index: 100; background: #fff; border-radius: 0 0 10px 10px; border: 1px solid #dadade!important; border-top: 0!important; box-shadow: none;}
+	.bdsug ul{display: block;margin: 5px 2px 0; padding: 5px 0 7px; background: 0 0; border-top: 0px solid #f5f5f6;}
+	.bdsug ul>li{margin-top: 0;height:30px;line-height: 25px;}
+</style>
+{/block}
 
-            <script src="/static/component/layui/layui.js"></script>
-            <script src="/static/component/pear/pear.js"></script>
+{block name="body"}
+<form class="layui-form" action="">
+	<div class="mainBox">
+		<div class="main-container">
+			<div class="layui-row layui-col-space15 layui-form-item">
+				<div class="layui-col-md3">
+					<label class="layui-form-label">分类</label>
+					<div class="layui-input-block">
+						<div id="CateId" class="xm-select-demo"></div>
+					</div>
+				</div>
+				<div class="layui-col-md9">
+					<label for="L_title" class="layui-form-label">{:lang('title')}</label>
+					<div class="layui-input-block">
+						<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;" value=""/>
+					</div>
+				</div>
+			</div>
 
-            <script>
-            layui.use(["form", "colorpicker", "upload",'xmSelect'], function () {
-                var $ = layui.jquery, form = layui.form, colorpicker = layui.colorpicker, upload = layui.upload;
-                var xmSelect = layui.xmSelect;
+			<div class="layui-form-item layui-form-text">
+				<div class="layui-input-block">
+				<textarea id="L_content" name="content" lay-verify="" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item layui-inline">
+				<label class="layui-form-label">{:lang('enclosure')}</label>
+				<div class="layui-input-inline" style="width: 190px">
+					<input type="text" class="layui-input" name="upzip" value="" placeholder="zip,image文件" title="上传附件" />
+				</div>
+				<button type="button" class="pear-btn" id="zip-button"><i class="layui-icon"></i>{:lang('uploads')}</button>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">{:lang('描述')}</label>
+				<div class="layui-input-block">
+				<textarea name="description" class="layui-textarea" placeholder="SEO描述"></textarea>
+				</div>
+			</div>
+			{//关键词}
+			<div class="layui-form-item">
+				<label class="layui-form-label">{:lang('关键词')}</label>
+				<div class="layui-input-block">
+					<!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
+					<input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="关键词" />
+				</div>
+			</div>
+			{//tag}
+			<div class="layui-form-item">
+				<label class="layui-form-label">{:lang('add tags')}</label>
+				<div class="layui-input-block">
+					<div id="tag"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="forum-save">
+			<i class="layui-icon layui-icon-ok"></i>
+			提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+			<i class="layui-icon layui-icon-refresh"></i>
+			重置
+			</button>
+		</div>
+	</div>
+</form>
 
-                // 分类选择
-                $.get("{:url('content.forum/getCateTree')}",function(res){
-                    // 渲染下拉树
-                    xmSelect.render({
-                        el: '#CateId',
-                        name: 'cate_id',
-                        height: '250px',
-                        layVerify: 'required',
-                        layVerType: 'tips',
-                        data: res.data,
-                        initValue:  [res.data[0].id],
-                        model: {label: {type: 'text'}},
-                        prop: {
-                            name: 'catename',
-                            value: 'id'
-                        },
-                        radio: true,
-                        clickClose: true,
-                        tree: {
-                            show: true,
-                            indent: 15,
-                            strict: false,
-                            expandedKeys: false
-                        },
-                        tips: '请选择'
-                    });
-                });
+{__block__}
 
-            // tag标签
-            $(function(){
-            //1.渲染标签
-            var addTags = xmSelect.render({
-                  el: '#tag',
-                  name: 'tagid',
-                  layVerify: '',
-                  layVerType: 'msg',
-                  paging: true,
-                  pageSize: 5,
-                  data: []
-                });
-                //2.动态标签赋值
-                $.get("{:url('content.tag/getAllTag')}",function(res){
-                  if(res.code === 0){
-                    addTags.update({
-                      data: res.data,
-                      autoRow: true,
-                    })
-                  }
-                });
-            })
+<script>
+	layui.use(['xmSelect'], function () {
+		var $ = layui.jquery, form = layui.form, upload = layui.upload;
+		var xmSelect = layui.xmSelect;
 
-            //上传附件
-            upload.render({
-              elem: "#zip-button",
-              url: "{:url('content.forum/uploads')}", //改成您自己的上传接口
-              data: { type: "zip" },
-              accept: "file",
-                before: function(obj){
-                    layer.load();
-                },
-              done: function (res) {
-                  layer.closeAll('loading');
-                if (res.status === 0) {
-                  $('input[name="upzip"]').val(res.url);
-                  layer.msg("上传成功");
-                } else {
-                  layer.msg(res.msg);
-                }
-              },
-            });
+		// 分类选择 渲染下拉树
+		$.get("{:url('content.forum/getCateTree')}",function(res){
+			xmSelect.render({
+				el: '#CateId',
+				name: 'cate_id',
+				height: '250px',
+				layVerify: 'required',
+				layVerType: 'tips',
+				data: res.data,
+				initValue:  [res.data[0].id],
+				model: {label: {type: 'text'}},
+				prop: {
+					name: 'catename',
+					value: 'id'
+				},
+				// radio: true,
+				clickClose: true,
+				tree: {
+					show: true,
+					indent: 15,
+					strict: false,
+					expandedKeys: false
+				},
+				on: function(data){ // 单选on模式
+					if(data.isAdd){
+						return data.change.slice(0, 1)
+					}
+				},
+				tips: '请选择'
+			});
+		});
 
-             // 改变标题颜色
-             colorpicker.render({
-              elem: "#color",
-              color: "#393d49",
-              predefine: true, // 开启预定义颜色
-              done: function (color) {
-                //譬如你可以在回调中把得到的 color 赋值给表单
-                $("#L_title_color").val(color);
-                $("#L_title").css("color", color);
-              },
-            });
+		// tag标签
 
-            form.on('submit(forum-save)', function(data) {
-                $.ajax({
-                  url: "{:url('content.forum/add')}",
-                  data: JSON.stringify(data.field),
-                  dataType: 'json',
-                  contentType: 'application/json',
-                  type: 'post',
-                  success: function(result) {
-                    if (result.code === 0) {
-                      layer.msg(result.msg, {
-                        icon: 1,
-                        time: 1000
-                      }, function() {
-                          parent.layui.table.reload("forum-table");
-                          parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-                      });
-                    } else {
-                      layer.msg(result.msg, {
-                        icon: 2,
-                        time: 1000
-                      });
-                    }
-                  }
-                })
-                return false;
-              });
+		//1.渲染标签
+		var addTags = xmSelect.render({
+			el: '#tag',
+			name: 'tagid',
+			layVerify: '',
+			layVerType: 'msg',
+			paging: true,
+			pageSize: 5,
+			data: []
+		});
 
-          });
-        </script>
-        {// 编辑器}
-        {:hook('ueditor')}
-        {:hook('taonyeditor')}
-        {// 百度标题词条}
-        {:hook('seoBaiduTitle')}
-        {// 百度关键词}
-        {:hook('seoBaiduKeywords')}
-    </body>
-</html>
+		//2.动态标签赋值
+		$.get("{:url('content.tag/getAllTag')}",function(res){
+			if(res.code === 0){
+			addTags.update({
+				data: res.data,
+				autoRow: true,
+			})
+			}
+		});
+
+
+		//上传附件
+		upload.render({
+			elem: "#zip-button",
+			url: "{:url('content.forum/uploads')}", //改成您自己的上传接口
+			data: { type: "zip" },
+			accept: "file",
+			before: function(obj){
+				layer.load();
+			},
+			done: function (res) {
+				layer.closeAll('loading');
+				if (res.status === 0) {
+					$('input[name="upzip"]').val(res.url);
+					layer.msg("上传成功");
+				} else {
+					layer.msg(res.msg);
+				}
+			},
+		});
+
+		form.on('submit(forum-save)', function(data) {
+			$.ajax({
+				url: "{:url('content.forum/add')}",
+				data: JSON.stringify(data.field),
+				dataType: 'json',
+				contentType: 'application/json',
+				type: 'post',
+				success: function(result) {
+					if (result.code === 0) {
+						layer.msg(result.msg, {
+						icon: 1,
+						time: 1000
+						}, function() {
+							parent.layui.table.reload("forum-table");
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+						});
+					} else {
+						layer.msg(result.msg, {
+						icon: 2,
+						time: 1000
+						});
+					}
+				}
+			})
+			return false;
+		});
+
+	});
+</script>
+
+{// 编辑器}
+{:hook('ueditor')}
+{:hook('taonyeditor')}
+
+{// 百度标题词条}
+{:hook('seoBaiduTitle')}
+{// 百度关键词}
+{ :hook('seoBaiduKeywords')}
+
+{/block}

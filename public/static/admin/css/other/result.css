@@ -1,39 +1,40 @@
-.result {
+.pear-result {
 	text-align: center;
 
 }
-.result .success svg {
+.pear-result .success svg {
 	color: #32C682;
 	text-align: center;
 	margin-top: 40px;
 
 }
-.result .error svg {
+.pear-result .error svg {
 	color: #f56c6c;
 	text-align: center;
 	margin-top: 40px;
 
 }
-.result .title {
+.pear-result .title {
 	margin-top: 25px;
 
 }
-.result .desc {
+.pear-result .description {
 	margin-top: 25px;
 	width: 60%;
 	margin-left: 20%;
 	color: rgba(0, 0, 0, .45);
 }
-.result .content {
+.pear-result .content {
 	margin-top: 20px;
 	width: 80%;
-	border-radius: 10px;
+	border-radius: 4px;
 	background-color: whitesmoke;
-	height: 200px;
+	padding: 20px 32px;
 	margin-left: 10%;
+	margin-bottom: 30px;
+	text-align: left;
 }
-.result .action {
+.pear-result .extra {
 	padding-top: 10px;
-	border-top: 1px whitesmoke solid;
 	margin-top: 25px;
 }

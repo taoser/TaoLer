@@ -16,9 +16,8 @@ use think\template\TagLib;
 
 class Article extends TagLib
 {
-    //
     protected $tags   =  [
-        // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
+        // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1闭合标签） alias 标签别名 level 嵌套层次
         'id'            => ['attr' => '', 'close' => 0],
         'title'         => ['attr' => '', 'close' => 0],
         'content'       => ['attr' => '', 'close' => 0],
@@ -27,9 +26,7 @@ class Article extends TagLib
         'author_avatar' => ['attr' => '', 'close' => 0],
         'author_link'   => ['attr' => '', 'close' => 0],
         'pv'            => ['attr' => '', 'close' => 0],
-        'title_color'   => ['attr' => '', 'close' => 0],
-        'comment_num'   => ['attr' => '', 'close' => 0],
-        'comments_count'=> ['attr' => '', 'close' => 0],
+        'comments_num'  => ['attr' => '', 'close' => 0],
         'keywords'      => ['attr' => '', 'close' => 0],
         'description'   => ['attr' => '', 'close' => 0],
         'link'          => ['attr' => '', 'close' => 0],
@@ -37,7 +34,9 @@ class Article extends TagLib
         'time'          => ['attr' => '', 'close' => 0],
         'uptime'        => ['attr' => '', 'close' => 0],
         'is_top'        => ['attr' => '', 'close' => 0],
-        'has_img'       => ['attr' => '', 'close' => 0],
+        'is_good'       => ['attr' => '', 'close' => 0],
+        'is_wait'       => ['attr' => '', 'close' => 0],
+        'has_image'     => ['attr' => '', 'close' => 0],
         'has_video'     => ['attr' => '', 'close' => 0],
         'master_pic'    => ['attr' => '', 'close' => 0],
 
@@ -50,18 +49,18 @@ class Article extends TagLib
         'cate'          => ['attr' => 'name', 'close' => 0],
         'user'          => ['attr' => 'name', 'close' => 0],
 
-        
+        'list'          => ['attr' => ''],
+        'prev'          => ['attr' => ''],
+        'next'          => ['attr' => ''],
 
-        'list'          => ['attr' => '', 'close' => 1],
-        'prev'          => ['attr' => '', 'close' => 1],
-        'next'          => ['attr' => '', 'close' => 1],
-
-        'tag'           => ['attr' => '', 'close' => 1],
-        'rela'          => ['attr' => '', 'close' => 1],
-        'zan'           => ['attr' => '', 'close' => 1],
+        'tag'           => ['attr' => ''],
+        'hastag'        => ['attr' => ''],
+        'rela'          => ['attr' => ''],
+        'rela_count'    => ['attr' => ''],
+        'zan'           => ['attr' => ''],
         'zan_count'     => ['attr' => '', 'close' => 0],
-        'hotag'          => ['attr' => '', 'close' => 1],
-        'hotag_count'    => ['attr' => '', 'close' => 0],
+        'hotag'         => ['attr' => ''],
+        'hotag_count'   => ['attr' => '', 'close' => 0],
 
 
         'comment'       => ['attr' => ''],
@@ -107,24 +106,14 @@ class Article extends TagLib
         return '{:url("user_home",["id"=>$article.user.id])->domain(true)}';
     }
 
-    public function tagPv(array $tag, string $content)
+    public function tagPv(array $tag, string $content): string
     {
         return '{$article.pv}';
     }
 
-    public function tagComment_num(array $tag, string $content): string
+    public function tagComments_num(array $tag, string $content): string
     {
-        return '{$article.comments_count}';
-    }
-
-    public function tagComments_count(array $tag, string $content): string
-    {
-        return '{$article.comments_count}';
-    }
-
-    public function tagTitle_color(array $tag, string $content): string
-    {
-        return '{$article.title_color  ?: "#333"}';
+        return '{$article.comments_num}';
     }
 
     public function tagKeywords(array $tag, string $content): string
@@ -159,12 +148,22 @@ class Article extends TagLib
 
     public function tagIs_top(array $tag, string $content): string
     {
-        return '{$article.is_top}';
+        return '{$article.flags.is_top}';
     }
 
-    public function tagHas_img(array $tag, string $content): string
+    public function tagIs_good(array $tag, string $content): string
     {
-        return '{$article.has_img}';
+        return '{$article.flags.is_good}';
+    }
+
+    public function tagIs_wait(array $tag, string $content): string
+    {
+        return '{$article.flags.is_wait}';
+    }
+
+    public function tagHas_image(array $tag, string $content): string
+    {
+        return '{$article.has_image}';
     }
 
     public function tagHas_video(array $tag, string $content): string
@@ -173,6 +172,11 @@ class Article extends TagLib
     }
 
     public function tagMaster_pic(array $tag, string $content): string
+    {
+        return '{notempty name="article.media.images"}{$article.media.images[0]}{/notempty}';
+    }
+
+    public function tagMaster_pic2(array $tag, string $content): string
     {
         return '{$article.master_pic}';
     }
@@ -245,7 +249,7 @@ class Article extends TagLib
 
     public function tagIs_tops(array $tag, string $content): string
     {
-        $parseStr = '{if($article.is_top == 0)}';
+        $parseStr = '{if($article.flags.is_top == \'0\')}';
         $parseStr .= '<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1" style="background-color: #ccc" title="置顶">顶</span>';
         $parseStr .= '{else /}';
         $parseStr .= '<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" title="取消置顶">顶</span>';
@@ -278,16 +282,19 @@ class Article extends TagLib
     // 文章列表
     public function tagList(array $tag, string $content): string
     {
-        $type = isset($tag['type']) ? $tag['type'] : '';
+        $type = empty($tag['type']) ? '' : $tag['type'];
+        $num = empty($tag['num']) ? 10 : (int)$tag['num'];
         $parse = match($type){
-            "top" => '<?php $__TOPS__ = \app\facade\Article::getTops(); ?> {volist name="__TOPS__" id="article"}' .$content. '{/volist}',
-            "hot" => '<?php $__HOTS__ = \app\facade\Article::getHots(); ?> {volist name="__HOTS__" id="article"}' .$content. '{/volist}',
-            "index" => '<?php $__INDEXS__ = \app\facade\Article::getIndexs(); ?> {volist name="__INDEXS__" id="article"}' .$content. '{/volist}',
-            default => '{assign name="ename" value="$Request.param.ename" /}
-                        {assign name="page" value="$Request.param.page ?? 1" /}
-                        {assign name="type" value="$Request.param.type ?? \'all\'" /}
-                        <?php $__LISTS__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type); ?> 
-                        {volist name="__LISTS__[\'data\']" id="article"}' . $content . '{/volist}'
+            "top"       => '<?php $__TOPS__ = \app\facade\Article::getTops('.$num.'); ?> {volist name="__TOPS__" id="article"}' .$content. '{/volist}',
+            "good"      => '<?php $__GOODS__ = \app\facade\Article::getGoods('.$num.'); ?> {volist name="__GOODS__" id="article"}' .$content. '{/volist}',
+            "comment"   => '<?php $__COMMENTS__ = \app\facade\Article::getHotComments('.$num.'); ?> {volist name="__COMMENTS__" id="article"}' .$content. '{/volist}',
+            "pv"        => '<?php $__PVS__ = \app\facade\Article::getHotPvs('.$num.'); ?> {volist name="__PVS__" id="article"}' .$content. '{/volist}',
+            "index"     => '<?php $__INDEXS__ = \app\facade\Article::getIndexs('.$num.'); ?> {volist name="__INDEXS__" id="article"}' .$content. '{/volist}',
+            default     => '{assign name="ename" value="$Request.param.ename ?? \'all\'" /}
+                            {assign name="page" value="$Request.param.page ?? 1" /}
+                            {assign name="type" value="$Request.param.type ?? \'all\'" /}
+                            <?php $__LISTS__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type,'.$num.'); ?> 
+                            {volist name="__LISTS__[\'data\']" id="article"}' . $content . '{/volist}'
         };
         
         return $parse;
@@ -314,8 +321,17 @@ class Article extends TagLib
     // 相关文章
     public function tagRela(array $tag, string $content): string
     {
-        $parse = '<?php $__RELA__ = \app\facade\Article::getRelationArticle($article[\'id\']); ?>';
-        $parse .= '{volist name="__RELA__" id="rela"} {notempty name="__RELA__"}' . $content . '{/notempty}{/volist}';
+        $parse = '<?php if(!isset($__RELA__)) $__RELA__ = \app\facade\Article::getRelationArticle($article[\'id\']); ?>';
+        $parse .= '{notempty name="__RELA__"} {volist name="__RELA__" id="rela"}' . $content . '{/volist} {/notempty}';
+            
+        return $parse;
+    }
+
+    // 相关文章统计
+    public function tagRela_count(array $tag, string $content): string
+    {
+        $parse = '<?php if(!isset($__RELA__)) $__RELA__ = \app\facade\Article::getRelationArticle($article[\'id\']); ?>';
+        $parse .= '{notempty name="__RELA__"}' . $content . '{/notempty}';
             
         return $parse;
     }
@@ -341,8 +357,17 @@ class Article extends TagLib
     // 标签tag
     public function tagTag(array $tag, string $content): string
     {
-        $parse = '<?php $__TAGS__ = \app\facade\Article::getTags($article[\'id\']); ?>';
+        $parse = '<?php if(!isset($__TAGS__)) $__TAGS__ = \app\facade\Article::getTags($article[\'id\']); ?>';
         $parse .= '{volist name="__TAGS__" id="tag"} {notempty name="__TAGS__"}' . $content . '{/notempty}{/volist}';
+            
+        return $parse;
+    }
+
+    // 标签tag
+    public function tagHastag(array $tag, string $content): string
+    {
+        $parse = '<?php if(!isset($__TAGS__)) $__TAGS__ = \app\facade\Article::getTags($article[\'id\']); ?>';
+        $parse .= '{notempty name="__TAGS__"}' . $content . '{/notempty}';
             
         return $parse;
     }

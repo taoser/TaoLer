@@ -1,27 +1,27 @@
-{article:list type="top" /}
-	<li>
-		<a href="{article:author_link /}" class="fly-avatar">
-		  <img src="{article:author_avatar /}" alt="{article:author /}">
+{article:list type="top" num="5" /}
+<li>
+	<a href="{article:author_link /}" class="fly-avatar">
+		<img src="{article:author_avatar /}" alt="{article:author /}">
+	</a>
+	<h2><a href="{article:url /}">{article:title /}</a></h2>
+	<div class="fly-list-info">
+		{if config('taoler.config.cate_show') == 1}
+		<a class="layui-badge">{eq name=":cookie('think_lang')" value="en-us"} {article:cate_ename /} {else /} {article:cate_name /} {/eq}</a>
+		{/if}
+		<a href="{article:author_link /}" link>
+		<cite>{article:author /}</cite>
 		</a>
-		<h2><a href="{article:url /}" style="color: {article:title_color ?? '' /}">{article:title /}</a></h2>
-		<div class="fly-list-info">
-			{if config('taoler.config.cate_show') == 1}
-			<a class="layui-badge">{eq name=":cookie('think_lang')" value="en-us"} {article:cate_ename /} {else /} {article:cate_name /} {/eq}</a>
-			{/if}
-			<a href="{article:author_link /}" link>
-			<cite>{article:author /}</cite>
-			</a>
-			<i>{article:time}</i>
-			{eq name="article.has_img" value="1"} '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'{/eq}
-			{eq name="article.has_video" value="1"} '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'{/eq}
-			{eq name="article.has_audio" value="1"} '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'{/eq}
-			<span class=" layui-hide-xs" title="浏览"> <i class="iconfont" title="浏览">&#xe60b;</i> {article:pv} </span>
-			<span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num}</span>
-		</div>
-		<div class="fly-list-badge">
-		{eq name="article.is_top" value="1"}
-		<span class="layui-badge layui-bg-black layui-hide-xs" >{:lang('top')}</span>
-		{/eq}
-		</div>
-	</li>
+		<i>{article:time}</i>
+		{eq name="article.has_image" value="1"} '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'{/eq}
+		{eq name="article.has_video" value="1"} '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'{/eq}
+		{eq name="article.has_audio" value="1"} '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'{/eq}
+		<span class=" layui-hide-xs" title="浏览"> <i class="iconfont" title="浏览">&#xe60b;</i> {article:pv /} </span>
+		<span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comments_num /}</span>
+	</div>
+	<div class="fly-list-badge">
+	{eq name="article.flags.is_top" value="1"}
+	<span class="layui-badge layui-bg-black layui-hide-xs" >{:lang('top')}</span>
+	{/eq}
+	</div>
+</li>
 {/article:list}

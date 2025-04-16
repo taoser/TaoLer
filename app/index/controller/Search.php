@@ -20,17 +20,18 @@ class Search extends IndexBaseController
     //搜索功能
 	public function getSearch()
 	{
-        $ser = Request::only(['keywords']);
-		$artList = Article::getSearchKeyWord($ser['keywords']);
+        // $page = Request::param('page/d', 1);
+        $keywords = Request::param('keywords');
+		$artList = Article::getSearchKeyWord($keywords);
+
         $counts = $artList->count();
 
-        $searchs = [
+        View::assign([
             'artList' => $artList,
-            'keywords' => $ser['keywords'],
+            'keywords' => $keywords,
             'counts' => $counts
-        ];
-        
-        View::assign($searchs);
+        ]);
+
 		return View::fetch('search');
 	}
 }

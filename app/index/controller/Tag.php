@@ -56,10 +56,12 @@ class Tag extends IndexBaseController
     {
         $data = [];
         $tags = TagModel::getTagList();
-        foreach($tags as $tag) {
+
+        foreach($tags['data'] as $tag) {
             $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
         }
-        return json(['code'=>0,'data'=>$data]);
+        
+        return json(['code' => 0, 'data' => $data]);
     }
 
     /**

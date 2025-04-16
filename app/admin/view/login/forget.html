@@ -1,8 +1,8 @@
 {extend name="public/base" /}
 
-{block name="title"}忘记密码 - TaoLer{/block}
+{block name="title"}TaoLer{/block}
 
-{block name="css"}<link rel="stylesheet" href="/static/admin/style/login.css" media="all">{/block}
+{block name="head"}<link rel="stylesheet" href="/static/admin/style/login.css" media="all">{/block}
 {block name="body"}
 
   <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
@@ -79,7 +79,7 @@
   </div>
 {/block}
 
-{block name="js"} 
+{__block__} 
   <script>
   layui.config({
     base: '../../layuiadmin/' //静态资源所在路径

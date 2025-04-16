@@ -34,9 +34,10 @@ class Tag extends TagLib
     // 评论
     public function tagList(array $tag, string $content): string
     {
+        $num = isset($tag['num']) ? (int)$tag['num'] : 10;
         $parse = '{notpresent name="ename"}{assign name="ename" value="$Request.param.ename" /}{/notpresent}';
         $parse .= '{notpresent name="page"}{assign name="page" value="$Request.param.page ?? 1" /}{/notpresent}';
-        $parse .= '<?php if(!isset($__TAGLIST__)) $__TAGLIST__ = \app\facade\Taglist::getArticleList($ename,$page);';
+        $parse .= '<?php if(!isset($__TAGLIST__)) $__TAGLIST__ = \app\facade\Taglist::getArticleList($ename,$page,'. $num .');';
         $parse .= ' ?>';
         $parse .= '{volist name="__TAGLIST__.data" id="article" empty= "还没有内容"}';
         $parse .= $content;

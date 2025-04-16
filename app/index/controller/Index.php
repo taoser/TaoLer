@@ -18,6 +18,8 @@ use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
 use app\common\lib\facade\HttpHelper;
+use app\facade\Article;
+use think\db\Query;
 
 class Index extends IndexBaseController
 {
@@ -40,10 +42,21 @@ class Index extends IndexBaseController
 		// var_dump($a,$b);
 
 
+// $a = Article::getHotPvs();
+// dump($a);
+
+// $sql = Article::where('status', 1)->fetchSql(true)->select();
+// halt($sql);
+
 // echo 'JIT Enabled: ' . (filter_var(ini_get('zend_enable_jit'), FILTER_VALIDATE_BOOLEAN) ? 'Yes' : 'No');
 
+		// 滚屏自动加载页码路由
+		$page = Request::param('page/d', 1);
+		$next = (string) url('index_page', ['page' => ++$page]);
 
-		$html = View::fetch();
+		View::assign('next', $next);
+
+		$html = View::fetch('index');
 
 		$this->buildHtml($html);
 

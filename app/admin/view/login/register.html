@@ -33,6 +33,23 @@
 										<div class="layui-input-prefix">
 											<i class="layui-icon layui-icon-username"></i>
 										</div>
+										<input name="username" lay-verify="required" placeholder="手机号" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-form-item">
+									<div class="layui-input-wrap">
+										<div class="layui-input-prefix">
+										<i class="layui-icon layui-icon-vercode"></i>
+										</div>
+										<input type="text" name="vercode" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+
+								<div class="layui-form-item">
+									<div class="layui-input-wrap">
+										<div class="layui-input-prefix">
+											<i class="layui-icon layui-icon-username"></i>
+										</div>
 										<input name="username" lay-verify="required" placeholder="账户" autocomplete="off" class="layui-input">
 									</div>
 								</div>
@@ -46,16 +63,15 @@
 											class="layui-input" lay-affix="eye">
 									</div>
 								</div>
-								<div class="tab-log-verification">
-									<div class="verification-text">
-										<div class="layui-input-wrap">
-											<div class="layui-input-prefix">
-												<i class="layui-icon layui-icon-auz"></i>
-											</div>
-											<input name="captcha" lay-verify="required" value="" placeholder="验证码" autocomplete="off" class="layui-input">
+								<div class="layui-form-item">
+									<div class="layui-input-wrap">
+										<div class="layui-input-prefix">
+											<i class="layui-icon layui-icon-password"></i>
 										</div>
+										<input type="password" name="password" value=""
+											lay-verify="required|confirmPassword" placeholder="确认密码" autocomplete="off"
+											class="layui-input" lay-affix="eye">
 									</div>
-									<img src="{:captcha_src()}" alt="" class="verification-img"  id="captcha"/>
 								</div>
 								<div class="layui-form-item">
 									<div class="remember-passsword">
@@ -71,7 +87,7 @@
 									<div class="other-login-methods">
 										其他方式
 									</div>
-									<div class="greenText"><a href="{:url('login/register')}">注册账号</a></div>
+									<div class="greenText"><a href="{:url('login/index')}">去登录</a></div>
 								</div>
 							</div>
 						</div>
@@ -106,25 +122,7 @@
 
 				/// 登录
 				$.ajax({
-					type: "post"
-					,url: "{:url('login/index')}" //实际使用请改成服务端真实接口
-					,data: data.field
-					,success: function(res){
-						if(res.code == 0){
-								
-							
-						         
-							//登入成功的提示与跳转
-							popup.success("登录成功", function() {
-								location.href = "{:url('index/index')}"
-							})
-
-						} else {
-							layer.open({title:'登陆失败', content:res.msg, icon:5, anim:6});
-							layui.jquery('#captcha').attr('src', '{:captcha_src()}?' + Math.random());
-							}
-
-						}
+					
 				});
 				
 

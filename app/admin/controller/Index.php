@@ -53,6 +53,31 @@ class Index extends AdminBaseController
 
 	public function console1()
 	{
+		// 评论、帖子状态
+        $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
+        $forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->count();
+        $user = Db::name('user')->where(['delete_time'=>0,'status'=>0])->count();
+		// 回复评论
+		$comments = Comment::field('id,article_id,content,create_time,delete_time')->order('id desc')->limit(10)->select();
+		$commData = [];
+		foreach($comments as $v) {
+			if(!is_null($v->article)) {
+				$commData[] = [
+					'id'			=> $v->id,
+					'content'		=> strip_tags($v['content']),
+					'create_time'	=> $v['create_time'],
+					'url'			=> $this->getArticleUrl($v['article_id'], 'index', $v->article->cate->ename)
+				];
+			}
+		}
+
+        View::assign([
+            'pendComms'     => $comm,
+            'pendForums'    => $forum,
+            'pendUser'      => $user,
+			'comments'		=> $commData,
+        ]);
+
         return View::fetch('console1');
     }
 	

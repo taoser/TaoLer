@@ -196,7 +196,6 @@ abstract class BaseController
     {
         $domain = $this->getDomain();
         $appName = app('http')->getName();
-
         $aid = IdEncode::decode($aid);
         // 详情动态路由，$aid, $ename
         if(empty(config('taoler.url_rewrite.article_as'))){

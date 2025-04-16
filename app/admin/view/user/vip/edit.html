@@ -1,82 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>修改页面</title>
-		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-	</head>
-	<body>
-		<form class="layui-form" action="">
-      <div class="mainBox">
-				<div class="main-container">
-            <div class="layui-form-item layui-hide">
-            <input type="text" name="id" class="layui-input" value="{$vip.id}">
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">会员等级</label>
-              <div class="layui-input-inline" >
-              <select name="vip">
-              {volist name="level" id="vo"}
-                <option {if condition="$vip.vip eq $vo"} selected {/if} value="{$vo}">{if condition="$vo eq 0"}普通{else /}L{$vo}{/if}</option>
-              {/volist}
-              </select>
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">积分区间</label>
-              <div class="layui-input-inline">
-                <input type="text" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input" value="{$vip.score}">
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">认证昵称</label>
-              <div class="layui-input-inline">
-                <input type="text" name="nick" lay-verify="required" placeholder="等级昵称" autocomplete="off" class="layui-input" value="{$vip.nick}">
-              </div>
-            </div>	
-            <div class="layui-form-item">
-              <label class="layui-form-label">免费发帖/日</label>
-              <div class="layui-input-inline">
-                <input type="text" name="postnum" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.postnum}">
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">免费刷新/日</label>
-              <div class="layui-input-inline">
-                <input type="text" name="refreshnum" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.refreshnum}">
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">发贴扣积分</label>
-              <div class="layui-input-inline">
-                <input type="text" name="postpoint" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.postpoint}">
-              </div>
-            </div>
-            <div class="layui-form-item">
-              <label class="layui-form-label">刷贴扣积分</label>
-              <div class="layui-input-inline">
-                <input type="text" name="refreshpoint" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.refreshpoint}">
-              </div>
-            </div>
-          </div>
-        </div>
+{extend name="public/form" /}
 
-        <div class="bottom">
-          <div class="button-container">
-            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
-              lay-filter="user-save">
-              <i class="layui-icon layui-icon-ok"></i>
-              提交
-            </button>
-            <button type="reset" class="pear-btn pear-btn-sm">
-              <i class="layui-icon layui-icon-refresh"></i>
-              重置
-            </button>
-          </div>
-        </div>
-      </form>
-      <script src="/static/component/layui/layui.js"></script>
-      <script src="/static/component/pear/pear.js"></script>
+{block name="body"}
+
+	<form class="layui-form" action="">
+      	<div class="mainBox">
+			<div class="main-container">
+				<div class="layui-form-item layui-hide">
+					<input type="text" name="id" class="layui-input" value="{$vip.id}">
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">会员等级</label>
+					<div class="layui-input-inline" >
+						<select name="vip">
+						{volist name="level" id="vo"}
+							<option {if condition="$vip.vip eq $vo"} selected {/if} value="{$vo}">{if condition="$vo eq 0"}普通{else /}L{$vo}{/if}</option>
+						{/volist}
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">积分区间</label>
+					<div class="layui-input-inline">
+						<input type="text" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input" value="{$vip.score}">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">认证昵称</label>
+					<div class="layui-input-inline">
+						<input type="text" name="nick" lay-verify="required" placeholder="等级昵称" autocomplete="off" class="layui-input" value="{$vip.nick}">
+					</div>
+				</div>	
+				<div class="layui-form-item">
+					<label class="layui-form-label">免费发帖/日</label>
+					<div class="layui-input-inline">
+						<input type="text" name="postnum" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.postnum}">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">免费刷新/日</label>
+					<div class="layui-input-inline">
+						<input type="text" name="refreshnum" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.refreshnum}">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">发贴扣积分</label>
+					<div class="layui-input-inline">
+						<input type="text" name="postpoint" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.postpoint}">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">刷贴扣积分</label>
+					<div class="layui-input-inline">
+						<input type="text" name="refreshpoint" lay-verify="number" placeholder="10" autocomplete="off" class="layui-input" value="{$vip.refreshpoint}">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="bottom">
+			<div class="button-container">
+				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+				lay-filter="user-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+				</button>
+				<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+				</button>
+			</div>
+		</div>
+	</form>
+
+    {__block__}
+
       <script>
         layui.use(['form', 'jquery'], function() {
           let form = layui.form;
@@ -110,5 +107,5 @@
           });
         })
       </script>
-  </body>
-</html>
+
+{/block}

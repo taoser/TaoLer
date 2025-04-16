@@ -31,7 +31,7 @@
 
 	<script src="/static/layui/layui.js" charset="utf-8"></script>
 	<script src="/static/tpl/taoler/mods/toast.js"></script>
-	<script src="/static/notify.js"></script>
+	<script src="/static/common/notify.js"></script>
 	<!-- 样式 -->
 	<link rel="canonical" href="{$Request.url}">
 	<link rel="stylesheet" href="/static/tpl/taoler/css/font_24081_qs69ykjbea.css" />
@@ -42,12 +42,23 @@
 	<script src="/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
 	{$sysInfo.showlist|raw}
 </head>
-<body >
+<body>
+<script>
+	const scriptUrl = '/static/layui/layui.js';
+	const existingScripts = document.querySelectorAll(`script[src="${scriptUrl}"]`);
+	if (existingScripts.length === 0) {
+		const script = document.createElement('script');
+		script.src = scriptUrl;
+		document.body.appendChild(script);
+	}
+</script>
+
 {include file="public/header" /}
 {block name="column"}导航{/block}
 {block name="content"}内容{/block}
 {include file="public/footer" /}
 {include file="public/js" /}
+
 <script>
 	var element = layui.element;
 	var toast = layui.toast;

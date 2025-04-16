@@ -19,8 +19,8 @@
 	<link rel="shortcut icon" type="image/x-icon" href="{$Request.domain}/favicon.ico"/>
 	<link rel="apple-touch-icon" sizes="180x180" href=""/>
 	<link rel="apple-touch-icon-precomposed" href=""/>
-	<link rel="stylesheet" href="{$Request.domain}/view/common/blog/css/style.css" type="text/css" charset="utf-8"/>
-	<script src="/static/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" href="/static/tpl/taoler/blog/css/style.css" type="text/css" charset="utf-8"/>
+	<script src="/static/common/jquery-3.6.0.min.js"></script>
 {/block}
 
 {block name="column"}{include file="/public/column" /}{/block}
@@ -116,7 +116,7 @@
 {/block}
 {block name="script"}
 
-<script type='text/javascript' src="{$Request.domain}/view/common/blog/js/theme.js"></script>
+<script type='text/javascript' src="/static/tpl/taoler/blog/js/theme.js"></script>
 <script>
 	layui.use(['laypage'], function(){
 		var laypage = layui.laypage;

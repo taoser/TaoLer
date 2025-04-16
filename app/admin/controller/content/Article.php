@@ -11,7 +11,7 @@
 namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
-use app\facade\Article;
+use app\facade\Article as ArticleModel;
 use app\facade\Category;
 use think\facade\View;
 use think\facade\Request;
@@ -22,14 +22,14 @@ use think\response\Json;
 use Exception;
 
 
-class Forum extends AdminBaseController
+class Article extends AdminBaseController
 {
     protected $model;
 
     public function initialize()
     {
         parent::initialize();
-        $this->model = new Article();
+        $this->model = new ArticleModel();
     }
 
     /**
@@ -240,86 +240,27 @@ class Forum extends AdminBaseController
 		}
 	}
 
-    /**
-	 * 置顶、加精、
-	 *
-	 * @return Json
-	 */
-	public function setFlag()
-	{
-		$param = Request::only(['id/d', 'name', 'value/d']);
-
-        // halt($param);
-
-        $data["flags->{$param['name']}"] = $param['value'];
-
-        try{
-            //获取状态
-            Db::table($this->getTableName($param['id']))
-            ->json(['flags'])
-            ->where('id', $param['id'])
-            ->update($data);
-
-            $has = Db::table($this->getTableName($param['id']))
-            ->where('id', $param['id'])
-            ->where('type', $param['name'])
-            ->find();
-
-            // 增加
-            if($param['value'] === 1) {
-                Db::name('article_flag')->save([
-                    'type' => $this->getTypeValue($param['name']),
-                    'article_id' => $param['id'],
-                    'create_time'   => date('Y-m-d H:i:s', time())
-                ]);
-            }
-            // 删除
-            if($param['value'] === 0) {
-                Db::name('article_flag')
-                ->where('article_id', $param['id'])
-                ->where('type', $this->getTypeValue($param['name']))
-                ->delete();
-            }
-            
-            // Cache::delete('article_'.$param['id']);
-            
-			return json(['code' => 0, 'msg' => '设置成功', 'icon'=>6]);
-        } catch(Exception $e) {
-            return json(['code' => -1, 'msg' => $e->getMessage(), 'icon'=>6]);
-        }
-	}
-
-    protected function getTypeValue($type) {
-        return match($type) {
-            'is_top'    => 1,
-            'is_good'   => 2,
-            'is_wait'   => 3,
-        };
-    }
-
 	/**
-	 * 评论开关，审核等状态管理
+	 * 置顶、加精、评论开关，审核等状态管理
 	 *
 	 * @return Json
 	 */
 	public function check()
 	{
-		$param = Request::only(['id/d', 'name', 'value/d']);
+		$param = Request::only(['id/d','name','value']);
 
-        try{
-            //获取状态
-            Db::table($this->getTableName($param['id']))
-            ->where('id', $param['id'])
-            ->update([
-                $param['name'] => $param['value']
-            ]);
+		//获取状态
+		$res = Db::table($this->getTableName($param['id']))->save([
+            'id' => $param['id'],
+            $param['name'] => $param['value']
+        ]);
 
+		if($res){
             Cache::delete('article_'.$param['id']);
-
-			return json(['code' => 0, 'msg' => '设置成功', 'icon'=>6]);
-        } catch(Exception $e) {
-            return json(['code' => -1, 'msg' => $e->getMessage(), 'icon'=>6]);
-        }
+			return json(['code'=>0,'msg'=>'设置成功','icon'=>6]);
+		}else {
+			return json(['code'=>-1,'msg'=>'失败啦','icon'=>6]);
+		}
 	}
 
     /**

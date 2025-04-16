@@ -36,13 +36,13 @@
 					{eq name="article.is_top" value="1"}
 					<span class="layui-badge layui-bg-black">{:lang('top')}</span>
 					{/eq}
-					{eq name="article.is_hot" value="1"}
+					{eq name="article.is_good" value="1"}
 					<span class="layui-badge layui-bg-red">{:lang('hot')}</span>
 					{/eq}
 					<span id="LAY_jieAdmin" data-id="{article:id /}" data-colurl="{:url('collection/find')}"></span>
 					<span class="fly-list-nums"> 
 						<a href="#comment">
-						<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{comment:count /}
+						<i class="iconfont" title="{:lang('reply')}">&#xe60c;</i>{article:comments_num /}
 						</a>
 						<i class="iconfont" title="浏览">&#xe60b;</i>{article:pv /}
 					</span>
@@ -70,15 +70,6 @@
 
 				<article class="detail-body photos" id="content">{article:content}</article>
 
-				{//解密文件}
-				{empty name="passJieMi"}
-				{if($article.read_type == 1)}
-				<div id="jiemi" style="text-align:center">
-					<button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
-				</div>
-				{/if}
-				{/empty}
-
 				<div style="margin-top: 15px">标签
 				{article:tag}
 				<a href="{$tag.url}"><span class="layui-btn layui-btn-xs layui-btn-normal  layui-btn-radius"># {$tag.name}</span></a>
@@ -96,7 +87,7 @@
 					<p style="line-height:200%; ">{$sysInfo.state|raw}</p>
 				</div>
 				{//本文链接}
-				<div style="margin-top: 20px;">本文链接：<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a></div>
+				<div style="margin-top: 20px;">本文链接：<a href="{article:url /}">{article:url /}</a></div>
 				<div class="detail-zan">
 					<!-- 点赞列表 -->
 					{article:zan}
@@ -139,7 +130,7 @@
 
 			{//评论内容}
 			<div class="fly-panel detail-box" id="flyReply">
-			<span style="font-size:18px;">评论 {comment:count /}</span>
+			<span style="font-size:18px;">评论 {article:comments_num /}</span>
 			<ul class="jieda" id="jieda">
 				{comment:list}
 					<li data-id="{comment:id /}" class="jieda-daan">
@@ -155,91 +146,84 @@
 							<div class="detail-hits">
 								<span class="post-time">{comment:time}</span>{:hook('ipShow',$comment.user.city)}</span>
 							</div>
+							
+							<div class="detail-body jieda-body photos">{comment:content /}</div>
+								<div class="jieda-reply">
+								{eq name="comment.delete_time" value="0"}
+								<span class="jieda-zan {if($comment.zan != 0)}zanok{/if}" type="zan">
+									<i class="iconfont icon-zan"></i><em>{comment:zan /}</em>
+								</span>
+								<span type="reply" data-pid="{comment:id /}" data-tid="{comment:uid /}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
+								{//评论编辑删除采纳权限}
+								<div class="jieda-admin">
+									{if ((session('user_id') == $comment.user_id) && (getLimtTime($comment.create_time) < 2)) OR ($user.auth  ?? '')}
+									<span type="edit" class="comment-edit" data-id="{comment:id /}">{:lang('edit')}</span>
+									<span type="del" class="comment-del" data-id="{comment:id /}">{:lang('delete')}</span>
+									{/if}
+								</div>
+								{/eq}
 
-							{//加密未解密评论不可查看}
-							{if($article.read_type == 0 || (($article.read_type == 1) && $passJieMi))}
-								<div class="detail-body jieda-body photos">{comment:content /}</div>
-									<div class="jieda-reply">
-									{eq name="comment.delete_time" value="0"}
-									<span class="jieda-zan {if($comment.zan != 0)}zanok{/if}" type="zan">
-										<i class="iconfont icon-zan"></i><em>{comment:zan /}</em>
-									</span>
-									<span type="reply" data-pid="{comment:id /}" data-tid="{comment:uid /}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
-									{//评论编辑删除采纳权限}
-									<div class="jieda-admin">
-										{if ((session('user_id') == $comment.user_id) && (getLimtTime($comment.create_time) < 2)) OR ($user.auth  ?? '')}
-										<span type="edit" class="comment-edit" data-id="{comment:id /}">{:lang('edit')}</span>
-										<span type="del" class="comment-del" data-id="{comment:id /}">{:lang('delete')}</span>
-										{/if}
-									</div>
-									{/eq}
+								{// 第二层回复}
+								{notempty name="$comment.children"}
+									{volist name="$comment.children" id="vo"}
+										<div class="layui-clear" style="margin:10px 0; padding: 10px; border: 1px solid #f0f0f0; background: #f6f6f6">
+											<a style="display: inline-block; width: 50px;">
+												<img src="{$vo.user.user_img}" style="width: 30px; height: 30px; border-radius: 15px; object-fit: cover">
+											</a>
+											<div style="float: left;width: calc(100% - 50px);">
+											<div>{$vo.user.name} {$vo.create_time|date='Y-m-d H:i'}</div>
+											<div class="detail-body jieda-body photos">{$vo.content|raw}</div>
+											<div class="jieda-reply">
+												{eq name="vo.delete_time" value="0"}
+													<span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
+													<i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
+													</span>
+													<span type="reply" data-pid="{$vo.id}" data-tid="{$vo.user.id}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
+													{//评论编辑删除采纳权限}
+													<div class="jieda-admin">
+														{if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
+														<span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
+														<span type="del" class="comment-del" data-id="{$vo.id}" >{:lang('delete')}</span>
+														{/if}
+													</div>
+												{/eq}
+											</div>
+											</div>
+										</div>
 
-									{// 第二层回复}
-									{notempty name="$comment.children"}
-										{volist name="$comment.children" id="vo"}
-											<div class="layui-clear" style="margin:10px 0; padding: 10px; border: 1px solid #f0f0f0; background: #f6f6f6">
+										{// 第三层回复}
+										{notempty name="$vo.children"}
+											{volist name="$vo.children" id="voo"}
+											<div class="layui-clear" style="margin:10px 0; padding: 10px; border: 1px solid #f0f0f0;">
 												<a style="display: inline-block; width: 50px;">
-													<img src="{$vo.user.user_img}" style="width: 30px; height: 30px; border-radius: 15px; object-fit: cover">
+													<img src="{$voo.user.user_img}" style="width: 30px; height: 30px; object-fit: cover; border-radius: 15px;">
 												</a>
 												<div style="float: left;width: calc(100% - 50px);">
-												<div>{$vo.user.name} {$vo.create_time|date='Y-m-d H:i'}</div>
-												<div class="detail-body jieda-body photos">{$vo.content|raw}</div>
+												<div>{$voo.user.name} 回复 {$voo.touser} {$voo.create_time|date='Y-m-d H:i'}</div>
+												<div class="detail-body jieda-body photos">{$voo.content|raw}</div>
 												<div class="jieda-reply">
-													{eq name="vo.delete_time" value="0"}
-														<span class="jieda-zan {if($vo.zan != 0)}zanok{/if}" type="zan">
-														<i class="iconfont icon-zan"></i><em>{$vo.zan}</em>
+													{eq name="voo.delete_time" value="0"}
+														<span class="jieda-zan {if($voo.zan != 0)}zanok{/if}" type="zan">
+														<i class="iconfont icon-zan"></i><em>{$voo.zan}</em>
 														</span>
-														<span type="reply" data-pid="{$vo.id}" data-tid="{$vo.user.id}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
+														<span type="reply" data-pid="{$vo.id}" data-tid="{$voo.user.id}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
 														{//评论编辑删除采纳权限}
 														<div class="jieda-admin">
-															{if ((session('user_id') == $vo.user.id) && (getLimtTime($vo.create_time) < 2)) OR ($user.auth  ?? '')}
-															<span type="edit" class="comment-edit" data-id="{$vo.id}">{:lang('edit')}</span>
-															<span type="del" class="comment-del" data-id="{$vo.id}" >{:lang('delete')}</span>
-															{/if}
+														{if ((session('user_id') == $voo.user.id) && (getLimtTime($voo.create_time) < 2)) OR ($user.auth  ?? '')}
+														<span type="edit" class="comment-edit" data-id="{$voo.id}">{:lang('edit')}</span>
+														<span type="del" class="comment-del" data-id="{$voo.id}">{:lang('delete')}</span>
+														{/if}
 														</div>
 													{/eq}
 												</div>
 												</div>
 											</div>
+											{/volist}
+										{/notempty}
+									{/volist}
+								{/notempty}
+							</div>
 
-											{// 第三层回复}
-											{notempty name="$vo.children"}
-												{volist name="$vo.children" id="voo"}
-												<div class="layui-clear" style="margin:10px 0; padding: 10px; border: 1px solid #f0f0f0;">
-													<a style="display: inline-block; width: 50px;">
-														<img src="{$voo.user.user_img}" style="width: 30px; height: 30px; object-fit: cover; border-radius: 15px;">
-													</a>
-													<div style="float: left;width: calc(100% - 50px);">
-													<div>{$voo.user.name} 回复 {$voo.touser} {$voo.create_time|date='Y-m-d H:i'}</div>
-													<div class="detail-body jieda-body photos">{$voo.content|raw}</div>
-													<div class="jieda-reply">
-														{eq name="voo.delete_time" value="0"}
-															<span class="jieda-zan {if($voo.zan != 0)}zanok{/if}" type="zan">
-															<i class="iconfont icon-zan"></i><em>{$voo.zan}</em>
-															</span>
-															<span type="reply" data-pid="{$vo.id}" data-tid="{$voo.user.id}"><i class="iconfont icon-svgmoban53"></i>{:lang('reply')}</span>
-															{//评论编辑删除采纳权限}
-															<div class="jieda-admin">
-															{if ((session('user_id') == $voo.user.id) && (getLimtTime($voo.create_time) < 2)) OR ($user.auth  ?? '')}
-															<span type="edit" class="comment-edit" data-id="{$voo.id}">{:lang('edit')}</span>
-															<span type="del" class="comment-del" data-id="{$voo.id}">{:lang('delete')}</span>
-															{/if}
-															</div>
-														{/eq}
-													</div>
-													</div>
-												</div>
-												{/volist}
-											{/notempty}
-										{/volist}
-									{/notempty}
-								</div>
-							{else /}
-								<div class="detail-body jieda-body photos">
-									<i class="layui-icon layui-icon-password" style="font-size: 24px; color: #FF5722;"></i>
-									评论解密后查看
-								</div>
-							{/if}
 						</div>
 					</li>
 				{/comment:list}
@@ -253,8 +237,8 @@
 		<div class="fly-panel">
 			<div class="fly-panel-main wenda-user">
 				<div class="user-img">
-					<a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
-					<img class="" src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}" />
+					<a href="{:url('user/home',['id'=>$article.user.id])}">
+					<img class="" src="{$article.user.user_img}" alt="{$article.user.name}" />
 					</a>
 				</div>
 			</div>
@@ -419,14 +403,14 @@
 		// 评论分页
 		laypage.render({
 			elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-			count: "{comment:count /}", //数据总数，从服务端得到
+			count: "{article:comments_num /}", //数据总数，从服务端得到
 			limit: 10,
 			curr: "{$page}",
 			//获取起始页
 			jump: function (obj, first) {
 				var page = obj.curr;
 				var limit = obj.limit;
-				var  url = "{:url('article_detail',['id' => $article.id ,'ename' =>$article['cate']['ename']])}";
+				var  url = "{article:url /}";
 				//首次不执行
 				if (!first) {
 					$.post("{:url('article/detail')}", { id: AID, page: page }, function () {

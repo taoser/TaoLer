@@ -1,83 +1,81 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>用户VIP</title>
-		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-		<script src="/static/component/layui/layui.js"></script>
-	</head>
-	<body class="pear-container">
-		<div class="layui-fluid" id="component-tabs">
-			<div class="layui-card">
-				<div class="layui-card-body">
-					<div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief"  lay-allowclose="true">
-						<ul class="layui-tab-title">
-							<li lay-id="vip" class="layui-this">用户等级</li>
-						</ul>
-						<div class="layui-tab-content">
-							<div class="layui-tab-item layui-show">
-								<div class="layui-tab-content" style="padding: 20px 0;">
-									<div class="layui-form">
-										<div class="layui-form-item">
-											<div class="layui-inline">
-											<label class="layui-form-label">用户积分</label>
-												<div class="layui-input-inline" style="width: 120px;">
-													<select name="vip">
-														<option value="0">普通</option>
-														<option value="1">L1</option>
-														<option value="2">L2</option>
-														<option value="3">L3</option>
-														<option value="4">L4</option>
-														<option value="5">L5</option>
-													</select>
-												</div>
-												
-												<div class="layui-input-inline">
-													<input type="text" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input">
-												</div>
-												<div class="layui-input-inline">
-													<input type="text" name="nick" lay-verify="required" placeholder="认证名称" autocomplete="off" class="layui-input">
-												</div>
-												<div class="layui-input-inline">
-													<input type="text" name="postnum" lay-verify="required|number" placeholder="免费发帖日限额" autocomplete="off" class="layui-input">
-												</div>
-												<div class="layui-input-inline">
-													<input type="text" name="refreshnum" lay-verify="required|number" placeholder="免费刷新日限额" autocomplete="off" class="layui-input">
-												</div>
-												<div class="layui-input-inline">
-													<input type="text" name="postpoint" lay-verify="required|number" placeholder="发帖扣积分" autocomplete="off" class="layui-input">
-												</div>
-												<div class="layui-input-inline">
-													<input type="text" name="refreshpoint" lay-verify="required|number" placeholder="刷贴扣积分" autocomplete="off" class="layui-input">
-												</div>
-												<div class="layui-input-inline">
-												<input type="submit" class="pear-btn  pear-btn-primary" lay-submit lay-filter="vip-rule-submit" id="vip-rule-submit" value="立即提交">								
-												</div>
-												
-											</div>	
-										</div>
-									</div>	
+{extend name="public/base" /}
+
+{block name="title"}管理员{/block}
+{block name="body"}
+
+	<div class="layui-fluid" id="component-tabs">
+		<div class="layui-card">
+			<div class="layui-card-body">
+				<div class="layui-tab layui-tab-brief" lay-filter="server-tabs-brief"  lay-allowclose="true">
+					<ul class="layui-tab-title">
+						<li lay-id="vip" class="layui-this">用户等级</li>
+					</ul>
+					<div class="layui-tab-content">
+						<div class="layui-tab-item layui-show">
+							<div class="layui-tab-content" style="padding: 20px 0;">
+
+								<div class="layui-form">
 									<div class="layui-form-item">
-										<table id="vip-rule" lay-filter="vip-rule"></table>
-										<script type="text/html" id="vip-rule-bar">
-											<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-											<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
-										</script>
-									</div>	
-								</div>
+										<div class="layui-inline">
+										<label class="layui-form-label">用户积分</label>
+											<div class="layui-input-inline" style="width: 120px;">
+												<select name="vip">
+													<option value="0">普通</option>
+													<option value="1">L1</option>
+													<option value="2">L2</option>
+													<option value="3">L3</option>
+													<option value="4">L4</option>
+													<option value="5">L5</option>
+												</select>
+											</div>
+											
+											<div class="layui-input-inline">
+												<input type="text" name="score" lay-verify="required" placeholder="积分区间:0-99" autocomplete="off" class="layui-input">
+											</div>
+											<div class="layui-input-inline">
+												<input type="text" name="nick" lay-verify="required" placeholder="认证名称" autocomplete="off" class="layui-input">
+											</div>
+											<div class="layui-input-inline">
+												<input type="text" name="postnum" lay-verify="required|number" placeholder="免费发帖日限额" autocomplete="off" class="layui-input">
+											</div>
+											<div class="layui-input-inline">
+												<input type="text" name="refreshnum" lay-verify="required|number" placeholder="免费刷新日限额" autocomplete="off" class="layui-input">
+											</div>
+											<div class="layui-input-inline">
+												<input type="text" name="postpoint" lay-verify="required|number" placeholder="发帖扣积分" autocomplete="off" class="layui-input">
+											</div>
+											<div class="layui-input-inline">
+												<input type="text" name="refreshpoint" lay-verify="required|number" placeholder="刷贴扣积分" autocomplete="off" class="layui-input">
+											</div>
+											<div class="layui-input-inline">
+											<input type="submit" class="pear-btn  pear-btn-primary" lay-submit lay-filter="vip-rule-submit" id="vip-rule-submit" value="立即提交">								
+											</div>
+											
+										</div>	
+									</div>
+								</div>	
+								<div class="layui-form-item">
+									<table id="vip-rule" lay-filter="vip-rule"></table>
+									<script type="text/html" id="vip-rule-bar">
+										<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+										<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+									</script>
+								</div>	
 							</div>
-
-							{:hook('signadminhook')}
-
 						</div>
+
+						{:hook('signadminhook')}
+
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
   
-		<script src="/static/component/pear/pear.js"></script>
-		<script>
-		layui.use(['element','jquery','table','form'], function(){
+	{__block__}
+
+	<script>
+		layui.use(['form'], function(){
 			var $ = layui.jquery
 			,element = layui.element
 			,table = layui.table
@@ -193,6 +191,6 @@
 			}
 				
 		});
-		</script>
-	</body>
-</html>
+	</script>
+
+{/block}

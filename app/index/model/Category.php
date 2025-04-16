@@ -53,16 +53,26 @@ class Category extends BaseModel
         return $this->field('id,catename,ename,detpl,pid,icon,sort,desc')->find($id);
     }
 
-    // 查询子分类
-    public function getSubCate(string $ename)
+    // 查询父分类
+    public function getParentCate(string $ename)
     {
-        return $this->field('ename,catename')->where('pid', $this::where('ename', $ename)->value('id'))->select();
+        $pid = $this::where('ename', $ename)->value('pid');
+        if($pid == 0) {
+            return null;
+        }
+        return $this->field('ename,catename')->where('pid', $pid)->append(['url'])->select();
     }
 
     // 查询兄弟分类
     public function getBrotherCate(string $ename)
     {
-        return $this->field('id,ename,catename')->where('pid', $this::where('ename', $ename)->value('pid'))->append(['url'])->order('sort asc')->select();
+        return $this->field('id,ename,catename,desc')->where('pid', $this::where('ename', $ename)->value('pid'))->append(['url'])->order('sort asc')->select();
+    }
+
+    // 查询子分类
+    public function getSubCate(string $ename)
+    {
+        return $this->field('id,ename,catename,desc')->where('pid', $this::where('ename', $ename)->value('id'))->append(['url'])->select();
     }
 
     /**
@@ -193,33 +203,34 @@ class Category extends BaseModel
      * @param integer $limit 每页数
      * @return array
      */
-    public static function getArticlesByCategoryEname(string $ename, int $page = 1, string $type = 'all', int $limit = 15): array
+    public static function getArticlesByCategoryEname(string $ename = 'all', int $page = 1, string $type = 'all', int $limit = 15): array
     {
-        $cate = self::getCateInfoByEname($ename);
-
         // 查询条件
         $where = [];
         // 数据
         $data = [];
+        
+        $cate = self::getCateInfoByEname($ename);
 
         if(!empty($cate['id'])){
             $where[] = ['cate_id' ,'=', $cate['id']];
         }
 
         $where[] = ['status', '=', 1];
+
         switch ($type) {
             //查询文章,15个分1页
-            case 'jie':
-                $where[] = ['jie','=', '1'];
-                break;
-            case 'hot':
-                $where[] = ['is_hot','=', '1'];
-                break;
             case 'top':
-                $where[] = ['is_top' ,'=', '1'];
+                $where[] = ['flags->is_top' ,'=', '1'];
+                break;
+            case 'good':
+                $where[] = ['flags->is_good','=', '1'];
+                break;
+            case 'end':
+                $where[] = ['flags->is_wait','=', '1'];
                 break;
             case 'wait':
-                $where[] = ['jie','=', '0'];
+                $where[] = ['flags->is_wait','=', '0'];
                 break;
         }
 
@@ -229,41 +240,19 @@ class Category extends BaseModel
         // $m = self::getSuffixMap(['status' => 1]);
         // halt($m);
 
-        // 文章分类总数
+        // 文章表数据
         $map = Cache::remember("cate_count_{$ename}_{$type}", function() use($where){
 
-
             return self::getSuffixMap($where, Article::class);
-            
-            // 以下是原理--------------------
-            // 单个分表统计数 倒叙
-            $counts = [];
-            // 数据总和
-            $totals = 0;
 
-            // 得到所有的分表后缀 倒叙排列
-            $suffixArr = self::getSubTablesSuffix('article');
-            // 主表没有后缀，添加到分表数组中
-            $suffixArr[] = '';
+            // return [
+            //     'countArr'    => $countArr,
+            //     'totals'    => $totals,
+            //     'tableSuffixArr' => $tableSuffixArr,
+            //     'tableCount' => $tableCount
+            // ];
 
-            // 表综合
-            $suffixCount = count($suffixArr);
-
-            if($suffixCount) {
-                foreach($suffixArr as $sfx) {
-                    $total = Article::suffix($sfx)->where($where)->count();
-                    $counts[] = $total;
-                    $totals += $total;
-                }
-            }
-
-            return [
-                'counts'    => $counts,
-                'totals'    => $totals,
-                'suffixArr' => $suffixArr,
-                'suffixCount' => $suffixCount
-            ];
-        });
+        }, 900);
 
 
         // 总共页面数
@@ -285,17 +274,18 @@ class Category extends BaseModel
                 // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
                 self::$newLimit = $limit;
 
-                $field = 'id,cate_id,user_id,title,content,description,title_color,create_time,is_top,is_hot,pv,jie,has_img,has_video,has_audio,read_type,art_pass,media';
+                $field = 'id,cate_id,user_id,title,content,description,create_time,pv,has_image,has_video,has_audio,media,comments_num,flags';
 
-                for($i = 0; $i < $map['suffixCount']; $i++) {
-
-                    self::$currentTotalNum += $map['counts'][$i];
+                // 循环 取每个表中的数据
+                for($i = 0; $i < $map['tableCount']; $i++) {
+                    // 当前表 取到的数据总数
+                    self::$currentTotalNum += $map['countArr'][$i];
 
                     // 1.可以完全取到 在第一组分表中就可以完全查询到
                     if((self::$currentTotalNum - $maxNum) >= 0){
                         // echo 123;
                     
-                        $articles = Article::suffix($map['suffixArr'][$i])
+                        $articles = Article::suffix($map['tableSuffixArr'][$i])
                         ->field('id')
                         ->where($where)
                         ->order('id', 'desc')
@@ -305,7 +295,7 @@ class Category extends BaseModel
                         $ids = $articles->toArray();
                         $idArr = array_column($ids, 'id');
 
-                        $list =  Article::suffix($map['suffixArr'][$i])
+                        $list =  Article::suffix($map['tableSuffixArr'][$i])
                         ->field($field)
                         ->whereIn('id', $idArr)
                         ->with([
@@ -313,9 +303,7 @@ class Category extends BaseModel
                                 $query->field('id,name,nickname,user_img,vip');
                             }
                         ])
-                        ->withCount(['comments'])
                         ->order('id', 'desc')
-                        ->hidden(['art_pass'])
                         ->select()
                         ->toArray();
                         
@@ -327,7 +315,7 @@ class Category extends BaseModel
                     if((self::$currentTotalNum - $maxNum) < 0 && ($maxNum - self::$currentTotalNum - $limit) < 0 ) {
                         // echo 234;
 
-                        $articles = Article::suffix($map['suffixArr'][$i])
+                        $articles = Article::suffix($map['tableSuffixArr'][$i])
                         ->field('id')
                         ->where($where)
                         ->order('id', 'desc')
@@ -336,7 +324,7 @@ class Category extends BaseModel
                         $ids = $articles->toArray();
                         $idArr = array_column($ids, 'id');
 
-                        $list =  Article::suffix($map['suffixArr'][$i])
+                        $list =  Article::suffix($map['tableSuffixArr'][$i])
                         ->field($field)
                         ->whereIn('id', $idArr)
                         ->with([
@@ -344,9 +332,7 @@ class Category extends BaseModel
                                 $query->field('id,name,nickname,user_img,vip');
                             }
                         ])
-                        ->withCount(['comments'])
                         ->order('id', 'desc')
-                        ->hidden(['art_pass'])
                         ->select()
                         ->toArray();
                         
@@ -398,9 +384,9 @@ class Category extends BaseModel
                             // $da['url'] = (string) Route::buildUrl("{$cate['ename']}/{$id}")->domain(true);
                         } else {
                             $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id])->domain(true);
-                            // $da['url'] = (string) Route::buildUrl("{$routeRewrite}/{$id}")->domain(true);
                         }
-                        $da['master_pic'] = isset($da['media']->image) ? $da['media']->image[0] : '';
+                        
+                        // $da['master_pic'] = $da['has_image'] > 0 ? $da['media']['images'][0] : '';
                     }
                 } else {
                     // 往datas数组中追加cate和url 减少查询
@@ -411,13 +397,11 @@ class Category extends BaseModel
                         $id = IdEncode::encode($da['id']);
                         if(empty($routeRewrite)) {
                             $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id,'ename' => $category['ename']])->domain(true);
-                            // $da['url'] = (string) Route::buildUrl("/{$cate['ename']}/{$id}")->domain(true);
                         } else {
                             $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id])->domain(true);
-                            // $da['url'] = (string) Route::buildUrl("/{$routeRewrite}/{$id}")->domain(true);
                         }
 
-                        $da['master_pic'] = isset($da['media']->image) ? $da['media']->image[0] : '';
+                        // $da['master_pic'] = $da['has_image'] > 0 ? $da['media']['images'][0] : '';
                     }
                 }
 

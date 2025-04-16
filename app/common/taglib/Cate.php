@@ -18,15 +18,17 @@ class Cate extends TagLib
         'catename'      => ['attr' => '', 'close' => 0],
         'ename'         => ['attr' => '', 'close' => 0],
         'desc'          => ['attr' => '', 'close' => 0],
+        'url'           => ['attr' => '', 'close' => 0],
+        'parent'        => ['attr' => '', 'close' => 1],
         'brother'       => ['attr' => '', 'close' => 1],
+        'children'      => ['attr' => '', 'close' => 1],
         'bro_name'      => ['attr' => '', 'close' => 0],
         'bro_ename'     => ['attr' => '', 'close' => 0],
         'bro_url'       => ['attr' => '', 'close' => 0],
-        'clist'         => ['attr' => '']
     ];
 
 
-    public function tagBrother($tag, $content): string
+    public function tagBrother1($tag, $content): string
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
         $parse .= '{php}$__brotherCate__ = \app\facade\Category::getBrotherCate($ename);{/php}';
@@ -37,17 +39,55 @@ class Cate extends TagLib
 
     }
 
+    public function tagParent($tag, $content): string
+    {
+        $parse = '{assign name="ename" value="$Request.param.ename" /}';
+        $parse .= '{php}$__parentCate__ = \app\facade\Category::getSubCate($ename);{/php}';
+        $parse .= '{notempty name="__parentCate__"} {volist name="__parentCate__" id="cate"}';
+        $parse .= $content;
+        $parse .= '{/volist} {/notempty}';
+        return $parse;
+
+    }
+
+    public function tagBrother($tag, $content): string
+    {
+        $parse = '{assign name="ename" value="$Request.param.ename" /}';
+        $parse .= '{php}$__brotherCate__ = \app\facade\Category::getBrotherCate($ename);{/php}';
+        $parse .= '{notempty name="__brotherCate__"} {volist name="__brotherCate__" id="cate"}';
+        $parse .= $content;
+        $parse .= '{/volist} {/notempty}';
+        return $parse;
+
+    }
+
+    public function tagChildren($tag, $content): string
+    {
+        $parse = '{assign name="ename" value="$Request.param.ename" /}';
+        $parse .= '{php}$__childCate__ = \app\facade\Category::getSubCate($ename);{/php}';
+        $parse .= '{notempty name="__childCate__"} {volist name="__childCate__" id="cate"}';
+        $parse .= $content;
+        $parse .= '{/volist} {/notempty}';
+        return $parse;
+
+    }
+
     public function tagCatename($tag): string
     {
         return '{$cate.catename}';
     }
     public function tagEname($tag): string
     {
-        return '{$cate.catename}';
+        return '{$cate.ename}';
     }
     public function tagDesc($tag): string
     {
-        return '{$cate.catename}';
+        return '{$cate.desc}';
+    }
+
+    public function tagUrl($tag): string
+    {
+        return '{$cate.url}';
     }
 
     public function tagBro_name($tag): string
@@ -63,12 +103,6 @@ class Cate extends TagLib
     public function tagBro_url($tag): string
     {
         return '{$brother.url}';
-    }
-
-    public function tagClist($tag, $content): string
-    {
-        //$paras = ;
-        return '';
     }
 
 

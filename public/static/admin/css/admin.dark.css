@@ -148,6 +148,16 @@
     border-color: rgba(0, 0, 0, .30) !important;
 }
 
+.pear-admin-dark .menu-search-list li{
+    background-color:#141414;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, .6) !important;
+    color: #ffffff;
+}
+
+.pear-admin-dark .menu-search-list li:hover{
+    background-color:var(--global-primary-color) !important;
+}
+
 
 /** message center */
 .pear-admin-dark .pear-message-center .layui-tab-title,
@@ -225,6 +235,12 @@
     border-color: rgba(0, 0, 0, .40) !important;
 }
 
+.pear-admin-dark .layui-table-tool-self > div {
+    border-color: rgba(0, 0, 0, .40) !important;
+    color: #ffffff !important;
+    background-color: transparent; 
+}
+
 .pear-admin-dark .layui-laypage select,
 .pear-admin-dark .layui-laypage button {
     border-color: rgba(0, 0, 0, .40) !important;
@@ -232,10 +248,16 @@
     background-color: transparent; 
 }
 
-.pear-admin-dark .layui-table-tool-self > div {
-    border-color: rgba(0, 0, 0, .40) !important;
-    color: #ffffff !important;
-    background-color: transparent; 
+.pear-admin-dark .layui-laypage a,
+.pear-admin-dark .layui-laypage-spr,
+.pear-admin-dark .layui-laypage-skip,
+.pear-admin-dark .layui-laypage-count {
+    color: #ffffff;
+}
+
+.pear-admin-dark .layui-laypage-limits option {
+    background-color: #141414 !important;
+    color: #ffffff;
 }
 
 /** panel */
@@ -324,4 +346,14 @@
 
 .pear-admin-dark *::-webkit-scrollbar-thumb:hover {
 	background: #0a0a0a;
+}
+
+/** profile */
+.pear-admin-dark .user-name,
+.pear-admin-dark .user-desc {
+    color: whitesmoke;
+}
+
+.pear-admin-dark .user-desc {
+    border-top: 1px solid #141414;
 }

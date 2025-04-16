@@ -20,13 +20,13 @@
 				<section id="main" class="list-home list-grid list-grid-padding">
 					{article:list}
 					<article class="list-item block card-plain">
-						{if getOnepic($article.content)}
+						{gt name="article.has_image" value="0"}
 						<figure class="media media-3x2 col-4 col-md-4 d-none d-md-block">
 							<a class="media-content" href="{article:url /}" title="{article:title /}">
-							<img src="{:getOnepic($article.content)}" width="233" height="155" alt="{article:title /}">
+							<img src="{article:master_pic /}" width="233" height="155" alt="{article:title /}">
 							</a>
 						</figure>
-						{/if}
+						{/gt}
 						<div class="list-width list-content">
 							<div class="list-body">
 								<a href="{article:url /}" title="{article:title /}" >
@@ -44,13 +44,14 @@
 									</div>
 									<div class="d-inline-block">
 										<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:author /}" rel="category">{article:author /}</a>
-										{$article.has_img ?= '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'}
+										{gt name="article.has_image" value="0"}
+										'<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'
+										{/gt}
 										{$article.has_video ?= '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'}
 										{$article.has_audio ?= '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'}
-										{$article.read_type ?= '<span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>'}
-										{$article.upzip ?= '<span><i class="layui-icon layui-icon-file-b" style="color: #009688;" title="附件"></i></span>'}
+										
 										<span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {article:pv}</span>
-										<span class=""><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num}</span>
+										<span class=""><i class="iconfont icon-pinglun1" title="回答"></i> {article:comments_num}</span>
 									</div>
 									<div class="flex-fill"></div>
 									<div class="mx-1">

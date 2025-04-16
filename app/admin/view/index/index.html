@@ -103,8 +103,9 @@
 				var admin = layui.admin;
 				var popup = layui.popup;
 				
-				admin.setConfigType("yml");
-				admin.setConfigPath("/static/config/pear.config.yml");
+				admin.setConfigType("json");
+				// admin.setConfigPath("/static/config/pear.config.json");
+				admin.setConfigPath("{:url('system.menu/getMenuJsonData')}");
 				
 				admin.render();
 				

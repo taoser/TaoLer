@@ -1,15 +1,15 @@
 {
 	"logo": {
-		"title": "Pear Admin",
-		"image": "admin/images/logo.png"
+		"title": "TaoLer Admin",
+		"image": "/static/admin/images/logo.png"
 	},
 	"menu": {
-		"data": "admin/data/menu.json",
+		"data": "/admin/system.menu/getnav",
 		"method": "GET",
 		"accordion": true,
 		"collapse": false,
-		"control": false,
-		"select": "10",
+		"control": true,
+		"select": "501",
 		"async": true
 	},
 	"tab": {
@@ -19,8 +19,8 @@
 		"preload": false,
 		"max": "30",
 		"index": {
-			"id": "10",
-			"href": "view/console/console1.html",
+			"id": "501",
+			"href": "/admin/index/console1.html",
 			"title": "首页"
 		}
 	},
@@ -64,6 +64,6 @@
 		"footer": false
 	},
 	"header": {
-		"message": "admin/data/message.json"
+		"message": "/static/admin/data/message.json"
 	}
 }

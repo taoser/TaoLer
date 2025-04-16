@@ -37,17 +37,18 @@ class Login extends AdminBaseController
 
 			return $result;
 		}
+		
 		return View::fetch('login');
 	}
 	
 	//注册
-	public function reg()
+	public function register()
 	{
 		if(Session::has('admin_id')){
 			return redirect('index/index');
 		}
 		
-		return View::fetch('reg');
+		return View::fetch('register');
 	}
 	
 	//忘记密码
