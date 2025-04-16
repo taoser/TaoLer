@@ -2204,6 +2204,16 @@ CREATE TABLE `tao_article`  (
   INDEX `idx_article_cid_status_dtime`(`cate_id` ASC, `status` ASC, `delete_time` ASC) USING BTREE COMMENT '分类状态时间索引'
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章主表' ROW_FORMAT = Dynamic;
 
+DROP TABLE IF EXISTS `tao_article_flag`;
+CREATE TABLE `tao_article_flag`  (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '属性id',
+  `type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '1置顶is_top,2精华is_good,3待解is_wait,4热评hot_comment,5hot_pv阅读排行',
+  `article_id` int UNSIGNED NOT NULL COMMENT '文章id',
+  `create_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
+  PRIMARY KEY (`id` DESC) USING BTREE,
+  INDEX `idx_type_article_id`(`type` ASC, `article_id` ASC) USING BTREE COMMENT '类型文章id'
+) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
 -- ----------------------------
 -- Table structure for tao_auth_group
 -- ----------------------------
