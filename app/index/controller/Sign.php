@@ -43,7 +43,15 @@ class Sign extends BaseController
 		}
 		
 		//签到排行榜
-        $totallist = Db::name('user_sign')->alias('s')->leftJoin('user u', 's.uid=u.id')->field('uid,s.id as id,max(days) as days,name,user_img')->group('uid')->order('days desc')->limit(20)->select();
+        $totallist = Db::name('user_sign')
+        ->alias('s')
+        ->leftJoin('user u', 's.uid=u.id')
+        ->field('uid,s.id as id,max(days) as days,name,user_img')
+        ->group('uid')
+        ->order('days desc')
+        ->limit(20)
+        ->select();
+        
 		if(count($totallist)){
 			foreach($totallist as $t){
 				$total = ['uid'=>$t['uid'],'days'=>$t['days'],'user'=>['username'=>$t['name'],'avatar'=>$t['user_img']]];

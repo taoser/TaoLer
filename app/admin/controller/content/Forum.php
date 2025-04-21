@@ -92,7 +92,7 @@ class Forum extends AdminBaseController
     {
         if (Request::isAjax()) {
 
-            $data = Request::only(['cate_id', 'title', 'title_color', 'tiny_content', 'content', 'upzip', 'keywords', 'description', 'captcha']);
+            $data = Request::only(['cate_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'captcha']);
             $tagId = input('tagid');
             $data['user_id'] = 1; //管理员ID
             // 调用验证器
@@ -114,10 +114,11 @@ class Forum extends AdminBaseController
             // 获取分类ename,appname
             $cateEname = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
 
-            $result =  $this->model::add($data);
-            if ($result['code'] == 1) {
+            try{
+                $result =  $this->model::add($data);
+
                 // 获取到的最新ID
-                $aid = $result['data']['id'];
+                $aid = $result['id'];
                 //写入taglist表
                 $tagArr = [];
                 if(isset($tagId)) {
@@ -133,14 +134,13 @@ class Forum extends AdminBaseController
 
                 $link = $this->getArticleUrl((int)$aid, 'index', $cateEname);
 
-                hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+                // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 
-                $url = $result['data']['status'] ? $link : (string)url('index/');
-                $res = Msgres::success($result['msg'], $url);
-            } else {
-                $res = Msgres::error('add_error');
+                // $url = $result['data']['status'] ? $link : (string)url('index/');
+                return Msgres::success($result['msg'], $link);
+            } catch(Exception $e) {
+                return Msgres::error('add_error');
             }
-            return $res;
         }
 
         return View::fetch('add');
@@ -164,7 +164,7 @@ class Forum extends AdminBaseController
         
         if(Request::isAjax()){
 
-            $data = Request::only(['id','cate_id','title','title_color','content','upzip','keywords','description','captcha']);
+            $data = Request::only(['id','cate_id','title','content','keywords','description','captcha']);
             $tagId = input('tagid');
 
             //调用验证器

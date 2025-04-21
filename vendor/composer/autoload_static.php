@@ -8,6 +8,7 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
 {
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
+        '7448f3465e10b5f033e4babb31eb0b06' => __DIR__ . '/..' . '/topthink/think-orm/src/helper.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
         '15ec93fa4ce4b2d53816a1a5f2c514e2' => __DIR__ . '/..' . '/topthink/think-validate/src/helper.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -141,9 +142,9 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             1 => __DIR__ . '/..' . '/topthink/think-container/src',
             2 => __DIR__ . '/..' . '/topthink/think-filesystem/src',
             3 => __DIR__ . '/..' . '/topthink/think-helper/src',
-            4 => __DIR__ . '/..' . '/topthink/think-orm/src',
-            5 => __DIR__ . '/..' . '/topthink/think-template/src',
-            6 => __DIR__ . '/..' . '/topthink/think-validate/src',
+            4 => __DIR__ . '/..' . '/topthink/think-template/src',
+            5 => __DIR__ . '/..' . '/topthink/think-validate/src',
+            6 => __DIR__ . '/..' . '/topthink/think-orm/src',
         ),
         'taoser\\think\\' => 
         array (

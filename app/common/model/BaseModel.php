@@ -172,6 +172,8 @@ class BaseModel extends Model
             $maxId = (int) Db::table($prefix)->max('id');
         }
 
+        // 主表无后缀
+        $suffix = '';
         // 表后缀数字（层级）
         $num = (int) floor($maxId / $single_table_num);
             
@@ -179,9 +181,6 @@ class BaseModel extends Model
         if($num > 0) {
             // 数据表后缀
             $suffix = "_{$num}";
-        } else {
-            // 主表无后缀
-            $suffix = '';
         }
 
         return $suffix;

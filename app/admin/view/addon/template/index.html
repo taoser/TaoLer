@@ -4,14 +4,16 @@
 {block name="body"}
 
 	<div class="layui-card">
+		<div class="layui-card-header">模板市场</div>
 		<div class="layui-card-body">
-			<form class="layui-form layui-form-pane">
+
+			<!-- <form class="layui-form layui-form-pane">
 				<div class="layui-form-item">
-					<label class="layui-form-label">卡片标题</label>
+					<label class="layui-form-label">类型</label>
 					<div class="layui-input-inline">
 						<input type="text" name="realName" id="realName" placeholder="" class="layui-input">
 					</div>
-					<label class="layui-form-label">卡片名称</label>
+					<label class="layui-form-label">名称</label>
 					<div class="layui-input-inline">
 						<input type="text" name="username" id="username" placeholder="" class="layui-input">
 					</div>
@@ -24,21 +26,130 @@
 							获取选中数据</button>
 					</div>
 				</div>
-			</form>
-			<div id="currentTableId"></div>
+			</form> -->
+			
+			<div class="layui-row layui-col-space30">
+				{volist name="template" id="vo"}
+				<div class="layui-col-md3 ew-datagrid-item" data-index="{}" data-number="1" >
+					<div class="project-list-item" style="border: 1px solid #efefef;">
+						<img class="project-list-item-cover" src="{$vo.thum_img}">
+						<div class="project-list-item-body">
+							<h2 class="layui-elip">{$vo.name}</h2>
+							<div class="project-list-item-text ">{$vo.ver_desc}</div>
+							<div class="project-list-item-desc">
+								<span class="time">版本:{$vo.version}</span>
+								<div class="ew-head-list">
+									<span class="time">{$vo.time}</span>
+								</div>
+							</div>
+							<div class="project-list-item-desc" style="margin-top: 15px;">
+								<div class="layui-btn-group">
+									{if (!$vo.local)}
+									<button type="button" lay-on="install" data-name="{$vo.name}" theme="default" class="enable layui-btn layui-bg-blue layui-btn-sm">安装</button>
+									{/if}
+
+									{if ($vo.local) AND (!$vo.enable)}
+									<button type="button" lay-on="enable" data-name="{$vo.name}" theme="default" class="enable layui-btn layui-btn-sm">启用</button>
+									{/if}
+									{if (!$vo.enable) AND ($vo.local)}
+									<button type="button" lay-on="delete" data-name="{$vo.name}" theme="default" class="enable layui-btn layui-btn-sm layui-btn-danger">删除</button>
+									{/if}
+
+									{if ($vo.enable)}
+									<button type="button" theme="default" class="layui-btn layui-btn-sm layui-btn-primary">使用中</button>
+									{/if}
+								</div>
+								{if $vo.update}
+								<div class="ew-head-list">
+									<button type="button" lay-on="update" data-name="{$vo.name}" theme="default" class="enable layui-btn layui-btn-sm layui-bg-orange">更新</button>
+								</div>
+								{/if}
+							</div>
+						</div>
+					</div>
+				</div>
+				{/volist}
+			</div>
+			
+			<div id="currentTableId2"></div>
 		</div>
 	</div>
 	
 	{__block__}
 
 	<script>
-		layui.use(['table', 'layer', 'form', 'jquery', 'card'], function() {
+		layui.use(['table', 'layer', 'form', 'jquery', 'card','toast'], function() {
 
 			let table = layui.table;
 			let form = layui.form;
 			let $ = layui.jquery;
 			let layer = layui.layer;
 			let card = layui.card;
+			let util = layui.util;
+			let toast = layui.toast;
+
+			// HTML 转义
+			util.event({
+				install: function() {
+					var name = $(this).attr('data-name');
+					$.post("{:url('addon.template/install')}", {name}, function(res) {
+						if(res.code === 1) {
+							toast.success({title:"成功消息",message:res.msg})
+							window.location.reload();
+						} else {
+							toast.error({title:"危险消息",message:res.msg})
+						}
+					})
+					return false;
+				},
+				enable: function() {
+					var name = $(this).attr('data-name');
+					$.post("{:url('addon.template/enable')}", {name}, function(res) {
+						if(res.code === 1) {
+							toast.success({title:"成功消息",message:res.msg})
+							window.location.reload();
+						} else {
+							toast.error({title:"危险消息",message:res.msg})
+						}
+					})
+					return false;
+				},
+				delete: function() {
+					var name = $(this).attr('data-name');
+
+					layer.confirm('确定要删除?', {
+						icon: 3,
+						title: '提示'
+					}, function(index) {
+						layer.close(index);
+						let loading = layer.load();
+						
+						$.post("{:url('addon.template/delete')}", {name}, function(res) {
+							if(res.code === 1) {
+								layer.close(loading);
+								toast.success({title:"成功消息",message:res.msg})
+								window.location.reload();
+							} else {
+								toast.error({title:"危险消息",message:res.msg})
+							}
+						})
+					});
+					
+					return false;
+				},
+				update: function(){
+					var name = $(this).attr('data-name');
+					$.post("{:url('addon.template/update')}", {name}, function(res) {
+						if(res.code === 1) {
+							toast.success({title:"成功消息",message:res.msg})
+							// window.location.reload();
+						} else {
+							toast.error({title:"危险消息",message:res.msg})
+						}
+					})
+					return false;
+				}
+			});
 
 			card.render({
 				elem: '#currentTableId',
@@ -53,19 +164,21 @@
 			})
 			
 			// 监听搜索操作
-			form.on('submit(data-search-btn)', function(data) {
+			form.on('submit(data-search-btn---)', function(data) {
 				queryJson = data.field;
 				card.reload("currentTableId", {
 					where: queryJson,
 				});
 				return false;
 			});
-			form.on('submit(data-checked-btn)', function() {
+
+			form.on('submit(data-checked-btn---)', function() {
 				var data = card.getChecked("currentTableId");
 				layer.msg(JSON.stringify(data));
 				return false;
 			});
-			form.on('submit(data-btn)', function() {
+
+			form.on('submit(data-btn---)', function() {
 				var data = card.getAllData("currentTableId");
 				layer.msg(JSON.stringify(data));
 				return false;

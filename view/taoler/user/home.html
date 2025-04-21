@@ -46,8 +46,8 @@
         <ul class="jie-row">
 		    {volist name="$arts" id="vo"}
           <li>
-            {if condition="$vo.is_hot==1"}<span class="fly-jing">{:lang('hot')}</span>{/if}
-            <a href="{$Request.domain}{$vo.url}" class="jie-title"> {$vo.title}</a>
+            {if condition="$vo.is_good==1"}<span class="fly-jing">{:lang('hot')}</span>{/if}
+            <a href="{$vo.url}" class="jie-title"> {$vo.title}</a>
             <i>{$vo.create_time|date='Y-m-d'}</i>
             <em class="layui-hide-xs">{$vo.pv} {:lang('browses')}</em>
           </li>

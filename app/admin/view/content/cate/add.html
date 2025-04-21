@@ -39,9 +39,9 @@
 						</div>
 					</div>
 					<div class="layui-form-item">
-					<label class="layui-form-label">描述</label>
+					<label class="layui-form-label">SEO描述</label>
 					<div class="layui-input-block">
-						<textarea type="text" name="desc" lay-verify="required" placeholder="描述*" autocomplete="off" class="layui-textarea"></textarea>
+						<textarea type="text" name="desc" lay-verify="required" placeholder="类目SEO描述*" autocomplete="off" class="layui-textarea"></textarea>
 					</div>
 					</div>
 					<div class="layui-form-item">
@@ -69,12 +69,11 @@
 	{__block__}
 
 	<script>
-		layui.use(['form', 'iconPicker', 'xmSelect',], function(){
+		layui.use(['iconPicker', 'xmSelect',], function(){
 			var $ = layui.jquery
 			,form = layui.form ;
 			var iconPicker = layui.iconPicker;
 			var xmSelect = layui.xmSelect;
-			var initPid = 0;
 
 			let ADD_EDIT = "{:url('content.cate/addEdit')}";
 			
@@ -118,90 +117,94 @@
 				return false;
 			});
 
-			(function (){
-				//分类菜单结构
-				$.ajax({
-					type: "get",
-					url: "{:url('content.forum/getCateTree')}",
-					success: function(res){
-						var data = res.data;
+			
+			//分类菜单结构
+			$.ajax({
+				type: "get",
+				url: "{:url('content.cate/getCateTree')}",
+				success: function(res){
+					var data = res.data;
+					var initPid = 0;
 
-						// 渲染下拉树
-						xmSelect.render({
-							el: '#menuSelectBox',
-							name: 'pid',
-							height: '250px',
-							layVerify: 'required',
-							layVerType: 'tips',
-							data: data,
-							initValue:  [initPid],
-							model: {label: {type: 'text'}},
-							prop: {
-								name: 'catename',
-								value: 'id'
-							},
-							radio: true,
-							clickClose: true,
-							tree: {
-								show: true,
-								indent: 15,
-								strict: false,
-								expandedKeys: true
-							},
-							tips: '请选择上级菜单'
-						});
+					// 渲染下拉树
+					xmSelect.render({
+						el: '#menuSelectBox',
+						name: 'pid',
+						height: '250px',
+						layVerify: 'required',
+						layVerType: 'tips',
+						data: data,
+						initValue:  [initPid],
+						model: {label: {type: 'text'}},
+						prop: {
+							name: 'catename',
+							value: 'id'
+						},
+						// radio: true,
+						clickClose: true,
+						tree: {
+							show: true,
+							indent: 15,
+							strict: false,
+							expandedKeys: true
+						},
+						on: function(data){ // 单选on模式
+							if(data.isAdd){
+								return data.change.slice(0, 1)
+							}
+						},
+						tips: '请选择上级菜单'
+					});
 
 
-						// var demo4 = xmSelect.render({
-						//   el: '#menuSelectBox',
-						//   model: { label: { type: 'text' } },
-						//   tree: {
-						//     show: true,
-						//     strict: false,
-						//     expandedKeys: [ -1 ],
-						//   },
-						//   on: function(data){
-						//     if(data.isAdd){
-						//       return data.change.slice(0, 1)
-						//     }
-						//   },
-						//   height: 'auto',
-						// })
+					// var demo4 = xmSelect.render({
+					//   el: '#menuSelectBox',
+					//   model: { label: { type: 'text' } },
+					//   tree: {
+					//     show: true,
+					//     strict: false,
+					//     expandedKeys: [ -1 ],
+					//   },
+					//   on: function(data){
+					//     if(data.isAdd){
+					//       return data.change.slice(0, 1)
+					//     }
+					//   },
+					//   height: 'auto',
+					// })
 
-						// //这里模拟ajax
-						// setTimeout(function(){
-						//   demo4.update({
-						//     data: [
-						//       {name: '销售员', value: -1, children: [
-						//         {name: '张三', value: 100, children: []},
-						//         {name: '李四1', value: 2},
-						//         {name: '王五1', value: 3, disabled: true},
-						//       ]},
-						//       {name: '奖品', value: -2, children: [
-						//         {name: '奖品3', value: -3, children: [
-						//           {name: '苹果3', value: 14},
-						//           {name: '香蕉3', value: 15},
-						//           {name: '葡萄3', value: 16},
-						//         ]},
-						//         {name: '苹果2', value: 4, disabled: true},
-						//         {name: '香蕉2', value: 5},
-						//         {name: '葡萄2', value: 6},
-						//       ]},
-						//     ]
-						//   })
+					// //这里模拟ajax
+					// setTimeout(function(){
+					//   demo4.update({
+					//     data: [
+					//       {name: '销售员', value: -1, children: [
+					//         {name: '张三', value: 100, children: []},
+					//         {name: '李四1', value: 2},
+					//         {name: '王五1', value: 3, disabled: true},
+					//       ]},
+					//       {name: '奖品', value: -2, children: [
+					//         {name: '奖品3', value: -3, children: [
+					//           {name: '苹果3', value: 14},
+					//           {name: '香蕉3', value: 15},
+					//           {name: '葡萄3', value: 16},
+					//         ]},
+					//         {name: '苹果2', value: 4, disabled: true},
+					//         {name: '香蕉2', value: 5},
+					//         {name: '葡萄2', value: 6},
+					//       ]},
+					//     ]
+					//   })
 
-						//   //设置默认值
-						//   demo4.setValue([
-						//     {name: '李四1', value: 2},
-						//     {name: '苹果3', value: 14},
-						//   ], null, true)
+					//   //设置默认值
+					//   demo4.setValue([
+					//     {name: '李四1', value: 2},
+					//     {name: '苹果3', value: 14},
+					//   ], null, true)
 
-						// }, 300)
+					// }, 300)
+				}
 
-					}
-
-				});
-			})()
+			});
 
 		})
 	</script>

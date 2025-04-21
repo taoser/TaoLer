@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Exception;
 
+#[\AllowDynamicProperties]
 class HttpHelper
 {
     protected $response;
@@ -18,6 +19,8 @@ class HttpHelper
 
     private $options = [];
 
+    private $bodyFormat; 
+
     public function __construct(){
         
         // verify 校验ssl, 填写cacert.pem路径或者false
@@ -26,6 +29,8 @@ class HttpHelper
         } else {
             $this->client = new Client(['verify' => false]);
         }
+
+        $this->bodyFormat = 'form_params';
     }
 
     /**
@@ -89,18 +94,25 @@ class HttpHelper
      */
     public function post(string $url, array $data = []): HttpHelper|null
     {
-        try {
 
-            $this->url = $this->host . $url;
-            $this->options = array_merge($this->options, $data);
-            $this->response = $this->client->post($this->url, ['json' => $this->options]);
-        } catch (Exception $e) {
-            echo $e->getMessage();
-            return null;
-        } catch (RequestException $e) {
-            $this->handleException($e);
-            return null;
-        }
+        $this->url = $this->host . $url;
+        
+        $this->options[$this->bodyFormat] = $data;
+
+        $this->response = $this->client->post($this->url, $this->options);
+
+        return $this;
+    }
+
+    /**
+     * 使用json发起请求
+     *
+     * @return $this
+     */
+    public function asJson(): HttpHelper|null
+    {
+        $this->bodyFormat = 'json';
+        $this->withHeaders(['Content-Type' => 'application/json']);
 
         return $this;
     }

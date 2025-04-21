@@ -128,7 +128,6 @@
 				,{field: 'id', width: 80, title: 'ID', sort: true}
 				,{title: '头像', width: 80, templet: '#avatarTpl'}
 				,{title: '详情', minWidth: 200, templet: '#titleTpl'}
-				,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
 				,{ title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
 				,{title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
 				,{title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
@@ -158,39 +157,38 @@
 				limits: [30,100,200,500,1000],
 			});
 
-
-		// 动态分类
-		function getSelectCate() {
-			// 分类选择
-			$.get("{:url('content.forum/getCateTree')}", function(res){
-				// 渲染下拉树
-				xmSelect.render({
-					el: '#CateId',
-					name: 'cate_id',
-					height: '250px',
-					layVerify: '',
-					layVerType: 'tips',
-					data: res.data,
-					initValue:  [],
-					model: {label: {type: 'text'}},
-					prop: {
-						name: 'catename',
-						value: 'id'
-					},
-					radio: true,
-					clickClose: true,
-					tree: {
-						show: true,
-						indent: 15,
-						strict: false,
-						expandedKeys: true
-					},
-					tips: '请选择'
-				});
+		// 分类选择
+		$.get("{:url('content.forum/getCateTree')}", function(res){
+			// 渲染下拉树
+			xmSelect.render({
+				el: '#CateId',
+				name: 'cate_id',
+				height: '250px',
+				layVerify: '',
+				layVerType: 'tips',
+				data: res.data,
+				initValue:  [],
+				model: {label: {type: 'text'}},
+				prop: {
+					name: 'catename',
+					value: 'id'
+				},
+				// radio: true,
+				clickClose: true,
+				tree: {
+					show: true,
+					indent: 15,
+					strict: false,
+					expandedKeys: true
+				},
+				on: function(data){ // 单选on模式
+					if(data.isAdd){
+						return data.change.slice(0, 1)
+					}
+				},
+				tips: '请选择'
 			});
-		}
-
-		getSelectCate();
+		});
 
 		table.on('tool(forum-table)', function(obj) {
 			if (obj.event === 'remove') {

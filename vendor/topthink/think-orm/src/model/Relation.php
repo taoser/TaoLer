@@ -3,20 +3,21 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2025 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace think\model;
 
 use Closure;
 use think\db\BaseQuery as Query;
 use think\db\exception\DbException as Exception;
-use think\Model;
+use think\model\Collection;
+use think\model\contract\Modelable as Model;
 
 /**
  * 模型关联基础类.
@@ -159,22 +160,40 @@ abstract class Relation
      * 封装关联数据集.
      *
      * @param array $resultSet 数据集
-     * @param Model $parent    父模型
      *
-     * @return mixed
+     * @param array $resultSet 关联数据结果集
+     * @return Collection 返回模型集合对象
      */
-    protected function resultSetBuild(array $resultSet, ?Model $parent = null)
+    protected function resultSetBuild(array $resultSet)
     {
-        return (new $this->model())->toCollection($resultSet)->setParent($parent);
+        return (new $this->model())->toCollection($resultSet);
     }
 
+    /**
+     * 获取关联查询的字段
+     *
+     * 根据模型名称处理查询字段
+     *
+     * @param string $model 模型名称
+     * @return mixed 返回处理后的查询字段
+     */
     protected function getQueryFields(string $model)
     {
         $fields = $this->query->getOptions('field');
+        $this->query->removeOption('field');
 
         return $this->getRelationQueryFields($fields, $model);
     }
 
+    /**
+     * 获取关联查询的字段
+     *
+     * 处理关联查询的字段，添加表名前缀
+     *
+     * @param mixed $fields 字段定义
+     * @param string $model 模型名称
+     * @return mixed 返回处理后的查询字段
+     */
     protected function getRelationQueryFields($fields, string $model)
     {
         if (empty($fields) || '*' == $fields) {
@@ -194,6 +213,15 @@ abstract class Relation
         return $fields;
     }
 
+    /**
+     * 处理关联查询条件
+     *
+     * 为查询条件添加关联表前缀
+     *
+     * @param array &$where 查询条件
+     * @param string $relation 关联表名
+     * @return void
+     */
     protected function getQueryWhere(array &$where, string $relation): void
     {
         foreach ($where as $key => &$val) {
@@ -216,7 +244,7 @@ abstract class Relation
     protected function getDefaultModel($data)
     {
         if (is_array($data)) {
-            $model = (new $this->model())->data($data);
+            $model = new $this->model($data);
         } elseif ($data instanceof Closure) {
             $model = new $this->model();
             $data($model);
@@ -225,6 +253,40 @@ abstract class Relation
         }
 
         return $model;
+    }
+
+    /**
+     * 处理关联查询及软删除的关联查询
+     *
+     * @param Query  $query 查询对象
+     * @param string $relation 关联名
+     * @param mixed  $where 查询条件
+     * @param string $logic 查询逻辑
+     * @return Query 返回查询对象
+     */
+    protected function getRelationSoftDelete(Query $query, $relation, $where = null, $logic = '')
+    {
+        if ($where) {
+            if (is_array($where)) {
+                $this->getQueryWhere($where, $relation);
+            } elseif ($where instanceof Query) {
+                $where->via($relation);
+            } elseif ($where instanceof Closure) {
+                $where($this->query->via($relation));
+                $where = $this->query;
+            }
+
+            $whereLogic = 'OR' == $logic ? 'whereOr' : 'where'; 
+            $query->$whereLogic(function ($query) use ($where) {
+                $query->where($where);
+            });
+        }
+
+        // 启用软删除则增加软删除条件
+        $softDelete = $this->query->getOptions('soft_delete');
+        return $query->when($softDelete, function ($query) use ($softDelete, $relation) {
+            $query->where($relation . strstr($softDelete[0], '.'), '=' == $softDelete[1][0] ? $softDelete[1][1] : null);
+        });
     }
 
     /**

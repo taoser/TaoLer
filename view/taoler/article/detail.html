@@ -23,7 +23,7 @@
                 <span class="layui-badge" style="background-color: #5FB878;">{:lang('finished')}</span>
                 {/if}
                 {if ($article.is_top == 1)}<span class="layui-badge layui-bg-black">{:lang('top')}</span>{/if}
-                {if ($article.is_hot == 1)}<span class="layui-badge layui-bg-red">{:lang('hot')}</span>{/if}
+                {if ($article.is_good == 1)}<span class="layui-badge layui-bg-red">{:lang('hot')}</span>{/if}
                 
                 <span id="LAY_jieAdmin" data-id="{$article['id']}"></span>
                 
@@ -58,7 +58,7 @@
             <span class="layui-btn layui-btn-xs jie-admin" type="del"><i class="layui-icon layui-icon-delete"></i></span>
             {if($article.is_top == 0)}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="1"><i class="layui-icon layui-icon-top"></i></span> 
             {else /}<span class="layui-btn layui-btn-xs jie-admin" type="set" field="top" rank="0" style="background-color:#ccc;">{:lang('cancel topping')}</span>{/if}
-            {if($article.is_hot == 0)}
+            {if($article.is_good == 0)}
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="1"><i class="layui-icon layui-icon-fire"></i></span> 
             {else /}
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" style="background-color:#ccc;">{:lang('cancel hoting')}</span>

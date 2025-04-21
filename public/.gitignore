@@ -4,5 +4,7 @@
 /home
 /addons
 /sys
+/static_html
 *.xml
 install.lock
+!.gitignore

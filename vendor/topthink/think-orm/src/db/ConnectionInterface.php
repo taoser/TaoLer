@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2025 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -27,24 +27,6 @@ interface ConnectionInterface
      * @return string
      */
     public function getQueryClass(): string;
-
-    /**
-     * 指定表名开始查询.
-     *
-     * @param $table
-     *
-     * @return BaseQuery
-     */
-    public function table($table);
-
-    /**
-     * 指定表名开始查询(不带前缀).
-     *
-     * @param $name
-     *
-     * @return BaseQuery
-     */
-    public function name($name);
 
     /**
      * 连接数据库方法.

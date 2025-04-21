@@ -16,6 +16,7 @@ use think\Response\Json;
 use app\index\validate\Article as ArticleValidate;
 use Exception;
 use think\exception\HttpException;
+use think\facade\Event;
 
 class Article extends IndexBaseController
 {
@@ -67,12 +68,13 @@ class Article extends IndexBaseController
 	//文章详情页
     public function detail()
     {
-		$id = $this->request->param('id');
-		// dump($this->request);
+		$ID = $this->request->param('id');
+
 		$commentPage = $this->request->param('page',1);
 
 		try{
-			$id = IdEncode::decode($id);
+			// 解密ID，得到int型
+			$id = IdEncode::decode($ID);
 			// 1.内容
 			$detail = $this->model::getDetail($id);
 	
@@ -90,7 +92,6 @@ class Article extends IndexBaseController
 		
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
-		// halt($lrDate_time);
 	
 		View::assign([
 			'article'		=> $detail,
@@ -131,17 +132,16 @@ class Article extends IndexBaseController
 			
 			// 数据
             $data = Request::only(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha']);
-            $data['user_id'] = $this->uid;
+            
 			$tagId = input('tagid');
 
-			// 验证码
+			// 验证
 			if(Config::get('taoler.config.post_captcha') == 1) {			
 				if(!captcha_check($data['captcha'])){
 					return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
 
-			// 验证器
 			$validate = new ArticleValidate();
             $result = $validate->scene('Artadd')->check($data);
             if (!$result) {
@@ -158,9 +158,7 @@ class Article extends IndexBaseController
 			$medisArr = $this->setMediaData($data['content']);
 			$data = array_merge($data, $medisArr);
 
-            // 获取分类ename,appname
-            $cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
-
+			// ---------------------
 			// vip每天可免费发帖数
 			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
 
@@ -216,8 +214,9 @@ class Article extends IndexBaseController
 			$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
 
 			try{
+				$data['user_id'] = $this->uid;
 				$result = $this->model::add($data);
-				
+					
 			} catch(Exception $e) {
 				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
@@ -243,16 +242,20 @@ class Article extends IndexBaseController
 			
 			// 清除文章tag缓存
 			Cache::tag('tagArtDetail')->clear();
-			// 发提醒邮件
-			hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
-
+			
+			// 获取分类ename,appname
+			$cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
 			$link = $this->getRouteUrl((int) $aid, $cateName['ename']);
 			$url = $data['status'] ? $link : (string)url('index/');
 
+			// 发提醒邮件
+			// hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
 			// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-			hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
+			// hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
 
+			// 清理首页静态文件
 			$this->removeIndexHtml();
+
 			return Msgres::success($msg, $url);
             
         }
@@ -299,7 +302,7 @@ class Article extends IndexBaseController
 		$this->removeDetailHtml($article);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id/d','cate_id/d','title','title_color','read_type','art_pass','content','keywords','description','captcha']);
+			$data = Request::only(['id/d','cate_id/d','title','content','keywords','description','captcha']);
 			
 			$tagId = input('tagid');	
 			
@@ -357,17 +360,17 @@ class Article extends IndexBaseController
 			
 			//删除原有缓存显示编辑后内容
 			Cache::delete('article_'.$id);
-			Session::delete('art_pass_'.$id);
 
 			$id = IdEncode::encode($id);
 			
 			$link = $this->getRouteUrl($id, $article->cate->ename);
 
-			hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+			// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 			return Msgres::success('edit_success',$link);
 		}
 			
         View::assign(['article'=>$article]);
+		
 		// 编辑多模板支持
 		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('detpl');
 		$appName = $this->app->http->getName();

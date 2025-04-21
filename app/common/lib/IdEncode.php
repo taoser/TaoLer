@@ -22,18 +22,21 @@ class IdEncode
     public static function encode(int $id): int|string
     {
         if(config('taoler.config.id_status') === 1) {
+            // 若加密开启，返回加密后的string
             return self::getInstance()->encode([$id]);
         }
+        // 未加密直接返回数值
         return $id;
     }
 
     // ID解密
     public static function decode(string|int $idStr): int
     {
-        if(config('taoler.config.id_status') === 1 && is_string($idStr)) {
+        // 若加密开启  && is_string($idStr)
+        if(config('taoler.config.id_status') === 1) {
             return self::getInstance()->decode($idStr)[0];
         }
 
-        return $idStr;
+        return (int)$idStr;
     }
 }

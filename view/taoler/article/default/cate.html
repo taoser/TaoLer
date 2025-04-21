@@ -3,7 +3,7 @@
 {block name="keywords"}{cate:catename},{$sysInfo.webname}{/block}
 {block name="description"}{cate:desc}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{cate:catename} - {$sysInfo.webname}">{/block}
-{block name="ogdescription"}<meta property="og:description" content="{cate:desc}" />{/block}
+{block name="ogdescription"}<meta property="og:description" content="{cate:desc /}" />{/block}
 {block name="meta"}
 	<!-- SEO优化 -->
 	<meta name="Copyright" content="{$sysInfo.webname}">
@@ -18,6 +18,7 @@
 		<div class="layui-col-md8">
 			<div class="fly-panel" style="margin-bottom: 0;">
 				<ul class="fly-list">
+
 					{article:list}
 					<li>
 						<a href="{article:author_link /}" class="fly-avatar">
@@ -45,7 +46,8 @@
 							{/eq}
 						</div>
 					</li>
-					{/article:list}	
+					{/article:list}
+
 				</ul>
 				<div style="text-align: center" id="pages"></div>
 			</div>
@@ -66,6 +68,7 @@
 		</div>
 	</div>
 </div>
+
 {include file="public/menu" /}
 
 {/block}

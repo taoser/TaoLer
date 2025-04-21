@@ -48,7 +48,7 @@ class Menu extends AdminController
 
         $auth_rule_list = Db::name($rule)
         ->field('id,pid,title,icon,name,sort,ismenu')
-        ->where(['status'=> 1, 'delete_time'=> 0])
+        ->where(['delete_time'=> 0, 'status'=> 1])
         ->select();
         
         foreach ($auth_rule_list as $v) {
@@ -96,6 +96,24 @@ class Menu extends AdminController
         //         ]
         //     ]
         // ];
+
+        $nav[] = Session::has('ruleTable') ? [
+            'id'    => 999,
+            'title' => '用户后台',
+            'icon'  => 'layui-icon layui-icon-console',
+            'href'  => (string) url("apps/delete"),
+            'sort'  => 999,
+            'type'  => 1,
+            "openType"  => "_blank",
+        ] : [
+            'id'    => 999,
+            'title' => '管理后台',
+            'icon'  => 'layui-icon layui-icon-console',
+            'href'  => (string) url("apps/index"),
+            'sort'  => 999,
+            'type'  => 1,
+            "openType"  => "_blank",
+        ];
 
         $nav[] = [
             'id'    => 1000,
