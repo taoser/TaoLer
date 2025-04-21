@@ -3,12 +3,13 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2025 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
+declare (strict_types = 1);
 
 namespace think\model\relation;
 
@@ -16,7 +17,7 @@ use Closure;
 use Exception;
 use think\db\BaseQuery as Query;
 use think\db\Raw;
-use think\Model;
+use think\model\contract\Modelable as Model;
 use think\model\Pivot;
 
 /**
@@ -115,7 +116,7 @@ class MorphToMany extends BelongsToMany
                     $data[$result->$pk] = [];
                 }
 
-                $result->setRelation($relation, $this->resultSetBuild($data[$result->$pk], clone $this->parent));
+                $result->setRelation($relation, $this->resultSetBuild($data[$result->$pk]));
             }
         }
     }
@@ -148,7 +149,7 @@ class MorphToMany extends BelongsToMany
                 $data[$pk] = [];
             }
 
-            $result->setRelation($relation, $this->resultSetBuild($data[$pk], clone $this->parent));
+            $result->setRelation($relation, $this->resultSetBuild($data[$pk]));
         }
     }
 
@@ -198,7 +199,7 @@ class MorphToMany extends BelongsToMany
         }
 
         return $this->belongsToManyQuery($this->foreignKey, $this->localKey, [
-            ['pivot.' . $this->localKey, 'exp', new Raw('=' . $this->parent->db(false)->getTable(true) . '.' . $this->parent->getPk())],
+            ['pivot.' . $this->localKey, 'exp', new Raw('=' . $this->parent->getTable(true) . '.' . $this->parent->getPk())],
             ['pivot.' . $this->morphType, '=', $this->morphClass],
         ])->fetchSql()->$aggregate($field);
     }
@@ -262,18 +263,8 @@ class MorphToMany extends BelongsToMany
         // 组装模型数据
         $data = [];
         foreach ($list as $set) {
-            $pivot = [];
-            foreach ($set->getData() as $key => $val) {
-                if (str_contains($key, '__')) {
-                    [$name, $attr] = explode('__', $key, 2);
-                    if ('pivot' == $name) {
-                        $pivot[$attr] = $val;
-                        unset($set->$key);
-                    }
-                }
-            }
-
-            $key = $pivot[$this->localKey];
+            $pivot = $set->getRelation('pivot');
+            $key   = $pivot[$this->localKey];
 
             if ($withLimit && isset($data[$key]) && count($data[$key]) >= $withLimit) {
                 continue;
@@ -315,20 +306,16 @@ class MorphToMany extends BelongsToMany
 
         if (!empty($id)) {
             // 保存中间表数据
-            $pivot[$this->localKey] = $this->parent->getKey();
+            $pivot[$this->localKey]  = $this->parent->getKey();
             $pivot[$this->morphType] = $this->morphClass;
-            $ids = (array) $id;
 
             $result = [];
-
-            foreach ($ids as $id) {
+            foreach ((array) $ids as $id) {
                 $pivot[$this->foreignKey] = $id;
+                $object = $this->newPivot();
+                $object->replace()->save($pivot);
 
-                $this->pivot->replace()
-                    ->exists(false)
-                    ->data([])
-                    ->save($pivot);
-                $result[] = $this->newPivot($pivot);
+                $result[] = $object;
             }
 
             if (count($result) == 1) {
@@ -396,7 +383,7 @@ class MorphToMany extends BelongsToMany
             $pivot[] = [$this->foreignKey, is_array($id) ? 'in' : '=', $id];
         }
 
-        $result = $this->pivot->where($pivot)->delete();
+        $result = $this->newPivot()->where($pivot)->delete();
 
         // 删除关联表数据
         if (isset($id) && $relationDel) {
@@ -449,7 +436,9 @@ class MorphToMany extends BelongsToMany
             if (!in_array($id, $current)) {
                 $this->attach($id, $attributes);
                 $changes['attached'][] = $id;
-            } elseif (count($attributes) > 0 && $this->attach($id, $attributes)) {
+            } elseif (count($attributes) > 0) {
+                $this->detach($id);
+                $this->attach($id, $attributes);
                 $changes['updated'][] = $id;
             }
         }

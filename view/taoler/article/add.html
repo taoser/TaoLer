@@ -21,39 +21,14 @@
 									<div id="CateId" class="xm-select-demo"></div>
 								</div>
 							</div>
-							<div class="layui-col-md8">
+							<div class="layui-col-md9">
 								<label for="L_title" class="layui-form-label">{:lang('title')}</label>
 								<div class="layui-input-block">
 									<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;" value=""/>
-									<input type="hidden" id="L_title_color" name="title_color" autocomplete="off" class="layui-input" />
 								</div>
 							</div>
-							{if ($user.auth == 1)}
-							<div class="layui-col-md1">
-							<div id="color"></div>
-							</div>
-							{/if}
 						</div>
 
-						<div class="layui-row layui-col-space15 layui-form-item" id="LAY_quiz">
-							<div class="layui-col-md3">
-								<label class="layui-form-label">阅读权限</label>
-								<div class="layui-input-block">
-									<select name="read_type">
-									<option value="0">开放阅读</option>
-									<option value="1">密码加密</option>
-									<option value="2">回帖阅读</option>
-									<option value="3">购买阅读</option>
-									</select>
-								</div>
-							</div>
-							<div class="layui-col-md3">
-								<label class="layui-form-label" for="L_version">密码</label>
-								<div class="layui-input-block">
-									<input type="text" id="L_version" value="" name="art_pass" autocomplete="off" class="layui-input" />
-								</div>
-							</div>
-						</div>
 						<div class="layui-form-item layui-form-text">
 							<div class="layui-input-block">
 							<textarea id="L_content" name="content" lay-verify="required" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
@@ -109,46 +84,52 @@
 {/block}
 
 {block name="script"}
-<script src="/static/xm-select.js"></script>
+<script src="/static/component/pear/pear.js"></script>
 <script>
-layui.use(['fly'], function () {
-    var $ = layui.jquery,
-		fly = layui.fly,
-		form = layui.form,
-		colorpicker = layui.colorpicker,
-		upload = layui.upload;
+	layui.use(['fly','xmSelect'], function () {
+		var $ = layui.jquery,
+			fly = layui.fly,
+			form = layui.form,
+			colorpicker = layui.colorpicker,
+			upload = layui.upload;
+		let xmSelect = layui.xmSelect;
 
-    	// 分类选择
-      	$.get("{:url('get_cate_tree')}",function(res){
-        	var cid = "{$cid}";
-            // 渲染下拉树
-            xmSelect.render({
-                el: '#CateId',
-                name: 'cate_id',
-                height: '250px',
-                layVerify: 'required',
-                layVerType: 'tips',
-                data: res.data,
-                initValue:  [cid],
-                model: {label: {type: 'text'}},
-                prop: {
-                    name: 'catename',
-                    value: 'id'
-                },
-                radio: true,
-                clickClose: true,
-                tree: {
-                    show: true,
-                    indent: 15,
-                    strict: false,
-                    expandedKeys: false
-                },
-                tips: '请选择'
-            });
-    	});
-    
-    // tag标签
-    $(function(){
+			// 分类选择
+			$.get("{:url('get_cate_tree')}",function(res){
+				var cid = "{$cid}";
+				// 渲染下拉树
+				xmSelect.render({
+					el: '#CateId',
+					name: 'cate_id',
+					height: '250px',
+					layVerify: 'required',
+					layVerType: 'tips',
+					data: res.data,
+					initValue:  [cid],
+					model: {label: {type: 'text'}},
+					prop: {
+						name: 'catename',
+						value: 'id'
+					},
+					// radio: true,
+					clickClose: true,
+					tree: {
+						show: true,
+						indent: 15,
+						strict: false,
+						expandedKeys: false
+					},
+					on: function(data){ // 单选on模式
+						if(data.isAdd){
+							return data.change.slice(0, 1)
+						}
+					},
+					tips: '请选择'
+				});
+			});
+		
+		// tag标签
+
 		//1.渲染标签
 		var addTags = xmSelect.render({
 			el: '#tag',
@@ -164,49 +145,48 @@ layui.use(['fly'], function () {
 		$.get("{:url('get_all_tag')}",function(res){
 			if(res.code === 0){
 				addTags.update({
-				data: res.data,
-				autoRow: true,
+					data: res.data,
+					autoRow: true,
 				})
 			}
 		});
-    });
 
-    // 改变标题颜色
-    colorpicker.render({
-      elem: "#color",
-      color: "#393d49",
-      predefine: true, // 开启预定义颜色
-      done: function (color) {
-        //譬如你可以在回调中把得到的 color 赋值给表单
-        $("#L_title_color").val(color);
-        $("#L_title").css("color", color);
-      },
-    });
-
-    // 发布文章
-    form.on("submit(article-add)", function (data) {
-		var field = data.field;
-		var loadIndex = layer.load(2);
-		$.ajax({
-			type: "post",
-			url: "{:url('article/add')}",
-			data: field,
-			dataType: "json",
-			success: function (res) {
-				layer.close(loadIndex);
-				if (res.code === 0) {
-					toast.success({title:"成功消息",message: res.msg});
-					location.href = res.url;
-				} else {
-					toast.error({title:"失败消息",message:res.msg});
-					$("#captcha").attr("src", "{:captcha_src()}?" + Math.random());
-				}
-			},
+		// 改变标题颜色
+		colorpicker.render({
+		elem: "#color",
+		color: "#393d49",
+		predefine: true, // 开启预定义颜色
+		done: function (color) {
+			//譬如你可以在回调中把得到的 color 赋值给表单
+			$("#L_title_color").val(color);
+			$("#L_title").css("color", color);
+		},
 		});
-		return false;
-    });
 
-  });
+		// 发布文章
+		form.on("submit(article-add)", function (data) {
+			var field = data.field;
+			var loadIndex = layer.load(2);
+			$.ajax({
+				type: "post",
+				url: "{:url('article/add')}",
+				data: field,
+				dataType: "json",
+				success: function (res) {
+					layer.close(loadIndex);
+					if (res.code === 0) {
+						toast.success({title:"成功消息",message: res.msg});
+						location.href = res.url;
+					} else {
+						toast.error({title:"失败消息",message:res.msg});
+						$("#captcha").attr("src", "{:captcha_src()}?" + Math.random());
+					}
+				},
+			});
+			return false;
+		});
+
+	});
 </script>
 {// 编辑器}
 

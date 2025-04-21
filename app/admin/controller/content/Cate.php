@@ -104,5 +104,37 @@ class Cate extends AdminBaseController
         return Files::getDirName('../view/'.$sys['template'].'/article/');
     }
 
+    /**
+     * 分类树
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getCateTree()
+    {
+        $cateList = Category::field('id,pid,catename,sort')
+        ->where('status', 1)
+        ->select()
+        ->toArray();
+
+        $data =  getTree($cateList);
+        // 排序
+        $cmf_arr = array_column($data, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $data);
+        
+        $count = count($data);
+
+        $tree = [];
+        if($count){
+
+            $tree = ['code'=>0, 'msg'=>'ok', 'count' => $count];
+
+            $tree['data'][] = ['id'=>0, 'catename'=>'顶级', 'pid' => 0, 'children'=>$data];
+        }
+
+        return json($tree);
+    }
+
 
 }

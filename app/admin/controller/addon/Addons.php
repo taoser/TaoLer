@@ -127,7 +127,7 @@ class Addons extends AdminBaseController
         }
 
         $uzip = new Zip();
-        $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
+        $zipDir = strstr($package_file, '.zip', true);   //返回文件名后缀前的字符串
         $zipPath = FileHelper::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
         $unzip_res = $uzip->unzip($package_file, $zipPath, true);
         if(!$unzip_res) {

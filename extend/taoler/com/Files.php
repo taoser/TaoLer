@@ -205,22 +205,23 @@ class Files
      * @return bool
      */
     public static function delDir($dir) {
-        //先删除目录下的文件：
-//        var_dump(is_dir($dir));
-//        if(!is_dir($dir)){
-//            return true;
-//        }
-        $dh=opendir($dir);
+
+       if(!is_dir($dir)){
+           return;
+       }
+       
+        $dh = opendir($dir);
         while ($file=readdir($dh)) {
-            if($file!="." && $file!="..") {
-                $fullpath=$dir."/".$file;
-                if(!is_dir($fullpath)) {
+            if($file !== "." && $file !== "..") {
+                $fullpath = $dir."/".$file;
+                if(!is_dir($fullpath) && file_exists($fullpath)) {
                     unlink($fullpath);
                 } else {
                     self::delDir($fullpath);
                 }
             }
         }
+
         closedir($dh);
         //删除当前文件夹
         if(rmdir($dir)) {

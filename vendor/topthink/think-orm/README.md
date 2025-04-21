@@ -1,21 +1,26 @@
-# ThinkORM
+# ThinkORM4.0
 
-基于PHP8.0+ 和PDO实现的ORM，支持多数据库，3.0版本主要特性包括：
+基于PHP8.0+ 和PDO实现的轻量级ORM，完全重构的Model层，支持实体模型和分层，完全兼容3.0。
+
+## 特性
 
 * 基于PDO和PHP强类型实现
-* 支持原生查询和查询构造器
+* 原生查询支持
+* 灵活的查询构造器和链式查询
 * 自动参数绑定和预查询
-* 简洁易用的查询功能
-* 强大灵活的模型用法
-* 支持预载入关联查询和延迟关联查询
-* 支持多数据库及动态切换
-* 支持`MongoDb`
-* 支持分布式及事务
-* 支持断点重连
-* 支持`JSON`查询
-* 支持数据库日志
-* 支持`PSR-16`缓存及`PSR-3`日志规范
-
+* 聚合查询
+* 强大的模型及关联定义
+* 模型获取器和修改器
+* 支持ActiveRecord模式和仓储模式
+* 模型事件和类型自动转换
+* 数据自动写入和延迟写入
+* 搜索器和查询范围
+* 预载入关联查询和延迟关联查询
+* 数据写入自动验证
+* 多数据库和`MongoDb`支持
+* 分布式及事务、断点重连
+* `JSON`及枚举类查询
+* `PSR-16`缓存及`PSR-3`日志规范
 
 ## 安装
 ~~~
@@ -25,3 +30,12 @@ composer require topthink/think-orm
 ## 文档
 
 详细参考 [ThinkORM开发指南](https://doc.thinkphp.cn/@think-orm)
+
+基于官方手册的数据训练和提供精准解答服务
+[官方专家智能体](https://chat.topthink.com/chat/e7m6qe)
+
+你可以使用官方提供的[ThinkChat](https://chat.topthink.com/)，让你在学习 ThinkPHP 的旅途中享受私人 AI 助理服务！
+
+[![](https://www.topthink.com/uploads/assistant/20230630/4d1a3f0ad2958b49bb8189b7ef824cb0.png)](https://chat.topthink.com/)
+
+ThinkPHP 生态服务由[顶想云](https://www.topthink.com)（TOPThink Cloud）提供，为生态提供专业的开发者服务和价值之选。

@@ -14,8 +14,33 @@
     border-color: var(--global-primary-color);
 }
 
+.layui-form-radio:hover>*,
+.layui-form-radioed>i,
+.layui-form-radioed {
+    color: var(--global-primary-color) !important;
+}
+
+.layui-form-checked[lay-skin=primary]>i {
+    border-color: var(--global-primary-color) !important;
+    background-color: var(--global-primary-color);
+    color: #fff;
+}
+
+.layui-form-checkbox[lay-skin=primary]>.layui-icon-indeterminate,
+.layui-form-checkbox[lay-skin=primary]>.layui-icon-indeterminate:hover {
+    border-color: var(--global-primary-color);
+}
+
+.layui-form-checkbox[lay-skin=primary]>.layui-icon-indeterminate:before {
+    background-color: var(--global-primary-color);
+}
+
 .layui-btn {
     background-color: var(--global-primary-color);
+}
+
+.layui-btn.layui-btn-primary:hover {
+    border: 1px solid var(--global-primary-color);
 }
 
 .layui-btn.layui-btn-normal {
@@ -41,4 +66,73 @@
 
 .layui-timeline-axis {
     color: var(--global-primary-color);
+}
+
+.layui-table-checked {
+    background-color: #f8f8f8;
+}
+
+.layui-input:focus, .layui-textarea:focus {
+    border-color: var(--global-primary-color) !important;
+    box-shadow: 0 0 0 3px rgb(from var(--global-primary-color) r g b / 8%);
+}
+
+.layui-form-select dl dd.layui-this {
+    color: var(--global-primary-color);
+}
+
+.layui-input-wrap .layui-input:focus+.layui-input-split {
+    border-color: var(--global-primary-color)
+}
+
+.layui-form-checked:hover>div, .layui-form-checked>div {
+    background-color: var(--global-primary-color);
+}
+
+.layui-form-checked:hover>i, .layui-form-checked>i {
+    color: var(--global-primary-color);
+}
+
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background-color: var(--global-primary-color);
+}
+
+.layui-laypage input:active {
+    border-color: var(--global-primary-color);
+}
+
+.layui-laypage a:hover {
+    color: var(--global-primary-color);
+}
+
+.layui-laypage input:focus, .layui-laypage select:focus {
+    border-color: var(--global-primary-color) !important;
+}
+
+.layui-laydate .layui-this, .layui-laydate .layui-this>div {
+    background-color: var(--global-primary-color) !important;
+}
+
+.layui-laydate-header i:hover, .layui-laydate-header span:hover {
+    color: var(--global-primary-color);
+}
+
+.layui-laydate-footer span:hover {
+    color: var(--global-primary-color);
+}
+
+.layui-tab-brief>.layui-tab-title .layui-this {
+    color: var(--global-primary-color);
+}
+
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after {
+    border-bottom: 2px solid var(--global-primary-color);
+}
+
+.layui-progress-bar {
+    background-color: var(--global-primary-color);
+}
+
+.layui-form-checkbox[lay-skin=primary]:hover>i {
+    border-color: var(--global-primary-color);
 }

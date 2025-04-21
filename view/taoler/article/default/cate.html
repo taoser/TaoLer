@@ -3,7 +3,7 @@
 {block name="keywords"}{cate:catename},{$sysInfo.webname}{/block}
 {block name="description"}{cate:desc}{/block}
 {block name="ogtitle"}<meta property="og:title" content="{cate:catename} - {$sysInfo.webname}">{/block}
-{block name="ogdescription"}<meta property="og:description" content="{cate:desc}" />{/block}
+{block name="ogdescription"}<meta property="og:description" content="{cate:desc /}" />{/block}
 {block name="meta"}
 	<!-- SEO优化 -->
 	<meta name="Copyright" content="{$sysInfo.webname}">
@@ -18,13 +18,14 @@
 		<div class="layui-col-md8">
 			<div class="fly-panel" style="margin-bottom: 0;">
 				<ul class="fly-list">
+
 					{article:list}
 					<li>
 						<a href="{article:author_link /}" class="fly-avatar">
 							<img src="{article:author_avatar /}" alt="{article:author /}">
 						</a>
 						<h2>
-							<a href="{article:url /}"  style="color:{article:title_color ?? '#333'};">{article:title /}</a>
+							<a href="{article:url /}">{article:title /}</a>
 						</h2>
 						
 						<div class="fly-list-info">
@@ -37,15 +38,16 @@
 							</a>
 							{//图标}
 							<span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {article:pv /}</span>
-							<span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num /}</span>
+							<span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comments_num /}</span>
 						</div>
 						<div class="fly-list-badge">
-							{eq name="article.is_hot" value="1"}
+							{eq name="article.flags.is_good" value="1"}
 							<i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i><span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span>
 							{/eq}
 						</div>
 					</li>
-					{/article:list}	
+					{/article:list}
+
 				</ul>
 				<div style="text-align: center" id="pages"></div>
 			</div>
@@ -66,6 +68,7 @@
 		</div>
 	</div>
 </div>
+
 {include file="public/menu" /}
 
 {/block}

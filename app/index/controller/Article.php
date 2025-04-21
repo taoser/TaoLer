@@ -16,6 +16,7 @@ use think\Response\Json;
 use app\index\validate\Article as ArticleValidate;
 use Exception;
 use think\exception\HttpException;
+use think\facade\Event;
 
 class Article extends IndexBaseController
 {
@@ -34,6 +35,7 @@ class Article extends IndexBaseController
     //文章分类
     public function cate()
 	{
+		global $page;
 		//动态参数
 		$ename = $this->request->param('ename');
 		$type = $this->request->param('type', 'all');
@@ -42,15 +44,19 @@ class Article extends IndexBaseController
 		// 分类信息
 		$cateInfo = Category::getCateInfoByEname($ename);
 
-		//分页url
-		$url = (string) url('cate_page',['ename'=>$ename, 'type'=>$type, 'page'=>$page]);
+		//当前页url
+		$url = (string) url('cate_page', ['ename' => $ename, 'type' => $type, 'page' => $page]);
+		
 		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
-
+		// 下一页url
+		$next = $path . '/' . ++$page . '.html';
 
 		$assignArr = [
 			'cateinfo'	=> $cateInfo,
 			'cate'	=> $cateInfo,
-			'path'		=> $path
+			'path'	=> $path,
+			'page'	=> ++$page,
+			'next'  => $next
 		];
 
 		View::assign($assignArr);
@@ -62,30 +68,30 @@ class Article extends IndexBaseController
 	//文章详情页
     public function detail()
     {
-		$id = $this->request->param('id');
-		// dump($this->request);
+		$ID = $this->request->param('id');
+
 		$commentPage = $this->request->param('page',1);
 
 		try{
-			$id = IdEncode::decode($id);
+			// 解密ID，得到int型
+			$id = IdEncode::decode($ID);
 			// 1.内容
 			$detail = $this->model::getDetail($id);
 	
 			// 2.pv
-			$detail->setInc('pv', 1);
+			$detail->setInc('pv', 1); // 延迟更新
 			$pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
 			$detail->pv = $pv;
+
 		} catch(Exception $e) {
 			throw new HttpException(404, $e->getMessage());
 		}
-		
 
 		// 3.设置内容的tag内链
 		// $artDetail->content = $this->setArtTagLink($artDetail->content);		
 		
 		//最新评论时间
 		$lrDate_time = Db::name('comment')->where('article_id', $id)->cache(true)->max('update_time',false) ?? time();
-		// halt($lrDate_time);
 	
 		View::assign([
 			'article'		=> $detail,
@@ -93,7 +99,6 @@ class Article extends IndexBaseController
 			'page'			=> $commentPage,
 			'cid' 			=> $id,
 			'lrDate_time' 	=> $lrDate_time,
-            'passJieMi'   	=> session('art_pass_'.$id)
 		]);
 
 		$html = View::fetch('article/'.$detail['cate']['detpl'].'/detail');
@@ -113,19 +118,30 @@ class Article extends IndexBaseController
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
 
+			$media = [
+				'images' => [],
+				'videos' => [],
+				'audios' => []
+			];
+
+			$flags = [
+				'is_top'    => '0',
+				'is_good'  => '0',
+				'is_wait'    => '0'
+			];
+			
 			// 数据
-            $data = Request::only(['cate_id/d', 'title', 'title_color','read_type','art_pass', 'content', 'keywords', 'description', 'captcha']);
-            $data['user_id'] = $this->uid;
+            $data = Request::only(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha']);
+            
 			$tagId = input('tagid');
 
-			// 验证码
+			// 验证
 			if(Config::get('taoler.config.post_captcha') == 1) {			
 				if(!captcha_check($data['captcha'])){
 					return json(['code'=>-1,'msg'=> '验证码失败']);
 				};
 			}
 
-			// 验证器
 			$validate = new ArticleValidate();
             $result = $validate->scene('Artadd')->check($data);
             if (!$result) {
@@ -137,17 +153,12 @@ class Article extends IndexBaseController
             $data['description'] = strip_tags($this->filterEmoji($data['description']));
 			// 处理图片内容
 			$data['content'] = $this->downUrlPicsReaplace($data['content']);
-			// 获取内容图片音视频标识
-			// $iva= $this->hasIva($data['content']);
-			// $data = array_merge($data, $iva);
 
 			// 多媒体数据
 			$medisArr = $this->setMediaData($data['content']);
 			$data = array_merge($data, $medisArr);
 
-            // 获取分类ename,appname
-            $cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
-
+			// ---------------------
 			// vip每天可免费发帖数
 			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
 
@@ -203,7 +214,9 @@ class Article extends IndexBaseController
 			$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
 
 			try{
+				$data['user_id'] = $this->uid;
 				$result = $this->model::add($data);
+					
 			} catch(Exception $e) {
 				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
@@ -229,16 +242,20 @@ class Article extends IndexBaseController
 			
 			// 清除文章tag缓存
 			Cache::tag('tagArtDetail')->clear();
-			// 发提醒邮件
-			hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
-
+			
+			// 获取分类ename,appname
+			$cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
 			$link = $this->getRouteUrl((int) $aid, $cateName['ename']);
 			$url = $data['status'] ? $link : (string)url('index/');
 
+			// 发提醒邮件
+			// hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
 			// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-			hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
+			// hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
 
+			// 清理首页静态文件
 			$this->removeIndexHtml();
+
 			return Msgres::success($msg, $url);
             
         }
@@ -285,7 +302,7 @@ class Article extends IndexBaseController
 		$this->removeDetailHtml($article);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id/d','cate_id/d','title','title_color','read_type','art_pass','content','keywords','description','captcha']);
+			$data = Request::only(['id/d','cate_id/d','title','content','keywords','description','captcha']);
 			
 			$tagId = input('tagid');	
 			
@@ -343,17 +360,17 @@ class Article extends IndexBaseController
 			
 			//删除原有缓存显示编辑后内容
 			Cache::delete('article_'.$id);
-			Session::delete('art_pass_'.$id);
 
 			$id = IdEncode::encode($id);
 			
 			$link = $this->getRouteUrl($id, $article->cate->ename);
 
-			hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+			// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
 			return Msgres::success('edit_success',$link);
 		}
 			
         View::assign(['article'=>$article]);
+		
 		// 编辑多模板支持
 		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('detpl');
 		$appName = $this->app->http->getName();
@@ -451,42 +468,6 @@ class Article extends IndexBaseController
 		
 		return json(['status' => 0, 'msg' => $msg]);	
 	}
-	
-	// 改变标题颜色
-	public function titleColor()
-	{
-		$data = Request::param();
-		$result = $this->model::update($data);
-		if($result){
-			//清除文章缓存
-			Cache::tag(['tagArt','tagArtDetail'])->clear();
-			$res = ['code'=> 0, 'msg'=>'标题颜色设置成功'];
-		}else{
-			$res = ['code'=> -1, 'msg'=>'标题颜色设置失败'];
-		}
-		return json($res);
-	}
-	
-	/**
-	 * 内容中是否有图片视频音频插入
-	 *
-	 * @param [type] $content
-	 * @return boolean
-	 */
-	public function hasIva($content)
-	{
-		//判断是否插入图片
-		$isHasImg = strpos($content,'img[');
-		$data['has_img'] = is_int($isHasImg) ? 1 : 0;
-		//判断是否插入视频
-		$isHasVideo = strpos($content,'video(');
-		$data['has_video'] = is_int($isHasVideo) ? 1 : 0;
-		//判断是否插入音频
-		$isHasAudio = strpos($content,'audio[');
-		$data['has_audio'] = is_int($isHasAudio) ? 1 : 0;
-		
-		return $data;
-	}
 
 	//设置文章内容tag
 	protected function setArtTagLink($content)
@@ -564,17 +545,6 @@ class Article extends IndexBaseController
         return json($tree);
     }
 
-    public function jiemi()
-    {
-        $param = Request::param();
-        $article = $this->model::find($param['id']);
-        if($article['art_pass'] == $param['art_pass']) {
-            session('art_pass_'.$param['id'], $param['art_pass']);
-            return json(['code' => 0, 'msg' => '解密成功']);
-        }
-        return json(['code' => -1, 'msg' => '解密失败']);
-    }
-
 	/**
 	 * 设置多媒体数据
 	 *
@@ -582,26 +552,28 @@ class Article extends IndexBaseController
 	 * @return array
 	 */
 	protected function setMediaData(string $content): array {
+		$data = [];
+
+		$data['media'] = [
+			'images' => [],
+			'videos' => [],
+			'audios' => []
+		];
+
 		$images = get_all_img($content);
 		$video = get_one_video($content);
 
-		$data = [];
-		$media = [];
 		if(!empty($images)) {
-			$media['image'] = $images;
-			$data['has_img'] = '1';
+			$data['media']['images'] = $images;
+			$data['has_image'] = count($images);
 		}
 		
 		if(!empty($video)) {
-			$media['video'] = $video;
-			$data['has_video'] = '1';
-		}
-
-		if(!empty($media)) {
-			$data['media'] = $media;
+			$data['media']['videos'] = $video;
+			$data['has_video'] = count($video);
 		}
 
 		return $data;
 	}
-	
+
 }

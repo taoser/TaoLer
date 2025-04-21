@@ -1,534 +1,531 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-	<head>
-		<meta charset="UTF-8">
-		<title>用户页面</title>
-		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-	</head>
-<body>
-		<div class="layui-card">
-			<div class="layui-card-body">
-				<form class="layui-form" action="">
-					<div class="layui-row layui-col-space15">
-						<div class="layui-col-md2">
-							<label class="layui-form-label">ID</label>
-							<div class="layui-input-block">
-							  <input type="text" name="id" placeholder="请输入ID号" autocomplete="off" class="layui-input">
-							</div>
-						</div>
-						<div class="layui-col-md2">
-							<label class="layui-form-label">用户</label>
-							<div class="layui-input-block">
-								<input type="text" name="name" placeholder="用户名" autocomplete="on"  class="layui-input">
-							</div>
-						</div>
-						<div class="layui-col-md2">
-							<label class="layui-form-label">性别</label>
-							<div class="layui-input-block">
-								<select name="sex">
-								  <option value="">不限</option>
-								  <option value="0">男</option>
-								  <option value="1">女</option>
-								</select>
-							</div>
-						</div>
-						<div class="layui-col-md2">
-							<label class="layui-form-label">邮箱</label>
-							<div class="layui-input-block">
-								<input type="text" name="email" placeholder="邮箱" class="layui-input">
-							</div>
-						</div>
-						<div class="layui-col-md2">
-							<label class="layui-form-label">状态</label>
-							<div class="layui-input-block">
-							  <select name="status">
-							  <option value="">选择状态</option>
-								<option value="1">正常</option>
-								<option value="-1">禁止</option>
-								<option value="0">待审</option>
-							  </select>
-							</div>
-						</div>
-						<div class="layui-col-md2">
-							<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
-								<i class="layui-icon layui-icon-search"></i>
-								查询
-							</button>
-							<button type="reset" class="pear-btn pear-btn-md">
-								<i class="layui-icon layui-icon-refresh"></i>
-								重置
-							</button>
+{extend name="public/base" /}
+
+{block name="title"}管理员{/block}
+{block name="body"}
+	<div class="layui-card">
+		<div class="layui-card-body">
+			<form class="layui-form" action="">
+				<div class="layui-row layui-col-space15">
+					<div class="layui-col-md2">
+						<label class="layui-form-label">ID</label>
+						<div class="layui-input-block">
+							<input type="text" name="id" placeholder="请输入ID号" autocomplete="off" class="layui-input">
 						</div>
 					</div>
-				</form>
-			</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">用户</label>
+						<div class="layui-input-block">
+							<input type="text" name="name" placeholder="用户名" autocomplete="on"  class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">性别</label>
+						<div class="layui-input-block">
+							<select name="sex">
+								<option value="">不限</option>
+								<option value="0">男</option>
+								<option value="1">女</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">邮箱</label>
+						<div class="layui-input-block">
+							<input type="text" name="email" placeholder="邮箱" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">状态</label>
+						<div class="layui-input-block">
+							<select name="status">
+							<option value="">选择状态</option>
+							<option value="1">正常</option>
+							<option value="-1">禁止</option>
+							<option value="0">待审</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+							<i class="layui-icon layui-icon-search"></i>
+							查询
+						</button>
+						<button type="reset" class="pear-btn pear-btn-md">
+							<i class="layui-icon layui-icon-refresh"></i>
+							重置
+						</button>
+					</div>
+				</div>
+			</form>
 		</div>
-		
-		<div class="layui-card">
-			<div class="layui-card-body">
-				<table id="user-table" lay-filter="user-table"></table>
-			</div>
+	</div>
+	
+	<div class="layui-card">
+		<div class="layui-card-body">
+			<table id="user-table" lay-filter="user-table"></table>
 		</div>
+	</div>
 
-		<script type="text/html" id="user-toolbar">
-			<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
-		        <i class="layui-icon layui-icon-add-1"></i>
-		        新增
-		    </button>
-		    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-		        <i class="layui-icon layui-icon-delete"></i>
-		        删除
-		    </button>
-		</script>
-		<script type="text/html" id="imgTpl"> 
-			<a href="{:url('user.user/goUserHome')}?id={{ d.id }}" target="_blank"><img src= {{=d.avatar}} style="width: 100px; height: 100px; border-radius: 6px; object-fit: cover;"/></a>
-		</script>
-		<script type="text/html" id="userInfoTpl"> 
-			<ul>
-				<li>ID: {{d.id}} 用户名：{{d.username }}</li>
-				<li>性别：{{#if (d.sex == 0) { }} <span>男</span> {{# }else if(d.sex == 1){ }} <span>女</span> {{# } }} 昵称：{{d.nick}}</li>
-				<li>电话：{{d.phone}}</li>
-				<li>邮箱：{{d.email}}</li>
-			</ul>
-		</script>
-		<script type="text/html" id="user-bar">
-			<button class="pear-btn pear-btn-primary pear-btn-sm" title="编辑" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-		    <button class="pear-btn pear-btn-danger pear-btn-sm" title="删除" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
-			<button class="pear-btn pear-btn-warm pear-btn-sm" title="清空资源" lay-event="clear"><i class="layui-icon layui-icon-clear"></i></button>
-		</script>
+	<script type="text/html" id="user-toolbar">
+		<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+			<i class="layui-icon layui-icon-add-1"></i>
+			新增
+		</button>
+		<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+			<i class="layui-icon layui-icon-delete"></i>
+			删除
+		</button>
+	</script>
+	<script type="text/html" id="imgTpl"> 
+		<a href="{:url('user.user/goUserHome')}?id={{ d.id }}" target="_blank"><img src= {{=d.avatar}} style="width: 100px; height: 100px; border-radius: 6px; object-fit: cover;"/></a>
+	</script>
+	<script type="text/html" id="userInfoTpl"> 
+		<ul>
+			<li>ID: {{d.id}} 用户名：{{d.username }}</li>
+			<li>性别：{{#if (d.sex == 0) { }} <span>男</span> {{# }else if(d.sex == 1){ }} <span>女</span> {{# } }} 昵称：{{d.nick}}</li>
+			<li>电话：{{d.phone}}</li>
+			<li>邮箱：{{d.email}}</li>
+		</ul>
+	</script>
+	<script type="text/html" id="user-bar">
+		<button class="pear-btn pear-btn-primary pear-btn-sm" title="编辑" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+		<button class="pear-btn pear-btn-danger pear-btn-sm" title="删除" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+		<button class="pear-btn pear-btn-warm pear-btn-sm" title="清空资源" lay-event="clear"><i class="layui-icon layui-icon-clear"></i></button>
+	</script>
 
-		<script type="text/html" id="user-enable">
-			<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.check== 1 ? 'checked' : '' }} />
-		</script>
+	<script type="text/html" id="user-enable">
+		<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.check== 1 ? 'checked' : '' }} />
+	</script>
 
-		<script type="text/html" id="buttonAuth">
-			{{#  if(d.id == '1'){ }}
-			  <input type="checkbox" name="auth" lay-skin="primary"  checked disabled >
-			{{#  } else { }}
-			  {if condition="checkRuleButton('user.user/auth')"}<input type="checkbox" name="auth" lay-skin="primary" lay-filter="auth" {{# if(d.auth ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >{else}<button class="layui-btn layui-btn-xs  layui-btn-disabled">无权限</button>{/if}
-			{{#  } }}
-		</script>
-		<script type="text/html" id="userLoginTpl">
-			<url>
-				<li>ip：{{d.ip}}</li>
-				<li>归属地：{{d.city}}</li>
-				<li>{{d.logintime}}</li>
-			</url>
-		</script>
+	<script type="text/html" id="buttonAuth">
+		{{#  if(d.id == '1'){ }}
+			<input type="checkbox" name="auth" lay-skin="primary"  checked disabled >
+		{{#  } else { }}
+			{if condition="checkRuleButton('user.user/auth')"}<input type="checkbox" name="auth" lay-skin="primary" lay-filter="auth" {{# if(d.auth ==1){ }}checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >{else}<button class="pear-btn pear-btn-xs  pear-btn-disabled">无权限</button>{/if}
+		{{#  } }}
+	</script>
+	<script type="text/html" id="userLoginTpl">
+		<url>
+			<li>ip：{{d.ip}}</li>
+			<li>归属地：{{d.city}}</li>
+			<li>{{d.logintime}}</li>
+		</url>
+	</script>
 
-		<script type="text/html" id="user-createTime">
-			{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd')}}
-		</script>
+	<script type="text/html" id="user-createTime">
+		{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd')}}
+	</script>
 
-		<script type="text/html" id="TPL-dropdpwn-vip">
-			<button class="layui-btn layui-btn-primary dropdpwn-demo">
-				<span>{{= d.vip}}</span>
-				<i class="layui-icon layui-icon-down layui-font-12"></i>
-			</button>
-		</script>
-		<script src="/static/component/layui/layui.js"></script>
-		<script src="/static/component/pear/pear.js"></script>
-		<script>
-			layui.use(['table', 'form', 'jquery','common','admin'], function() {
-				let $ = layui.jquery;
-				let table = layui.table;
-				let form = layui.form;
-				let common = layui.common;
-				var dropdown = layui.dropdown;
-				var admin = layui.admin;
+	<script type="text/html" id="TPL-dropdpwn-vip">
+		<button class="pear-btn pear-btn-primary dropdpwn-demo">
+			<span>{{= d.vip}}</span>
+			<i class="layui-icon layui-icon-down layui-font-12"></i>
+		</button>
+	</script>
 
-				let MODULE_PATH = "operate/";				
+	{__block__}
 
-				let cols = [
-					[	{
-							type: 'checkbox'
-						},
-						{
-							title: '头像',
-							field: 'avatar',
-							align: 'center',
-							width: 150,
-							templet: '#imgTpl'
-						},
-						{
-							title: '用户',
-							field: 'username',
-							minWidth: 200,
-							templet: '#userInfoTpl'
-						},
-						{
-							title: '登录',
-							field: 'ip',
-							minWidth: 180,
-							templet: '#userLoginTpl'
-						},
-						{
-							title: '积分/金币',
-							field: 'point',
-							align: 'center',
-							width:	100,
-							edit: 'text'
-						},
-						{
-							title: '会员等级/L',
-							field: 'vip',
-							align: 'center',
-							width:180,
-							unresize: true,
-							align: 'center',
-							templet: '#TPL-dropdpwn-vip'
-						},
-						{
-							title: '状态',
-							field: 'check',
-							align: 'center',
-							width: 95,
-							templet: '#user-enable'
-						},
-						{
-							title: '超级管理',
-							field: 'auth',
-							align: 'center',
-							templet: '#buttonAuth'
-						},
-						{
-							title: '注册',
-							field: 'jointime',
-							align: 'center'
-						},
-						{
-							title: '备注',
-							field: 'note',
-							align: 'center',
-							width:	100,
-							edit: 'text'
-						},
-						{
-							title: '操作',
-							toolbar: '#user-bar',
-							align: 'center',
-							width: 160
-						}
-					]
+	<script>
+		layui.use(['common','admin'], function() {
+			let $ = layui.jquery;
+			let table = layui.table;
+			let form = layui.form;
+			let common = layui.common;
+			var dropdown = layui.dropdown;
+			var admin = layui.admin;
+
+			let MODULE_PATH = "operate/";				
+
+			let cols = [
+				[	{
+						type: 'checkbox'
+					},
+					{
+						title: '头像',
+						field: 'avatar',
+						align: 'center',
+						width: 150,
+						templet: '#imgTpl'
+					},
+					{
+						title: '用户',
+						field: 'username',
+						minWidth: 200,
+						templet: '#userInfoTpl'
+					},
+					{
+						title: '登录',
+						field: 'ip',
+						minWidth: 180,
+						templet: '#userLoginTpl'
+					},
+					{
+						title: '积分/金币',
+						field: 'point',
+						align: 'center',
+						width:	100,
+						edit: 'text'
+					},
+					{
+						title: '会员等级/L',
+						field: 'vip',
+						align: 'center',
+						width:180,
+						unresize: true,
+						align: 'center',
+						templet: '#TPL-dropdpwn-vip'
+					},
+					{
+						title: '状态',
+						field: 'check',
+						align: 'center',
+						width: 95,
+						templet: '#user-enable'
+					},
+					{
+						title: '超级管理',
+						field: 'auth',
+						align: 'center',
+						templet: '#buttonAuth'
+					},
+					{
+						title: '注册',
+						field: 'jointime',
+						align: 'center'
+					},
+					{
+						title: '备注',
+						field: 'note',
+						align: 'center',
+						width:	100,
+						edit: 'text'
+					},
+					{
+						title: '操作',
+						toolbar: '#user-bar',
+						align: 'center',
+						width: 160
+					}
 				]
+			]
 
-				table.render({
-					elem: '#user-table',
-					url: "{:url('user.user/list')}",
-					page: true,
-					cols: cols,
-					skin: 'line',
-					toolbar: '#user-toolbar',
-      				lineStyle: 'height: 160px;', // 定义表格的多行样式
-					defaultToolbar: [{
-						title: '刷新',
-						layEvent: 'refresh',
-						icon: 'layui-icon-refresh',
-					}, 'filter', 'print', 'exports'],
-					limit: 10,
-					done: function(res, curr, count){
-						var options = this;
+			table.render({
+				elem: '#user-table',
+				url: "{:url('user.user/list')}",
+				page: true,
+				cols: cols,
+				skin: 'line',
+				toolbar: '#user-toolbar',
+				lineStyle: 'height: 160px;', // 定义表格的多行样式
+				defaultToolbar: [{
+					title: '刷新',
+					layEvent: 'refresh',
+					icon: 'layui-icon-refresh',
+				}, 'filter', 'print', 'exports'],
+				limit: 10,
+				done: function(res, curr, count){
+					var options = this;
 
-						// 获取当前行数据
-						table.getRowData = function(elem){
-							var index = $(elem).closest('tr').data('index');
-							return table.cache[options.id][index] || {};
-						};
+					// 获取当前行数据
+					table.getRowData = function(elem){
+						var index = $(elem).closest('tr').data('index');
+						return table.cache[options.id][index] || {};
+					};
 
-						// dropdown 方式的下拉选择
-						dropdown.render({
-							elem: '.dropdpwn-demo',
-							// trigger: 'hover',
-							// 此处的 data 值，可根据 done 返回的 res 遍历来赋值
-							data: res.viplist,
-							click: function(obj){
-							var data = table.getRowData(this.elem); // 获取当前行数据(如 id 等字段，以作为数据修改的索引)
-							this.elem.find('span').html(obj.title);
-							// 更新数据中对应的字段
-							data.vip = obj.vip;
+					// dropdown 方式的下拉选择
+					dropdown.render({
+						elem: '.dropdpwn-demo',
+						// trigger: 'hover',
+						// 此处的 data 值，可根据 done 返回的 res 遍历来赋值
+						data: res.viplist,
+						click: function(obj){
+						var data = table.getRowData(this.elem); // 获取当前行数据(如 id 等字段，以作为数据修改的索引)
+						this.elem.find('span').html(obj.title);
+						// 更新数据中对应的字段
+						data.vip = obj.vip;
 
-							$.ajax({
-								type: "post",
-								url: "{:url('user.user/editVipLevel')}",
-								data: data,
-								dataType: 'json',
-								success: (res) => {
-								  if(res.code === 0) {
-									layer.msg(res.msg, {icon: 1});
-								  } else {
-									layer.msg(res.msg, {icon: 2});
-									return false;
-								  }
+						$.ajax({
+							type: "post",
+							url: "{:url('user.user/editVipLevel')}",
+							data: data,
+							dataType: 'json',
+							success: (res) => {
+								if(res.code === 0) {
+								layer.msg(res.msg, {icon: 1});
+								} else {
+								layer.msg(res.msg, {icon: 2});
+								return false;
 								}
-							  })
-							// 显示 - 仅用于演示
-							//layer.msg('选中值: '+ obj.title +'<br>当前行数据：'+ JSON.stringify(data));
 							}
-						});
-					}
-				});
-
-				table.on('tool(user-table)', function(obj) {
-					if (obj.event === 'remove') {
-						window.remove(obj);
-					} else if (obj.event === 'edit') {
-						window.edit(obj);
-					} else if(obj.event === 'clear') {
-						window.clear(obj);
-					}
-				});
-
-				table.on('toolbar(user-table)', function(obj) {
-					if (obj.event === 'add') {
-						window.add();
-					} else if (obj.event === 'refresh') {
-						window.refresh();
-					} else if (obj.event === 'batchRemove') {
-						window.batchRemove(obj);
-					}
-				});
-
-				// 单元格编辑后的事件
-				table.on('edit(user-table)', function(obj){
-					var field = obj.field; // 得到修改的字段
-					var value = obj.value // 得到修改后的值
-					//var oldValue = obj.oldValue // 得到修改前的值 -- v2.8.0 新增
-					var data = obj.data // 得到所在行所有键值
-					//var col = obj.getCol(); // 得到当前列的表头配置属性 -- v2.8.0 新增
-					data.field = field;
-					//return
-					// 值的校验
-					if(value.replace(/\s/g, '') === ''){
-						layer.tips('值不能为空', this, {tips: 1});
-						return obj.reedit(); // 重新编辑 -- v2.8.0 新增
-					}
-					// 只能为数值型
-					if(field === 'point') {
-						if(isNaN(value)) {
-							layer.tips('只能为数值', this, {tips: 1});
-							return obj.reedit();
+							})
+						// 显示 - 仅用于演示
+						//layer.msg('选中值: '+ obj.title +'<br>当前行数据：'+ JSON.stringify(data));
 						}
-					}
-					
+					});
+				}
+			});
 
-					// 编辑后续操作，如提交更新请求，以完成真实的数据更新
-					$.ajax({
-						type: "post",
-						url: "{:url('user.user/editField')}",
-						data: data,
-						dataType: 'json',
-						success: (res) => {
-						  if(res.code === 0) {
-							layer.msg(res.msg, {icon: 1});
-						  } else {
-							layer.msg(res.msg, {icon: 2});
-							return false;
-						  }
-						}
-					  })
-					// …
-				});
+			table.on('tool(user-table)', function(obj) {
+				if (obj.event === 'remove') {
+					window.remove(obj);
+				} else if (obj.event === 'edit') {
+					window.edit(obj);
+				} else if(obj.event === 'clear') {
+					window.clear(obj);
+				}
+			});
+
+			table.on('toolbar(user-table)', function(obj) {
+				if (obj.event === 'add') {
+					window.add();
+				} else if (obj.event === 'refresh') {
+					window.refresh();
+				} else if (obj.event === 'batchRemove') {
+					window.batchRemove(obj);
+				}
+			});
+
+			// 单元格编辑后的事件
+			table.on('edit(user-table)', function(obj){
+				var field = obj.field; // 得到修改的字段
+				var value = obj.value // 得到修改后的值
+				//var oldValue = obj.oldValue // 得到修改前的值 -- v2.8.0 新增
+				var data = obj.data // 得到所在行所有键值
+				//var col = obj.getCol(); // 得到当前列的表头配置属性 -- v2.8.0 新增
+				data.field = field;
+				//return
+				// 值的校验
+				if(value.replace(/\s/g, '') === ''){
+					layer.tips('值不能为空', this, {tips: 1});
+					return obj.reedit(); // 重新编辑 -- v2.8.0 新增
+				}
+				// 只能为数值型
+				if(field === 'point') {
+					if(isNaN(value)) {
+						layer.tips('只能为数值', this, {tips: 1});
+						return obj.reedit();
+					}
+				}
 				
 
-				form.on('submit(user-query)', function(data) {
-					table.reload('user-table', {
-						where: data.field
-					})
-					return false;
-				});
-
-				form.on('switch(user-enable)', function(obj) {
-					layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
-					var status = obj.elem.checked ? 1 : -1;
-					//执行用户审核
-						$.ajax({
-							type:'post',
-							url:"{:url('user.user/check')}",
-							data:{"id":this.value,"status":status},
-							dataType:'json',
-							success:function(res){
-								if(res.code == 0){
-									layer.msg(res.msg,{
-										icon:res.icon,
-										time:2000
-									}
-									//,function(){location.reload();}
-									);
-								} else {
-									layer.open({
-										title:'审核失败',
-										content:res.msg,
-										icon:5,
-										adim:6
-									})
-								}
-							}
-						});
-						return false;
-				});
-
-				//超级管理auth控制
-				form.on('checkbox(auth)', function(data){
-				var data = data.elem;
-				var auth = data.checked ? 1 : 0;
+				// 编辑后续操作，如提交更新请求，以完成真实的数据更新
 				$.ajax({
+					type: "post",
+					url: "{:url('user.user/editField')}",
+					data: data,
+					dataType: 'json',
+					success: (res) => {
+						if(res.code === 0) {
+						layer.msg(res.msg, {icon: 1});
+						} else {
+						layer.msg(res.msg, {icon: 2});
+						return false;
+						}
+					}
+					})
+				// …
+			});
+			
+
+			form.on('submit(user-query)', function(data) {
+				table.reload('user-table', {
+					where: data.field
+				})
+				return false;
+			});
+
+			form.on('switch(user-enable)', function(obj) {
+				layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+				var status = obj.elem.checked ? 1 : -1;
+				//执行用户审核
+					$.ajax({
 						type:'post',
-						url:"{:url('user.user/auth')}",
-						data:{"id":data.id,"auth":auth},
+						url:"{:url('user.user/check')}",
+						data:{"id":this.value,"status":status},
 						dataType:'json',
-						success:function(data){
-							if(data.code === 0){
-								layer.msg(data.msg,{
-									icon:6,
+						success:function(res){
+							if(res.code == 0){
+								layer.msg(res.msg,{
+									icon:res.icon,
 									time:2000
 								}
 								//,function(){location.reload();}
 								);
 							} else {
 								layer.open({
-									title:'修改失败',
-									content:data.msg,
+									title:'审核失败',
+									content:res.msg,
 									icon:5,
 									adim:6
 								})
 							}
 						}
 					});
-				return false;
+					return false;
+			});
 
-				});
-
-				window.add = function() {
-					layer.open({
-						type: 2,
-						title: '新增',
-						shade: 0.1,
-						area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'450px'],
-						content: "{:url('user.user/add')}"
-					});
-				}
-
-				window.edit = function(obj) {
-					layer.open({
-						type: 2,
-						title: '修改',
-						shade: 0.1,
-						area: ['500px', '450px'],
-						content: 'edit.html?id=' + obj.data.id
-					});
-				}
-
-				window.remove = function(obj) {
-					
-					layer.confirm('确定要删除该用户', {
-						icon: 3,
-						title: '提示'
-					}, function(index) {
-						layer.close(index);
-						let loading = layer.load();
-						$.ajax({
-							url: "{:url('user.user/delete')}?id=" + obj.data['id'],
-							dataType: 'json',
-							type: 'delete',
-							success: function(result) {
-								layer.close(loading);
-								if (result.code === 0) {
-									layer.msg(result.msg, {
-										icon: 1,
-										time: 1000
-									}, function() {
-										obj.del();
-									});
-								} else {
-									layer.msg(result.msg, {
-										icon: 2,
-										time: 1000
-									});
-								}
+			//超级管理auth控制
+			form.on('checkbox(auth)', function(data){
+			var data = data.elem;
+			var auth = data.checked ? 1 : 0;
+			$.ajax({
+					type:'post',
+					url:"{:url('user.user/auth')}",
+					data:{"id":data.id,"auth":auth},
+					dataType:'json',
+					success:function(data){
+						if(data.code === 0){
+							layer.msg(data.msg,{
+								icon:6,
+								time:2000
 							}
-						})
-					});
-				}
-
-				window.clear = function(obj) {
-					
-					layer.confirm('确定要清空该用户资源', {
-						icon: 3,
-						title: '提示'
-					}, function(index) {
-						layer.close(index);
-						let loading = layer.load();
-						$.ajax({
-							url: "{:url('user.user/clear')}?id=" + obj.data['id'],
-							dataType: 'json',
-							type: 'delete',
-							success: function(result) {
-								layer.close(loading);
-								if (result.code === 0) {
-									layer.msg(result.msg, {
-										icon: 1,
-										time: 1000
-									}, function() {
-										obj.del();
-									});
-								} else {
-									layer.msg(result.msg, {
-										icon: 2,
-										time: 1000
-									});
-								}
-							}
-						})
-					});
-				}
-
-				window.batchRemove = function(obj) {
-					
-					var checkIds = common.checkField(obj,'id');
-					console.log(checkIds)
-					if (checkIds === "") {
-						layer.msg("未选中数据", {
-							icon: 3,
-							time: 1000
-						});
-						return false;
+							//,function(){location.reload();}
+							);
+						} else {
+							layer.open({
+								title:'修改失败',
+								content:data.msg,
+								icon:5,
+								adim:6
+							})
+						}
 					}
-					
-					layer.confirm('确定要删除这些用户', {
-						icon: 3,
-						title: '提示'
-					}, function(index) {
-						layer.close(index);
-						let loading = layer.load();
-						$.ajax({
-							url: "{:url('user.user/delete')}",
-							dataType: 'json',
-							type: 'delete',
-							data:{"id":checkIds}, 
-							success: function(result) {
-								layer.close(loading);
-								if (result.success) {
-									layer.msg(result.msg, {
-										icon: 1,
-										time: 1000
-									}, function() {
-										table.reload('user-table');
-									});
-								} else {
-									layer.msg(result.msg, {
-										icon: 2,
-										time: 1000
-									});
-								}
-							}
-						})
-					});
-				}
+				});
+			return false;
 
-				window.refresh = function(param) {
-					table.reload('user-table');
+			});
+
+			window.add = function() {
+				layer.open({
+					type: 2,
+					title: '新增',
+					shade: 0.1,
+					area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'450px'],
+					content: "{:url('user.user/add')}"
+				});
+			}
+
+			window.edit = function(obj) {
+				layer.open({
+					type: 2,
+					title: '修改',
+					shade: 0.1,
+					area: ['500px', '450px'],
+					content: 'edit.html?id=' + obj.data.id
+				});
+			}
+
+			window.remove = function(obj) {
+				
+				layer.confirm('确定要删除该用户', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					layer.close(index);
+					let loading = layer.load();
+					$.ajax({
+						url: "{:url('user.user/delete')}?id=" + obj.data['id'],
+						dataType: 'json',
+						type: 'delete',
+						success: function(result) {
+							layer.close(loading);
+							if (result.code === 0) {
+								layer.msg(result.msg, {
+									icon: 1,
+									time: 1000
+								}, function() {
+									obj.del();
+								});
+							} else {
+								layer.msg(result.msg, {
+									icon: 2,
+									time: 1000
+								});
+							}
+						}
+					})
+				});
+			}
+
+			window.clear = function(obj) {
+				
+				layer.confirm('确定要清空该用户资源', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					layer.close(index);
+					let loading = layer.load();
+					$.ajax({
+						url: "{:url('user.user/clear')}?id=" + obj.data['id'],
+						dataType: 'json',
+						type: 'delete',
+						success: function(result) {
+							layer.close(loading);
+							if (result.code === 0) {
+								layer.msg(result.msg, {
+									icon: 1,
+									time: 1000
+								}, function() {
+									obj.del();
+								});
+							} else {
+								layer.msg(result.msg, {
+									icon: 2,
+									time: 1000
+								});
+							}
+						}
+					})
+				});
+			}
+
+			window.batchRemove = function(obj) {
+				
+				var checkIds = common.checkField(obj,'id');
+				console.log(checkIds)
+				if (checkIds === "") {
+					layer.msg("未选中数据", {
+						icon: 3,
+						time: 1000
+					});
+					return false;
 				}
-			})
-		</script>
-	</body>
-	</html>
+				
+				layer.confirm('确定要删除这些用户', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					layer.close(index);
+					let loading = layer.load();
+					$.ajax({
+						url: "{:url('user.user/delete')}",
+						dataType: 'json',
+						type: 'delete',
+						data:{"id":checkIds}, 
+						success: function(result) {
+							layer.close(loading);
+							if (result.success) {
+								layer.msg(result.msg, {
+									icon: 1,
+									time: 1000
+								}, function() {
+									table.reload('user-table');
+								});
+							} else {
+								layer.msg(result.msg, {
+									icon: 2,
+									time: 1000
+								});
+							}
+						}
+					})
+				});
+			}
+
+			window.refresh = function(param) {
+				table.reload('user-table');
+			}
+		})
+	</script>
+
+{/block}

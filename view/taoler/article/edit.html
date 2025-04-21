@@ -1,8 +1,9 @@
 {extend name="public/base" /}
 
 {block name="title"}编辑帖子{/block}
-{block name="link"} {/block}
+{block name="link"}{/block}
 {block name="column"}{/block}
+
 {block name="content"}
 <div class="layui-container fly-marginTop">
 	<div class="fly-panel" pad20 style="padding-top: 5px;">
@@ -28,37 +29,10 @@
 								{/if}
 							</div>
 							</div>
-							<div class="layui-col-md8">
+							<div class="layui-col-md9">
 								<label for="L_title" class="layui-form-label">{:lang('title')}</label>
 								<div class="layui-input-block">
 									<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$article.title}">
-									<input type="hidden" id="L_title_color"  name="title_color" autocomplete="off" class="layui-input" value="{$article.title_color ?? '#333'}">
-								</div>
-							</div>
-							{if ($user.auth == 1)}
-							<div class="layui-col-md1">
-								<div id="color"></div>
-								<div id="test9" style="margin-left: 30px;"></div>
-							</div>
-							{/if}
-						</div>
-
-						<div class="layui-row layui-col-space15 layui-form-item" id="LAY_quiz">
-							<div class="layui-col-md3">
-							<label class="layui-form-label">阅读权限</label>
-							<div class="layui-input-block">
-								<select name="read_type">
-								<option value="0" {if($article.read_type == 0)} selected {/if}>开放阅读</option>
-								<option value="1" {if($article.read_type == 1)} selected {/if}>密码加密</option>
-								<option value="2" {if($article.read_type == 2)} selected {/if}>回帖阅读</option>
-								<option value="3" {if($article.read_type == 3)} selected {/if}>购买阅读</option>
-								</select>
-							</div>
-							</div>
-							<div class="layui-col-md3">
-								<label class="layui-form-label" >密码</label>
-								<div class="layui-input-block">
-									<input type="text" value="{$article.art_pass ?? ''}" name="art_pass" autocomplete="off" class="layui-input" />
 								</div>
 							</div>
 						</div>
@@ -113,9 +87,9 @@
 {/block}
 
 {block name="script"}
-<script src="/static/xm-select.js"></script>
+<script src="/static/component/pear/pear.js"></script>
 <script>
-	layui.use(['fly'], function(){
+	layui.use(['fly','xmSelect'], function(){
     var $ = layui.jquery
     ,fly = layui.fly
     ,colorpicker = layui.colorpicker
@@ -149,40 +123,46 @@
                     strict: false,
                     expandedKeys: false
                 },
+                on: function(data){ // 单选on模式
+                  if(data.isAdd){
+                    return data.change.slice(0, 1)
+                  }
+                },
                 tips: '请选择'
             });
       });
     
     // tag标签
-    $(function(){
-      //1.渲染标签
-      var addTags = xmSelect.render({
-        el: '#tag',
-        name: 'tagid',
-        layVerify: '',
-        layVerType: 'msg',
-        paging: true,
-        pageSize: 5,
-        data: []
-      });
-      //2.动态赋值
-      $.get("{:url('get_art_tag')}",{id:artId},function(res){
-        if(res.code === 0){
-          addTags.setValue(
-            res.data
-          )
-        }
-      });
-      //3.动态标签赋值
-      $.get("{:url('get_all_tag')}",function(res){
-        if(res.code === 0){
-          addTags.update({
-            data: res.data,
-            autoRow: true,
-          })
-        }
-      });
-    })
+
+	  //1.渲染标签
+	  var addTags = xmSelect.render({
+		el: '#tag',
+		name: 'tagid',
+		layVerify: '',
+		layVerType: 'msg',
+		paging: true,
+		pageSize: 5,
+		data: []
+	});
+
+	//2.标签数据
+	$.get("{:url('get_all_tag')}",function(res){
+		if(res.code === 0){
+			addTags.update({
+				data: res.data,
+				autoRow: true,
+			})
+
+			//3.选中数据动态赋值
+			$.get("{:url('get_art_tag')}",{id:artId},function(res){
+				if(res.code === 0){
+					addTags.setValue(
+						res.data
+					)
+				}
+			});
+		}
+	});
 
   //编辑文章
 	form.on('submit(article-edit)', function(data){
@@ -206,19 +186,6 @@
 		});
 		return false;
 	});
-
-  //预定义颜色项
-  colorpicker.render({
-      elem: '#color'
-      ,color: "{$article.title_color ?? '#333'}"
-      ,predefine: true // 开启预定义颜色
-      ,done: function(color){
-        //譬如你可以在回调中把得到的 color 赋值给表单
-        $('#L_title_color').val(color);
-        //改变标题颜色
-        $('#L_title').css("color", color);
-      }
-    });
 
       //指定允许上传的文件类型
       upload.render({

@@ -1,91 +1,93 @@
 
-{extend name="public/admin_form" /}
+{extend name="public/form" /}
 
 {block name="body"}
-  <form class="layui-form" action="">
-    <div class="mainBox">
-      <div class="main-container">
-        <div class="layui-form-item">
-          <label class="layui-form-label">名称</label>
-          <div class="layui-input-inline">
-            <input type="text" name="name" lay-verify="required" placeholder="tag名" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">别名</label>
-          <div class="layui-input-inline">
-            <input type="text" name="ename" lay-verify="required" placeholder="英文或者拼音别名" autocomplete="off" class="layui-input" >
-          </div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">关键词</label>
-          <div class="layui-input-inline">
-            <input type="text" name="keywords" lay-verify="required" placeholder="关键词 多个以逗号,隔开" autocomplete="off" class="layui-input" >
-          </div>
-        </div>
-        <div class="layui-form-item layui-form-text">
-          <label class="layui-form-label">摘要</label>
-          <div class="layui-input-block">
-            <textarea type="text" name="description" lay-verify="required" placeholder="请输入内容" autocomplete="off" class="layui-textarea"></textarea>
-          </div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">seo标题</label>
-          <div class="layui-input-inline">
-            <input type="text" name="title" lay-verify="required" placeholder="tag标题" autocomplete="off" class="layui-input" >
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bottom">
-      <div class="button-container">
-        <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="tag-save">
-          <i class="layui-icon layui-icon-ok"></i>
-          提交
-        </button>
-        <button type="reset" class="pear-btn pear-btn-sm">
-          <i class="layui-icon layui-icon-refresh"></i>
-          重置
-        </button>
-      </div>
-    </div>
-  </form>
+	<form class="layui-form" action="">
+		<div class="mainBox">
+			<div class="main-container">
+			<div class="layui-form-item">
+				<label class="layui-form-label">名称</label>
+				<div class="layui-input-inline">
+				<input type="text" name="name" lay-verify="required" placeholder="tag名" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">别名</label>
+				<div class="layui-input-inline">
+				<input type="text" name="ename" lay-verify="required" placeholder="英文或者拼音别名" autocomplete="off" class="layui-input" >
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">关键词</label>
+				<div class="layui-input-inline">
+				<input type="text" name="keywords" lay-verify="required" placeholder="关键词 多个以逗号,隔开" autocomplete="off" class="layui-input" >
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">摘要</label>
+				<div class="layui-input-block">
+				<textarea type="text" name="description" lay-verify="required" placeholder="请输入内容" autocomplete="off" class="layui-textarea"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">seo标题</label>
+				<div class="layui-input-inline">
+				<input type="text" name="title" lay-verify="required" placeholder="tag标题" autocomplete="off" class="layui-input" >
+				</div>
+			</div>
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="tag-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
+			</div>
+		</div>
+	</form>
 
-{/block}
-{block name="js"}
-    <script>
-      layui.use(['form', 'jquery', 'upload'], function() {
-        let form = layui.form;
-        let $ = layui.jquery;
+{__block__}
 
-        let ADD_URL = "{:url('content.tag/add')}";
+	<script>
+		layui.use(['form', 'jquery', 'upload'], function() {
+			let form = layui.form;
+			let $ = layui.jquery;
 
-        form.on('submit(tag-save)', function(data) {
-          $.ajax({
-            url: ADD_URL,
-            data: JSON.stringify(data.field),
-            dataType: 'json',
-            contentType: 'application/json',
-            type: 'post',
-            success: function(result) {
-              if (result.code === 0) {
-                layer.msg(result.msg, {
-                  icon: 1,
-                  time: 1000
-                }, function() {
-                  parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-                  parent.layui.table.reload("tag-table");
-                });
-              } else {
-                layer.msg(result.msg, {
-                  icon: 2,
-                  time: 1000
-                });
-              }
-            }
-          })
-          return false;
-        });
-      })
-    </script>
+			let ADD_URL = "{:url('content.tag/add')}";
+
+			form.on('submit(tag-save)', function(data) {
+				$.ajax({
+					url: ADD_URL,
+					data: JSON.stringify(data.field),
+					dataType: 'json',
+					contentType: 'application/json',
+					type: 'post',
+					success: function(result) {
+					if (result.code === 0) {
+						layer.msg(result.msg, {
+						icon: 1,
+						time: 1000
+						}, function() {
+						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+						parent.layui.table.reload("tag-table");
+						});
+					} else {
+						layer.msg(result.msg, {
+						icon: 2,
+						time: 1000
+						});
+					}
+					}
+				})
+				
+				return false;
+			});
+		})
+	</script>
+
 {/block}

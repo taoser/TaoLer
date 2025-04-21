@@ -2176,34 +2176,43 @@ INSERT INTO `tao_area` VALUES (2114, 201, '西华县');
 DROP TABLE IF EXISTS `tao_article`;
 CREATE TABLE `tao_article`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `title` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
-  `content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
+  `cate_id` int UNSIGNED NOT NULL COMMENT '分类id',
+  `user_id` int UNSIGNED NOT NULL COMMENT '用户id',
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
+  `thum_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '缩略图',
   `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '关键词',
-  `description` tinytext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'seo描述',
-  `cate_id` int NOT NULL COMMENT '分类id',
-  `user_id` int NOT NULL COMMENT '用户id',
-  `pv` int NOT NULL DEFAULT 0 COMMENT '浏览量',
-  `jie` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '0未结1已结',
-  `is_top` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '置顶1否0',
-  `is_hot` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '推荐1否0',
-  `is_reply` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '0禁评1可评',
-  `media` json NULL COMMENT '媒体image,video,audio',
-  `has_img` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '1有图0无图',
-  `has_video` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '1有视频0无',
-  `has_audio` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '1有音频0无',
-  `read_type` enum('0','1','2','3') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '阅读权限0开放1回复可读2密码可读3私密',
-  `status` enum('0','1','-1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '状态1显示0待审-1禁止',
-  `title_color` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '标题颜色',
-  `art_pass` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '文章加密密码',
-  `goods_detail_id` int NULL DEFAULT NULL COMMENT '商品ID',
+  `description` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'seo描述',
+  `content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
+  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT 'ip地址',
+  `type` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '类型1文章2视频3音频',
+  `status` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态1显示0待审-1禁止',
+  `has_image` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '图片张数',
+  `has_video` tinyint NOT NULL DEFAULT 0 COMMENT '1有视频0无',
+  `has_audio` tinyint NOT NULL DEFAULT 0 COMMENT '1有音频0无',
+  `is_comment` tinyint UNSIGNED NOT NULL COMMENT '可评论1是0否',
+  `pv` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览量',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `comments_num` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '评论数',
+  `media` json NOT NULL COMMENT '媒体image,video,audio',
+  `flags` json NOT NULL COMMENT '标记is_top置顶is_good推荐is_wait完结',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE COMMENT '文章的用户索引',
   INDEX `cate_id`(`cate_id` ASC) USING BTREE COMMENT '文章分类索引',
-  INDEX `idx_article_create_time`(`create_time` DESC) USING BTREE COMMENT '创建时间'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;
+  INDEX `idx_article_create_time`(`create_time` DESC) USING BTREE COMMENT '创建时间',
+  INDEX `idx_article_cid_status_dtime`(`cate_id` ASC, `status` ASC, `delete_time` ASC) USING BTREE COMMENT '分类状态时间索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章主表' ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `tao_article_flag`;
+CREATE TABLE `tao_article_flag`  (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '属性id',
+  `type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '1置顶is_top,2精华is_good,3待解is_wait,4热评hot_comment,5hot_pv阅读排行',
+  `article_id` int UNSIGNED NOT NULL COMMENT '文章id',
+  `create_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
+  PRIMARY KEY (`id` DESC) USING BTREE,
+  INDEX `idx_type_article_id`(`type` ASC, `article_id` ASC) USING BTREE COMMENT '类型文章id'
+) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_auth_group

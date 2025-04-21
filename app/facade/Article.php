@@ -17,7 +17,7 @@ class Article extends Facade
 {
 	protected static function getFacadeClass()
 	{
-		return 'app\index\model\Article';
+		return 'app\index\entity\Article';
 	}
 
 }

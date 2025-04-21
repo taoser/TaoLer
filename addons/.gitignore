@@ -1,4 +1,3 @@
 *
-!.gitignore
 !middleware.php
-!middleware/
+!.gitignore

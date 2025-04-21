@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2025 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -26,6 +26,7 @@ class Pivot extends Model
      * @var Model
      */
     public $parent;
+    protected $pivotName;
 
     /**
      * 是否时间自动写入.
@@ -43,31 +44,34 @@ class Pivot extends Model
      */
     public function __construct(array $data = [], ?Model $parent = null, string $table = '')
     {
-        $this->parent = $parent;
-
-        if (is_null($this->name)) {
-            $this->name = $table;
-        }
-
+        $this->pivotName   = $table;
+        $this->parent      = $parent;
         parent::__construct($data);
+    }
+
+    /**
+     *  初始化模型.
+     *
+     * @return void
+     */
+    protected function init() 
+    {
+        if (is_null($this->getOption('name'))) {
+            $this->setOption('name', $this->pivotName);
+        }
     }
 
     /**
      * 创建新的模型实例.
      *
-     * @param array $data    数据
-     * @param mixed $where   更新条件
-     * @param array $options 参数
+     * @param array|object $data    数据
+     * @param array        $options
      *
      * @return Model
      */
-    public function newInstance(array $data = [], $where = null, array $options = []): Model
+    public function newInstance(array | object $data = [], array $options = [])
     {
-        $model = parent::newInstance($data, $where, $options);
-
-        $model->parent  = $this->parent;
-        $model->name    = $this->name;
-
-        return $model;
+        $this->data($data);
+        return $this->clone();
     }
 }

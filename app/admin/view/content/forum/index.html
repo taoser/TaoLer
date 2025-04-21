@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>用户管理</title>
-  <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-</head>
-<body class="pear-container">
+{extend name="public/base" /}
+
+{block name="title"}文章内容{/block}
+
+{block name="body"}
+
 	<div class="layui-card">
 		<div class="layui-card-body">
 			<form class="layui-form" action="">
@@ -93,13 +91,13 @@
 		<div><img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= "{{ d.user.user_img }}"></div>
 	</script>
 	<script type="text/html" id="forum-istop">
-		<input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.is_top == 1 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.flags.is_top == 1 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonHot">
-		<input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isHot" {{ d.is_hot == 1 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_good" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isGood" {{ d.flags.is_good == 1 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonReply">
-		<input type="checkbox" name="is_reply" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isReply" {{ d.is_reply == 0 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_comment" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isComment" {{ d.is_comment == 0 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonCheck">
 		<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.status == 0 ? '待审' : '禁止' }}" {{ d.status == 1 ? 'checked' : '' }}>
@@ -110,8 +108,7 @@
 		<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 	</script>
 
-	<script src="/static/component/layui/layui.js"></script>
-	<script src="/static/component/pear/pear.js"></script>
+	{__block__}
 	
 	<script>
 		const FORUM_List = "{:url('content.forum/list')}";
@@ -120,8 +117,9 @@
 			var $ = layui.jquery;
 			var form = layui.form;
 			var table = layui.table;
-			var common = layui.common;
+
 			var toast = layui.toast;
+			var common = layui.common;
 			var xmSelect = layui.xmSelect;
 
 			let cols = [
@@ -130,7 +128,6 @@
 				,{field: 'id', width: 80, title: 'ID', sort: true}
 				,{title: '头像', width: 80, templet: '#avatarTpl'}
 				,{title: '详情', minWidth: 200, templet: '#titleTpl'}
-				,{field: 'content', title: '内容', 'escape':false, minWidth: 200}
 				,{ title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
 				,{title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
 				,{title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
@@ -160,39 +157,38 @@
 				limits: [30,100,200,500,1000],
 			});
 
-
-		// 动态分类
-		function getSelectCate() {
-			// 分类选择
-			$.get("{:url('content.forum/getCateTree')}", function(res){
-				// 渲染下拉树
-				xmSelect.render({
-					el: '#CateId',
-					name: 'cate_id',
-					height: '250px',
-					layVerify: '',
-					layVerType: 'tips',
-					data: res.data,
-					initValue:  [],
-					model: {label: {type: 'text'}},
-					prop: {
-						name: 'catename',
-						value: 'id'
-					},
-					radio: true,
-					clickClose: true,
-					tree: {
-						show: true,
-						indent: 15,
-						strict: false,
-						expandedKeys: true
-					},
-					tips: '请选择'
-				});
+		// 分类选择
+		$.get("{:url('content.forum/getCateTree')}", function(res){
+			// 渲染下拉树
+			xmSelect.render({
+				el: '#CateId',
+				name: 'cate_id',
+				height: '250px',
+				layVerify: '',
+				layVerType: 'tips',
+				data: res.data,
+				initValue:  [],
+				model: {label: {type: 'text'}},
+				prop: {
+					name: 'catename',
+					value: 'id'
+				},
+				// radio: true,
+				clickClose: true,
+				tree: {
+					show: true,
+					indent: 15,
+					strict: false,
+					expandedKeys: true
+				},
+				on: function(data){ // 单选on模式
+					if(data.isAdd){
+						return data.change.slice(0, 1)
+					}
+				},
+				tips: '请选择'
 			});
-		}
-
-		getSelectCate();
+		});
 
 		table.on('tool(forum-table)', function(obj) {
 			if (obj.event === 'remove') {
@@ -231,20 +227,20 @@
 
 		// 监听置顶
 		form.on('switch(isTop)', function(obj){
-			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value:obj.elem.checked ? 1 : 0},function(res){
+			$.post("{:url('content.forum/setFlag')}",{id:obj.value, name:obj.elem.name, value:obj.elem.checked ? 1 : 0},function(res){
 				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
 			});
 		});
 
 		// 监听加精
-		form.on('switch(isHot)', function(obj){
-			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
+		form.on('switch(isGood)', function(obj){
+			$.post("{:url('content.forum/setFlag')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
 				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
 			});
 		});
 
 		// 监听回复
-		form.on('switch(isReply)', function(obj){
+		form.on('switch(isComment)', function(obj){
 			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
 				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
 			});
@@ -417,5 +413,4 @@
 
 	});
 	</script>
-</body>
-</html>
+{/block}

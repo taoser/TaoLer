@@ -1,45 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>新增管理员</title>
-  <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-</head>
-  <body>
-      <form class="layui-form" action="">
-        <div class="mainBox">
-          <div class="main-container">
-          <div class="layui-form-item  layui-form-text">
-            <label class="layui-form-label">压缩包</label>
-            <div class="layui-input-inline">
-              <input type="text" name="addons_src" lay-verify="required" placeholder="请上传zip包" autocomplete="off" class="layui-input" >
-            </div>
-          </div>
-          <div class="layui-form-item  layui-form-text">
-            <label class="layui-form-label"></label>
-            <div class="layui-input-inline">
-             <button style="float: left;" type="button" class="layui-btn " id="layuiadmin-upload-addons">上传插件</button>
-            </div>
-          </div></div>
-        </div>
-        <div class="bottom">
-          <div class="button-container">
-            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
-                    lay-filter="addon-save">
-              <i class="layui-icon layui-icon-ok"></i>
-              提交
-            </button>
-            <button type="reset" class="pear-btn pear-btn-sm">
-              <i class="layui-icon layui-icon-refresh"></i>
-              重置
-            </button>
-          </div>
-        </div>
-      </form>
-      <script src="/static/component/layui/layui.js"></script>
-      <script src="/static/component/pear/pear.js"></script>
+{extend name="public/form" /}
 
-      <script>
+{block name="body"}
+	<form class="layui-form" action="">
+		<div class="mainBox">
+			<div class="main-container">
+			<div class="layui-form-item  layui-form-text">
+			<label class="layui-form-label">压缩包</label>
+			<div class="layui-input-inline">
+				<input type="text" name="addons_src" lay-verify="required" placeholder="请上传zip包" autocomplete="off" class="layui-input" >
+			</div>
+			</div>
+			<div class="layui-form-item  layui-form-text">
+			<label class="layui-form-label"></label>
+			<div class="layui-input-inline">
+				<button style="float: left;" type="button" class="pear-btn " id="layuiadmin-upload-addons">上传插件</button>
+			</div>
+			</div></div>
+		</div>
+		<div class="bottom">
+			<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+					lay-filter="addon-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
+			</div>
+		</div>
+	</form>
+
+	{__block__}
+
+    <script>
       layui.use(['form', 'upload'], function() {
         var $ = layui.$, form = layui.form, upload = layui.upload;
 
@@ -102,6 +97,6 @@
 
       });
 
-  </script>
-</body>
-</html>
+	</script>
+
+{/block}

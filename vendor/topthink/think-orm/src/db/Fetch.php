@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2025 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -248,13 +248,13 @@ class Fetch
     /**
      * 字段值增长
      *
-     * @param string    $field 字段名
-     * @param float     $step  步进值
+     * @param string    $field    字段名
+     * @param float|int $step     步进值
      * @param int       $lazyTime 延迟时间（秒）
      *
      * @return string
      */
-    public function setInc(string $field, float $step = 1, int $lazyTime = 0)
+    public function setInc(string $field, float|int $step = 1, int $lazyTime = 0)
     {
         return $this->inc($field, $step)->update();
     }
@@ -262,13 +262,13 @@ class Fetch
     /**
      * 字段值减少
      *
-     * @param string    $field 字段名
-     * @param float     $step  步进值
+     * @param string    $field    字段名
+     * @param float|int $step     步进值
      * @param int       $lazyTime 延迟时间（秒）
      *
      * @return string
      */
-    public function setDec(string $field, float $step = 1, int $lazyTime = 0)
+    public function setDec(string $field, float|int $step = 1, int $lazyTime = 0)
     {
         return $this->dec($field, $step)->update();
     }

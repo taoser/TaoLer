@@ -1,5 +1,7 @@
 /.idea
 /.vscode
-pay_order.php
+/*.php
+/start_*
 *.log
 .env
+!.gitignore

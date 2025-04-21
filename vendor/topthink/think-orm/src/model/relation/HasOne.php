@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2025 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -15,7 +15,8 @@ namespace think\model\relation;
 
 use Closure;
 use think\db\BaseQuery as Query;
-use think\Model;
+use think\helper\Str;
+use think\model\contract\Modelable as Model;
 
 /**
  * HasOne 关联类.
@@ -69,10 +70,8 @@ class HasOne extends OneToOne
         if ($relationModel) {
             if (!empty($this->bindAttr)) {
                 // 绑定关联属性
-                $this->bindAttr($this->parent, $relationModel);
+                $this->parent->bindRelationAttr($relationModel, $this->bindAttr);
             }
-
-            $relationModel->setParent(clone $this->parent);
         } else {
             $default       = $this->query->getOptions('default_model');
             $relationModel = $this->getDefaultModel($default);
@@ -91,14 +90,16 @@ class HasOne extends OneToOne
      *
      * @return string
      */
-    public function getRelationCountQuery(?Closure $closure = null, string $aggregate = 'count', string $field = '*', ?string &$name = null): string
+    public function getRelationCountQuery(?Closure $closure = null, string $aggregate = 'count', string $field = 'id',  ? string &$name = null) : string
     {
         if ($closure) {
             $closure($this->query, $name);
         }
-
+        $alias = Str::snake(class_basename($this->model));
+        $alias = $this->query->getAlias() ?: $alias . '_' . $aggregate;
         return $this->query
-            ->whereExp($this->foreignKey, '=' . $this->parent->getTable(true) . '.' . $this->localKey)
+            ->alias($alias)
+            ->whereExp($alias . '.' . $this->foreignKey, '=' . $this->parent->getTable(true) . '.' . $this->localKey)
             ->fetchSql()
             ->$aggregate($field);
     }
@@ -114,7 +115,7 @@ class HasOne extends OneToOne
      *
      * @return int
      */
-    public function relationCount(Model $result, ?Closure $closure = null, string $aggregate = 'count', string $field = '*', ?string &$name = null)
+    public function relationCount(Model $result, ?Closure $closure = null, string $aggregate = 'count', string $field = 'id',  ? string &$name = null)
     {
         $localKey = $this->localKey;
 
@@ -142,23 +143,24 @@ class HasOne extends OneToOne
      *
      * @return Query
      */
-    public function has(string $operator = '>=', int $count = 1, string $id = '*', string $joinType = '', ?Query $query = null): Query
+    public function has(string $operator = '>=', int $count = 1, string $id = '*', string $joinType = '', ?Query $query = null) : Query
     {
-        $table      = $this->query->getTable();
-        $model      = class_basename($this->parent);
-        $relation   = class_basename($this->model);
-        $localKey   = $this->localKey;
-        $foreignKey = $this->foreignKey;
-        $softDelete = $this->query->getOptions('soft_delete');
-        $query      = $query ?: $this->parent->db()->alias($model);
+        $model    = Str::snake(class_basename($this->parent));
+        $relation = Str::snake(class_basename($this->model));
+        $table    = $this->query->getTable();
+        $query    = $query ?: $this->parent->db();
+        $alias    = $query->getAlias() ?: $model;
+        $method   = (0 == $count && '=' == $operator) ? 'whereNotExists' : 'whereExists';
 
-        return $query->whereExists(function ($query) use ($table, $model, $relation, $localKey, $foreignKey, $softDelete) {
+        if ($this->isSelfRelation() && $alias == $relation) {
+            $relation .= '_'; 
+        }
+
+        return $query->alias($alias)->$method(function ($query) use ($table, $alias, $relation) {
             $query->table([$table => $relation])
-                ->field($relation . '.' . $foreignKey)
-                ->whereExp($model . '.' . $localKey, '=' . $relation . '.' . $foreignKey)
-                ->when($softDelete, function ($query) use ($softDelete, $relation) {
-                    $query->where($relation . strstr($softDelete[0], '.'), '=' == $softDelete[1][0] ? $softDelete[1][1] : null);
-                });
+                ->field($relation . '.' . $this->foreignKey)
+                ->whereColumn($alias . '.' . $this->localKey, $relation . '.' . $this->foreignKey);
+            $this->getRelationSoftDelete($query, $relation);
         });
     }
 
@@ -172,35 +174,27 @@ class HasOne extends OneToOne
      *
      * @return Query
      */
-    public function hasWhere($where = [], $fields = null, string $joinType = '', ?Query $query = null): Query
+    public function hasWhere($where = [], $fields = null, string $joinType = '', ?Query $query = null, string $logic = '', string $relationAlias = ''): Query
     {
+        $model    = Str::snake(class_basename($this->parent));
+        $relation = Str::snake(class_basename($this->model));
         $table    = $this->query->getTable();
-        $model    = class_basename($this->parent);
-        $relation = class_basename($this->model);
+        $query    = $query ?: $this->parent->db();
+        $alias    = $query->getAlias() ?: $model;
+        $fields   = $this->getRelationQueryFields($fields, $alias);
+        $relAlias = $relationAlias ?: $relation;
 
-        if (is_array($where)) {
-            $this->getQueryWhere($where, $relation);
-        } elseif ($where instanceof Query) {
-            $where->via($relation);
-        } elseif ($where instanceof Closure) {
-            $where($this->query->via($relation));
-            $where = $this->query;
+        if ($this->isSelfRelation() && $alias == $relAlias) {
+            $relAlias .= '_'; 
         }
 
-        $fields     = $this->getRelationQueryFields($fields, $model);
-        $softDelete = $this->query->getOptions('soft_delete');
-        $query      = $query ?: $this->parent->db();
+        $query->alias($alias)
+        ->via($alias)
+        ->field($fields)
+        ->join([$table => $relAlias], $alias . '.' . $this->localKey . '=' . $relAlias . '.' . $this->foreignKey, $joinType);
+         
 
-        return $query->alias($model)
-            ->via($model)
-            ->field($fields)
-            ->join([$table => $relation], $model . '.' . $this->localKey . '=' . $relation . '.' . $this->foreignKey, $joinType ?: $this->joinType)
-            ->when($softDelete, function ($query) use ($softDelete, $relation) {
-                $query->where($relation . strstr($softDelete[0], '.'), '=' == $softDelete[1][0] ? $softDelete[1][1] : null);
-            })
-            ->where(function ($query) use ($where) {
-                $query->where($where);
-            });
+        return $this->getRelationSoftDelete($query, $relAlias, $where, $logic);
     }
 
     /**
@@ -249,16 +243,12 @@ class HasOne extends OneToOne
                     $relationModel = $defaultModel;
                 } else {
                     $relationModel = $data[$result->$localKey];
-                    $relationModel->setParent(clone $result);
-                    $relationModel->exists(true);
                 }
                 // 设置关联属性
-                $result->setRelation($relation, $relationModel);
-
-                if (!empty($this->bindAttr)) {
-                    // 绑定关联属性
-                    $this->bindAttr($result, $relationModel);
-                    $result->hidden([$relation], true);
+                if (!empty($this->bindAttr) && $relationModel) {
+                    $result->bindRelationAttr($relationModel, $this->bindAttr, $relation);
+                } else {
+                    $result->setRelation($relation, $relationModel);
                 }
             }
         }
@@ -292,23 +282,18 @@ class HasOne extends OneToOne
             $relationModel = $this->getDefaultModel($default);
         } else {
             $relationModel = $data[$result->$localKey];
-            $relationModel->setParent(clone $result);
-            $relationModel->exists(true);
         }
-
-        // 设置关联属性
-        $result->setRelation($relation, $relationModel);
 
         // 动态绑定参数
         $bindAttr = $this->query->getOptions('bind_attr');
         if ($bindAttr) {
             $this->bind($bindAttr);
         }
-
-        if (!empty($this->bindAttr)) {
-            // 绑定关联属性
-            $this->bindAttr($result, $relationModel);
-            $result->hidden([$relation], true);
+        // 设置关联属性
+        if (!empty($this->bindAttr) && $relationModel) {
+            $result->bindRelationAttr($relationModel, $this->bindAttr, $relation);
+        } else {
+            $result->setRelation($relation, $relationModel);
         }
     }
 

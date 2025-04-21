@@ -15,7 +15,7 @@ class Category extends Facade
 {
     protected static function getFacadeClass()
     {
-        return 'app\index\model\Category';
+        return 'app\index\entity\Category';
     }
 
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Intervention\Gif\Decoders;
 
+use Intervention\Gif\Exceptions\DecoderException;
+
 abstract class AbstractDecoder
 {
     /**
@@ -39,22 +41,30 @@ abstract class AbstractDecoder
      * Read given number of bytes and move file pointer
      *
      * @param int $length
+     * @throws DecoderException
      * @return string
      */
-    protected function getNextBytes(int $length): string
+    protected function getNextBytesOrFail(int $length): string
     {
-        return fread($this->handle, $length);
+        $bytes = fread($this->handle, $length);
+
+        if (strlen($bytes) !== $length) {
+            throw new DecoderException('Unexpected end of file.');
+        }
+
+        return $bytes;
     }
 
     /**
      * Read given number of bytes and move pointer back to previous position
      *
      * @param int $length
+     * @throws DecoderException
      * @return string
      */
-    protected function viewNextBytes(int $length): string
+    protected function viewNextBytesOrFail(int $length): string
     {
-        $bytes = $this->getNextBytes($length);
+        $bytes = $this->getNextBytesOrFail($length);
         $this->movePointer($length * -1);
 
         return $bytes;
@@ -63,11 +73,12 @@ abstract class AbstractDecoder
     /**
      * Read next byte and move pointer back to previous position
      *
+     * @throws DecoderException
      * @return string
      */
-    protected function viewNextByte(): string
+    protected function viewNextByteOrFail(): string
     {
-        return $this->viewNextBytes(1);
+        return $this->viewNextBytesOrFail(1);
     }
 
     /**
@@ -89,11 +100,12 @@ abstract class AbstractDecoder
     /**
      * Get next byte in stream and move file pointer
      *
+     * @throws DecoderException
      * @return string
      */
-    protected function getNextByte(): string
+    protected function getNextByteOrFail(): string
     {
-        return $this->getNextBytes(1);
+        return $this->getNextBytesOrFail(1);
     }
 
     /**

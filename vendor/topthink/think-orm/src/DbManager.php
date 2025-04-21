@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2025 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -94,13 +94,11 @@ class DbManager
      */
     protected function modelMaker()
     {
-        Model::setDb($this);
-
-        if (is_object($this->event)) {
-            Model::setEvent($this->event);
-        }
-
         Model::maker(function (Model $model) {
+            $model->setOption('db', $this);
+            if (is_object($this->event)) {
+                $model->setOption('event', $this->event);
+            }
             $isAutoWriteTimestamp = $model->getAutoWriteTimestamp();
 
             if (is_null($isAutoWriteTimestamp)) {

@@ -27,10 +27,30 @@ class Menu extends AdminController
      */
     public function getnav()
     {
-        $auth     = new Auth();
-        $menu     = [];
+        $auth   = new Auth();
+        // 菜单数组
+        $menu   = [];
+
+        // 初始菜单
+        $menu[] = [
+            'id'    => 501,
+            "title" => "控制后台",
+            "icon"  => "layui-icon layui-icon-console",
+            "type"  => 1,
+            "openType"  =>"_iframe",
+            "href"  => (string) url("index/console1"),
+            'sort'  => 1,
+            'pid'   => 1,
+        ];
+
+        // 多后台菜单
         $rule = Session::has('ruleTable') ? Session::get('ruleTable') : 'auth_rule';
-        $auth_rule_list = Db::name($rule)->field('id,pid,title,icon,name,sort,ismenu')->where(['status'=> 1, 'delete_time'=> 0])->select();
+
+        $auth_rule_list = Db::name($rule)
+        ->field('id,pid,title,icon,name,sort,ismenu')
+        ->where(['delete_time'=> 0, 'status'=> 1])
+        ->select();
+        
         foreach ($auth_rule_list as $v) {
             if ($auth->check($v['name'], $this->aid) || $this->aid == 1) {
                 $menu[] = [
@@ -48,34 +68,53 @@ class Menu extends AdminController
         $nav = $this->getTrees($menu);
 
         // 初始化控制台
-        $nav[] = [
-            'id'    => 500,
-            'title' => '主页',
-            'icon'  => 'layui-icon layui-icon-console',
-            'href'  => '',
-            'sort'  => 1,
-            'type'  => 0,
-            'children' => [
-                [
-                    'id'    => 501,
-                    "title" => "控制后台",
-                    "icon"  => "layui-icon layui-icon-console",
-                    "type"  => 1,
-                    "openType"  =>"_iframe",
-                    "href"  => (string) url("index/console1"),
-                    'sort'  => 1,
-                ],[
-                    'id'    => 502,
-                    "title" => "数据分析",
-                    "icon"  => "layui-icon layui-icon-console",
-                    "type"  => 1,
-                    "openType"  => "_iframe",
-                    "href"  => (string) url("index/console2"),
-                    'sort'  => 2,
-                ]
-            ]
+        
+        // $nav[] = [
+        //     'id'    => 500,
+        //     'title' => '主页',
+        //     'icon'  => 'layui-icon layui-icon-console',
+        //     'href'  => '',
+        //     'sort'  => 1,
+        //     'type'  => 0,
+        //     'children' => [
+        //         [
+        //             'id'    => 501,
+        //             "title" => "控制后台",
+        //             "icon"  => "layui-icon layui-icon-console",
+        //             "type"  => 1,
+        //             "openType"  =>"_iframe",
+        //             "href"  => (string) url("index/console1"),
+        //             'sort'  => 1,
+        //         ],[
+        //             'id'    => 502,
+        //             "title" => "数据分析",
+        //             "icon"  => "layui-icon layui-icon-console",
+        //             "type"  => 1,
+        //             "openType"  => "_iframe",
+        //             "href"  => (string) url("index/console2"),
+        //             'sort'  => 2,
+        //         ]
+        //     ]
+        // ];
 
+        $nav[] = Session::has('ruleTable') ? [
+            'id'    => 999,
+            'title' => '用户后台',
+            'icon'  => 'layui-icon layui-icon-console',
+            'href'  => (string) url("apps/delete"),
+            'sort'  => 999,
+            'type'  => 1,
+            "openType"  => "_blank",
+        ] : [
+            'id'    => 999,
+            'title' => '管理后台',
+            'icon'  => 'layui-icon layui-icon-console',
+            'href'  => (string) url("apps/index"),
+            'sort'  => 999,
+            'type'  => 1,
+            "openType"  => "_blank",
         ];
+
         $nav[] = [
             'id'    => 1000,
             'title' => '官网',
@@ -186,6 +225,82 @@ class Menu extends AdminController
             return false;
         }
 
+    }
+
+    // 后台菜单控制
+    public function getMenuJsonData()
+    {
+        $menu = [
+            "logo" => [
+                "title"=> "TaoLer Admin",
+                "image"=> "/static/admin/images/logo.png"
+            ],
+            "menu"=> [
+                "data"=> (string) url('system.menu/getnav'),
+                "method"=> "GET",
+                "accordion"=> true,
+                "collapse"=> false,
+                "control"=> false,
+                "select"=> "501",
+                "async"=> true
+            ],
+            "tab"=> [
+                "enable"=> true,
+                "keepState"=> true,
+                "session"=> true,
+                "preload"=> false,
+                "max"=> "30",
+                "index"=> [
+                    "id"=> "501",
+                    "href"=> (string) url('index/console1'),
+                    "title"=> "首页"
+                ]
+            ],
+            "theme"=> [
+                "defaultColor"=> "2",
+                "defaultMenu"=> "dark-theme",
+                "defaultHeader"=> "light-theme",
+                "allowCustom"=> true,
+                "banner"=> false
+            ],
+            "colors"=> [
+                [
+                    "id"=> "1",
+                    "color"=> "#2d8cf0",
+                    "second"=> "#ecf5ff"
+                ],
+                [
+                    "id"=> "2",
+                    "color"=> "#36b368",
+                    "second"=> "#f0f9eb"
+                ],
+                [
+                    "id"=> "3",
+                    "color"=> "#f6ad55",
+                    "second"=> "#fdf6ec"
+                ],
+                [
+                    "id"=> "4",
+                    "color"=> "#f56c6c",
+                    "second"=> "#fef0f0"
+                ],
+                [
+                    "id"=> "5",
+                    "color"=> "#3963bc",
+                    "second"=> "#ecf5ff"
+                ]
+            ],
+            "other"=> [
+                "keepLoad"=> "1200",
+                "autoHead"=> false,
+                "footer"=> false
+            ],
+            "header"=> [
+                "message"=> "/static/admin/data/message.json"
+            ]
+        ];
+
+        return json($menu);
     }
 
 

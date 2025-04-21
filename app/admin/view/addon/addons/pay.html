@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>支付</title>
-    <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-</head>
+{extend name="public/base" /}
+
+{block name="title"}支付{/block}
+
+{block name="head"}
 <style>
     .layui-container{background-color: #F9F9F9}
     .auth-type{margin: 10px 0px;}
@@ -13,63 +11,64 @@
     .soft-info{margin: 10px;}
     .pay-tips{line-height:20px;text-align: center;margin-bottom: 20px;}
 </style>
-    <body>
-        <div class="layui-container">
-            <div class="layui-row">
-                <div class="auth-type">
-                    授权
-                </div>
+{/block}
+
+{block name="body"}
+
+    <div class="layui-row">
+        <div class="auth-type">
+            授权
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="order-info">
+            <p>订单标题：<em>{$orderData.subject}</em></p>
+            <p>订单编号：<em>{$orderData.out_trade_no}</em></p>
+            <p>订单价格：<em class="scanpay-price">￥{$orderData.total_amount}</em> 元</p>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-sm6">
+            <div class="pay-type">
+                <div style="padding: 5px; text-align: center;"><img src="/static/admin/images/alipay.jpg" style="height:80px;"></div>
             </div>
-            <div class="layui-row">
-                <div class="order-info">
-                    <p>订单标题：<em>{$orderData.subject}</em></p>
-                    <p>订单编号：<em>{$orderData.out_trade_no}</em></p>
-                    <p>订单价格：<em class="scanpay-price">￥{$orderData.total_amount}</em> 元</p>
-                </div>
-            </div>
-            <div class="layui-row">
-                <div class="layui-col-sm6">
-                    <div class="pay-type">
-                        <div style="padding: 5px; text-align: center;"><img src="/static/res/images/alipay.jpg" style="height:80px;"></div>
-                    </div>
-                    <div class="soft-info">
-                        <div>不支持退款</div>
-                        <br />
-                        <div>软件协议:本软件为原作者拥有版权权限，购买软件可以商用，禁止出售第三方行为。</div>
-                    </div>
-                </div>
-                <div class="layui-col-sm6">
-                    <div class="qrcode" data-text="支付宝当面付" style="padding: 5px; text-align: center;">
-                        <img src="{$orderData.qr_code_img}">
-                    </div>
-                    <div class="pay-tips">
-                        <p>请使用支付宝扫一扫<br>扫描二维码进行支付</p>
-                    </div>
-                </div>
+            <div class="soft-info">
+                <div>不支持退款</div>
+                <br />
+                <div>软件协议:本软件为原作者拥有版权权限，购买软件可以商用，禁止出售第三方行为。</div>
             </div>
         </div>
-        <script src="/static/component/layui/layui.js"></script>
-        <script src="/static/component/pear/pear.js"></script>
-        <script type="text/javascript">
-            layui.use(['jquery'], function() {
-                var $ = layui.jquery;
-                var out_trade_no = "{$orderData.out_trade_no}";
-                let URL = 'https://www.aieok.com/pay/checkstatus.html?out_trade_no=' + out_trade_no;
-                var interval = setInterval(function () {
-                    $.ajax({
-                        type: "get",
-                        url: URL,
-                        data: {out_trade_no: out_trade_no},
-                        dataType: "json",
-                        success: function (res) {
-                            // 等等支付时，一直轮询
-                            if (res.code !== 0) {
-                                clearInterval(interval);
-                            }
+        <div class="layui-col-sm6">
+            <div class="qrcode" data-text="支付宝当面付" style="padding: 5px; text-align: center;">
+                <img src="{$orderData.qr_code_img}">
+            </div>
+            <div class="pay-tips">
+                <p>请使用支付宝扫一扫<br>扫描二维码进行支付</p>
+            </div>
+        </div>
+    </div>
+
+    {__block__}
+
+    <script type="text/javascript">
+        layui.use(['jquery'], function() {
+            var $ = layui.jquery;
+            var out_trade_no = "{$orderData.out_trade_no}";
+            let URL = 'https://www.aieok.com/pay/checkstatus.html?out_trade_no=' + out_trade_no;
+            var interval = setInterval(function () {
+                $.ajax({
+                    type: "get",
+                    url: URL,
+                    data: {out_trade_no: out_trade_no},
+                    dataType: "json",
+                    success: function (res) {
+                        // 等等支付时，一直轮询
+                        if (res.code !== 0) {
+                            clearInterval(interval);
                         }
-                    })
-                }, 2500);
-            })
-        </script>
-    </body>
-</html>
+                    }
+                })
+            }, 2500);
+        })
+    </script>
+{/block}

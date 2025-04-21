@@ -1,11 +1,11 @@
 <div class="fly-panel-title fly-filter">
 	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'all'])} " {if condition="$Request.param.type eq 'all'" } class="layui-this" {/if} >{:lang('all')}</a>
 	<span class="fly-mid"></span>
-	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'jie'])} " {if condition="$Request.param.type eq 'jie'" } class="layui-this" {/if} >{:lang('end')}</a>
+	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'wait'])} " {if condition="$Request.param.type eq 'wait'" } class="layui-this" {/if} >{:lang('end')}</a>
 	<span class="fly-mid"></span>
 	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'top'])} " {if condition="$Request.param.type eq 'top'" } class="layui-this" {/if} >{:lang('top')}</a>
 	<span class="fly-mid"></span>
-	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'hot'])} " {if condition="$Request.param.type eq 'hot'" } class="layui-this" {/if} >{:lang('hot')}</a>
+	<a href="{:url('cate_type',['ename' => $Request.param.ename,'type' => 'good'])} " {if condition="$Request.param.type eq 'good'" } class="layui-this" {/if} >{:lang('hot')}</a>
 		  
   <!--span class="fly-filter-right layui-hide-xs"><a href="" class="layui-this">按最新</a>
   <span class="fly-mid"></span><a href="">按热议</a></span-->

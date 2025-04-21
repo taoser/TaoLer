@@ -71,7 +71,7 @@ class AuthRule extends AdminController
             //层级level
             $plevel = Db::name('auth_rule')->field('level')->find($data['pid']);
 			if($plevel){
-				$data['level'] = $plevel['level']+1;
+				$data['level'] = $plevel['level'] + 1;
 			} else {
 				$data['level'] = 0;
 			}
@@ -85,8 +85,9 @@ class AuthRule extends AdminController
 	}
 	
 	//权限编辑
-	public function edit()
+	public function edit(\think\Request $request)
 	{
+		$id = $request->param('id/d');
 		$rule = new AuthRuleModel();
 		
 		if(Request::isAjax()){
@@ -99,9 +100,10 @@ class AuthRule extends AdminController
 			} else {
 				$data['level'] = 0;
 			}
-			$zi = $this->model->where('pid',$data['id'])->select();//查询出下级
-            if(!empty($zi)){
-                $zi->update(['level'=>$data['level']+1]);
+
+			$son = $this->model->where('pid',$data['id'])->select();//查询出下级
+            if(!empty($son)){
+                $son->update(['level' => $data['level'] + 1]);
             }
 
 			$rule = $this->model->find($data['id']);
@@ -109,9 +111,11 @@ class AuthRule extends AdminController
 		}
 		
 		$auth_rules = $this->model->getAuthRuleArray();
-		$rules = $this->model->find(input('id'));
+		$rules = $this->model->find($id);
+		// dump($rules);
 
-		View::assign(['AuthRule'=>$auth_rules,'rules'=>$rules]);
+		View::assign(['AuthRule' => $auth_rules,'rules' => $rules]);
+
 		return View::fetch();
 	}
 

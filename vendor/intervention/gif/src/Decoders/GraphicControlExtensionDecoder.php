@@ -6,12 +6,14 @@ namespace Intervention\Gif\Decoders;
 
 use Intervention\Gif\Blocks\GraphicControlExtension;
 use Intervention\Gif\DisposalMethod;
+use Intervention\Gif\Exceptions\DecoderException;
 
 class GraphicControlExtensionDecoder extends AbstractPackedBitDecoder
 {
     /**
      * Decode given string to current instance
      *
+     * @throws DecoderException
      * @return GraphicControlExtension
      */
     public function decode(): GraphicControlExtension
@@ -19,24 +21,24 @@ class GraphicControlExtensionDecoder extends AbstractPackedBitDecoder
         $result = new GraphicControlExtension();
 
         // bytes 1-3
-        $this->getNextBytes(3); // skip marker, label & bytesize
+        $this->getNextBytesOrFail(3); // skip marker, label & bytesize
 
         // byte #4
-        $packedField = $this->getNextByte();
+        $packedField = $this->getNextByteOrFail();
         $result->setDisposalMethod($this->decodeDisposalMethod($packedField));
         $result->setUserInput($this->decodeUserInput($packedField));
         $result->setTransparentColorExistance($this->decodeTransparentColorExistance($packedField));
 
         // bytes 5-6
-        $result->setDelay($this->decodeDelay($this->getNextBytes(2)));
+        $result->setDelay($this->decodeDelay($this->getNextBytesOrFail(2)));
 
         // byte #7
         $result->setTransparentColorIndex($this->decodeTransparentColorIndex(
-            $this->getNextByte()
+            $this->getNextByteOrFail()
         ));
 
         // byte #8 (terminator)
-        $this->getNextByte();
+        $this->getNextByteOrFail();
 
         return $result;
     }

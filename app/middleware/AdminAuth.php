@@ -44,7 +44,7 @@ class AdminAuth
          if(!Session::has('admin_id')) {
             if(empty($cooAuth)){
                 //没有登录及当前非登录页重定向登录页
-                if(!in_array($path, ['login/index','login/reg'])) {
+                if(!in_array($path, ['login/index','login/register'])) {
                     return redirect((string) url('login/index'));
                 }
 
@@ -69,7 +69,7 @@ class AdminAuth
         
         //登陆后无法访问登录页
         if(Session::has('admin_id')){
-            if(in_array($path, ['login/index','login/reg'])){
+            if(in_array($path, ['login/index','login/register'])){
                 return redirect((string) url('index/index'));
             }
         }
@@ -81,6 +81,7 @@ class AdminAuth
             // 排除公共权限
             $not_check_list = [
                 'login/index',
+                'login/register',
                 'admin/index',
                 'system.menu/getnav',
                 'index/index',

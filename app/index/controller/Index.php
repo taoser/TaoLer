@@ -18,6 +18,9 @@ use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
 use app\common\lib\facade\HttpHelper;
+use app\facade\Article;
+use think\db\Query;
+use app\index\entity\Article as ArticleEntity;
 
 class Index extends IndexBaseController
 {
@@ -38,12 +41,29 @@ class Index extends IndexBaseController
 		// $a = $alipay->index();
 		// $b= $weixin->index();
 		// var_dump($a,$b);
+		// $ar = new ArticleEntity();
+		// $a = $ar->getTops();
 
+
+		// HttpHelper::asJson()->post('https://www.aieok.com/a',['a' =>'b']);
+
+// $a = Article::getHotPvs();
+// dump($a);
+
+// $sql = Article::where('status', 1)->fetchSql(true)->select();
+// halt($sql);
+
+// halt($a);
 
 // echo 'JIT Enabled: ' . (filter_var(ini_get('zend_enable_jit'), FILTER_VALIDATE_BOOLEAN) ? 'Yes' : 'No');
 
+		// 滚屏自动加载页码路由
+		$page = Request::param('page/d', 1);
+		$next = (string) url('index_page', ['page' => ++$page]);
 
-		$html = View::fetch();
+		View::assign('next', $next);
+
+		$html = View::fetch('index');
 
 		$this->buildHtml($html);
 

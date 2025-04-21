@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>头像上传</title>
-    <link rel="stylesheet" href="../../../component/pear/css/pear.css" />
-</head>
-<body class="pear-container">
+{extend name="public/base" /}
+
+{block name="title"}用户资料{/block}
+{block name="body"}
     <div class="layui-row layui-col-space15">
         <div class="layui-col-xs9">
             <div style="height:325px;background-color: rgb(247, 247, 247);">
@@ -19,7 +15,7 @@
     </div>
     <div class="layui-row">
         <div class="layui-form-item">
-            <div class="layui-input-inline layui-btn-container" style="width: auto;vertical-align:top;">
+            <div class="layui-input-inline pear-btn-container" style="width: auto;vertical-align:top;">
                 <button class="pear-btn pear-btn-sm pear-btn-primary layui-icon layui-icon-left" cropper-event="rotate" data-option="-15" title="左旋15°"></button>
                 <button class="pear-btn pear-btn-sm pear-btn-primary layui-icon layui-icon-right" cropper-event="rotate" data-option="15" title="右旋15°"></button>
                 <button class="pear-btn pear-btn-sm pear-btn-danger layui-icon layui-icon-refresh" cropper-event="reset" title="重置"></button>
@@ -29,8 +25,9 @@
             <div class="layui-form-mid layui-word-aux">建议:图片的尺寸宽高比为1:1,大小在5m以内。</div>
         </div>
     </div>
-    <script src="../../../component/layui/layui.js"></script>
-    <script src="../../../component/pear/pear.js"></script>
+    
+    {__block__}
+
     <script>
         layui.use(['jquery','layer','cropper'], function () {
             let $ = layui.jquery;
@@ -103,6 +100,5 @@
             });
         });
     </script>
-</body>
 
-</html>
+{/block}

@@ -46,6 +46,12 @@ class Comment extends IndexBaseController
 				
 			//用户留言存入数据库
 			if (CommentModel::create($data)) {
+				// 评论数+1
+				Db::table($table)
+				->where('id', $data['article_id'])
+				->inc('comment_num')
+				->update();
+
 				//站内信
 				$article = Db::table($table)->field('id,title,user_id,cate_id')->where('id',$data['article_id'])->find();
                 // 获取分类ename,appname

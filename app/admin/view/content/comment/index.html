@@ -1,37 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>评论管理</title>
-  <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-</head>
-<body class="pear-container">
+{extend name="public/base" /}
+
+{block name="title"}评论{/block}
+{block name="body"}
+
 	<div class="layui-card">
 		<div class="layui-card-body">
 			<form class="layui-form" action="">
 				<div class="layui-form-item">
 					<div class="layui-inline layuiadmin-input-useradmin">
-					<label class="layui-form-label">回帖人</label>
-					<div class="layui-input-block">
-						<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
-					</div>
+						<label class="layui-form-label">回帖人</label>
+						<div class="layui-input-block">
+							<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+						</div>
 					</div>
 					<div class="layui-inline">
-					<label class="layui-form-label">内容</label>
-					<div class="layui-input-block">
-						<input type="text" name="content" placeholder="请输入" autocomplete="off" class="layui-input">
+						<label class="layui-form-label">内容</label>
+						<div class="layui-input-block">
+							<input type="text" name="content" placeholder="请输入" autocomplete="off" class="layui-input">
+						</div>
 					</div>
-					</div>
-						<div class="layui-inline">
-					<label class="layui-form-label">状态</label>
-					<div class="layui-input-block">
-						<select name="status" lay-filter="fourm-check">
-						<option value="">全部</option>
-						<option value="0">待审</option>
-						<option value="-1">禁止</option>
-						<option value="1">通过</option>
-						</select>
-					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">状态</label>
+						<div class="layui-input-block">
+							<select name="status" lay-filter="fourm-check">
+							<option value="">全部</option>
+							<option value="0">待审</option>
+							<option value="-1">禁止</option>
+							<option value="1">通过</option>
+							</select>
+						</div>
 					</div>
 					<div class="layui-form-item layui-inline">
 					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="comment-query">
@@ -54,264 +51,250 @@
 	</div>
 
 	<script type="text/html" id="comment-toolbar">
-	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+		<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
 		<i class="layui-icon layui-icon-delete"></i>
 		删除
-	</button>
-	<button class="pear-btn layui-bg-orange pear-btn-md" lay-event="checkSelect">
+		</button>
+		<button class="pear-btn layui-bg-orange pear-btn-md" lay-event="checkSelect">
 		批量审核
-	</button>
+		</button>
 	</script>
-
-  <script type="text/html" id="repTpl">
-    <ul>
-      <li> {{ d.replyer }} </li>
-      <li> {{ d.replytime }} </li>
-    </ul>
-  </script>
+	<script type="text/html" id="repTpl">
+		<ul>
+			<li> {{ d.replyer }} </li>
+			<li> {{ d.replytime }} </li>
+		</ul>
+	</script>
 	<script type="text/html" id="imgTpl">
-	<img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= {{ d.avatar }}>
+		<img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= {{ d.avatar }}>
 	</script>
 	<script type="text/html" id="buttonCheck">
 		<input type="checkbox" name="check" lay-skin="switch" lay-filter="check" lay-text="通过|{{ d.check == 0 ? '待审' : '禁止' }}" {{  d.check == 1 ? 'checked' : '' }} id="{{d.id}}" >
-
 	</script>
-
 	<script type="text/html" id="comment-bar">
-	<!--<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>-->
-	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+		<!--<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>-->
+		<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 	</script>
 
-    </div>
+	{__block__}
 
+	<script>
+		const TABLE_LIST = "{:url('content.comment/list')}";
+		const COMMENT_DELETE = "{:url('content.comment/delete')}";
 
-    <script src="/static/component/layui/layui.js"></script>
-    <script src="/static/component/pear/pear.js"></script>
-    <script>
-      const TABLE_LIST = "{:url('content.comment/list')}";
-      const COMMENT_DELETE = "{:url('content.comment/delete')}";
+		layui.use(['jquery','table','form','common'], function(){
+			var $ = layui.jquery
+			,form = layui.form
+			,table = layui.table;
+			let common = layui.common;
 
-      layui.use(['jquery','table','form','common'], function(){
-        var $ = layui.jquery
-        ,form = layui.form
-        ,table = layui.table;
-        let common = layui.common;
+			//评论管理
+			table.render({
+				elem: '#comment-table'
+				,url: TABLE_LIST
+				,skin: 'line'
+				,lineStyle: 'height: 80px;'
+				,toolbar: '#comment-toolbar'
+				,cols: [[
+				{type: 'checkbox'}
+				,{field: 'id', width: 80, title: 'ID', sort: true}
+				,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
+				,{field: 'title', title: '标题',minWidth: 150, templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
+				,{field: 'content', title: '评论内容', minWidth: 200,templet: '<div><strong>{{d.content}}</strong></div>'}
+				,{ title: '详情', width: 180, templet: '#repTpl'}
+				,{field: 'check', title: '审核', templet: '#buttonCheck', width: 100}
+				,{title: '操作', width: 60, align: 'center', toolbar: '#comment-bar'}
+				]]
+				,page: true
+				,limit: 15
+				,limits: [10, 15, 20, 25, 30]
+				,text: '对不起，加载出现异常！'
+			});
 
-        //评论管理
-        table.render({
-          elem: '#comment-table'
-          ,url: TABLE_LIST
-          ,skin: 'line'
-          ,lineStyle: 'height: 80px;'
-          ,toolbar: '#comment-toolbar'
-          ,cols: [[
-            {type: 'checkbox'}
-            ,{field: 'id', width: 80, title: 'ID', sort: true}
-            ,{field: 'avatar', title: '头像', width: 80, templet: '#imgTpl'}
-            ,{field: 'title', title: '标题',minWidth: 150, templet: '<div><a href="{{d.url}}" target="_blank">{{d.title}}</a></div>'}
-            ,{field: 'content', title: '评论内容', minWidth: 200,templet: '<div><strong>{{d.content}}</strong></div>'}
-            ,{ title: '详情', width: 180, templet: '#repTpl'}
-            ,{field: 'check', title: '审核', templet: '#buttonCheck', width: 100}
-            ,{title: '操作', width: 60, align: 'center', toolbar: '#comment-bar'}
-          ]]
-          ,page: true
-          ,limit: 15
-          ,limits: [10, 15, 20, 25, 30]
-          ,text: '对不起，加载出现异常！'
-        });
+			table.on('tool(comment-table)', function(obj) {
+				if (obj.event === 'remove') {
+				window.remove(obj);
+				} else if (obj.event === 'edit') {
+				window.edit(obj);
+				}
+			});
 
-        table.on('tool(comment-table)', function(obj) {
-          if (obj.event === 'remove') {
-            window.remove(obj);
-          } else if (obj.event === 'edit') {
-            window.edit(obj);
-          }
-        });
+			table.on('toolbar(comment-table)', function(obj) {
+				if (obj.event === 'add') {
+				window.add();
+				} else if (obj.event === 'refresh') {
+				window.refresh();
+				} else if (obj.event === 'batchRemove') {
+				window.batchRemove(obj);
+				} else if (obj.event === 'checkSelect') {
+					window.checkSelect(obj);
+				}
+			});
 
-        table.on('toolbar(comment-table)', function(obj) {
-          if (obj.event === 'add') {
-            window.add();
-          } else if (obj.event === 'refresh') {
-            window.refresh();
-          } else if (obj.event === 'batchRemove') {
-            window.batchRemove(obj);
-          } else if (obj.event === 'checkSelect') {
-				window.checkSelect(obj);
+			form.on('submit(comment-query)', function(data) {
+				table.reload('comment-table', {
+				where: data.field,
+				page: {
+				curr: 1 //重新从第 1 页开始
+				}
+				})
+				return false;
+			});
+
+			//监听回贴审核
+			form.on('switch(check)', function(data){
+				var data= data.elem;
+				var status = data.checked ? 1 : -1;
+				//执行回帖审核
+				$.ajax({
+					type:'post',
+					url:"{:url('content.comment/check')}",
+					data:{id:data.id,status:status},
+					dataType:'json',
+					success:function(res){
+						if(res.code === 0){
+							layer.msg(res.msg,{
+								icon:res.icon,
+								time:2000
+							});
+						} else {
+							layer.open({
+								title:'审核失败',
+								content:res.msg,
+								icon:5,
+								adim:6
+							})
+						}
+					table.reload('comment-table');
+					}
+				});
+				return false;
+			});
+
+			window.remove = function(obj) {
+
+				layer.confirm('确定要删除?', {
+				icon: 3,
+				title: '提示'
+				}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+				$.ajax({
+					url: COMMENT_DELETE + "?id=" + obj.data['id'],
+					dataType: 'json',
+					type: 'delete',
+					success: function(result) {
+					layer.close(loading);
+					if (result.code === 0) {
+						layer.msg(result.msg, {
+						icon: 1,
+						time: 1000
+						}, function() {
+						obj.del();
+						});
+					} else {
+						layer.msg(result.msg, {
+						icon: 2,
+						time: 1000
+						});
+					}
+					}
+				})
+				});
 			}
-        });
 
-        form.on('submit(comment-query)', function(data) {
-          table.reload('comment-table', {
-            where: data.field,
-            page: {
-            curr: 1 //重新从第 1 页开始
-          }
-          })
-          return false;
-        });
+			window.batchRemove = function(obj) {
 
+				var checkIds = common.checkField(obj,'id');
 
-
-        //监听回贴审核
-        form.on('switch(check)', function(data){
-        var data= data.elem;
-        var status = data.checked ? 1 : -1;
-        //执行回帖审核
-            $.ajax({
-                type:'post',
-                url:"{:url('content.comment/check')}",
-                data:{id:data.id,status:status},
-                dataType:'json',
-                success:function(res){
-                    if(res.code === 0){
-                        layer.msg(res.msg,{
-                            icon:res.icon,
-                            time:2000
-                        });
-                    } else {
-                        layer.open({
-                            title:'审核失败',
-                            content:res.msg,
-                            icon:5,
-                            adim:6
-                        })
-                    }
-                table.reload('comment-table');
-                }
-            });
-            return false;
-        });
-
-
-        window.remove = function(obj) {
-
-          layer.confirm('确定要删除?', {
-            icon: 3,
-            title: '提示'
-          }, function(index) {
-            layer.close(index);
-            let loading = layer.load();
-            $.ajax({
-              url: COMMENT_DELETE + "?id=" + obj.data['id'],
-              dataType: 'json',
-              type: 'delete',
-              success: function(result) {
-                layer.close(loading);
-                if (result.code === 0) {
-                  layer.msg(result.msg, {
-                    icon: 1,
-                    time: 1000
-                  }, function() {
-                    obj.del();
-                  });
-                } else {
-                  layer.msg(result.msg, {
-                    icon: 2,
-                    time: 1000
-                  });
-                }
-              }
-            })
-          });
-        }
-
-        window.batchRemove = function(obj) {
-
-          var checkIds = common.checkField(obj,'id');
-
-          if (checkIds === "") {
-            layer.msg("未选中数据", {
-              icon: 3,
-              time: 1000
-            });
-            return false;
-          }
-
-          layer.confirm('确定要删除?', {
-            icon: 3,
-            title: '提示'
-          }, function(index) {
-            layer.close(index);
-            let loading = layer.load();
-            $.ajax({
-              url: COMMENT_DELETE,
-              dataType: 'json',
-              type: 'delete',
-              data:{"id":checkIds},
-              success: function(result) {
-                layer.close(loading);
-                if (result.code === 0) {
-                  layer.msg(result.msg, {
-                    icon: 1,
-                    time: 1000
-                  }, function() {
-                    table.reload('comment-table');
-                  });
-                } else {
-                  layer.msg(result.msg, {
-                    icon: 2,
-                    time: 1000
-                  });
-                }
-              }
-            })
-          });
-        }
-
-        // 全选审核
-		window.checkSelect = function(obj) {
-			var id = obj.config.id;
-    		var checkStatus = table.checkStatus(id);
-			var data = checkStatus.data;
-
-			if (data.length === 0) {
+				if (checkIds === "") {
 				layer.msg("未选中数据", {
 					icon: 3,
 					time: 1000
 				});
 				return false;
-			}
+				}
 
-			layer.confirm('确定要审核?', {
+				layer.confirm('确定要删除?', {
 				icon: 3,
 				title: '提示'
-			}, function(index) {
+				}, function(index) {
 				layer.close(index);
 				let loading = layer.load();
-				console.log(data)
 				$.ajax({
-					type: "post",
-					url: "{:url('content.comment/checkSelect')}",
+					url: COMMENT_DELETE,
 					dataType: 'json',
-					data: {data},
+					type: 'delete',
+					data:{"id":checkIds},
 					success: function(result) {
-						layer.close(loading);
-						if (result.code === 0) {
-							layer.msg(result.msg, {
-								icon: 1,
-								time: 1000
-							}, function() {
-								table.reload('comment-table');
-							});
-						} else {
-							layer.msg(result.msg, {
-								icon: 2,
-								time: 1000
-							});
-						}
+					layer.close(loading);
+					if (result.code === 0) {
+						layer.msg(result.msg, {
+						icon: 1,
+						time: 1000
+						}, function() {
+						table.reload('comment-table');
+						});
+					} else {
+						layer.msg(result.msg, {
+						icon: 2,
+						time: 1000
+						});
+					}
 					}
 				})
-			});
-		}
+				});
+			}
 
+			// 全选审核
+			window.checkSelect = function(obj) {
+				var id = obj.config.id;
+				var checkStatus = table.checkStatus(id);
+				var data = checkStatus.data;
 
-        window.refresh = function(param) {
-          table.reload('comment-table');
-        }
+				if (data.length === 0) {
+					layer.msg("未选中数据", {
+						icon: 3,
+						time: 1000
+					});
+					return false;
+				}
 
+				layer.confirm('确定要审核?', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					layer.close(index);
+					let loading = layer.load();
+					console.log(data)
+					$.ajax({
+						type: "post",
+						url: "{:url('content.comment/checkSelect')}",
+						dataType: 'json',
+						data: {data},
+						success: function(result) {
+							layer.close(loading);
+							if (result.code === 0) {
+								layer.msg(result.msg, {
+									icon: 1,
+									time: 1000
+								}, function() {
+									table.reload('comment-table');
+								});
+							} else {
+								layer.msg(result.msg, {
+									icon: 2,
+									time: 1000
+								});
+							}
+						}
+					})
+				});
+			}
 
-  });
-  </script>
-</body>
-</html>
-
+			window.refresh = function(param) {
+				table.reload('comment-table');
+			}
+		});
+	</script>
+{/block}

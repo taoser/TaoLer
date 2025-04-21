@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2023 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2025 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -277,6 +277,16 @@ abstract class Paginator implements ArrayAccess, Countable, IteratorAggregate, J
     public function listRows(): int
     {
         return $this->listRows;
+    }
+
+    /**
+     * 获取当前页页码
+     *
+     * @return bool
+     */
+    public function hasMore(): bool
+    {
+        return $this->hasMore;
     }
 
     /**

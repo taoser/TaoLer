@@ -30,6 +30,7 @@ use think\facade\Cache;
                 $tagsArr[] = str_replace('/','\\',strstr(strstr($a, 'addons'), '.php', true));
             }
         }
+        
         return implode(',', $tagsArr);
     });
 

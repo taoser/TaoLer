@@ -25,8 +25,8 @@
 					<div class="detail-hits" style="left:-30px;">
 						<span>{$article.cate.catename}</span>
 						<span>{$article.user.name}</span>
-						<span class="post-time" style="padding-top: 5px;" data="{$article.update_time}">{article:uptime} </span>
-						<span><i class="iconfont" title="浏览">&#xe60b;</i> {article:pv}</span>
+						<span class="post-time" style="padding-top: 5px;" data="{$article.update_time}">{article:uptime /} </span>
+						<span><i class="iconfont" title="浏览">&#xe60b;</i> {article:pv /}</span>
 					</div>
 				</div>
 				<hr style="margin-bottom: 25px">
@@ -36,15 +36,6 @@
 				<div class="detail-body photos" style="font-size: 18px;line-height: 200%;" id="content">
 					{$article.content|raw}
 				</div>
-
-				{//解密文件}
-				{empty name="passJieMi"}
-				{if($article.read_type == 1)}
-				<div id="jiemi" style="text-align:center">
-				<button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-password" style="font-size: 30px; color: #FF5722;"></i> 阅读请解密 </button>
-				</div>
-				{/if}
-				{/empty}
 
 				<div style="margin-top: 15px">标签
 				{article:tag}
@@ -56,7 +47,7 @@
 					<p style="line-height:200%;">{$sysInfo.state|raw}</p>
 				</div>
 				<div style="margin-top: 20px;">本文链接：
-					<a href="{$Request.domain}{$Request.url}">{$Request.domain}{$Request.url}</a>
+					<a href="{article:url /}">{article:url /}</a>
 				</div>
 			</div>
 		</div>

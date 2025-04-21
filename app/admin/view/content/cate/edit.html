@@ -1,4 +1,4 @@
-{extend name="public:admin_form" /}
+{extend name="public/form" /}
 
 {block name="body"}
 <form class="layui-form" action="">
@@ -40,9 +40,9 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                  <label class="layui-form-label">描述</label>
+                  <label class="layui-form-label">SEO描述</label>
                   <div class="layui-input-block">
-                      <textarea type="text" name="desc" lay-verify="required"  value="{$cate.desc}"   placeholder="描述*" autocomplete="off" class="layui-textarea">{$cate.desc}</textarea>
+                      <textarea type="text" name="desc" lay-verify="required"  value="{$cate.desc}"   placeholder="类目SEO描述*" autocomplete="off" class="layui-textarea">{$cate.desc}</textarea>
                   </div>
                 </div>
                 <div class="layui-form-item">
@@ -69,16 +69,16 @@
         </div>
     </div>
 </form>
-{/block}
 
-{block name="js"}
+{__block__}
+
   <script>
   layui.use(['form', 'iconPicker', 'xmSelect',], function(){
     var $ = layui.jquery
     ,form = layui.form ;
 	var iconPicker = layui.iconPicker;
     var xmSelect = layui.xmSelect;
-    var initPid = "{$cate.pid}";
+
     let ADD_EDIT = "{:url('content.cate/addEdit')}";
 	
 	//初始化图标选择
@@ -120,13 +120,12 @@
           return false;
       });
 
-      (function (){
           //分类菜单结构
           $.ajax({
               type: "get",
-              url: "{:url('content.forum/getCateTree')}",
+              url: "{:url('content.cate/getCateTree')}",
               success: function(res){
-                  var data = res.data;
+                var initPid = "{$cate.pid}";
 
                   // 渲染下拉树
                   xmSelect.render({
@@ -135,14 +134,14 @@
                       height: '250px',
                       layVerify: 'required',
                       layVerType: 'tips',
-                      data: data,
+                      data: res.data,
                       initValue:  [initPid],
                       model: {label: {type: 'text'}},
                       prop: {
                           name: 'catename',
                           value: 'id'
                       },
-                      radio: true,
+                    //   radio: true,
                       clickClose: true,
                       tree: {
                           show: true,
@@ -150,13 +149,16 @@
                           strict: false,
                           expandedKeys: true
                       },
+                      on: function(data){ // 单选on模式
+							if(data.isAdd){
+								return data.change.slice(0, 1)
+							}
+						},
                       tips: '请选择上级菜单'
                   });
               }
 
           });
-      })()
-
 
   })
   </script>

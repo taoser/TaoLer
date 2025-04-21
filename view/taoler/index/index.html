@@ -48,10 +48,10 @@
 			<section id="main" class="list-home list-grid list-grid-padding">
 				{article:list type="index"}
 				<article class="list-item block card-plain">
-					{eq name="article.has_img" value='1'}
+					{eq name="article.has_image" value='1'}
 					<figure class="media media-3x2  d-none d-md-block">
 						<a class="media-content" href="{article:url /}" title="{article:title /}">
-							<img src="{$article.master_pic}" alt="{article:title /}">
+							<img src="{article:master_pic /}" alt="{article:title /}">
 						</a>
 					</figure>
 					{/eq}
@@ -72,14 +72,14 @@
 								</div>
 								<div class="d-inline-block">
 									<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:author /}</a>
-									{eq name="article.has_img" value="1"} <span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>{/eq}
+									{eq name="article.has_image" value="1"} <span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>{/eq}
 									{eq name="article.has_video" value="1"} <span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>{/eq}
 									{eq name="article.has_audio" value="1"} <span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>{/eq}
-									{eq name="article.read_type" value="1"} <span><i class="layui-icon layui-icon-password" style="color: #FF5722;"></i></span>{/eq}
+				
 								</div>
 								<div class="flex-fill"></div>
 								<div class="mx-1">
-									<span class="text-muted"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num}</span>
+									<span class="text-muted"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comments_num}</span>
 								</div>
 							</div>
 						</div>

@@ -26,7 +26,7 @@
             <a href="{article:user name='link' /}" class="fly-avatar">
               <img src="{article:author_avatar /}" alt="{article:author /}">
             </a>
-            <h2><a href="{article:url /}"  style="color: {article:title_color ?? '#333'};">{article:title}</a></h2>
+            <h2><a href="{article:url /}">{article:title}</a></h2>
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
               <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.catename}</a>
@@ -35,16 +35,16 @@
               <cite>{article:author /}</cite>
               <i>{article:time /}</i>
               </a>
-              {eq name="article.has_img" value="1"} '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'{/eq}
+              {eq name="article.has_image" value="1"} '<span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>'{/eq}
               {eq name="article.has_video" value="1"} '<span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>'{/eq}
               {eq name="article.has_audio" value="1"} '<span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>'{/eq}
               
               <span class="layui-hide-xs" title="浏览"><i class="iconfont" title="浏览">&#xe60b;</i> {article:pv /}</span>
-              {eq name="article.jie" value="1"}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/eq}
-              <span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comment_num /}</span>
+              {eq name="article.flags.is_wait" value="1"}<span class="layui-badge fly-badge-accept layui-hide-xs">{:lang('end')}</span>{/eq}
+              <span class="fly-list-nums"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comments_num /}</span>
             </div>
             <div class="fly-list-badge">
-              {eq name="article.is_hot" value="1"}
+              {eq name="article.flags.is_good" value="1"}
             <i class="layui-icon layui-icon-fire layui-hide-md" style="font-size: 20px; color: #FF5722;"></i>
             <span class="layui-badge layui-bg-red layui-hide-xs">{:lang('hot')}</span>
             {/eq}

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Intervention\Gif\Decoders;
 
 use Intervention\Gif\Blocks\LogicalScreenDescriptor;
+use Intervention\Gif\Exceptions\DecoderException;
 
 class LogicalScreenDescriptorDecoder extends AbstractPackedBitDecoder
 {
     /**
      * Decode given string to current instance
      *
+     * @throws DecoderException
      * @return LogicalScreenDescriptor
      */
     public function decode(): LogicalScreenDescriptor
@@ -19,12 +21,12 @@ class LogicalScreenDescriptorDecoder extends AbstractPackedBitDecoder
 
         // bytes 1-4
         $logicalScreenDescriptor->setSize(
-            $this->decodeWidth($this->getNextBytes(2)),
-            $this->decodeHeight($this->getNextBytes(2))
+            $this->decodeWidth($this->getNextBytesOrFail(2)),
+            $this->decodeHeight($this->getNextBytesOrFail(2))
         );
 
         // byte 5
-        $packedField = $this->getNextByte();
+        $packedField = $this->getNextByteOrFail();
 
         $logicalScreenDescriptor->setGlobalColorTableExistance(
             $this->decodeGlobalColorTableExistance($packedField)
@@ -44,12 +46,12 @@ class LogicalScreenDescriptorDecoder extends AbstractPackedBitDecoder
 
         // byte 6
         $logicalScreenDescriptor->setBackgroundColorIndex(
-            $this->decodeBackgroundColorIndex($this->getNextByte())
+            $this->decodeBackgroundColorIndex($this->getNextByteOrFail())
         );
 
         // byte 7
         $logicalScreenDescriptor->setPixelAspectRatio(
-            $this->decodePixelAspectRatio($this->getNextByte())
+            $this->decodePixelAspectRatio($this->getNextByteOrFail())
         );
 
         return $logicalScreenDescriptor;

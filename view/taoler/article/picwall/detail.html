@@ -126,7 +126,7 @@
               <div class="card-body pt-4">
                 {//评论内容}
                 <div class="mb-3" id="flyReply">
-                  文章评论 <small class="font-theme text-muted">({comment:count /})</small>
+                  文章评论 <small class="font-theme text-muted">({article:comments_num /})</small>
                   <ul class="jieda" id="jieda">
                     {comment:list}
                     <li data-id="{$vo.id}" class="jieda-daan">
@@ -367,31 +367,6 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
     })
   });
   
-	//预定义颜色项
-	colorpicker.render({
-		elem: '#color'
-		,color: '#393d49'
-		,predefine: true // 开启预定义颜色
-		,size: 'xs'
-		,done: function(color){
-      //改变标题颜色
-      $('h1').css("color", color);
-      $.ajax({
-        type:'post',
-        url:"{:url('Article/titleColor')}",
-        data:{id: id,title_color: color},
-        dataType:'json',
-        success:function(data){
-          if(data.code == 0){
-            layer.msg(data.msg,{icon:6,time:2000
-            });
-          } else {
-            layer.open({content:data.msg,icon:5,adim:6});
-          }
-        }
-      });
-		}
-	});
   
   //评论需要登陆
   form.on('submit(user-comment)',function (data){
@@ -422,7 +397,7 @@ layui.use(['fly', 'face','colorpicker', 'laypage'], function(){
     // 评论分页
     laypage.render({
       elem: "pages", //注意，这里的 test1 是 ID，不用加 # 号
-      count: "{comment:count /}", //数据总数，从服务端得到
+      count: "{article:comments_num /}", //数据总数，从服务端得到
       limit: 10,
       curr: "{$page}",
       //获取起始页

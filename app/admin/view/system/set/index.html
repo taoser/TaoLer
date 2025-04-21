@@ -1,12 +1,7 @@
+{extend name="public/base" /}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>权限管理</title>
-    <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
-</head>
-<body class="pear-container">
+{block name="title"}设置{/block}
+{block name="body"}
 <div class="layui-fluid" id="component-tabs">
 	<div class="layui-row">
 		<div class="layui-col-md12">
@@ -53,9 +48,9 @@
 										<div class="layui-input-block">
 											<span><img src="{$sysInfo.logo}" hight="40" width="50" ></span>
 											{if condition="checkRuleButton('set/upload')"}
-											<button type="button" class="layui-btn layui-btn-sm" id="logo-img">选择文件</button>
-											<button type="button" class="layui-btn layui-btn-sm" id="logo-upload-button">开始上传</button>
-											{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">选择文件</button>{/if}
+											<button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="logo-img">选择文件</button>
+											<button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="logo-upload-button">开始上传</button>
+											{else /}<button type="button" class="pear-btn pear-btn-primary pear-btn-sm pear-btn-disabled">选择文件</button>{/if}
 										</div>
 									</div>
 									<div class="layui-form-item">
@@ -63,9 +58,9 @@
 										<div class="layui-input-block">
 											<span><img src="{$sysInfo.m_logo}" hight="40" width="50" ></span>
 											{if condition="checkRuleButton('set/upload')"}
-											<button type="button" class="layui-btn layui-btn-sm" id="m-logo-img">选择文件</button>
-											<button type="button" class="layui-btn layui-btn-sm" id="m-logo-upload-button">开始上传</button>
-											{else /}<button type="button" class="layui-btn layui-btn-sm layui-btn-disabled">选择文件</button>{/if}
+											<button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="m-logo-img">选择文件</button>
+											<button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="m-logo-upload-button">开始上传</button>
+											{else /}<button type="button" class="pear-btn pear-btn-primary pear-btn-sm pear-btn-disabled">选择文件</button>{/if}
 										</div>
 									</div>
 									<div class="layui-form-item">
@@ -378,8 +373,7 @@
 	</div>
 </div>
 
-<script src="/static/component/layui/layui.js"></script>
-<script src="/static/component/pear/pear.js"></script>
+{__block__}
 
 <script>
 	
@@ -458,5 +452,5 @@
 
 	});
 </script>
-</body>
-</html>
+
+{/block}

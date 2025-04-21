@@ -6,22 +6,24 @@
             </li>
             {//导航nav}
             {if config('taoler.config.nav_top')  == 0}
-            {taoler:nav}
-            <li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
-                <a href="{nav:link /}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
-                {notempty name="nav.children"}
-                <dl class="layui-nav-child"> <!-- 二级菜单 -->
-                {taoler:snav}
-                <dd><a href="{snav:link /}">{snav:name /}</a></dd>
-                {/taoler:snav}
-                </dl>
-                {/notempty}
-            </li>
-            {/taoler:nav}
+                {taoler:nav}
+                <li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
+                    <a href="{nav:link /}">{nav:title} {if condition="$nav.is_hot eq 1"} <span class="layui-badge-dot"></span> {/if}</a>
+                    {notempty name="nav.children"}
+                        <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                        {taoler:snav}
+                        <dd><a href="{snav:link /}">{snav:name /}</a></dd>
+                        {/taoler:snav}
+                        </dl>
+                    {/notempty}
+                </li>
+                {/taoler:nav}
             {/if}
         </ul>
+
         <div class="fly-column-right layui-hide-xs">
             <a href="{:url('add_article',['cate'=>$Request.param.ename])}" class="layui-btn" id="add_post">{:lang('add post')}</a>
-        </div> 
+        </div>
+         
     </div>
 </div>
