@@ -95,6 +95,7 @@ class Forum extends AdminBaseController
             $data = Request::only(['cate_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'captcha']);
             $tagId = input('tagid');
             $data['user_id'] = 1; //管理员ID
+
             // 调用验证器
             $validate = new \app\common\validate\Article;
             $result = $validate->scene('Artadd')->check($data);
@@ -102,19 +103,22 @@ class Forum extends AdminBaseController
                 return Msgres::error($validate->getError());
             }
 
-            // 获取内容图片音视频标识
-            $iva= $this->hasIva($data['content']);
-            $data = array_merge($data,$iva);
-
             // 处理内容
             $data['content'] = $this->downUrlPicsReaplace($data['content']);
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
             $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
             $data['description'] = strip_tags($this->filterEmoji($data['description']));
+
+            // 多媒体数据
+			$medisArr = $this->setMediaData($data['content']);
+			$data = array_merge($data, $medisArr);
+
+
             // 获取分类ename,appname
             $cateEname = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
 
             try{
+
                 $result =  $this->model::add($data);
 
                 // 获取到的最新ID
@@ -127,19 +131,14 @@ class Forum extends AdminBaseController
                         $tagArr[] = ['article_id'=>$aid,'tag_id'=>$tid,'create_time'=>time()];
                     }
                 }
+
                 Db::name('taglist')->insertAll($tagArr);
 
-                // 清除文章tag缓存
-                Cache::tag('tagArtDetail')->clear();
-
-                $link = $this->getArticleUrl((int)$aid, 'index', $cateEname);
-
-                // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-
-                // $url = $result['data']['status'] ? $link : (string)url('index/');
-                return Msgres::success($result['msg'], $link);
+                return json(['code' => 0, 'msg' => 'ok']);
+                
             } catch(Exception $e) {
-                return Msgres::error('add_error');
+                // return Msgres::error('add_error');
+                return json(['code' => -1, 'msg' => 'error']);
             }
         }
 
@@ -160,6 +159,7 @@ class Forum extends AdminBaseController
 		// $id = IdEncode::decode($id);
 
 		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
+ 
         if(is_null($article)) return json(['code' => -1, 'msg' => '不能编辑！']);
         
         if(Request::isAjax()){
@@ -212,9 +212,11 @@ class Forum extends AdminBaseController
             }
             //删除原有缓存显示编辑后内容
             Cache::delete('article_'.$id);
-            $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
+            // $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
             // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-            return Msgres::success('edit_success',$link);
+            // return Msgres::success('edit_success');
+
+            return json(['code' => 0, 'msg' => 'ok']);
             
         }
 
@@ -356,28 +358,6 @@ class Forum extends AdminBaseController
         return $this->uploadFiles($type);
     }
 
-	/**
-	 * 内容中是否有图片视频音频插入
-	 *
-	 * @param [type] $content
-	 * @return array
-     *
-	 */
-	public function hasIva($content)
-	{
-		//判断是否插入图片
-		$isHasImg = strpos($content,'img[');
-		$data['has_img'] = is_int($isHasImg) ? 1 : 0;
-		//判断是否插入视频
-		$isHasVideo = strpos($content,'video(');
-		$data['has_video'] = is_int($isHasVideo) ? 1 : 0;
-		//判断是否插入音频
-		$isHasAudio = strpos($content,'audio[');
-		$data['has_audio'] = is_int($isHasAudio) ? 1 : 0;
-		
-		return $data;
-	}
-
     /**
      * 分类树
      * @return Json
@@ -430,5 +410,37 @@ class Forum extends AdminBaseController
         }
         return true;
     }
+
+    /**
+	 * 设置多媒体数据
+	 *
+	 * @param string $content
+	 * @return array
+	 */
+	protected function setMediaData(string $content): array {
+		$data = [];
+
+		$data['media'] = [
+			'images' => [],
+			'videos' => [],
+			'audios' => []
+		];
+
+		$images = get_all_img($content);
+		$video = get_one_video($content);
+
+		if(!empty($images)) {
+			$data['media']['images'] = $images;
+			$data['has_image'] = count($images);
+            $data['thum_img'] = $images[0];
+		}
+		
+		if(!empty($video)) {
+			$data['media']['videos'] = $video;
+			$data['has_video'] = count($video);
+		}
+
+		return $data;
+	}
 
 }

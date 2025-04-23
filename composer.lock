@@ -1113,16 +1113,16 @@
         },
         {
             "name": "overtrue/easy-sms",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/overtrue/easy-sms.git",
-                "reference": "c3c5b3bc942beac18aa7cc1e435cefa5ecbe5975"
+                "reference": "9d9d643624ebfa377cc5237768d9dcc0be61a173"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/overtrue/easy-sms/zipball/c3c5b3bc942beac18aa7cc1e435cefa5ecbe5975",
-                "reference": "c3c5b3bc942beac18aa7cc1e435cefa5ecbe5975",
+                "url": "https://api.github.com/repos/overtrue/easy-sms/zipball/9d9d643624ebfa377cc5237768d9dcc0be61a173",
+                "reference": "9d9d643624ebfa377cc5237768d9dcc0be61a173",
                 "shasum": ""
             },
             "require": {
@@ -1155,7 +1155,7 @@
             "description": "The easiest way to send short message.",
             "support": {
                 "issues": "https://github.com/overtrue/easy-sms/issues",
-                "source": "https://github.com/overtrue/easy-sms/tree/3.1.0"
+                "source": "https://github.com/overtrue/easy-sms/tree/3.1.1"
             },
             "funding": [
                 {
@@ -1163,7 +1163,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-10T09:33:39+00:00"
+            "time": "2025-04-23T06:21:18+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -2362,16 +2362,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v4.0.22",
+            "version": "v4.0.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "85a2e68971f78e1dd9728524003618a75586a52e"
+                "reference": "8f1fb808e51da244fe40ea7d6ca1b215968d7ad9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/85a2e68971f78e1dd9728524003618a75586a52e",
-                "reference": "85a2e68971f78e1dd9728524003618a75586a52e",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/8f1fb808e51da244fe40ea7d6ca1b215968d7ad9",
+                "reference": "8f1fb808e51da244fe40ea7d6ca1b215968d7ad9",
                 "shasum": ""
             },
             "require": {
@@ -2415,9 +2415,9 @@
             ],
             "support": {
                 "issues": "https://github.com/top-think/think-orm/issues",
-                "source": "https://github.com/top-think/think-orm/tree/v4.0.22"
+                "source": "https://github.com/top-think/think-orm/tree/v4.0.24"
             },
-            "time": "2025-04-19T04:01:50+00:00"
+            "time": "2025-04-22T09:59:31+00:00"
         },
         {
             "name": "topthink/think-template",

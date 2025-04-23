@@ -68,6 +68,7 @@
 							</div>
 						</div>
 						{/if}
+
 						<div class="layui-form-item">
 							<button type="submit" class="layui-btn" lay-filter="article-add" lay-submit id="add">{:lang('post now')}</button>
 						</div>
@@ -86,11 +87,9 @@
 {block name="script"}
 <script src="/static/component/pear/pear.js"></script>
 <script>
-	layui.use(['fly','xmSelect'], function () {
+	layui.use(['xmSelect'], function () {
 		var $ = layui.jquery,
-			fly = layui.fly,
 			form = layui.form,
-			colorpicker = layui.colorpicker,
 			upload = layui.upload;
 		let xmSelect = layui.xmSelect;
 
@@ -149,18 +148,6 @@
 					autoRow: true,
 				})
 			}
-		});
-
-		// 改变标题颜色
-		colorpicker.render({
-		elem: "#color",
-		color: "#393d49",
-		predefine: true, // 开启预定义颜色
-		done: function (color) {
-			//譬如你可以在回调中把得到的 color 赋值给表单
-			$("#L_title_color").val(color);
-			$("#L_title").css("color", color);
-		},
 		});
 
 		// 发布文章

@@ -114,6 +114,7 @@ class Article extends IndexBaseController
      */
     public function add()
     {
+
         if (Request::isAjax()) {
 			// 检验发帖是否开放
 			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
@@ -216,37 +217,25 @@ class Article extends IndexBaseController
 			try{
 				$data['user_id'] = $this->uid;
 				$result = $this->model::add($data);
+
+
+				event('article.articlePush', [
+					'article_log_id'	=> $postLog['id'],
+					'article_id'		=> $result['id'],
+					'tag_id'			=> $tagId,
+				]);
 					
 			} catch(Exception $e) {
 				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
-            
-			// 记录每天发帖量
-			Db::name('user_article_log')
-				->where('id', $postLog['id'])
-				->inc('user_postnum')
-				->update();
-
-			// 获取到的最新ID
-			$aid = $result['id'];
-
-			//写入taglist表
-			if(!empty($tagId)) {
-				$tagArr = [];
-				$tagIdArr = explode(',', $tagId);
-				foreach($tagIdArr as $tid) {
-					$tagArr[] = [ 'article_id' => $aid, 'tag_id' => $tid, 'create_time'=>time()];
-				}
-				Db::name('taglist')->insertAll($tagArr);
-			}	
-			
-			// 清除文章tag缓存
-			Cache::tag('tagArtDetail')->clear();
 			
 			// 获取分类ename,appname
 			$cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
-			$link = $this->getRouteUrl((int) $aid, $cateName['ename']);
+			$link = $this->getRouteUrl((int) $result['id'], $cateName['ename']);
 			$url = $data['status'] ? $link : (string)url('index/');
+
+			// 清除文章tag缓存
+			Cache::tag('tagArtDetail')->clear();
 
 			// 发提醒邮件
 			// hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
@@ -369,7 +358,7 @@ class Article extends IndexBaseController
 			return Msgres::success('edit_success',$link);
 		}
 			
-        View::assign(['article'=>$article]);
+        View::assign(['article' => $article]);
 		
 		// 编辑多模板支持
 		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('detpl');
@@ -566,6 +555,7 @@ class Article extends IndexBaseController
 		if(!empty($images)) {
 			$data['media']['images'] = $images;
 			$data['has_image'] = count($images);
+			$data['thum_img'] = $images[0];
 		}
 		
 		if(!empty($video)) {

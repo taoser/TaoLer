@@ -35,7 +35,7 @@ trait DbConnect
     public function getQuery()
     {
         $db = $this->initDb()->newQuery();
-        
+
         if ($this->getOption('cache')) {
             [$key, $expire, $tag] = $this->getOption('cache');
             $db->cache($key, $expire, $tag);
@@ -52,8 +52,7 @@ trait DbConnect
 
     /**
      * 初始化数据库连接对象.
-     *
-     * @return void
+     * @return Query
      */
     private function initDb()
     {
@@ -213,5 +212,5 @@ trait DbConnect
         }
 
         return call_user_func_array([$this->db(), $method], $args);
-    }    
+    }
 }

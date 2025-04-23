@@ -1,9 +1,10 @@
 <?php
 // 事件定义文件
 return [
-    'bind'      => [
-        'UserLogin' => 'app\event\UserLogin',
-	    'Message' => 'app\event\Message',
+    'bind'  => [
+        'UserLogin'     => 'app\event\UserLogin',
+	    'Message'       => 'app\event\Message',
+        'ArticlePush'   => 'app\event\ArticlePush'
     ],
 
     'listen'    => [
@@ -18,5 +19,6 @@ return [
     ],
 
     'subscribe' => [
+        'article'   => 'app\subscribe\Article',
     ],
 ];

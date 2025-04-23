@@ -39,22 +39,31 @@ abstract class View extends Entity
         $this->model()->asView(true);
 
         // 初始化模型
-        if (!$this->isEmpty() && !$with) {
-            $this->initData();
+        if (!$this->isEmpty()) {
+            $this->initData(!$with);
         }
     }
 
     /**
      * 初始化实体数据属性（如果存在关联查询则会延迟执行）.
      *
+     * @param bool  $relation  是否处理关联数据
      * @return void
      */
-    public function initData()
+    public function initData(bool $relation = true)
     {
         // 获取实体属性
         $properties = $this->getEntityProperties();
         $data       = $this->model()->getData();
         foreach ($properties as $key => $field) {
+            if (!$relation) {
+                // 确保存在基础模型数据
+                if (isset($data[$field])) { 
+                    $this->$field = $data[$field];
+                }
+                continue;
+            }
+
             if (is_int($key)) {
                 $this->$field = $this->fetchViewAttr($field);
             } elseif (strpos($field, '->')) {
@@ -100,18 +109,22 @@ abstract class View extends Entity
      */
     private function getEntityProperties(): array
     {
-        $reflection = new ReflectionClass($this);
-        $options    = $this->getOptions();
-        $mapping    = $options['property_mapping'] ?? [];
-        $properties = [];
+        $properties = $this->getOption('view_properties');
+        if (empty($properties)) {
+            $reflection = new ReflectionClass($this);
+            $options    = $this->getOptions();
+            $mapping    = $options['property_mapping'] ?? [];
+            $properties = [];
 
-        foreach ($reflection->getProperties() as $property) {
-            $field = $property->getName();
-            if (isset($mapping[$field])) {
-                $properties[$field] = $mapping[$field];
-            } else {
-                $properties[] = $field;
+            foreach ($reflection->getProperties() as $property) {
+                $field = $property->getName();
+                if (isset($mapping[$field])) {
+                    $properties[$field] = $mapping[$field];
+                } else {
+                    $properties[] = $field;
+                }
             }
+            $this->setOption('view_properties', $properties);
         }
 
         return $properties;
@@ -165,7 +178,7 @@ abstract class View extends Entity
      * @param int $options json参数
      * @return string
      */
-    public function tojson(int $options = JSON_UNESCAPED_UNICODE): string
+    public function toJson(int $options = JSON_UNESCAPED_UNICODE): string
     {
         return json_encode($this->toArray(), $options);
     }
@@ -260,7 +273,7 @@ abstract class View extends Entity
      */
     public function __unset(string $name): void
     {
-        __unset($this->$name);
+        unset($this->$name);
     }
 
     public function __debugInfo()

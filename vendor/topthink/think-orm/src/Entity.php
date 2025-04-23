@@ -227,7 +227,7 @@ abstract class Entity implements JsonSerializable, ArrayAccess, Arrayable, Jsona
      * @param int $options json参数
      * @return string
      */
-    public function tojson(int $options = JSON_UNESCAPED_UNICODE): string
+    public function toJson(int $options = JSON_UNESCAPED_UNICODE): string
     {
         return $this->model()->toJson($options);
     }

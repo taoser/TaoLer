@@ -38,11 +38,6 @@ class Admin extends Model
         return $this->belongsTo('AuthGroup','auth_group_id','id');
     }
 */
-	//管理员关联站点
-	public function station()
-    {
-        return $this->belongsTo(Station::class);
-    }
 
     //远程一对多管理员关联角色
     public function adminGroup()
@@ -93,9 +88,9 @@ class Admin extends Model
                 );
 					
             //用户名密码正确返回1
-            $res = ['code'=>0,'msg'=>'登陆成功', 'url'=>(string) url('index/index')];
+            $res = ['code' =>0, 'msg' => '登陆成功', 'url'=>(string) url('index/index')];
         } else {
-			$res = ['code'=>-1,'msg'=>'用户名或密码错误','url'=>(string) url('admin/login')];
+			$res = ['code' =>-1, 'msg'=>'用户名或密码错误', 'url'=>(string) url('admin/login')];
 		}
 		return json($res);
     }

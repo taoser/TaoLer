@@ -23,9 +23,6 @@ class Article extends BaseEntity
     // 当前用到的数据总和
     protected static $currentTotalNum = 0;
 
-    protected string $content;
-
-
     /**
      * 添加
      * @param array $data
@@ -38,7 +35,7 @@ class Article extends BaseEntity
         $this->title    = $data['title'];
         $this->content  = $data['content'];
         $this->keywords = $data['keywords'];
-        
+
         if(isset($data['status'])) {
             $this->status   = $data['status'];
         }
@@ -950,14 +947,15 @@ class Article extends BaseEntity
 // halt($map);
         // 总共页面数
         $lastPage = (int) ceil($map['totals'] / $limit); // 向上取整
-
+        
+        $datas = [];
         if($map['totals']) {
 
             if($page > $lastPage) {
                 throw new Exception('no data');
             }
 
-            $datas = [];
+            
             // 最大偏移量
             $maxNum = $page * $limit;
             // 开始时的偏移量
