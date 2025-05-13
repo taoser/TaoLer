@@ -170,12 +170,8 @@ class Forum extends AdminBaseController
             //调用验证器
             $validate = new \app\common\validate\Article();
             $res = $validate->scene('Artadd')->check($data);
-
             if(!$res) return Msgres::error($validate->getError());
-            //获取内容图片音视频标识
-            $iva= $this->hasIva($data['content']);
-            $data = array_merge($data,$iva);
-
+   
             // 处理内容
             $data['content'] = $this->downUrlPicsReaplace($data['content']);
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串

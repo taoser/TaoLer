@@ -17,11 +17,18 @@ class Taoler extends TagLib
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
         'nav'       => ['attr' => '', 'close' => 1],
-        'snav'      => ['attr' => '', 'close' => 1],
-        'gnav'      => ['attr' => '', 'close' => 1],
-        'if'        => ['condition', 'expression' => true, 'close' => 1],
-        'list'      => ['attr' => 'type', 'close' => 1, 'expression' => true],
-
+        'snav'      => ['attr' => ''],
+        'gnav'      => ['attr' => ''],
+        'slide'     => ['attr' => ''],
+        'title'     => ['attr' => '', 'close' => 0],
+        'name'      => ['attr' => '', 'close' => 0],
+        'logo'      => ['attr' => '', 'close' => 0],
+        'mlogo'     => ['attr' => '', 'close' => 0],
+        'keywords'  => ['attr' => '', 'close' => 0],
+        'description'   => ['attr' => '', 'close' => 0],
+        'copyright'     => ['attr' => '', 'close' => 0],
+        'icp'           => ['attr' => '', 'close' => 0],
+        
     ];
 
     public function tagNav($tag, $content): string
@@ -56,17 +63,60 @@ class Taoler extends TagLib
         return $parse;
     }
 
-    public function tagIf($tag, $content): string
+    // 幻灯片
+    public function tagSlide($tag, $content): string
     {
+        $type = empty($tag['type']) ? 1 : $tag['type'];
+        $num = empty($tag['num']) ? 5 : $tag['num'];
 
-        $condition = !empty($tag['expression']) ? $tag['expression'] : $tag['condition'];
-        $condition = $this->parseCondition($condition);
-        $parseStr  = '<?php if(' . $condition . '): ?>' . $content . '<?php endif; ?>';
+        $parse ='<?php $__SLIDE__ = \app\facade\AdSlide::getSlide(' . $type .',' . $num . '); ?>';
+        $parse .= '{volist name="__SLIDE__" id="slide"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
 
-        return $parseStr;
+        return $parse;
+    }
 
-//        return '{if'.$tag.'}} '.$content.' {/if}';
+    // 网站 标题
+    public function tagTitle($tag, $content): string
+    {
+        return '{$sysInfo.webtitle}';
+    }
 
+    // 网站名
+    public function tagName($tag, $content): string
+    {
+        return '{$sysInfo.webname}';
+    }
+    // logo
+    public function tagLogo($tag, $content): string
+    {
+        return '{$sysInfo.logo}';
+    }
+    // 移动端logo
+    public function tagMlogo($tag, $content): string
+    {
+        return '{$sysInfo.m_logo}';
+    }
+    // 关键词
+    public function tagKeywords($tag, $content): string
+    {
+        return '{$sysInfo.keywords}';
+    }
+    // 描述
+    public function tagDescription($tag, $content): string
+    {
+        return '{$sysInfo.descript}';
+    }
+    // 版权
+    public function tagCopyright($tag, $content): string
+    {
+        return '{$sysInfo.copyright}';
+    }
+    // icp备案
+    public function tagIcp($tag, $content): string
+    {
+        return '{$sysInfo.icp}';
     }
 
 

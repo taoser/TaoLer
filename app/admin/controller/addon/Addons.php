@@ -52,10 +52,20 @@ class Addons extends AdminBaseController
         $localAddons = Files::getDirName('../addons/');
 
         // 排除公共中间件目录
-        $key = array_search('middleware',$localAddons,true);
-        if($key !== false) {
-            unset($localAddons[$key]);
+        $key1 = array_search('middleware', $localAddons, true);
+
+        if($key1 !== false) {
+            unset($localAddons[$key1]);
         }
+
+        // 若不存在info.ini，只有文件夹，表示没有安装成功
+        foreach($localAddons as $name) {
+            $in = str_replace('\\', '/', root_path() . "addons/$name/info.ini");
+            if(!file_exists($in)) {
+                $key2 = array_search($name, $localAddons, true);
+                unset($localAddons[$key2]);
+            }
+        }  
 
         if($data['type'] == 'installed') {
             $count = count($localAddons); // 安装总数
@@ -109,57 +119,24 @@ class Addons extends AdminBaseController
     // 插件文件升级检查
     protected function addonsFileCheckInstall($name, $url) {
 
-        // 1.判断远程文件是否可用存在
-        $header = get_headers($url, true);
-        if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))) {
-            throw new Exception('获取远程文件失败');
-        }
-        
         //拼接路径
-        $addons_dir = FileHelper::getDirPath(root_path() . 'runtime' . DS . 'addons');
-        if(!is_dir($addons_dir)) Files::mkdirs($addons_dir);
-
+        $addons_dir = str_replace('\\','/', root_path() . 'runtime' . DS . 'addons' . DS . $name . DS);
+ 
         // 2.把远程文件放入本地
         $package_file = $addons_dir . $name . '.zip';  //升级的压缩包文件路径
-        $cpfile = copy($url, $package_file);
-        if(!$cpfile) {
-            throw new Exception('下载升级文件失败');
-        }
 
-        $uzip = new Zip();
-        $zipDir = strstr($package_file, '.zip', true);   //返回文件名后缀前的字符串
-        $zipPath = FileHelper::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
-        $unzip_res = $uzip->unzip($package_file, $zipPath, true);
-        if(!$unzip_res) {
-            throw new Exception('解压失败');
-        }
+        // 下载文件
+        FileHelper::downloadFile($url, $package_file);
 
-        unlink($package_file);
+        // 解压zip到runtime目录
+        FileHelper::unZip($package_file, $addons_dir, true);
 
-        //升级前的写入文件权限检查
-        $allUpdateFiles = Files::getAllFile($zipPath);
-
-        if (empty($allUpdateFiles)) {
-            throw new Exception('无可更新文件!');
-        }
-    
-        $checkString    = '';
-        foreach ($allUpdateFiles as $updateFile) {
-            $coverFile  = ltrim(str_replace($zipPath, '', $updateFile), DIRECTORY_SEPARATOR);
-            $dirPath    = dirname('../'.$coverFile);
-            if (file_exists('../'.$coverFile)) {
-                if (!is_writable('../'.$coverFile)) $checkString .= $coverFile . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
-            } else {
-                if (!is_dir($dirPath)) @mkdir($dirPath, 0777, true);
-                if (!is_writable($dirPath)) $checkString .= $dirPath . '&nbsp;[<span class="text-red">' . '无写入权限' . '</span>]<br>';
-            }
-        }
-        if (!empty($checkString)) {
-            throw new Exception('$checkString');
-        }
-
-        // 拷贝文件
-        FileHelper::copyDir(root_path() . 'runtime' . DS . 'addons' . DS . $name . DS, root_path());
+        // 只能复制目录包含的路径，避险
+        $reserve = "addons/$name";
+        // 复制
+        FileHelper::copyFolder($addons_dir, root_path(), $reserve);
+        // 删除
+        FileHelper::deleteFolder($addons_dir);
 
         return true;
     }

@@ -1,11 +1,10 @@
 {extend name="public:base" /}
 
-{block name="title"}{system:webtitle /}{/block}
-{block name="keywords"}{system:keywords /}{/block}
-{block name="description"}{system:descript}{/block}
-{block name="ogtitle"}<meta property="og:title" content="{system:webtitle /}" >{/block}
-{block name="ogdescription"}<meta property="og:description" content="{system:descript /}" >{/block}
-{block name="ogimage"}<meta property="og:image" content="{$Request.domain}{system:logo /}" >{/block}
+{block name="keywords"}{taoler:keywords /}{/block}
+{block name="description"}{taoler:description}{/block}
+{block name="ogtitle"}<meta property="og:title" content="{taoler:title /}" >{/block}
+{block name="ogdescription"}<meta property="og:description" content="{taoler:description /}" >{/block}
+{block name="ogimage"}<meta property="og:image" content="{taoler:logo /}" >{/block}
 {block name="meta"}{/block}
 {block name="link"}
 <!-- 特效丶样式 -->
@@ -19,7 +18,21 @@
 		<div class="layui-col-md8">
 
 			<!--首页幻灯-->
-			{:hook('ads_slider')}
+			<div class="fly-panel">
+				<div class="layui-row">
+				  <div class="layui-carousel fly-topline" id="TAOLER-SLIDER">
+					<div carousel-item="">
+					  {taoler:slide}
+						<div time-limit="">
+						  <a href="{slide:url /}" target="_blank" rel="nofollow">
+							<img src="{slide:image /}" alt="{slide:title /}" />
+						  </a>
+						</div>
+					  {/taoler:slide}
+					</div>
+				  </div>
+				</div>
+			</div>
 
 			<!--置顶文章-->
 			<div class="fly-panel">
@@ -112,7 +125,9 @@
 
 {block name="script"}
 <script>
-	layui.use(['util'], function(){
+	layui.extend({
+  ads: '{/}/static/addons/ads/js/ads'
+}).use(['util','ads'], function(){
 		let util = layui.util;
 		let carousel = layui.carousel;
 

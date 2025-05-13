@@ -1,0 +1,227 @@
+{extend name="public/base" /}
+
+{block name="title"}文章内容{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+	<div class="layui-card-body">
+		<form class="layui-form" wid100 lay-filter="">
+			<div class="layui-form-item">
+				<div class="layui-form-item layui-inline">
+					<label class="layui-form-label">位置</label>
+					<div class="layui-input-block">
+						<select name="type" lay-verify="required" lay-filter="slid-type">
+							<option value="1">pc - 1920x650</option>
+							<option value="2">移动端 - auto</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item layui-inline">
+					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="ads-query">
+						<i class="layui-icon layui-icon-search"></i>
+						查询
+					</button>
+					<button type="reset" class="pear-btn pear-btn-md">
+						<i class="layui-icon layui-icon-refresh"></i>
+						重置
+					</button>
+				</div>
+			</div> 
+		</form>
+	</div>
+</div>
+
+<div class="layui-card">
+	<div class="layui-card-body">
+		<table id="slide-table" lay-filter="slide-table"></table>
+	</div>
+</div>
+
+<script type="text/html" id="ads-toolbar">
+	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+		<i class="layui-icon layui-icon-add-1"></i>
+		新增
+	</button>
+</script>
+
+
+<script type="text/html" id="ads-bar">
+	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+
+<script type="text/html" id="ads-enable">
+	<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="ads-enable" {{ d.status == 1 ? 'checked' : '' }} />
+</script>
+
+{__block__}
+
+<script>
+	const LIST_URL = "{:url('service.slide/list')}";
+	console.log(LIST_URL);
+	layui.use(['common'], function(){
+		var $ = layui.jquery
+		,layer = layui.layer
+		,table = layui.table
+		,form = layui.form;
+		let common = layui.common;
+
+		//第一个实例
+		table.render({
+			elem: '#slide-table'
+			,url: LIST_URL
+			,page: true
+			,cols: [[
+				{field: 'id', title: 'ID', width:80, sort: true}
+				,{field: 'image', title: '图片', minWidth:120, templet: '<img src="{{d.image}}" height="60" width="80">'}
+				,{field: 'title', title: '名称', width:180}
+				,{field: 'type', title: '类型', width:120}
+				,{field: 'url', title: 'URL', minWidth: 250}
+				,{field: 'start_time', title: '开始','escape':false, width: 150, sort: true}
+				,{field: 'end_time', title: '结束','escape':false, width: 150, sort: true}
+				,{field: 'status', title: '状态', width: 95, templet: '#ads-enable'}
+				,{field: 'create_time', title: '时间','escape':false, width: 150, sort: true}
+				,{title:'操作', toolbar: '#ads-bar', width:110}
+			]]
+			,skin: 'line'
+			,lineStyle: 'height: 100px;'
+			,toolbar: '#ads-toolbar'
+			,limit: 10
+			,text: '对不起，加载出现异常！'
+		});
+
+		table.on('tool(slide-table)', function(obj) {
+			if (obj.event === 'remove') {
+				window.remove(obj);
+			} else if (obj.event === 'edit') {
+				window.edit(obj);
+			}
+		});
+
+		table.on('toolbar(slide-table)', function(obj) {
+			if (obj.event === 'add') {
+				window.add();
+			} else if (obj.event === 'refresh') {
+				window.refresh();
+			} else if (obj.event === 'batchRemove') {
+				window.batchRemove(obj);
+			}
+		});
+
+		form.on('submit(ads-query)', function(data) {
+			table.reload('slide-table', {
+				where: data.field
+			})
+			return false;
+		});
+
+		form.on('select(slid-type)', function(data){
+			$.post("{:url('service.slide/list')}", {type: data.value}, function (res){
+				if (res.code === -1){
+					layer.open({content:res.msg,icon:5,anim:6});
+				}
+			}
+		);
+		
+		//执行重载
+		table.reload('slide-table', {
+			where: {type: data.value}
+			,page: {
+						curr: 1 //重新从第 1 页开始
+					}
+			});
+		});
+
+		form.on('switch(ads-enable)', function(obj) {
+			layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+			var status = obj.elem.checked ? 1 : 0;
+
+			//执行用户审核
+			$.ajax({
+				type:'post',
+				url:"{:url('service.slide/check')}",
+				data:{"id":this.value, "status":status},
+				dataType:'json',
+				success:function(res){
+					if(res.code === 0){
+						layer.msg(res.msg,{
+									icon:res.icon,
+									time:2000
+								}
+								//,function(){location.reload();}
+						);
+					} else {
+						layer.open({
+							title:'审核失败',
+							content:res.msg,
+							icon:5,
+							adim:6
+						})
+					}
+				}
+			});
+
+			return false;
+		});
+
+		window.add = function() {
+			layer.open({
+				type: 2,
+				title: '新增',
+				shade: 0.1,
+				area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'500px'],
+				content: 'add.html'
+			});
+		}
+
+		window.edit = function(obj) {
+			layer.open({
+				type: 2,
+				title: '修改',
+				shade: 0.1,
+				area: ['500px', '500px'],
+				content: 'edit.html?id=' + obj.data.id
+			});
+		}
+
+		window.remove = function(obj) {
+
+			layer.confirm('确定要删除?', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+
+				$.ajax({
+					url: "{:url('service.slide/delete')}?id=" + obj.data['id'],
+					dataType: 'json',
+					type: 'delete',
+					success: function(result) {
+						layer.close(loading);
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								obj.del();
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
+
+		window.refresh = function(param) {
+			table.reload('user-table');
+		}
+
+	});
+</script>
+{/block}

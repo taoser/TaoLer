@@ -10,7 +10,7 @@
 
 namespace app\admin\controller\user;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -24,7 +24,7 @@ use app\common\model\Article;
 use app\common\model\Comment;
 use Exception;
 
-class User extends AdminController
+class User extends AdminBaseController
 {
 
 	/**

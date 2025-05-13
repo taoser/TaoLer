@@ -10,14 +10,14 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\App;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\View;
 use app\admin\model\AuthRule as AuthRuleModel;
 
-class AuthRule extends AdminController
+class AuthRule extends AdminBaseController
 {
 
 	protected $model = null;

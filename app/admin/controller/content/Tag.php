@@ -19,7 +19,7 @@ use app\facade\TagList;
 use app\facade\Tag as TagModel;
 use think\response\Json;
 
-class Tag extends AdminController
+class Tag extends AdminBaseController
 {
 
     public function index()

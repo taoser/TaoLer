@@ -89,7 +89,7 @@ class Category extends BaseEntity
     // 分类表
     public function getList()
     {
-        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,status,is_hot,desc')->cache(3600)->select()->toArray();
+        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,status,is_hot,desc')->cache(3600)->append(['url'])->select()->toArray();
         if(count($data)) {
             // 排序
             $cmf_arr = array_column($data, 'sort');
@@ -253,7 +253,14 @@ class Category extends BaseEntity
         if($map['totals']) {
 
             if($page > $lastPage) {
-                throw new Exception('no data');
+                // throw new Exception('no data');
+                return [
+                    'total'         => $map['totals'],
+                    'per_page'      => $limit,
+                    'current_page'  => $page,
+                    'last_page'     => $lastPage,
+                    'data'          => $data
+                ];
             }
 
             $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit, $map, $cate) {
@@ -405,7 +412,7 @@ class Category extends BaseEntity
     // 获取url
     public function getUrlAttr($value, $data)
     {
-        return (string) url('cate', ['ename' => $data['ename']]);
+        return (string) url('cate', ['ename' => $data['ename']])->domain(true);
     }
 
 }

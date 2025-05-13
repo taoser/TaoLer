@@ -16,8 +16,9 @@ class System extends TagLib
 {
     protected $tags = [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
+        'title'      => ['attr' => '', 'close' => 0],
         'webname'       => ['attr' => '', 'close' => 0],
-        'webtitle'      => ['attr' => '', 'close' => 0],
+        
         'domain'        => ['attr' => '', 'close' => 0],
         'template'      => ['attr' => '', 'close' => 0],
         'logo'          => ['attr' => '', 'close' => 0],
@@ -51,7 +52,7 @@ class System extends TagLib
         return '{$sysInfo.webname}';
     }
 
-    public function tagWebtitle(): string
+    public function tagTitle(): string
     {
         return '{$sysInfo.webtitle}';
     }

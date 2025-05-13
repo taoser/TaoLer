@@ -138,7 +138,8 @@ class IndexBaseController extends \app\BaseController
 				}
 
 				// 压缩
-				$content = advanced_compress_html_js($content);
+				// $content = advanced_compress_html_js($content);
+				$content = compressHtmlJs($content);
 				file_put_contents($staticFilePath, $content);
 			}
 		}

@@ -78,7 +78,7 @@
 	{__block__}
 
 	<script>
-		layui.use(['table', 'layer', 'form', 'jquery', 'card','toast'], function() {
+		layui.use(['jquery', 'card','toast','loading'], function() {
 
 			let table = layui.table;
 			let form = layui.form;
@@ -87,12 +87,15 @@
 			let card = layui.card;
 			let util = layui.util;
 			let toast = layui.toast;
+			let loading = layui.loading;
 
 			// HTML 转义
 			util.event({
 				install: function() {
 					var name = $(this).attr('data-name');
+					loading.Load(4, "安装模板");
 					$.post("{:url('addon.template/install')}", {name}, function(res) {
+						loading.loadRemove(1000);
 						if(res.code === 1) {
 							toast.success({title:"成功消息",message:res.msg})
 							window.location.reload();
@@ -104,7 +107,9 @@
 				},
 				enable: function() {
 					var name = $(this).attr('data-name');
+					loading.Load(5, "启用模板");
 					$.post("{:url('addon.template/enable')}", {name}, function(res) {
+						loading.loadRemove(1000);
 						if(res.code === 1) {
 							toast.success({title:"成功消息",message:res.msg})
 							window.location.reload();
@@ -112,21 +117,20 @@
 							toast.error({title:"危险消息",message:res.msg})
 						}
 					})
+					
 					return false;
 				},
 				delete: function() {
 					var name = $(this).attr('data-name');
-
 					layer.confirm('确定要删除?', {
 						icon: 3,
 						title: '提示'
 					}, function(index) {
 						layer.close(index);
-						let loading = layer.load();
-						
+						loading.Load(2, "删除模板");
 						$.post("{:url('addon.template/delete')}", {name}, function(res) {
+							loading.loadRemove(1000);
 							if(res.code === 1) {
-								layer.close(loading);
 								toast.success({title:"成功消息",message:res.msg})
 								window.location.reload();
 							} else {
@@ -139,7 +143,9 @@
 				},
 				update: function(){
 					var name = $(this).attr('data-name');
+					loading.Load(3,message);
 					$.post("{:url('addon.template/update')}", {name}, function(res) {
+						loading.loadRemove(1000);
 						if(res.code === 1) {
 							toast.success({title:"成功消息",message:res.msg})
 							// window.location.reload();

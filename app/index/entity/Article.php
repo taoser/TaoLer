@@ -512,8 +512,10 @@ class Article extends BaseEntity
      */
     public static function getRelationArticle(int $id, int $limit = 5): array
     {
-        return Cache::remember('rela_'.$id, function() use($id,$limit){
+        return Cache::remember('rela_'.$id, function() use($id,$limit) {
+
             $tagId = Taglist::where('article_id', $id)->value('tag_id');
+
             $articleIdArr = Taglist::where('tag_id', $tagId)
             ->where('article_id','<>', $id)
             ->limit($limit)
@@ -523,12 +525,20 @@ class Article extends BaseEntity
             if(count($articleIdArr)) {
                 foreach($articleIdArr as $id) {
                     $article = self::suffix(self::byIdGetSuffix($id))
-                    ->field('id,title,cate_id')
+                    ->with(['cate' => function($query) {
+                        $query->field('id,catename');
+                    }])
+                    ->field('id,title,cate_id,pv,create_time,description')
                     ->where('id', $id)
                     ->append(['url'])
                     ->find();
 
                     if(!is_null($article)) {
+                        $article['hasImg'] = $article['has_image'] > 0 ? true : false;
+                        $article['time'] = $article['create_time'];
+                        $article['cate_name']   = $article['cate']['catename'];
+                        $article['desc']    = $article['description'];
+
                         $data[] = $article;
                     }
                 }

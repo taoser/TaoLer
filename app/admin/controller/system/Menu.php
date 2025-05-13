@@ -10,13 +10,13 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\facade\Db;
 use taoser\think\Auth;
 use think\facade\Lang;
 use think\facade\Session;
 
-class Menu extends AdminController
+class Menu extends AdminBaseController
 {
     /**
      * pearadmin动态菜单栏

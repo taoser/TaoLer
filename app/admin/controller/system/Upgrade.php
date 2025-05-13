@@ -20,7 +20,7 @@
  */
 namespace app\admin\controller\system;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -34,7 +34,7 @@ use taoser\SetArr;
 use app\common\lib\facade\HttpHelper;
 
 
-class Upgrade extends AdminController
+class Upgrade extends AdminBaseController
 {
     protected $root_dir = "../";	//站点代码的根目录
     protected $backup_dir = "../runtime/update/backup_dir/";	//备份目录
@@ -255,6 +255,7 @@ class Upgrade extends AdminController
 			$allUpdateFiles = Files::getAllFile($zipPath);
 			
 			if (empty($allUpdateFiles)) return json(['code' => -1, 'msg' => '无可更新文件。']);
+            
 			$checkString    = '';
 			foreach ($allUpdateFiles as $updateFile) {
 				$coverFile  = ltrim(str_replace($zipPath, '', $updateFile), DIRECTORY_SEPARATOR);

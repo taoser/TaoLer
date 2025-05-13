@@ -64,7 +64,7 @@ class Template extends AdminBaseController
                 $data['enable'] = false;
                 // 是否已下载本地
                 $data['local'] = false;
-    // halt($v->name, $infoArr);
+ 
                 if(array_key_exists($v->name, $infoArr)) {
                     $data['local'] = true;
                     if (version_compare($v->version, $infoArr[$v->name]['version'], '>')) {
@@ -76,7 +76,7 @@ class Template extends AdminBaseController
                     $data['enable'] = true;
                 }
                 // var_dump($v);
-    // halt(json_decode($v, true));
+
                 $datas[] = array_merge((array)$v, $data); 
             }
         }
@@ -170,32 +170,26 @@ class Template extends AdminBaseController
             return $tpl;
         }       
 
-        $viewPath = str_replace('\\','/',root_path().'runtime/view/');
+        $viewPath = str_replace('\\','/',root_path()."runtime/view/$name/");
 
         try {
 
-            if(!file_exists($viewPath)) {
-                mkdir($viewPath,0777,true);
-            }
-
             $tplZip = $viewPath."$name.zip";
             // 下载文件
-            FileHelper::downloadFile($tpl->data['url'], $tplZip);
+            FileHelper::downloadFile($tpl->data->url, $tplZip);
             // 解压zip到runtime目录
             FileHelper::unZip($tplZip, $viewPath, true);
 
-            // 只能复制的目录，避险
-            $reserve = [
-                str_replace('\\','/', root_path()."runtime/view/view/$name"),
-                str_replace('\\','/', root_path()."runtime/view/public/static/tpl/$name"),
-            ];
+            // 只能复制限定路径的目录，避险
+            $reserve = "view/$name";
             // 复制
             FileHelper::copyFolder($viewPath, root_path(), $reserve);
             // 删除
-            FileHelper::deleteFolder($viewPath.'view', root_path(), $reserve, true);
+            FileHelper::deleteFolder($viewPath);
             
         } catch(Exception $e) {
-            throw new Exception('解压缩失败'.$e->getMessage());
+            // throw new Exception('解压缩失败'.$e->getMessage());
+            return json(['code' => 0, 'msg' => $e->getMessage()]);
         }
 
         return json(['code'  => 1,'msg'   => 'ok']);
@@ -206,7 +200,7 @@ class Template extends AdminBaseController
         $name = Request::param('name');
 
         try{
-            Db::name('system')->cache('system')->where('id', 1)->update([
+            Db::name('system')->cache(true)->where('id', 1)->update([
                 'template' => $name
             ]);
 
@@ -253,43 +247,35 @@ class Template extends AdminBaseController
         // 单文件配置
         $info = $this->getViewInfo($name);
 
-        $id = Db::name('template')->where('name', $name)->value('id');
+        // 框架
+        $frameworkVersion = config('taoler.version');
+
+        $tpl = HttpHelper::withHost()->post('/v1/template/update', [
+            'name'          => $name,
+            'version'       => $info['version'],
+            'frame_version' => $frameworkVersion
+        ])->toJson();
+
+        if($tpl->code < 0 ) {
+            return $tpl;
+        } 
+
+        $viewPath = str_replace('\\','/',root_path()."runtime/view/$name/");
         
-        if(is_null($id)) {
-            return json(['code' => 0, 'msg' => '此模板暂时不可用']);
-        }
-
-        $tpl = Db::name('template_version')->where('template_id', $id)->where('version', '>', $info['version'])->find();
-
-        if(version_compare($this->frameworkVersion, $tpl['framework'], '<')) {
-            return json(['code' => 0, 'msg' => '请先升级框架到'.$tpl['framework']]);
-        }
-
-        $viewPath = str_replace('\\','/',root_path().'runtime/view/');
-        
-        if(!file_exists($viewPath)) {
-            mkdir($viewPath,0777,true);
-        }
-
         try {
             $tplZip = $viewPath."$name.zip";
             // 下载文件
-            FileHelper::downloadFile(Request::domain().$tpl['url'], $tplZip);
+            FileHelper::downloadFile($tpl->data->url, $tplZip);
             // 解压zip到runtime目录
             FileHelper::unZip($tplZip, $viewPath, true);
 
-            // 保留目录
-            $reserve = [
-                str_replace('\\','/', root_path()."runtime/view/view/$name"),
-                str_replace('\\','/', root_path()."runtime/view/public/static/tpl/$name"),
-            ];
-    
-            FileHelper::copyFolder($viewPath, root_path(), $reserve);
-            FileHelper::deleteFolder($viewPath.'view', root_path(), $reserve, true);
+            FileHelper::copyFolder($viewPath, root_path(), "view/$name");
+            FileHelper::deleteFolder($viewPath);
             
             
         } catch(Exception $e) {
-            throw new Exception('更新失败'.$e->getMessage());
+            // throw new Exception('更新失败'.$e->getMessage());
+            return json(['code' => 0, 'msg' => $e->getMessage()]);
         }
 
 

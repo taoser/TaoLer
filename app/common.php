@@ -217,15 +217,16 @@ if (!function_exists('get_all_img')) {
      * @param $str
      * @return array
      */
-    function get_all_img($str)
+    function get_all_img($text)
     {
-        //匹配格式为 <img src="http://img.com" />的图片
-        $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
-        preg_match_all($pattern, $str, $matchContent);
-        if(isset($matchContent[1][0])) {
-            return array_unique($matchContent[1]);
+        // 定义正则表达式来匹配图片链接，支持更多图片格式
+        $pattern = '/<img[^>]+src=["\']([^"\']+\.(jpg|jpeg|png|gif|svg))["\']/i';
+        $imageLinks = [];
+        if (preg_match_all($pattern, $text, $matches)) {
+            $imageLinks = $matches[1];
         }
-        return [];
+
+        return $imageLinks;
     }
 }
 
@@ -334,5 +335,37 @@ function advanced_compress_html_js($code) {
 
     return $code;
 }
+
+// 文件压缩
+function compressHtmlJs($html) {
+    // 移除 HTML 注释
+    $html = preg_replace('/<!--(?!\[if|\<\!\[endif\])(.*?)-->/is', '', $html);
+
+    // 移除 JS 多行注释
+    $html = preg_replace('/\/\*(.*?)\*\//is', '', $html);
+
+    // 移除 JS 单行注释 排除网址外的单行注释
+    $html = preg_replace_callback(
+        '/(https?:\/\/[^\s<>]*|\/\/.*?(\n|$))/',
+        function ($matches) {
+            if (str_starts_with($matches[0], '//')) {
+                return isset($matches[2]) ? $matches[2] : '';
+            }
+            return $matches[0];
+        }, $html);
+
+    // 移除 JS 单行注释 正则以//开头，内容中不包含>，以换行符结尾的单行注释给移除
+    // $html = preg_replace_callback('/\/\/([^>\r\n]*)(\n|\r\n)/', function ($matches) {
+    //     return $matches[2];
+    // }, $html);
+
+    // 压缩 HTML 空白字符
+    $html = preg_replace('/\s+/', ' ', $html);
+    $html = preg_replace('/>\s+</', '><', $html);
+
+    return $html;
+
+}
+
 
 
