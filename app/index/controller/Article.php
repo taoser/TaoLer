@@ -53,6 +53,11 @@ class Article extends IndexBaseController
 		// 分类信息
 		$cateInfo = Category::getCateInfoByEname($ename);
 
+		if($cateInfo->type == 2) {
+			$article = Db::name('page')->where('cate_id', $cateInfo->id)->find();
+			View::assign('article', $article);
+		}
+
 		//当前页url
 		$url = (string) url('cate_page', ['ename' => $ename, 'type' => $type, 'page' => $page]);
 		
@@ -70,7 +75,7 @@ class Article extends IndexBaseController
 
 		View::assign($assignArr);
 
-		$cateView = is_null($cateInfo) ? 'article/cate' : 'article/' . $cateInfo->detpl . '/cate';
+		$cateView = is_null($cateInfo) ? 'article/cate' : $path = $cateInfo->type == 2 ? 'article/' . $cateInfo->tpl . '/single' : 'article/' . $cateInfo->tpl . '/cate';
 		return View::fetch($cateView);
     }
 
@@ -110,7 +115,7 @@ class Article extends IndexBaseController
 			'lrDate_time' 	=> $lrDate_time,
 		]);
 
-		$html = View::fetch('article/'.$detail['cate']['detpl'].'/detail');
+		$html = View::fetch('article/'.$detail['cate']['tpl'].'/detail');
 		
 		$this->buildHtml($html);
 		
@@ -180,19 +185,19 @@ class Article extends IndexBaseController
 
 		
 		// 子模块自定义自适应add.html模板
-		$cate = Db::name('cate')->field('id,detpl')->where('ename', input('cate'))->find();
+		$cate = Db::name('cate')->field('id,tpl')->where('ename', input('cate'))->find();
 		// 子模块下有add.html模板
 		if(!empty($cate)) {
 			$cid = $cate['id'];
 		} else {
-			$cate['detpl'] = '';
+			$cate['tpl'] = '';
 			$cid = '';
 		}
 
 		// 模板路径
 		$appName = $this->app->http->getName();
 		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
-		$view = 'article' . DIRECTORY_SEPARATOR . $cate['detpl'] . DIRECTORY_SEPARATOR . 'add.html';
+		$view = 'article' . DIRECTORY_SEPARATOR . $cate['tpl'] . DIRECTORY_SEPARATOR . 'add.html';
 		$vfile = $viewRoot . $view;
 
 		//子模块下存在add模板则调用，否则调用article/add.html
@@ -292,7 +297,7 @@ class Article extends IndexBaseController
         View::assign(['article' => $article]);
 		
 		// 编辑多模板支持
-		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('detpl');
+		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('tpl');
 		$appName = $this->app->http->getName();
 		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
 		$view = 'article' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'edit.html';

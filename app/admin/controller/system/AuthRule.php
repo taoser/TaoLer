@@ -68,10 +68,16 @@ class AuthRule extends AdminBaseController
 	{
 		if(Request::isAjax()){
 			$data = Request::param();
+
+			$count = Db::name('auth_rule')->where('name', $data['name'])->count();
+			if($count) return json(['code' => 1, 'msg' => '权限地址已存在！']);
+
             //层级level
-            $plevel = Db::name('auth_rule')->field('level')->find($data['pid']);
-			if($plevel){
-				$data['level'] = $plevel['level'] + 1;
+            $rule = Db::name('auth_rule')->field('level')->find($data['pid']);
+
+			if(!is_null($rule)){
+
+				$data['level'] = $rule['level'] + 1;
 			} else {
 				$data['level'] = 0;
 			}
@@ -112,7 +118,6 @@ class AuthRule extends AdminBaseController
 		
 		$auth_rules = $this->model->getAuthRuleArray();
 		$rules = $this->model->find($id);
-		// dump($rules);
 
 		View::assign(['AuthRule' => $auth_rules,'rules' => $rules]);
 

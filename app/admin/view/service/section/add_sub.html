@@ -1,0 +1,132 @@
+{extend name="public/form" /}
+
+{block name="body"}
+	<form class="layui-form" action="">
+		<div class="mainBox">
+			<div class="main-container">
+				<div class="layui-form-item">
+					<label class="layui-form-label">父模块</label>
+					<div class="layui-input-block">
+						<select name="section_id" lay-filter="section">
+							{foreach name="section" id="vo"}
+							<option value="{$vo.id}">{$vo.title}</option>
+							{/foreach}
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">标题</label>
+					<div class="layui-input-block">
+						<input type="text" name="name" lay-verify="required" placeholder="标题" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">icon</label>
+					<div class="layui-input-block">
+						<input type="text" name="icon" lay-verify="required" placeholder="子标题描述" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item" id="img">
+					<label class="layui-form-label">图片</label>
+					<div class="layui-input-inline">
+						<input type="text" name="image" lay-verify="" placeholder="上传图片" autocomplete="off" lay-filter="iconPicker" class="layui-input" >
+					</div>
+					<button style="float: left;" type="button" class="layui-btn" id="upload-section-img">选图</button>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">URL</label>
+					<div class="layui-input-block">
+						<input type="text" name="url" lay-verify="required" placeholder="英文名*" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">SEO描述</label>
+					<div class="layui-input-block">
+						<textarea type="text" name="description" lay-verify="required" placeholder="描述*" autocomplete="off" class="layui-textarea"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="button-container">
+				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="cate-save">
+					<i class="layui-icon layui-icon-ok"></i>
+					提交
+				</button>
+				<button type="reset" class="pear-btn pear-btn-sm">
+					<i class="layui-icon layui-icon-refresh"></i>
+					重置
+				</button>
+			</div>
+		</div>
+	</form>
+
+	{__block__}
+
+	<script>
+		let ADD_EDIT = "{:url('service.section/addSub')}";
+		const UPLOAD_URL = "{:url('service.slide/uploadImg')}";
+
+		layui.use(['imgcom'],function(){
+			var $ = layui.jquery
+			,form = layui.form ;
+			var upload = layui.upload;
+			var imgcom = layui.imgcom;
+			form.on('submit(cate-save)', function(data) {
+				$.ajax({
+					url: ADD_EDIT,
+					data: JSON.stringify(data.field),
+					dataType: 'json',
+					contentType: 'application/json',
+					type: 'post',
+					success: function(result) {
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								// parent.layui.table.reload("cate-table");
+								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+								window.parent.location.reload();
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+				return false;
+			});
+
+			//上传图片
+			upload.render({
+			elem: '#upload-section-img'
+			,url: UPLOAD_URL
+			,data:{type:'image'}
+			,accept: 'images'
+			,acceptMime: 'image/*'
+			,auto: false
+			,choose: function (obj) { //选择文件后的回调
+					imgcom.uploads(obj);
+				}
+			,done: function(res){
+				$(this.item).prev("div").children("input").val(res.src)
+				if(res.code === 0){
+					layer.msg(res.msg,{icon:6,tiye:2000});
+				} else {
+					layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+				}
+			}
+			});
+
+		})
+	</script>
+{/block}

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace app\admin\controller\content;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use app\facade\TagList;

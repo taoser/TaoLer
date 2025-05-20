@@ -1,0 +1,198 @@
+{extend name="public/base" /}
+
+{block name="title"}文章内容{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+	<div class="layui-card-body">
+		<table id="link-table" lay-filter="link-table"></table>
+	</div>
+</div>
+
+<script type="text/html" id="link-toolbar">
+	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+		<i class="layui-icon layui-icon-add-1"></i>
+		新增
+	</button>
+</script>
+
+
+<script type="text/html" id="link-bar">
+	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+
+<script type="text/html" id="link-enable">
+	<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="link-enable" {{ d.status == 1 ? 'checked' : '' }} />
+</script>
+
+{__block__}
+
+<script>
+	const LIST_URL = "{:url('service.link/list')}";
+
+	layui.use(['common'], function(){
+		var $ = layui.jquery
+		,layer = layui.layer
+		,table = layui.table
+		,form = layui.form;
+		let common = layui.common;
+
+		//第一个实例
+		table.render({
+			elem: '#link-table'
+			,url: LIST_URL
+			,page: true
+			,cols: [[
+				{field: 'id', title: 'ID', width:80, sort: true}
+				,{field: 'logo', title: 'logo', width:120, templet: '<img src="{{d.logo}}" height="60" width="80">'}
+				,{field: 'title', title: '名称', minWidth:180}
+				,{field: 'url', title: 'URL', minWidth: 250}
+				,{field: 'create_time', title: '时间','escape':false, width: 130, sort: true}
+				,{field: 'start_time', title: '开始','escape':false, width: 130, sort: true}
+				,{field: 'end_time', title: '结束','escape':false, width: 130, sort: true}
+				,{field: 'status', title: '状态', width: 95, templet: '#link-enable'}
+				,{title:'操作', toolbar: '#link-bar', width:110}
+			]]
+			,skin: 'line'
+			,lineStyle: 'height: 100px;'
+			,toolbar: '#link-toolbar'
+			,limit: 10
+			,text: '对不起，加载出现异常！'
+		});
+
+		table.on('tool(link-table)', function(obj) {
+			if (obj.event === 'remove') {
+				window.remove(obj);
+			} else if (obj.event === 'edit') {
+				window.edit(obj);
+			}
+		});
+
+		table.on('toolbar(link-table)', function(obj) {
+			if (obj.event === 'add') {
+				window.add();
+			} else if (obj.event === 'refresh') {
+				window.refresh();
+			} else if (obj.event === 'batchRemove') {
+				window.batchRemove(obj);
+			}
+		});
+
+		form.on('submit(link-query)', function(data) {
+			table.reload('link-table', {
+				where: data.field
+			})
+			return false;
+		});
+
+		form.on('select(slid-type)', function(data){
+			$.post("{:url('service.link/list')}", {type: data.value}, function (res){
+				if (res.code === -1){
+					layer.open({content:res.msg,icon:5,anim:6});
+				}
+			}
+		);
+		
+		//执行重载
+		table.reload('link-table', {
+			where: {type: data.value}
+			,page: {
+						curr: 1 //重新从第 1 页开始
+					}
+			});
+		});
+
+		form.on('switch(link-enable)', function(obj) {
+			layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+			var status = obj.elem.checked ? 1 : 0;
+
+			//执行用户审核
+			$.ajax({
+				type:'post',
+				url:"{:url('service.link/check')}",
+				data:{"id":this.value, "status":status},
+				dataType:'json',
+				success:function(res){
+					if(res.code === 0){
+						layer.msg(res.msg,{
+									icon:res.icon,
+									time:2000
+								}
+								//,function(){location.reload();}
+						);
+					} else {
+						layer.open({
+							title:'审核失败',
+							content:res.msg,
+							icon:5,
+							adim:6
+						})
+					}
+				}
+			});
+
+			return false;
+		});
+
+		window.add = function() {
+			layer.open({
+				type: 2,
+				title: '新增',
+				shade: 0.1,
+				area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'500px'],
+				content: 'add.html'
+			});
+		}
+
+		window.edit = function(obj) {
+			layer.open({
+				type: 2,
+				title: '修改',
+				shade: 0.1,
+				area: ['500px', '500px'],
+				content: 'edit.html?id=' + obj.data.id
+			});
+		}
+
+		window.remove = function(obj) {
+
+			layer.confirm('确定要删除?', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+
+				$.ajax({
+					url: "{:url('service.link/delete')}?id=" + obj.data['id'],
+					dataType: 'json',
+					type: 'delete',
+					success: function(result) {
+						layer.close(loading);
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								obj.del();
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
+
+		window.refresh = function(param) {
+			table.reload('user-table');
+		}
+
+	});
+</script>
+{/block}

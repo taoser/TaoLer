@@ -57,34 +57,6 @@ class Forum extends AdminBaseController
     }
 
     /**
-     * 分类树
-     * @return \think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function getCateTree()
-    {
-        $cateList = Category::field('id,pid,catename,sort')
-        ->where('status', 1)
-        ->select()
-        ->toArray();
-
-        $list =  getTree($cateList);
-        // 排序
-        $cmf_arr = array_column($list, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $list);
-        
-        $count = count($list);
-        $tree = [];
-        if($count){
-            $tree = ['code'=>0, 'msg'=>'ok','data' => $list, 'count' => $count];
-        }
-
-        return json($tree);
-    }
-
-    /**
      * 添加帖子文章
      * @return string|\think\Response|\think\response\Json|void
      */

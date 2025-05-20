@@ -2,8 +2,6 @@
 
 namespace app\index\entity;
 
-use app\common\model\BaseModel;
-use Exception;
 use think\db\exception\DbException;
 use think\db\Query;
 use think\facade\Db;
@@ -11,6 +9,9 @@ use think\facade\Cache;
 use app\common\lib\IdEncode;
 use think\facade\Route;
 use app\common\entity\BaseEntity;
+use Exception;
+use think\model\type\Json as TypeJson;
+use think\response\Json;
 
 class Category extends BaseEntity
 {
@@ -23,12 +24,12 @@ class Category extends BaseEntity
     protected static $currentTotalNum = 0;
 
 	// 查询类别信息
-	public static function getCateInfoByEname(string $ename)
+	public function getCateInfoByEname(string $ename)
 	{
-		$cate = self::field('id,ename,catename,detpl,desc')
+		$cate = $this->field('id,ename,type,catename,tpl,desc,image')
         ->where('ename', $ename)
-        ->where('status', '1')
-        ->cache('cate_'.$ename, 3600)
+        ->where('status', 1)
+        ->cache('cate_'.$ename, 3500)
         ->find();
 
         // 抛出 HTTP 异常
@@ -42,7 +43,7 @@ class Category extends BaseEntity
     // ID查询类别信息
     public function getCateInfoById(int $id)
     {
-        return $this->field('id,catename,ename,detpl,pid,icon,sort,desc')->find($id);
+        return $this->field('id,pid,ename,type,catename,tpl,icon,sort,desc,url,image')->find($id);
     }
 
     // 查询父分类
@@ -52,44 +53,48 @@ class Category extends BaseEntity
         if($pid == 0) {
             return null;
         }
-        return $this->field('ename,catename')->where('pid', $pid)->append(['url'])->select();
+        return $this->field('ename,type,catename,image')->where('pid', $pid)->append(['url'])->select();
     }
 
     // 查询兄弟分类
     public function getBrotherCate(string $ename)
     {
-        return $this->field('id,ename,catename,desc')->where('pid', $this::where('ename', $ename)->value('pid'))->append(['url'])->order('sort asc')->select();
+        return $this->field('id,ename,type,catename,desc,image')->where('pid', $this->where('ename', $ename)->value('pid'))->append(['url'])->order('sort asc')->select();
     }
 
     // 查询子分类
     public function getSubCate(string $ename)
     {
-        return $this->field('id,ename,catename,desc')->where('pid', $this::where('ename', $ename)->value('id'))->append(['url'])->select();
+        return $this->field('id,ename,type,catename,desc,image')->where('pid', $this->where('ename', $ename)->value('id'))->append(['url'])->select();
     }
 
     /**
-     * 删除分类
-     * @param $id
-     * @return int|string
-     * @throws DbException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 删除栏目及栏目内容
+     *
+     * @param integer $id
+     * @return Json
      */
-	public function del($id)
+	public function delete(int $id): Json
 	{
-		$cates = $this->field('id,pid')->with('article')->find($id);
-		$sonCate = $this::where('pid',$cates['id'])->count();
-		if($sonCate > 0) {
-            return '存在子分类，无法删除';
-		}
-        $res = $cates->together(['article'])->delete();
-        return $res ? 1 : '删除失败';
+        try{
+            $cate = $this->field('id,pid')->with('article')->find($id);
+            $subCate = $this->where('pid', $cate['id'])->count();
+            if($subCate > 0) {
+                return json(['code' => 1, 'msg' => '存在子栏目,无法直接删除']);
+            }
+
+            $cate->together(['article'])->delete();
+        } catch(Exception $e){
+            return json(['code' => 1, 'msg' => 'error']);
+        }
+		
+        return json(['code' => 0, 'msg' => 'ok']);
 	}
 
     // 分类表
     public function getList()
     {
-        $data = $this->field('id,pid,sort,catename,ename,detpl,icon,status,is_hot,desc')->cache(3600)->append(['url'])->select()->toArray();
+        $data = $this->field('id,pid,ename,type,sort,catename,tpl,icon,status,is_hot,desc,url,image')->append(['url'])->select()->toArray();
         if(count($data)) {
             // 排序
             $cmf_arr = array_column($data, 'sort');
@@ -102,34 +107,28 @@ class Category extends BaseEntity
     // 如果菜单下无内容，URl不能点击
     public function menu()
     {
-        try {
-            return $this->where(['status' => 1])
-                ->cache(3600)
-                ->append(['url'])
-                ->select()
-                ->toArray();
-        } catch (DbException $e) {
-            return $e->getMessage();
-        }
-
+        
+        return $this->where('status', 1)
+            ->cache(3600)
+            ->append(['url'])
+            ->select()
+            ->toArray();
     }
 
     // 分类导航菜单
     public function getNav()
     {
-        try {
-            $cateList = $this->where('status', '1')
-                ->cache(3600)
-                ->append(['url'])
-                ->select()
-                ->toArray();
-            // 排序
-            $cmf_arr = array_column($cateList, 'sort');
-            array_multisort($cmf_arr, SORT_ASC, $cateList);
-            return getTree($cateList);
-        } catch (DbException $e) {
-            return $e->getMessage();
-        }
+        
+        $list = $this->where('status', 1)
+            // ->cache(3600)
+            ->append(['url'])
+            ->select()
+            ->toArray();
+        // 排序
+        $cmf_arr = array_column($list, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $list);
+        return getTree($list);
+       
     }
 
     /**
@@ -195,14 +194,14 @@ class Category extends BaseEntity
      * @param integer $limit 每页数
      * @return array
      */
-    public static function getArticlesByCategoryEname(string $ename = 'all', int $page = 1, string $type = 'all', int $limit = 15): array
+    public function getArticlesByCategoryEname(string $ename = 'all', int $page = 1, string $type = 'all', int $limit = 15): array
     {
         // 查询条件
         $where = [];
         // 数据
         $data = [];
         
-        $cate = self::getCateInfoByEname($ename);
+        $cate = $this->getCateInfoByEname($ename);
 
         if(!empty($cate['id'])){
             $where[] = ['cate_id' ,'=', $cate['id']];
@@ -409,10 +408,20 @@ class Category extends BaseEntity
 
     }
 
-    // 获取url
-    public function getUrlAttr($value, $data)
+    /**
+     * 审核
+     *
+     * @param array $data
+     * @return Json
+     */
+    public function check(array $data): Json
     {
-        return (string) url('cate', ['ename' => $data['ename']])->domain(true);
+        try{
+            self::update($data);
+        } catch(Exception $e) {
+            return json(['code' => 1,'msg' => 'error']);
+        }
+        return json(['code'=>0,'msg'=>'设置成功','icon'=>6]);
     }
 
 }

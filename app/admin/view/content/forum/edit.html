@@ -114,7 +114,7 @@
 			});
 
 			// 分类选择
-			$.get("{:url('content.forum/getCateTree')}",function(res){
+			$.get("{:url('content.cate/getArticleCateTree')}",function(res){
 				var INITCID = "{$article.cate_id}";
 				// 渲染下拉树
 				xmSelect.render({
@@ -130,13 +130,12 @@
 						name: 'catename',
 						value: 'id'
 					},
-					// radio: true,
 					clickClose: true,
 					tree: {
-						show: true,
+						show: false,
 						indent: 15,
 						strict: false,
-						expandedKeys: false
+						expandedKeys: true
 					},
 					on: function(data){ // 单选on模式
 						if(data.isAdd){

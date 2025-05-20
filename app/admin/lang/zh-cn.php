@@ -32,7 +32,7 @@ return [
 	'Edit role' => '编辑角色',
 	'Delete role' => '删除角色',
 	'Check role' => '审核角色',
-	'Rule management' => '权限管理',
+	'Rule management' => '权限菜单',
 	'Rule list'  => '权限列表',
 	'Add rule'  => '添加权限',
 	'Edit rule'  => '编辑权限',

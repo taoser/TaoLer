@@ -5,46 +5,69 @@
 		<div class="mainBox">
 			<div class="main-container">
 				<div class="layui-form-item">
-					<label class="layui-form-label">上级分类</label>
+					<label class="layui-form-label">上级栏目*</label>
 					<div class="layui-input-block">
 						<div id="menuSelectBox" class="ew-xmselect-tree"></div>
 					</div>
-					</div>
-					<div class="layui-form-item">
-					<label class="layui-form-label">分类名</label>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">名称*</label>
 					<div class="layui-input-block">
-						<input type="text" name="catename" lay-verify="required" placeholder="分类名*" autocomplete="off" class="layui-input">
+						<input type="text" name="catename" lay-verify="required" placeholder="栏目名称*" autocomplete="off" class="layui-input">
 					</div>
-					</div>
-					<div class="layui-form-item">
-					<label class="layui-form-label">EN别名</label>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">别名*</label>
 					<div class="layui-input-block">
-						<input type="text" name="ename" lay-verify="required" placeholder="英文名*" autocomplete="off" class="layui-input">
+						<input type="text" name="ename" lay-verify="required" placeholder="英文别名*" autocomplete="off" class="layui-input">
 					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">类型*</label>
+					<div class="layui-input-block">
+						<select name="type">
+							<option value="1">列表</option>
+							<option value="2">单页</option>
+							<option value="3">链接</option>
+						</select>
 					</div>
-					<div class="layui-form-item">
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">模板*</label>
+					<div class="layui-input-block">
+						<select name="tpl" lay-verify="required">
+							{volist name="template" id="vo"}
+							<option value="{$vo}">{$vo}</option>
+							{/volist}
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">链接</label>
+					<div class="layui-input-block">
+						<input type="text" name="url" lay-verify="" placeholder="类型 为链接 必填" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
 					<label class="layui-form-label">图标</label>
 					<div class="layui-input-block">
-						<input type="text" name="icon" placeholder="图标*" id="iconPicker" lay-filter="iconPicker" style="display:none;" class="layui-input">
+						<input type="text" name="icon" placeholder="图标" id="iconPicker" lay-filter="iconPicker" style="display:none;" class="layui-input">
 					</div>
+				</div>
+				<div class="layui-form-item" id="img">
+					<label class="layui-form-label">图片</label>
+					<div class="layui-input-inline">
+						<input type="text" name="image" lay-verify="" placeholder="上传图片" autocomplete="off" lay-filter="iconPicker" class="layui-input" >
 					</div>
-					<div class="layui-form-item">
-						<label class="layui-form-label">详情页模板</label>
-						<div class="layui-input-block">
-							<select name="detpl" id="tpl" lay-verify="required">
-								{volist name="template" id="vo"}
-								<option value="{$vo}" >{$vo}</option>
-								{/volist}
-							</select>
-						</div>
-					</div>
-					<div class="layui-form-item">
+					<button style="float: left;" type="button" class="layui-btn" id="upload-cate-img">选图</button>
+				</div>
+				<div class="layui-form-item">
 					<label class="layui-form-label">SEO描述</label>
 					<div class="layui-input-block">
 						<textarea type="text" name="desc" lay-verify="required" placeholder="类目SEO描述*" autocomplete="off" class="layui-textarea"></textarea>
 					</div>
-					</div>
-					<div class="layui-form-item">
+				</div>
+				<div class="layui-form-item">
 					<label class="layui-form-label">排序</label>
 					<div class="layui-input-block">
 						<input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input">
@@ -69,13 +92,17 @@
 	{__block__}
 
 	<script>
-		layui.use(['iconPicker', 'xmSelect',], function(){
+
+		const ADD_EDIT = "{:url('content.cate/addEdit')}";
+		const UPLOAD_URL = "{:url('content.cate/upload')}";
+
+		layui.use(['iconPicker', 'xmSelect','imgcom'], function(){
 			var $ = layui.jquery
 			,form = layui.form ;
 			var iconPicker = layui.iconPicker;
 			var xmSelect = layui.xmSelect;
-
-			let ADD_EDIT = "{:url('content.cate/addEdit')}";
+			let upload = layui.upload;
+			let imgcom = layui.imgcom;
 			
 			//初始化图标选择
 			iconPicker.render({
@@ -90,6 +117,7 @@
 			});
 
 			form.on('submit(cate-save)', function(data) {
+				data.field.is_single = data.field.is_single == 'on' ? 1 : 0;
 				$.ajax({
 					url: ADD_EDIT,
 					data: JSON.stringify(data.field),
@@ -102,9 +130,8 @@
 								icon: 1,
 								time: 1000
 							}, function() {
-								// parent.layui.table.reload("cate-table");
 								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-								window.parent.location.reload();
+								parent.layui.treetable.reload('#cate-table');
 							});
 						} else {
 							layer.msg(result.msg, {
@@ -117,93 +144,56 @@
 				return false;
 			});
 
-			
 			//分类菜单结构
-			$.ajax({
-				type: "get",
-				url: "{:url('content.cate/getCateTree')}",
-				success: function(res){
-					var data = res.data;
-					var initPid = 0;
+			$.get("{:url('content.cate/getCateTree')}",function(res) {
+				// 渲染下拉树
+				xmSelect.render({
+					el: '#menuSelectBox',
+					name: 'pid',
+					height: '250px',
+					layVerify: 'required',
+					layVerType: 'tips',
+					data: res.data,
+					model: {label: {type: 'text'}},
+					prop: {
+						name: 'catename',
+						value: 'id'
+					},
+					clickClose: true,
+					tree: {
+						show: true,
+						indent: 15,
+						strict: false,
+						expandedKeys: true
+					},
+					on: function(data){ // 单选on模式
+						if(data.isAdd){
+							return data.change.slice(0, 1)
+						}
+					},
+					tips: '请选择上级菜单'
+				})
+			});
 
-					// 渲染下拉树
-					xmSelect.render({
-						el: '#menuSelectBox',
-						name: 'pid',
-						height: '250px',
-						layVerify: 'required',
-						layVerType: 'tips',
-						data: data,
-						initValue:  [initPid],
-						model: {label: {type: 'text'}},
-						prop: {
-							name: 'catename',
-							value: 'id'
-						},
-						// radio: true,
-						clickClose: true,
-						tree: {
-							show: true,
-							indent: 15,
-							strict: false,
-							expandedKeys: true
-						},
-						on: function(data){ // 单选on模式
-							if(data.isAdd){
-								return data.change.slice(0, 1)
-							}
-						},
-						tips: '请选择上级菜单'
-					});
-
-
-					// var demo4 = xmSelect.render({
-					//   el: '#menuSelectBox',
-					//   model: { label: { type: 'text' } },
-					//   tree: {
-					//     show: true,
-					//     strict: false,
-					//     expandedKeys: [ -1 ],
-					//   },
-					//   on: function(data){
-					//     if(data.isAdd){
-					//       return data.change.slice(0, 1)
-					//     }
-					//   },
-					//   height: 'auto',
-					// })
-
-					// //这里模拟ajax
-					// setTimeout(function(){
-					//   demo4.update({
-					//     data: [
-					//       {name: '销售员', value: -1, children: [
-					//         {name: '张三', value: 100, children: []},
-					//         {name: '李四1', value: 2},
-					//         {name: '王五1', value: 3, disabled: true},
-					//       ]},
-					//       {name: '奖品', value: -2, children: [
-					//         {name: '奖品3', value: -3, children: [
-					//           {name: '苹果3', value: 14},
-					//           {name: '香蕉3', value: 15},
-					//           {name: '葡萄3', value: 16},
-					//         ]},
-					//         {name: '苹果2', value: 4, disabled: true},
-					//         {name: '香蕉2', value: 5},
-					//         {name: '葡萄2', value: 6},
-					//       ]},
-					//     ]
-					//   })
-
-					//   //设置默认值
-					//   demo4.setValue([
-					//     {name: '李四1', value: 2},
-					//     {name: '苹果3', value: 14},
-					//   ], null, true)
-
-					// }, 300)
+			//上传图片
+			upload.render({
+				elem: '#upload-cate-img'
+				,url: UPLOAD_URL
+				,data:{type:'image'}
+				,accept: 'images'
+				,acceptMime: 'image/*'
+				,auto: false
+				,choose: function (obj) { //选择文件后的回调
+						imgcom.uploads(obj);
+					}
+				,done: function(res){
+					$(this.item).prev("div").children("input").val(res.src)
+					if(res.code === 0){
+						layer.msg(res.msg,{icon:6,tiye:2000});
+					} else {
+						layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+					}
 				}
-
 			});
 
 		})

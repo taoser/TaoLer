@@ -59,15 +59,24 @@ class Slide extends AdminBaseController
     }
 
     /**
-     * 显示创建资源表单页.
+     * 添加
      *
-     * @return \think\Response
+     * @return void
      */
     public function add()
     {
         //添加幻灯
         if(Request::isAjax()){
-            $data = Request::param();
+            $data = Request::only(['type','title','image','url','description','start_time','end_time']);
+
+            if(!empty($data['start_time']) && !empty($data['end_time'])) {
+                $stime = strtotime($data['start_time']);
+                $etime = strtotime($data['end_time']);
+                if($etime <= $stime) {
+                    return json(['code' => -1, 'msg' => '结束时间不能小于开始时间']);
+                }
+            }
+
             try{
                 AdSlide::save($data);
                 return json( ['code'=>0,'msg'=>'添加成功']);
@@ -81,20 +90,34 @@ class Slide extends AdminBaseController
 
 
     /**
-     * @param $id
-     * @return string|\think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 编辑
+     *
+     * @return void
      */
     public function edit()
     {
       $id = (int)input('id');
       
 
-      if(Request::isAjax()){
-        $data = Request::param();
-        
+        if(Request::isAjax()){
+            $data = Request::only(['id','type','title','image','url',',description','start_time','end_time']);
+
+            if(!empty($data['start_time']) && !empty($data['end_time'])) {
+                $stime = strtotime($data['start_time']);
+                $etime = strtotime($data['end_time']);
+                if($etime <= $stime) {
+                    return json(['code' => -1, 'msg' => '结束时间不能小于开始时间']);
+                }
+            }
+
+            if(empty($data['start_time'])) {
+                $data['start_time'] = null;
+            }
+
+            if(empty($data['end_time'])) {
+                $data['end_time'] = null;
+            }
+
             try{
                 AdSlide::update($data);
                 return json( ['code'=>0,'msg'=>'编辑成功']);
@@ -133,7 +156,7 @@ class Slide extends AdminBaseController
         $data = Request::only(['id','status']);
 
         //获取状态
-        $res = AdSlide::where('id', $data['id'])->save(['status' => $data['status']]);
+        $res = AdSlide::where('id', $data['id'])->update(['status' => $data['status']]);
         if($res){
             if($data['status'] == 1){
                 return json(['code'=>0,'msg'=>'启用成功','icon'=>6]);

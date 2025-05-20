@@ -7,7 +7,7 @@ class AdSlide extends BaseEntity
    public function getSlide($type = 1, $num = 5)
    {
         $data = [];
-        $list = $this->field('id,title,type,image,url,sort,status,start_time,end_time')
+        $list = $this->field('id,title,type,image,url,description,sort,status,start_time,end_time')
         ->where([
             'status' => 1,
             'type'  => $type,
@@ -33,6 +33,7 @@ class AdSlide extends BaseEntity
                 'image' => $v->image,
                 'url'   => $v->url,
                 'sort'  => $v->sort,
+                'description'   => $v->description,
             ];
         }
 

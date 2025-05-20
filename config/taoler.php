@@ -16,7 +16,7 @@ return [
 	// 应用名,此项不可更改
 	'appname'	=> 'TaoLer',
     // 系统版本
-    'version'   => '3.3.2',
+    'version'   => '3.3.3',
 	// 加盐
 	'salt'		=> 'taoler',
 	// 分表单表数量 默认100W

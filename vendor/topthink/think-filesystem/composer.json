@@ -20,15 +20,14 @@
         }
     },
     "require": {
-        "php": ">=7.2.5",
-        "topthink/framework": "^6.1|^8.0",
-        "league/flysystem": "^1.1.4",
-        "league/flysystem-cached-adapter": "^1.0"
+        "php": "^8.2",
+        "topthink/framework": "^8.0",
+        "league/flysystem": "^3.0"
     },
     "require-dev": {
         "mikey179/vfsstream": "^1.6",
         "mockery/mockery": "^1.2",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^11.5"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

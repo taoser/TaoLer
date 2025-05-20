@@ -10,6 +10,7 @@ use think\facade\Lang;
 use think\facade\Cache;
 use think\facade\Event;
 use taoser\addons\middleware\Addons;
+use think\facade\Request;
 
 /**
  * 插件服务
@@ -30,13 +31,13 @@ class Service extends \think\Service
         // 加载插件事件
         $this->loadEvent();
         // 加载自定义路由
-        $this->loadRoutes();
+        // $this->loadRoutes();
         // 加载插件系统服务
-        $this->loadService();
+        // $this->loadService();
         // 加载插件命令
-        $this->loadCommand();
+        // $this->loadCommand();
         // 加载配置
-        $this->loadConfig();
+        // $this->loadConfig();
         // 绑定插件容器
         $this->app->bind('addons', Service::class);
         
@@ -47,42 +48,16 @@ class Service extends \think\Service
         $this->registerRoutes(function (Route $route) {
             // 只有在addons下进行注册解析
             $path = $this->app->request->pathinfo();
+
             $pathArr = explode("/", str_replace('.html','', str_replace('\\', '/', $path)));
             if($pathArr[0] === 'addons') {
                 // 路由脚本
                 $execute = '\\taoser\\addons\\Route::execute';
 
-                // 中间件数组
-                $middlewaresArr = [];
-
                 // 注册插件公共中间件
-            if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
-                $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
-//
-//                    // addons目录下全局中间件，对所有addons都生效
-//                    //$middleware = (array) include $this->app->addons->getAddonsPath() . 'middleware.php';
-//                    // 执行addons全局中间件
-//                    //$route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware($middleware);
-//                    //$middlewaresArr = array_merge($middlewaresArr, $middleware);
-            }
-
-
-//            $middlewareDir = $this->app->addons->getAddonsPath() . $addon. DIRECTORY_SEPARATOR . 'middleware' .  DIRECTORY_SEPARATOR;
-                    // 如果插件下存在middleware文件夹
-//            if(is_dir($middlewareDir)) {
-//                //配置
-//                $middleware_dir = scandir($middlewareDir);
-//                foreach ($middleware_dir as $name) {
-//                    if (in_array($name, ['.', '..'])) {
-//                        continue;
-//                    }
-//                    if(is_dir($middlewareDir . $name)) continue;
-//                    $middlewareClassName = str_replace('.php','',$name);
-//                    $middlewareClass = "\\addons\\{$addon}\\middleware\\{$middlewareClassName}";
-//
-//                    array_push($middlewaresArr, $middlewareClass);
-//                }
-//            }
+                if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
+                    $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
+                }
 
                 // 注册控制器路由
                 $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
@@ -143,12 +118,13 @@ class Service extends \think\Service
     private function loadRoutes()
     {
         //配置
-        $addons_dir = scandir($this->addons_path);
+        // $addons_dir = scandir($this->addons_path);
+        $addons_dir = Cache::get('addons_list');
         foreach ($addons_dir as $name) {
-            if (in_array($name, ['.', '..'])) {
-                continue;
-            }
-            if(!is_dir($this->addons_path . $name)) continue;
+            // if (in_array($name, ['.', '..'])) {
+            //     continue;
+            // }
+            // if(!is_dir($this->addons_path . $name)) continue;
             $module_dir = $this->addons_path . $name .  DIRECTORY_SEPARATOR;
             //路由配置文件
             $addons_route_dir = $module_dir . 'route' .  DIRECTORY_SEPARATOR;
@@ -183,7 +159,9 @@ class Service extends \think\Service
                 $addons_config_dir = $this->addons_path . $name . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR;
 
                 if (is_dir($addons_config_dir)) {
+
                     $files = glob($addons_config_dir . '*.php');
+                    
                     foreach ($files as $file) {
                         if (file_exists($file)) {
                             if (substr($file, -11) == 'console.php') {
@@ -197,6 +175,7 @@ class Service extends \think\Service
 
             }
         }
+
     }
 
     /**
@@ -235,6 +214,7 @@ class Service extends \think\Service
     private function loadService()
     {
         $results = scandir($this->addons_path);
+  
         $bind = [];
         foreach ($results as $name) {
             if ($name === '.' or $name === '..') {
@@ -247,18 +227,19 @@ class Service extends \think\Service
             if (!is_dir($addonDir)) {
                 continue;
             }
-
-            if (!is_file($addonDir . ucfirst($name) . '.php')) {
+            if (!is_file($addonDir . 'Plugin.php')) {
                 continue;
             }
-
-            $info_file = $addonDir . 'info.ini';
+            $info_file = $addonDir . 'service.ini';
             if (!is_file($info_file)) {
                 continue;
             }
+ 
             $info = parse_ini_file($info_file, true, INI_SCANNER_TYPED) ?: [];
+
             $bind = array_merge($bind, $info);
         }
+
         $this->app->bind($bind);
     }
 
@@ -272,37 +253,78 @@ class Service extends \think\Service
         if (!Config::get('addons.autoload', true)) {
             return true;
         }
-        $config = Config::get('addons');
-        // 读取插件目录及钩子列表
-        $base = get_class_methods("\\taoser\\Addons");
-        // 读取插件目录中的php文件
-        foreach (glob($this->getAddonsPath() . '*/*.php') as $addons_file) {
-            // 格式化路径信息
-            $info = pathinfo($addons_file);
-            // 获取插件目录名
-            $name = pathinfo($info['dirname'], PATHINFO_FILENAME);
-            // 找到插件入口文件
-            if (strtolower($info['filename']) === 'plugin') {
-                // 读取出所有公共方法
-                $methods = (array)get_class_methods("\\addons\\" . $name . "\\" . $info['filename']);
-                // 跟插件基类方法做比对，得到差异结果
-                $hooks = array_diff($methods, $base);
-                // 循环将钩子方法写入配置中
-                foreach ($hooks as $hook) {
-                    if (!isset($config['hooks'][$hook])) {
-                        $config['hooks'][$hook] = [];
+
+        $conf = Cache::remember('addons_config', function(){
+            $config = Config::get('addons');
+            // 读取插件目录及钩子列表
+            $base = get_class_methods("\\taoser\\Addons");
+            $base = array_unique(array_merge($base, ['initialize','install', 'uninstall', 'enabled', 'disabled']));
+
+            $addon_list = [];
+
+            // 读取插件目录中的php文件
+            foreach (glob($this->getAddonsPath() . '*/*.php') as $addons_file) {
+                // 格式化路径信息
+                $info = pathinfo($addons_file);
+                // 获取插件目录名
+                $name = pathinfo($info['dirname'], PATHINFO_FILENAME);
+    
+                // 找到插件入口文件
+                if (strtolower($info['filename']) === 'plugin') {
+                    // 读取出所有公共方法
+                    $methods = (array)get_class_methods("\\addons\\" . $name . "\\" . $info['filename']);
+                    $ini= $info['dirname'] .DS. 'info.ini';
+                    if (!is_file($ini)) {
+                        continue;
                     }
-                    // 兼容手动配置项
-                    if (is_string($config['hooks'][$hook])) {
-                        $config['hooks'][$hook] = explode(',', $config['hooks'][$hook]);
+                    $addon_ini = parse_ini_file($ini, true, INI_SCANNER_TYPED) ?: [];
+                    // dump(!$addon_ini['install']);
+                    // 排除未安装和未启用
+                    if(!$addon_ini['install']) continue;
+                    if(!$addon_ini['status']) continue;
+
+                    if(!in_array($name, $addon_list)) {
+                        $addon_list[] = $name;
                     }
-                    if (!in_array($name, $config['hooks'][$hook])) {
-                        $config['hooks'][$hook][] = $name;
+
+                     //路由配置文件
+                    // $addons_route_dir = $module_dir . 'route' .  DIRECTORY_SEPARATOR;
+
+                    // if (file_exists($addons_route_dir) && is_dir($addons_route_dir)) {
+                    //     $files = glob($addons_route_dir . '*.php');
+                    //     foreach ($files as $file) {
+                    //         if (file_exists($file)) {
+                    //             $this->loadRoutesFrom($file);;
+                    //         }
+                    //     }
+                    // }
+                    
+                    // 跟插件基类方法做比对，得到差异结果
+                    $hooks = array_diff($methods, $base);
+                    // 循环将钩子方法写入配置中
+                    foreach ($hooks as $hook) {
+                        if (!isset($config['hooks'][$hook])) {
+                            $config['hooks'][$hook] = [];
+                        }
+                        // 兼容手动配置项
+                        if (is_string($config['hooks'][$hook])) {
+                            $config['hooks'][$hook] = explode(',', $config['hooks'][$hook]);
+                        }
+                        if (!in_array($name, $config['hooks'][$hook])) {
+                            $config['hooks'][$hook][] = $name;
+                        }
                     }
                 }
             }
-        }
-        Config::set($config, 'addons');
+
+            Cache::set('addons_config', $config);
+            Cache::set('addons_list', $addon_list);
+            return $config;
+        });
+// dump($conf);
+
+        Config::set($conf, 'addons');
+        
     }
 
     /**

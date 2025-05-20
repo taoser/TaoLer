@@ -19,6 +19,7 @@ class Slide extends TagLib
         'title' => ['attr' => '', 'close' => 0],
         'url'   => ['attr' => '', 'close' => 0],
         'image' => ['attr' => '', 'close' => 0],
+        'description'   => ['attr' => '', 'close' => 0],
     ];
 
     public function tagId(): string
@@ -37,6 +38,11 @@ class Slide extends TagLib
     }
 
     public function tagImage(): string
+    {
+        return '{$slide.image}';
+    }
+
+    public function tagDescription(): string
     {
         return '{$slide.image}';
     }

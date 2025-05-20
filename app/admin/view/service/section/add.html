@@ -1,0 +1,81 @@
+{extend name="public/form" /}
+
+{block name="body"}
+	<form class="layui-form" action="">
+		<div class="mainBox">
+			<div class="main-container">
+				
+				<div class="layui-form-item">
+					<label class="layui-form-label">标题</label>
+					<div class="layui-input-block">
+						<input type="text" name="title" lay-verify="required" placeholder="标题" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">子标题</label>
+					<div class="layui-input-block">
+						<input type="text" name="subtitle" lay-verify="required" placeholder="子标题描述" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">别名</label>
+					<div class="layui-input-block">
+						<input type="text" name="alias" lay-verify="required" placeholder="英文名*" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="button-container">
+				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="section-save">
+					<i class="layui-icon layui-icon-ok"></i>
+					提交
+				</button>
+				<button type="reset" class="pear-btn pear-btn-sm">
+					<i class="layui-icon layui-icon-refresh"></i>
+					重置
+				</button>
+			</div>
+		</div>
+	</form>
+
+	{__block__}
+
+	<script>
+		layui.use(function(){
+			var $ = layui.jquery
+			,form = layui.form ;
+
+			let ADD_EDIT = "{:url('service.section/add')}";
+			
+			form.on('submit(section-save)', function(data) {
+				$.ajax({
+					url: ADD_EDIT,
+					data: JSON.stringify(data.field),
+					dataType: 'json',
+					contentType: 'application/json',
+					type: 'post',
+					success: function(result) {
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								// parent.layui.table.reload("section-table");
+								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+								window.parent.location.reload();
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+				return false;
+			});
+
+		})
+	</script>
+{/block}

@@ -78,7 +78,7 @@
 		var xmSelect = layui.xmSelect;
 
 		// 分类选择 渲染下拉树
-		$.get("{:url('content.forum/getCateTree')}",function(res){
+		$.get("{:url('content.cate/getArticleCateTree')}",function(res){
 			xmSelect.render({
 				el: '#CateId',
 				name: 'cate_id',
@@ -95,10 +95,10 @@
 				// radio: true,
 				clickClose: true,
 				tree: {
-					show: true,
+					show: false,
 					indent: 15,
 					strict: false,
-					expandedKeys: false
+					expandedKeys: true
 				},
 				on: function(data){ // 单选on模式
 					if(data.isAdd){
@@ -131,7 +131,6 @@
 			})
 			}
 		});
-
 
 		//上传附件
 		upload.render({

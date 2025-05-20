@@ -45,10 +45,9 @@ abstract class Entity implements JsonSerializable, ArrayAccess, Arrayable, Jsona
         $options = $this->getOptions();
 
         if (is_null($model)) {
-            $class = !empty($options['model_class']) ? $options['model_class'] : str_replace('\\entity\\', '\\model\\', static::class);
+            $class = !empty($options['modelClass']) ? $options['modelClass'] : str_replace('\\entity\\', '\\model\\', static::class);
             $model = new $class();
             $model->entity($this);
-            unset($options['model_class']);
         }
 
         self::$weakMap[$this] = [
@@ -56,7 +55,7 @@ abstract class Entity implements JsonSerializable, ArrayAccess, Arrayable, Jsona
         ];
 
         // 初始化模型
-        $model->setOptions($options);
+        $this->setOptions($options);
         $this->init($options);
     }
 
@@ -68,6 +67,45 @@ abstract class Entity implements JsonSerializable, ArrayAccess, Arrayable, Jsona
     protected function getOptions(): array
     {
         return [];
+    }
+
+    /**
+     * 批量设置模型参数
+     * @param array  $options  值
+     * @return void
+     */
+    public function setOptions(array $options): void
+    {
+        foreach ($options as $name => $value) {
+            $this->setOption($name, $value);
+        }
+    }
+
+    /**
+     * 设置模型参数
+     *
+     * @param string $name  参数名
+     * @param mixed  $value  值
+     *
+     * @return $this
+     */
+    public function setOption(string $name, $value)
+    {
+        self::$weakMap[$this][$name] = $value;
+        return $this;
+    }
+
+    /**
+     * 获取模型参数
+     *
+     * @param string $name  参数名
+     * @param mixed  $default  默认值
+     *
+     * @return mixed
+     */
+    public function getOption(string $name, $default = null)
+    {
+        return self::$weakMap[$this][$name] ?? $default;
     }
 
     /**
@@ -98,7 +136,13 @@ abstract class Entity implements JsonSerializable, ArrayAccess, Arrayable, Jsona
         return self::$weakMap[$this]['model'];
     }
 
-    public function setModel($model)
+    /**
+     *  设置模型.
+     *
+     * @param Model $model 模型对象
+     * @return void
+     */
+    public function setModel(Model $model)
     {
         self::$weakMap[$this]['model'] = $model;
     }
@@ -264,12 +308,18 @@ abstract class Entity implements JsonSerializable, ArrayAccess, Arrayable, Jsona
             $db = $entity->model()->db();
         }
 
+        if ('with' != $method && !empty(self::$weakMap[$entity]['autoMapping'])) {
+            // 自动关联查询
+            $db->with(self::$weakMap[$entity]['autoMapping']);
+        }
+
         return call_user_func_array([$db, $method], $args);
     }
 
     public function __call($method, $args)
     {
         // 调用Model类方法
-        return call_user_func_array([$this->model(), $method], $args);
+        $result = call_user_func_array([$this->model(), $method], $args);
+        return $result instanceof Model ? $this : $result;
     }
 }

@@ -15,7 +15,6 @@ namespace think;
 
 use ArrayAccess;
 use Closure;
-use InvalidArgumentException;
 use JsonSerializable;
 use think\contract\Arrayable;
 use think\contract\Jsonable;
@@ -320,21 +319,16 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
      * @param array $data 数据
      * @param array $allow 需要验证的字段
      *
-     * @throws InvalidArgumentException
+     * @throws ValidateException
      * @return void
      */
     protected function validate(array $data, array $allow = []): void
     {
         $validater = $this->getOption('validate');
-        if (!empty($validater) && class_exists('think\validate')) {
-            try {
-                validate($validater)
-                    ->only($allow ?: array_keys($data))
-                    ->check($data);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                throw new InvalidArgumentException($e->getError());
-            }
+        if (!empty($validater)) {
+            validate($validater)
+                ->only($allow ?: array_keys($data))
+                ->check($data);
         }
     }
 
@@ -431,7 +425,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
             if ($val instanceof Modelable || in_array($name, $together)) {
                 $relations[$name] = $val;
                 unset($data[$name]);
-            } elseif ($val instanceof Collection || !in_array($name, $allow)) {
+            } elseif ($val instanceof Collection || (!empty($allow) && !in_array($name, $allow))) {
                 unset($data[$name]);
             } elseif ($isUpdate && !$this->isForce() && $this->isNotRequireUpdate($name, $val, $origin)) {
                 unset($data[$name]);
@@ -464,6 +458,11 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         } else {
             $db->where($this->getOrigin());
         }
+
+        if ($this->isForce()) {
+            $db->removeOption('soft_delete');
+        }
+
         return $db;
     }
 
@@ -530,7 +529,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     }
 
     /**
-     * 是否为视图模型（不能写入 也不会绑定模型）.
+     * 是否为视图模型（不能写入）.
      *
      * @return bool
      */
@@ -544,7 +543,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
      *
      * @return static
      */
-    public function refresh(): static
+    public function refresh()
     {
         if ($this->isExists()) {
             $data = $this->db()->find($this->getKey())->getData();

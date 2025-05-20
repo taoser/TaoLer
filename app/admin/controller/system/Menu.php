@@ -49,6 +49,7 @@ class Menu extends AdminBaseController
         $auth_rule_list = Db::name($rule)
         ->field('id,pid,title,icon,name,sort,ismenu')
         ->where(['delete_time'=> 0, 'status'=> 1])
+        ->order('sort', 'asc')
         ->select();
         
         foreach ($auth_rule_list as $v) {
@@ -64,6 +65,9 @@ class Menu extends AdminBaseController
                 ];
             }
         }
+
+        //  $cmf_arr = array_column($menu, 'sort');
+        // array_multisort($cmf_arr, SORT_ASC, $menu);
 
         $nav = $this->getTrees($menu);
 

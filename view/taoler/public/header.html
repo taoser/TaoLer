@@ -1,14 +1,14 @@
 <div class="fly-header layui-bg-black">
 	<div class="layui-container">
-		<a class="fly-logo layui-hide-xs" href="{$Request.domain}"><img src="{$sysInfo.logo}"  alt="logo"></a>
+		<a class="fly-logo layui-hide-xs" href="{$Request.domain}"><img src="{taoler:logo}"  alt="logo"></a>
 		<!--头部伸缩侧边栏-->
 		<div class="site-tree-mobile-top layui-hide"><i class="layui-icon layui-icon-spread-left"></i></div>
 		<div class="site-mobile-shade-top"></div>
 		{//移动端LOGO}
-		<a class="layui-hide-md layui-hide-sm" href="{$Request.domain}" ><img class="fly-logo-m" src="{$sysInfo.m_logo}" alt="logo"></a>
+		<a class="layui-hide-md layui-hide-sm" href="{$Request.domain}" ><img class="fly-logo-m" src="{taoler:mlogo/}" alt="logo"></a>
 		{//导航nav}
 		<ul class="layui-nav fly-nav layui-hide-xs">
-		{if config('taoler.config.nav_top')  != 0}
+		{neq name=":config('taoler.config.nav_top')"  value="0"}
 		{taoler:nav}
 			<li class="layui-nav-item {if condition='$nav.ename eq $Request.param.ename'} layui-this {/if}" >
 				<a href="{nav:link /}">{nav:title /} {eq name="nav.is_hot" value="1"} <span class="layui-badge-dot"></span> {/eq}</a>
@@ -21,7 +21,7 @@
 				{/notempty}
 			</li>
 		{/taoler:nav}
-		{/if}
+		{/neq}
 		{// 后台自定义头部链接}
 		{:hook('ads_header_link')}
 		</ul>

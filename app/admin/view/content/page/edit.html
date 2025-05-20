@@ -1,0 +1,101 @@
+{extend name="public/form" /}
+
+{block name="body"}
+	<form class="layui-form" action="">
+		<div class="mainBox">
+			<div class="main-container">
+				<input type="hidden" name="id" value="{$page.id}">
+				<div class="layui-form-item">
+					<label class="layui-form-label">分类</label>
+					<div class="layui-input-block">
+						<select name="cate_id" disabled>
+							<option value="{$page.cate_id}">{$page.cate.catename}</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="L_title" class="layui-form-label">{:lang('title')}</label>
+					<div class="layui-input-block">
+						<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$page.title}">
+					</div>
+				</div>
+				<div class="layui-form-item layui-form-text">
+					<div class="layui-input-block">
+					<textarea id="L_content" name="content" required lay-verify="required" placeholder="详细内容"  class="layui-textarea taonyeditor">{$page.content}</textarea>
+					</div>
+				</div>
+
+				<div class="layui-form-item">
+					<label class="layui-form-label">{:lang('描述')}</label>
+					<div class="layui-input-block">
+						<textarea name="description" class="layui-textarea" placeholder="SEO描述">{$page.description}</textarea>
+					</div>
+				</div>
+				{//关键词}
+				<div class="layui-form-item">
+					<label class="layui-form-label">{:lang('关键词')}</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" name="keywords" value="{$page.keywords}" placeholder="多个英文逗号隔开" title="添加关键词" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="button-container">
+				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="page-save">
+					<i class="layui-icon layui-icon-ok"></i>
+					提交
+				</button>
+				<button type="reset" class="pear-btn pear-btn-sm">
+					<i class="layui-icon layui-icon-refresh"></i>
+					重置
+				</button>
+			</div>
+		</div>
+	</form>
+
+	{__block__}
+
+	<script>
+		layui.use(function(){
+			var $ = layui.jquery
+			,form = layui.form
+
+			form.on('submit(page-save)', function(data) {
+				$.ajax({
+					url: "{:url('content.page/edit')}",
+					data: JSON.stringify(data.field),
+					dataType: 'json',
+					contentType: 'application/json',
+					type: 'post',
+					success: function(result) {
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								parent.layui.table.reload("page-table");
+								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+				return false;
+			});
+
+		});
+    </script>
+	
+	{// 编辑器}
+	{:hook('ueditor')}
+	{:hook('taonyeditor')}
+	{// 百度标题词条}
+
+	{// 百度关键词}
+
+{/block}

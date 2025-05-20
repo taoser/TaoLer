@@ -1,4 +1,4 @@
-# think-filesystem for ThinkPHP6.1
+# think-filesystem for ThinkPHP
 
 ## 安装
 

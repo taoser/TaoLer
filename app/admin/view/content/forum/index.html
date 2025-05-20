@@ -91,16 +91,16 @@
 		<div><img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= "{{ d.user.user_img }}"></div>
 	</script>
 	<script type="text/html" id="forum-istop">
-		<input type="checkbox" name="is_top" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.flags.is_top == 1 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_top" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.flags.is_top == 1 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonHot">
-		<input type="checkbox" name="is_good" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isGood" {{ d.flags.is_good == 1 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_good" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isGood" {{ d.flags.is_good == 1 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonReply">
-		<input type="checkbox" name="is_comment" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isComment" {{ d.is_comment == 0 ? 'checked' : '' }}>
+		<input type="checkbox" name="is_comment" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isComment" {{ d.is_comment == 0 ? 'checked' : '' }}>
 	</script>
 	<script type="text/html" id="buttonCheck">
-		<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.status == 0 ? '待审' : '禁止' }}" {{ d.status == 1 ? 'checked' : '' }}>
+		<input type="checkbox" name="status" id="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.status == 0 ? '待审' : '禁止' }}" {{ d.status == 1 ? 'checked' : '' }}>
 	</script>
 
 	<script type="text/html" id="forum-table-bar">
@@ -128,7 +128,7 @@
 				,{field: 'id', width: 80, title: 'ID', sort: true}
 				,{title: '头像', width: 80, templet: '#avatarTpl'}
 				,{title: '详情', minWidth: 200, templet: '#titleTpl'}
-				,{ title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
+				,{title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
 				,{title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
 				,{title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
 				,{title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
@@ -158,7 +158,7 @@
 			});
 
 		// 分类选择
-		$.get("{:url('content.forum/getCateTree')}", function(res){
+		$.get("{:url('content.cate/getArticleCateTree')}", function(res){
 			// 渲染下拉树
 			xmSelect.render({
 				el: '#CateId',
@@ -173,7 +173,6 @@
 					name: 'catename',
 					value: 'id'
 				},
-				// radio: true,
 				clickClose: true,
 				tree: {
 					show: true,
@@ -227,29 +226,28 @@
 
 		// 监听置顶
 		form.on('switch(isTop)', function(obj){
-			$.post("{:url('content.forum/setFlag')}",{id:obj.value, name:obj.elem.name, value:obj.elem.checked ? 1 : 0},function(res){
+			$.post("{:url('content.forum/setFlag')}",{id:this.id, name:obj.elem.name, value:obj.elem.checked ? 1 : 0},function(res){
 				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
 			});
 		});
 
 		// 监听加精
 		form.on('switch(isGood)', function(obj){
-			$.post("{:url('content.forum/setFlag')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
+			$.post("{:url('content.forum/setFlag')}",{id:this.id, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
 				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
 			});
 		});
 
 		// 监听回复
 		form.on('switch(isComment)', function(obj){
-			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
+			$.post("{:url('content.forum/check')}",{id:this.id, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
 				layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
 			});
 		});
 
 		// 监听审贴
 		form.on('switch(artStatus)', function(obj){
-			//layer.tips(obj.value + ' ' + obj.elem.name + '：'+ obj.elem.checked, obj.othis);
-			$.post("{:url('content.forum/check')}",{id:obj.value, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
+			$.post("{:url('content.forum/check')}",{id:this.id, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
 				if(res.code === 0){
 					layer.msg(res.msg,{icon:res.icon,time:2000})
 				} else {

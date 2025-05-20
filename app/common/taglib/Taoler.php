@@ -16,28 +16,39 @@ class Taoler extends TagLib
 {
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
+        // 导航
         'nav'       => ['attr' => '', 'close' => 1],
         'snav'      => ['attr' => ''],
         'gnav'      => ['attr' => ''],
+        
+        // 幻灯片和链接
         'slide'     => ['attr' => ''],
+        'link'      => ['attr' => ''],
+
+        // system
         'title'     => ['attr' => '', 'close' => 0],
         'name'      => ['attr' => '', 'close' => 0],
         'logo'      => ['attr' => '', 'close' => 0],
         'mlogo'     => ['attr' => '', 'close' => 0],
         'keywords'  => ['attr' => '', 'close' => 0],
+        'copyright' => ['attr' => '', 'close' => 0],
+        'icp'       => ['attr' => '', 'close' => 0],
         'description'   => ['attr' => '', 'close' => 0],
-        'copyright'     => ['attr' => '', 'close' => 0],
-        'icp'           => ['attr' => '', 'close' => 0],
+
+        //
+        'section'   => ['attr' => 'name,num', 'close' => 1],
         
     ];
 
     public function tagNav($tag, $content): string
     {
         $id = $tag['id'] ?? 'nav';
-        $parse = '{php}$__cate__ = \app\facade\Category::getNav();{/php}';
-        $parse .= '{volist name="__cate__" id="'.$id.'"}';
+        $parse = '{php}$__CATE__ = \app\facade\Category::getNav();{/php}';
+        $parse .= '{notempty name="__CATE__"}';
+        $parse .= '{volist name="__CATE__" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';
+        $parse .= '{/notempty}';
         return $parse;
     }
 
@@ -77,12 +88,23 @@ class Taoler extends TagLib
         return $parse;
     }
 
+    // 友情链接 and 合作伙伴
+    public function tagLink($tag, $content): string
+    {
+        $num = empty($tag['num']) ? 10 : $tag['num'];
+        $parse ='<?php $__LINK__ = \app\facade\Link::getLink(' . $num . '); ?>';
+        $parse .= '{volist name="__LINK__" id="link"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+
+        return $parse;
+    }
+
     // 网站 标题
     public function tagTitle($tag, $content): string
     {
         return '{$sysInfo.webtitle}';
     }
-
     // 网站名
     public function tagName($tag, $content): string
     {
@@ -117,6 +139,21 @@ class Taoler extends TagLib
     public function tagIcp($tag, $content): string
     {
         return '{$sysInfo.icp}';
+    }
+
+    //section
+    public function tagSection($tag, $content): string
+    {
+        $name = !empty($tag['name']) ? $tag['name'] : '';
+        $num = !empty($tag['num']) ? $tag['num'] : 10;
+
+        $parse ='<?php $section = \app\facade\Section::getSection(\'' . $name . '\'); ?>';
+        $parse .='{notempty name="section"}';
+        $parse .='<?php $__SECTIONSUB__ = \app\facade\SectionAccess::getSectionAccess("' . $name . '",' . $num . '); ?>';
+        $parse .= $content;
+        $parse .= '{/notempty}';
+    
+        return $parse;
     }
 
 

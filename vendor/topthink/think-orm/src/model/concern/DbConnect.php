@@ -34,7 +34,7 @@ trait DbConnect
      */
     public function getQuery()
     {
-        $db = $this->initDb()->newQuery();
+        $db = $this->initDb()->newQuery($this->getOption('query'));
 
         if ($this->getOption('cache')) {
             [$key, $expire, $tag] = $this->getOption('cache');
@@ -90,7 +90,7 @@ trait DbConnect
                 // 获取数据表信息
                 $db     = $this->initDb();
                 $fields = $db->getFieldsType();
-                $schema = array_merge($fields, $this->getOption('type', $db->getType()));
+                $schema = array_merge($fields, $this->getOption('type', []));
                 // 获取主键和自增字段
                 if (!$this->getOption('pk')) {
                     $this->setOption('pk', $db->getPk());
@@ -104,7 +104,7 @@ trait DbConnect
         }
 
         if ($field) {
-            return $schema[$field] ?? 'string';
+            return $schema[$field] ?? null;
         }
 
         return $schema;

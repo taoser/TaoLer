@@ -18,7 +18,7 @@
 					</div>
 				</div>
 				<div class="layui-form-item layui-inline">
-					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="ads-query">
+					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="slide-query">
 						<i class="layui-icon layui-icon-search"></i>
 						查询
 					</button>
@@ -38,7 +38,7 @@
 	</div>
 </div>
 
-<script type="text/html" id="ads-toolbar">
+<script type="text/html" id="slide-toolbar">
 	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
 		<i class="layui-icon layui-icon-add-1"></i>
 		新增
@@ -46,20 +46,20 @@
 </script>
 
 
-<script type="text/html" id="ads-bar">
+<script type="text/html" id="slide-bar">
 	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
 	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
 
-<script type="text/html" id="ads-enable">
-	<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="ads-enable" {{ d.status == 1 ? 'checked' : '' }} />
+<script type="text/html" id="slide-enable">
+	<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="slide-enable" {{ d.status == 1 ? 'checked' : '' }} />
 </script>
 
 {__block__}
 
 <script>
 	const LIST_URL = "{:url('service.slide/list')}";
-	console.log(LIST_URL);
+
 	layui.use(['common'], function(){
 		var $ = layui.jquery
 		,layer = layui.layer
@@ -74,19 +74,19 @@
 			,page: true
 			,cols: [[
 				{field: 'id', title: 'ID', width:80, sort: true}
-				,{field: 'image', title: '图片', minWidth:120, templet: '<img src="{{d.image}}" height="60" width="80">'}
-				,{field: 'title', title: '名称', width:180}
-				,{field: 'type', title: '类型', width:120}
-				,{field: 'url', title: 'URL', minWidth: 250}
-				,{field: 'start_time', title: '开始','escape':false, width: 150, sort: true}
-				,{field: 'end_time', title: '结束','escape':false, width: 150, sort: true}
-				,{field: 'status', title: '状态', width: 95, templet: '#ads-enable'}
-				,{field: 'create_time', title: '时间','escape':false, width: 150, sort: true}
-				,{title:'操作', toolbar: '#ads-bar', width:110}
+				,{field: 'image', title: '图片', minWidth:120, templet: '<div><img src="{{d.image}}" height="60" width="80"></div>'}
+				,{field: 'title', title: '标题', width:180, templet: '<div>{{d.title}}</br>{{d.create_time}}</div>'}
+				,{field: 'type', title: '类型', width:80}
+				,{field: 'url', title: 'URL', minWidth: 200}
+				,{field: 'description', title: '描述', minWidth: 200}
+				,{field: 'start_time', title: '开始','escape':false, width: 130, sort: true}
+				,{field: 'end_time', title: '结束','escape':false, width: 130, sort: true}
+				,{field: 'status', title: '状态', width: 95, templet: '#slide-enable'}
+				,{title:'操作', toolbar: '#slide-bar', width:110}
 			]]
 			,skin: 'line'
 			,lineStyle: 'height: 100px;'
-			,toolbar: '#ads-toolbar'
+			,toolbar: '#slide-toolbar'
 			,limit: 10
 			,text: '对不起，加载出现异常！'
 		});
@@ -109,7 +109,7 @@
 			}
 		});
 
-		form.on('submit(ads-query)', function(data) {
+		form.on('submit(slide-query)', function(data) {
 			table.reload('slide-table', {
 				where: data.field
 			})
@@ -133,7 +133,7 @@
 			});
 		});
 
-		form.on('switch(ads-enable)', function(obj) {
+		form.on('switch(slide-enable)', function(obj) {
 			layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
 			var status = obj.elem.checked ? 1 : 0;
 
@@ -146,9 +146,9 @@
 				success:function(res){
 					if(res.code === 0){
 						layer.msg(res.msg,{
-									icon:res.icon,
-									time:2000
-								}
+							icon:res.icon,
+							time:2000
+						}
 								//,function(){location.reload();}
 						);
 					} else {
@@ -170,7 +170,7 @@
 				type: 2,
 				title: '新增',
 				shade: 0.1,
-				area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'500px'],
+				area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'600px'],
 				content: 'add.html'
 			});
 		}
@@ -180,7 +180,7 @@
 				type: 2,
 				title: '修改',
 				shade: 0.1,
-				area: ['500px', '500px'],
+				area: ['500px', '600px'],
 				content: 'edit.html?id=' + obj.data.id
 			});
 		}
@@ -219,7 +219,7 @@
 		}
 
 		window.refresh = function(param) {
-			table.reload('user-table');
+			table.reload('slide-table');
 		}
 
 	});

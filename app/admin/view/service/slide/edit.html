@@ -1,4 +1,4 @@
-{extend name="public/admin_form" /}
+{extend name="public/form" /}
 
 {block name="body"}
 
@@ -6,7 +6,7 @@
     <div class="mainBox">
         <div class="main-container">
             <div class="layui-form-item">
-                <label class="layui-form-label">位置</label>
+                <label class="layui-form-label">类型</label>
                 <div class="layui-input-inline">
                     <select name="type" lay-verify="required" lay-filter="type">
                         <option {if condition="$slide.type eq 1"} selected {/if} value="1">pc - 1920x650</option>
@@ -25,7 +25,7 @@
                 <div class="layui-input-inline">
                     <input type="text" name="image" lay-verify="" placeholder="上传图" autocomplete="off" class="layui-input" value="{$slide.image}">
                 </div>
-                <button style="float: left;" type="button" class="layui-btn" id="upload-ads-img">选图</button>
+                <button style="float: left;" type="button" class="layui-btn" id="upload-slide-img">选图</button>
             </div>
 
             <div class="layui-form-item">
@@ -37,21 +37,27 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">开始</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="start_time" id="start-time" lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$slide.start_time}">
+                    <input type="text" name="start_time" id="start-time" lay-verify="" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$slide.start_time}">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">结束</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="end_time" id="over-time"  lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$slide.end_time}">
+                    <input type="text" name="end_time" id="over-time"  lay-verify="" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$slide.end_time}">
                 </div>
+            </div>
+            <div class="layui-form-item">
+				<label class="layui-form-label">描述</label>
+				<div class="layui-input-block">
+					<textarea name="description" placeholder="请输入内容" class="layui-textarea">{$slide.description}</textarea>
+				</div>
             </div>
         </div>
     </div>
     <div class="bottom">
         <div class="button-container">
             <input type="text" name="id" class="layui-input layui-hide" value="{$slide.id}">
-            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="ads-save">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="slide-save">
                 <i class="layui-icon layui-icon-ok"></i>
                 提交
             </button>
@@ -63,8 +69,8 @@
     </div>
 </form>
 
-{/block}
-{block name="js"}
+{__block__}
+
 <script>
     const EDIT_URL = "{:url('service.slide/edit')}";
 	const UPLOAD_URL = "{:url('service.slide/uploadImg')}";
@@ -86,7 +92,7 @@
             ,trigger: 'click'
         });
 
-        form.on('submit(ads-save)', function(data) {
+        form.on('submit(slide-save)', function(data) {
             $.ajax({
                 url: EDIT_URL,
                 data: JSON.stringify(data.field),
@@ -115,7 +121,7 @@
 
         //上传图片
         upload.render({
-            elem: '#upload-ads-img'
+            elem: '#upload-slide-img'
             ,url: UPLOAD_URL
             ,data:{type:'image'}
             ,accept: 'images'
