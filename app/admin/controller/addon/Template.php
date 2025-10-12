@@ -204,7 +204,7 @@ class Template extends AdminBaseController
                 'template' => $name
             ]);
 
-            Db::name('cate')->where('status', 1)->update(['detpl' => 'default']);
+            Db::name('cate')->where('status', 1)->update(['tpl' => 'default']);
 
             return json(['code'  => 1,'msg'   => 'ok']);
         } catch(Exception $e) {

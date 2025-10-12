@@ -61,12 +61,12 @@
 				<ul class="fly-list">
 					{if config('taoler.config.top_show') == 1}
 						{// 列表}
-						{include file="public/index-topforum" /}
+						{include file="public/index-top" /}
 					{else /}
 						{// 滚动}
 						<div class="layui-carousel" id="ID-carousel">
 							<div carousel-item>
-								{include file="public/index-topforum" /}
+								{include file="public/index-top" /}
 							</div>
 						</div>
 					{/if}

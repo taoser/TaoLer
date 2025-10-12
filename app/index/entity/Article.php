@@ -110,7 +110,7 @@ class Article extends BaseEntity
      */
     public function getTops(int $num = 5): array
     {
-        return Cache::remember('top_article', function() use($num) {
+        return  Cache::remember('top_article', function() use($num) {
 
             $datas = [];
             // type = 1为置顶推荐文章

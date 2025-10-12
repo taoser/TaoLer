@@ -11,11 +11,9 @@ interface ImageManagerInterface
     /**
      * Create new image instance with given width & height
      *
-     * @link https://image.intervention.io/v3/basics/instantiation#creating-new-images
-     * @param int $width
-     * @param int $height
+     * @link https://image.intervention.io/v3/basics/instantiation#create-new-images
+     *
      * @throws RuntimeException
-     * @return ImageInterface
      */
     public function create(int $width, int $height): ImageInterface;
 
@@ -42,28 +40,24 @@ interface ImageManagerInterface
      * If the second parameter is not set, an attempt to decode the input is made
      * with all available decoders of the driver.
      *
-     * @link https://image.intervention.io/v3/basics/instantiation#reading-images
-     * @param mixed $input
+     * @link https://image.intervention.io/v3/basics/instantiation#read-image-sources
+     *
      * @param string|array<string|DecoderInterface>|DecoderInterface $decoders
      * @throws RuntimeException
-     * @return ImageInterface
      */
     public function read(mixed $input, string|array|DecoderInterface $decoders = []): ImageInterface;
 
     /**
      * Create new animated image by given callback
      *
-     * @link https://image.intervention.io/v3/basics/instantiation#creating-animations
-     * @param callable $init
+     * @link https://image.intervention.io/v3/basics/instantiation#create-animations
+     *
      * @throws RuntimeException
-     * @return ImageInterface
      */
     public function animate(callable $init): ImageInterface;
 
     /**
      * Return currently used driver
-     *
-     * @return DriverInterface
      */
     public function driver(): DriverInterface;
 }

@@ -122,25 +122,23 @@
 			var common = layui.common;
 			var xmSelect = layui.xmSelect;
 
-			let cols = [
-				[
-				{type: 'checkbox'}
-				,{field: 'id', width: 80, title: 'ID', sort: true}
-				,{title: '头像', width: 80, templet: '#avatarTpl'}
-				,{title: '详情', minWidth: 200, templet: '#titleTpl'}
-				,{title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
-				,{title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
-				,{title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
-				,{title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
-				,{title: '操作', width: 110, align: 'center', toolbar: '#forum-table-bar'}
-				]
-			];
-
 			table.render({
 				elem: '#forum-table',
 				url: FORUM_List,
 				page: true,
-				cols: cols,
+				cols: [
+					[
+					{type: 'checkbox'}
+					,{field: 'id', width: 80, title: 'ID', sort: true}
+					,{title: '头像', width: 80, templet: '#avatarTpl'}
+					,{title: '详情', minWidth: 200, templet: '#titleTpl'}
+					,{title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
+					,{title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
+					,{title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
+					,{title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
+					,{title: '操作', width: 110, align: 'center', toolbar: '#forum-table-bar'}
+					]
+				],
 				height: function(){
 					var otherHeight = $('.layui-card-body:first').outerHeight(); // 自定义其他区域的高度
 					return $(window).height() - otherHeight - 70; // 返回 number 类型
@@ -155,6 +153,7 @@
 				}, 'filter', 'print', 'exports'],
 				limit: 30,
 				limits: [30,100,200,500,1000],
+				loading: true // 显示默认加载条
 			});
 
 		// 分类选择

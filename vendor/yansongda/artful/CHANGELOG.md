@@ -1,3 +1,15 @@
+## v1.1.3
+
+### added
+
+- feat: EventInterface 增加更多常用方法(#28, #29)
+
+## v1.1.2
+
+### added
+
+- feat: 增加 radar 插件 headers 的获取 (#25)
+
 ## v1.1.1
 
 ### chore

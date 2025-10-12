@@ -16,12 +16,13 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
-use app\common\model\User as UserModel;
+use app\facade\Article;
+use app\facade\Comment;
+use app\facade\User as UserModel;
 use app\common\lib\Uploads;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
-use app\common\model\Article;
-use app\common\model\Comment;
+
 use Exception;
 
 class User extends AdminBaseController
@@ -42,7 +43,7 @@ class User extends AdminBaseController
 	{
 		if(Request::isAjax()){
 			$datas = Request::only(['id','name','email','sex','status']);
-			$map = array_filter($datas,[$this,'filtrArr']);
+			$map = $this->getParamFilter($datas);
 			if(!empty($map['id'])) {
 			    $map['id'] = (int) $map['id'];
 			}

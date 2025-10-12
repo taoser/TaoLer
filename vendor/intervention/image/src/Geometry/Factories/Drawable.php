@@ -8,8 +8,6 @@ class Drawable
 {
     /**
      * Creeate BezierFactory statically
-     *
-     * @return BezierFactory
      */
     public static function bezier(): BezierFactory
     {
@@ -18,8 +16,6 @@ class Drawable
 
     /**
      * Creeate CircleFactory statically
-     *
-     * @return CircleFactory
      */
     public static function circle(): CircleFactory
     {
@@ -27,10 +23,7 @@ class Drawable
     }
 
     /**
-     *
      * Create EllipseFactory statically
-     *
-     * @return EllipseFactory
      */
     public static function ellipse(): EllipseFactory
     {
@@ -39,8 +32,6 @@ class Drawable
 
     /**
      * Creeate LineFactory statically
-     *
-     * @return LineFactory
      */
     public static function line(): LineFactory
     {
@@ -49,8 +40,6 @@ class Drawable
 
     /**
      * Creeate PolygonFactory statically
-     *
-     * @return PolygonFactory
      */
     public static function polygon(): PolygonFactory
     {
@@ -59,8 +48,6 @@ class Drawable
 
     /**
      * Creeate RectangleFactory statically
-     *
-     * @return RectangleFactory
      */
     public static function rectangle(): RectangleFactory
     {

@@ -26,6 +26,7 @@ use app\common\decorator\Media;
 use app\common\observer\ObserverManager;
 use app\common\observer\LogObserver;
 use app\common\observer\MailObserver;
+use tao\ResHelper;
 
 class Article extends IndexBaseController
 {
@@ -53,7 +54,7 @@ class Article extends IndexBaseController
 		// 分类信息
 		$cateInfo = Category::getCateInfoByEname($ename);
 
-		if($cateInfo->type == 2) {
+		if(!is_null($cateInfo) && $cateInfo->type == 2) {
 			$article = Db::name('page')->where('cate_id', $cateInfo->id)->find();
 			View::assign('article', $article);
 		}
@@ -143,7 +144,7 @@ class Article extends IndexBaseController
 					->addValidation(new AuthValidationStrategy())
 					->addValidation(new \app\common\strategy\PostValidationStrategy());
 
-				// 装饰器
+				// 装饰
 				$articleServer->setDecorator(new MainArticleProcessorDecorator())
 					->addProcessor(new SensitiveWordFilter()) //违禁词过滤
 					->addProcessor(new WordsDesc()) //关键词描述
@@ -160,7 +161,7 @@ class Article extends IndexBaseController
 				// $result = $this->model::add($data);
 
 			} catch(Exception $e) {
-				return json(['code' => -1, 'msg' => $e->getMessage()]);
+				return ResHelper::error($e->getMessage());
 			}
 			
 			// 获取分类ename,appname
@@ -179,8 +180,8 @@ class Article extends IndexBaseController
 			// 清理首页静态文件
 			$this->removeIndexHtml();
 
-			return json(['code' => 0, 'msg' => '发布成功！']);
-            
+			return ResHelper::success(msg:'发布成功！');
+
         }
 
 		
@@ -322,10 +323,10 @@ class Article extends IndexBaseController
 			$this->model::remove($ids);
 				
 		} catch (\Exception $e) {
-			return json(['code'=>-1,'msg' => $e->getMessage()]);
+			return ResHelper::error($e->getMessage());
 		}
 
-		return json(['code' => 0, 'msg' => '删除成功']);
+		return ResHelper::error(msg:'删除成功');
 	}
 
 	/**
@@ -456,18 +457,13 @@ class Article extends IndexBaseController
     public function getCateTree()
     {
         $cateList = Category::field('id,pid,catename,sort')->where(['status' => 1])->select()->toArray();
-        $list =  getTree($cateList);
-        // 排序
-        $cmf_arr = array_column($list, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $list);
-        $count = count($list);
-        $tree = [];
-        if($count){
-            $tree = ['code'=>0, 'msg'=>'ok','count'=>$count];
-            $tree['data'] = $list;
-        }
 
-        return json($tree);
+		$list = getArrayTree($cateList);
+
+        $count = count($list);
+
+		return ResHelper::success(data:$list, count:$count);
+
     }
 
 	/**

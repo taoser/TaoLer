@@ -14,7 +14,7 @@ namespace app\listener;
 
 use think\facade\Log;
 use app\facade\User;
-use app\common\lib\facade\HttpHelper;
+use ip\XdbSearcher;
 
 class UserLogin
 {
@@ -25,29 +25,18 @@ class UserLogin
      */
     public function handle($user)
     {
+        $ip = request()->ip();
         $type = $user->user['type'];
         $id = $user->user['id'];
-
         $u = User::find($id);
-        $ip = request()->ip();
-        $url = 'http://ip-api.com/json/' . $ip . '?lang=zh-CN&fields=57361';
-        $city = 'earth';
+        
+        $city = XdbSearcher::getCity($ip) ?? '';
 
         // 登录日志
         Log::channel('login')->info('login:{user} {ip}',['user'=>$u->name,'ip'=>$ip]);
 
         //日志
         if($type == 'log'){
-            // try{
-            //     $ipInfo = HttpHelper::get($url)->toJson();
-            //     if($ipInfo->status == 'success') {
-            //         $city = $ipInfo->city;
-            //     }
-
-            // } catch (\Exception $e) {
-            //     // echo $e->getMessage();
-            // }
-
             $data = [
                 'city' => $city,
                 'last_login_ip'		=> $ip,

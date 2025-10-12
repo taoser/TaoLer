@@ -35,6 +35,7 @@ class ArticleService
                 $this->validation->validate($data);
             }
 
+            // 装饰器
             if($this->decorator) {
                 $data = $this->decorator->process($data);
             }

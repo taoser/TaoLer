@@ -41,8 +41,6 @@ class Colorspace implements ColorspaceInterface
     }
 
     /**
-     * @param ColorInterface $color
-     * @return ColorInterface
      * @throws ColorException
      */
     public function importColor(ColorInterface $color): ColorInterface
@@ -56,8 +54,6 @@ class Colorspace implements ColorspaceInterface
     }
 
     /**
-     * @param ColorInterface $color
-     * @return ColorInterface
      * @throws ColorException
      */
     protected function importRgbColor(ColorInterface $color): ColorInterface
@@ -107,8 +103,6 @@ class Colorspace implements ColorspaceInterface
     }
 
     /**
-     * @param ColorInterface $color
-     * @return ColorInterface
      * @throws ColorException
      */
     protected function importHsvColor(ColorInterface $color): ColorInterface

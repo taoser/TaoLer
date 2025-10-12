@@ -74,7 +74,6 @@ class Article extends BaseModel
             $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
             return (string) Route::buildUrl('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
         }
-
         return (string) Route::buildUrl('article_detail',['id' => $data['id']])->domain(true);
     }
 

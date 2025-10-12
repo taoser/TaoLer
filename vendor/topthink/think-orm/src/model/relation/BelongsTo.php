@@ -191,7 +191,7 @@ class BelongsTo extends OneToOne
         }
 
         $query->alias($alias)
-            ->via($model)
+            ->via($alias)
             ->field($fields)
             ->join([$table => $relAlias], $alias . '.' . $this->foreignKey . '=' . $relAlias . '.' . $this->localKey, $joinType);
 
@@ -227,9 +227,10 @@ class BelongsTo extends OneToOne
             $default      = $this->query->getOption('default_model');
             $defaultModel = $this->getDefaultModel($default);
 
-            $data = $this->eagerlyWhere([
-                [$localKey, 'in', array_unique($range)],
-            ], $localKey, $subRelation, $closure, $cache);
+            $range = array_unique($range);
+            $data  = $this->eagerlyWhere([
+                [$localKey, 'in', $range],
+            ], $localKey, $subRelation, $closure, $cache, count($range) > 1 ? true : false);
 
             // 动态绑定参数
             $bindAttr = $this->query->getOption('bind_attr');

@@ -1,0 +1,93 @@
+{extend name="public/form" /}
+
+{block name="link"}
+<style>
+	.reply{width: 95%; padding: 0 15px; margin: 20px;}
+	.re-left{height:30px; text-align: left;}
+	.re-right{height:30px; text-align: right;}
+	.recontent{background-color: aliceblue; padding: 5px 10px; border-radius: 2px;}
+</style>
+{/block}
+
+{block name="body"}
+<form class="layui-form" action="">
+	<div class="mainBox">
+		<div class="main-container">
+			<div class="layui-row layui-col-space15 layui-form-item">
+				<form class="layui-form" action="">
+					<div class="layui-form-item">
+						<label class="layui-form-label">标题</label>
+						<div class="layui-input-block">
+						<input type="text" autocomplete="off" class="layui-input" value="{$feed.title}" disabled>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">内容</label>
+						<div class="layui-input-block">
+							<textarea placeholder="请输入内容" class="layui-textarea" disabled>{$feed.content}</textarea>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							{volist name="feed['reply']" id="vo"}
+							<div {if ($vo.mine == true)} class="reply re-left" {else/} class="reply re-right" {/if}>
+								<div class="author"><i class="layui-icon layui-icon-friends"></i> {$vo.username} {$vo.reply_time}</div>
+								<div><span class="recontent">{$vo.recontent}</span></div>
+							</div>
+							{/volist}
+						</div>
+					</div>
+					<div class="layui-form-item layui-form-text">
+						<label class="layui-form-label">回复</label>
+						<div class="layui-input-block">
+						<textarea name="recontent" placeholder="请输入内容" class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<input type="text" class="layui-hide" name="id" value="{$feed.id}">
+						<div class="layui-input-block">
+						<button type="submit" class="layui-btn" lay-submit lay-filter="recontent">立即提交</button>
+						<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+	
+</form>
+
+{__block__}
+
+<script>
+	layui.use(function () {
+		var $ = layui.jquery, form = layui.form, upload = layui.upload;
+
+		// 提交事件
+		form.on('submit(recontent)', function(data){
+			var field = data.field; // 获取表单字段值
+			// 此处可执行 Ajax 等操作
+			$.post("{:url('content.feedback/reply')}", field, function(res){
+				console.log(res)
+				if(res.code === 0) {
+					layer.msg(res.msg, {
+						icon: 1,
+						time: 1000
+						},function(){
+							location.reload();
+						});
+				} else {
+					layer.msg(res.msg, {
+						icon: 2,
+						time: 1000
+						});
+				}
+			})
+			return false; // 阻止默认 form 跳转
+		});
+
+	});
+</script>
+
+{/block}

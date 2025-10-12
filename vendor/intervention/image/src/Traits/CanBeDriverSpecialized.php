@@ -13,8 +13,6 @@ trait CanBeDriverSpecialized
 {
     /**
      * The driver with which the instance may be specialized
-     *
-     * @var DriverInterface
      */
     protected DriverInterface $driver;
 
@@ -66,18 +64,14 @@ trait CanBeDriverSpecialized
     }
 
     /**
-     * Determine if the given object belongs to the driver's namespace
-     *
-     * @param object $object
-     * @return bool
+     * Determine if the current object belongs to the given driver's namespace
      */
-    protected function belongsToDriver(object $object): bool
+    protected function belongsToDriver(object $driver): bool
     {
-        $driverId = function (object $object): string|bool {
-            $id = substr($object::class, 27);
-            return strstr($id, "\\", true);
+        $namespace = function (object $object): string {
+            return (new ReflectionClass($object))->getNamespaceName();
         };
 
-        return $driverId($this) === $driverId($object);
+        return str_starts_with($namespace($this), $namespace($driver));
     }
 }

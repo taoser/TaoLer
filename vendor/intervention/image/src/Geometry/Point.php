@@ -4,21 +4,36 @@ declare(strict_types=1);
 
 namespace Intervention\Image\Geometry;
 
+use ArrayIterator;
 use Intervention\Image\Interfaces\PointInterface;
+use IteratorAggregate;
+use Traversable;
 
-class Point implements PointInterface
+/**
+ * @implements IteratorAggregate<int>
+ */
+class Point implements PointInterface, IteratorAggregate
 {
     /**
      * Create new point instance
      *
-     * @param int $x
-     * @param int $y
      * @return void
      */
     public function __construct(
         protected int $x = 0,
         protected int $y = 0
     ) {
+        //
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see IteratorAggregate::getIterator()
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator([$this->x, $this->y]);
     }
 
     /**

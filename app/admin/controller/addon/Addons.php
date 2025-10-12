@@ -360,6 +360,7 @@ class Addons extends AdminBaseController
 
         if(Request::isAjax()){
             $params = Request::param('params/a',[],'trim');
+            halt($params);
 
             if ($params) {
                 foreach ($config as $k => &$v) {
@@ -372,19 +373,21 @@ class Addons extends AdminBaseController
                             }
                             $params[$k] = $arr;
                             $value = $params[$k];
-                            $v['content'] = $value;
+                            $v['content'] = [];
                             $v['value'] = $value;
                         } elseif ($v['type'] == 'select'){
                             $value = [(int)$params[$k]];
                             $v['value'] = $value;
+                            $v['content'] = $value;
                         } else {
                             $value =  $params[$k];
                         }
+
                         $v['value'] = $value;
                     }
                 }
                 unset($v);
-                set_addons_config($name,$config);
+                set_addons_config($name, $config);
 
             }
             return json(['code'=>0,'msg'=>'配置成功！']);

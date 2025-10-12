@@ -59,6 +59,7 @@
 - [火山引擎](https://console.volcengine.com/sms/)
 - [移动云MAS（黑名单模式）](https://mas.10086.cn)
 - [电信天翼云](https://www.ctyun.cn/document/10020426/10021544)
+- [微趣云](https://sms.weiqucloud.com/)
 
 ## 环境需求
 
@@ -1035,6 +1036,26 @@ $easySms->send(18888888888, [
     'data' => [
         "code" => 123456,
     ],
+]);
+```
+
+### [微趣云](https://sms.weiqucloud.com/)
+
+短信使用 `content`
+
+```php
+  'weiqucloud' => [
+        'userId'  => '',    // 服务商会提供 
+        'account'   => '',    //服务商会提供
+        'password'  => '',    // 服务商会提供,
+    ],
+```
+
+发送示例：
+
+```php
+$easySms->send(18888888888, [
+    'content'  =>"【已备案签名】您的验证码是 xx。",
 ]);
 ```
 
