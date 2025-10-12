@@ -1,0 +1,24 @@
+{
+    "name": "jaeger/g-http",
+    "description": "Simple Http client base on GuzzleHttp",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jaeger",
+            "email": "JaegerCode@gmail.com"
+        }
+    ],
+    "require": {
+        "PHP":">=8.1",
+        "guzzlehttp/guzzle": "^6.0 || ^7.0",
+        "symfony/cache": "^6.4 || ^7.0"
+    },
+    "autoload":{
+        "psr-4":{
+            "Jaeger\\":"src"
+        }
+    },
+    "require-dev": {
+        "predis/predis": "^2.2"
+    }
+}

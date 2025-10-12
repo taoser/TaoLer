@@ -28,18 +28,17 @@
         "taoser/think-setarr": "^0.0.5",
         "phpmailer/phpmailer": "^6.8",
         "firebase/php-jwt": "^6.10",
-        "workerman/workerman": "^4.1",
-        "workerman/gateway-worker": "^3.1",
+        "workerman/workerman": "^5.1",
+        "workerman/gateway-worker": "^4.0",
         "workerman/gatewayclient": "^3.1",
-        "workerman/phpsocket.io": "^2.1",
         "intervention/image": "^3.9",
         "overtrue/easy-sms": "^3.0",
         "endroid/qr-code": "^6.0",
         "yansongda/pay": "~3.7.0",
         "guzzlehttp/guzzle": "^7.8",
         "illuminate/container": "^11.29",
-        "jaeger/querylist": "^3.2",
-        "sqids/sqids": "^0.4.1"
+        "jaeger/querylist": "^4.4",
+        "sqids/sqids": "^0.5"
     },
     "require-dev": {
         "symfony/var-dumper": ">=4.2",
