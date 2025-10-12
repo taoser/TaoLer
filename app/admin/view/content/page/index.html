@@ -1,0 +1,246 @@
+{extend name="public/base" /}
+
+{block name="title"}单页文章{/block}
+
+{block name="body"}
+
+	<div class="layui-card">
+		<div class="layui-card-body">
+			<form class="layui-form" action="">
+				<div class="layui-row layui-col-space15 ">
+					<div class="layui-col-md2">
+						<label class="layui-form-label">选择类目</label>
+						<div class="layui-input-block">
+							<div id="CateId" class="xm-select-demo"></div>
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<label class="layui-form-label">标题</label>
+						<div class="layui-input-block">
+							<input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="page-query">
+							<i class="layui-icon layui-icon-search"></i>
+							查询
+						</button>
+						<button type="reset" class="pear-btn pear-btn-md">
+							<i class="layui-icon layui-icon-refresh"></i>
+							重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="layui-card">
+		<div class="layui-card-body">
+		<table id="page-table" lay-filter="page-table" ></table>
+		</div>
+	</div>
+
+	<script type="text/html" id="page-toolbar">
+		<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+		<i class="layui-icon layui-icon-add-1"></i>
+		新增
+		</button>
+	</script>
+	<script type="text/html" id="titleTpl">
+        <ul>
+          <li><a href="{{- d.aurl }}" target="_blank"><strong>{{- d.title }}</strong></a></li>
+          <li>类别：{{ d.cate.catename }}</li>
+          <li>{{ d.user.name }} - {{ d.create_time }}</li>
+        </ul>
+    </script>
+
+	<script type="text/html" id="buttonReply">
+		<input type="checkbox" name="is_comment" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isComment" {{ d.is_comment == 0 ? 'checked' : '' }}>
+	</script>
+	<script type="text/html" id="buttonCheck">
+		<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.status == 0 ? '待审' : '禁止' }}" {{ d.status == 1 ? 'checked' : '' }}>
+	</script>
+
+	<script type="text/html" id="page-table-bar">
+		<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+		<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+	</script>
+
+	{__block__}
+	
+	<script>
+		const FORUM_List = "{:url('content.page/list')}";
+
+		layui.use(['toast','common','xmSelect'], function(){
+			var $ = layui.jquery;
+			var form = layui.form;
+			var table = layui.table;
+			var toast = layui.toast;
+			var common = layui.common;
+			var xmSelect = layui.xmSelect;
+
+			table.render({
+				elem: '#page-table',
+				url: FORUM_List,
+				page: true,
+				cols: [[
+					{type: 'checkbox'}
+					,{field: 'id', width: 60, title: 'ID', sort: true}
+					,{title: '栏目', width: 150, align: 'center',templet: '<div>{{ d.cate.catename }}</div>'}
+					,{field: 'title', title: '标题', width: 200}
+					,{field: 'description', title: '描述', minWidth: 300}
+					,{field: 'keywords', title: '关键词', width: 200, align: 'center'}
+					,{field: 'create_time', title: '时间', width: 130, align: 'center'}
+					,{title: '操作', width: 110, align: 'center', toolbar: '#page-table-bar'}
+				]],
+				height: function(){
+					var otherHeight = $('.layui-card-body:first').outerHeight(); // 自定义其他区域的高度
+					return $(window).height() - otherHeight - 70; // 返回 number 类型
+				},
+				skin: 'line',
+				lineStyle: 'height: 120px;',
+				toolbar: '#page-toolbar',
+				defaultToolbar: [{
+					title: '刷新',
+					layEvent: 'refresh',
+					icon: 'layui-icon-refresh',
+				}, 'filter', 'print', 'exports'],
+				limit: 30,
+				limits: [30,100,200,500,1000],
+			});
+
+		// 分类选择
+		$.get("{:url('content.cate/getSingleCateTree')}", function(res){
+			// 渲染下拉树
+			xmSelect.render({
+				el: '#CateId',
+				name: 'cate_id',
+				height: '250px',
+				layVerify: '',
+				layVerType: 'tips',
+				data: res.data,
+				initValue:  [],
+				model: {label: {type: 'text'}},
+				prop: {
+					name: 'catename',
+					value: 'id'
+				},
+				// radio: true,
+				clickClose: true,
+				tree: {
+					show: false,
+					indent: 15,
+					strict: false,
+					expandedKeys: true
+				},
+				on: function(data){ // 单选on模式
+					if(data.isAdd){
+						return data.change.slice(0, 1)
+					}
+				},
+				tips: '请选择'
+			});
+		});
+
+		table.on('tool(page-table)', function(obj) {
+			if (obj.event === 'remove') {
+				window.remove(obj);
+			} else if (obj.event === 'edit') {
+				window.edit(obj);
+			}
+		});
+
+		table.on('toolbar(page-table)', function(obj) {
+			if (obj.event === 'add') {
+				window.add();
+			} else if (obj.event === 'refresh') {
+				window.refresh();
+			} else if (obj.event === 'checkSelect') {
+				window.checkSelect(obj);
+			}
+		});
+
+		form.on('submit(page-query)', function(data) {
+			table.reloadData('page-table', {
+				where: data.field,
+				page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+					curr: 1, //设定初始在第 5 页
+					groups: 1, //只显示 1 个连续页码
+					first: false, //不显示首页
+					last: false //不显示尾页
+				},
+				scrollPos: true,
+			})
+			return false;
+		});
+
+
+		// 添加
+		window.add = function() {
+			layer.open({
+				type: 2,
+				title: '新增',
+				shade: 0.1,
+				area: [common.isModile()?'100%':'100%', common.isModile()?'100%':'100%'],
+				content: "{:url('content.page/add')}"
+			});
+		}
+
+		window.edit = function(obj) {
+			$.post("{:url('content.page/edit')}", {"id": obj.data['id']}, function(res){
+				if(res.code === -1) {
+					layer.msg(res.msg,{icon:res.icon,time:2000})
+					return false
+				}
+				
+				layer.open({
+					type: 2,
+					title: '修改',
+					shade: 0.1,
+					area: ['100%', '100%'],
+					content: 'edit.html?id=' + obj.data.id
+				})
+			})
+			
+		}
+
+		window.remove = function(obj) {
+			layer.confirm('确定要删除?', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				layer.close(index);
+				let loading = layer.load();
+				$.ajax({
+					url: "{:url('content.page/delete')}?id=" + obj.data['id'],
+					dataType: 'json',
+					type: 'delete',
+					success: function(result) {
+						layer.close(loading);
+						if (result.code === 0) {
+							layer.msg(result.msg, {
+								icon: 1,
+								time: 1000
+							}, function() {
+								obj.del();
+							});
+						} else {
+							layer.msg(result.msg, {
+								icon: 2,
+								time: 1000
+							});
+						}
+					}
+				})
+			});
+		}
+
+		// 刷新
+		window.refresh = function(param) {
+			table.reload('page-table');
+		}
+
+	});
+	</script>
+{/block}

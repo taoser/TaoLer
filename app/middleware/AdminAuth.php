@@ -34,7 +34,7 @@ class AdminAuth
     //    var_dump(Request::url(),Request::pathinfo(),$request->baseUrl(),$request->controller(), $request->action());
 
 		//访问路径
-        $path = str_contains($request->pathinfo(), '.html') ? strtolower(stristr($request->pathinfo(), ".html",true)) : strtolower($request->pathinfo());
+        $path = str_contains($request->pathinfo(), '.html') ? stristr($request->pathinfo(), ".html",true) : $request->pathinfo();
 
 //    var_dump($path);
 		
@@ -93,6 +93,7 @@ class AdminAuth
                 'Admin/info',
                 'system.admin/repass',
                 'system.admin/logout',
+                'system.menu/getMenuJsonData',
                 'Index/cunsult',
                 'Index/replys',
                 'Index/reply',
@@ -106,6 +107,7 @@ class AdminAuth
                 }
             }
         }
+        
 		return $next($request);	
     }
 }

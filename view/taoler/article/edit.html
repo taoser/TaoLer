@@ -16,7 +16,7 @@
 				<div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
 					<div class="layui-tab-item layui-show">
 					
-						<input type="hidden" name="id" value="{$article.id}">
+						<input type="hidden" name="id" value="{article:id /}">
 						<div class="layui-row layui-col-space15 layui-form-item">
 							<div class="layui-col-md3">
 							<label class="layui-form-label">{:lang('special column')}</label>
@@ -24,8 +24,8 @@
 								{if ($user.auth == 1)}
 								<div id="CateId" class="xm-select-demo"></div>
 								{else /}
-								<input type="text" name="cate_id"  class="layui-input layui-hide" disabled value="{$article.cate_id}">
-								<input type="text" class="layui-input" disabled value="{$article.cate.catename}">
+								<input type="text" name="cate_id"  class="layui-input layui-hide" disabled value="{article:cate_id /}">
+								<input type="text" class="layui-input" disabled value="{article:cate_name}">
 								{/if}
 							</div>
 							</div>
@@ -45,14 +45,14 @@
 						<div class="layui-form-item layui-hide">
 							<label class="layui-form-label">{:lang('描述')}</label>
 							<div class="layui-input-block">
-							<textarea name="description" class="layui-textarea" placeholder="SEO描述">{$article.description}</textarea>
+							<textarea name="description" class="layui-textarea" placeholder="SEO描述">{article:description /}</textarea>
 							</div>
 						</div>
 						{//关键词}
 						<div class="layui-form-item layui-hide">
 							<label class="layui-form-label">{:lang('添加关键词')}</label>
 							<div class="layui-input-block">
-								<input type="text" class="layui-input" name="keywords" value="{$article.keywords}" placeholder="多个英文逗号隔开" title="添加关键词" />
+								<input type="text" class="layui-input" name="keywords" value="{article：keywords /}" placeholder="多个英文逗号隔开" title="添加关键词" />
 							</div>
 						</div>
 						{//tag}
@@ -91,13 +91,11 @@
 <script>
 	layui.use(['fly','xmSelect'], function(){
     var $ = layui.jquery
-    ,fly = layui.fly
-    ,colorpicker = layui.colorpicker
     ,form = layui.form
     ,upload = layui.upload;
 
-    var cateId = "{$article.cate.id}";
-    var artId = "{$article.id}";
+    var cateId = "{article:cate_id /}";
+    var artId = "{article:id /}";
 
     // 分类选择
       $.get("{:url('get_cate_tree')}",function(res){
@@ -115,7 +113,7 @@
                     name: 'catename',
                     value: 'id'
                 },
-                radio: true,
+                // radio: true,
                 clickClose: true,
                 tree: {
                     show: true,
@@ -128,12 +126,15 @@
                     return data.change.slice(0, 1)
                   }
                 },
+				on: function(data){ // 单选on模式
+					if(data.isAdd){
+						return data.change.slice(0, 1)
+					}
+				},
                 tips: '请选择'
             });
       });
     
-    // tag标签
-
 	  //1.渲染标签
 	  var addTags = xmSelect.render({
 		el: '#tag',
@@ -187,25 +188,25 @@
 		return false;
 	});
 
-      //指定允许上传的文件类型
-      upload.render({
-        elem: '#zip-button'
-        ,url: "{:url('article/uploads')}" //改成您自己的上传接口
-        ,data: {type:'zip'}
-        ,accept: 'file',
-        before: function(obj){
-          layer.load();
-        },
+    //指定允许上传的文件类型
+    upload.render({
+		elem: '#zip-button'
+		,url: "{:url('article/uploads')}" //改成您自己的上传接口
+		,data: {type:'zip'}
+		,accept: 'file',
+		before: function(obj){
+			layer.load();
+		},
         done: function(res){
-          layer.closeAll('loading');
-          if(res.status === 0){
-            $('input[name="upzip"]').val(res.url);
-            notify.success(res.msg);
-          } else {
-            notify.error(res.msg);
-          }
+			layer.closeAll('loading');
+			if(res.status === 0){
+				$('input[name="upzip"]').val(res.url);
+				notify.success(res.msg);
+			} else {
+				notify.error(res.msg);
+			}
         }
-    });
+    })
 
   });
 </script>

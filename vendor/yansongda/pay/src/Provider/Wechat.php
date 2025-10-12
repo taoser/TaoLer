@@ -10,7 +10,6 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yansongda\Artful\Artful;
-use Yansongda\Artful\Event;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
@@ -19,9 +18,9 @@ use Yansongda\Artful\Plugin\ParserPlugin;
 use Yansongda\Artful\Plugin\StartPlugin;
 use Yansongda\Artful\Rocket;
 use Yansongda\Pay\Contract\ProviderInterface;
+use Yansongda\Pay\Event;
 use Yansongda\Pay\Event\CallbackReceived;
 use Yansongda\Pay\Event\MethodCalled;
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Plugin\Wechat\AddRadarPlugin;
 use Yansongda\Pay\Plugin\Wechat\ResponsePlugin;
@@ -85,11 +84,15 @@ class Wechat implements ProviderInterface
     }
 
     /**
+     * @throws ContainerException
      * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
      */
     public function cancel(array $order): Collection|Rocket
     {
-        throw new InvalidParamsException(Exception::PARAMS_METHOD_NOT_SUPPORTED, '参数异常: 微信不支持 cancel API');
+        Event::dispatch(new MethodCalled('wechat', __METHOD__, $order, null));
+
+        return $this->__call('cancel', [$order]);
     }
 
     /**

@@ -85,8 +85,6 @@ class TextModifier extends GenericTextModifier implements SpecializedInterface
     /**
      * Decode text color in GD compatible format
      *
-     * @param ImageInterface $image
-     * @return int
      * @throws RuntimeException
      * @throws ColorException
      */
@@ -101,8 +99,6 @@ class TextModifier extends GenericTextModifier implements SpecializedInterface
     /**
      * Decode color for stroke (outline) effect in GD compatible format
      *
-     * @param ImageInterface $image
-     * @return int
      * @throws RuntimeException
      * @throws ColorException
      */
@@ -128,8 +124,6 @@ class TextModifier extends GenericTextModifier implements SpecializedInterface
 
     /**
      * Return GD's internal font size (if no ttf file is set)
-     *
-     * @return int
      */
     private function gdFont(): int
     {

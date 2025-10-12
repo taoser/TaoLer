@@ -37,17 +37,16 @@ class Route
         $controller = $request->route('controller', 'index');
         $action = $request->route('action', 'index') ?: 'index';
 
-        $module_path  = $app->addons->getAddonsPath() . $addon . DIRECTORY_SEPARATOR;
-        
-        //注册路由配置
-        $addonsRouteConfig = [];
-        if (is_file($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php')) {
-            $addonsRouteConfig = include($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php');
-            $app->config->load($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php', pathinfo($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php', PATHINFO_FILENAME));
-        }
-        if (isset($addonsRouteConfig['url_route_must']) && $addonsRouteConfig['url_route_must']) {
-            throw new HttpException(400, lang("addon {$addon}：已开启强制路由"));
-        }
+        // $module_path  = $app->addons->getAddonsPath() . $addon . DIRECTORY_SEPARATOR;
+        // //注册路由配置
+        // $addonsRouteConfig = [];
+        // if (is_file($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php')) {
+        //     $addonsRouteConfig = include($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php');
+        //     $app->config->load($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php', pathinfo($module_path. 'config' . DIRECTORY_SEPARATOR . 'route.php', PATHINFO_FILENAME));
+        // }
+        // if (isset($addonsRouteConfig['url_route_must']) && $addonsRouteConfig['url_route_must']) {
+        //     throw new HttpException(400, lang("addon {$addon}：已开启强制路由"));
+        // }
 
         Event::trigger('addons_begin', $request);
 
@@ -71,6 +70,7 @@ class Route
         // 监听addon_module_init
         Event::trigger('addon_module_init', $request);
         $class = get_addons_class($addon, 'controller', $controller);
+
         if (!$class) {
             throw new HttpException(404, lang('addon controller %s not found', [Str::studly($controller)]));
         }

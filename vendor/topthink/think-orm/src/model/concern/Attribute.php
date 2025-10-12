@@ -45,8 +45,7 @@ trait Attribute
         // 分析数据
         $data    = $this->parseData($data);
         $schema  = $this->getFields();
-        $mapping = $this->getOption('mapping');
-        $fields  = array_keys(array_merge($schema, $mapping));
+        $fields  = array_keys($schema);
 
         // 模型赋值
         foreach ($data as $name => $value) {
@@ -63,24 +62,9 @@ trait Attribute
                 continue;
             }
 
-            if (!empty($mapping)) {
-                $key = array_search($name, $mapping);
-                if (!$fromSave && $key) {
-                    $trueName = $key;
-                    $type     = $schema[$name] ?? 'string';
-                } elseif ($fromSave && isset($mapping[$name])) {
-                    $trueName = $mapping[$name];
-                    $type     = $schema[$trueName] ?? 'string';
-                } else {
-                    $trueName = $this->getRealFieldName($name);
-                    $type     = $schema[$trueName] ?? 'string';
-                }
-            } else {
-                $trueName = $this->getRealFieldName($name);
-                $type     = $schema[$trueName] ?? 'string';
-            }
-
+            $trueName = $fromSave ? $this->getMappingName($name) : $name;
             if (in_array($trueName, $fields)) {
+                $type = $schema[$trueName] ?? 'string';
                 // 读取数据后进行类型转换
                 if (!$fromSave || !$this->hasSetAttr($trueName)) {
                     $value = $this->readTransform($value, $type);
@@ -113,7 +97,7 @@ trait Attribute
     /**
      * 获取主键名.
      *
-     * @return string|array
+     * @return null|string|array
      */
     public function getPk()
     {
@@ -193,18 +177,14 @@ trait Attribute
     /**
      * 数据读取 类型转换.
      *
-     * @param mixed        $value 值
-     * @param string|arrau $type  要转换的类型
+     * @param mixed             $value 值
+     * @param string|array|null $type  要转换的类型
      *
      * @return mixed
      */
-    protected function readTransform($value, string | array $type)
+    protected function readTransform($value, string | array | null $type)
     {
-        if (is_null($value)) {
-            return;
-        }
-
-        if ($value instanceof Raw || $value instanceof Express) {
+        if (is_null($type) || is_null($value) || $value instanceof Raw || $value instanceof Express) {
             return $value;
         }
 
@@ -219,9 +199,10 @@ trait Attribute
             if (class_exists($type) && !($value instanceof $type)) {
                 if (is_subclass_of($type, Typeable::class)) {
                     $value = $type::from($value, $model);
-                    if ($value instanceof DateTime && $param) {
+                    if ($param && $value instanceof DateTime) {
+                        // 设置时间输出格式
                         $value->setFormat($param);
-                    }                    
+                    }
                 } elseif (is_subclass_of($type, FieldTypeTransform::class)) {
                     $value = $type::get($value, $model);
                 } elseif (is_subclass_of($type, BackedEnum::class)) {
@@ -258,18 +239,14 @@ trait Attribute
     /**
      * 数据写入 类型转换.
      *
-     * @param mixed        $value 值
-     * @param string|array $type  要转换的类型
+     * @param mixed             $value 值
+     * @param string|array|null $type  要转换的类型
      *
      * @return mixed
      */
-    protected function writeTransform($value, string | array $type)
+    protected function writeTransform($value, string | array | null $type)
     {
-        if (null === $value) {
-            return;
-        }
-
-        if ($value instanceof Raw || $value instanceof Express) {
+        if (is_null($type) || is_null($value) || $value instanceof Raw || $value instanceof Express) {
             return $value;
         }
 
@@ -386,6 +363,17 @@ trait Attribute
     }
 
     /**
+     * 判断模型是否存在数据字段.
+     *
+     * @param string $name 字段名
+     * @return bool
+     */
+    public function hasData(string $name): bool
+    {
+        return $this->hasGetAttr($name) || array_key_exists($this->getMappingName($name), self::$weakMap[$this]['data']);
+    }
+
+    /**
      * 设置数据对象的实际值
      *
      * @param string $name  名称
@@ -419,13 +407,15 @@ trait Attribute
      * 获取原始数据.
      *
      * @param string|null $name 字段名
+     * @param bool $transform 是否自动类型转换
      * @return mixed
      */
-    public function getOrigin(?string $name = null)
+    public function getOrigin(?string $name = null, bool $transfrom = false)
     {
         if ($name) {
-            $name = $this->getRealFieldName($name);
-            return $this->getWeakData('origin', $name);
+            $name   = $this->getRealFieldName($name);
+            $result = $this->getWeakData('origin', $name);
+            return $transfrom ? $this->writeTransform($result, $this->getFields($name)) : $result;
         }
         return $this->getOption('origin');
     }
@@ -505,20 +495,33 @@ trait Attribute
     }
 
     /**
+     * 字段是否定义获取器
+     *
+     * @param string $name  名称
+     *
+     * @return bool
+     */
+    protected function hasGetAttr(string $name): bool
+    {
+        $attr   = Str::studly($name);
+        $method = 'get' . $attr . 'Attr';
+        return method_exists($this, $method);
+    }
+
+    /**
      * 使用修改器或类型自动转换处理数据（写入数据前自动调用）
      *
      * @param string $name  名称
      * @param mixed  $value 值
-     * @param array  $data 所有数据
      *
      * @return mixed
      */
-    private function setWithAttr(string $name, $value, array $data = [])
+    private function setWithAttr(string $name, $value)
     {
         $attr   = Str::studly($name);
         $method = 'set' . $attr . 'Attr';
         if (method_exists($this, $method)) {
-            $value = $this->$method($value, $data);
+            $value = $this->$method($value, $this->getData());
         } else {
             // 类型转换
             $value = $this->writeTransform($value, $this->getFields($name));
@@ -560,7 +563,7 @@ trait Attribute
             return $value;
         }
 
-        if (!array_key_exists($name, $this->getData())) {
+        if (!array_key_exists($name, $this->getData()) && !array_key_exists($name, $this->getFields())) {
             // 动态获取关联数据
             $value = $this->getRelationData($name) ?: null;
         } else {
@@ -586,10 +589,7 @@ trait Attribute
     protected function getMappingName(string $name): string
     {
         $mapping = $this->getOption('mapping');
-        if (!empty($mapping)) {
-            $name = array_search($name, $mapping) ?: $name;
-        }
-        return $this->getRealFieldName($name);
+        return array_search($name, $mapping) ?: $this->getRealFieldName($name);
     }
 
     /**
@@ -612,9 +612,14 @@ trait Attribute
         } elseif (method_exists($this, $method)) {
             // 获取器
             $value = $this->$method($value, $data);
-        } elseif ($value instanceof Typeable || is_subclass_of($value, EnumTransform::class)) {
+        } elseif ($value instanceof Typeable || is_subclass_of($value, EnumTransform::class, false)) {
             // 类型自动转换
-            $value = $value->value();
+            if ($value instanceof Json) {
+                // JSON数据转换
+                $value = $this->readTransformJson($name, $value);
+            } else {
+                $value = $value->value();
+            }
         } elseif (is_int($value) && $this->isTimeAttr($name) && false != $this->getDateFormat()) {
             // 兼容数字类型时间字段的自动转换输出
             $value = (new \DateTime())
@@ -624,9 +629,33 @@ trait Attribute
         return $value;
     }
 
+    /**
+     * 处理JSON数据对象的值
+     *
+     * @param string $name 名称
+     * @param Json   $value 值
+     *
+     * @return array|object
+     */
+    protected function readTransformJson(string $name, Json $value)
+    {
+        // JSON数据转换
+        $value = $value->value();
+        if ($value) {
+            foreach ($value as $key => &$val) {
+                $type = $this->getFields($name . '->' . $key);
+                if ($type) {
+                    // 定义了JSON属性类型自动转换
+                    $val  = $this->readTransform($val, $type);
+                }
+            }            
+        }
+        return $value;
+    }
+
     protected function isTimeAttr(string $name): bool
     {
-        return in_array($name, [$this->getOption('createTime'), $this->getOption('updateTime'), $this->getOption('deleteTime')]) || in_array($name, $this->getOption('timestamp_field', []));
+        return in_array($name, [$this->getOption('createTime'), $this->getOption('updateTime'), $this->getOption('deleteTime')]) || in_array($name, $this->getOption('timestampField', []));
     }
 
     /**
@@ -652,6 +681,21 @@ trait Attribute
     public function setAttr(string $name, $value)
     {
         return $this->set($name, $value);
+    }
+
+    /**
+     * 批量设置数据对象值 支持数据类型转换
+     *
+     * @param array $data 数据
+     *
+     * @return void
+     */
+    public function setAttrs(array $data): void
+    {
+        // 进行数据处理
+        foreach ($data as $key => $value) {
+            $this->set($key, $value);
+        }
     }
 
     /**

@@ -33,15 +33,7 @@
 					<textarea id="L_content" name="content" required lay-verify="required" placeholder="详细内容"  class="layui-textarea taonyeditor">{$article.content}</textarea>
 					</div>
 				</div>
-				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label">{:lang('enclosure')}</label>
-						<div class="layui-input-inline" style="width: 190px;">
-							<input type="text" class="layui-input" name="upzip" value="{$article.upzip ?? ''}" placeholder="zip,jpg格式" title="上传附件"/>
-						</div>
-						<button type="button" class="pear-btn" id="zip-button"><i class="layui-icon"></i>上传文件</button>
-					</div>
-				</div>
+
 				<div class="layui-form-item">
 					<label class="layui-form-label">{:lang('描述')}</label>
 					<div class="layui-input-block">
@@ -84,14 +76,12 @@
 	{__block__}
 
 	<script>
-		layui.use(['colorpicker','form','upload','xmSelect'], function(){
+		layui.use(['xmSelect'], function(){
 			var $ = layui.jquery
-			,colorpicker = layui.colorpicker
 			,form = layui.form
 			,upload = layui.upload;
 			var artId = "{$article.id}";
 			var xmSelect = layui.xmSelect;
-
 
 			//1.渲染标签
 			var addTags = xmSelect.render({
@@ -124,7 +114,7 @@
 			});
 
 			// 分类选择
-			$.get("{:url('content.forum/getCateTree')}",function(res){
+			$.get("{:url('content.cate/getArticleCateTree')}",function(res){
 				var INITCID = "{$article.cate_id}";
 				// 渲染下拉树
 				xmSelect.render({
@@ -140,13 +130,12 @@
 						name: 'catename',
 						value: 'id'
 					},
-					// radio: true,
 					clickClose: true,
 					tree: {
-						show: true,
+						show: false,
 						indent: 15,
 						strict: false,
-						expandedKeys: false
+						expandedKeys: true
 					},
 					on: function(data){ // 单选on模式
 						if(data.isAdd){
@@ -211,7 +200,7 @@
 	{:hook('ueditor')}
 	{:hook('taonyeditor')}
 	{// 百度标题词条}
-	{:hook('seoBaiduTitle')}
+
 	{// 百度关键词}
-	{:hook('seoBaiduKeywords')}
+
 {/block}

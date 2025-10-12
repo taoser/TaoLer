@@ -16,21 +16,39 @@ class Taoler extends TagLib
 {
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
+        // 导航
         'nav'       => ['attr' => '', 'close' => 1],
-        'snav'      => ['attr' => '', 'close' => 1],
-        'gnav'      => ['attr' => '', 'close' => 1],
-        'if'        => ['condition', 'expression' => true, 'close' => 1],
-        'list'      => ['attr' => 'type', 'close' => 1, 'expression' => true],
+        'snav'      => ['attr' => ''],
+        'gnav'      => ['attr' => ''],
+        
+        // 幻灯片和链接
+        'slide'     => ['attr' => ''],
+        'link'      => ['attr' => ''],
 
+        // system
+        'title'     => ['attr' => '', 'close' => 0],
+        'name'      => ['attr' => '', 'close' => 0],
+        'logo'      => ['attr' => '', 'close' => 0],
+        'mlogo'     => ['attr' => '', 'close' => 0],
+        'keywords'  => ['attr' => '', 'close' => 0],
+        'copyright' => ['attr' => '', 'close' => 0],
+        'icp'       => ['attr' => '', 'close' => 0],
+        'description'   => ['attr' => '', 'close' => 0],
+
+        //
+        'section'   => ['attr' => 'name,num', 'close' => 1],
+        
     ];
 
     public function tagNav($tag, $content): string
     {
         $id = $tag['id'] ?? 'nav';
-        $parse = '{php}$__cate__ = \app\facade\Category::getNav();{/php}';
-        $parse .= '{volist name="__cate__" id="'.$id.'"}';
+        $parse = '{php}$__CATE__ = \app\facade\Category::getNav();{/php}';
+        $parse .= '{notempty name="__CATE__"}';
+        $parse .= '{volist name="__CATE__" id="'.$id.'"}';
         $parse .= $content;
         $parse .= '{/volist}';
+        $parse .= '{/notempty}';
         return $parse;
     }
 
@@ -56,17 +74,86 @@ class Taoler extends TagLib
         return $parse;
     }
 
-    public function tagIf($tag, $content): string
+    // 幻灯片
+    public function tagSlide($tag, $content): string
     {
+        $type = empty($tag['type']) ? 1 : $tag['type'];
+        $num = empty($tag['num']) ? 5 : $tag['num'];
 
-        $condition = !empty($tag['expression']) ? $tag['expression'] : $tag['condition'];
-        $condition = $this->parseCondition($condition);
-        $parseStr  = '<?php if(' . $condition . '): ?>' . $content . '<?php endif; ?>';
+        $parse ='<?php $__SLIDE__ = \app\facade\AdSlide::getSlide(' . $type .',' . $num . '); ?>';
+        $parse .= '{volist name="__SLIDE__" id="slide"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
 
-        return $parseStr;
+        return $parse;
+    }
 
-//        return '{if'.$tag.'}} '.$content.' {/if}';
+    // 友情链接 and 合作伙伴
+    public function tagLink($tag, $content): string
+    {
+        $num = empty($tag['num']) ? 10 : $tag['num'];
+        $parse ='<?php $__LINK__ = \app\facade\Link::getLink(' . $num . '); ?>';
+        $parse .= '{volist name="__LINK__" id="link"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
 
+        return $parse;
+    }
+
+    // 网站 标题
+    public function tagTitle($tag, $content): string
+    {
+        return '{$sysInfo.webtitle}';
+    }
+    // 网站名
+    public function tagName($tag, $content): string
+    {
+        return '{$sysInfo.webname}';
+    }
+    // logo
+    public function tagLogo($tag, $content): string
+    {
+        return '{$sysInfo.logo}';
+    }
+    // 移动端logo
+    public function tagMlogo($tag, $content): string
+    {
+        return '{$sysInfo.m_logo}';
+    }
+    // 关键词
+    public function tagKeywords($tag, $content): string
+    {
+        return '{$sysInfo.keywords}';
+    }
+    // 描述
+    public function tagDescription($tag, $content): string
+    {
+        return '{$sysInfo.descript}';
+    }
+    // 版权
+    public function tagCopyright($tag, $content): string
+    {
+        return '{$sysInfo.copyright}';
+    }
+    // icp备案
+    public function tagIcp($tag, $content): string
+    {
+        return '{$sysInfo.icp}';
+    }
+
+    //section
+    public function tagSection($tag, $content): string
+    {
+        $name = !empty($tag['name']) ? $tag['name'] : '';
+        $num = !empty($tag['num']) ? $tag['num'] : 10;
+
+        $parse ='<?php $section = \app\facade\Section::getSection(\'' . $name . '\'); ?>';
+        $parse .='{notempty name="section"}';
+        $parse .='<?php $__SECTIONSUB__ = \app\facade\SectionAccess::getSectionAccess("' . $name . '",' . $num . '); ?>';
+        $parse .= $content;
+        $parse .= '{/notempty}';
+    
+        return $parse;
     }
 
 

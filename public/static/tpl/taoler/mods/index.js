@@ -93,7 +93,7 @@ layui.define(['layer', 'form', 'util'], function(exports){
     //新消息通知 -移除 -2024/9/6
     
 
-	//手机绑定弹窗
+	  //手机绑定弹窗
     ,setPhoneNotice: function(){
       layer.open({
         type: 1
@@ -142,10 +142,6 @@ layui.define(['layer', 'form', 'util'], function(exports){
       var othis = $(this);
       othis.attr('src', othis.attr('src')+'?'+ new Date().getTime());
   });
-
-  //签到 移除
-
-  //活跃榜 移除
 
   //相册
   if($(window).width() > 750){

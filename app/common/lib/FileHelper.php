@@ -81,48 +81,72 @@ class FileHelper
      *
      * @param string $source 源文件目录
      * @param string $destination 目标目录
-     * @param array $reserve 只能复制保留数组内的目录
+     * @param string $reserve 只能复制限定路径的目录 "view/taoler"
      * @param boolean $is_delete_source 是否删除源文件
      * @return boolean
      */
-    public static function copyFolder(string $source, string $destination, array $reserve = [], bool $is_delete_source = false): bool {
+    public static function copyFolder(string $source, string $destination, string $reserve = '', bool $is_delete_source = false): bool {
+        
+        if (!is_dir($destination)) {
+            mkdir($destination, 0777, true);
+        }
+
         // 创建递归迭代器
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::SELF_FIRST
         );
 
-        try{
-
-            foreach ($iterator as $file) {
-
-                $relativeFile = str_replace('\\','/', $file->getPathname());
-                $relativePath = str_replace('\\','/', substr($relativeFile, strlen($source)));
-                $destinationPath = str_replace('\\','/', $destination . $relativePath);
+        $has_reserve = empty($reserve) ? false : true;
         
-                if ($file->isDir()) {
-                    // 如果是目录
-                    if(!in_array($destinationPath, $reserve)) {
-                        continue;
-                    }
-                    
-                    //创建对应的目标目录
-                    if (!is_dir($destinationPath)) {
-                        mkdir($destinationPath, 0777, true);
-                    }
-    
-                } else {
-                    // 如果是文件，复制文件到目标位置
-                    copy($relativeFile, $destinationPath);
-    
-                    if($is_delete_source){
-                        unlink($relativeFile);
-                    }
-                }
+        $checkString = '';
+
+        foreach ($iterator as $file) {
+            // 原路径
+            $relativeFile = str_replace('\\','/', $file->getPathname());
+            // 路径
+            $relativePath = str_replace('\\','/', substr($relativeFile, strlen($source)));
+            // 文件路径
+            $destinationPath = str_replace('\\','/', $destination . $relativePath);
+
+            // 是否有限定目录及 路径中包含限定目录？
+            if($has_reserve && !str_contains($relativeFile, $reserve)) {
+                continue;
             }
 
-        } catch(Exception $e) {
-            throw new Exception("复制文件夹-".$e->getMessage());
+            if ($file->isDir()) {
+                //创建对应的目标目录
+                if (!is_dir($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+
+            } else {
+
+                // 获取文件目录
+                $directory = dirname($destinationPath);
+                
+                if (!is_writable($directory)) {
+                    $checkString .= $destinationPath . '&nbsp;[<span style="color:red;">' . '无写入权限' . '</span>]<br>';
+                    continue;
+                }
+
+                // 如果是文件且没有权限问题，复制文件到目标位置
+                if(empty($checkString)) {
+                    try{
+                        copy($relativeFile, $destinationPath);
+                    } catch(Exception $e) {
+                        throw new Exception("复制文件夹-".$e->getMessage());
+                    }
+                }
+                
+                if($is_delete_source){
+                    unlink($relativeFile);
+                }
+            }
+        }
+        
+        if(!empty($checkString)) {
+            throw new Exception($checkString);
         }
 
         return true;
@@ -210,6 +234,7 @@ class FileHelper
     public static function downloadFile(string $url, string $to_path): bool
     {
         try{
+            
             $options = [
                 'timeout' => 30,
                 'connect_timeout' => 5,
@@ -226,21 +251,100 @@ class FileHelper
             $body = $response->getBody();
             $status = $response->getStatusCode();
             if ($status == 404) {
-                throw new Exception('安装包不存在');
+                throw new Exception('404请求错误');
             }
 
-            $zip_content = $body->getContents();
-            if (empty($zip_content)) {
-                throw new Exception('安装包不存在');
+            $file_content = $body->getContents();
+            if (empty($file_content)) {
+                throw new Exception('文件不存在');
             }
 
-            file_put_contents($to_path, $zip_content);
+            // 提取文件所在的目录
+            $directory = dirname($to_path);
+
+            // 检查目录是否存在，如果不存在则创建
+            if (!is_dir($directory)) {
+                // 递归创建目录
+                mkdir($directory, 0777, true);
+            }
+
+            file_put_contents($to_path, $file_content);
 
         } catch(Exception $e) {
             throw new Exception("下载文件-".$e->getMessage());
         }
 
         return true;
+    }
+
+    /**
+     * 正则获取html中所有图片链接["https://www.x.com/a.jpg","https://www.y.com/b.png"]
+     *
+     * @param string $text
+     * @return array
+     */
+    public static function getImagesLink(string $text): array
+    {
+        // 定义正则表达式来匹配图片链接，支持更多图片格式
+        $pattern = '/<img[^>]+src=["\']([^"\']+\.(jpg|jpeg|png|gif|svg))["\']/i';
+        $imageLinks = [];
+        if (preg_match_all($pattern, $text, $matches)) {
+            $imageLinks = $matches[1];
+        }
+
+        return $imageLinks;
+    }
+
+    // 得到所有html中所有图片链接
+    public static function getHTMLimagesLink($html): array
+    {
+        // 创建 DOMDocument 对象
+        $dom = new \DOMDocument();
+        // 抑制错误输出，避免因 HTML 不规范而产生警告
+        @$dom->loadHTML($html);
+
+        // 获取所有的 img 标签
+        $images = $dom->getElementsByTagName('img');
+        $imageLinks = [];
+
+        // 遍历 img 标签，提取 src 属性值
+        foreach ($images as $image) {
+            $src = $image->getAttribute('src');
+            if ($src) {
+                $imageLinks[] = $src;
+            }
+        }
+
+        return $imageLinks;
+    }
+
+    // 文件压缩
+    public static function compressHtmlJs($html) {
+        // 移除 HTML 注释
+        $html = preg_replace('/<!--(?!\[if|\<\!\[endif\])(.*?)-->/is', '', $html);
+
+        // 移除 JS 多行注释
+        $html = preg_replace('/\/\*(.*?)\*\//is', '', $html);
+
+        // 移除 JS 单行注释 排除网址外的单行注释
+        $html = preg_replace_callback(
+            '/(https?:\/\/[^\s<>]*|\/\/.*?(\n|$))/',
+            function ($matches) {
+                if (str_starts_with($matches[0], '//')) {
+                    return isset($matches[2]) ? $matches[2] : '';
+                }
+                return $matches[0];
+            }, $html);
+
+        // 移除 JS 单行注释 正则以//开头，内容中不包含>，以换行符结尾的单行注释给移除
+        // $html = preg_replace_callback('/\/\/([^>\r\n]*)(\n|\r\n)/', function ($matches) {
+        //     return $matches[2];
+        // }, $html);
+
+        // 压缩 HTML 空白字符
+        $html = preg_replace('/\s+/', ' ', $html);
+        $html = preg_replace('/>\s+</', '><', $html);
+
     }
 
 }

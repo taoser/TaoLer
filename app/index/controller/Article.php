@@ -2,11 +2,11 @@
 
 namespace app\index\controller;
 
+use Exception;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
-use think\facade\Session;
 use think\facade\Config;
 use app\facade\Category;
 use app\index\model\PushJscode;
@@ -14,9 +14,19 @@ use app\common\lib\Msgres;
 use app\common\lib\IdEncode;
 use think\Response\Json;
 use app\index\validate\Article as ArticleValidate;
-use Exception;
 use think\exception\HttpException;
-use think\facade\Event;
+use app\common\service\ArticleService;
+use app\common\strategy\ArticleValidation;
+use app\common\strategy\DataValidationStrategy;
+use app\common\strategy\AuthValidationStrategy;
+use app\common\decorator\MainArticleProcessorDecorator;
+use app\common\decorator\SensitiveWordFilter;
+use app\common\decorator\WordsDesc;
+use app\common\decorator\Media;
+use app\common\observer\ObserverManager;
+use app\common\observer\LogObserver;
+use app\common\observer\MailObserver;
+use tao\ResHelper;
 
 class Article extends IndexBaseController
 {
@@ -44,6 +54,11 @@ class Article extends IndexBaseController
 		// 分类信息
 		$cateInfo = Category::getCateInfoByEname($ename);
 
+		if(!is_null($cateInfo) && $cateInfo->type == 2) {
+			$article = Db::name('page')->where('cate_id', $cateInfo->id)->find();
+			View::assign('article', $article);
+		}
+
 		//当前页url
 		$url = (string) url('cate_page', ['ename' => $ename, 'type' => $type, 'page' => $page]);
 		
@@ -61,7 +76,7 @@ class Article extends IndexBaseController
 
 		View::assign($assignArr);
 
-		$cateView = is_null($cateInfo) ? 'article/cate' : 'article/' . $cateInfo->detpl . '/cate';
+		$cateView = is_null($cateInfo) ? 'article/cate' : $path = $cateInfo->type == 2 ? 'article/' . $cateInfo->tpl . '/single' : 'article/' . $cateInfo->tpl . '/cate';
 		return View::fetch($cateView);
     }
 
@@ -101,7 +116,7 @@ class Article extends IndexBaseController
 			'lrDate_time' 	=> $lrDate_time,
 		]);
 
-		$html = View::fetch('article/'.$detail['cate']['detpl'].'/detail');
+		$html = View::fetch('article/'.$detail['cate']['tpl'].'/detail');
 		
 		$this->buildHtml($html);
 		
@@ -115,138 +130,47 @@ class Article extends IndexBaseController
     public function add()
     {
         if (Request::isAjax()) {
-			// 检验发帖是否开放
-			if(config('taoler.config.is_post') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止发帖！']);
 
-			$media = [
-				'images' => [],
-				'videos' => [],
-				'audios' => []
-			];
-
-			$flags = [
-				'is_top'    => '0',
-				'is_good'  => '0',
-				'is_wait'    => '0'
-			];
-			
-			// 数据
-            $data = Request::only(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha']);
-            
-			$tagId = input('tagid');
-
-			// 验证
-			if(Config::get('taoler.config.post_captcha') == 1) {			
-				if(!captcha_check($data['captcha'])){
-					return json(['code'=>-1,'msg'=> '验证码失败']);
-				};
-			}
-
-			$validate = new ArticleValidate();
-            $result = $validate->scene('Artadd')->check($data);
-            if (!$result) {
-                return Msgres::error($validate->getError());
-            }
-
-			// 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-            $data['description'] = strip_tags($this->filterEmoji($data['description']));
-			// 处理图片内容
-			$data['content'] = $this->downUrlPicsReaplace($data['content']);
-
-			// 多媒体数据
-			$medisArr = $this->setMediaData($data['content']);
-			$data = array_merge($data, $medisArr);
-
-			// ---------------------
-			// vip每天可免费发帖数
-			$user = Db::name('user')->field('id,vip,point,auth')->find($this->uid);
-
-			$postRule = Db::name('user_viprule')
-				->field('postnum,postpoint')
-				->where('vip', $user['vip'])
-				->find();
-
-			// 检测可发帖子剩余量
-			$postLog = Db::name('user_article_log')
-				->field('id,user_postnum')
-				->where('user_id', $this->uid)
-				->whereDay('create_time')
-				->find();
-
-			if(is_null($postLog)) {
-				//没有记录创建
-				Db::name('user_article_log')
-				->save([
-					'user_id' => $this->uid,
-					'create_time' => time()
-				]);
-
-				$postLog = Db::name('user_article_log')
-				->field('id,user_postnum')
-				->where('user_id', $this->uid)
-				->whereDay('create_time')
-				->find();
-			}
-
-			// 超级管理员排外
-			if($user['auth'] === '0') {
-				// 可用免费额
-				$cannum =  $postRule['postnum'] - $postLog['user_postnum']; 
-				if($cannum <= 0) {
-					//额度已用完需要扣积分
-					$canpoint = 1 * $postRule['postpoint'];
-					$point = $user['point'] - $canpoint;
-
-					if($point < 0) { // 1.积分不足
-						return json(['code' => -1, 'msg' => "免额已使用,本次需{$canpoint}积分,请充值！"]);
-					}
-
-					// 2.扣除积分
-					Db::name('user')
-					->where('id', $this->uid)
-					->update(['point' => $point]);
-				}
-			}
-
-			// 超级管理员无需审核
-			$data['status'] = $user['auth'] ? 1 : Config::get('taoler.config.posts_check');
-			$msg = $data['status'] ? '发布成功' : '发布成功，请等待审核';
+			$data = Request::only(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha','tagid']);
+			$data['user_id'] = $this->uid;
 
 			try{
-				$data['user_id'] = $this->uid;
-				$result = $this->model::add($data);
-					
-			} catch(Exception $e) {
-				return json(['code' => -1, 'msg' => $e->getMessage()]);
-			}
-            
-			// 记录每天发帖量
-			Db::name('user_article_log')
-				->where('id', $postLog['id'])
-				->inc('user_postnum')
-				->update();
 
-			// 获取到的最新ID
-			$aid = $result['id'];
-
-			//写入taglist表
-			if(!empty($tagId)) {
-				$tagArr = [];
-				$tagIdArr = explode(',', $tagId);
-				foreach($tagIdArr as $tid) {
-					$tagArr[] = [ 'article_id' => $aid, 'tag_id' => $tid, 'create_time'=>time()];
-				}
-				Db::name('taglist')->insertAll($tagArr);
-			}	
+				$articleServer = new ArticleService();
 			
-			// 清除文章tag缓存
-			Cache::tag('tagArtDetail')->clear();
+				// 校验策略
+				$articleServer->setValidation(new ArticleValidation())
+					->addValidation(new DataValidationStrategy())
+					->addValidation(new AuthValidationStrategy())
+					->addValidation(new \app\common\strategy\PostValidationStrategy());
+
+				// 装饰
+				$articleServer->setDecorator(new MainArticleProcessorDecorator())
+					->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+					->addProcessor(new WordsDesc()) //关键词描述
+					->addProcessor(new Media()) // 媒体处理
+					->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+				// 观察者策略
+				$articleServer->setObserverManager(new ObserverManager())
+					->addObserver(new LogObserver())
+					->addObserver(new MailObserver());
+
+				$articleServer->add($data);
+				
+				// $result = $this->model::add($data);
+
+			} catch(Exception $e) {
+				return ResHelper::error($e->getMessage());
+			}
 			
 			// 获取分类ename,appname
-			$cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
-			$link = $this->getRouteUrl((int) $aid, $cateName['ename']);
-			$url = $data['status'] ? $link : (string)url('index/');
+			// $cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
+			// $link = $this->getRouteUrl((int) $result['id'], $cateName['ename']);
+			// $url = $data['status'] ? $link : (string)url('index/');
+
+			// 清除文章tag缓存
+			Cache::tag('tagArtDetail')->clear();
 
 			// 发提醒邮件
 			// hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
@@ -256,25 +180,25 @@ class Article extends IndexBaseController
 			// 清理首页静态文件
 			$this->removeIndexHtml();
 
-			return Msgres::success($msg, $url);
-            
+			return ResHelper::success(msg:'发布成功！');
+
         }
 
 		
 		// 子模块自定义自适应add.html模板
-		$cate = Db::name('cate')->field('id,detpl')->where('ename', input('cate'))->find();
+		$cate = Db::name('cate')->field('id,tpl')->where('ename', input('cate'))->find();
 		// 子模块下有add.html模板
 		if(!empty($cate)) {
 			$cid = $cate['id'];
 		} else {
-			$cate['detpl'] = '';
+			$cate['tpl'] = '';
 			$cid = '';
 		}
 
 		// 模板路径
 		$appName = $this->app->http->getName();
 		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
-		$view = 'article' . DIRECTORY_SEPARATOR . $cate['detpl'] . DIRECTORY_SEPARATOR . 'add.html';
+		$view = 'article' . DIRECTORY_SEPARATOR . $cate['tpl'] . DIRECTORY_SEPARATOR . 'add.html';
 		$vfile = $viewRoot . $view;
 
 		//子模块下存在add模板则调用，否则调用article/add.html
@@ -305,6 +229,8 @@ class Article extends IndexBaseController
 			$data = Request::only(['id/d','cate_id/d','title','content','keywords','description','captcha']);
 			
 			$tagId = input('tagid');	
+
+			// $data['tagid'];
 			
 			// 验证码
 			if(Config::get('taoler.config.post_captcha') == 1)
@@ -336,8 +262,8 @@ class Article extends IndexBaseController
 			}
 			
 			//处理标签
-			if(!empty($tagId)) {
-				$tagIdArr = explode(',',$tagId);
+			if(!empty($data['tagid'])) {
+				$tagIdArr = explode(',', $data['tagid']);
 				$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
 				foreach($artTags as $aid => $tid) {
 					if(!in_array($tid, $tagIdArr)){
@@ -369,10 +295,10 @@ class Article extends IndexBaseController
 			return Msgres::success('edit_success',$link);
 		}
 			
-        View::assign(['article'=>$article]);
+        View::assign(['article' => $article]);
 		
 		// 编辑多模板支持
-		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('detpl');
+		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('tpl');
 		$appName = $this->app->http->getName();
 		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
 		$view = 'article' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'edit.html';
@@ -397,10 +323,10 @@ class Article extends IndexBaseController
 			$this->model::remove($ids);
 				
 		} catch (\Exception $e) {
-			return json(['code'=>-1,'msg' => $e->getMessage()]);
+			return ResHelper::error($e->getMessage());
 		}
 
-		return json(['code' => 0, 'msg' => '删除成功']);
+		return ResHelper::error(msg:'删除成功');
 	}
 
 	/**
@@ -531,18 +457,13 @@ class Article extends IndexBaseController
     public function getCateTree()
     {
         $cateList = Category::field('id,pid,catename,sort')->where(['status' => 1])->select()->toArray();
-        $list =  getTree($cateList);
-        // 排序
-        $cmf_arr = array_column($list, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $list);
-        $count = count($list);
-        $tree = [];
-        if($count){
-            $tree = ['code'=>0, 'msg'=>'ok','count'=>$count];
-            $tree['data'] = $list;
-        }
 
-        return json($tree);
+		$list = getArrayTree($cateList);
+
+        $count = count($list);
+
+		return ResHelper::success(data:$list, count:$count);
+
     }
 
 	/**
@@ -566,6 +487,7 @@ class Article extends IndexBaseController
 		if(!empty($images)) {
 			$data['media']['images'] = $images;
 			$data['has_image'] = count($images);
+			$data['thum_img'] = $images[0];
 		}
 		
 		if(!empty($video)) {

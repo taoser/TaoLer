@@ -1,10 +1,10 @@
 {extend name="public/base" /}
 
-{block name="title"}管理员{/block}
+{block name="title"}权限菜单{/block}
 {block name="body"}
     <div class="layui-card">
         <div class="layui-card-body">
-            <table id="power-table" lay-filter="power-table"></table>
+            <table id="rule-table" lay-filter="rule-table"></table>
         </div>
     </div>
 
@@ -43,17 +43,13 @@
     </script>
 
     <script type="text/html" id="power-enable">
-        <input type="checkbox" name="enable" value="{{d.id}}" {{#if (d.id == 1 || d.id == 31){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="rule-enable"  {{ d.enable== 1 ? 'checked' : '' }} />
-    </script>
-
-    <script type="text/html" id="icon">
-        <i class="layui-icon {{d.icon}}"></i>
+        <input type="checkbox" name="enable" value="{{d.id}}" {{# if (d.id == 1 || d.id == 31){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="rule-enable"  {{ d.enable == 1 ? 'checked' : '' }} />
     </script>
 
     {__block__}
 
     <script>
-        const RULES = "{:url('system.AuthRule/list')}";
+        const RULES_URL = "{:url('system.AuthRule/list')}";
         const RULES_DELETE = "{:url('system.AuthRule/delete')}";
         const RULES_ENABLE = "{:url('system.AuthRule/check')}";
 
@@ -65,35 +61,32 @@
 
             let MODULE_PATH = "operate/";
 
-            window.render = function(){
-                treetable.render({
-                    treeColIndex: 1,
-                    treeSpid: 0,
-                    treeIdName: 'powerId',
-                    treePidName: 'parentId',
-                    skin:'line',
-                    treeDefaultClose: true,
-                    toolbar:'#power-toolbar',
-                    elem: '#power-table',
-                    url: RULES,
-                    page: false,
-                    cols: [[
-                            {type: 'checkbox'},
-                            {field: 'id', width: 100,  title: '权限ID'},
-                            {field: 'powerName', minWidth: 200, title: '权限名称'},
-                            {field: 'icon', title: '图标',templet:'#icon'},
-                            {field: 'powerType', title: '权限类型',templet:'#power-type'},
-                            {field: 'powerUrl', title: '权限地址', minWidth: 150},
-                            {field: 'enable', title: '是否可用',templet:'#power-enable'},
-                            {field: 'sort', title: '排序'},
-                            {title: '操作',templet: '#power-bar', width: 150, align: 'center'}
-                        ]]
-                });
-            }
+ 
+            treetable.render({
+                treeColIndex: 1,
+                treeSpid: 0,
+                treeIdName: 'powerId',
+                treePidName: 'parentId',
+                skin:'line',
+                treeDefaultClose: true,
+                toolbar:'#power-toolbar',
+                elem: '#rule-table',
+                url: RULES_URL,
+                page: false,
+                cols: [[
+                    {type: 'checkbox'},
+                    {field: 'id', width: 100,  title: '权限ID'},
+                    {field: 'powerName', minWidth: 200, title: '权限名称'},
+                    {field: 'icon', title: '图标',templet:'<div><i class="layui-icon {{d.icon}}"></i></div>'},
+                    {field: 'powerType', title: '权限类型',templet:'#power-type'},
+                    {field: 'powerUrl', title: '权限地址', minWidth: 150},
+                    {field: 'enable', title: '是否可用',templet:'#power-enable'},
+                    {field: 'sort', title: '排序'},
+                    {title: '操作',templet: '#power-bar', width: 150, align: 'center'}
+                ]]
+            });
 
-            render();
-
-            table.on('tool(power-table)',function(obj){
+            table.on('tool(rule-table)',function(obj){
                 if (obj.event === 'remove') {
                     window.remove(obj);
                 } else if (obj.event === 'edit') {
@@ -102,7 +95,7 @@
             })
 
 
-            table.on('toolbar(power-table)', function(obj){
+            table.on('toolbar(rule-table)', function(obj){
                 if(obj.event === 'add'){
                     window.add();
                 } else if(obj.event === 'refresh'){
@@ -110,9 +103,9 @@
                 } else if(obj.event === 'batchRemove'){
                     window.batchRemove(obj);
                 }  else if(obj.event === 'expandAll'){
-                        treetable.expandAll("#power-table");
+                        treetable.expandAll("#rule-table");
                 } else if(obj.event === 'foldAll'){
-                        treetable.foldAll("#power-table");
+                        treetable.foldAll("#rule-table");
                 }
             });
 

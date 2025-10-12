@@ -37,7 +37,7 @@ class User extends BaseEntity
     public function login($data)
     {	
         //查询使用邮箱或者用户名登陆
-        $user = $this::whereOr('phone',$data['name'])->whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
+        $user = $this->whereOr('phone',$data['name'])->whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
 
         if($user->isEmpty()){
 			throw new Exception(Lang::get('username or password error'));

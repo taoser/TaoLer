@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         beStrictAboutTestsThatDoNotTestAnything="false"
-         bootstrap="tests/bootstrap.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnError="false"
-         stopOnFailure="false"
-         verbose="true"
->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd" backupGlobals="false"
+         beStrictAboutTestsThatDoNotTestAnything="false" bootstrap="tests/bootstrap.php" colors="true"
+         processIsolation="false" stopOnError="false" stopOnFailure="false" cacheDirectory=".phpunit.cache"
+         backupStaticProperties="false">
     <testsuites>
         <testsuite name="ThinkPHP Test Suite">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <source>
+        <include>
             <directory suffix=".php">./src/think</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </source>
 </phpunit>

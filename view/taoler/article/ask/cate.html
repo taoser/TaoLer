@@ -1,13 +1,13 @@
 {extend name="public/base" /}
 
-{block name="title"}{$cateinfo.catename} - {$sysInfo.webname}{/block}
-{block name="keywords"}{$cateinfo.catename},{$sysInfo.webname}{/block}
+{block name="title"}{$cateinfo.catename} - {taoler:name /}{/block}
+{block name="keywords"}{$cateinfo.catename},{taoler:name /}{/block}
 {block name="description"}{$cateinfo.desc}{/block}
-{block name="ogtitle"}<meta property="og:title" content="{$cateinfo.catename} - {$sysInfo.webname}">{/block}
+{block name="ogtitle"}<meta property="og:title" content="{$cateinfo.catename} - {taoler:name /}">{/block}
 {block name="ogdescription"}<meta property="og:description" content="{$cateinfo.desc}" />{/block}
 {block name="meta"}
 	<!-- SEO优化 -->
-	<meta name="Copyright" content="{$sysInfo.webname}">
+	<meta name="copyright" content="{taoler:copyright /}">
 	<meta property="og:type" content="website"/>
 	<meta property="og:image" content=""/>
 {/block}

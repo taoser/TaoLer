@@ -20,10 +20,11 @@ class Gnav extends TagLib
         'id'        => ['attr' => '', 'close' => 0],
         'pid'       => ['attr' => '', 'close' => 0],
         'icon'      => ['attr' => '', 'close' => 0],
+        'image'     => ['attr' => '', 'close' => 0],
         'name'      => ['attr' => '', 'close' => 0],
         'ename'     => ['attr' => '', 'close' => 0],
         'title'     => ['attr' => '', 'close' => 0],
-        'detpl'     => ['attr' => '', 'close' => 0],
+        'tpl'       => ['attr' => '', 'close' => 0],
         'sort'      => ['attr' => '', 'close' => 0],
         'desc'      => ['attr' => '', 'close' => 0],
         'is_hot'    => ['attr' => '', 'close' => 0],
@@ -48,6 +49,11 @@ class Gnav extends TagLib
         return '{$gnav.icon}';
     }
 
+    public function tagImage(): string
+    {
+        return '{$nav.image}';
+    }
+
     public function tagName($tag): string
     {
         return '{$gnav.catename}';
@@ -63,9 +69,9 @@ class Gnav extends TagLib
         return '{:cookie(\'think_lang\') == \'en-us\' ? $gnav.ename : $gnav.catename}';
     }
 
-    public function tagDetpl(): string
+    public function tagTpl(): string
     {
-        return '{$gnav.detpl}';
+        return '{$gnav.tpl}';
     }
 
     public function tagSort(): string

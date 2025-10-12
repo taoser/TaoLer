@@ -14,21 +14,13 @@ use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
+use app\facade\Category;
 use taoler\com\Files;
-use app\index\model\Category;
-
-
+use think\Response\Json;
+use Exception;
 
 class Cate extends AdminBaseController
 {
-    protected $model;
-
-    public function initialize()
-    {
-        parent::initialize();
-        $this->model = new Category();
-    }
-
     /**
      * 浏览
      * @return string
@@ -41,7 +33,7 @@ class Cate extends AdminBaseController
 	//帖子分类
 	public function list()
 	{
-        return $this->model->getList();
+        return Category::getList();
 	}
 
     //添加和编辑帖子分类 废弃
@@ -50,18 +42,20 @@ class Cate extends AdminBaseController
         $addOrEdit = !is_null(input('id'));//true是编辑false新增
         $msg = $addOrEdit ? lang('edit') : lang('add');
         if(Request::isAjax()) {
-            $data = Request::param();
+            $data = Request::param(['id/d','pid/d','catename','ename','type','icon','image','detpl','desc','sort', 'url']);
+
             if(isset($data['id']) && $data['pid'] == $data['id']) return json(['code'=>-1,'msg'=> $msg.'不能作为自己的子类']);
-            $list = Db::name('cate')->cache('catename')->save($data);
-            if($list){
-                return json(['code'=>0,'msg'=> $msg.'成功']);
+            try{
+                Category::cache('catename')->save($data);
+            } catch(Exception $e) {
+                return json(['code' => 1, 'msg' => $msg.'失败'.$e->getMessage()]);
             }
-            return json(['code'=>-1,'msg'=> $msg.'失败']);
+            return json(['code'=>0,'msg'=> $msg.'成功']);
         }
         //详情模板
         $template = $this->getIndexTpl();
-        // 如果是新增，pid=0,detpl默认第一个子模块，如果是编辑，查询出cate
-        $cate = $addOrEdit ? $this->model->getCateInfoById((int) input('id')) : '';
+        // 如果是新增，pid=0, tpl默认第一个子模块，如果是编辑，查询出cate
+        $cate = $addOrEdit ? Category::getCateInfoById((int) input('id')) : '';
         $view = $addOrEdit ? 'edit' : 'add';
 
         View::assign([
@@ -71,27 +65,20 @@ class Cate extends AdminBaseController
         return View::fetch($view);
     }
 	
-	//删除帖子分类
+	//删除栏目及栏目内容
 	public function delete()
 	{
-        $result = $this->model->del(input('id'));
-        if($result == 1){
-            return json(['code'=>0,'msg'=>'删除分类成功']);
-        }
-        return json(['code'=>-1,'msg' => $result]);
+        $id = $this->app->request->param('id/d');
+
+        return Category::delete($id);
 	}
 
 	// 动态审核
 	public function check()
 	{
         $param = Request::only(['id','name','value']);
-        $data = ['id'=>$param['id'],$param['name']=>$param['value']];
-        //获取状态
-        $res = Db::name('cate')->save($data);
-		if($res){
-			return json(['code'=>0,'msg'=>'设置成功','icon'=>6]);
-		}
-        return json(['code'=>-1,'msg'=>'设置失败']);
+        $data = ['id' => $param['id'], $param['name'] => $param['value']];
+        return Category::check($data);
 	}
 
     /**
@@ -105,35 +92,111 @@ class Cate extends AdminBaseController
     }
 
     /**
-     * 分类树
-     * @return \think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 有顶级菜单的分类数
+     *
+     * @return Json
      */
-    public function getCateTree()
+    public function getCateTree(): Json
     {
-        $cateList = Category::field('id,pid,catename,sort')
-        ->where('status', 1)
-        ->select()
-        ->toArray();
+        $list = Category::field('id,pid,catename,sort')->select()->toArray();
 
-        $data =  getTree($cateList);
+        $data =  getTree($list);
         // 排序
         $cmf_arr = array_column($data, 'sort');
         array_multisort($cmf_arr, SORT_ASC, $data);
-        
+
         $count = count($data);
 
-        $tree = [];
-        if($count){
+        return json([
+            'code' => 0,
+            'msg' => 'ok',
+            'count' => $count,
+            'data'  => [[
+                'id' => 0,
+                'pid'   => 0,
+                'catename' => '顶级',
+                'children'  => $data
+            ]]
+        ]);
+    }
 
-            $tree = ['code'=>0, 'msg'=>'ok', 'count' => $count];
+    /**
+     * 文章可选分类菜单
+     *
+     * @return Json
+     */
+    public function getArticleCateTree(): Json
+    {
+        $list = Category::field('id,pid,catename,sort')->select()->toArray();
 
-            $tree['data'][] = ['id'=>0, 'catename'=>'顶级', 'pid' => 0, 'children'=>$data];
-        }
+        $data =  getTree($list);
+        // 排序
+        $cmf_arr = array_column($data, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $data);
 
-        return json($tree);
+        $count = count($data);
+
+        return json([
+            'code' => 0,
+            'msg' => 'ok',
+            'count' => $count,
+            'data'  => $data
+        ]);
+    }
+
+    /**
+     * 单页分类菜单
+     *
+     * @return Json
+     */
+    public function getSingleCateTree(): Json
+    {
+        $list = Category::field('id,pid,catename,sort')
+        ->where('type', 2)
+        ->select();
+
+        $data =  getTree($list);
+        // 排序
+        $cmf_arr = array_column($data, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $data);
+
+        $count = count($data);
+
+        return json([
+            'code' => 0,
+            'msg' => 'ok',
+            'count' => $count,
+            'data'  => $data
+        ]);
+    }
+
+    /**
+     * 单页分类菜单
+     *
+     * @return Json
+     */
+    public function getSingleArticleCateTree(): Json
+    {
+        $pageCate = Db::name('page')->field('cate_id')->group('cate_id')->select()->column('cate_id');
+   
+        $list = Category::field('id,pid,catename,sort')
+        ->where('type', 2)
+        ->whereNotIn('id', $pageCate)
+        ->select();
+
+        $data =  getTree($list);
+        // 排序
+        $cmf_arr = array_column($data, 'sort');
+        array_multisort($cmf_arr, SORT_ASC, $data);
+
+        $count = count($data);
+
+        return json([
+            'code' => 0,
+            'msg' => 'ok',
+            'count' => $count,
+            'data'  => $data
+        ]);
     }
 
 

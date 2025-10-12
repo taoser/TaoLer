@@ -19,7 +19,7 @@
         "php": ">=8.0.0",
         "topthink/framework": "^8.0.1",
         "topthink/think-orm": "^4.0",
-        "topthink/think-filesystem": "^2.0",
+        "topthink/think-filesystem": "^3.0",
         "topthink/think-multi-app": "^1.0",
         "topthink/think-view": "^2.0",
         "topthink/think-captcha": "^3.0",

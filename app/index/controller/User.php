@@ -1,6 +1,7 @@
 <?php
 namespace app\index\controller;
 
+use Exception;
 use app\common\controller\BaseController;
 use app\common\validate\User as userValidate;
 use think\facade\Db;
@@ -12,10 +13,8 @@ use think\facade\View;
 use app\facade\Article;
 use app\index\model\Collection;
 use app\facade\User as userModel;
-use Exception;
 use taoler\com\Message;
 use Intervention\Image\ImageManager;
-use think\facade\Config;
 use think\response\Json;
 
 class User extends IndexBaseController

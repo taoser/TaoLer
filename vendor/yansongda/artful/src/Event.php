@@ -12,6 +12,7 @@ use Yansongda\Artful\Exception\ServiceNotFoundException;
 
 /**
  * @method static Event\Event dispatch(object $event)
+ * @method static void        addListener(string $eventName, callable $listener, int $priority = 0)
  */
 class Event
 {
@@ -28,12 +29,14 @@ class Event
 
         $class = Artful::get(EventDispatcherInterface::class);
 
-        if ($class instanceof \Psr\EventDispatcher\EventDispatcherInterface) {
-            $class->{$method}(...$args);
-
-            return;
+        if (!$class instanceof \Psr\EventDispatcher\EventDispatcherInterface) {
+            throw new InvalidParamsException(Exception::PARAMS_EVENT_DRIVER_INVALID, '参数异常: 配置的 `EventDispatcherInterface` 不符合 PSR 规范');
         }
 
-        throw new InvalidParamsException(Exception::PARAMS_EVENT_DRIVER_INVALID, '参数异常: 配置的 `EventDispatcherInterface` 不符合 PSR 规范');
+        if (!method_exists($class, $method)) {
+            throw new InvalidParamsException(Exception::PARAMS_EVENT_DRIVER_INVALID, "参数异常: {$method} 在配置的 `EventDispatcherInterface` 中不存在");
+        }
+
+        $class->{$method}(...$args);
     }
 }

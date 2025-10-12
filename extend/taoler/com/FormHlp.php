@@ -354,6 +354,7 @@ class FormHlp
      */
     public  function arrays($name = '', $list = [], $options = [])
     {
+        // dump($name,$list);
         $label = $options['label'] ?? $name;
         $arr = '';
         $i = 0;
@@ -373,24 +374,50 @@ class FormHlp
             if ($i == 0) {
                 $arr .= '<div class="layui-form-item" >' .$this->label($label,$options) . '<div class="layui-input-inline">
                 <input '. $this->verify($options) . ' type="text"  name="' . $name . '[key][]"  value="' . $key . '" placeholder="' . lang('key') . '" autocomplete="off" class="layui-input input-double-width">
-            </div>
-            <div class="layui-input-inline">
-                <input '. $this->verify($options) . ' type="text"  name="' . $name . '[value][]"  value="' . $value . '" placeholder="' . lang('value') . '" autocomplete="off" class="layui-input input-double-width">
-            </div><div class="layui-input-inline" >
-                <button  data-name="' . $name . '" type="button" class="layui-btn layui-btn-warm layui-btn-sm addInput" lay-event="addInput">
-                    <i class="layui-icon">&#xe654;</i>
-                </button>
-            </div></div>';;
+                </div>
+                <div class="layui-input-inline">
+                    <input '. $this->verify($options) . ' type="text"  name="' . $name . '[value][]"  value="' . $value . '" placeholder="' . lang('value') . '" autocomplete="off" class="layui-input input-double-width">
+                </div><div class="layui-input-inline" >
+                    <button  data-name="' . $name . '" type="button" class="layui-btn layui-btn-warm layui-btn-sm addInput" lay-event="addInput">
+                        <i class="layui-icon">&#xe654;</i>
+                    </button>
+                </div>
+                </div>';
             } else {
-                $arr .= '<div class="layui-form-item"><label class="layui-form-label ' . $this->labelRequire($options) . '"></label><div class="layui-input-inline">
-                <input '. $this->verify($options) . ' type="text"  name="' . $name . '[key][]" value="' . $key . '"  placeholder="' . lang('key') . '" autocomplete="off" class="layui-input input-double-width">
-                </div><div class="layui-input-inline">
-                <input '. $this->verify($options) . ' type="text"  name="' . $name . '[value][]" value="' . $value . '" placeholder="' . lang('value') . '" autocomplete="off" class="layui-input input-double-width">
-            </div><div class="layui-input-inline">
-                <button  data-name="' . $name . '" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">
-                    <i class="layui-icon">&#xe67e;</i>
-                </button>
-            </div></div>';
+                if(is_array($value)) {
+                    $arr .= '<div class="layui-form-item"><label class="layui-form-label ' . $this->labelRequire($options) . '"></label><div class="layui-input-inline">
+                        <input '. $this->verify($options) . ' type="text"  name="' . $name . '[key][]" value="' . $key . '"  placeholder="' . lang('key') . '" autocomplete="off" class="layui-input input-double-width">
+                    </div>';
+                    foreach($value as $kk => $vv) {
+                    $arr .= '<div class="layui-form-item"><label class="layui-form-label ' . $this->labelRequire($options) . '"></label><div class="layui-input-inline">
+                        <input '. $this->verify($options) . ' type="text"  name="' . $name . '[key]['.$key.'][]" value="' . $kk . '"  placeholder="' . lang('key') . '" autocomplete="off" class="layui-input input-double-width">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input '. $this->verify($options) . ' type="text"  name="' . $name . '[value][]['.$key.'][]" value="' . $vv . '" placeholder="' . lang('value') . '" autocomplete="off" class="layui-input input-double-width">
+                        </div>
+                        <div class="layui-input-inline">
+                        <button  data-name="' . $kk . '" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">
+                            <i class="layui-icon">&#xe67e;</i>
+                        </button>
+                        </div>
+                        </div>';
+                    }
+                
+                    
+                } else {
+                    $arr .= '<div class="layui-form-item"><label class="layui-form-label ' . $this->labelRequire($options) . '"></label><div class="layui-input-inline">
+                    <input '. $this->verify($options) . ' type="text"  name="' . $name . '[key][]" value="' . $key . '"  placeholder="' . lang('key') . '" autocomplete="off" class="layui-input input-double-width">
+                    </div>
+                    <div class="layui-input-inline">
+                        <input '. $this->verify($options) . ' type="text"  name="' . $name . '[value][]" value="' . $value . '" placeholder="' . lang('value') . '" autocomplete="off" class="layui-input input-double-width">
+                    </div>
+                    <div class="layui-input-inline">
+                    <button  data-name="' . $name . '" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">
+                        <i class="layui-icon">&#xe67e;</i>
+                    </button>
+                    </div>
+                    </div>';
+                }
             }
             $i++;
         }

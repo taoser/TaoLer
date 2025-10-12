@@ -36,9 +36,9 @@ return [
             // 数据库连接参数
             'params'          => [],
             // 数据库编码默认采用utf8
-            'charset'         => env('DB_CHARSET', 'utf8'),
+            'charset'         => env('DB_CHARSET', 'utf8mb4'),
             // 数据库表前缀
-            'prefix'          => env('DB_PREFIX', ''),
+            'prefix'          => env('DB_PREFIX', 'tao_'),
 
             // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
             'deploy'          => 0,
@@ -53,7 +53,7 @@ return [
             // 是否需要断线重连
             'break_reconnect' => false,
             // 监听SQL
-            'trigger_sql'     => env('APP_DEBUG', true),
+            'trigger_sql'     => env('APP_DEBUG', false),
             // 开启字段缓存
             'fields_cache'    => true,
             // 字段缓存路径

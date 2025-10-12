@@ -1,172 +1,425 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>Document</title>
-    <meta name="keywords" content="网站关键词" />
-    <meta name="description" content="网站描述" />
-    <!-- <meta content="always" name="referrer"> -->
-     
-    <meta itemprop=dateUpdate content="2024-02-06 12:41:56">
-    <!-- 头条时间因子 -->
-    <meta property="bytedance:published_time" content="2014-12-11T12:28:44+01:00" />
-    <meta property="bytedance:lrDate_time" content="2017-03-13T15:01:40+01:00" />
-    <meta property="bytedance:updated_time" content="2017-03-13T15:01:40+01:00" />
-
-    <!-- 百度时间因子 -->
-    <script type="application/ld+json">
-        {
-        "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
-        "@id": "{ article.Url}",
-        "appid": "",
-        "title": "",
-        "images" [
-            "https://www.1.jpg",
-        ],
-        "description": "",
-        "pubDate": "{ article.Time("PostTime","Y-m-d\TH:i:s")}",
-        "upDate": "{ article.Time("UpdateTime","Y-m-d\TH:i:s")}",
-        "lrDate": "",
-        }
-    </script>
-
-    <link rel="shortcut icon" href="https://www.baidu.com/favicon.ico?t=20171027" type=image/x-icon>
-    <!-- 添加到主屏后的标题 -->
-    <meta name="apple-mobile-web-app-title" content="新浪体育">
-    <link rel="apple-touch-icon-precomposed" href="https://n1.sinaimg.cn/products/base/latest/images/home/sports_icon.png" >
-    <link rel="stylesheet" href="/static/layui/css/layui.css">
-    <link rel="stylesheet" href="/static/view/tao/css/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{taoler:title /}</title>
+    <meta name="keywords" content="{taoler:keywords /}" />
+    <meta name="description" content="{taoler:description /}" />
+    <meta name="MSSmartTagsPreventParsing" content="True">
+    <meta http-equiv="MSThemeCompatible" content="Yes">
+    <link rel="shortcut icon" type="image/x-icon" href= "favicon.ico" />
+    <link href="/static/layui/css/layui.css" rel="stylesheet">
+    <link href="/static/tpl/tao/css/index.css" rel="stylesheet">
 </head>
 <body>
-    <header class="header">
-        <div class="layui-container">
-
-            <div class="logo">
-                <a href="/">
-                    <img src="/static/res/images/logo.png" alt="logo">
+    <header class="layui-fluid header layui-bg-gray">
+        <div class="layui-container container">
+            <div class="logo-container">
+                <a href="logo">
+                    <img src="/static/tpl/tao/image/logo.png" alt="logo" >
                 </a>
             </div>
-
-            <nav class="header-nav layui-hide-xs">
-                <ul class="layui-nav nav-bg-light">
-                    <li class="layui-nav-item">
-                        <a href=""><span class="layui-badge-dot" style="left:0; right: auto; margin: -4px 0 0 5px;"></span>新主题</a>
-                    </li>
-                    <li class="layui-nav-item">
-                        <a href="">日志内容<span class="layui-badge">9</span></a>
+            <div class="header-menu">
+                <nav class="head-nav layui-hide-xs">
+                    <ul class="layui-nav layui-bg-gray">
+                        <li class="layui-nav-item layui-this"><a href="">选中</a></li>
+                        <li class="layui-nav-item">
+                          <a href="javascript:;">常规</a>
+                        </li>
+                        <li class="layui-nav-item"><a href="">导航</a></li>
+                        <li class="layui-nav-item">
+                          <a href="javascript:;">子级</a>
+                          <dl class="layui-nav-child">
+                            <dd><a href="">菜单1</a></dd>
+                            <dd><a href="">菜单2</a></dd>
+                            <dd><a href="">菜单3</a></dd>
+                          </dl>
+                        </li>
+                        <li class="layui-nav-item">
+                          <a href="javascript:;">选项</a>
+                          <dl class="layui-nav-child">
+                            <dd><a href="">选项1</a></dd>
+                            <dd class="layui-this"><a href="">选项2</a></dd>
+                            <dd><a href="">选项3</a></dd>
+                          </dl>
+                        </li>
+                        <li class="layui-nav-item"><a href="">演示</a></li>
                         
-                    </li>
-                    <li class="layui-nav-item" lay-unselect>
-                        <a href="javascript:;">
-                          <img src="https://unpkg.com/outeres@0.0.10/demo/avatar/1.jpg" class="layui-nav-img">
-                        </a>
-                        <dl class="layui-nav-child">
-                          <dd><a href="javascript:;">子级菜单</a></dd>
-                          <dd><a href="javascript:;">横线隔断</a></dd>
-                          <hr>
-                          <dd style="text-align: center;"><a href="">退出</a></dd>
-                        </dl>
-                      </li>
-                </ul>
-            </nav>
-
-        </div>
-    </header>
-
-    <div class="content">
-        <div class="layui-container">
-
-            <div class="layui-row layui-col-space15">
-
-                <main class="layui-col-md9">
-                    <section class="tao-panel article-list">
-                        <!-- 左图右文 -->
-                        <div class="article-list-item">
-                            <div class="layui-row layui-col-space20">
-                                <div class="layui-col-xs3 image-box">
-                                    <img src="/static/res/images/logo.png" alt="" class="list-img">
-                                </div>
-                                <div class="layui-col-xs9 text-box">
-                                    <h2 class="list-title">中国是伟大的工程看看来的了啦啦啦啦啦啦啦啦啦啦啦</h2>
-                                    <p class="list-desc layui-hide-xs">kjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk</p>
-                                   
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </section>
-
-                    <section class="tao-panel">
-                        aaa
-                        aaaa
-                    </section>
+                      </ul>
+                </nav>
+                <div class="header-info">
+                    
+                    <a><i class="layui-icon layui-icon-github" style="font-size: 20px;"></i> </a>
+                    
+                    <a><i class="layui-icon layui-icon-username" style="font-size: 20px;"></i> </a>
+                    
+                </div>
+            </div>
     
-                </main>
-
-                <aside class="layui-col-md3">
-                    <div class="tao-panel">
-                        cccc
-                    </div>
-                    <div class="tao-panel">
-                        ddddd
-                    </div>
-                    <div class="tao-panel">
-                        eeee
-                    </div>
-                    <div class="tao-panel sticky-panel">
-                        ffff
-                    </div>
-                </aside>
-
-            </div>
-
-        </div>
-    </div>
-
-    <footer class="footer">
-        <div class="layui-container">
-            <div class="layui-row layui-col-space10">
-                <div class="layui-col-md3 layui-col-xs6">
-                    1/4
-                </div>
-                <div class="layui-col-md3 layui-col-xs6">
-                1/4
-                </div>
-                <div class="layui-col-md3 layui-col-xs6">
-                1/4
-                </div>
-                <div class="layui-col-md3 layui-col-xs6">
-                1/4
-                </div>
-            </div>
-        </div>
-        <hr>
-
-        <div class="layui-container footer-info">
-            <div class="layui-row layui-col-space20">
-
-                <div class="layui-col-md2 qrcode-show layui-hide-xs">
-                    <img src="/static/res/images/logo.png" alt="">
-                </div>
-
-                <div class="layui-col-md6 copyright">
-                    <p>Copyright © 2024 TaoLer aieok.com</p>
-                    <p class="layui-hide-xs">京ICP备2022015173号-1</p>
-                    <p class="layui-hide-xs">京公网安备11010802039576号</p>
-                </div>
-
-                <div class="layui-col-md4 layui-hide-xs">
-
-                </div>
-            </div>
         </div>
         
+    </header>
+
+    <main class="main">
+        <!-- 幻灯 -->
+        <section >
+            <div class="layui-carousel" id="ID-slide">
+                <div carousel-item>
+
+                    <div class="slide">
+                        <img src="/static/tpl/tao/image/b0.jpg" alt="" class="slide-img">
+                        <div class="slide-item put-left">
+                            <h1>TaoLerCMS</h1>
+                            <p>TaoLer使用简单、代码简洁、运行迅速、模板自适应、现代化的PHP内容管理系统。<br/>支持多模板、多单页自由切换，网站风格可定制性强，支持插件化开发，方便二开。可做为门户网站，生活服务，学习问答笔记，文章分享等。</p>
+                            <button type="button" class="layui-btn layui-btn-radius layui-btn-radius">原始按钮</button>
+                        </div>
+                    </div>
+
+                    <div class="slide">
+                        <img src="/static/tpl/tao/image/b3.jpg" alt="" class="slide-img">
+                        <div class="slide-item put-right">
+                            <h1>TaoAdmin管理系统</h1>
+                            <p>这是段落内容，我们的内容是写在这里的,这是段落内容，我们的内容是写在这里的,这是段落内容，我们的内容是写在这里的,这是段落内容，我们的内容是写在这里的,</p>
+                            <button type="button" class="layui-btn layui-btn-radius layui-btn-radius">原始按钮</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="service-section">
+            {taoler:section name="service" num="3"}
+            <div class="layui-container">
+                <div class="title-text">
+                    <h2>{section:title /}</h2>
+                </div>
+                <div class="layui-row layui-col-space20">
+                    {section:list}
+                    <div class="layui-col-md4">
+                        <div class="layui-card service-item">
+                            <i class="layui-icon {section:icon /}" style="font-size: 80px; color: #1E9FFF;"></i>
+                            <h3>{section:name /}</h3>
+                            <div class="layui-card-body">
+                                {section:description /}
+                            </div>
+                            <button type="button" class="layui-btn layui-btn-radius">默认按钮</button>
+                        </div>
+                    </div>
+                    {/section:list}
+                </div>
+            </div>
+            {/taoler:section}
+        </section>
+
+        <section class="select-section">
+
+            <div class="layui-container">
+                <div class="title-text">
+                    <h2>选择TaoLer</h2>
+                </div>
+    
+                <div class="layui-row layui-col-space20">
+    
+                    <div class="layui-col-md4">
+                        <div class="layui-card service-item">
+                            <i class="layui-icon layui-icon-release" style="font-size: 80px; color: #1E9FFF;"></i>
+                            <h3>web站长</h3>
+                            <div class="layui-card-body">
+                                企业主题，社区门户，博客论坛，商城商店
+                              <p class="service-desc">
+                                满足web站长的各种需求
+                                </p>
+                            </div>
+                            <button type="button" class="layui-btn layui-btn-radius">默认按钮</button>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4">
+                        <div class="layui-card service-item">
+                            <i class="layui-icon layui-icon-fonts-code" style="font-size: 80px; color: #1E9FFF;"></i>
+                            <h3>API接口</h3>
+                            <div class="layui-card-body">
+                                开发App，小程序，erp，移动应用，vue单页面
+                                <p class="service-desc">
+                                    数据接口，管理后台，简单快捷
+                                </p>
+                            </div>
+                            <button type="button" class="layui-btn layui-btn-radius">默认按钮</button>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4">
+                        <div class="layui-card service-item">
+                            <i class="layui-icon layui-icon-component" style="font-size: 80px; color: #1E9FFF;"></i>
+                            <h3>插件支持</h3>
+                            <div class="layui-card-body">
+                                维护最小核心，热插拔式扩展，自定义功能
+                                <p class="service-desc">
+                                自主开发模板，应用功能
+                                </p>
+                            </div>
+                            <button type="button" class="layui-btn layui-btn-radius">默认按钮</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        </section>
+
+        <section class="info-section">
+            <div class="layui-container">
+                <div class="title-text">
+                    <h2>系统特点</h2>
+                </div>
+    
+                <div class="layui-row layui-col-space15">
+    
+                    <div class="layui-col-md3">
+                        <div class="layui-card grid-item">
+                            <div class="layui-card-header grid-title">
+                                <i class="layui-icon layui-icon-app" style="font-size: 30px; color: #1E9FFF;"></i>
+                                <h3>信息安全</h3>
+                            </div>
+                            <div class="layui-card-body">
+                                核心框架底层牢靠，代码持续维护更新，免费开源
+                              <p class="grid-desc">
+                                这是这个那个的情况
+                                </p>
+                            </div>
+                          </div>
+                        
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="layui-card grid-item">
+                            <div class="layui-card-header grid-title">
+                                <i class="layui-icon layui-icon-app" style="font-size: 30px; color: #1E9FFF;"></i>
+                                <h3>应用介绍</h3>
+                            </div>
+                            <div class="layui-card-body">
+                              卡片式面板面板通常用于非白色背景色的主体内<br>
+                              从而映衬出边框投影
+                              <p class="grid-desc">
+                                这是这个那个的情况
+                                </p>
+                            </div>
+                          </div>
+                        
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="layui-card grid-item">
+                            <div class="layui-card-header grid-title">
+                                <i class="layui-icon layui-icon-app" style="font-size: 30px; color: #1E9FFF;"></i>
+                                <h3>应用介绍</h3>
+                            </div>
+                            <div class="layui-card-body">
+                              卡片式面板面板通常用于非白色背景色的主体内<br>
+                              从而映衬出边框投影
+                              <p class="grid-desc">
+                                这是这个那个的情况
+                                </p>
+                            </div>
+                          </div>
+                        
+                    </div>
+                    <div class="layui-col-md3 grid-col">
+                        <div class="layui-card grid-item">
+                            <div class="layui-card-header grid-title">
+                                <i class="layui-icon layui-icon-app" style="font-size: 30px; color: #1E9FFF;"></i>
+                                <h3>应用介绍</h3>
+                            </div>
+                            <div class="layui-card-body">
+                              卡片式面板面板通常用于非白色背景色的主体内<br>
+                              从而映衬出边框投影
+                              <p class="grid-desc">
+                                这是这个那个的情况
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="layui-card grid-item">
+                            <div class="layui-card-header grid-title">
+                                <i class="layui-icon layui-icon-app" style="font-size: 30px; color: #1E9FFF;"></i>
+                                <h3>应用介绍</h3>
+                            </div>
+                            <div class="layui-card-body">
+                              卡片式面板面板通常用于非白色背景色的主体内<br>
+                              从而映衬出边框投影
+                              <p class="grid-desc">
+                                这是这个那个的情况
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="layui-card grid-item">
+                            <div class="layui-card-header grid-title">
+                                <i class="layui-icon layui-icon-app" style="font-size: 30px; color: #1E9FFF;"></i>
+                                <h3>应用介绍</h3>
+                            </div>
+                            <div class="layui-card-body">
+                              卡片式面板面板通常用于非白色背景色的主体内<br>
+                              从而映衬出边框投影
+                              <p class="grid-desc">
+                                这是这个那个的情况
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="layui-card grid-item">
+                            <div class="layui-card-header grid-title">
+                                <i class="layui-icon layui-icon-app" style="font-size: 30px; color: #1E9FFF;"></i>
+                                <h3>应用介绍</h3>
+                            </div>
+                            <div class="layui-card-body">
+                              卡片式面板面板通常用于非白色背景色的主体内<br>
+                              从而映衬出边框投影
+                              <p class="grid-desc">
+                                这是这个那个的情况
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="layui-card grid-item">
+                            <div class="layui-card-header grid-title">
+                                <i class="layui-icon layui-icon-app" style="font-size: 30px; color: #1E9FFF;"></i>
+                                <h3>应用介绍</h3>
+                            </div>
+                            <div class="layui-card-body">
+                              卡片式面板面板通常用于非白色背景色的主体内<br>
+                              从而映衬出边框投影
+                              <p class="grid-desc">
+                                这是这个那个的情况
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </section>
+        
+        <section class="partner-section">
+            <div class="layui-container">
+                <div class="title-text">
+                    <h2>合作伙伴</h2>
+                </div>
+                <div class="layui-row layui-col-space20">
+                    <div class="layui-col-md3 layui-col-xs6 partiner-item">
+                        <a href="" title="">
+                            <img src="/static/tpl/tao/image/thinkphp.png" alt="">
+                        </a>
+                    </div>
+                    <div class="layui-col-md3 layui-col-xs6 partiner-item">
+                        <a href="" title="">
+                            <img src="/static/tpl/tao/image/thinkphp.png" alt="">
+                        </a>
+                    </div>
+                    <div class="layui-col-md3 layui-col-xs6 partiner-item">
+                        <a href="" title="">
+                            <img src="/static/tpl/tao/image/thinkphp.png" alt="">
+                        </a>
+                    </div>
+                    <div class="layui-col-md3 layui-col-xs6 partiner-item">
+                        <a href="" title="">
+                            <img src="/static/tpl/tao/image/thinkphp.png" alt="">
+                        </a>
+                    </div>
+                
+                    <div class="layui-col-md3 layui-col-xs6 partiner-item">
+                        <a href="" title="">
+                            <img src="/static/tpl/tao/image/thinkphp.png" alt="">
+                        </a>
+                    </div>
+                    <div class="layui-col-md3 layui-col-xs6 partiner-item">
+                        <a href="" title="">
+                            <img src="/static/tpl/tao/image/thinkphp.png" alt="">
+                        </a>
+                    </div>
+                    <div class="layui-col-md3 layui-col-xs6 partiner-item">
+                        <a href="" title="">
+                            <img src="/static/tpl/tao/image/thinkphp.png" alt="">
+                        </a>
+                    </div>
+                    <div class="layui-col-md3 layui-col-xs6 partiner-item">
+                        <a href="" title="">
+                            <img src="/static/tpl/tao/image/thinkphp.png" alt="">
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+    <footer class="footer">
+        <div class="layui-container">
+            <div class="layui-row layui-col-space15 info">
+                <div class="layui-col-md3">
+                    <div class="qr-img">
+                        <img src="/static/tpl/tao/image/logo.png" alt="">
+                    </div>
+                    <div class="desc">
+                        TaoLer是一个快速web应用框架,不限制商业使用，开源免费。持续开发。TaoLer是一个快速web应用框架,不限制商业使用，开源免费。持续开发。
+                    </div>
+                </div>
+                <div class="layui-col-md9 layui-row layui-col-space20 footer-list">
+                    <dl class="layui-col-md3 layui-col-xs6 ">
+                        <dt class="title">TaoLer</dt>
+                        <dd>关于我们</dd>
+                        <dd>联系我们</dd>
+                        <dd>关于我们</dd>
+                        <dd>关于我们</dd>
+                    </dl>
+                    <dl class="layui-col-md3 layui-col-xs6">
+                        <dt class="title">服务支持</dt>
+                        <dd>关于我们</dd>
+                        <dd>联系我们</dd>
+                        <dd>关于我们</dd>
+                        <dd>关于我们</dd>
+                    </dl>
+                    <dl class="layui-col-md3 layui-col-xs6">
+                        <dt class="title">商务合作</dt>
+                        <dd>关于我们</dd>
+                        <dd>联系我们</dd>
+                        <dd>关于我们</dd>
+                        <dd>关于我们</dd>
+                    </dl>
+                    <div class="layui-col-md3 layui-col-xs6 qr">
+                        二维码
+                    </div>
+                </div>
+                
+            </div>
+        </div>
     </footer>
 
-    <!-- 请勿在项目正式环境中引用该 layui.js 地址 -->
     <script src="/static/layui/layui.js"></script>
+    <script src="/static/tpl/tao/js/swiper-bundle.min.js"></script>
+
+    <script>
+
+        layui.use(function(){
+        var carousel = layui.carousel;
+        const width = window.innerWidth;
+        const height = width * 650 / 1920; 
+
+        // 渲染 - 图片轮播
+            carousel.render({
+                elem: '#ID-slide',
+                width: '100%',
+                height: height,
+                // full: true,
+                interval: 3000,
+                anim: 'updown',
+                arrow: 'hover'
+            });
+        });
+
+    </script>
 </body>
 </html>

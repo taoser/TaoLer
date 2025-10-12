@@ -1,0 +1,128 @@
+{extend name="public/form" /}
+
+{block name="body"}
+<form class="layui-form">
+	<div class="mainBox">
+		<div class="main-container">
+			<div class="layui-form-item">
+				<label class="layui-form-label">单页栏目</label>
+				<div class="layui-input-block">
+					<div id="CateId" class="xm-select-demo"></div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+					<label for="L_title" class="layui-form-label">{:lang('title')}</label>
+					<div class="layui-input-block">
+						<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;" value=""/>
+					</div>
+				</div>
+			<div class="layui-form-item layui-form-text">
+				<div class="layui-input-block">
+				<textarea id="L_content" name="content" lay-verify="" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">{:lang('描述')}</label>
+				<div class="layui-input-block">
+				<textarea name="description" class="layui-textarea" placeholder="SEO描述"></textarea>
+				</div>
+			</div>
+			{//关键词}
+			<div class="layui-form-item">
+				<label class="layui-form-label">{:lang('关键词')}</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="关键词" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="page-save">
+			<i class="layui-icon layui-icon-ok"></i>
+			提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+			<i class="layui-icon layui-icon-refresh"></i>
+			重置
+			</button>
+		</div>
+	</div>
+</form>
+
+{__block__}
+
+<script>
+	layui.use(['xmSelect'], function () {
+		var $ = layui.jquery, form = layui.form, upload = layui.upload;
+		var xmSelect = layui.xmSelect;
+
+		// 分类选择 渲染下拉树
+		$.get("{:url('content.cate/getSingleArticleCateTree')}",function(res){
+			xmSelect.render({
+				el: '#CateId',
+				name: 'cate_id',
+				height: '250px',
+				layVerify: 'required',
+				layVerType: 'tips',
+				data: res.data,
+				initValue:  [],
+				model: {label: {type: 'text'}},
+				prop: {
+					name: 'catename',
+					value: 'id'
+				},
+				// radio: true,
+				clickClose: true,
+				tree: {
+					show: true,
+					indent: 15,
+					strict: false,
+					expandedKeys: false
+				},
+				on: function(data){ // 单选on模式
+					if(data.isAdd){
+						return data.change.slice(0, 1)
+					}
+				},
+				tips: '请选择'
+			});
+		});
+
+
+		form.on('submit(page-save)', function(data) {
+			$.ajax({
+				url: "{:url('content.page/add')}",
+				data: JSON.stringify(data.field),
+				dataType: 'json',
+				contentType: 'application/json',
+				type: 'post',
+				success: function(result) {
+					if (result.code === 0) {
+						layer.msg(result.msg, {
+						icon: 1,
+						time: 1000
+						}, function() {
+							parent.layui.table.reload("page-table");
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+						});
+					} else {
+						layer.msg(result.msg, {
+						icon: 2,
+						time: 1000
+						});
+					}
+				}
+			})
+			return false;
+		});
+
+	});
+</script>
+
+{// 编辑器}
+{:hook('ueditor')}
+{:hook('taonyeditor')}
+
+
+{/block}

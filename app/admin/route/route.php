@@ -14,4 +14,8 @@ use think\facade\Route;
 
 // Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 
+// 执照图片
+Route::rule('data/storage/[:id]/licence_pic/:name$', 'addons.jida.Lawyer/showImg')->name('lic_img');
+
+
 

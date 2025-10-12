@@ -17,6 +17,7 @@ use Closure;
 use think\helper\Str;
 use think\model\Collection;
 use think\model\contract\Modelable;
+use think\model\View;
 
 /**
  * 模型数据转换处理.
@@ -97,6 +98,7 @@ trait Conversion
      */
     public function toArray(): array
     {
+        $mapping = $this->getOption('mapping');
         foreach (['visible', 'hidden', 'append'] as $convert) {
             ${$convert} = $this->getOption($convert);
             foreach (${$convert} as $key => $val) {
@@ -107,6 +109,8 @@ trait Conversion
                     [$relName, $name]               = explode('.', $val);
                     $relation[$relName][$convert][] = $name;
                     unset(${$convert}[$key]);
+                } elseif ($item = array_search($val, $mapping)) {
+                    ${$convert}[$key] = $item;
                 }
             }
         }
@@ -120,7 +124,7 @@ trait Conversion
                     // 隐藏关联属性
                     unset($item[$name]);
                     continue;
-                } 
+                }
 
                 if (!empty($relation[$name])) {
                     // 处理关联数据输出
@@ -134,9 +138,9 @@ trait Conversion
                 $item[$name] = $this->getWithAttr($name, $val, $data);
             }
 
-            if (isset($item[$name]) && $key = $this->getWeakData('mapping', $name)) {
+            if (array_key_exists($name, $item) && isset($mapping[$name])) {
                 // 检查字段映射
-                $item[$key] = $item[$name];
+                $item[$mapping[$name]] = $item[$name];
                 unset($item[$name]);
             }
         }
@@ -201,5 +205,16 @@ trait Conversion
         }
 
         return $collection;
-    }    
+    }
+
+    /**
+     * 转换为视图模型
+     *
+     * @param string $class 视图模型类名
+     * @return View
+     */
+    public function toView(string $class)
+    {
+        return is_subclass_of($class, View::class) ? new $class($this) : $this;
+    }
 }

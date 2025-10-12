@@ -10,13 +10,13 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\facade\Db;
 use taoser\think\Auth;
 use think\facade\Lang;
 use think\facade\Session;
 
-class Menu extends AdminController
+class Menu extends AdminBaseController
 {
     /**
      * pearadmin动态菜单栏
@@ -49,6 +49,7 @@ class Menu extends AdminController
         $auth_rule_list = Db::name($rule)
         ->field('id,pid,title,icon,name,sort,ismenu')
         ->where(['delete_time'=> 0, 'status'=> 1])
+        ->order('sort', 'asc')
         ->select();
         
         foreach ($auth_rule_list as $v) {
@@ -64,6 +65,9 @@ class Menu extends AdminController
                 ];
             }
         }
+
+        //  $cmf_arr = array_column($menu, 'sort');
+        // array_multisort($cmf_arr, SORT_ASC, $menu);
 
         $nav = $this->getTrees($menu);
 

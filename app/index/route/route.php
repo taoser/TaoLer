@@ -14,6 +14,11 @@ Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 
 Route::get('/', 'index'); // 首页访问路由
 
+// 测试图片访问
+Route::get('fverify', 'staticfile/verify'); // 首页访问路由
+
+Route::rule('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
+
 // 定义主域名路由
 // Route::group('index',function(){
 // })->namespace('app\index\controller');

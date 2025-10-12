@@ -55,103 +55,6 @@ function getLimtTime($create_time)
     return $lt;
 }
 
-/**
- * 数组层级缩进转换
- * @param array $array 源数组
- * @param int   $pid
- * @param int   $level
- * @return array
- */
-function array2level($array, $pid = 0, $level = 1)
-{
-    static $list = [];
-
-    foreach ($array as $v) {
-
-        if ($v['pid'] == $pid) {
-
-            $v['level'] = $level;
-            $list[]     = $v;
-
-            array2level($array, $v['id'], $level + 1);
-        }
-    }
-
-    return $list;
-}
-
-/**
- * 构建层级（树状）数组
- * @param array  $array          要进行处理的一维数组，经过该函数处理后，该数组自动转为树状数组
- * @param string $pid_name       父级ID的字段名
- * @param string $child_key_name 子元素键名
- * @return array|bool
- */
-function array2tree(&$array, $pid_name = 'pid', $child_key_name = 'children')
-{
-    $counter = array_children_count($array, $pid_name);
-    if (!isset($counter[0]) || $counter[0] == 0) {
-        return $array;
-    }
-    $tree = [];
-    while (isset($counter[0]) && $counter[0] > 0) {
-        $temp = array_shift($array);
-        if (isset($counter[$temp['id']]) && $counter[$temp['id']] > 0) {
-            array_push($array, $temp);
-        } else {
-            if ($temp[$pid_name] == 0) {
-                $tree[] = $temp;
-            } else {
-                $array = array_child_append($array, $temp[$pid_name], $temp, $child_key_name);
-            }
-        }
-        $counter = array_children_count($array, $pid_name);
-    }
-
-    return $tree;
-}
-
-/**
- * 子元素计数器
- * @param array $array
- * @param int   $pid
- * @return array
- */
-function array_children_count($array, $pid)
-{
-    $counter = [];
-    foreach ($array as $item) {
-        $count = isset($counter[$item[$pid]]) ? $counter[$item[$pid]] : 0;
-        $count++;
-        $counter[$item[$pid]] = $count;
-    }
-
-    return $counter;
-}
-
-/**
- * 把元素插入到对应的父元素$child_key_name字段
- * @param        $parent
- * @param        $pid
- * @param        $child
- * @param string $child_key_name 子元素键名
- * @return mixed
- */
-function array_child_append($parent, $pid, $child, $child_key_name)
-{
-    foreach ($parent as &$item) {
-        if ($item['id'] == $pid) {
-            if (!isset($item[$child_key_name])) {
-                $item[$child_key_name] = [];
-            }
-
-            $item[$child_key_name][] = $child;
-        }
-    }
-
-    return $parent;
-}
-
 //菜单无限极分类
 function getTree($data, $pId = 0)
 {
@@ -173,6 +76,83 @@ function getTree($data, $pId = 0)
     // array_multisort($cmf_arr, SORT_ASC, $tree);
     return $tree;
 }
+
+/**
+ * 将一维数组转换为树形结构（无限级分类）
+ * @param array $items 原始数据数组
+ * @param int $rootPid 根节点ID（支持数值或字符串）
+ * @param string $idField 主键字段名
+ * @param string $pidField 父级ID字段名
+ * @param string $childrenField 子节点存储字段名
+ * @param string $sortField 排序字段名（空字符串表示不排序）
+ * @param bool $asc 是否升序（仅在排序时有效）
+ * @return array 树形结构数组
+ */
+function getArrayTree(
+    array $items,
+    int $rootPid = 0,
+    string $idField = 'id',
+    string $pidField = 'pid',
+    string $childrenField = 'children',
+    string $sortField = 'sort',
+    bool $asc = true
+): array {
+    if (empty($items)) {
+        return [];
+    }
+
+    // 使用array_column获取所有ID，确保ID存在
+    $ids = array_column($items, $idField);
+    if (in_array(null, $ids, true)) {
+        throw new InvalidArgumentException("Missing or invalid value in '{$idField}' field");
+    }
+
+    // 使用array_column获取所有PID，确保PID存在
+    $pids = array_column($items, $pidField);
+    if (in_array(null, $pids, true)) {
+        throw new InvalidArgumentException("Missing or invalid value in '{$pidField}' field");
+    }
+
+    // 自定义排序
+    if (!empty($sortField)) {
+        // 检查排序字段是否存在
+        $sortValues = array_column($items, $sortField);
+        if (in_array(null, $sortValues, true)) {
+            throw new InvalidArgumentException("Missing or invalid value in '{$sortField}' field");
+        }
+        
+        usort($items, function ($a, $b) use ($sortField, $asc) {
+            $result = $a[$sortField] <=> $b[$sortField];
+            return $asc ? $result : -$result;
+        });
+    }
+
+    // 构建引用关系
+    $tree = [];
+    $reference = [];
+
+    // 初始化引用映射并确保children字段存在
+    foreach ($items as &$item) {
+        $id = $item[$idField];
+        $item[$childrenField] = [];
+        $reference[$id] = &$item;
+    }
+    unset($item);
+
+    // 构建树形结构
+    foreach ($items as $item) {
+        $id = $item[$idField];
+        $pid = $item[$pidField];
+        
+        if ($pid === $rootPid) {
+            $tree[] = &$reference[$id];
+        } elseif (isset($reference[$pid])) {
+            $reference[$pid][$childrenField][] = &$reference[$id];
+        }
+    }
+
+    return $tree;
+}    
 
 //按钮权限检查
 function checkRuleButton($rules_button)
@@ -217,15 +197,16 @@ if (!function_exists('get_all_img')) {
      * @param $str
      * @return array
      */
-    function get_all_img($str)
+    function get_all_img($text)
     {
-        //匹配格式为 <img src="http://img.com" />的图片
-        $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
-        preg_match_all($pattern, $str, $matchContent);
-        if(isset($matchContent[1][0])) {
-            return array_unique($matchContent[1]);
+        // 定义正则表达式来匹配图片链接，支持更多图片格式
+        $pattern = '/<img[^>]+src=["\']([^"\']+\.(jpg|jpeg|png|gif|svg))["\']/i';
+        $imageLinks = [];
+        if (preg_match_all($pattern, $text, $matches)) {
+            $imageLinks = $matches[1];
         }
-        return [];
+
+        return $imageLinks;
     }
 }
 
@@ -334,5 +315,37 @@ function advanced_compress_html_js($code) {
 
     return $code;
 }
+
+// 文件压缩
+function compressHtmlJs($html) {
+    // 移除 HTML 注释
+    $html = preg_replace('/<!--(?!\[if|\<\!\[endif\])(.*?)-->/is', '', $html);
+
+    // 移除 JS 多行注释
+    $html = preg_replace('/\/\*(.*?)\*\//is', '', $html);
+
+    // 移除 JS 单行注释 排除网址外的单行注释
+    $html = preg_replace_callback(
+        '/(https?:\/\/[^\s<>]*|\/\/.*?(\n|$))/',
+        function ($matches) {
+            if (str_starts_with($matches[0], '//')) {
+                return isset($matches[2]) ? $matches[2] : '';
+            }
+            return $matches[0];
+        }, $html);
+
+    // 移除 JS 单行注释 正则以//开头，内容中不包含>，以换行符结尾的单行注释给移除
+    // $html = preg_replace_callback('/\/\/([^>\r\n]*)(\n|\r\n)/', function ($matches) {
+    //     return $matches[2];
+    // }, $html);
+
+    // 压缩 HTML 空白字符
+    $html = preg_replace('/\s+/', ' ', $html);
+    $html = preg_replace('/>\s+</', '><', $html);
+
+    return $html;
+
+}
+
 
 

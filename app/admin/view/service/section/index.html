@@ -1,0 +1,271 @@
+{extend name="public/base" /}
+
+{block name="title"}分类管理{/block}
+
+{block name="body"}
+
+<div class="layui-row layui-col-space10">
+    <div class="layui-col-md2">
+        <div class="layui-panel">
+            <ul class="layui-menu layui-menu-lg" id="section-menu">
+                {foreach name="section" id="vo"}
+                <li lay-options="" id="{$vo.id}" class="section-menu">
+                    <div class="layui-menu-body-title">
+                        <a href="javascript:;">
+                        {if $vo.status == 1}
+                        <i class="layui-icon layui-icon-eye" style="color:#ff5722;"></i>
+                        {else /}
+                        <i class="layui-icon layui-icon-eye-invisible"></i>
+                        {/if}
+                        {$vo.title} - {$vo.alias}
+                        </a>
+                    </div>
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+        <div style="color:red; margin: 10px;">提示：右键可编辑、删除 模块</div>
+    </div>
+    <div class="layui-col-md10">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <table id="section-table" lay-filter="section-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="section-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        模块
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add-sub">
+        <i class="layui-icon layui-icon-add-1"></i>
+        子模块
+    </button>
+</script>
+
+<script type="text/html" id="section-bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit" data-href="{:url('cate/edit')}"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+
+<script type="text/html" id="section-check">
+    <input type="checkbox" name="status" id="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="section-check" {{ d.status == 1 ? 'checked' : '' }} />
+</script>
+
+{__block__}
+
+<script>
+
+    const LIST_URL = "{:url('service.section/list')}";
+    const DELETE = "{:url('service.section/delete')}";
+    const CHECK = "{:url('service.section/check')}";
+    const DELETE_SUB = "{:url('service.section/deleteSub')}";
+
+    layui.use(function () {
+        let $ = layui.jquery;
+        let table = layui.table;
+        let form = layui.form;
+        var dropdown = layui.dropdown;
+
+        // 菜单点击事件
+        dropdown.on('click(section-menu)', function(options){
+            // console.log(this, options);
+            var id = this.getAttribute('id');
+            var data = new Object();
+            data.id = id;
+
+            table.reload('section-table', {
+                where: data
+            })
+
+            return false;
+        });
+
+        // 右键菜单
+        dropdown.render({
+            elem: '.section-menu', // 也可绑定到 document，从而重置整个右键
+            trigger: 'contextmenu', // contextmenu
+            isAllowSpread: false, // 禁止菜单组展开收缩
+            style: 'width: 200px', // 定义宽度，默认自适应
+            data: [
+                {
+                    title: '编辑',
+                    id: 'edit'
+                },{
+                    title: '删除',
+                    id: 'delete'
+                }
+                // ,{
+                //     title: 'Printing',
+                //     id: 'print'
+                // }
+                ,{
+                    title: '刷新',
+                    id: 'reload'
+                }
+            ],
+
+            click: function(obj, othis){
+                // console.log(obj,this.id)
+                var data = new Object();
+                data.id = this.id;
+
+                if(obj.id === 'edit'){
+                    window.edit(data);
+                } else if(obj.id === 'delete'){
+                    window.delete(data);
+                } else if(obj.id === 'print'){
+                    window.print();
+                } else if(obj.id === 'reload'){
+                    location.reload();
+                }
+            }
+        });
+
+
+        //第一个实例
+        table.render({
+            elem: '#section-table'
+            ,url: LIST_URL
+            ,cols: [[
+                {field: 'id', title: 'ID', width:60, sort: true}
+                ,{field: 'section', title: '模块','escape':false, width: 130, templet: '<div>{{d.section.title}}</div>'}
+                ,{field: 'name', title: '名称','escape':false, width: 130}
+                ,{field: 'icon', title: 'icon', width:60, templet: '<div><i class="layui-icon {{d.icon}}"></i></div>'}
+                ,{field: 'image', title: '图片', minWidth:120, templet: '<div><img src="{{d.image}}" height="60" width="80"></div>'}
+                ,{field: 'url', title: 'URL', minWidth: 200}
+                ,{field: 'description', title: '描述', minWidth: 200}
+                ,{field: 'sort', title: '排序', width:90}
+                ,{field: 'status', title: '状态', width: 95, templet:'#section-check'}
+                ,{title:'操作', toolbar: '#section-bar', width:110}
+            ]]
+            ,skin: 'line'
+            ,lineStyle: 'height: 100px;'
+            ,toolbar: '#section-toolbar'
+            ,text: '对不起，加载出现异常！'
+        });
+
+        table.on('tool(section-table)',function(obj){
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.editSub(obj);
+            }
+        })
+
+        table.on('toolbar(section-table)', function(obj){
+            if(obj.event === 'add'){
+                window.add();
+            } else if(obj.event === 'add-sub'){
+                window.addSub();
+            } else if(obj.event === 'refresh'){
+                window.refresh();
+            } else if(obj.event === 'batchRemove'){
+                window.batchRemove(obj);
+            }  else if(obj.event === 'expandAll'){
+                treetable.expandAll("#section-table");
+            } else if(obj.event === 'foldAll'){
+                treetable.foldAll("#section-table");
+            }
+        });
+
+        form.on('switch(section-check)', function(obj){
+            var status = this.checked ? 1: 0;
+            $.post(CHECK, {id: this.id, status: status},function(res){
+                if(res.code === 0){
+                    layer.msg(res.msg,{icon:res.icon,time:2000})
+                } else {
+                    layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+                }
+            });
+        });
+
+        window.add = function(){
+            layer.open({
+                type: 2,
+                title: '添加',
+                shade: 0.1,
+                area: ['500px', '350px'],
+                content: 'add.html'
+            });
+        }
+
+        window.addSub = function(){
+            layer.open({
+                type: 2,
+                title: '添加',
+                shade: 0.1,
+                area: ['500px', '550px'],
+                content: 'addSub.html'
+            });
+        }
+
+        window.edit = function(obj){
+            layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['500px', '350px'],
+                content: 'edit.html?id=' + obj.id
+            });
+        }
+
+        window.editSub = function(obj){
+            layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['550px', '650px'],
+                content: 'editSub.html?id=' + obj.data.id
+            });
+        }
+
+        window.delete = function(obj){
+            layer.confirm('确定要删除模块及内容', {icon: 3, title:'提示'}, function(index){
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: DELETE + "?id="+obj.id,
+                    dataType:'json',
+                    type:'delete',
+                    success:function(result){
+                        layer.close(loading);
+                        if(result.code === 0){
+                            layer.msg(result.msg,{icon:1,time:1000},function(){
+                                obj.del();
+                            });
+                        }else{
+                            layer.msg(result.msg,{icon:2,time:1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.remove = function(obj){
+            layer.confirm('确定要删除?', {icon: 3, title:'提示'}, function(index){
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: DELETE_SUB + "?id="+obj.data['id'],
+                    dataType:'json',
+                    type:'delete',
+                    success:function(result){
+                        layer.close(loading);
+                        if(result.code === 0){
+                            layer.msg(result.msg,{icon:1,time:1000},function(){
+                                obj.del();
+                            });
+                        } else {
+                            layer.msg(result.msg,{icon:2,time:1000});
+                        }
+                    }
+                })
+            });
+        }
+    })
+</script>
+{/block}

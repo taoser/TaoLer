@@ -20,10 +20,11 @@ class Nav extends TagLib
         'id'        => ['attr' => '', 'close' => 0],
         'pid'       => ['attr' => '', 'close' => 0],
         'icon'      => ['attr' => '', 'close' => 0],
+        'image'     => ['attr' => '', 'close' => 0],
         'name'      => ['attr' => '', 'close' => 0],
         'ename'     => ['attr' => '', 'close' => 0],
         'title'     => ['attr' => '', 'close' => 0],
-        'detpl'     => ['attr' => '', 'close' => 0],
+        'tpl'       => ['attr' => '', 'close' => 0],
         'sort'      => ['attr' => '', 'close' => 0],
         'desc'      => ['attr' => '', 'close' => 0],
         'is_hot'    => ['attr' => '', 'close' => 0],
@@ -48,6 +49,11 @@ class Nav extends TagLib
         return '{$nav.icon}';
     }
 
+    public function tagImage(): string
+    {
+        return '{$nav.image}';
+    }
+
     public function tagName($tag): string
     {
          return '{$nav.catename}';
@@ -63,7 +69,7 @@ class Nav extends TagLib
         return '{$nav.catename}';
     }
 
-    public function tagDetpl(): string
+    public function tagTpl(): string
     {
         return '{$nav.detpl}';
     }

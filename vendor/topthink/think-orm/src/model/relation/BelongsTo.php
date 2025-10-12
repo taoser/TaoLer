@@ -73,7 +73,7 @@ class BelongsTo extends OneToOne
                 $this->parent->bindRelationAttr($relationModel, $this->bindAttr);
             }
         } else {
-            $default       = $this->query->getOptions('default_model');
+            $default       = $this->query->getOption('default_model');
             $relationModel = $this->getDefaultModel($default);
         }
 
@@ -191,7 +191,7 @@ class BelongsTo extends OneToOne
         }
 
         $query->alias($alias)
-            ->via($model)
+            ->via($alias)
             ->field($fields)
             ->join([$table => $relAlias], $alias . '.' . $this->foreignKey . '=' . $relAlias . '.' . $this->localKey, $joinType);
 
@@ -224,15 +224,16 @@ class BelongsTo extends OneToOne
 
         if (!empty($range)) {
             $this->query->removeWhereField($localKey);
-            $default      = $this->query->getOptions('default_model');
+            $default      = $this->query->getOption('default_model');
             $defaultModel = $this->getDefaultModel($default);
 
-            $data = $this->eagerlyWhere([
+            $range = array_unique($range);
+            $data  = $this->eagerlyWhere([
                 [$localKey, 'in', $range],
-            ], $localKey, $subRelation, $closure, $cache);
+            ], $localKey, $subRelation, $closure, $cache, count($range) > 1 ? true : false);
 
             // 动态绑定参数
-            $bindAttr = $this->query->getOptions('bind_attr');
+            $bindAttr = $this->query->getOption('bind_attr');
             if ($bindAttr) {
                 $this->bind($bindAttr);
             }
@@ -280,14 +281,14 @@ class BelongsTo extends OneToOne
 
         // 关联模型
         if (!isset($data[$result->$foreignKey])) {
-            $default       = $this->query->getOptions('default_model');
+            $default       = $this->query->getOption('default_model');
             $relationModel = $this->getDefaultModel($default);
         } else {
             $relationModel = $data[$result->$foreignKey];
         }
 
         // 动态绑定参数
-        $bindAttr = $this->query->getOptions('bind_attr');
+        $bindAttr = $this->query->getOption('bind_attr');
         if ($bindAttr) {
             $this->bind($bindAttr);
         }

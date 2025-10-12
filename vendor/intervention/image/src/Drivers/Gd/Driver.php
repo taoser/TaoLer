@@ -33,6 +33,7 @@ class Driver extends AbstractDriver
      * {@inheritdoc}
      *
      * @see DriverInterface::checkHealth()
+     *
      * @codeCoverageIgnore
      */
     public function checkHealth(): void
@@ -70,8 +71,9 @@ class Driver extends AbstractDriver
     /**
      * {@inheritdoc}
      *
-     * @throws RuntimeException
      * @see DriverInterface::createAnimation()
+     *
+     * @throws RuntimeException
      */
     public function createAnimation(callable $init): ImageInterface
     {
@@ -81,6 +83,7 @@ class Driver extends AbstractDriver
                 protected DriverInterface $driver,
                 public Core $core = new Core()
             ) {
+                //
             }
 
             /**
@@ -152,8 +155,6 @@ class Driver extends AbstractDriver
 
     /**
      * Return version of GD library
-     *
-     * @return string
      */
     public static function version(): string
     {

@@ -11,7 +11,7 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
@@ -26,7 +26,7 @@ use taoser\SetArr;
 use app\common\lib\SetArr as SetArrConf;
 use think\response\Json;
 
-class Set extends AdminController
+class Set extends AdminBaseController
 {
 
 	protected $sysInfo = '';

@@ -73,7 +73,7 @@ class HasOne extends OneToOne
                 $this->parent->bindRelationAttr($relationModel, $this->bindAttr);
             }
         } else {
-            $default       = $this->query->getOptions('default_model');
+            $default       = $this->query->getOption('default_model');
             $relationModel = $this->getDefaultModel($default);
         }
 
@@ -223,15 +223,16 @@ class HasOne extends OneToOne
 
         if (!empty($range)) {
             $this->query->removeWhereField($foreignKey);
-            $default      = $this->query->getOptions('default_model');
+            $default      = $this->query->getOption('default_model');
             $defaultModel = $this->getDefaultModel($default);
 
-            $data = $this->eagerlyWhere([
+            $range = array_unique($range);
+            $data  = $this->eagerlyWhere([
                 [$foreignKey, 'in', $range],
-            ], $foreignKey, $subRelation, $closure, $cache);
+            ], $foreignKey, $subRelation, $closure, $cache, count($range) > 1 ? true : false);
 
             // 动态绑定参数
-            $bindAttr = $this->query->getOptions('bind_attr');
+            $bindAttr = $this->query->getOption('bind_attr');
             if ($bindAttr) {
                 $this->bind($bindAttr);
             }
@@ -278,14 +279,14 @@ class HasOne extends OneToOne
 
         // 关联模型
         if (!isset($data[$result->$localKey])) {
-            $default       = $this->query->getOptions('default_model');
+            $default       = $this->query->getOption('default_model');
             $relationModel = $this->getDefaultModel($default);
         } else {
             $relationModel = $data[$result->$localKey];
         }
 
         // 动态绑定参数
-        $bindAttr = $this->query->getOptions('bind_attr');
+        $bindAttr = $this->query->getOption('bind_attr');
         if ($bindAttr) {
             $this->bind($bindAttr);
         }

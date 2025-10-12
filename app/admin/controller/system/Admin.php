@@ -8,7 +8,7 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use app\admin\validate\Admin as AdminValidate;
 use app\admin\model\Admin as AdminModel;
 use think\App;
@@ -19,7 +19,7 @@ use think\facade\Session;
 use think\facade\Cookie;
 
 
-class Admin extends AdminController
+class Admin extends AdminBaseController
 {
     protected $model = null;
 

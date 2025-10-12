@@ -10,14 +10,14 @@
 
 namespace app\admin\controller\system;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\App;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\View;
 use app\admin\model\AuthRule as AuthRuleModel;
 
-class AuthRule extends AdminController
+class AuthRule extends AdminBaseController
 {
 
 	protected $model = null;
@@ -68,10 +68,16 @@ class AuthRule extends AdminController
 	{
 		if(Request::isAjax()){
 			$data = Request::param();
+
+			$count = Db::name('auth_rule')->where('name', $data['name'])->count();
+			if($count) return json(['code' => 1, 'msg' => '权限地址已存在！']);
+
             //层级level
-            $plevel = Db::name('auth_rule')->field('level')->find($data['pid']);
-			if($plevel){
-				$data['level'] = $plevel['level'] + 1;
+            $rule = Db::name('auth_rule')->field('level')->find($data['pid']);
+
+			if(!is_null($rule)){
+
+				$data['level'] = $rule['level'] + 1;
 			} else {
 				$data['level'] = 0;
 			}
@@ -112,7 +118,6 @@ class AuthRule extends AdminController
 		
 		$auth_rules = $this->model->getAuthRuleArray();
 		$rules = $this->model->find($id);
-		// dump($rules);
 
 		View::assign(['AuthRule' => $auth_rules,'rules' => $rules]);
 

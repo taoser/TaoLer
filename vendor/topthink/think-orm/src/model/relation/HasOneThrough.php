@@ -41,7 +41,7 @@ class HasOneThrough extends HasManyThrough
 
         if ($relationModel) {
         } else {
-            $default = $this->query->getOptions('default_model');
+            $default = $this->query->getOption('default_model');
             $relationModel = $this->getDefaultModel($default);
         }
 
@@ -74,7 +74,7 @@ class HasOneThrough extends HasManyThrough
 
         if (!empty($range)) {
             $this->query->removeWhereField($foreignKey);
-            $default = $this->query->getOptions('default_model');
+            $default = $this->query->getOption('default_model');
             $defaultModel = $this->getDefaultModel($default);
 
             $data = $this->eagerlyWhere([
@@ -120,7 +120,7 @@ class HasOneThrough extends HasManyThrough
 
         // 关联模型
         if (!isset($data[$result->$localKey])) {
-            $default = $this->query->getOptions('default_model');
+            $default = $this->query->getOption('default_model');
             $relationModel = $this->getDefaultModel($default);
         } else {
             $relationModel = $data[$result->$localKey];
@@ -137,10 +137,11 @@ class HasOneThrough extends HasManyThrough
      * @param array   $subRelation 子关联
      * @param Closure $closure
      * @param array   $cache       关联缓存
+     * @param bool    $collection  是否数据集查询
      *
      * @return array
      */
-    protected function eagerlyWhere(array $where, string $key, array $subRelation = [], ?Closure $closure = null, array $cache = []): array
+    protected function eagerlyWhere(array $where, string $key, array $subRelation = [], ?Closure $closure = null, array $cache = [], bool $collection = false): array
     {
         // 预载入关联查询 支持嵌套预载入
         $keys = $this->through->where($where)->column($this->throughPk, $this->foreignKey);

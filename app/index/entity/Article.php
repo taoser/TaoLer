@@ -23,9 +23,6 @@ class Article extends BaseEntity
     // 当前用到的数据总和
     protected static $currentTotalNum = 0;
 
-    protected string $content;
-
-
     /**
      * 添加
      * @param array $data
@@ -38,7 +35,7 @@ class Article extends BaseEntity
         $this->title    = $data['title'];
         $this->content  = $data['content'];
         $this->keywords = $data['keywords'];
-        
+
         if(isset($data['status'])) {
             $this->status   = $data['status'];
         }
@@ -113,7 +110,7 @@ class Article extends BaseEntity
      */
     public function getTops(int $num = 5): array
     {
-        return Cache::remember('top_article', function() use($num) {
+        return  Cache::remember('top_article', function() use($num) {
 
             $datas = [];
             // type = 1为置顶推荐文章
@@ -312,7 +309,7 @@ class Article extends BaseEntity
                     $data = $this->suffix($map['tableSuffixArr'][0])->field($field)
                         ->with([
                         'cate' => function(Query $query){
-                            $query->field('id,catename,ename,detpl');
+                            $query->field('id,catename,ename,tpl');
                         },
                         'user' => function(Query $query){
                             $query->field('id,name,nickname,user_img');
@@ -331,7 +328,7 @@ class Article extends BaseEntity
                     $data = $this->suffix($map['tableSuffixArr'][0])->field($field)
                         ->with([
                         'cate' => function(Query $query){
-                            $query->field('id,catename,ename,detpl');
+                            $query->field('id,catename,ename,tpl');
                         },
                         'user' => function(Query $query){
                             $query->field('id,name,nickname,user_img');
@@ -349,7 +346,7 @@ class Article extends BaseEntity
                         ->field($field)
                         ->with([
                         'cate' => function(Query $query){
-                            $query->field('id,catename,ename,detpl');
+                            $query->field('id,catename,ename,tpl');
                         },
                         'user' => function(Query $query){
                             $query->field('id,name,nickname,user_img');
@@ -370,7 +367,7 @@ class Article extends BaseEntity
                 $data = $this->field($field)
                     ->with([
                     'cate' => function(Query $query){
-                        $query->field('id,catename,ename,detpl');
+                        $query->field('id,catename,ename,tpl');
                     },
                     'user' => function(Query $query){
                         $query->field('id,name,nickname,user_img');
@@ -408,7 +405,7 @@ class Article extends BaseEntity
                 ->where('status', '1')
                 ->with([
                     'cate' => function(Query $query){
-                        $query->field('id,catename,ename,detpl');
+                        $query->field('id,catename,ename,tpl');
                     },
                     'user' => function(Query $query){
                         $query->field('id,name,nickname,user_img,area_id,vip,city');
@@ -515,8 +512,10 @@ class Article extends BaseEntity
      */
     public static function getRelationArticle(int $id, int $limit = 5): array
     {
-        return Cache::remember('rela_'.$id, function() use($id,$limit){
+        return Cache::remember('rela_'.$id, function() use($id,$limit) {
+
             $tagId = Taglist::where('article_id', $id)->value('tag_id');
+
             $articleIdArr = Taglist::where('tag_id', $tagId)
             ->where('article_id','<>', $id)
             ->limit($limit)
@@ -526,12 +525,20 @@ class Article extends BaseEntity
             if(count($articleIdArr)) {
                 foreach($articleIdArr as $id) {
                     $article = self::suffix(self::byIdGetSuffix($id))
-                    ->field('id,title,cate_id')
+                    ->with(['cate' => function($query) {
+                        $query->field('id,catename');
+                    }])
+                    ->field('id,title,cate_id,pv,create_time,description')
                     ->where('id', $id)
                     ->append(['url'])
                     ->find();
 
                     if(!is_null($article)) {
+                        $article['hasImg'] = $article['has_image'] > 0 ? true : false;
+                        $article['time'] = $article['create_time'];
+                        $article['cate_name']   = $article['cate']['catename'];
+                        $article['desc']    = $article['description'];
+
                         $data[] = $article;
                     }
                 }
@@ -947,17 +954,18 @@ class Article extends BaseEntity
             'tableSuffixArr' => $tableSuffixArr,
             'tableCount' => $tableCount
         ];
-// halt($map);
+        // halt($map);
         // 总共页面数
         $lastPage = (int) ceil($map['totals'] / $limit); // 向上取整
-
+        
+        $datas = [];
         if($map['totals']) {
 
             if($page > $lastPage) {
                 throw new Exception('no data');
             }
 
-            $datas = [];
+            
             // 最大偏移量
             $maxNum = $page * $limit;
             // 开始时的偏移量
@@ -1084,106 +1092,5 @@ class Article extends BaseEntity
 
     }
 
-    // 两种模式 获取url
-    public function getUrlAttr($value, $data)
-    {
-        $data['id'] = IdEncode::encode($data['id']);
-
-        if(empty(config('taoler.url_rewrite.article_as'))) {
-            $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
-            return (string) Route::buildUrl('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
-        }
-
-        return (string) Route::buildUrl('article_detail',['id' => $data['id']])->domain(true);
-    }
-
-    /**
-     * 获取主图
-     *
-     * @param [type] $value
-     * @param [type] $data
-     * @return void
-     */
-    public function getMasterPicAttr($value, $data)
-    {
-        if($data['has_image'] > 0 && isset($data['media']['images'])) {
-            return $data['media']['images'][0];
-        }
-        return '';
-    }
-
-    /**
-     * APP应用转换,在后台admin应用转换为在其它app应用的路径
-     * /admin/user/info转换为 /index/user/info
-     * $appName 要转换为哪个应用
-     * $url 路由地址
-     * return string
-     */
-    public function getAurlAttr($value, $data)
-    {
-        $asName = config('taoler.url_rewrite.article_as'); //详情页URL别称
-
-        $data['id'] = IdEncode::encode($data['id']);
-        
-        if(empty($asName)) {
-            $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
-            $url = (string) Route::buildUrl("{$ename}/{$data['id']}");
-        } else if(!empty($asName)) {
-            $url = (string) Route::buildUrl($asName."{$data['id']}");
-        } else {
-            $url = (string) Route::buildUrl("{$data['id']}");
-        }
-
-        $appName = 'index';
-
-        // 判断应用是否绑定域名
-        $app_bind = array_search($appName, config('app.domain_bind'));
-        // 判断应用是否域名映射
-        $app_map = array_search($appName, config('app.app_map'));
-
-        // 判断admin应用是否绑定域名
-        $bind_admin = array_search('admin',config('app.domain_bind'));
-        // 判断admin应用是否域名映射
-        $map_admin = array_search('admin',config('app.app_map'));
-
-        //1.admin绑定了域名
-        if($bind_admin) {
-            // 1.应用绑定了域名
-            if($app_bind) {
-                return $url;
-            }
-            // 2.应用进行了映射
-            if($app_map){
-                return $appName . $url;
-            }
-            // 3.应用未绑定域名也未进行映射
-            return $appName . $url;
-        }
-
-        //2.admin进行了映射
-        if($map_admin) {
-            // 1.应用绑定了域名
-            if($app_bind) {
-                return str_replace($map_admin, '', $url);;
-            }
-            // 2.应用进行了映射
-            if($app_map){
-                return str_replace($map_admin, $app_map, $url);
-            }
-            // 3.应用未绑定域名也未进行映射
-            return str_replace($map_admin, $appName, $url);
-        }
-        //3.admin未绑定域名也未映射
-        // 1.应用绑定了域名
-        if($app_bind) {
-            return $url;
-        }
-        // 2.应用进行了映射
-        if($app_map){
-            return str_replace('admin', $app_map, $url);
-        }
-        return str_replace('admin', $appName, $url);
-        
-    }
 
 }

@@ -152,9 +152,11 @@
 								icon: 1,
 								time: 1000
 							}, function() {
-								parent.layer.close(parent.layer.getFrameIndex(window
-									.name)); //关闭当前页
-								parent.layui.table.reload("power-table");
+								// parent.layui.table.renderData('rule-table');
+								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+								parent.layui.treetable.reload('#rule-table');
+								// parent.layui.table.reload("rule-table");
+								// window.parent.location.reload();
 							});
 						} else {
 							layer.msg(result.msg, {

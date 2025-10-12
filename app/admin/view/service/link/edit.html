@@ -1,0 +1,129 @@
+{extend name="public/form" /}
+
+{block name="body"}
+
+<form class="layui-form" >
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="title" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input" value="{$link.title}">
+                </div>
+            </div>
+            <div class="layui-form-item" id="img">
+                <label class="layui-form-label">图片</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="image" lay-verify="" placeholder="上传图" autocomplete="off" class="layui-input" value="{$link.logo}">
+                </div>
+                <button style="float: left;" type="button" class="layui-btn" id="upload-ads-img">选图</button>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">链接</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="url" lay-verify="required|url" placeholder="输入完整连接*必填" autocomplete="off" class="layui-input" value="{$link.url}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">开始</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="start_time" id="start-time" lay-verify="" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$link.start_time}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">结束</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="end_time" id="over-time"  lay-verify="" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" value="{$link.end_time}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <input type="text" name="id" class="layui-input layui-hide" value="{$link.id}">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="ads-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="pear-btn pear-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>
+</form>
+
+{__block__}
+
+<script>
+    const EDIT_URL = "{:url('service.link/edit')}";
+	const UPLOAD_URL = "{:url('service.link/uploadImg')}";
+    layui.use(['imgcom'], function(){
+        var $ = layui.$,form = layui.form,laydate = layui.laydate,upload = layui.upload,imgcom = layui.imgcom;
+
+        //开始时间
+        laydate.render({
+            elem: '#start-time'
+            ,type: 'datetime'
+            ,btns: ['clear','confirm']
+            ,trigger: 'click'
+        });
+        //结束时间
+        laydate.render({
+            elem: '#over-time'
+            ,type: 'datetime'
+            ,btns: ['clear','confirm']
+            ,trigger: 'click'
+        });
+
+        form.on('submit(ads-save)', function(data) {
+            $.ajax({
+                url: EDIT_URL,
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'post',
+                success: function(result) {
+                    if (result.code === 0) {
+                        layer.msg(result.msg, {
+                            icon: 1,
+                            time: 1000
+                        }, function() {
+                            parent.layui.table.reload("slide-table");
+                            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+                        });
+                    } else {
+                        layer.msg(result.msg, {
+                            icon: 2,
+                            time: 1000
+                        });
+                    }
+                }
+            })
+            return false;
+        });
+
+        //上传图片
+        upload.render({
+            elem: '#upload-ads-img'
+            ,url: UPLOAD_URL
+            ,data:{type:'image'}
+            ,accept: 'images'
+            ,acceptMime: 'image/*'
+            ,auto: false
+            ,choose: function (obj) { //选择文件后的回调
+                imgcom.uploads(obj);
+            }
+            ,done: function(res){
+                $(this.item).prev("div").children("input").val(res.src)
+                if(res.code === 0){
+                    layer.msg(res.msg,{icon:6,tiye:2000});
+                } else {
+                    layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+                }
+            }
+        });
+    })
+</script>
+{/block}

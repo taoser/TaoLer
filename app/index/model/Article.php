@@ -3,13 +3,11 @@ declare (strict_types = 1);
 
 namespace app\index\model;
 
-
 use Exception;
 use app\common\model\BaseModel;
 use think\model\concern\SoftDelete;
 use app\observer\ArticleObserver;
 use app\common\lib\IdEncode;
-use Symfony\Component\VarExporter\Internal\Exporter;
 use think\facade\Route;
 
 class Article extends BaseModel
@@ -24,11 +22,10 @@ class Article extends BaseModel
             'defaultSoftDelete'     => 0,
             'eventObserver'         => ArticleObserver::class,
             'jsonAssoc'             => true,
+            'lazyFields'            => 'pv' // 延迟写入pv
         ];
     }
 
-    // 延迟写入pv
-    protected $lazyFields = ['pv'];
 
     //文章关联栏目表
     public function cate()
@@ -77,7 +74,6 @@ class Article extends BaseModel
             $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
             return (string) Route::buildUrl('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
         }
-
         return (string) Route::buildUrl('article_detail',['id' => $data['id']])->domain(true);
     }
 

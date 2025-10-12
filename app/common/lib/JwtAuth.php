@@ -5,6 +5,7 @@ namespace app\common\lib;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Exception;
 
 class JwtAuth
 {    
@@ -48,15 +49,15 @@ class JwtAuth
             // 对 token 进行编码
             $decoded = JWT::decode($token, new Key(self::KEY, self::ALG));
             // 检测 token 附加数据中是否存在用户id
-            if (!empty($decoded->data->uid)) {
-                $data =  $decoded->data;
-            } else {
-                throw new \Exception('The token does not contain user information');
+            if (empty($decoded->data->uid)) {
+                throw new Exception('The token does not contain user information');
             }
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), 201);
+
+            return $decoded->data;
+            
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage(), 201);
         }
-        return $data; // 用户信息
     }
 
     public static function getHeaderToken(array $header)

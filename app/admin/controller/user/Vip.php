@@ -10,13 +10,13 @@
 
 namespace app\admin\controller\user;
 
-use app\common\controller\AdminController;
+use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\index\model\UserViprule;
 
-class Vip extends AdminController
+class Vip extends AdminBaseController
 {
 
 	public function index()

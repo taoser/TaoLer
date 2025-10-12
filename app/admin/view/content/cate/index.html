@@ -3,225 +3,172 @@
 {block name="title"}分类管理{/block}
 
 {block name="body"}
-    <div class="layui-card">
-        <div class="layui-card-body">
-            <table id="cate-table" lay-filter="cate-table"></table>
-        </div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="cate-table" lay-filter="cate-table"></table>
     </div>
+</div>
 
-    <script type="text/html" id="cate-toolbar">
-        <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
-            <i class="layui-icon layui-icon-add-1"></i>
-            新增
-        </button>
-        <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-            <i class="layui-icon layui-icon-delete"></i>
-            删除
-        </button>
-        <button class="pear-btn pear-btn-success pear-btn-md" lay-event="expandAll">
-            <i class="layui-icon layui-icon-spread-left"></i>
-            展开
-        </button>
-        <button class="pear-btn pear-btn-success pear-btn-md" lay-event="foldAll">
-            <i class="layui-icon layui-icon-shrink-right"></i>
-            折叠
-        </button>
-    </script>
+<script type="text/html" id="cate-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="expandAll">
+        <i class="layui-icon layui-icon-spread-left"></i>
+        展开
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="foldAll">
+        <i class="layui-icon layui-icon-shrink-right"></i>
+        折叠
+    </button>
+</script>
+<script type="text/html" id="cate-bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit" data-href="{:url('cate/edit')}"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+<script type="text/html" id="is-hot">
+    <input type="checkbox" name="is_hot" id="{{d.id}}" lay-skin="primary" lay-filter="cate-hot"  {{ d.is_hot == 1 ? 'checked' : '' }} />
+</script>
+<script type="text/html" id="is-type">
+    <div>
+        {{# if(d.type == 1) { }}
+            列表
+        {{# } else if(d.type == 2) { }}
+            单页
+        {{# } else { }}
+            链接
+        {{# } }}
+    </div>
+</script>
+<script type="text/html" id="cate-check">
+    <input type="checkbox" name="status" id="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="cate-check" {{ d.status == 1 ? 'checked' : '' }} />
+</script>
 
-    <script type="text/html" id="cate-bar">
-        <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit" data-href="{:url('cate/edit')}"><i class="layui-icon layui-icon-edit"></i></button>
-        <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
-    </script>
+{__block__}
 
-    <script type="text/html" id="cate-hot">
-        <input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="primary" lay-filter="cate-hot"  {{ d.is_hot == 1 ? 'checked' : '' }} />
-    </script>
-    <script type="text/html" id="cate-check">
-        <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="cate-check" {{ d.status== 1 ? 'checked' : '' }} />
-    </script>
+<script>
+    const CATE = "{:url('content.cate/list')}";
+    const DELETE = "{:url('content.cate/delete')}";
+    const CHECK = "{:url('content.cate/check')}";
 
-    <script type="text/html" id="icon">
-        <i class="layui-icon {{d.icon}}"></i>
-    </script>
+    layui.use(['treetable'],function () {
+        let $ = layui.jquery;
+        let table = layui.table;
+        let form = layui.form;
+        let treetable = layui.treetable;
 
-    {__block__}
+        treetable.render({
+            treeColIndex: 1,
+            treeSpid: 0,
+            treeIdName: 'id',
+            treePidName: 'pid',
+            skin:'line',
+            treeDefaultClose: false,
+            toolbar:'#cate-toolbar',
+            elem: '#cate-table',
+            url: CATE,
+            page: false,
+            cols: [[
+                {field: 'id', title: 'ID',width: 50}
+                ,{field: 'catename', title: '栏目名称', width: 150}
+                ,{field: 'ename', title: '别名', width: 100}
+                ,{field: 'type', title: '类型', align: 'center',width: 50, templet: '#is-type'}
+                ,{field: 'tpl',title: '模板', align: 'center',width: 100}
+                ,{field: 'icon', title: '图标', align: 'center',width: 50, templet: '<div><i class="layui-icon {{d.icon}}"></i></div>'}
+                ,{field: 'icon', title: '图标', align: 'center',width: 50, templet: '<div><img src="{{- d.image }}" style="width: 60px;"></div>'}
+                ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#is-hot'}
+                ,{field: 'url', title: '链接', width: 150}
+                ,{field: 'desc', title: '描述', minWidth: 200}
+                ,{field: 'status', title: '状态', width: 90, align: 'center', templet:'#cate-check'}
+                ,{field: 'sort', title: '排序', width: 80, align: 'center', sort: true}
+                ,{title: '操作', width: 120, align: 'center', toolbar: '#cate-bar'}
+            ]]
+        });
 
-    <script>
-        const CATE = "{:url('content.cate/list')}";
-        const DELETE = "{:url('content.cate/delete')}";
-        const CHECK = "{:url('content.cate/check')}";
-
-        layui.use(['table','form','jquery','treetable'],function () {
-            let $ = layui.jquery;
-            let table = layui.table;
-            let form = layui.form;
-            let treetable = layui.treetable;
-
-            let cols = [
-                [
-                    {type: 'checkbox'}
-                    ,{field: 'catename', title: '分类名', width: 150}
-                    ,{field: 'ename', title: 'EN别名', width: 100}
-                    ,{field: 'detpl',title: '模板', align: 'center',width: 100}
-                    ,{field: 'icon', title: '图标', align: 'center',width: 50, templet: '<p><i class="layui-icon {{d.icon}}"></i></p>'}
-                    ,{field: 'is_hot', title: '热门', align: 'center',width: 50, templet: '#cate-hot'}
-                    ,{field: 'desc', title: '描述', minWidth: 200}
-                    ,{field: 'status', title: '状态', width: 80,templet:'#cate-check'}
-                    ,{field: 'id', title: 'ID',width: 60}
-                    ,{field: 'sort', title: '排序', width: 80, sort: true}
-                    ,{title: '操作', width: 120, align: 'center', toolbar: '#cate-bar'}
-                ]
-            ];
-
-            window.render = function(){
-                treetable.render({
-                    treeColIndex: 1,
-                    treeSpid: 0,
-                    treeIdName: 'id',
-                    treePidName: 'pid',
-                    skin:'line',
-                    treeDefaultClose: false,
-                    toolbar:'#cate-toolbar',
-                    elem: '#cate-table',
-                    url: CATE,
-                    page: false,
-                    cols: cols
-                });
-            }
-
-            render();
-
-            table.on('tool(cate-table)',function(obj){
-                if (obj.event === 'remove') {
-                    window.remove(obj);
-                } else if (obj.event === 'edit') {
-                    window.edit(obj);
-                }
-            })
-
-
-            table.on('toolbar(cate-table)', function(obj){
-                if(obj.event === 'add'){
-                    window.add();
-                } else if(obj.event === 'refresh'){
-                    window.refresh();
-                } else if(obj.event === 'batchRemove'){
-                    window.batchRemove(obj);
-                }  else if(obj.event === 'expandAll'){
-                    treetable.expandAll("#cate-table");
-                } else if(obj.event === 'foldAll'){
-                    treetable.foldAll("#cate-table");
-                }
-            });
-
-            form.on('checkbox(cate-hot)', function(obj){
-                layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
-                var status = obj.elem.checked ? 1 : 0;
-                $.post(CHECK,{id:this.value, name:this.name, value: status},function(res){
-                    if(res.code === 0){
-                        layer.msg(res.msg,{icon:res.icon,time:2000})
-                    } else {
-                        layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
-                    }
-                });
-            });
-
-            form.on('switch(cate-check)', function(obj){
-                layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
-                var status = obj.elem.checked ? 1 : 0;
-                $.post(CHECK,{id:this.value, name:this.name, value: status},function(res){
-                    if(res.code === 0){
-                        layer.msg(res.msg,{icon:res.icon,time:2000})
-                    } else {
-                        layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
-                    }
-                });
-            });
-
-            window.add = function(){
-                layer.open({
-                    type: 2,
-                    title: '新增',
-                    shade: 0.1,
-                    area: ['550px', '650px'],
-                    content: 'addEdit.html'
-                });
-            }
-
-            window.edit = function(obj){
-                layer.open({
-                    type: 2,
-                    title: '修改',
-                    shade: 0.1,
-                    area: ['550px', '650px'],
-                    content: 'addEdit.html?id=' + obj.data.id
-                });
-            }
-            window.remove = function(obj){
-                layer.confirm('确定要删除该权限', {icon: 3, title:'提示'}, function(index){
-                    layer.close(index);
-                    let loading = layer.load();
-                    $.ajax({
-                        url: DELETE+"?id="+obj.data['id'],
-                        dataType:'json',
-                        type:'delete',
-                        success:function(result){
-                            layer.close(loading);
-                            if(result.code === 0){
-                                layer.msg(result.msg,{icon:1,time:1000},function(){
-                                    obj.del();
-                                });
-                            }else{
-                                layer.msg(result.msg,{icon:2,time:1000});
-                            }
-                        }
-                    })
-                });
-            }
-            
-            window.batchRemove = function(obj) {
-                let data = table.checkStatus(obj.config.id).data;
-                if (data.length === 0) {
-                    layer.msg("未选中数据", {
-                        icon: 3,
-                        time: 1000
-                    });
-                    return false;
-                }
-                let ids = "";
-                for (let i = 0; i < data.length; i++) {
-                    ids += data[i].id + ",";
-                }
-                ids = ids.substr(0, ids.length - 1);
-                layer.confirm('确定要删除这些权限', {
-                    icon: 3,
-                    title: '提示'
-                }, function(index) {
-                    layer.close(index);
-                    let loading = layer.load();
-                    $.ajax({
-                        url: DELETE + "?id=" + ids,
-                        dataType: 'json',
-                        type: 'delete',
-                        success: function(result) {
-                            layer.close(loading);
-                            if (result.success) {
-                                layer.msg(result.msg, {
-                                    icon: 1,
-                                    time: 1000
-                                }, function() {
-                                    table.reload('user-table');
-                                });
-                            } else {
-                                layer.msg(result.msg, {
-                                    icon: 2,
-                                    time: 1000
-                                });
-                            }
-                        }
-                    })
-                });
+        table.on('tool(cate-table)',function(obj){
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
             }
         })
-    </script>
+
+        table.on('toolbar(cate-table)', function(obj){
+            if(obj.event === 'add'){
+                window.add();
+            } else if(obj.event === 'refresh'){
+                window.refresh();
+            } else if(obj.event === 'expandAll'){
+                treetable.expandAll("#cate-table");
+            } else if(obj.event === 'foldAll'){
+                treetable.foldAll("#cate-table");
+            }
+        });
+
+        form.on('checkbox(cate-hot)', function(obj){
+            var status = obj.elem.checked ? 1 : 0;
+            $.post(CHECK,{id:this.id, name:this.name, value: status},function(res){
+                if(res.code === 0){
+                    layer.msg(res.msg,{icon:res.icon,time:2000})
+                } else {
+                    layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+                }
+            });
+        });
+
+        form.on('switch(cate-check)', function(obj){
+            var status = this.checked ? 1: 0;
+            $.post(CHECK,{id:this.id, name: this.name, value: status},function(res){
+                if(res.code === 0){
+                    layer.msg(res.msg,{icon:res.icon,time:2000})
+                } else {
+                    layer.open({title:'审核失败',content:res.msg,icon:5,adim:6})
+                }
+            });
+        });
+
+        window.add = function(){
+            layer.open({
+                type: 2,
+                title: '添加',
+                shade: 0.1,
+                area: ['550px', '710px'],
+                content: 'addEdit.html'
+            });
+        }
+
+        window.edit = function(obj){
+            layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['550px', '710px'],
+                content: 'addEdit.html?id=' + obj.data.id
+            });
+        }
+        window.remove = function(obj){
+
+            layer.confirm('删除栏目及相关内容？', {icon: 3, title:'提示'}, function(index){
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: DELETE + "?id=" + obj.data['id'],
+                    dataType:'json',
+                    type:'delete',
+                    success:function(result){
+                        layer.close(loading);
+                        if(result.code === 0){
+                            layer.msg(result.msg,{icon:1,time:1000},function(){
+                                obj.del();
+                            });
+                        } else {
+                            layer.msg(result.msg,{icon:2,time:1000});
+                        }
+                    }
+                })
+            });
+        }
+    })
+</script>
 {/block}
