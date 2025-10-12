@@ -29,7 +29,11 @@
 - .....
 
 ## 环境要求
+<<<<<<< HEAD
 - PHP >= 8.0
+=======
+- PHP >= 8.1
+>>>>>>> 3.0
 
 > 如果你的PHP版本还停留在PHP5，或者不会使用Composer,你可以选择使用QueryList3,QueryList3支持php5.3以及手动安装。
 QueryList3 文档:http://v3.querylist.cc

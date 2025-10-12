@@ -8,16 +8,18 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
 {
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '15ec93fa4ce4b2d53816a1a5f2c514e2' => __DIR__ . '/..' . '/topthink/think-validate/src/helper.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '7448f3465e10b5f033e4babb31eb0b06' => __DIR__ . '/..' . '/topthink/think-orm/src/helper.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+        '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
+        '0f675193b08f1d998bf8336679b91267' => __DIR__ . '/..' . '/jaeger/querylist/src/Collect/Support/helpers.php',
+        'ccc59ff8a4c824e248d98aed04130ff5' => __DIR__ . '/..' . '/jaeger/querylist/src/Collect/Support/alias.php',
         '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         '8c783b3a3de2f6d9177022b5ccdcc841' => __DIR__ . '/..' . '/yansongda/pay/src/Functions.php',
@@ -47,13 +49,17 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         ),
         'W' => 
         array (
+            'Workerman\\Coroutine\\' => 20,
             'Workerman\\' => 10,
         ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Contracts\\Service\\' => 26,
+            'Symfony\\Contracts\\Cache\\' => 24,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
+            'Symfony\\Component\\Cache\\' => 24,
             'Sqids\\' => 6,
         ),
         'Q' => 
@@ -68,7 +74,7 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
-            'PHPSocketIO\\' => 12,
+            'Psr\\Cache\\' => 10,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' => 
@@ -80,6 +86,10 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             'League\\MimeTypeDetection\\' => 25,
             'League\\Flysystem\\Local\\' => 23,
             'League\\Flysystem\\' => 17,
+        ),
+        'J' => 
+        array (
+            'Jaeger\\' => 7,
         ),
         'I' => 
         array (
@@ -107,10 +117,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         'D' => 
         array (
             'DASPRiD\\Enum\\' => 13,
-        ),
-        'C' => 
-        array (
-            'Channel\\' => 8,
         ),
         'B' => 
         array (
@@ -170,13 +176,26 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/yansongda/artful/src',
         ),
+        'Workerman\\Coroutine\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/coroutine/src',
+        ),
         'Workerman\\' => 
         array (
-            0 => __DIR__ . '/..' . '/workerman/workerman',
+            0 => __DIR__ . '/..' . '/workerman/coroutine/src',
+            1 => __DIR__ . '/..' . '/workerman/workerman/src',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Contracts\\Service\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/service-contracts',
+        ),
+        'Symfony\\Contracts\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/cache-contracts',
         ),
         'Symfony\\Component\\VarExporter\\' => 
         array (
@@ -186,13 +205,17 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
+        'Symfony\\Component\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/cache',
+        ),
         'Sqids\\' => 
         array (
             0 => __DIR__ . '/..' . '/sqids/sqids/src',
         ),
         'QL\\' => 
         array (
-            0 => __DIR__ . '/..' . '/jaeger/querylist',
+            0 => __DIR__ . '/..' . '/jaeger/querylist/src',
         ),
         'Psr\\SimpleCache\\' => 
         array (
@@ -219,9 +242,9 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'PHPSocketIO\\' => 
+        'Psr\\Cache\\' => 
         array (
-            0 => __DIR__ . '/..' . '/workerman/phpsocket.io/src',
+            0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
         'PHPMailer\\PHPMailer\\' => 
         array (
@@ -242,6 +265,10 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         'League\\Flysystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
+        ),
+        'Jaeger\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jaeger/g-http/src',
         ),
         'Intervention\\Image\\' => 
         array (
@@ -291,10 +318,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/dasprid/enum/src',
         ),
-        'Channel\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/workerman/channel/src',
-        ),
         'BaconQrCode\\' => 
         array (
             0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
@@ -320,6 +343,7 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         'phpQueryEvents' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'phpQueryObject' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'phpQueryPlugins' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        '©' => __DIR__ . '/..' . '/symfony/cache/Traits/ValueWrapper.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

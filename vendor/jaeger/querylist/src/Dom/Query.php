@@ -62,7 +62,11 @@ class Query
      * @param Closure|null $callback
      * @return Collection|static
      */
+<<<<<<< HEAD
     public function getData(Closure $callback = null)
+=======
+    public function getData(?Closure $callback = null)
+>>>>>>> 3.0
     {
         return $this->handleData($this->data, $callback);
     }
@@ -136,7 +140,11 @@ class Query
      * @param Closure|null $callback
      * @return QueryList
      */
+<<<<<<< HEAD
     public function query(Closure $callback = null)
+=======
+    public function query(?Closure $callback = null)
+>>>>>>> 3.0
     {
         $this->data = $this->getList();
         $this->data = $this->handleData($this->data, $callback);

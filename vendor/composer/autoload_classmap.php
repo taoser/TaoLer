@@ -20,4 +20,5 @@ return array(
     'phpQueryEvents' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
     'phpQueryObject' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
     'phpQueryPlugins' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
+    '©' => $vendorDir . '/symfony/cache/Traits/ValueWrapper.php',
 );

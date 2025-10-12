@@ -415,6 +415,37 @@ class Gateway
         }
         return $client_list;
     }
+    /**
+     * 获取与 uid 绑定的 client_id 列表
+     *
+     * @param string $uid
+     * @return array
+     */
+    public static function getClientIdByUids( $uids )
+    {
+        $gateway_data             = GatewayProtocol::$empty;
+        $gateway_data['cmd']      = GatewayProtocol::CMD_BATCH_GET_CLIENT_ID_BY_UID;
+        $gateway_data['ext_data'] = json_encode( $uids );
+        $client_list              = array();
+        $all_buffer_array         = static::getBufferFromAllGateway($gateway_data);
+        foreach ($all_buffer_array as $local_ip => $buffer_array) {
+            foreach ($buffer_array as $local_port => $connection_id_array) {
+                if ($connection_id_array) {
+                    foreach ($connection_id_array as $uid =>$connection_id) {
+                        if( $connection_id ){
+                            if( !isset( $client_list[$uid] ) ){
+                                $client_list[$uid] = [];
+                            }
+                            $client_list[$uid][] = Context::addressToClientId($local_ip, $local_port, $connection_id );
+                            
+                        }
+                        
+                    }
+                }
+            }
+        }
+        return $client_list;
+    }
 
     /**
      * 获取某个群组在线uid列表
@@ -1341,7 +1372,7 @@ class Gateway
         $time_now = time();
         $expiration_time = 1;
         $register_addresses = (array)static::$registerAddress;
-        if(empty($addresses_cache) || $time_now - $last_update > $expiration_time) {
+        if(empty($addresses_cache[static::$registerAddress]) || $time_now - $last_update[static::$registerAddress] > $expiration_time) {
             foreach ($register_addresses as $register_address) {
                 $client = stream_socket_client('tcp://' . $register_address, $errno, $errmsg, static::$connectTimeout);
                 if ($client) {
@@ -1359,14 +1390,14 @@ class Gateway
                 throw new Exception('getAllGatewayAddressesFromRegister fail. tcp://' .
                     $register_address . ' return ' . var_export($ret, true));
             }
-            $last_update = $time_now;
-            $addresses_cache = $data['addresses'];
+            $last_update[static::$registerAddress] = $time_now;
+            $addresses_cache[static::$registerAddress] = $data['addresses'];
         }
-        if (!$addresses_cache) {
+        if (!$addresses_cache[static::$registerAddress]) {
             throw new Exception('Gateway::getAllGatewayAddressesFromRegister() with registerAddress:' .
-                json_encode(static::$registerAddress) . '  return ' . var_export($addresses_cache, true));
+                json_encode(static::$registerAddress) . '  return ' . var_export($addresses_cache[static::$registerAddress], true));
         }
-        return $addresses_cache;
+        return $addresses_cache[static::$registerAddress];
     }
 
     /**
