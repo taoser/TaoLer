@@ -600,7 +600,13 @@ class Query extends BaseQuery
             $options = $this->getOptions();
             $bind    = $this->bind;
             $times   = 0;
-            if ($this->getOption('order') || !is_string($column)) {
+            $field   = $this->getOption('field');
+            if (is_array($field) && false !== stripos(implode(',', $field), 'distinct')) {
+                $distinct = true;
+            } else {
+                $distinct = false;
+            }
+            if ($this->getOption('order') || !is_string($column) || $distinct) {
                 $page      = 1;
                 $resultSet = $this->options($options)->page($page, $length)->select();
             } else {

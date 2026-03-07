@@ -1,4 +1,4 @@
-layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'menu', 'frame', 'theme', 'convert','fullscreen'],
+layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'pearTab', 'menu', 'frame', 'theme', 'convert','fullscreen'],
 	function(exports) {
 		"use strict";
 
@@ -6,7 +6,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 			form = layui.form,
 			element = layui.element,
 			yaml = layui.yaml,
-			pearTab = layui.tab,
+			pearTab = layui.pearTab,
 			convert = layui.convert,
 			pearMenu = layui.menu,
 			pearFrame = layui.frame,

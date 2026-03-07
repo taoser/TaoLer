@@ -9,6 +9,7 @@ use think\facade\Cache;
 use app\common\lib\IdEncode;
 use think\facade\Route;
 use app\common\entity\BaseEntity;
+use app\index\model\Category as ModelCategory;
 use Exception;
 use think\model\type\Json as TypeJson;
 use think\response\Json;
@@ -207,22 +208,18 @@ class Category extends BaseEntity
             $where[] = ['cate_id' ,'=', $cate['id']];
         }
 
-        $where[] = ['status', '=', 1];
-
         switch ($type) {
-            //查询文章,15个分1页
-            case 'top':
-                $where[] = ['flags->is_top' ,'=', '1'];
-                break;
-            case 'good':
+            case 'hot':
                 $where[] = ['flags->is_good','=', '1'];
                 break;
-            case 'end':
-                $where[] = ['flags->is_wait','=', '1'];
+            case 'top':
+                $where[] = ['flags->is_top' ,'=', '1'];
                 break;
             case 'wait':
                 $where[] = ['flags->is_wait','=', '0'];
                 break;
+            default: 
+            break;
         }
 
         // $limit = 5;
@@ -237,10 +234,10 @@ class Category extends BaseEntity
             return self::getSuffixMap($where, Article::class);
 
             // return [
-            //     'countArr'    => $countArr,
-            //     'totals'    => $totals,
+            //     'countArr'       => $countArr,
+            //     'totals'         => $totals,
             //     'tableSuffixArr' => $tableSuffixArr,
-            //     'tableCount' => $tableCount
+            //     'tableCount'     => $tableCount
             // ];
 
         }, 900);
@@ -272,43 +269,44 @@ class Category extends BaseEntity
                 // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
                 self::$newLimit = $limit;
 
-                $field = 'id,cate_id,user_id,title,content,description,create_time,pv,has_image,has_video,has_audio,media,comments_num,flags';
-
                 // 循环 取每个表中的数据
                 for($i = 0; $i < $map['tableCount']; $i++) {
                     // 当前表 取到的数据总数
                     self::$currentTotalNum += $map['countArr'][$i];
 
                     // 1.可以完全取到 在第一组分表中就可以完全查询到
-                    if((self::$currentTotalNum - $maxNum) >= 0){
+                    if((self::$currentTotalNum - $maxNum) >= 0) {
                         // echo 123;
                     
-                        $articles = Article::suffix($map['tableSuffixArr'][$i])
-                        ->field('id')
-                        ->where($where)
-                        ->order('id', 'desc')
-                        ->limit(self::$offset, self::$newLimit)
-                        ->select();
+                        // $articles = Article::suffix($map['tableSuffixArr'][$i])
+                        // ->field('id')
+                        // ->where($where)
+                        // ->order('id', 'desc')
+                        // ->limit(self::$offset, self::$newLimit)
+                        // ->select();
 
-                        $ids = $articles->toArray();
-                        $idArr = array_column($ids, 'id');
+                        // $ids = $articles->toArray();
+                        // $idArr = array_column($ids, 'id');
 
-                        $list =  Article::suffix($map['tableSuffixArr'][$i])
-                        ->field($field)
-                        ->whereIn('id', $idArr)
-                        ->with([
-                            'cate' => function (Query $query) {
-                                $query->field('id,catename,ename');
-                            },
-                            'user' => function(Query $query){
-                                $query->field('id,name,nickname,user_img,vip');
-                            }
-                        ])
-                        ->order('id', 'desc')
-                        ->select()
-                        ->toArray();
+                        // $list =  Article::suffix($map['tableSuffixArr'][$i])
+                        // ->field($field)
+                        // ->whereIn('id', $idArr)
+                        // ->with([
+                        //     'cate' => function (Query $query) {
+                        //         $query->field('id,catename,ename');
+                        //     },
+                        //     'user' => function(Query $query){
+                        //         $query->field('id,name,nickname,user_img,vip');
+                        //     }
+                        // ])
+                        // ->order('id', 'desc')
+                        // ->select()
+                        // ->toArray();
+
+                        $list = $this->selectSuffix($where, $map['tableSuffixArr'][$i]);
                         
                         $datas = array_merge($datas, $list);
+
                         break;
                     } 
 
@@ -316,42 +314,19 @@ class Category extends BaseEntity
                     if((self::$currentTotalNum - $maxNum) < 0 && ($maxNum - self::$currentTotalNum - $limit) < 0 ) {
                         // echo 234;
 
-                        $articles = Article::suffix($map['tableSuffixArr'][$i])
-                        ->field('id')
-                        ->where($where)
-                        ->order('id', 'desc')
-                        ->limit(self::$offset, self::$newLimit)
-                        ->select();
-                        $ids = $articles->toArray();
-                        $idArr = array_column($ids, 'id');
+                        $list = $this->selectSuffix($where, $map['tableSuffixArr'][$i]);
 
-                        $list =  Article::suffix($map['tableSuffixArr'][$i])
-                        ->field($field)
-                        ->whereIn('id', $idArr)
-                        ->with([
-                            'cate' => function (Query $query) {
-                                $query->field('id,catename,ename');
-                            },
-                            'user' => function(Query $query){
-                                $query->field('id,name,nickname,user_img,vip');
-                            }
-                        ])
-                        ->order('id', 'desc')
-                        ->select()
-                        ->toArray();
-                        
                         $datas = array_merge($datas, $list);
                         
                         // 介于2表之间 第二张表分量从0开始
                         self::$offset = 0;
                         // 第二张表分量数
                         self::$newLimit = $page * $limit - self::$currentTotalNum;
-            
+
                     }
 
                     // 3.第一组完全取不到 数据没有在第一组，刚好从第二组开头取, 只能从后面一组从0开始继续找 ，需要跳过当次循环
                     if($maxNum - self::$currentTotalNum - $limit == 0) {
-
                         // echo 345;
 
                         self::$offset = 0;
@@ -359,7 +334,6 @@ class Category extends BaseEntity
 
                     // 4.第一组完全取不到 且不是从第二组开头找，需要跳过当次循环
                     if((self::$currentTotalNum - $maxNum < 0) && ($maxNum - self::$currentTotalNum - $limit > 0) ) {
-
                         // echo 456;
 
                         // 第一组可分页面数
@@ -382,6 +356,7 @@ class Category extends BaseEntity
                     $id = IdEncode::encode($da['id']);
                     
                     if(empty($routeRewrite)) {
+                        
                         $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id, 'ename' => $da['cate']['ename']])->domain(true);
                         // $da['url'] = (string) Route::buildUrl("{$cate['ename']}/{$id}")->domain(true);
                     } else {
@@ -422,6 +397,55 @@ class Category extends BaseEntity
             return json(['code' => 1,'msg' => 'error']);
         }
         return json(['code'=>0,'msg'=>'设置成功','icon'=>6]);
+    }
+
+    // 根据条件高效分页关联查询
+    protected function selectSuffix($where, $suffix)
+    {
+        // 3. 构建主键分页子查询（核心：仅查ID，利用主键索引快速定位）
+        $subQuery = Article::suffix($suffix)
+            ->with(['cate' => function($query) {
+                $query->where('status', 1);  // 只关联状态正常的用户
+            }])
+            ->has('cate')  // 关键：只返回有关联user的记录
+            ->field('id')
+            ->where($where)
+            ->where('status', 1)
+            ->order('id', 'desc')
+            ->limit(self::$offset, self::$newLimit) // 深分页用limit(offset, limit)更直观
+            ->buildSql(); // 生成带括号的子查询SQL
+
+            // halt($subQuery);
+
+        // 4. 主查询：JOIN子查询+关联查询+追加字段（一次查询搞定）
+        $list = Article::suffix($suffix)
+            ->alias('a')
+            // JOIN子查询（仅匹配分页后的ID，避免全表扫描）
+            ->join([$subQuery => 'b'], 'a.id = b.id')
+            // 关联分类/用户（保留原逻辑，简化闭包）
+            ->with([
+                'cate' => fn(Query $query) => $query->field('id,catename,ename'),
+                'user' => fn(Query $query) => $query->field('id,name,nickname,user_img,vip')
+            ])
+            // 字段筛选（主表加别名，避免字段冲突）
+            ->field(['a.id', 'a.cate_id', 'a.user_id', 'a.title', 'a.content', 'a.description','a.create_time', 'a.pv', 'a.has_image', 'a.has_video', 'a.has_audio','a.comments_num', 'a.flags'])
+            // 保持排序一致性
+            ->order('a.id', 'desc')
+            // 追加URL字段（模型访问器）
+            ->append(['url'])
+            // 执行查询并处理结果（空值防护）
+            ->select()
+            // ->map(function ($item) {
+            //     // 可选：单条数据格式化（如时间戳转字符串）
+            //     // $item->create_time = date('Y-m-d H:i:s', $item->create_time);
+            //     // return $item;
+            // })
+            ->toArray();
+
+        // 空值兜底：若无数据直接返回空数组
+        $list = $list ?: [];
+
+        return $list;
     }
 
 }

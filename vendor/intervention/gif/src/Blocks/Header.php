@@ -20,8 +20,6 @@ class Header extends AbstractEntity
 
     /**
      * Set GIF version
-     *
-     * @param string $value
      */
     public function setVersion(string $value): self
     {
@@ -32,8 +30,6 @@ class Header extends AbstractEntity
 
     /**
      * Return current version
-     *
-     * @return string
      */
     public function getVersion(): string
     {

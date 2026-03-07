@@ -10,8 +10,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 {
     /**
      * Create new instance
-     *
-     * @param ImageDescriptor $source
      */
     public function __construct(ImageDescriptor $source)
     {
@@ -20,8 +18,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode current source
-     *
-     * @return string
      */
     public function encode(): string
     {
@@ -37,8 +33,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode left value
-     *
-     * @return string
      */
     protected function encodeLeft(): string
     {
@@ -47,8 +41,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode top value
-     *
-     * @return string
      */
     protected function encodeTop(): string
     {
@@ -57,8 +49,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode width value
-     *
-     * @return string
      */
     protected function encodeWidth(): string
     {
@@ -67,8 +57,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode height value
-     *
-     * @return string
      */
     protected function encodeHeight(): string
     {
@@ -77,8 +65,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode size of local color table
-     *
-     * @return string
      */
     protected function encodeLocalColorTableSize(): string
     {
@@ -87,8 +73,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode reserved field
-     *
-     * @return string
      */
     protected function encodeReservedField(): string
     {
@@ -97,8 +81,6 @@ class ImageDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode packed field
-     *
-     * @return string
      */
     protected function encodePackedField(): string
     {

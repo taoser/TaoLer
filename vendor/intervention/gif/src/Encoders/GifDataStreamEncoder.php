@@ -13,8 +13,6 @@ class GifDataStreamEncoder extends AbstractEncoder
 {
     /**
      * Create new instance
-     *
-     * @param GifDataStream $source
      */
     public function __construct(GifDataStream $source)
     {
@@ -25,7 +23,6 @@ class GifDataStreamEncoder extends AbstractEncoder
      * Encode current source
      *
      * @throws EncoderException
-     * @return string
      */
     public function encode(): string
     {
@@ -52,7 +49,6 @@ class GifDataStreamEncoder extends AbstractEncoder
      * Encode data blocks of source
      *
      * @throws EncoderException
-     * @return string
      */
     protected function encodeFrames(): string
     {
@@ -66,7 +62,6 @@ class GifDataStreamEncoder extends AbstractEncoder
      * Encode comment extension blocks of source
      *
      * @throws EncoderException
-     * @return string
      */
     protected function encodeComments(): string
     {

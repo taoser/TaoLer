@@ -9,19 +9,19 @@
 					<div class="layui-col-md2">
 						<label class="layui-form-label">用户名</label>
 						<div class="layui-input-block">
-							<input type="text" name="name" placeholder="" class="layui-input">
+							<input type="text" name="name" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-col-md2">
 						<label class="layui-form-label">邮箱</label>
 						<div class="layui-input-block">
-							<input type="text" name="email" placeholder="" class="layui-input">
+							<input type="text" name="email" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-col-md2">
 						<label class="layui-form-label">手机号</label>
 						<div class="layui-input-block">
-							<input type="text" name="phone" placeholder="" class="layui-input">
+							<input type="text" name="phone" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-col-md2">
@@ -86,16 +86,14 @@
 		{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd')}}
 	</script>
 
-	{__block__}
+{__block__}
 
 	<script>
-		layui.use(['table', 'form', 'jquery','common'], function() {
+		layui.use(['common','popup'], function() {
 			let table = layui.table;
 			let form = layui.form;
 			let $ = layui.jquery;
 			let common = layui.common;
-
-			let MODULE_PATH = "operate/";
 
 			let cols = [
 				[{
@@ -186,13 +184,13 @@
 				if (obj.event === 'remove') {
 					window.remove(obj);
 				} else if (obj.event === 'edit') {
-					window.edit(obj);
+					edit(obj);
 				}
 			});
 
 			table.on('toolbar(user-table)', function(obj) {
 				if (obj.event === 'add') {
-					window.add();
+					add();
 				} else if (obj.event === 'refresh') {
 					window.refresh();
 				} else if (obj.event === 'batchRemove') {
@@ -207,37 +205,28 @@
 				return false;
 			});
 
+			//执行用户审核
 			form.on('switch(user-enable)', function(obj) {
-				layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
 				var status = obj.elem.checked ? 1 : -1;
-				//执行用户审核
-					$.ajax({
-						type:'post',
-						url:"{:url('system.admin/check')}",
-						data:{"id":this.value,"status":status},
-						dataType:'json',
-						success:function(res){
-							if(res.code === 0){
-								layer.msg(res.msg,{
-									icon:res.icon,
-									time:2000
-								}
-								//,function(){location.reload();}
-								);
-							} else {
-								layer.open({
-									title:'审核失败',
-									content:res.msg,
-									icon:5,
-									adim:6
-								})
-							}
+				$.ajax({
+					type:'post',
+					url:"{:url('system.admin/check')}",
+					data:{"id": this.value, "status":status},
+					dataType:'json',
+					success:function(res){
+						if(res.code === 0){
+							return layui.popup.success(res.msg,function(){
+								table.reload('user-table')
+							});
+						} else {
+							return layui.popup.failure(res.msg);
 						}
-					});
-					return false;
+					}
+				});
+				return false;
 			});
 
-			window.add = function() {
+			let add = function() {
 				layer.open({
 					type: 2,
 					title: '新增',
@@ -247,7 +236,7 @@
 				});
 			}
 
-			window.edit = function(obj) {
+			let edit = function(obj) {
 				layer.open({
 					type: 2,
 					title: '修改',
@@ -268,23 +257,19 @@
 						url: "{:url('system.admin/delete')}?id=" + obj.data['id'],
 						dataType: 'json',
 						type: 'delete',
-						success: function(result) {
+						success: function(res) {
 							layer.close(loading);
-							if (result.code === 0) {
-								layer.msg(result.msg, {
-									icon: 1,
-									time: 1000
-								}, function() {
+							if (res.code === 0) {
+								return layui.popup.success(res.msg,function(){
 									obj.del();
+									table.reload('user-table')
 								});
 							} else {
-								layer.msg(result.msg, {
-									icon: 2,
-									time: 1000
-								});
+								return layui.popup.failure(res.msg);
 							}
 						}
 					})
+					return false;
 				});
 			}
 
@@ -293,11 +278,7 @@
 				var checkIds = common.checkField(obj,'id');
 
 				if (checkIds === "") {
-					layer.msg("未选中数据", {
-						icon: 3,
-						time: 1000
-					});
-					return false;
+					return layui.popup.warning('未选中任何数据');
 				}
 				
 				layer.confirm('确定要删除这些用户', {
@@ -311,23 +292,18 @@
 						dataType: 'json',
 						type: 'delete',
 						data:{"id":checkIds}, 
-						success: function(result) {
+						success: function(res) {
 							layer.close(loading);
-							if (result.success) {
-								layer.msg(result.msg, {
-									icon: 1,
-									time: 1000
-								}, function() {
+							if (res.success) {
+								return layui.popup.success(res.msg,function() {
 									table.reload('user-table');
 								});
 							} else {
-								layer.msg(result.msg, {
-									icon: 2,
-									time: 1000
-								});
+								return layui.popup.failure(res.msg);
 							}
 						}
 					})
+					return false;
 				});
 			}
 

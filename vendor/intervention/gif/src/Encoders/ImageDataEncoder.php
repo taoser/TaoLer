@@ -13,8 +13,6 @@ class ImageDataEncoder extends AbstractEncoder
 {
     /**
      * Create new instance
-     *
-     * @param ImageData $source
      */
     public function __construct(ImageData $source)
     {
@@ -25,7 +23,6 @@ class ImageDataEncoder extends AbstractEncoder
      * Encode current source
      *
      * @throws EncoderException
-     * @return string
      */
     public function encode(): string
     {

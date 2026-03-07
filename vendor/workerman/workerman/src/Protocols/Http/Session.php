@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Workerman\Protocols\Http;
 
 use Exception;
-use Random\RandomException;
 use RuntimeException;
+use Throwable;
 use Workerman\Protocols\Http\Session\FileSessionHandler;
 use Workerman\Protocols\Http\Session\SessionHandlerInterface;
 use function array_key_exists;
@@ -428,11 +428,12 @@ class Session
     }
 
     /**
-     * __wakeup.
+     * __unserialize.
      *
+     * @param array $data
      * @return void
      */
-    public function __wakeup()
+    public function __unserialize(array $data): void
     {
         $this->isSafe = false;
     }
@@ -441,7 +442,7 @@ class Session
      * __destruct.
      *
      * @return void
-     * @throws RandomException
+     * @throws Throwable
      */
     public function __destruct()
     {

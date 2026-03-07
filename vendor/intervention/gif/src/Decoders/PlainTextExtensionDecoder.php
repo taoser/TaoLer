@@ -13,7 +13,6 @@ class PlainTextExtensionDecoder extends AbstractDecoder
      * Decode current source
      *
      * @throws DecoderException
-     * @return PlainTextExtension
      */
     public function decode(): PlainTextExtension
     {
@@ -35,11 +34,15 @@ class PlainTextExtensionDecoder extends AbstractDecoder
      * Get number of bytes in header block
      *
      * @throws DecoderException
-     * @return int
      */
     protected function getInfoBlockSize(): int
     {
-        return unpack('C', $this->getNextByteOrFail())[1];
+        $unpacked = unpack('C', $this->getNextByteOrFail());
+        if ($unpacked === false || !array_key_exists(1, $unpacked)) {
+            throw new DecoderException('Unable to decode info block size.');
+        }
+
+        return $unpacked[1];
     }
 
     /**
@@ -54,7 +57,13 @@ class PlainTextExtensionDecoder extends AbstractDecoder
 
         do {
             $char = $this->getNextByteOrFail();
-            $size = (int) unpack('C', $char)[1];
+            $unpacked = unpack('C', $char);
+            if ($unpacked === false || !array_key_exists(1, $unpacked)) {
+                throw new DecoderException('Unable to decode text block.');
+            }
+
+            $size = (int) $unpacked[1];
+
             if ($size > 0) {
                 $blocks[] = $this->getNextBytesOrFail($size);
             }

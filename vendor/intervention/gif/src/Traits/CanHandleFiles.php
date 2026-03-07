@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Intervention\Gif\Traits;
 
+use Intervention\Gif\Exceptions\RuntimeException;
+
 trait CanHandleFiles
 {
      /**
      * Determines if input is file path
-     *
-     * @param mixed $input
-     * @return bool
      */
     private static function isFilePath(mixed $input): bool
     {
@@ -19,9 +18,6 @@ trait CanHandleFiles
 
     /**
      * Determine if given string contains null bytes
-     *
-     * @param string $string
-     * @return bool
      */
     private static function hasNullBytes(string $string): bool
     {
@@ -31,12 +27,16 @@ trait CanHandleFiles
     /**
      * Create file pointer from given gif image data
      *
-     * @param string $data
-     * @return resource
+     * @throws RuntimeException
      */
-    private static function getHandleFromData($data)
+    private static function getHandleFromData(string $data): mixed
     {
         $handle = fopen('php://temp', 'r+');
+
+        if ($handle === false) {
+            throw new RuntimeException('Unable to create tempory file handle.');
+        }
+
         fwrite($handle, $data);
         rewind($handle);
 
@@ -45,11 +45,8 @@ trait CanHandleFiles
 
     /**
      * Create file pounter from given file path
-     *
-     * @param string $path
-     * @return resource
      */
-    private static function getHandleFromFilePath(string $path)
+    private static function getHandleFromFilePath(string $path): mixed
     {
         return fopen($path, 'rb');
     }

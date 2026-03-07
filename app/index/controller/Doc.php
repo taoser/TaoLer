@@ -16,7 +16,7 @@ use think\facade\Request;
 use think\facade\Db;
 use app\facade\Article;
 
-use app\index\model\Slider;
+use addons\ads\model\Slider;
 
 
 class Doc extends IndexBaseController

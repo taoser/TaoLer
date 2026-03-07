@@ -13,8 +13,6 @@ class FrameBlockEncoder extends AbstractEncoder
 {
     /**
      * Create new decoder instance
-     *
-     * @param FrameBlock $source
      */
     public function __construct(FrameBlock $source)
     {

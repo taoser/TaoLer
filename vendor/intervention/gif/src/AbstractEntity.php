@@ -19,8 +19,6 @@ abstract class AbstractEntity implements Stringable
 
     /**
      * Get short classname of current instance
-     *
-     * @return string
      */
     public static function getShortClassname(): string
     {
@@ -31,7 +29,6 @@ abstract class AbstractEntity implements Stringable
      * Cast object to string
      *
      * @throws EncoderException
-     * @return string
      */
     public function __toString(): string
     {

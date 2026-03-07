@@ -93,7 +93,7 @@ class BaseEntity extends Entity
      *
      * @param array $where 查询条件 
      * @param [type] $class 类
-     * @return void
+     * @return array
      */
     public static function getSuffixMap(array $where = [], ?string $class = null)
     {

@@ -15,12 +15,16 @@ class DataSubBlockDecoder extends AbstractDecoder
      *
      * @throws FormatException
      * @throws DecoderException
-     * @return DataSubBlock
      */
     public function decode(): DataSubBlock
     {
         $char = $this->getNextByteOrFail();
-        $size = (int) unpack('C', $char)[1];
+        $unpacked = unpack('C', $char);
+        if ($unpacked === false || !array_key_exists(1, $unpacked)) {
+            throw new DecoderException('Unable to decode data sub block.');
+        }
+
+        $size = (int) $unpacked[1];
 
         return new DataSubBlock($this->getNextBytesOrFail($size));
     }

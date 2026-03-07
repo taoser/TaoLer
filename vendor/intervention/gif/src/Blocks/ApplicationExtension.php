@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Intervention\Gif\Blocks;
 
 use Intervention\Gif\AbstractExtension;
+use Intervention\Gif\Exceptions\RuntimeException;
 
 class ApplicationExtension extends AbstractExtension
 {
@@ -12,8 +13,6 @@ class ApplicationExtension extends AbstractExtension
 
     /**
      * Application Identifier & Auth Code
-     *
-     * @var string
      */
     protected string $application = '';
 
@@ -26,8 +25,6 @@ class ApplicationExtension extends AbstractExtension
 
     /**
      * Get size of block
-     *
-     * @return int
      */
     public function getBlockSize(): int
     {
@@ -36,9 +33,6 @@ class ApplicationExtension extends AbstractExtension
 
     /**
      * Set application name
-     *
-     * @param string $value
-     * @return ApplicationExtension
      */
     public function setApplication(string $value): self
     {
@@ -49,8 +43,6 @@ class ApplicationExtension extends AbstractExtension
 
     /**
      * Get application name
-     *
-     * @return string
      */
     public function getApplication(): string
     {
@@ -59,9 +51,6 @@ class ApplicationExtension extends AbstractExtension
 
     /**
      * Add block to application extension
-     *
-     * @param DataSubBlock $block
-     * @return ApplicationExtension
      */
     public function addBlock(DataSubBlock $block): self
     {
@@ -74,7 +63,6 @@ class ApplicationExtension extends AbstractExtension
      *  Set data sub blocks of instance
      *
      * @param array<DataSubBlock> $blocks
-     * @return ApplicationExtension
      */
     public function setBlocks(array $blocks): self
     {
@@ -91,5 +79,19 @@ class ApplicationExtension extends AbstractExtension
     public function getBlocks(): array
     {
         return $this->blocks;
+    }
+
+    /**
+     * Get first block of ApplicationExtension
+     *
+     * @throws RuntimeException
+     */
+    public function getFirstBlock(): DataSubBlock
+    {
+        if (!array_key_exists(0, $this->blocks)) {
+            throw new RuntimeException('Unable to retrieve data sub block.');
+        }
+
+        return $this->blocks[0];
     }
 }

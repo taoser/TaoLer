@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Intervention\Gif\Blocks;
 
 use Intervention\Gif\Exceptions\FormatException;
+use Intervention\Gif\Exceptions\RuntimeException;
 
 class NetscapeApplicationExtension extends ApplicationExtension
 {
@@ -16,7 +17,6 @@ class NetscapeApplicationExtension extends ApplicationExtension
      * Create new instance
      *
      * @throws FormatException
-     * @return void
      */
     public function __construct()
     {
@@ -27,19 +27,23 @@ class NetscapeApplicationExtension extends ApplicationExtension
     /**
      * Get number of loops
      *
-     * @return int
+     * @throws RuntimeException
      */
     public function getLoops(): int
     {
-        return unpack('v*', substr($this->getBlocks()[0]->getValue(), 1))[1];
+        $unpacked = unpack('v*', substr($this->getFirstBlock()->getValue(), 1));
+
+        if ($unpacked === false || !array_key_exists(1, $unpacked)) {
+            throw new RuntimeException('Unable to get loop count.');
+        }
+
+        return $unpacked[1];
     }
 
     /**
      * Set number of loops
      *
-     * @param int $loops
      * @throws FormatException
-     * @return self
      */
     public function setLoops(int $loops): self
     {

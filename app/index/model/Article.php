@@ -14,6 +14,7 @@ class Article extends BaseModel
 {
 	//软删除
 	use SoftDelete;
+    
     protected function getOptions(): array 
     {
         return [
@@ -30,7 +31,7 @@ class Article extends BaseModel
     //文章关联栏目表
     public function cate()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class); // 内连接：无匹配分类的文章会被过滤;
     }
 	
 	//文章关联评论

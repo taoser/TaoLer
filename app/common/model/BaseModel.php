@@ -7,6 +7,15 @@ use think\facade\Db;
 
 class BaseModel extends Model
 {
+    protected function getBaseOptions(): array 
+    {
+        return [
+            'createTime' => 'create_time',
+            'updateTime' => 'update_time',
+            'dateFormat' => 'Y-m-d H:i:s',
+        ];
+    }
+    
     /**
      * article 查、改、删时需要传入id,获取所在表的后缀
      *
