@@ -734,11 +734,12 @@ class Request implements Stringable
     }
 
     /**
-     * __wakeup.
+     * __unserialize.
      *
+     * @param array $data
      * @return void
      */
-    public function __wakeup(): void
+    public function __unserialize(array $data): void
     {
         $this->isSafe = false;
     }
@@ -756,7 +757,17 @@ class Request implements Stringable
         if ($this->properties) {
             $this->properties = [];
         }
-        if (isset($this->data['files']) && $this->isSafe) {
+        $this->connection = null;
+    }
+
+    /**
+     * Destructor.
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        if (!empty($this->data['files']) && $this->isSafe) {
             clearstatcache();
             array_walk_recursive($this->data['files'], function ($value, $key) {
                 if ($key === 'tmp_name' && is_file($value)) {

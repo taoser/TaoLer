@@ -35,10 +35,10 @@
 	{__block__}
 
     <script>
-      layui.use(['form', 'upload'], function() {
+      const ADDON_ADD = "{:url('addon.addons/add')}";
+      layui.use(['popup'], function() {
         var $ = layui.$, form = layui.form, upload = layui.upload;
-
-        let ADDON_ADD = "{:url('addon.addons/add')}";
+        let popup = layui.popup;
 
         upload.render({
           elem: '#layuiadmin-upload-addons'
@@ -51,17 +51,9 @@
             $(this.item).prev("div").children("input").val(res.src)
 
             if (res.code == 0) {
-              layer.msg(res.msg, {
-                icon: 6,
-                tiye: 2000
-              });
+              return popup.success(res.msg);
             } else {
-              layer.open({
-                title: "上传失败",
-                content: res.msg,
-                icon: 5,
-                anim: 6
-              });
+              return popup.failure(res.msg);
             }
           }
         });
@@ -72,23 +64,15 @@
             url: ADDON_ADD,
             data: JSON.stringify(data.field),
             dataType: 'json',
-            contentType: 'application/json',
             type: 'post',
-            success: function (result) {
-              if (result.code === 0) {
-                layer.msg(result.msg, {
-                  icon: 1,
-                  time: 1000
-                }, function () {
-                  parent.layer.close(parent.layer.getFrameIndex(window
-                          .name)); //关闭当前页
+            success: function (res) {
+              if (res.code === 0) {
+                return popup.success(res.msg, function () {
+                  parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
                   //parent.layui.table.reload("user-table");
                 });
               } else {
-                layer.msg(result.msg, {
-                  icon: 2,
-                  time: 1000
-                });
+                return popup.failure(res.msg);
               }
             }
           })

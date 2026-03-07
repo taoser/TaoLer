@@ -225,7 +225,7 @@ class Uploads
 
         try {
             validate([$fileName=>['fileSize'=>$fileSize * 1024,'fileExt'=>$fileExt,'fileMime'=>$fileMime]])
-                ->check(['file'=>$file]);
+                ->check(['file' => $file]);
 
         } catch (ValidateException $e) {
             
@@ -271,7 +271,7 @@ class Uploads
 
         $name_path = str_replace('\\',"/", $path . '/' . $info->getBasename());
 
-        return json(['code' => 1,'msg'=>'上传成功', 'data' => ['url'=> $name_path]]);
+        return json(['code' => 1,'msg' => '上传成功', 'data' => ['url'=> $name_path]]);
     }
 
     // 文件上传进度

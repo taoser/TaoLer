@@ -19,13 +19,10 @@ use JsonSerializable;
 use RuntimeException;
 use stdClass;
 use Throwable;
-use Workerman\Events\Ev;
-use Workerman\Events\Event;
 use Workerman\Events\EventInterface;
-use Workerman\Events\Select;
 use Workerman\Protocols\Http;
 use Workerman\Protocols\Http\Request;
-use Workerman\Protocols\ProtocolInterface;
+use Workerman\Timer;
 use Workerman\Worker;
 
 use function ceil;
@@ -44,6 +41,7 @@ use function restore_error_handler;
 use function set_error_handler;
 use function stream_set_blocking;
 use function stream_set_read_buffer;
+use function stream_socket_shutdown;
 use function stream_socket_enable_crypto;
 use function stream_socket_get_name;
 use function strlen;
@@ -57,6 +55,7 @@ use const STREAM_CRYPTO_METHOD_SSLv23_CLIENT;
 use const STREAM_CRYPTO_METHOD_SSLv23_SERVER;
 use const STREAM_CRYPTO_METHOD_SSLv2_CLIENT;
 use const STREAM_CRYPTO_METHOD_SSLv2_SERVER;
+use const STREAM_SHUT_WR;
 
 /**
  * TcpConnection.
@@ -95,18 +94,25 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
     public const STATUS_ESTABLISHED = 2;
 
     /**
+     * Status ending (graceful close: write -> FIN -> linger/drain -> close).
+     *
+     * @var int
+     */
+    public const STATUS_ENDING = 4;
+
+    /**
      * Status closing.
      *
      * @var int
      */
-    public const STATUS_CLOSING = 4;
+    public const STATUS_CLOSING = 8;
 
     /**
      * Status closed.
      *
      * @var int
      */
-    public const STATUS_CLOSED = 8;
+    public const STATUS_CLOSED = 16;
 
     /**
      * Maximum string length for cache
@@ -248,14 +254,13 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
     public ?stdClass $context = null;
 
     /**
+     * Internal use only. Do not access or modify from application code.
+     *
+     * @internal Framework internal API
+     * @deprecated Do not set this property, use $response->header() or $response->widthHeaders() instead
      * @var array
      */
     public array $headers = [];
-
-    /**
-     * @var ?Request
-     */
-    public ?Request $request = null;
 
     /**
      * Is safe.
@@ -284,6 +289,20 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * @var int
      */
     public static int $defaultMaxPackageSize = 10485760;
+
+    /**
+     * Default linger timeout for graceful end (seconds).
+     *
+     * @var float
+     */
+    public static float $defaultLingerTimeout = 1.0;
+
+    /**
+     * Linger timeout for graceful end (seconds).
+     *
+     * @var float
+     */
+    public float $lingerTimeout = 1.0;
 
     /**
      * Id recorder.
@@ -328,6 +347,20 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
     protected int $status = self::STATUS_ESTABLISHED;
 
     /**
+     * Linger timer id for end().
+     *
+     * @var int
+     */
+    protected int $endLingerTimerId = 0;
+
+    /**
+     * Whether write side has been shutdown (FIN sent) during end().
+     *
+     * @var bool
+     */
+    protected bool $endWriteShutdown = false;
+
+    /**
      * Remote address.
      *
      * @var string
@@ -365,6 +398,7 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
         self::STATUS_CONNECTING => 'CONNECTING',
         self::STATUS_ESTABLISHED => 'ESTABLISHED',
         self::STATUS_CLOSING => 'CLOSING',
+        self::STATUS_ENDING => 'ENDING',
         self::STATUS_CLOSED => 'CLOSED',
     ];
 
@@ -389,6 +423,7 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
         $this->eventLoop->onReadable($this->socket, $this->baseRead(...));
         $this->maxSendBufferSize = self::$defaultMaxSendBufferSize;
         $this->maxPackageSize = self::$defaultMaxPackageSize;
+        $this->lingerTimeout = self::$defaultLingerTimeout;
         $this->remoteAddress = $remoteAddress;
         static::$connections[$this->id] = $this;
         $this->context = new stdClass();
@@ -418,7 +453,7 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      */
     public function send(mixed $sendBuffer, bool $raw = false): bool|null
     {
-        if ($this->status === self::STATUS_CLOSING || $this->status === self::STATUS_CLOSED) {
+        if ($this->status === self::STATUS_ENDING || $this->status === self::STATUS_CLOSING || $this->status === self::STATUS_CLOSED) {
             return false;
         }
 
@@ -667,19 +702,23 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
             }
         } else {
             $this->bytesRead += strlen($buffer);
+            if ($this->status === self::STATUS_ENDING) {
+                return;
+            }
             if ($this->recvBuffer === '') {
                 if (!isset($buffer[static::MAX_CACHE_STRING_LENGTH]) && isset($requests[$buffer])) {
                     ++self::$statistics['total_request'];
                     if ($this->protocol === Http::class) {
-                        $request = clone $requests[$buffer];
-                        $request->destroy();
+                        $request = $requests[$buffer];
                         $request->connection = $this;
-                        $this->request = $request;
                         try {
                             ($this->onMessage)($this, $request);
                         } catch (Throwable $e) {
                             $this->error($e);
                         }
+                        $request = clone $request;
+                        $request->destroy();
+                        $requests[$buffer] = $request;
                         return;
                     }
                     $request = $requests[$buffer];
@@ -749,11 +788,10 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
                     if ((!is_object($request) || $request instanceof Request) && $one && !isset($oneRequestBuffer[static::MAX_CACHE_STRING_LENGTH])) {
                         ($this->onMessage)($this, $request);
                         if ($request instanceof Request) {
-                            $requests[$oneRequestBuffer] = clone $request;
-                            $requests[$oneRequestBuffer]->destroy();
-                        } else {
-                            $requests[$oneRequestBuffer] = $request;
+                            $request = clone $request;
+                            $request->destroy();
                         }
+                        $requests[$oneRequestBuffer] = $request;
                         if (count($requests) > static::MAX_CACHE_SIZE) {
                             unset($requests[key($requests)]);
                         }
@@ -771,7 +809,7 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
             return;
         }
 
-        // Applications protocol is not set.
+        // Application protocol is not set.
         ++self::$statistics['total_request'];
         try {
             ($this->onMessage)($this, $this->recvBuffer);
@@ -809,6 +847,9 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
                 } catch (Throwable $e) {
                     $this->error($e);
                 }
+            }
+            if ($this->status === self::STATUS_ENDING) {
+                $this->endMaybeShutdownWrite();
             }
             if ($this->status === self::STATUS_CLOSING) {
                 if (!empty($this->context->streamSending)) {
@@ -912,7 +953,7 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      */
     public function close(mixed $data = null, bool $raw = false): void
     {
-        if ($this->status === self::STATUS_CONNECTING) {
+        if ($this->status === self::STATUS_INITIAL || $this->status === self::STATUS_CONNECTING) {
             $this->destroy();
             return;
         }
@@ -932,6 +973,79 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
         } else {
             $this->pauseRecv();
         }
+    }
+
+    /**
+     * Graceful end connection.
+     * It tries to: send response -> wait sendBuffer empty -> shutdown write(FIN) -> linger/drain reads -> close().
+     *
+     * @param mixed $data
+     * @param bool $raw
+     * @return void
+     */
+    public function end(mixed $data = null, bool $raw = false): void
+    {
+        if ($this->status === self::STATUS_INITIAL || $this->status === self::STATUS_CONNECTING) {
+            $this->destroy();
+            return;
+        }
+
+        if ($this->status === self::STATUS_ENDING || $this->status === self::STATUS_CLOSING || $this->status === self::STATUS_CLOSED) {
+            return;
+        }
+
+        if ($data !== null) {
+            $this->send($data, $raw);
+        }
+
+        // Enter ending mode: stop protocol parsing and only drain incoming data.
+        $this->status = self::STATUS_ENDING;
+        // Disable business callback after end().
+        $this->onMessage = static function (self $connection, mixed $data = null): void {};
+        $this->recvBuffer = '';
+        $this->currentPackageLength = 0;
+
+        // If already flushed to kernel, shutdown write now. Otherwise, baseWrite() will call endMaybeShutdownWrite()
+        // when sendBuffer becomes empty.
+        if ($this->sendBuffer === '') {
+            $this->endMaybeShutdownWrite();
+            return;
+        }
+    }
+
+    /**
+     * If in ENDING and sendBuffer is empty, shutdown write side and start linger timer.
+     *
+     * @return void
+     */
+    protected function endMaybeShutdownWrite(): void
+    {
+        if ($this->status !== self::STATUS_ENDING || $this->endWriteShutdown || $this->sendBuffer !== '') {
+            return;
+        }
+
+        if (is_resource($this->socket)) {
+            try {
+                @stream_socket_shutdown($this->socket, STREAM_SHUT_WR);
+            } catch (Throwable) {
+                // ignore
+            }
+        }
+        $this->endWriteShutdown = true;
+
+        $timeout = $this->lingerTimeout;
+        if ($timeout <= 0) {
+            $this->close();
+            return;
+        }
+
+        $this->endLingerTimerId = Timer::delay($timeout, function (): void {
+            $this->endLingerTimerId = 0;
+            if ($this->status === self::STATUS_CLOSED) {
+                return;
+            }
+            $this->close();
+        });
     }
 
     /**
@@ -1063,6 +1177,7 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
         $this->sendBuffer = $this->recvBuffer = '';
         $this->currentPackageLength = 0;
         $this->isPaused = $this->sslHandshakeCompleted = false;
+        $this->endWriteShutdown = false;
         if ($this->status === self::STATUS_CLOSED) {
             // Cleaning up the callback to avoid memory leaks.
             $this->onMessage = $this->onClose = $this->onError = $this->onBufferFull = $this->onBufferDrain = $this->eventLoop = $this->errorHandler = null;
@@ -1098,11 +1213,12 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
     }
 
     /**
-     * __wakeup.
+     * __unserialize.
      *
+     * @param array $data
      * @return void
      */
-    public function __wakeup()
+    public function __unserialize(array $data): void
     {
         $this->isSafe = false;
     }

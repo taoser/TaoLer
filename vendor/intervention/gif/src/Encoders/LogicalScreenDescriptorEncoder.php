@@ -10,8 +10,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 {
     /**
      * Create new instance
-     *
-     * @param LogicalScreenDescriptor $source
      */
     public function __construct(LogicalScreenDescriptor $source)
     {
@@ -20,8 +18,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode current source
-     *
-     * @return string
      */
     public function encode(): string
     {
@@ -36,8 +32,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode width of current instance
-     *
-     * @return string
      */
     protected function encodeWidth(): string
     {
@@ -46,8 +40,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode height of current instance
-     *
-     * @return string
      */
     protected function encodeHeight(): string
     {
@@ -56,8 +48,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode background color index of global color table
-     *
-     * @return string
      */
     protected function encodeBackgroundColorIndex(): string
     {
@@ -66,8 +56,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode pixel aspect ratio
-     *
-     * @return string
      */
     protected function encodePixelAspectRatio(): string
     {
@@ -76,8 +64,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 
     /**
      * Return color resolution for encoding
-     *
-     * @return string
      */
     protected function encodeColorResolution(): string
     {
@@ -86,8 +72,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode size of global color table
-     *
-     * @return string
      */
     protected function encodeGlobalColorTableSize(): string
     {
@@ -96,8 +80,6 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
 
     /**
      * Encode packed field of current instance
-     *
-     * @return string
      */
     protected function encodePackedField(): string
     {

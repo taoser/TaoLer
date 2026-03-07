@@ -62,7 +62,7 @@
 	
 	<div class="layui-card">
 		<div class="layui-card-body">
-			<table id="user-table" lay-filter="user-table"></table>
+			<table id="table" lay-filter="table"></table>
 		</div>
 	</div>
 
@@ -77,12 +77,12 @@
 		</button>
 	</script>
 	<script type="text/html" id="imgTpl"> 
-		<a href="{:url('user.user/goUserHome')}?id={{ d.id }}" target="_blank"><img src= {{=d.avatar}} style="width: 100px; height: 100px; border-radius: 6px; object-fit: cover;"/></a>
+		<a href="{:url('user.user/goUserHome')}?id={{ d.id }}" target="_blank"><img src= {{=d.user_img}} style="width: 100px; height: 100px; border-radius: 6px; object-fit: cover;"/></a>
 	</script>
 	<script type="text/html" id="userInfoTpl"> 
 		<ul>
-			<li>ID: {{d.id}} 用户名：{{d.username }}</li>
-			<li>性别：{{#if (d.sex == 0) { }} <span>男</span> {{# }else if(d.sex == 1){ }} <span>女</span> {{# } }} 昵称：{{d.nick}}</li>
+			<li>ID: {{d.id}} 用户名：{{d.name }}</li>
+			<li>性别：{{#if (d.sex == 0) { }} <span>男</span> {{# }else if(d.sex == 1){ }} <span>女</span> {{# } }} 昵称：{{d.nickname}}</li>
 			<li>电话：{{d.phone}}</li>
 			<li>邮箱：{{d.email}}</li>
 		</ul>
@@ -94,7 +94,7 @@
 	</script>
 
 	<script type="text/html" id="user-enable">
-		<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.check== 1 ? 'checked' : '' }} />
+		<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.status== 1 ? 'checked' : '' }} />
 	</script>
 
 	<script type="text/html" id="buttonAuth">
@@ -106,9 +106,9 @@
 	</script>
 	<script type="text/html" id="userLoginTpl">
 		<url>
-			<li>ip：{{d.ip}}</li>
+			<li>ip：{{d.last_login_ip}}</li>
 			<li>归属地：{{d.city}}</li>
-			<li>{{d.logintime}}</li>
+			<li>{{d.last_login_time}}</li>
 		</url>
 	</script>
 
@@ -118,7 +118,7 @@
 
 	<script type="text/html" id="TPL-dropdpwn-vip">
 		<button class="pear-btn pear-btn-primary dropdpwn-demo">
-			<span>{{= d.vip}}</span>
+			<span>{{= d.vipnick}}</span>
 			<i class="layui-icon layui-icon-down layui-font-12"></i>
 		</button>
 	</script>
@@ -132,9 +132,7 @@
 			let form = layui.form;
 			let common = layui.common;
 			var dropdown = layui.dropdown;
-			var admin = layui.admin;
-
-			let MODULE_PATH = "operate/";				
+			var admin = layui.admin;			
 
 			let cols = [
 				[	{
@@ -142,21 +140,21 @@
 					},
 					{
 						title: '头像',
-						field: 'avatar',
+						field: 'user_img',
 						align: 'center',
 						width: 150,
 						templet: '#imgTpl'
 					},
 					{
 						title: '用户',
-						field: 'username',
-						minWidth: 200,
+						field: 'name',
+						minWidth: 220,
 						templet: '#userInfoTpl'
 					},
 					{
 						title: '登录',
 						field: 'ip',
-						minWidth: 180,
+						minWidth: 160,
 						templet: '#userLoginTpl'
 					},
 					{
@@ -168,7 +166,6 @@
 					},
 					{
 						title: '会员等级/L',
-						field: 'vip',
 						align: 'center',
 						width:180,
 						unresize: true,
@@ -191,7 +188,8 @@
 					{
 						title: '注册',
 						field: 'jointime',
-						align: 'center'
+						align: 'center',
+						width: 120
 					},
 					{
 						title: '备注',
@@ -210,7 +208,7 @@
 			]
 
 			table.render({
-				elem: '#user-table',
+				elem: '#table',
 				url: "{:url('user.user/list')}",
 				page: true,
 				cols: cols,
@@ -251,10 +249,10 @@
 							dataType: 'json',
 							success: (res) => {
 								if(res.code === 0) {
-								layer.msg(res.msg, {icon: 1});
+									layer.msg(res.msg, {icon: 1});
 								} else {
-								layer.msg(res.msg, {icon: 2});
-								return false;
+									layer.msg(res.msg, {icon: 2});
+									return false;
 								}
 							}
 							})
@@ -265,7 +263,15 @@
 				}
 			});
 
-			table.on('tool(user-table)', function(obj) {
+			// 动态查询
+			form.on('submit(user-query)', function(data) {
+				table.reload('table', {
+					where: data.field
+				})
+				return false;
+			});
+
+			table.on('tool(table)', function(obj) {
 				if (obj.event === 'remove') {
 					window.remove(obj);
 				} else if (obj.event === 'edit') {
@@ -275,7 +281,7 @@
 				}
 			});
 
-			table.on('toolbar(user-table)', function(obj) {
+			table.on('toolbar(table)', function(obj) {
 				if (obj.event === 'add') {
 					window.add();
 				} else if (obj.event === 'refresh') {
@@ -286,7 +292,7 @@
 			});
 
 			// 单元格编辑后的事件
-			table.on('edit(user-table)', function(obj){
+			table.on('edit(table)', function(obj){
 				var field = obj.field; // 得到修改的字段
 				var value = obj.value // 得到修改后的值
 				//var oldValue = obj.oldValue // 得到修改前的值 -- v2.8.0 新增
@@ -306,7 +312,6 @@
 						return obj.reedit();
 					}
 				}
-				
 
 				// 编辑后续操作，如提交更新请求，以完成真实的数据更新
 				$.ajax({
@@ -324,14 +329,6 @@
 					}
 					})
 				// …
-			});
-			
-
-			form.on('submit(user-query)', function(data) {
-				table.reload('user-table', {
-					where: data.field
-				})
-				return false;
 			});
 
 			form.on('switch(user-enable)', function(obj) {
@@ -509,7 +506,7 @@
 									icon: 1,
 									time: 1000
 								}, function() {
-									table.reload('user-table');
+									table.reload('table');
 								});
 							} else {
 								layer.msg(result.msg, {
@@ -523,7 +520,7 @@
 			}
 
 			window.refresh = function(param) {
-				table.reload('user-table');
+				table.reload('table');
 			}
 		})
 	</script>

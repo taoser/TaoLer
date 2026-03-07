@@ -13,7 +13,8 @@ layui.config({
 	common: "common",            // 公共方法封装
 	menu: "menu",		         // 数据菜单组件
 	frame: "frame", 	         // 内容页面组件
-	tab: "tab",			         // 多选项卡组件
+	// tab: "tab",			         // 多选项卡组件
+	pearTab: "pearTab",	
 	echarts: "echarts",          // 数据图表组件
 	echartsTheme: "echartsTheme",// 数据图表主题
 	encrypt: "encrypt",		     // 数据加密组件

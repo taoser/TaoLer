@@ -24,6 +24,7 @@ use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
 
 use Exception;
+use think\response\Json;
 
 class User extends AdminBaseController
 {
@@ -39,65 +40,48 @@ class User extends AdminBaseController
 	}
 	
 	//用户表
-	public function list()
+	public function list(): Json
 	{
-		if(Request::isAjax()){
-			$datas = Request::only(['id','name','email','sex','status']);
-			$map = $this->getParamFilter($datas);
-			if(!empty($map['id'])) {
-			    $map['id'] = (int) $map['id'];
-			}
+		$page = Request::param('page/d', 1);
+		$limit = Request::param('limit/d', 10);
 
-			$user = Db::name('user')->where(['delete_time'=>0])->where($map)->order('id desc')->paginate([
-                'list_rows' => input('limit'),
-                'page' => input('page')
-            ]);
-			$count = $user->total();
-			$data = [];
-			if($count){
-				$vipList = [];
-				$vipRule = Db::name('user_viprule')->field('id,vip,nick')->select();
-				foreach($vipRule as $v) {
-					$vipList[] = ['id' => $v['id'], 'vip' => $v['vip'], 'title' => $v['nick']];
-				}
+		$datas = Request::param(['id','name','email','sex','status']);
 
-				foreach($user as $k => $v){
-					$data[] = [
-						'id'		=>	$v['id'],
-						'username'	=>	$v['name'],
-						'nick'		=>	$v['nickname'],
-						'avatar'	=>	$v['user_img'],
-						'phone'		=>	$v['phone'],
-						'email'		=>	$v['email'],
-						'sex'		=>	$v['sex'],
-						'ip'		=>	$v['last_login_ip'],
-						'city'		=>	$v['city'],
-						'point'		=>	$v['point'],
-						'logintime'	=>	date("Y-m-d H:i:s",$v['last_login_time']),
-						'jointime'	=>	date("Y-m-d H:i",$v['create_time']),
-						'check'		=>	$v['status'],
-						'auth'		=>	$v['auth'],
-						'vip'		=> 	$vipList[$v['vip']]['title'],
-						'note'		=>  $v['note']
-					];
-				}
-				
-				return json(['code'=>0,'msg'=>'ok','count'=>$count, 'data' => $data, 'viplist' => $vipList]);
-			}
-			return json(['code'=>-1,'msg'=>'没有查询结果！']);			
+		$map = $this->getParamFilter($datas);
+
+		$query = Db::name('user')->alias('u')->join('user_viprule v', 'u.vip = v.vip');
+
+		if(!empty($map['id'])) {
+			$query->where('u.id', $map['id']);
+			unset($map['id']);
 		}
-		return View::fetch();
-	}
 
-	protected function getUserVipNick($vip) {
+		$user = $query
+		->field('u.id,name,nickname,user_img,phone,email,sex,last_login_ip,city,point,last_login_time,u.create_time,status,auth,note,v.nick as vipnick,u.vip')
+		->where($map)
+		->where('u.delete_time', 0)
+		->order('u.id desc')
+		->page($page, $limit)
+		->select();
 
+		if($user->isEmpty()){
+			return json(['code'=>-1,'msg'=>'没有查询结果！']);
+		}
+		
+		foreach($user as &$v){
+			$v['create_time']	=	date("Y-m-d H:i",$v['create_time']);
+		}
+		unset($v);
+
+		$vipList = Db::name('user_viprule')->field('id,vip,nick as title')->select();
+
+		return json(['code'=>0,'msg'=>'ok','count' => count($user), 'data' => $user, 'viplist' => $vipList]);
+		
 	}
-	
 	
 	//添加用户
 	public function add()
 	{
-		//
 		if(Request::isAjax()){
 			$data = Request::only(['name','email','user_img','password','phone','sex']);
             try{
@@ -108,17 +92,20 @@ class User extends AdminBaseController
                 // 验证失败 输出错误信息
                 return json(['code'=>-1,'msg'=>$e->getError()]);
             }
+
             $data['create_time'] = time();
             $salt = substr(md5($data['create_time']),-6);
             // 密码
             $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
+
             try {
                 Db::name('user')->save($data);
                 $res = ['code'=>0,'msg'=>'添加成功'];
             } catch (\Exception $e) {
                 $res = ['code'=>-1, 'msg'=>$e->getMessage()];
             }
-		return json($res);
+
+			return json($res);
 		}
 		
 		return View::fetch();
@@ -128,7 +115,7 @@ class User extends AdminBaseController
 	public function edit()
 	{
 		if(Request::isAjax()){
-			$data = Request::only(['id','name','email','user_img','password','phone','sex']);
+			$data = Request::only(['id/d','name','email','user_img','password','phone','sex']);
             if(empty($data['password'])) {
                 unset($data['password']);
             } else {
@@ -136,6 +123,7 @@ class User extends AdminBaseController
                 $salt = substr(md5($user['create_time']),-6);
                 $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6)); // 密码
             }
+
 			try{
                 Db::name('user')->update($data);
                 return json(['code'=>0,'msg'=>'编辑成功']);
@@ -143,33 +131,34 @@ class User extends AdminBaseController
                 return json(['code'=> -1,'msg'=>$e->getMessage()]);
             }
 		}
+
 		$user = Db::name('user')->find(input('id'));
 		View::assign('user',$user);
+
 		return View::fetch();
 	}
 	
 	//删除用户
-	public function delete($id)
+	public function delete()
 	{
-		$ids = explode(',',$id);
-		if(Request::isAjax()){
-			$user =UserModel::select($ids);
-			$result = $user->delete();
-			
-				if($result){
-					return json(['code'=>0,'msg'=>'删除成功']);
-				}else{
-					return json(['code'=>-1,'msg'=>'删除失败']);
-				}
-			}
+		$id = Request::param('id');
+		$ids = explode(',', $id);
+		
+		$user = UserModel::select($ids);
+		$result = $user->delete();
+		
+		if($result){
+			return json(['code'=>0,'msg'=>'删除成功']);
+		}
+		return json(['code'=>-1,'msg'=>'删除失败']);
 	}
 
-	//删除用户
-	public function clear($id)
+	//清除用户资源
+	public function clear()
 	{
 		$id = (int)input('id');
-		
-		
+		try{
+
 			$articleCount = Article::where('user_id', $id)->count();
 			$commentCount = Comment::where('user_id', $id)->count();
 
@@ -184,7 +173,7 @@ class User extends AdminBaseController
 					$query->where('user_id','=', $id);
 				});
 			}
-			try{
+			
 		} catch(Exception $e) {
 			return json(['code'=>-1,'msg'=>'清空资源失败']);
 		}
@@ -219,17 +208,16 @@ class User extends AdminBaseController
 			} else {
 				return json(['code'=>0,'msg'=>'禁用用户','icon'=>5]);
 			}
-			
-		}else {
-			return json(['code'=>-1,'msg'=>'审核出错']);
 		}
-	
+
+		return json(['code'=>-1,'msg'=>'审核出错']);
 	}
 	
 	//超级管理员
 	public function auth()
 	{
-		$data = Request::param();
+		$data = Request::param(['id/d', 'auth']);
+
 		$user = Db::name('user')->save($data);
 		if($user){
 			if($data['auth'] == 1){
@@ -237,19 +225,8 @@ class User extends AdminBaseController
 			} else {
 				return json(['code'=>0,'msg'=>'取消超级管理员','icon'=>5]);
 			}
-		}else{
-			$res = ['code'=>-1,'msg'=>'前台管理员设置失败'];
-		} 
-		return json($res);
-	}
-	
-	//过滤数组中为空和null的值
-	public function filtrArr($arr)
-	{
-		if($arr === '' || $arr === null){
-            return false;
-        }
-        return true;
+		}
+		return json(['code'=>-1,'msg'=>'前台管理员设置失败']);
 	}
 
 	//登录用户中心
@@ -266,31 +243,43 @@ class User extends AdminBaseController
 	// 编辑用户积分
 	public function editField()
 	{
-		if(Request::isAjax()) {
-			$param = Request::param(['id','field','point','note']);
-			if($param['field'] == 'point') {
-				$data = ['point' => (int)$param['point']];
-			} else {
-				$data = ['note' => $param['note']];
-			}
-			$res = Db::name('user')->where('id',(int)$param['id'])->update($data);
-			if($res > 0) {
-				return json(['code' => 0, 'msg' => '修改成功']);
-			}
-			return json(['code' => -1, 'msg' => '修改失败']);
+		$param = Request::param(['id/d','field','point/d','note']);
+		if($param['field'] == 'point') {
+			$data = ['point' => $param['point']];
+		} else {
+			$data = ['note' => $param['note']];
 		}
+
+		$res = Db::name('user')->where('id', $param['id'])->update($data);
+		if($res) {
+			return json(['code' => 0, 'msg' => '修改成功']);
+		}
+
+		return json(['code' => -1, 'msg' => '修改失败']);
 	}
 	
 	// 编辑用户会员等级
 	public function editVipLevel()
 	{
-		if(Request::isAjax()) {
-			$param = Request::param(['id','vip']);
-			$res = Db::name('user')->where('id',(int)$param['id'])->update(['vip' => (int)$param['vip']]);
-			if($res > 0) {
-				return json(['code' => 0, 'msg' => '修改成功']);
-			}
-			return json(['code' => -1, 'msg' => '修改失败']);
+		$param = Request::param(['id/d','vip/d']);
+		$res = Db::name('user')
+		->where('id', $param['id'])
+		->update(['vip' => $param['vip']]);
+		
+		if($res) {
+			return json(['code' => 0, 'msg' => '修改成功']);
 		}
+
+		return json(['code' => -1, 'msg' => '修改失败']);
 	}
+
+	//过滤数组中为空和null的值
+	public function filtrArr($arr)
+	{
+		if($arr === '' || $arr === null){
+            return false;
+        }
+        return true;
+	}
+
 }

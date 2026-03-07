@@ -61,7 +61,7 @@ class Worker
      *
      * @var string
      */
-    final public const VERSION = '5.1.4';
+    final public const VERSION = '5.1.9';
 
     /**
      * Status initial.
@@ -247,6 +247,8 @@ class Worker
 
     /**
      * Store all connections of clients.
+     *
+     * @internal Framework internal API
      *
      * @var TcpConnection[]
      */
@@ -1605,7 +1607,7 @@ class Worker
             // Compatibility with the bug in Swow where the first request on Windows fails to trigger stream_select.
             if (extension_loaded('swow')) {
                 Timer::delay(0.1 , function(){
-                    $stream = fopen(__FILE__, 'r');
+                    $stream = tmpfile();
                     static::$globalEvent->onReadable($stream, function($stream) {
                         static::$globalEvent->offReadable($stream);
                     });

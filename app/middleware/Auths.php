@@ -15,13 +15,12 @@ class Auths
 			
 			try{
 				$data = JwtAuth::decode($token);
-				// halt($data);
+
 				$request->uid = $data->uid;
 
 			} catch(\Exception $e) {
 				return $e->getMessage();
 			}
-			
 
 		} else {
 			return json(['code' => -1, 'msg' => 'no auth']);

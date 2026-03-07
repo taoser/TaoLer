@@ -14,7 +14,6 @@ class ColorTableDecoder extends AbstractDecoder
      * Decode given string to ColorTable
      *
      * @throws DecoderException
-     * @return ColorTable
      */
     public function decode(): ColorTable
     {

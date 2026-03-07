@@ -20,7 +20,6 @@ class GifDataStreamDecoder extends AbstractDecoder
      * Decode current source to GifDataStream
      *
      * @throws DecoderException
-     * @return GifDataStream
      */
     public function decode(): GifDataStream
     {

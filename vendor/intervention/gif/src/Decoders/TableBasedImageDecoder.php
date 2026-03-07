@@ -16,7 +16,6 @@ class TableBasedImageDecoder extends AbstractDecoder
      * Decode TableBasedImage
      *
      * @throws DecoderException
-     * @return TableBasedImage
      */
     public function decode(): TableBasedImage
     {

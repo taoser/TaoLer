@@ -1,4 +1,4 @@
-{extend name="public/admin_base" /}
+{extend name="public/base" /}
 
 {block name="head"}<link rel="stylesheet" href="/static/admin/css/other/console2.css" />{/block}
 {block name="body"}
@@ -154,9 +154,9 @@
 			</div>
 		</div>
 	</div>
-{/block}		
 
-{block name="js"}
+{__block__}
+
 	<script>
 		layui.use(['layer', 'echarts', 'carousel', 'element', 'table'], function() {
 			var $ = layui.jquery,

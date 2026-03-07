@@ -10,65 +10,46 @@ class LogicalScreenDescriptor extends AbstractEntity
 {
     /**
      * Width
-     *
-     * @var int
      */
     protected int $width;
 
     /**
      * Height
-     *
-     * @var int
      */
     protected int $height;
 
     /**
      * Global color table flag
-     *
-     * @var bool
      */
     protected bool $globalColorTableExistance = false;
 
     /**
      * Sort flag of global color table
-     *
-     * @var bool
      */
     protected bool $globalColorTableSorted = false;
 
     /**
      * Size of global color table
-     *
-     * @var int
      */
     protected int $globalColorTableSize = 0;
 
     /**
      * Background color index
-     *
-     * @var int
      */
     protected int $backgroundColorIndex = 0;
 
     /**
      * Color resolution
-     *
-     * @var int
      */
     protected int $bitsPerPixel = 8;
 
     /**
      * Pixel aspect ration
-     *
-     * @var int
      */
     protected int $pixelAspectRatio = 0;
 
     /**
      * Set size
-     *
-     * @param int $width
-     * @param int $height
      */
     public function setSize(int $width, int $height): self
     {
@@ -80,8 +61,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Get width of current instance
-     *
-     * @return int
      */
     public function getWidth(): int
     {
@@ -90,8 +69,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Get height of current instance
-     *
-     * @return int
      */
     public function getHeight(): int
     {
@@ -100,8 +77,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Determine if global color table is present
-     *
-     * @return bool
      */
     public function getGlobalColorTableExistance(): bool
     {
@@ -110,8 +85,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Alias of getGlobalColorTableExistance
-     *
-     * @return bool
      */
     public function hasGlobalColorTable(): bool
     {
@@ -120,9 +93,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Set global color table flag
-     *
-     * @param bool $existance
-     * @return self
      */
     public function setGlobalColorTableExistance(bool $existance = true): self
     {
@@ -133,8 +103,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Get global color table sorted flag
-     *
-     * @return bool
      */
     public function getGlobalColorTableSorted(): bool
     {
@@ -143,9 +111,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Set global color table sorted flag
-     *
-     * @param bool $sorted
-     * @return self
      */
     public function setGlobalColorTableSorted(bool $sorted = true): self
     {
@@ -156,8 +121,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Get size of global color table
-     *
-     * @return int
      */
     public function getGlobalColorTableSize(): int
     {
@@ -166,8 +129,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Get byte size of global color table
-     *
-     * @return int
      */
     public function getGlobalColorTableByteSize(): int
     {
@@ -176,8 +137,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Set size of global color table
-     *
-     * @param int $size
      */
     public function setGlobalColorTableSize(int $size): self
     {
@@ -188,8 +147,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Get background color index
-     *
-     * @return int
      */
     public function getBackgroundColorIndex(): int
     {
@@ -198,8 +155,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Set background color index
-     *
-     * @param int $index
      */
     public function setBackgroundColorIndex(int $index): self
     {
@@ -210,8 +165,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Get current pixel aspect ration
-     *
-     * @return int
      */
     public function getPixelAspectRatio(): int
     {
@@ -220,8 +173,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Set pixel aspect ratio
-     *
-     * @param int $ratio
      */
     public function setPixelAspectRatio(int $ratio): self
     {
@@ -232,8 +183,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Get color resolution
-     *
-     * @return int
      */
     public function getBitsPerPixel(): int
     {
@@ -242,8 +191,6 @@ class LogicalScreenDescriptor extends AbstractEntity
 
     /**
      * Set color resolution
-     *
-     * @param int $value
      */
     public function setBitsPerPixel(int $value): self
     {

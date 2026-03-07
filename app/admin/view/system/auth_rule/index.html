@@ -53,14 +53,11 @@
         const RULES_DELETE = "{:url('system.AuthRule/delete')}";
         const RULES_ENABLE = "{:url('system.AuthRule/check')}";
 
-        layui.use(['table','form','jquery','treetable'],function () {
+        layui.use(['treetable'],function () {
             let table = layui.table;
             let form = layui.form;
             let $ = layui.jquery;
             let treetable = layui.treetable;
-
-            let MODULE_PATH = "operate/";
-
  
             treetable.render({
                 treeColIndex: 1,

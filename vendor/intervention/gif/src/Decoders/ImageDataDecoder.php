@@ -17,7 +17,6 @@ class ImageDataDecoder extends AbstractDecoder
      *
      * @throws DecoderException
      * @throws FormatException
-     * @return ImageData
      */
     public function decode(): ImageData
     {
@@ -25,13 +24,23 @@ class ImageDataDecoder extends AbstractDecoder
 
         // LZW min. code size
         $char = $this->getNextByteOrFail();
-        $size = (int) unpack('C', $char)[1];
-        $data->setLzwMinCodeSize($size);
+        $unpacked = unpack('C', $char);
+        if ($unpacked === false || !array_key_exists(1, $unpacked)) {
+            throw new DecoderException('Unable to decode lzw min. code size.');
+        }
+
+        $data->setLzwMinCodeSize(intval($unpacked[1]));
 
         do {
             // decode sub blocks
             $char = $this->getNextByteOrFail();
-            $size = (int) unpack('C', $char)[1];
+            $unpacked = unpack('C', $char);
+            if ($unpacked === false || !array_key_exists(1, $unpacked)) {
+                throw new DecoderException('Unable to decode image data sub block.');
+            }
+
+            $size = intval($unpacked[1]);
+
             if ($size > 0) {
                 $data->addBlock(new DataSubBlock($this->getNextBytesOrFail($size)));
             }

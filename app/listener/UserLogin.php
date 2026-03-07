@@ -38,9 +38,9 @@ class UserLogin
         //日志
         if($type == 'log'){
             $data = [
-                'city' => $city,
+                'city'              => $city,
                 'last_login_ip'		=> $ip,
-                'last_login_time'	=> time(),
+                'last_login_time'	=> date('Y-m-d H:i:s'),
                 'login_error_num'	=> 0
             ];
         }

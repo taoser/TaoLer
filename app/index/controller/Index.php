@@ -57,7 +57,48 @@ class Index extends IndexBaseController
      */
     public function index()
     {
-		// halt(123);
+
+		// $a = Db::name('addon_lawyer_clue')->where('status',1)->whereDay('create_time')->count();
+		// halt($a);
+		// $subQuery = Article::suffix(1)
+        //     ->with(['cate' => function($query) {
+        //         $query->where('status', 1);  // 只关联状态正常的用户
+        //     }])
+        //     ->has('cate')  // 关键：只返回有关联user的记录
+        //     ->field('id')
+        //     // ->where($where)
+        //     ->where('status', 1)
+        //     ->order('id', 'desc')
+        //     // ->limit(self::$offset, self::$newLimit) // 深分页用limit(offset, limit)更直观
+        //     ->buildSql(); // 生成带括号的子查询SQL
+
+            // halt($subQuery);
+		// $subsql = Db::name('article')
+		// ->where('status',1)
+		// ->page(2)
+		// ->limit(10)
+		// ->field('id')
+		// ->buildSql();
+
+		// $a = Db::name('article')
+		// ->alias('a')
+		// ->join([$subsql=> 'b'], 'a.id = b.id')
+		// ->field('a.id,a.title,a.content,a.create_time')
+		// ->select();
+
+		// $subQuery = ArticleEntity::where('cate_id', 1)
+		// ->where('status',1)
+		// ->page(2)
+		// ->limit(10)
+		// ->field('id')
+		// ->buildSql();
+
+		// $b = ArticleEntity::alias('a')
+		// ->join([$subQuery => 'b'], 'a.id = b.id')  // 子查询别名b，关联主表a
+		// ->field('a.id,a.title,a.content,a.create_time')
+		// ->select();  // 返回模型集合（可直接遍历，用法与Db查询结果一致）
+		// // halt($subsql, $a);
+		// halt($subQuery, $b);
 
 		// $s = 'storage/1/d/jkjlkjlkkjl.jpg';
 		// $a = pathinfo($s);
@@ -164,7 +205,6 @@ class Index extends IndexBaseController
         $username = Request::param('username');
         $uid = Db::name('user')->whereOr('nickname', $username)->whereOr('name', $username)->value('id');
         return redirect((string) url('user/home',['id'=>$uid]));
-
     }
 	
 	public function language()

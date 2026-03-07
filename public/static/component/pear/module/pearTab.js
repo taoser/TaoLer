@@ -1,7 +1,7 @@
 layui.define(['jquery', 'element'], function(exports) {
 	"use strict";
 
-	var MOD_NAME = 'tab',
+	var MOD_NAME = 'pearTab',
 		$ = layui.jquery,
 		element = layui.element;
 

@@ -10,8 +10,6 @@ class GraphicControlExtensionEncoder extends AbstractEncoder
 {
     /**
      * Create new instance
-     *
-     * @param GraphicControlExtension $source
      */
     public function __construct(GraphicControlExtension $source)
     {
@@ -20,8 +18,6 @@ class GraphicControlExtensionEncoder extends AbstractEncoder
 
     /**
      * Encode current source
-     *
-     * @return string
      */
     public function encode(): string
     {
@@ -38,8 +34,6 @@ class GraphicControlExtensionEncoder extends AbstractEncoder
 
     /**
      * Encode delay time
-     *
-     * @return string
      */
     protected function encodeDelay(): string
     {
@@ -48,8 +42,6 @@ class GraphicControlExtensionEncoder extends AbstractEncoder
 
     /**
      * Encode transparent color index
-     *
-     * @return string
      */
     protected function encodeTransparentColorIndex(): string
     {
@@ -58,8 +50,6 @@ class GraphicControlExtensionEncoder extends AbstractEncoder
 
     /**
      * Encode packed field
-     *
-     * @return string
      */
     protected function encodePackedField(): string
     {

@@ -15,6 +15,14 @@ use app\common\entity\BaseEntity;
 
 class Article extends BaseEntity
 {
+    // 1. 字段常量管理（抽离到模型更佳）
+    const ARTICLE_LIST_FIELDS = [
+        'a.id', 'a.cate_id', 'a.user_id', 'a.title', 'a.content', 'a.description',
+        'a.create_time', 'a.pv', 'a.has_image', 'a.has_video', 'a.has_audio',
+        'a.comments_num', 'a.flags'
+    ];
+    const CATE_RELATION_FIELDS = ['id', 'catename', 'ename'];
+    const USER_RELATION_FIELDS = ['id', 'name', 'nickname', 'user_img', 'vip'];
 
     // 新的数量, 数据介于两表之间分量时使用
     protected static $newLimit;
@@ -630,92 +638,6 @@ class Article extends BaseEntity
         });
 
         return $allTags;
-    }
-
-    /**
-     * 分类数据
-     * @param string $ename
-     * @param string $type  all\top\hot\jie 分类类型
-     * @param int $page
-     * @return mixed
-     * @throws \Throwable
-     */
-    public function getCateList(string $ename, string $type, int $page = 1, int $limit = 15)
-    {
-        $where = [];
-        $cateId = Category::where('status', 1)->where('ename', $ename)->value('id');
-
-        if(!is_null($cateId)){
-            $where[] = ['cate_id' ,'=', $cateId];
-        }
-
-        $where[] = ['status', '=', 1];
-
-        switch ($type) {
-            //查询文章,15个分1页
-            case 'end':
-                $where[] = ['jie','=', '1'];
-                break;
-            case 'hot':
-                $where[] = ['is_hot','=', '1'];
-                break;
-            case 'top':
-                $where[] = ['is_top' ,'=', '1'];
-                break;
-            case 'wait':
-                $where[] = ['jie','=', '0'];
-                break;
-        }
-
-        // 文章分类总数
-        $count = (int) Cache::remember("cate_count_{$ename}_{$type}", function() use($where){
-            return $this::where($where)->count();
-        });
-
-        $data = [];
-
-        // 总共页面数
-        $lastPage = (int) ceil($count / $limit); // 向上取整
- 
-        if($count) {
-
-            if($page > $lastPage) {
-                throw new Exception('no data');
-            }
-
-            $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit) {
-                $articles = Article::field('id')->where($where)->order('id', 'desc')->page($page, $limit)->select();
-                $ids = $articles->toArray();
-                $idArr = array_column($ids, 'id');
-
-                $list =  Article::field('id,cate_id,user_id,title,content,description,create_time,pv,has_image,has_video,has_audio,comments_num,flags')
-                ->with([
-                    'cate' => function(Query $query) {
-                        $query->field('id,catename,ename');
-                    },
-                    'user' => function(Query $query){
-                        $query->field('id,name,nickname,user_img,vip');
-                    }
-                ])
-                ->whereIn('id', $idArr)
-                ->order('id', 'desc')
-                ->select()
-                ->append(['url'])
-                ->toArray();
-
-                return $list;
-                
-            }, 600);
-        }
-
-        return [
-            'total' => $count,
-            'per_page' => $limit,
-            'current_page' => $page,
-            'last_page' => $lastPage,
-            'data' => $data
-        ];
-
     }
 
     // 获取用户发帖列表

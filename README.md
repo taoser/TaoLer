@@ -1,3 +1,5 @@
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 # TaoLer
 
 > TaoLer是一个简单迅捷的管理系统，支持插件化开发，适用于企业、个人或组织建站需求。
@@ -27,6 +29,8 @@
 6.	双升级系统，可支持自动和手动升级。可在线检测并升级系统，保持网站的更新和安全。
 7.	代码开源，不设暗门操作，更安全。
 8.	项目会长期维护，优化更新。
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
 9.	预增加插件管理机制1.x（2.x版本正式上线）
 
 ![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/6ea6bb3e40d9a3bc7c9ec28f3e0d7b90.png "TaoLerCMS")
