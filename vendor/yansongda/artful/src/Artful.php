@@ -47,12 +47,12 @@ class Artful
         HttpServiceProvider::class,
     ];
 
-    private static null|Closure|ContainerInterface $container = null;
+    private static Closure|ContainerInterface|null $container = null;
 
     /**
      * @throws ContainerException
      */
-    private function __construct(array $config, null|Closure|ContainerInterface $container = null)
+    private function __construct(array $config, Closure|ContainerInterface|null $container = null)
     {
         $this->registerServices($config, $container);
 
@@ -61,7 +61,11 @@ class Artful
     }
 
     /**
-     * @return mixed
+     * @template T
+     *
+     * @param class-string<T> $service
+     *
+     * @return mixed|T
      *
      * @throws ContainerException
      * @throws ServiceNotFoundException
@@ -78,7 +82,7 @@ class Artful
     /**
      * @throws ContainerException
      */
-    public static function config(array $config = [], null|Closure|ContainerInterface $container = null): bool
+    public static function config(array $config = [], Closure|ContainerInterface|null $container = null): bool
     {
         if (self::hasContainer() && !($config['_force'] ?? false)) {
             return false;
@@ -144,6 +148,12 @@ class Artful
     }
 
     /**
+     * @template T
+     *
+     * @param class-string<T> $service
+     *
+     * @return mixed|T
+     *
      * @throws ServiceNotFoundException
      * @throws ContainerException
      */
@@ -168,7 +178,7 @@ class Artful
         return Artful::getContainer()->has($service);
     }
 
-    public static function setContainer(null|Closure|ContainerInterface $container): void
+    public static function setContainer(Closure|ContainerInterface|null $container): void
     {
         self::$container = $container;
     }
@@ -224,7 +234,7 @@ class Artful
      * @throws InvalidParamsException
      * @throws ServiceNotFoundException
      */
-    public static function shortcut(string $shortcut, array $params = []): null|Collection|MessageInterface|Rocket
+    public static function shortcut(string $shortcut, array $params = []): Collection|MessageInterface|Rocket|null
     {
         if (!class_exists($shortcut) || !in_array(ShortcutInterface::class, class_implements($shortcut))) {
             throw new InvalidParamsException(Exception::PARAMS_SHORTCUT_INVALID, "参数异常: [{$shortcut}] 未实现 `ShortcutInterface`");
@@ -240,7 +250,7 @@ class Artful
      * @throws ContainerException
      * @throws InvalidParamsException
      */
-    public static function artful(array $plugins, array $params): null|Collection|MessageInterface|Rocket
+    public static function artful(array $plugins, array $params): Collection|MessageInterface|Rocket|null
     {
         Event::dispatch(new Event\ArtfulStart($plugins, $params));
 
@@ -333,7 +343,7 @@ class Artful
     /**
      * @throws ContainerException
      */
-    private function registerServices(array $config, null|Closure|ContainerInterface $container = null): void
+    private function registerServices(array $config, Closure|ContainerInterface|null $container = null): void
     {
         foreach ($this->coreService as $service) {
             self::registerService($service, ContainerServiceProvider::class == $service ? $container : $config);

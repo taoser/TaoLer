@@ -42,9 +42,10 @@ class Cate extends AdminBaseController
         $addOrEdit = !is_null(input('id'));//true是编辑false新增
         $msg = $addOrEdit ? lang('edit') : lang('add');
         if(Request::isAjax()) {
-            $data = Request::param(['id/d','pid/d','catename','ename','type','icon','image','detpl','desc','sort', 'url']);
+            $data = Request::param(['id/d','pid/d','catename','ename','type','icon','image','tpl','desc','sort', 'url']);
 
             if(isset($data['id']) && $data['pid'] == $data['id']) return json(['code'=>-1,'msg'=> $msg.'不能作为自己的子类']);
+
             try{
                 Category::cache('catename')->save($data);
             } catch(Exception $e) {

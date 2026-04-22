@@ -48,7 +48,7 @@ class Swoole implements ContextInterface
     {
         $context = Coroutine::getContext();
         $context->setFlags(ArrayObject::ARRAY_AS_PROPS);
-        $context->exchangeArray($data ?: []);
+        $context->exchangeArray($data ? $data->getArrayCopy() : []);
     }
 
     /**

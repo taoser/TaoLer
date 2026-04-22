@@ -10,7 +10,7 @@ use Yansongda\Supports\Collection;
 
 class XmlPacker implements PackerInterface
 {
-    public function pack(null|array|Collection $payload, ?array $params = null): string
+    public function pack(array|Collection|null $payload, ?array $params = null): string
     {
         return Collection::wrap($payload)->toXml();
     }

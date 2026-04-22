@@ -26,14 +26,9 @@ class Doc extends IndexBaseController
     {
 		$types = input('type');
 		$slider = new Slider();
-		//幻灯
-		$sliders = $slider->getSliderList(1);
-		
+
 		//更新日志
 		$timeline = Db::name('time_line')->where('delete_time',0)->order('create_time','desc')->select();
-		
-		//热议文章
-		$artHot = Article::getArtHot(10);
 
 		//首页赞助
 		$ad_index = $slider->getSliderList(3);
@@ -48,9 +43,7 @@ class Doc extends IndexBaseController
 		$friend_links = $slider->getSliderList(6);
 		
 		$assgin = [
-			'slider'	=>	$sliders,
 			'timeline'	=>	$timeline,
-			'artHot'	=>	$artHot,
 			'type'		=>	$types,
 			'ad_index'	=>	$ad_index,
 			'ad_comm'	=>	$ad_comm,

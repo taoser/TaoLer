@@ -16,8 +16,7 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\index\model\Comment as CommentModel;
-
-
+use think\facade\Log;
 
 class Comment extends AdminBaseController
 {
@@ -30,8 +29,6 @@ class Comment extends AdminBaseController
         $this->model = new CommentModel();
     }
 
-
-
     /**
      * 浏览
      * @return string
@@ -41,93 +38,96 @@ class Comment extends AdminBaseController
         return View::fetch();
     }
 
-    public function list1()
-    {
-        $data = Request::only(['name','content','status']);
-        $map = $this->getParamFilter($data);
-        $where = [];
-        if(!empty($map['content'])){
-            $where[] = ['content', 'like', $map['content'].'%'];
-        }
-        if(isset($data['status'])){
-            $where[] = ['status', '=', (int) $data['status']];
-        }
-
-        if(isset($data['name'])){
-            $userId = Db::name('user')->where('name',$data['name'])->value('id');
-            $where[] = ['user_id', '=', $userId];
-        }
-        unset($map);
-
-        $list = $this->model->getCommentList($where, input('page'), input('limit'));
-        $res = [];
-        if($list['total']) {
-            $res = ['code' =>0, 'msg' => 'ok', 'count' => $list['total']];
-            foreach($list['data'] as $k => $v){
-                $res['data'][] = [
-                    'id'        => $v['id'],
-                    'replyer'   => $v['user']['name'],
-                    'title'     => $v['article']['title'],
-                    'avatar'    => $v['user']['user_img'],
-                    'content'   => strip_tags($v['content']),
-                    'replytime' => $v['create_time'],
-                    'check'     => $v['status'],
-                    //'url'       => $this->getArticleUrl($v['article_id'], 'index', $v->article->cate->ename),
-                ];
-            }
-            return json($res);
-        }
-        return json(['code' => 0, 'msg' => 'no data']);
-    }
-
-	//帖子评论
+	/**
+	 * 帖子评论列表
+	 * 
+	 * 获取评论列表，支持按用户名、内容、状态进行筛选
+	 * 
+	 * @return Json 返回评论列表数据
+	 */
 	public function list()
 	{
-        $data = Request::only(['name','content','status']);
-        $map = array_filter($data);
-        $where = array();
-        if(!empty($map['content'])){
-            $where[] = ['a.content','like', $map['content'].'%'];
-            unset($map['content']);
-        }
-        if(isset($data['status']) && $data['status'] !== '' ){
-            $where[] = ['a.status','=',(int)$data['status']];
-            unset($map['status']);
-        }
-        $replys = Db::name('comment')
-            ->alias('a')
-            ->join('user u','a.user_id = u.id')
-            ->join('article c','a.article_id = c.id')
-            ->join('cate ca','c.cate_id = ca.id')
-            ->field('a.id as aid,name,ename,appname,title,user_img,a.content as content,a.create_time as create_time,a.status as astatus,c.id as cid')
-            ->where('a.delete_time',0)
-            ->where($map)
-            ->where($where)
-            ->order('a.create_time', 'desc')
-            ->paginate([
-                'list_rows' => input('limit'),
-                'page' => input('page')
-            ]);
-        $count = $replys->total();
-        if ($count) {
-            $res = ['code'=>0,'msg'=>'','count'=>$count];
-            foreach($replys as $k => $v){
-                $res['data'][] = [
-                    'id'        => $v['aid'],
-                    'replyer'   => $v['name'],
-                    'title'     => htmlspecialchars($v['title']),
-                    'avatar'    => $v['user_img'],
-                    'content'   => strip_tags($v['content']),
-                    'replytime' => date("Y-m-d H:i:s",$v['create_time']),
-                    'check'     => $v['astatus'],
-                    'url'       => $this->getArticleUrl($v['cid'],'index',$v['ename'])
-                ];
+        try {
+            // 获取请求参数并进行安全过滤
+            $page = max(1, (int)input('page', 1));
+            $limit = min(100, (int)input('limit', 10));
+            $name = trim(Request::param('name', ''));
+            $content = trim(Request::param('content', ''));
+            $status = Request::param('status', '');
+            
+            // 构建查询条件
+            $where = [];
+            
+            // 内容搜索 - 使用参数绑定防止SQL注入
+            if (!empty($content)) {
+                $where[] = ['a.content', 'like', '%' . $content . '%'];
             }
-        } else {
-            $res = ['code'=>-1,'msg'=>'没有查询结果！'];
+            
+            // 状态筛选
+            if ($status !== '') {
+                $where[] = ['a.status', '=', (int)$status];
+            }
+            
+            // 用户名搜索
+            if (!empty($name)) {
+                $where[] = ['u.name', 'like', '%' . $name . '%'];
+            }
+            
+            // 构建查询
+            $query = Db::name('comment')
+                ->alias('a')
+                ->join('user u', 'a.user_id = u.id')
+                ->join('article c', 'a.article_id = c.id')
+                ->join('cate ca', 'c.cate_id = ca.id')
+                ->field('a.id as aid, u.name, ca.ename, c.title, u.user_img, a.content, a.create_time, a.status as astatus, c.id as cid')
+                ->where('a.delete_time', 0)
+                ->where($where)
+                ->order('a.create_time', 'desc');
+            
+            // 执行分页查询
+            $replys = $query->paginate([
+                'list_rows' => $limit,
+                'page' => $page
+            ]);
+            
+            // 处理返回数据
+            $count = $replys->total();
+            $data = [];
+            
+            if ($count) {  
+                foreach ($replys as $v) {
+                    $data[] = [
+                        'id'        => (int)$v['aid'],
+                        'replyer'   => htmlspecialchars($v['name']),
+                        'title'     => htmlspecialchars($v['title']),
+                        'avatar'    => $v['user_img'],
+                        'content'   => mb_substr(strip_tags($v['content']), 0, 100, 'UTF-8'),
+                        'replytime' => date('Y-m-d H:i:s', $v['create_time']),
+                        'check'     => (int)$v['astatus'],
+                        'url'       => $this->getArticleUrl((int)$v['cid'], 'index', $v['ename'])
+                    ];
+                }
+            }
+            
+            // 统一返回格式
+            return json([
+                'code'  => 0,
+                'msg'   => $count ? 'ok' : 'no data',
+                'count' => $count,
+                'data'  => $data
+            ]);
+        } catch (\Exception $e) {
+            // 捕获异常并记录日志
+            	Log::error('Comment list error: ' . $e->getMessage());
+            
+            // 返回错误信息
+            return json([
+                'code' => -1,
+                'msg' => '系统错误，请稍后重试',
+                'count' => 0,
+                'data' => []
+            ]);
         }
-        return json($res);
-
 	}
 	
 	//评论编辑
@@ -136,59 +136,158 @@ class Comment extends AdminBaseController
 		return View::fetch();
 	}
 	
-	//评论删除
-	public function delete($id)
+	/**
+	 * 评论删除
+	 * 
+	 * 支持单个或批量删除评论
+	 * 
+	 * @return Json 返回删除结果
+	 */
+	public function delete()
 	{
-		if(Request::isAjax()){
+		if (Request::isAjax()) {
             try {
-                $arr = explode(",",$id);
-                foreach($arr as $v){
-                    $comm = CommentModel::find($v);
-                    $comm->delete();
+                $id = Request::param('id');
+                // 验证参数
+                if (empty($id)) {
+                    return json(['code' => -1, 'msg' => '参数错误']);
                 }
-                return json(['code'=>0,'msg'=>'删除成功']);
+                
+                // 处理ID列表
+                $ids = array_filter(explode(",", $id), function($item) {
+                    return is_numeric($item) && $item > 0;
+                });
+                
+                if (empty($ids)) {
+                    return json(['code' => -1, 'msg' => '无效的ID']);
+                }
+                
+                // 批量删除评论
+                $result = CommentModel::destroy($ids);
+                
+                if ($result) {
+                    return json(['code' => 0, 'msg' => '删除成功']);
+                } else {
+                    return json(['code' => -1, 'msg' => '删除失败']);
+                }
             } catch (\Exception $e) {
-                return json(['code'=>-1,'msg'=>'删除失败']);
+                // 记录错误日志
+                Log::error('Comment delete error: ' . $e->getMessage());
+                return json(['code' => -1, 'msg' => '系统错误，请稍后重试']);
             }
         }
-
+        
+        return json(['code' => -1, 'msg' => '非法请求']);
 	}
 
-	//评论审核
+	/**
+	 * 评论审核
+	 * 
+	 * 审核评论状态，设置为通过或禁止
+	 * 
+	 * @return Json 返回审核结果
+	 */
 	public function check()
 	{
-		$data = Request::param();
+		try {
+            // 验证请求类型
+            if (!Request::isAjax()) {
+                return json(['code' => -1, 'msg' => '非法请求']);
+            }
+            
+            // 获取并验证参数
+            $id = Request::param('id/d');
+            $status = (int)Request::param('status', 0);
+            
+            if ($id <= 0) {
+                return json(['code' => -1, 'msg' => '参数错误']);
+            }
+            
+            // 验证状态值
+            if (!in_array($status, [0, 1, -1])) {
+                return json(['code' => -1, 'msg' => '无效的状态值']);
+            }
+            
+            // 更新评论状态
+            $result = Db::name('comment')->where('id', $id)->save(['status' => $status]);
+            
+            if ($result == false) {
+                return json(['code' => -1, 'msg' => '审核出错']);
+            }
 
-		//获取状态
-		$res = Db::name('comment')->where('id',$data['id'])->save(['status' => $data['status']]);
-		if($res){
-			if($data['status'] == 1) return json(['code'=>0,'msg'=>'评论审核通过','icon'=>6]);
-            return json(['code'=>0,'msg'=>'评论被禁止','icon'=>5]);
-		}
-        return json(['code'=>-1,'msg'=>'审核出错']);
+            if ($status == 1) {
+                return json(['code' => 0, 'msg' => '评论审核通过', 'icon' => 6]);
+            }
+
+            return json(['code' => 0, 'msg' => '评论被禁止', 'icon' => 5]);
+
+        } catch (\Exception $e) {
+            // 记录错误日志
+            Log::error('Comment check error: ' . $e->getMessage());
+
+            return json(['code' => -1, 'msg' => config('app.debug') ? $e->getMessage() : '系统错误，请稍后重试']);
+        }
 	}
 
     /**
 	 * 多选批量审核
+	 * 
+	 * 批量审核评论状态，根据check值设置status
+	 * - check=1 时，status=-1（禁止）
+	 * - check=0 或 check=-1 时，status=1（通过）
 	 *
-	 * @return Json
+	 * @return Json 返回审核结果
 	 */
 	public function checkSelect()
 	{
-        $param = Request::param('data');
-        $data = [];
-        foreach($param as $v) {
-            $data[] = ['id' => (int)$v['id'], 'status' => $v['check'] == '1' ? '-1' : '1'];
-        }
+        try {
+            // 验证请求类型
+            if (!Request::isAjax()) {
+                return json(['code' => -1, 'msg' => '非法请求', 'icon' => 5]);
+            }
+            
+            // 获取并验证参数
+            $param = Request::param('data');
+            
+            if (empty($param) || !is_array($param)) {
+                return json(['code' => -1, 'msg' => '参数错误', 'icon' => 5]);
+            }
+            
+            // 处理审核数据
+            $data = [];
+            foreach ($param as $v) {
+                // 验证每个元素的结构
+                if (!isset($v['id']) || !isset($v['check'])) {
+                    continue;
+                }
+                
+                // 根据check值计算status
+                $status = ($v['check'] == 1) ? -1 : 1;
+                
+                $data[] = [
+                    'id' => (int)$v['id'],
+                    'status' => $status
+                ];
+            }
+            
+            // 检查是否有有效的审核数据
+            if (empty($data)) {
+                return json(['code' => -1, 'msg' => '没有有效的审核数据', 'icon' => 5]);
+            }
+            
+            // 批量更新状态
+            $result = $this->model->saveAll($data);
+            
+            if ($result) {
+                return json(['code' => 0, 'msg' => '审核成功', 'icon' => 6]);
+            }
 
-		//获取状态
-		$res = $this->model->saveAll($data);
-	
-		if($res){
-			return json(['code'=>0,'msg'=>'审核成功','icon'=>6]);
-		}else {
-			return json(['code'=>-1,'msg'=>'失败啦','icon'=>6]);
-		}
+            return json(['code' => -1, 'msg' => '审核失败', 'icon' => 5]);
+        } catch (\Exception $e) {
+            // 记录错误日志
+            Log::error('Comment checkSelect error: ' . $e->getMessage());
+            return json(['code' => -1, 'msg' => '系统错误，请稍后重试', 'icon' => 5]);
+        }
 	}
 	
 

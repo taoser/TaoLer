@@ -168,7 +168,7 @@
 
 			form.on('submit(forum-save)', function(data) {
 				$.ajax({
-					url: "{:url('content.forum/edit')}",
+					url: "{:url('content.forum/editData')}",
 					data: JSON.stringify(data.field),
 					dataType: 'json',
 					contentType: 'application/json',

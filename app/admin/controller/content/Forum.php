@@ -20,6 +20,18 @@ use think\facade\Cache;
 use app\common\lib\Msgres;
 use think\response\Json;
 use Exception;
+use app\common\service\ArticleService;
+use app\common\strategy\ArticleValidation;
+use app\common\strategy\DataValidationStrategy;
+use app\common\strategy\AuthValidationStrategy;
+use app\common\decorator\MainArticleProcessorDecorator;
+use app\common\decorator\SensitiveWordFilter;
+use app\common\decorator\WordsDesc;
+use app\common\decorator\Media;
+use app\common\observer\ObserverManager;
+use app\common\observer\LogObserver;
+use app\common\observer\TagObserver;
+use app\common\observer\MailObserver;
 
 
 class Forum extends AdminBaseController
@@ -64,53 +76,39 @@ class Forum extends AdminBaseController
     {
         if (Request::isAjax()) {
 
-            $data = Request::only(['cate_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'captcha']);
-            $tagId = input('tagid');
+            $data = Request::only(['cate_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'tagid']);
             $data['user_id'] = 1; //管理员ID
+            $data['status'] = 1; //正常
 
-            // 调用验证器
-            $validate = new \app\common\validate\Article;
-            $result = $validate->scene('Artadd')->check($data);
-            if (true !== $result) {
-                return Msgres::error($validate->getError());
-            }
+             try{
 
-            // 处理内容
-            $data['content'] = $this->downUrlPicsReaplace($data['content']);
-            // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-            $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-            $data['description'] = strip_tags($this->filterEmoji($data['description']));
+				$articleServer = new ArticleService();
+			
+				// 校验策略
+				$articleServer->setValidation(new ArticleValidation())
+					->addValidation(new DataValidationStrategy())
+					->addValidation(new AuthValidationStrategy())
+					->addValidation(new \app\common\strategy\PostValidationStrategy());
 
-            // 多媒体数据
-			$medisArr = $this->setMediaData($data['content']);
-			$data = array_merge($data, $medisArr);
+				// 装饰
+				$articleServer->setDecorator(new MainArticleProcessorDecorator())
+					->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+					->addProcessor(new WordsDesc()) //关键词描述
+					->addProcessor(new Media()) // 媒体处理
+					->addProcessor(new \app\common\decorator\Image()); // 图片处理
 
+				// 观察者策略
+				$articleServer->setObserverManager(new ObserverManager())
+					->addObserver(new LogObserver())
+					->addObserver(new MailObserver());
 
-            // 获取分类ename,appname
-            $cateEname = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
-
-            try{
-
-                $result =  $this->model::add($data);
-
-                // 获取到的最新ID
-                $aid = $result['id'];
-                //写入taglist表
-                $tagArr = [];
-                if(isset($tagId)) {
-                    $tagIdArr = explode(',',$tagId);
-                    foreach($tagIdArr as $tid) {
-                        $tagArr[] = ['article_id'=>$aid,'tag_id'=>$tid,'create_time'=>time()];
-                    }
-                }
-
-                Db::name('taglist')->insertAll($tagArr);
+				$data = $articleServer->add($data);
+                
 
                 return json(['code' => 0, 'msg' => 'ok']);
                 
             } catch(Exception $e) {
-                // return Msgres::error('add_error');
-                return json(['code' => -1, 'msg' => 'error']);
+                return json(['code' => -1, 'msg' => $e->getMessage()]);
             }
         }
 
@@ -131,65 +129,57 @@ class Forum extends AdminBaseController
 		// $id = IdEncode::decode($id);
 
 		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
+        
+        View::assign('article', $article);
+
+        return View::fetch();
+    }
+
+    public function editData()
+    {
+        $data = Request::only(['id/d','cate_id','title','content','keywords','description','tagid']);
+		// $id = IdEncode::decode($data['id']);
+
+		$article = $this->model::suffix($this->byIdGetSuffix($data['id']))->find($data['id']);
  
         if(is_null($article)) return json(['code' => -1, 'msg' => '不能编辑！']);
+
         
-        if(Request::isAjax()){
-
-            $data = Request::only(['id','cate_id','title','content','keywords','description','captcha']);
-            $tagId = input('tagid');
-
-            //调用验证器
-            $validate = new \app\common\validate\Article();
-            $res = $validate->scene('Artadd')->check($data);
-            if(!$res) return Msgres::error($validate->getError());
-   
-            // 处理内容
-            $data['content'] = $this->downUrlPicsReaplace($data['content']);
-            // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-            $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-            $data['description'] = strip_tags($this->filterEmoji($data['description']));
-
-            try{
-				$article->edit($data);
-			} catch(Exception $e) {
-				return json(['code' => -1, 'msg' => $e->getMessage()]);
-			}
-
-            //处理标签
-            $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
-            if(isset($tagId)) {
-                $tagIdArr = explode(',',$tagId);
-                foreach($artTags as $aid => $tid) {
-                    if(!in_array($tid,$tagIdArr)){
-                        //删除被取消的tag
-                        Db::name('taglist')->delete($aid);
-                    }
-                }
-                //查询保留的标签
-                $artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
-                $tagArr = [];
-                foreach($tagIdArr as $tid) {
-                    if(!in_array($tid, $artTags)){
-                        //新标签
-                        $tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
-                    }
-                }
-                //更新新标签
-                Db::name('taglist')->insertAll($tagArr);
-            }
-            //删除原有缓存显示编辑后内容
-            Cache::delete('article_'.$id);
-            // $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
-            // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-            // return Msgres::success('edit_success');
-
-            return json(['code' => 0, 'msg' => 'ok']);
+        try{
+            $articleServer = new ArticleService();
             
+            // 校验策略
+            $articleServer->setValidation(new ArticleValidation())
+                ->addValidation(new DataValidationStrategy())
+                ->addValidation(new AuthValidationStrategy());
+
+            // 装饰
+            $articleServer->setDecorator(new MainArticleProcessorDecorator())
+                ->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+                ->addProcessor(new WordsDesc()) //关键词描述
+                ->addProcessor(new Media()) // 媒体处理
+                ->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+            // 观察者策略
+            $articleServer->setObserverManager(new ObserverManager())
+                ->addObserver(new TagObserver())
+                ->addObserver(new MailObserver());
+
+        
+            $articleServer->edit($data, $article);
+
+        } catch(Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
 
-        View::assign(['article'=>$article]);
-        return View::fetch();
+        //删除原有缓存显示编辑后内容
+        Cache::delete('article_'.$data['id']);
+        // $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
+        // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+        // return Msgres::success('edit_success');
+
+        return json(['code' => 0, 'msg' => 'ok']);
+        
     }
 
 
