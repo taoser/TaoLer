@@ -7,7 +7,6 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
-use think\facade\Config;
 use app\facade\Category;
 use app\index\model\PushJscode;
 use app\common\lib\Msgres;
@@ -183,7 +182,6 @@ class Article extends IndexBaseController
 			}
         }
 
-		
 		// 子模块自定义自适应add.html模板
 		$cate = Db::name('cate')->field('id,tpl')->where('ename', input('cate'))->find();
 		// 子模块下有add.html模板

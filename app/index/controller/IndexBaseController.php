@@ -98,6 +98,7 @@ class IndexBaseController extends \app\BaseController
 		];
 		
         View::assign($assign);
+		
 		return $sysInfo;
     }
 

@@ -9,14 +9,6 @@ use Exception;
 
 class JwtAuth
 {    
-    // 访问密钥    
-    const KEY = 'adsfhgkjl1324675809';
-    // 签发者 
-    const ISS = 'www.aieok.com';
-    // 接收者      
-    const AUD = 'www.aieok.com';    
-    // 加密算法   
-    const ALG = 'HS256';
 
     /**  对数据进行编码  
      *   @param array $data
@@ -26,14 +18,14 @@ class JwtAuth
     {
         $time = time();      
         $payload = [
-            "iss"  => self::ISS,
-            "aud"  => self::AUD,         
+            "iss"  => config('jwt.iss'),
+            "aud"  => config('jwt.aud'),         
             "iat"  => $time,      
             "nbf"  => $time,        
             'exp'  => $time + 86400 * 30,          
             'data' => $data,  
         ];
-        $token = JWT::encode($payload, self::KEY, self::ALG);
+        $token = JWT::encode($payload, config('jwt.key'), config('jwt.alg'));
         return $token;
     }
     
@@ -47,7 +39,7 @@ class JwtAuth
     {
         try {
             // 对 token 进行编码
-            $decoded = JWT::decode($token, new Key(self::KEY, self::ALG));
+            $decoded = JWT::decode($token, new Key(config('jwt.key'), config('jwt.alg')));
             // 检测 token 附加数据中是否存在用户id
             if (empty($decoded->data->uid)) {
                 throw new Exception('The token does not contain user information');
