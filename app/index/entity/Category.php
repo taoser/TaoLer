@@ -428,7 +428,7 @@ class Category extends BaseEntity
                 'user' => fn(Query $query) => $query->field('id,name,nickname,user_img,vip')
             ])
             // 字段筛选（主表加别名，避免字段冲突）
-            ->field(['a.id', 'a.cate_id', 'a.user_id', 'a.title', 'a.content', 'a.description','a.create_time', 'a.pv', 'a.has_image', 'a.has_video', 'a.has_audio','a.comments_num', 'a.flags'])
+            ->field(['a.id', 'a.cate_id', 'a.user_id', 'a.title', 'a.content', 'a.description','a.create_time', 'a.pv', 'a.thum_img', 'a.has_image', 'a.has_video', 'a.has_audio', 'a.media', 'a.comments_num', 'a.flags'])
             // 保持排序一致性
             ->order('a.id', 'desc')
             // 追加URL字段（模型访问器）

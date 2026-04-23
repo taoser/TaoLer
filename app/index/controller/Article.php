@@ -7,7 +7,6 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
-use think\facade\Config;
 use app\facade\Category;
 use app\index\model\PushJscode;
 use app\common\lib\Msgres;
@@ -25,6 +24,7 @@ use app\common\decorator\WordsDesc;
 use app\common\decorator\Media;
 use app\common\observer\ObserverManager;
 use app\common\observer\LogObserver;
+use app\common\observer\TagObserver;
 use app\common\observer\MailObserver;
 use tao\ResHelper;
 
@@ -156,35 +156,32 @@ class Article extends IndexBaseController
 					->addObserver(new LogObserver())
 					->addObserver(new MailObserver());
 
-				$articleServer->add($data);
-				
-				// $result = $this->model::add($data);
+				$result = $articleServer->add($data);
+
+				// 获取分类ename,appname
+				$cateName = Db::name('cate')->field('ename')->find($data['cate_id']);
+				$link = $this->getRouteUrl((int) $result['article_id'], $cateName['ename']);
+				$status = Db::name('article')->where('id', $result['article_id'])->value('status');
+				$url = $status ? $link : (string) url('index/');
+
+				// 清除文章tag缓存
+				Cache::tag('tagArtDetail')->clear();
+
+				// 发提醒邮件
+				// hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
+				// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+				// hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
+
+				// 清理首页静态文件
+				$this->removeIndexHtml();
+
+				return Msgres::success('add_success', $url);
 
 			} catch(Exception $e) {
 				return ResHelper::error($e->getMessage());
 			}
-			
-			// 获取分类ename,appname
-			// $cateName = Db::name('cate')->field('ename, appname')->find($data['cate_id']);
-			// $link = $this->getRouteUrl((int) $result['id'], $cateName['ename']);
-			// $url = $data['status'] ? $link : (string)url('index/');
-
-			// 清除文章tag缓存
-			Cache::tag('tagArtDetail')->clear();
-
-			// 发提醒邮件
-			// hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
-			// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-			// hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
-
-			// 清理首页静态文件
-			$this->removeIndexHtml();
-
-			return ResHelper::success(msg:'发布成功！');
-
         }
 
-		
 		// 子模块自定义自适应add.html模板
 		$cate = Db::name('cate')->field('id,tpl')->where('ename', input('cate'))->find();
 		// 子模块下有add.html模板
@@ -220,79 +217,51 @@ class Article extends IndexBaseController
     {
 		$id = $this->request->param('id/d');
 		// $id = IdEncode::decode($id);
-// halt($id);
+
 		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
 
 		$this->removeDetailHtml($article);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id/d','cate_id/d','title','content','keywords','description','captcha']);
+			$data = Request::only(['id/d','cate_id/d','title','content','keywords','description','captcha', 'tagid']);
+
+			try {
+
+				$articleServer = new ArticleService();
+				
+				// 校验策略
+				$articleServer->setValidation(new ArticleValidation())
+					->addValidation(new DataValidationStrategy())
+					->addValidation(new AuthValidationStrategy());
+
+				// 装饰
+				$articleServer->setDecorator(new MainArticleProcessorDecorator())
+					->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+					->addProcessor(new WordsDesc()) //关键词描述
+					->addProcessor(new Media()) // 媒体处理
+					->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+				// 观察者策略
+				$articleServer->setObserverManager(new ObserverManager())
+					->addObserver(new TagObserver())
+					->addObserver(new MailObserver());
+
 			
-			$tagId = input('tagid');	
+				$articleServer->edit($data, $article);
 
-			// $data['tagid'];
-			
-			// 验证码
-			if(Config::get('taoler.config.post_captcha') == 1)
-			{				
-				if(!captcha_check($data['captcha'])){
-					return json(['code'=>-1,'msg'=> '验证码失败']);
-				};
-			}
-			//调用验证器
-			$validate = new ArticleValidate(); 
-			$res = $validate->scene('Artadd')->check($data);
-			if(!$res){
-                return Msgres::error($validate->getError());
-			}
+				//删除原有缓存显示编辑后内容
+				Cache::delete('article_'.$data['id']);
 
+				$id = IdEncode::encode($data['id']);
+				
+				$link = $this->getRouteUrl($data['id'], $article->cate->ename);
 
-			$data['content'] = $this->downUrlPicsReaplace($data['content']);
-			// 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-			$data['description'] = strip_tags($this->filterEmoji($data['description']));
-			// 多媒体数据
-			$medisArr = $this->setMediaData($data['content']);
-			$data = array_merge($data, $medisArr);
+				// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+				return Msgres::success('edit_success', $link);
 
-			try{
-				$article->edit($data);
 			} catch(Exception $e) {
 				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
-			
-			//处理标签
-			if(!empty($data['tagid'])) {
-				$tagIdArr = explode(',', $data['tagid']);
-				$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id','id');
-				foreach($artTags as $aid => $tid) {
-					if(!in_array($tid, $tagIdArr)){
-						//删除被取消的tag
-						Db::name('taglist')->delete($aid);
-					}
-				}
-				//查询保留的标签
-				$artTags = Db::name('taglist')->where('article_id',$id)->column('tag_id');
-				$tagArr = [];
-				foreach($tagIdArr as $tid) {
-					if(!in_array($tid, $artTags)){
-						//新标签
-						$tagArr[] = ['article_id'=>$data['id'],'tag_id'=>$tid,'create_time'=>time()];
-					}
-				}
-				//更新新标签
-				Db::name('taglist')->insertAll($tagArr);
-			}
-			
-			//删除原有缓存显示编辑后内容
-			Cache::delete('article_'.$id);
-
-			$id = IdEncode::encode($id);
-			
-			$link = $this->getRouteUrl($id, $article->cate->ename);
-
-			// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-			return Msgres::success('edit_success',$link);
 		}
 			
         View::assign(['article' => $article]);
@@ -463,39 +432,6 @@ class Article extends IndexBaseController
         $count = count($list);
 
 		return ResHelper::success(data:$list, count:$count);
-
     }
-
-	/**
-	 * 设置多媒体数据
-	 *
-	 * @param string $content
-	 * @return array
-	 */
-	protected function setMediaData(string $content): array {
-		$data = [];
-
-		$data['media'] = [
-			'images' => [],
-			'videos' => [],
-			'audios' => []
-		];
-
-		$images = get_all_img($content);
-		$video = get_one_video($content);
-
-		if(!empty($images)) {
-			$data['media']['images'] = $images;
-			$data['has_image'] = count($images);
-			$data['thum_img'] = $images[0];
-		}
-		
-		if(!empty($video)) {
-			$data['media']['videos'] = $video;
-			$data['has_video'] = count($video);
-		}
-
-		return $data;
-	}
 
 }

@@ -269,10 +269,9 @@
 		window.edit = function(obj) {
 			$.post("{:url('content.forum/edit')}", {"id": obj.data['id']}, function(res){
 				if(res.code === -1) {
-					layer.msg(res.msg,{icon:res.icon,time:2000})
+					layer.msg(res.msg, {icon:res.icon,time:2000})
 					return false
 				}
-				
 				layer.open({
 					type: 2,
 					title: '修改',
@@ -281,7 +280,6 @@
 					content: 'edit.html?id=' + obj.data.id
 				})
 			})
-			
 		}
 
 		window.remove = function(obj) {

@@ -59,7 +59,7 @@ function get_packer(mixed $packer): PackerInterface
     return $packer;
 }
 
-function filter_params(null|array|Collection $params, ?Closure $closure = null): Collection
+function filter_params(array|Collection|null $params, ?Closure $closure = null): Collection
 {
     $params = Collection::wrap($params);
 

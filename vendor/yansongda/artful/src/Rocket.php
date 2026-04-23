@@ -32,9 +32,9 @@ class Rocket implements JsonSerializableInterface, ArrayAccess
 
     private string $direction = DirectionInterface::class;
 
-    private null|Collection|MessageInterface $destination = null;
+    private Collection|MessageInterface|null $destination = null;
 
-    private null|RequestInterface|ResponseInterface $destinationOrigin = null;
+    private RequestInterface|ResponseInterface|null $destinationOrigin = null;
 
     public function getRadar(): ?RequestInterface
     {
@@ -72,7 +72,7 @@ class Rocket implements JsonSerializableInterface, ArrayAccess
         return $this->payload;
     }
 
-    public function setPayload(null|array|Collection $payload): Rocket
+    public function setPayload(array|Collection|null $payload): Rocket
     {
         if (is_array($payload)) {
             $payload = new Collection($payload);
@@ -129,24 +129,24 @@ class Rocket implements JsonSerializableInterface, ArrayAccess
         return $this;
     }
 
-    public function getDestination(): null|Collection|MessageInterface
+    public function getDestination(): Collection|MessageInterface|null
     {
         return $this->destination;
     }
 
-    public function setDestination(null|Collection|MessageInterface $destination): Rocket
+    public function setDestination(Collection|MessageInterface|null $destination): Rocket
     {
         $this->destination = $destination;
 
         return $this;
     }
 
-    public function getDestinationOrigin(): null|RequestInterface|ResponseInterface
+    public function getDestinationOrigin(): RequestInterface|ResponseInterface|null
     {
         return $this->destinationOrigin;
     }
 
-    public function setDestinationOrigin(null|RequestInterface|ResponseInterface $destinationOrigin): Rocket
+    public function setDestinationOrigin(RequestInterface|ResponseInterface|null $destinationOrigin): Rocket
     {
         $this->destinationOrigin = $destinationOrigin;
 

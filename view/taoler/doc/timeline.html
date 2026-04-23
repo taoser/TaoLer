@@ -10,19 +10,21 @@
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md8">
 		<!--首页幻灯-->
-		<div class="fly-panel layui-hide-xs"> 
-		  <div class="layui-row fly-panel-main" style="padding: 15px;"> 
-		   <div class="layui-carousel fly-topline" id="FLY_topline" > 
-			<div carousel-item=""> 
-			{volist name="slider" id="vo"}
-			 <div time-limit="2019-04-18 0:0:0" > 
-			  <a href="{$Request.domain}{$vo.slid_href}" target="_blank" rel="nofollow"> <img src="{$Request.domain}{$vo.slid_img}" alt="{$vo.slid_name}" /> </a> 
-			 </div> 
-			{/volist} 
+			<div class="fly-panel">
+				<div class="layui-row">
+				  <div class="layui-carousel fly-topline" id="TAOLER-SLIDER">
+					<div carousel-item="">
+					  {taoler:slide}
+						<div time-limit="">
+						  <a href="{slide:url /}" target="_blank" rel="nofollow">
+							<img src="{slide:image /}" alt="{slide:title /}" />
+						  </a>
+						</div>
+					  {/taoler:slide}
+					</div>
+				  </div>
+				</div>
 			</div> 
-		   </div> 
-		  </div>
-		</div> 
 		<!--更新日志-->
 		<div class="layui-card">
 			<div class="layui-card-header"><h1 class="site-h1">更新日志</h1></div>
@@ -71,22 +73,7 @@
 
 		<!--广告赞助-->
 		{:hook('ads_index_support')}
-
-      <dl class="fly-panel fly-list-one">
-        <dt class="fly-panel-title">本周热议</dt>
-        {volist name="artHot" id="vo"}
-		<dd>
-          <a href="{$Request.domain}{:url('article/detail',['id' => $vo.id])}">{$vo.title}</a>
-          <span><i class="iconfont icon-pinglun1"></i> {$vo.comments_count}</span>
-        </dd>
-		{/volist}
-
-        <!-- 无数据时 -->
-        <!--
-        <div class="fly-none">没有相关数据</div>
-        -->
-      </dl>
-
+    
       <div class="fly-panel">
         <div class="fly-panel-title">
           官方产品
@@ -108,10 +95,13 @@
 
 {block name="script"}
 <script>
-    layui.use(['form', 'layer'], function() {
+    layui.extend({
+      ads: '{/}/static/addons/ads/js/ads'
+    }).use(function() {
         var layer = layui.layer;
         var $ = layui.jquery;
         var jifenname = "金币";
+        let carousel = layui.carousel;
 
 	$('#friend-link').on('click', function(){
 		layer.open({
@@ -123,6 +113,17 @@
 		});
 		return false;
 	});
+
+  // 渲染 - 设置时间间隔、动画类型、宽高度等属性
+		carousel.render({
+			elem: '#ID-carousel',
+			interval: 2000,
+			anim: 'updown',
+			arrow: 'none',
+			indicator: 'none',
+			width: 'auto',
+			height: '80px'
+		});
 });
 </script>
 

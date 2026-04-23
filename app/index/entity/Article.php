@@ -18,7 +18,7 @@ class Article extends BaseEntity
     // 1. 字段常量管理（抽离到模型更佳）
     const ARTICLE_LIST_FIELDS = [
         'a.id', 'a.cate_id', 'a.user_id', 'a.title', 'a.content', 'a.description',
-        'a.create_time', 'a.pv', 'a.has_image', 'a.has_video', 'a.has_audio',
+        'a.create_time', 'a.pv', 'a.thum_img', 'a.has_image', 'a.has_video', 'a.has_audio',
         'a.comments_num', 'a.flags'
     ];
     const CATE_RELATION_FIELDS = ['id', 'catename', 'ename'];
@@ -47,6 +47,18 @@ class Article extends BaseEntity
         if(isset($data['status'])) {
             $this->status   = $data['status'];
         }
+
+        if(isset($data['has_image'])) {
+            $this->has_image = $data['has_image'];
+            $this->thum_img = $data['thum_img'];
+        }
+        if(isset($data['has_video'])) {
+            $this->has_video = $data['has_video'];
+        }
+
+        if(isset($data['has_audio'])) {
+            $this->has_audio = $data['has_audio'];
+        }
         
         $this->description  = $data['description'];
        
@@ -68,7 +80,7 @@ class Article extends BaseEntity
             throw new Exception('save error');
         }
 
-        return ['id'=> $this->id];
+        return ['id' => $this->id];
 	}
 
     /**
@@ -131,7 +143,7 @@ class Article extends BaseEntity
             }
 
             foreach($sufsAids as $k => $v) {
-                $data = $this->field('id,title,cate_id,user_id,create_time,pv,has_image,has_video,has_audio,media,comments_num,flags')
+                $data = $this->field('id,title,cate_id,user_id,create_time,pv,thum_img,has_image,thum_img,has_video,has_audio,media,comments_num,flags')
                 ->suffix($k)
                 ->with([
                     'cate' => function (Query $query) {
@@ -308,7 +320,7 @@ class Article extends BaseEntity
             
             $map = self::getSuffixMap(['status' => 1], Article::class);
 
-            $field = 'id,title,cate_id,user_id,content,description,pv,has_image,has_video,has_audio,create_time,media,comments_num,flags';
+            $field = 'id,title,cate_id,user_id,content,description,pv,thum_img,has_image,has_video,has_audio,create_time,media,comments_num,flags';
             // 判断是否有多个表
             if($map['tableCount'] > 1) {
 
@@ -601,7 +613,7 @@ class Article extends BaseEntity
             ->limit($limit)
             ->select();
 
-            $tags = $this->field('id,cate_id,user_id,has_image,title,create_time,pv')
+            $tags = $this->field('id,cate_id,user_id,thum_img,has_image,title,create_time,pv')
             ->whereIn('id', $arrId)
             ->where('status', '1')
             ->with([

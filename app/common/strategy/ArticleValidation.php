@@ -15,9 +15,9 @@ class ArticleValidation {
         $this->strategy[] = $strategy;
     }
 
-    public function validate($user) {
+    public function validate($data) {
         foreach($this->strategy as $v) {
-            $v->validate($user);
+            $v->validate($data);
         }
     }
 }

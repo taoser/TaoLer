@@ -20,6 +20,18 @@ use think\facade\Cache;
 use app\common\lib\Msgres;
 use think\response\Json;
 use Exception;
+use app\common\service\ArticleService;
+use app\common\strategy\ArticleValidation;
+use app\common\strategy\DataValidationStrategy;
+use app\common\strategy\AuthValidationStrategy;
+use app\common\decorator\MainArticleProcessorDecorator;
+use app\common\decorator\SensitiveWordFilter;
+use app\common\decorator\WordsDesc;
+use app\common\decorator\Media;
+use app\common\observer\ObserverManager;
+use app\common\observer\LogObserver;
+use app\common\observer\MailObserver;
+use tao\ResHelper;
 
 
 class Article extends AdminBaseController
@@ -95,52 +107,66 @@ class Article extends AdminBaseController
             $data = Request::only(['cate_id', 'title', 'title_color', 'tiny_content', 'content', 'upzip', 'keywords', 'description', 'captcha']);
             $tagId = input('tagid');
             $data['user_id'] = 1; //管理员ID
-            // 调用验证器
-            $validate = new \app\common\validate\Article;
-            $result = $validate->scene('Artadd')->check($data);
-            if (true !== $result) {
-                return Msgres::error($validate->getError());
-            }
 
-            // 获取内容图片音视频标识
-            $iva= $this->hasIva($data['content']);
-            $data = array_merge($data,$iva);
+            try{
 
-            // 处理内容
-            $data['content'] = $this->downUrlPicsReaplace($data['content']);
-            // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-            $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-            $data['description'] = strip_tags($this->filterEmoji($data['description']));
-            // 获取分类ename,appname
-            $cateEname = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
+				$articleServer = new ArticleService();
+			
+				// 校验策略
+				$articleServer->setValidation(new ArticleValidation())
+					->addValidation(new DataValidationStrategy())
+					->addValidation(new AuthValidationStrategy())
+					->addValidation(new \app\common\strategy\PostValidationStrategy());
 
-            $result =  $this->model::add($data);
-            if ($result['code'] == 1) {
-                // 获取到的最新ID
-                $aid = $result['data']['id'];
-                //写入taglist表
-                $tagArr = [];
-                if(isset($tagId)) {
-                    $tagIdArr = explode(',',$tagId);
-                    foreach($tagIdArr as $tid) {
-                        $tagArr[] = ['article_id'=>$aid,'tag_id'=>$tid,'create_time'=>time()];
-                    }
-                }
-                Db::name('taglist')->insertAll($tagArr);
+				// 装饰
+				$articleServer->setDecorator(new MainArticleProcessorDecorator())
+					->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+					->addProcessor(new WordsDesc()) //关键词描述
+					->addProcessor(new Media()) // 媒体处理
+					->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+				// 观察者策略
+				$articleServer->setObserverManager(new ObserverManager())
+					->addObserver(new LogObserver())
+					->addObserver(new MailObserver());
+
+				$res =$articleServer->add($data);
+                halt($res);
+				
+				// $result = $this->model::add($data);
+
+                return Msgres::success('添加成功');
+
+			} catch(Exception $e) {
+				return ResHelper::error($e->getMessage());
+			}
+
+
+
+                // //写入taglist表
+                // $tagArr = [];
+                // if(isset($tagId)) {
+                //     $tagIdArr = explode(',',$tagId);
+                //     foreach($tagIdArr as $tid) {
+                //         $tagArr[] = ['article_id'=>$aid,'tag_id'=>$tid,'create_time'=>time()];
+                //     }
+                // }
+                // Db::name('taglist')->insertAll($tagArr);
 
                 // 清除文章tag缓存
                 Cache::tag('tagArtDetail')->clear();
 
-                $link = $this->getArticleUrl((int)$aid, 'index', $cateEname);
+                // 获取分类ename,appname
+                // $cateEname = Db::name('cate')->where('id',$data['cate_id'])->value('ename');
 
-                hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+                // $link = $this->getArticleUrl((int)$aid, 'index', $cateEname);
 
-                $url = $result['data']['status'] ? $link : (string)url('index/');
-                $res = Msgres::success($result['msg'], $url);
-            } else {
-                $res = Msgres::error('add_error');
-            }
-            return $res;
+                // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+
+                // $url = $result['data']['status'] ? $link : (string)url('index/');
+
+               
+            return Msgres::error('add_error');
         }
 
         return View::fetch('add');

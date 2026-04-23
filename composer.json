@@ -27,7 +27,7 @@
         "taoser/think-addons": "^2.0",
         "taoser/think-setarr": "^0.0.5",
         "phpmailer/phpmailer": "^6.8",
-        "firebase/php-jwt": "^6.10",
+        "firebase/php-jwt": "^7.0",
         "workerman/workerman": "^5.1",
         "workerman/gateway-worker": "^4.0",
         "workerman/gatewayclient": "^3.1",

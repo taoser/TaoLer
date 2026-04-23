@@ -39,6 +39,7 @@ class Article extends TagLib
         'has_image'     => ['attr' => '', 'close' => 0],
         'has_video'     => ['attr' => '', 'close' => 0],
         'master_pic'    => ['attr' => '', 'close' => 0],
+        'thum_img'      => ['attr' => '', 'close' => 0],
 
         'cate_name'     => ['attr' => '', 'close' => 0],
         'cate_ename'    => ['attr' => '', 'close' => 0],
@@ -174,6 +175,11 @@ class Article extends TagLib
     public function tagMaster_pic(array $tag, string $content): string
     {
         return '{notempty name="article.media.images"}{$article.media.images[0]}{/notempty}';
+    }
+
+    public function tagThum_img(array $tag, string $content): string
+    {
+        return '{gt name="article.has_image"}{$article.thum_img}{/gt}';
     }
 
     public function tagMaster_pic2(array $tag, string $content): string

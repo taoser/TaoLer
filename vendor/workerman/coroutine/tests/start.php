@@ -10,11 +10,22 @@ use Workerman\Worker;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+$phpunitDisplayOptions = [
+    '--colors=always',
+    '--display-deprecations',
+    '--display-phpunit-deprecations',
+    '--display-errors',
+    '--display-notices',
+    '--display-warnings',
+    '--display-incomplete',
+    '--display-skipped',
+];
+
 if (DIRECTORY_SEPARATOR === '/' || (!extension_loaded('swow') && !class_exists(Revolt\EventLoop::class))) {
-    create_test_worker(function () {
+    create_test_worker(function () use ($phpunitDisplayOptions) {
         (new PHPUnit\TextUI\Application)->run([
             __DIR__ . '/../vendor/bin/phpunit',
-            '--colors=always',
+            ...$phpunitDisplayOptions,
             __DIR__ . '/ChannelTest.php',
             __DIR__ . '/PoolTest.php',
             __DIR__ . '/BarrierTest.php',
@@ -25,10 +36,10 @@ if (DIRECTORY_SEPARATOR === '/' || (!extension_loaded('swow') && !class_exists(R
 }
 
 if (extension_loaded('event')) {
-    create_test_worker(function () {
+    create_test_worker(function () use ($phpunitDisplayOptions) {
         (new PHPUnit\TextUI\Application)->run([
             __DIR__ . '/../vendor/bin/phpunit',
-            '--colors=always',
+            ...$phpunitDisplayOptions,
             __DIR__ . '/ChannelTest.php',
             __DIR__ . '/PoolTest.php',
             __DIR__ . '/BarrierTest.php',
@@ -39,30 +50,30 @@ if (extension_loaded('event')) {
 }
 
 if (class_exists(Revolt\EventLoop::class) && (DIRECTORY_SEPARATOR === '/' || !extension_loaded('swow'))) {
-    create_test_worker(function () {
+    create_test_worker(function () use ($phpunitDisplayOptions) {
         (new PHPUnit\TextUI\Application)->run([
             __DIR__ . '/../vendor/bin/phpunit',
-            '--colors=always',
+            ...$phpunitDisplayOptions,
             ...glob(__DIR__ . '/*Test.php')
         ]);
     }, Fiber::class);
 }
 
 if (extension_loaded('Swoole')) {
-    create_test_worker(function () {
+    create_test_worker(function () use ($phpunitDisplayOptions) {
         (new PHPUnit\TextUI\Application)->run([
             __DIR__ . '/../vendor/bin/phpunit',
-            '--colors=always',
+            ...$phpunitDisplayOptions,
             ...glob(__DIR__ . '/*Test.php')
         ]);
     }, Swoole::class);
 }
 
 if (extension_loaded('Swow')) {
-    create_test_worker(function () {
+    create_test_worker(function () use ($phpunitDisplayOptions) {
         (new PHPUnit\TextUI\Application)->run([
             __DIR__ . '/../vendor/bin/phpunit',
-            '--colors=always',
+            ...$phpunitDisplayOptions,
             ...glob(__DIR__ . '/*Test.php')
         ]);
     }, Swow::class);

@@ -14,7 +14,7 @@ class AuthValidationStrategy implements ValidationStrategy
         }
 
         // 验证
-        if(config('taoler.config.post_captcha') == 1) {			
+        if(config('taoler.config.post_captcha') == 1 && !empty($data['captcha'])) {			
             if(!captcha_check($data['captcha'])){
                 throw new Exception('验证码失败', 500);
             };

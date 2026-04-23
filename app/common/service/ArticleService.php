@@ -41,6 +41,7 @@ class ArticleService
             }
 
             $article = Article::add($data);
+
             $data['article_id'] = $article['id'];
 
             // 通知观察者
@@ -48,14 +49,46 @@ class ArticleService
                 $this->observer->notify($data);
             }
 
+            return $data;
+
             return true;
+
         } catch(Exception $e) {
             // echo "文章发布失败：". $e->getMessage(). "\n";
-            // return false;
-
             throw new Exception($e->getMessage());
         }
         
+    }
+
+    public function edit($data, $articleModel)
+    {
+        try{
+            // 校验
+            if($this->validation) {
+                $this->validation->validate($data);
+            }
+
+            // 装饰器
+            if($this->decorator) {
+                $data = $this->decorator->process($data);
+            }
+
+            // 数据保存
+            $articleModel->save($data);
+
+            $data['article_id'] = $data['id'];
+
+            // 通知观察者
+            if($this->observer) {
+                $this->observer->notify($data);
+            }
+
+            return true;
+            
+        } catch(Exception $e) {
+            // echo "文章编辑失败：". $e->getMessage(). "\n";
+            throw new Exception($e->getMessage());
+        }
     }
 
     // 校验器

@@ -4,6 +4,7 @@ namespace test;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use ReflectionProperty;
 use Workerman\Coroutine;
 use Workerman\Coroutine\Exception\PoolException;
 use Workerman\Coroutine\Pool;
@@ -332,7 +333,6 @@ class PoolTest extends TestCase
 
         // 调用受保护的 checkConnections 方法
         $reflectedMethod = new ReflectionMethod($pool, 'checkConnections');
-        $reflectedMethod->setAccessible(true);
         $reflectedMethod->invoke($pool);
 
         // 检查心跳时间是否更新
@@ -367,17 +367,13 @@ class PoolTest extends TestCase
 
     private function getPrivateProperty($object, string $property)
     {
-        $reflection = new ReflectionClass($object);
-        $prop = $reflection->getProperty($property);
-        $prop->setAccessible(true);
+        $prop = new ReflectionProperty($object, $property);
         return $prop->getValue($object);
     }
 
     private function setPrivateProperty($object, string $property, $value)
     {
-        $reflection = new ReflectionClass($object);
-        $prop = $reflection->getProperty($property);
-        $prop->setAccessible(true);
+        $prop = new ReflectionProperty($object, $property);
         $prop->setValue($object, $value);
     }
 

@@ -10,7 +10,7 @@ use Yansongda\Supports\Collection;
 
 class JsonPacker implements PackerInterface
 {
-    public function pack(null|array|Collection $payload, ?array $params = null): string
+    public function pack(array|Collection|null $payload, ?array $params = null): string
     {
         if (($payload instanceof Collection && $payload->isEmpty()) || empty($payload)) {
             return '';
