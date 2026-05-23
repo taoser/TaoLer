@@ -58,7 +58,6 @@ class Controller
         $this->addon_path = $app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
         $this->addon_config = "addon_{$this->name}_config";
         $this->addon_info = "addon_{$this->name}_info";
-        // $this->view = View::engine('Taoler');
         $this->view = clone View::engine('Think');
         $this->view->config([
             'strip_space' => true, // 去除空格和换行

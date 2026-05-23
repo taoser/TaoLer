@@ -20,13 +20,13 @@
 				<section id="main" class="list-home list-grid list-grid-padding">
 					{article:list}
 					<article class="list-item block card-plain">
-						{gt name="article.has_image" value="0"}
+						{egt name="article.has_image" value="1"}
 						<figure class="media media-3x2 col-4 col-md-4 d-none d-md-block">
 							<a class="media-content" href="{article:url /}" title="{article:title /}">
 							<img src="{article:master_pic /}" width="233" height="155" alt="{article:title /}">
 							</a>
 						</figure>
-						{/gt}
+						{/egt}
 						<div class="list-width list-content">
 							<div class="list-body">
 								<a href="{article:url /}" title="{article:title /}" >

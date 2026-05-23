@@ -82,7 +82,7 @@ class Route
 
         // 生成控制器对象
         try {
-            $instance = new $class($app);
+            $instance = $app->make($class);
         } catch (\Exception $e) {
             throw new HttpException(404, lang('addon controller %s not found', [Str::studly($controller)]));
         }

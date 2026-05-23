@@ -179,7 +179,7 @@ class Article extends TagLib
 
     public function tagThum_img(array $tag, string $content): string
     {
-        return '{gt name="article.has_image"}{$article.thum_img}{/gt}';
+        return '{egt name="article.has_image" value="1"}{$article.thum_img}{/egt}';
     }
 
     public function tagMaster_pic2(array $tag, string $content): string

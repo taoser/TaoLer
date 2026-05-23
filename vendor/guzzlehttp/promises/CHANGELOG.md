@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## 2.3.1 - 2026-05-19
+
+### Fixed
+
+- Fixed `Utils::inspect()` returning the internal reason array instead of the `AggregateException`
+
+
 ## 2.3.0 - 2025-08-22
 
 ### Added

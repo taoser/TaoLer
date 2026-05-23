@@ -9,8 +9,9 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+use think\App;
+
 // [ 应用入口文件 ]
-namespace think;
 
 $tao_config = "../config/taoler.php";
 
@@ -37,18 +38,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 // 执行HTTP应用并响应
 $app = new App();
-
-// // 静态文件存放目录
-// $staticPath = str_replace('\\','/', $app->getRootPath(). 'public/static_html' . $app->request->url());
-// // 首页静态文件路径
-// $indexPath = $staticPath.'index.html';
-// if(file_exists($indexPath)) {
-//     return include $indexPath;
-// }
-// // 其它页面静态文件路径
-// if(file_exists($staticPath) && is_file($staticPath)) {
-//     return include $staticPath;
-// }
 
 $http = ($app)->http;
 

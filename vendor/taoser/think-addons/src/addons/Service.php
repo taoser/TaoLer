@@ -60,7 +60,13 @@ class Service extends \think\Service
                 }
 
                 // 注册控制器路由
-                $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+                // $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+                
+                // 使用路由分组
+                $route->group('addons', function () use ($route, $execute) {
+                    $route->rule(':addon/[:controller]/[:action]', $execute)
+                        ->middleware(Addons::class);
+                });
 
                 // 自定义路由
                 $routes = (array) Config::get('addons.route', []);
@@ -255,7 +261,7 @@ class Service extends \think\Service
         }
 
         $conf = Cache::remember('addons_config', function(){
-            $config = Config::get('addons');
+            $config = $this->app->config->get('addons');
             // 读取插件目录及钩子列表
             $base = get_class_methods("\\taoser\\Addons");
             $base = array_unique(array_merge($base, ['initialize','install', 'uninstall', 'enabled', 'disabled']));

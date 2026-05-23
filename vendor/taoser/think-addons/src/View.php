@@ -42,7 +42,7 @@ class View extends Manager
      * @param string $type 模板引擎类型
      * @return $this
      */
-    public function engine(string $type = null)
+    public function engine(?string $type = null)
     {
         return $this->driver($type);
     }

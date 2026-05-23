@@ -11,7 +11,6 @@
 
 namespace app\index\entity;
 
-use app\facade\Taglist;
 use app\common\entity\BaseEntity;
 
 class Tag extends BaseEntity

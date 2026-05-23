@@ -131,7 +131,7 @@ if (!function_exists('get_addons_class')) {
                 $namespace = '\\addons\\' . $name . '\\controller\\' . $class;
                 // 匹配空控制器
                 if (!class_exists($namespace)) {
-                    $namespace = '\\addons\\' . $name . '\\Controller\\' . config('route.empty_controller');
+                    $namespace = '\\addons\\' . $name . '\\controller\\' . config('route.empty_controller');
                 }
                 break;
             default:

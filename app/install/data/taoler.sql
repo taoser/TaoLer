@@ -2211,7 +2211,7 @@ CREATE TABLE `tao_article`  (
   `has_image` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '图片张数',
   `has_video` tinyint NOT NULL DEFAULT 0 COMMENT '1有视频0无',
   `has_audio` tinyint NOT NULL DEFAULT 0 COMMENT '1有音频0无',
-  `is_comment` tinyint UNSIGNED NOT NULL COMMENT '可评论1是0否',
+  `is_comment` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '可评论1是0否',
   `pv` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览量',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
@@ -2793,7 +2793,7 @@ CREATE TABLE `tao_user`  (
 -- ----------------------------
 -- Records of tao_user
 -- ----------------------------
-INSERT INTO `tao_user` VALUES (1, 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', 0, '管理员', 'earth', '1', '这是一个社区系统', '/static/res/images/avatar/00.jpg', '1', 0, 1, '1', 0, '备注信息', '127.0.0.1', 1677900186, 0, 0, 0, 1579053025, 1677900186, 0);
+INSERT INTO `tao_user` VALUES (1, 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '2147483647', 'admin@qq.com', 0, '管理员', 'earth', '1', '这是一个社区系统', '/static/avatar/00.jpg', '1', 0, 1, '1', 0, '备注信息', '127.0.0.1', 1677900186, 0, 0, 0, 1579053025, 1677900186, 0);
 
 -- ----------------------------
 -- Table structure for tao_user_area

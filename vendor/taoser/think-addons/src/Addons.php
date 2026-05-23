@@ -8,7 +8,6 @@ use think\App;
 use think\helper\Str;
 use think\facade\Config;
 use think\facade\View;
-use taoler\com\Files;
 use think\facade\Cache;
 use think\facade\Db;
 use think\facade\Template;
@@ -132,21 +131,24 @@ abstract class Addons
         return $this;
     }
 
+    // 获取插件下标签 addons/taglib文件
     protected function getTagLib() {
         return Cache::remember('addon_taglib', function(){
-            $tagsArr = []; 
-            //获取插件下标签 addons/taglib文件
-            $localAddons = Files::getDirName('../addons/');
-            foreach($localAddons as $v) {
-                $dir = root_path() . 'addons'. DIRECTORY_SEPARATOR . $v . DIRECTORY_SEPARATOR .'taglib';
-                if(!file_exists($dir)) continue;
-                $addons_taglib = Files::getAllFile($dir);
-                foreach ($addons_taglib as $a) {
-                    $tagsArr[] = str_replace('/','\\',strstr(strstr($a, 'addons'), '.php', true));
+            $tagsArr = [];
+            $addonsPath = $this->app->addons->getAddonsPath();
+            
+            foreach (scandir($addonsPath) as $name) {
+                if (in_array($name, ['.', '..'])) continue;
+                $taglibDir = $addonsPath . $name . DIRECTORY_SEPARATOR . 'taglib';
+                if (!is_dir($taglibDir)) continue;
+                
+                foreach (glob($taglibDir . '/*.php') as $file) {
+                    $className = pathinfo($file, PATHINFO_FILENAME);
+                    $tagsArr[] = "\\addons\\{$name}\\taglib\\{$className}";
                 }
             }
             return implode(',', $tagsArr);
-        });
+        }, 3600); // 添加过期时间
     }
 
     /**
@@ -228,6 +230,11 @@ abstract class Addons
 
     //必须卸载插件方法
     abstract public function uninstall();
+
+    // 在 Addons.php 中补充
+    abstract public function enabled();   // 启用插件
+
+    abstract public function disabled();  // 禁用插件
 
     // 写入管理位
     protected function insert(array $hooks = []) {
