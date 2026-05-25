@@ -2211,7 +2211,7 @@ CREATE TABLE `tao_article`  (
   `has_image` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '图片张数',
   `has_video` tinyint NOT NULL DEFAULT 0 COMMENT '1有视频0无',
   `has_audio` tinyint NOT NULL DEFAULT 0 COMMENT '1有音频0无',
-  `is_comment` tinyint UNSIGNED NOT NULL COMMENT '可评论1是0否',
+  `is_comment` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '可评论1是0否',
   `pv` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览量',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',

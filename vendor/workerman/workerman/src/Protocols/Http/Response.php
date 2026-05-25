@@ -56,7 +56,7 @@ class Response implements Stringable
     public ?array $file = null;
 
     /**
-     * Mine type map.
+     * Mime Type map.
      * @var array
      */
     protected static array $mimeTypeMap = [
@@ -341,6 +341,17 @@ class Response implements Stringable
     }
 
     /**
+     * Get Mime Type from extension.
+     *
+     * @param string $ext
+     * @return string
+     */
+    public function getMimeType(string $ext): string
+    {
+        return self::$mimeTypeMap[$ext] ?? 'application/octet-stream';
+    }
+
+    /**
      * Set status.
      *
      * @param int $code
@@ -462,9 +473,6 @@ class Response implements Stringable
         $reason = $this->reason ?: self::PHRASES[$this->status];
         $head = "HTTP/$this->version $this->status $reason\r\n";
         $headers = $this->headers;
-        if (!isset($headers['Server'])) {
-            $head .= "Server: workerman\r\n";
-        }
         foreach ($headers as $name => $value) {
             // Skip unsafe header names
             if (strpbrk((string)$name, ":\r\n") !== false) {
@@ -499,15 +507,13 @@ class Response implements Stringable
         if ($baseName === '') {
             $baseName = 'unknown';
         }
+        $mime = '';
         if (!isset($headers['Content-Type'])) {
-            if (isset(self::$mimeTypeMap[$extension])) {
-                $head .= "Content-Type: " . self::$mimeTypeMap[$extension] . "\r\n";
-            } else {
-                $head .= "Content-Type: application/octet-stream\r\n";
-            }
+            $mime = $this->getMimeType($extension);
+            $head .= "Content-Type: " . $mime . "\r\n";
         }
 
-        if (!isset($headers['Content-Disposition']) && !isset(self::$mimeTypeMap[$extension])) {
+        if (!isset($headers['Content-Disposition']) && $mime === 'application/octet-stream') {
             $head .= "Content-Disposition: attachment; filename=\"$baseName\"\r\n";
         }
 
@@ -532,14 +538,11 @@ class Response implements Stringable
         $reason = $this->reason ?: self::PHRASES[$this->status] ?? '';
         $bodyLen = strlen($this->body);
         if (empty($this->headers)) {
-            return "HTTP/$this->version $this->status $reason\r\nServer: workerman\r\nContent-Type: text/html;charset=utf-8\r\nContent-Length: $bodyLen\r\nConnection: keep-alive\r\n\r\n$this->body";
+            return "HTTP/$this->version $this->status $reason\r\nContent-Type: text/html;charset=utf-8\r\nContent-Length: $bodyLen\r\nConnection: keep-alive\r\n\r\n$this->body";
         }
 
         $head = "HTTP/$this->version $this->status $reason\r\n";
         $headers = $this->headers;
-        if (!isset($headers['Server'])) {
-            $head .= "Server: workerman\r\n";
-        }
         foreach ($headers as $name => $value) {
             // Skip unsafe header names
             if (strpbrk((string)$name, ":\r\n") !== false) {
