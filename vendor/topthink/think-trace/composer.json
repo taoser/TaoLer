@@ -9,8 +9,8 @@
         }
     ],
     "require": {
-    	"php": ">=7.1.0",
-        "topthink/framework": "^6.0|^8.0"
+    	"php": ">=8.0",
+        "topthink/framework": "^8.1"
     },
     "autoload": {
         "psr-4": {

@@ -20,20 +20,28 @@ use Workerman\Connection\TcpConnection;
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 use function clearstatcache;
+use function count;
+use function ctype_digit;
+use function ctype_xdigit;
+use function explode;
 use function filesize;
 use function fopen;
 use function fread;
 use function fseek;
 use function ftell;
+use function hexdec;
 use function ini_get;
 use function is_array;
 use function is_object;
+use function ltrim;
 use function preg_match;
-use function str_starts_with;
+use function preg_replace;
 use function strlen;
 use function strpos;
+use function strtolower;
 use function substr;
 use function sys_get_temp_dir;
+use function trim;
 
 /**
  * Class Http.
@@ -54,6 +62,25 @@ class Http
      * @var string
      */
     protected static string $uploadTmpDir = '';
+
+    /**
+     * Bad request.
+     *
+     * @var string
+     */
+    protected const HTTP_400 = "HTTP/1.1 400 Bad Request\r\nConnection: close\r\n\r\n";
+
+    /**
+     * Payload too large.
+     *
+     * @var string
+     */
+    protected const HTTP_413 = "HTTP/1.1 413 Payload Too Large\r\nConnection: close\r\n\r\n";
+
+    /**
+     * Max bytes buffered while waiting for end of headers, and max offset of "\r\n\r\n" (header block size limit).
+     */
+    protected const MAX_HEADER_LENGTH = 16384;
 
     /**
      * Get or set the request class name.
@@ -78,62 +105,168 @@ class Http
      */
     public static function input(string $buffer, TcpConnection $connection): int
     {
+        static $cache = [];
+
         $crlfPos = strpos($buffer, "\r\n\r\n");
         if (false === $crlfPos) {
-            // Judge whether the package length exceeds the limit.
-            if (strlen($buffer) >= 16384) {
-                $connection->end("HTTP/1.1 413 Payload Too Large\r\nConnection: close\r\nContent-Length: 0\r\n\r\n", true);
+            if (strlen($buffer) >= static::MAX_HEADER_LENGTH) {
+                $connection->end(static::HTTP_413, true);
             }
             return 0;
         }
 
         $length = $crlfPos + 4;
-        // Only slice when necessary (avoid extra string copy).
-        // Keep the trailing "\r\n\r\n" in $header for simpler/faster validation patterns.
+        if ($crlfPos >= static::MAX_HEADER_LENGTH) {
+            $connection->end(static::HTTP_413, true);
+            return 0;
+        }
         $header = isset($buffer[$length]) ? substr($buffer, 0, $length) : $buffer;
 
-        // Validate request line: METHOD SP request-target SP HTTP/1.0|1.1 CRLF
-        // Request-target validation:
-        // - Allow origin-form only (must start with "/") for all methods below.
-        // - Do NOT support asterisk-form ("*") for OPTIONS.
-        // - For compatibility, allow any bytes except ASCII control characters, spaces and DEL in request-target.
-        //   (Strictly speaking, URI should be ASCII and non-ASCII should be percent-encoded; but many clients send UTF-8.)
-        // - Disallow "Transfer-Encoding" header (case-insensitive; line-start must be "\r\n" to avoid matching "x-Transfer-Encoding").
-        // - Optionally capture Content-Length (case-insensitive; line-start must be "\r\n" to avoid matching "x-Content-Length").
-        // - If Content-Length exists, it must be a valid decimal number and the whole field-value must be digits + optional OWS.
-        // - Disallow duplicate Content-Length headers.
-        // Note: All lookaheads are placed at \A so they can scan the entire header including the request line.
-        //       Use [ \t]* instead of \s* to avoid matching across lines.
-        //       The pattern uses case-insensitive modifier (~i) for header name matching.
-        $headerValidatePattern = '~\A'
-            // Optional: capture Content-Length value (must be at \A to scan entire header)
-            . '(?:(?=[\s\S]*\r\nContent-Length[ \t]*:[ \t]*(\d+)[ \t]*\r\n))?'
-            // Disallow Transfer-Encoding header
-            . '(?![\s\S]*\r\nTransfer-Encoding[ \t]*:)'
-            // If Content-Length header exists, its value must be pure digits + optional OWS
-            . '(?![\s\S]*\r\nContent-Length[ \t]*:(?![ \t]*\d+[ \t]*\r\n)[^\r]*\r\n)'
-            // Disallow duplicate Content-Length headers (adjacent or separated)
-            . '(?![\s\S]*\r\nContent-Length[ \t]*:[^\r\n]*\r\n(?:[\s\S]*?\r\n)?Content-Length[ \t]*:)'
-            // Match request line: METHOD SP request-target SP HTTP-version CRLF
-            . '(?:GET|POST|OPTIONS|HEAD|DELETE|PUT|PATCH) +\/[^\x00-\x20\x7f]* +HTTP\/1\.[01]\r\n~i';
+        if ($length <= TcpConnection::MAX_CACHE_STRING_LENGTH && isset($cache[$header])) {
+            return $cache[$header];
+        }
 
-        if (!preg_match($headerValidatePattern, $header, $matches)) {
-            $connection->end("HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 0\r\n\r\n", true);
+        // Validate request line: METHOD SP origin-form SP HTTP/1.x
+        $firstLineEnd = strpos($header, "\r\n");
+        if (!preg_match(
+            '~^(?-i:GET|POST|OPTIONS|HEAD|DELETE|PUT|PATCH) /[^\x00-\x20\x7f]* (?-i:HTTP)/1\.(?<minor>[01])$~',
+            substr($header, 0, $firstLineEnd),
+            $matches
+        )) {
+            $connection->end(static::HTTP_400, true);
             return 0;
         }
 
-        if (isset($matches[1])) {
-            $length += (int)$matches[1];
+        // Parse headers
+        $headers = [];
+        $headerBody = substr($header, $firstLineEnd + 2, $crlfPos - $firstLineEnd - 2);
+        foreach (explode("\r\n", $headerBody) as $line) {
+            if ($line === '') {
+                continue;
+            }
+            $parts = explode(':', $line, 2);
+            // field-name must be a token: 1*tchar (RFC 7230 §3.2.6)
+            if (!isset($parts[1]) || !preg_match('/^[a-zA-Z0-9!#$%&\'*+\-.^_`|~]+$/', $parts[0])) {
+                $connection->end(static::HTTP_400, true);
+                return 0;
+            }
+            $headers[strtolower($parts[0])][] = trim($parts[1], " \t");
+        }
+
+        // Host: required for HTTP/1.1, must not be duplicated for any version (RFC 7230 §5.4)
+        $hostCount = count($headers['host'] ?? []);
+        if ($hostCount > 1 || ($matches['minor'] === '1' && $hostCount === 0)) {
+            $connection->end(static::HTTP_400, true);
+            return 0;
+        }
+
+        // Transfer-Encoding: must be sole header with value "chunked", no Content-Length
+        if (isset($headers['transfer-encoding'])) {
+            if (isset($headers['content-length'])
+                || count($headers['transfer-encoding']) !== 1
+                || strtolower($headers['transfer-encoding'][0]) !== 'chunked') {
+                $connection->end(static::HTTP_400, true);
+                return 0;
+            }
+            return static::inputChunked($buffer, $connection, $length);
+        }
+
+        // Content-Length: must be single header with pure-digit value
+        if (isset($headers['content-length'])) {
+            if (count($headers['content-length']) !== 1 || !ctype_digit($headers['content-length'][0])) {
+                $connection->end(static::HTTP_400, true);
+                return 0;
+            }
+            $length += (int)$headers['content-length'][0];
         }
 
         if ($length > $connection->maxPackageSize) {
-            $connection->end("HTTP/1.1 413 Payload Too Large\r\nConnection: close\r\nContent-Length: 0\r\n\r\n", true);
+            $connection->end(static::HTTP_413, true);
             return 0;
         }
 
+        if ($length <= TcpConnection::MAX_CACHE_STRING_LENGTH) {
+            $cache[$header] = $length;
+            if (count($cache) > TcpConnection::MAX_CACHE_SIZE) {
+                unset($cache[key($cache)]);
+            }
+        }
         return $length;
     }
 
+
+    /**
+     * Check the integrity of a chunked transfer-encoded request body.
+     *
+     * @param string $buffer
+     * @param TcpConnection $connection
+     * @param int $headerLength
+     * @return int
+     */
+    protected static function inputChunked(string $buffer, TcpConnection $connection, int $headerLength): int
+    {
+        $connection->context ??= new \stdClass();
+        $connection->context->chunked = true;
+
+        $pos = $headerLength;
+        $bufLen = strlen($buffer);
+        $maxSize = $connection->maxPackageSize;
+
+        while (true) {
+            $lineEnd = strpos($buffer, "\r\n", $pos);
+            if ($lineEnd === false) {
+                return 0;
+            }
+
+            $semiPos = strpos($buffer, ';', $pos);
+            $hexEnd = ($semiPos !== false && $semiPos < $lineEnd) ? $semiPos : $lineEnd;
+            $hexStr = substr($buffer, $pos, $hexEnd - $pos);
+
+            if ($hexStr === '' || !ctype_xdigit($hexStr) || isset($hexStr[16])) {
+                $connection->end(static::HTTP_400, true);
+                return 0;
+            }
+
+            $chunkSize = hexdec($hexStr);
+            if (is_float($chunkSize)) {
+                $connection->end(static::HTTP_400, true);
+                return 0;
+            }
+            $pos = $lineEnd + 2;
+
+            if ($chunkSize === 0) {
+                while (true) {
+                    $lineEnd = strpos($buffer, "\r\n", $pos);
+                    if ($lineEnd === false) {
+                        return 0;
+                    }
+                    if ($lineEnd === $pos) {
+                        $totalLength = $pos + 2;
+                        if ($totalLength > $maxSize) {
+                            $connection->end(static::HTTP_413, true);
+                            return 0;
+                        }
+                        return $totalLength;
+                    }
+                    $pos = $lineEnd + 2;
+                }
+            }
+
+            if ($pos + $chunkSize + 2 > $bufLen) {
+                return 0;
+            }
+            if (substr($buffer, $pos + $chunkSize, 2) !== "\r\n") {
+                $connection->end(static::HTTP_400, true);
+                return 0;
+            }
+            $pos += $chunkSize + 2;
+
+            if ($pos > $maxSize) {
+                $connection->end(static::HTTP_413, true);
+                return 0;
+            }
+        }
+    }
 
     /**
      * Http decode.
@@ -144,9 +277,84 @@ class Http
      */
     public static function decode(string $buffer, TcpConnection $connection): mixed
     {
+        $trailers = [];
+        if (isset($connection->context->chunked)) {
+            unset($connection->context->chunked);
+            [$buffer, $trailers] = static::decodeChunked($buffer, strpos($buffer, "\r\n\r\n"));
+        }
+
         $request = new static::$requestClass($buffer);
+        if ($trailers !== []) {
+            $request->setChunkTrailers($trailers);
+        }
         $request->connection = $connection;
         return $request;
+    }
+
+    /**
+     * Decode a chunked transfer-encoded request into a normalized buffer.
+     *
+     * @param string $buffer
+     * @param int $headerEnd
+     * @return array{string, array}
+     */
+    protected static function decodeChunked(string $buffer, int $headerEnd): array
+    {
+        $header = preg_replace('~\r\nTransfer-Encoding[ \t]*:[^\r]*~i', '', substr($buffer, 0, $headerEnd), 1);
+        $body = '';
+        $trailers = [];
+        $pos = $headerEnd + 4;
+        $bufLen = strlen($buffer);
+
+        while (true) {
+            $lineEnd = strpos($buffer, "\r\n", $pos);
+            if ($lineEnd === false) {
+                break;
+            }
+
+            $semiPos = strpos($buffer, ';', $pos);
+            $hexEnd = ($semiPos !== false && $semiPos < $lineEnd) ? $semiPos : $lineEnd;
+            $hexStr = substr($buffer, $pos, $hexEnd - $pos);
+            if ($hexStr === '' || !ctype_xdigit($hexStr) || isset($hexStr[16])) {
+                break;
+            }
+
+            $chunkSize = hexdec($hexStr);
+            if (is_float($chunkSize)) {
+                break;
+            }
+            $pos = $lineEnd + 2;
+
+            if ($chunkSize === 0) {
+                while (true) {
+                    $lineEnd = strpos($buffer, "\r\n", $pos);
+                    if ($lineEnd === false) {
+                        break 2;
+                    }
+                    if ($lineEnd === $pos) {
+                        $pos += 2;
+                        break;
+                    }
+                    $colonPos = strpos($buffer, ':', $pos);
+                    if ($colonPos !== false && $colonPos < $lineEnd) {
+                        $trailers[strtolower(substr($buffer, $pos, $colonPos - $pos))] = ltrim(substr($buffer, $colonPos + 1, $lineEnd - $colonPos - 1));
+                    }
+                    $pos = $lineEnd + 2;
+                }
+                break;
+            }
+
+            if ($pos + $chunkSize + 2 > $bufLen) {
+                break;
+            }
+            if (substr($buffer, $pos + $chunkSize, 2) !== "\r\n") {
+                break;
+            }
+            $body .= substr($buffer, $pos, $chunkSize);
+            $pos += $chunkSize + 2;
+        }
+
+        return [$header . "\r\nContent-Length: " . strlen($body) . "\r\n\r\n" . $body, $trailers];
     }
 
     /**
@@ -177,7 +385,7 @@ class Http
             $connection->headers = [];
             $response = (string)$response;
             $bodyLen = strlen($response);
-            return "HTTP/1.1 200 OK\r\nServer: workerman\r\n{$extHeader}Connection: keep-alive\r\nContent-Type: $contentType\r\nContent-Length: $bodyLen\r\n\r\n$response";
+            return "HTTP/1.1 200 OK\r\n{$extHeader}Connection: keep-alive\r\nContent-Type: $contentType\r\nContent-Length: $bodyLen\r\n\r\n$response";
         }
 
         if ($connection->headers) {
