@@ -15,6 +15,7 @@ namespace think\trace;
 use Closure;
 use think\App;
 use think\Config;
+use think\event\LogRecord;
 use think\event\LogWrite;
 use think\Request;
 use think\Response;
@@ -30,13 +31,13 @@ class TraceDebug
      * Trace日志
      * @var array
      */
-    protected $log = [];
+    protected array $log = [];
 
     /**
      * 配置参数
      * @var array
      */
-    protected $config = [];
+    protected array $config = [];
 
     /** @var App */
     protected $app;
@@ -63,7 +64,7 @@ class TraceDebug
             $this->log = [];
             $this->app->event->listen(LogWrite::class, function ($event) {
                 if (empty($this->config['channel']) || $this->config['channel'] == $event->channel) {
-                    $this->log = array_merge_recursive($this->log, $event->log);
+                    $this->parseLog($event->log);
                 }
             });
         }
@@ -80,6 +81,24 @@ class TraceDebug
         return $response;
     }
 
+    /**
+     * 解析日志信息
+     * @access public
+     * @param array<LogRecord> $log
+     * @return void
+     */
+    protected function parseLog(array $log)
+    {
+        foreach ($log as $key => $record) {
+            if (is_string($key) && is_array($record)) {
+                $this->log = array_merge_recursive($this->log, $log);
+                break;
+            } else {
+                $this->log[$record->type][] = $record->message;
+            }
+        }
+    }
+
     public function traceDebug(Response $response, &$content)
     {
         $config = $this->config;
@@ -93,8 +112,9 @@ class TraceDebug
             //TODO 记录
         } else {
             $log    = $this->app->log->getLog($config['channel'] ?? '');
-            $log    = array_merge_recursive($this->log, $log);
-            $output = $trace->output($this->app, $response, $log);
+
+            $this->parseLog($log);
+            $output = $trace->output($this->app, $response, $this->log);
             if (is_string($output)) {
                 // trace调试信息注入
                 $pos = strripos($content, '</body>');

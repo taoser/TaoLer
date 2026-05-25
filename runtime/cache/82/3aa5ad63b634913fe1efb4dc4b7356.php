@@ -1,0 +1,4 @@
+<?php
+//000000000600
+ exit();?>
+a:24:{s:2:"id";s:3:"int";s:7:"cate_id";s:3:"int";s:7:"user_id";s:3:"int";s:6:"status";s:3:"int";s:4:"type";s:3:"int";s:10:"is_comment";s:3:"int";s:9:"has_image";s:3:"int";s:9:"has_video";s:3:"int";s:9:"has_audio";s:3:"int";s:2:"pv";s:3:"int";s:12:"comments_num";s:3:"int";s:5:"title";s:6:"string";s:8:"thum_img";s:6:"string";s:8:"keywords";s:6:"string";s:11:"description";s:6:"string";s:2:"ip";s:6:"string";s:7:"content";s:6:"string";s:5:"media";s:4:"json";s:5:"flags";s:4:"json";s:11:"create_time";s:3:"int";s:11:"update_time";s:3:"int";s:11:"delete_time";s:3:"int";s:3:"_pk";s:2:"id";s:8:"_autoinc";s:2:"id";}

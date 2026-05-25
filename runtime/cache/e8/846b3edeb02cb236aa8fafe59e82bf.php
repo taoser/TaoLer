@@ -1,0 +1,4 @@
+<?php
+//000000000600
+ exit();?>
+a:27:{s:2:"id";s:3:"int";s:5:"phone";s:6:"string";s:4:"name";s:6:"string";s:6:"status";s:3:"int";s:4:"auth";s:3:"int";s:3:"vip";s:3:"int";s:6:"active";s:3:"int";s:3:"sex";s:3:"int";s:16:"login_error_lock";s:3:"int";s:15:"login_error_num";s:3:"int";s:7:"area_id";s:3:"int";s:5:"point";s:3:"int";s:16:"login_error_time";s:3:"int";s:5:"email";s:6:"string";s:8:"password";s:6:"string";s:8:"user_img";s:6:"string";s:8:"nickname";s:6:"string";s:4:"city";s:6:"string";s:4:"sign";s:6:"string";s:4:"note";s:6:"string";s:13:"last_login_ip";s:6:"string";s:15:"last_login_time";s:8:"datetime";s:11:"create_time";s:3:"int";s:11:"update_time";s:3:"int";s:11:"delete_time";s:3:"int";s:3:"_pk";s:2:"id";s:8:"_autoinc";s:2:"id";}

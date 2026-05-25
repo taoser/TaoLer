@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## 2.4.1 - 2026-05-20
+
+### Fixed
+
+- Fixed cancelling settled coroutines when no current promise remains
+
+
+## 2.4.0 - 2026-05-20
+
+### Changed
+
+- Empty `EachPromise` instances now resolve when the task queue runs without `wait()`
+
+
 ## 2.3.1 - 2026-05-19
 
 ### Fixed

@@ -87,8 +87,12 @@ class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
         $uri = $args[0];
         $opts = $args[1] ?? [];
 
-        return \substr($method, -5) === 'Async'
-            ? $this->requestAsync(\substr($method, 0, -5), $uri, $opts)
+        $isAsync = \substr($method, -5) === 'Async';
+        $method = $isAsync ? \substr($method, 0, -5) : $method;
+        $method = \strtoupper($method);
+
+        return $isAsync
+            ? $this->requestAsync($method, $uri, $opts)
             : $this->request($method, $uri, $opts);
     }
 
@@ -326,6 +330,11 @@ class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
     private function transfer(RequestInterface $request, array $options): PromiseInterface
     {
         $request = $this->applyOptions($request, $options);
+
+        if ('' === $request->getProtocolVersion()) {
+            $request = Psr7\Utils::modifyRequest($request, ['version' => '1.1']);
+        }
+
         /** @var HandlerStack $handler */
         $handler = $options['handler'];
 
@@ -474,6 +483,10 @@ class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
      */
     private static function normalizeProtocolVersion($version): string
     {
+        if ('' === $version) {
+            return '1.1';
+        }
+
         return \is_float($version) ? \number_format($version, 1, '.', '') : (string) $version;
     }
 

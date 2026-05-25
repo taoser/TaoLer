@@ -41,7 +41,7 @@ abstract class Addons
         $this->app = $app;
         $this->request = $app->request;
         $this->name = $this->getName();
-        $this->addon_path = $app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
+        $this->addon_path = $this->app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
         $this->addon_config = "addon_{$this->name}_config";
         $this->addon_info = "addon_{$this->name}_info";
         // $this->taglib_pre_load = $this->getTagLib();
@@ -49,7 +49,8 @@ abstract class Addons
         $this->view = clone View::engine('Think');
         $this->view->config([
             'strip_space'   => true, // 去除空格和换行
-            'view_path' => $this->addon_path . 'view' . DIRECTORY_SEPARATOR,
+            'view_path'     => $this->addon_path . 'view' . DIRECTORY_SEPARATOR,
+            'view_dir_name' => 'view',
             // 'taglib_pre_load'   => $this->taglib_pre_load
         ]);
 

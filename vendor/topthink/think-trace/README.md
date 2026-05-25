@@ -1,6 +1,6 @@
 # think-trace
 
-用于ThinkPHP6+的页面Trace扩展，支持Html页面和浏览器控制台两种方式输出。
+用于ThinkPHP8.1的页面Trace扩展，支持Html页面和浏览器控制台两种方式输出。
 
 ## 安装
 

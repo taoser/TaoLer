@@ -151,9 +151,10 @@ if (!function_exists('addons_url')) {
      * @param bool|string $domain 域名
      * @return bool|string
      */
-    function addons_url($url = '', $param = [], $suffix = true, $domain = false)
+    function addons_url($url = '', $param = [], $suffix = false, $domain = false)
     {
         $request = app('request');
+        
         if (empty($url)) {
             // 生成 url 模板变量
             $addons = $request->addon;
@@ -163,6 +164,7 @@ if (!function_exists('addons_url')) {
         } else {
             $url = Str::studly($url);
             $url = parse_url($url);
+            
             if (isset($url['scheme'])) {
                 $addons = strtolower($url['scheme']);
                 $controller = $url['host'];
@@ -182,7 +184,7 @@ if (!function_exists('addons_url')) {
             }
         }
 
-        return Route::buildUrl("@addons/{$addons}/{$controller}/{$action}", $param)->suffix($suffix)->domain($domain);
+        return Route::buildUrl("/addons/{$addons}/{$controller}/{$action}", $param)->suffix($suffix)->domain($domain);
     }
 }
 

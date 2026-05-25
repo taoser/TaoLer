@@ -1,0 +1,31 @@
+{extend name="public:base" /}
+{block name="content"}
+    <main class="main">
+        <!-- banner -->
+        <div class="banner">
+            <div class="layui-container">
+                <span class="banner-title">{$cateinfo.catename}</span>
+            </div>
+        </div>
+        <div class="layui-container">
+            <div class="company-desc info">
+                <div class="layui-row layui-col-space30">
+                    <div class="layui-col-md6">
+                        <h3>{article:title /}</h3>
+                        {article:content /}
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="right" style="height: 550px;">
+                            <img src="/static/tpl/food/image/pic/company_1.png" alt="" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        
+        
+    </main>
+
+    {__block__}
+
+    {/block}

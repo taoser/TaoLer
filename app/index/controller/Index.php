@@ -58,6 +58,7 @@ class Index extends IndexBaseController
     public function index()
     {
 
+	// return json(['code' => 200, 'msg' => 'success']);
 		// $a = Db::name('addon_lawyer_clue')->where('status',1)->whereDay('create_time')->count();
 		// halt($a);
 		// $subQuery = Article::suffix(1)

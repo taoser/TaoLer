@@ -37,13 +37,14 @@ if(file_exists($tao_config)) {
 require __DIR__ . '/../vendor/autoload.php';
 
 // 执行HTTP应用并响应
-$app = new App();
+$http = (new App())->http;
 
-$http = ($app)->http;
-
-// dump($url);
 $response = $http->run();
 
 $response->send();
 
 $http->end($response);
+
+
+
+

@@ -11,6 +11,7 @@ use think\facade\Cache;
 use think\facade\Event;
 use taoser\addons\middleware\Addons;
 use think\facade\Request;
+use app\middleware\AccessControl;
 
 /**
  * 插件服务
@@ -21,22 +22,23 @@ class Service extends \think\Service
 {
     protected $addons_path;
 
+    // 注册系统服务，将服务绑定到容器中
     public function register()
     {
         $this->addons_path = $this->getAddonsPath();
         // 加载系统语言包
-        $this->loadLang();
+        // $this->loadLang();
         // 自动载入插件
-        $this->autoload();
+        // $this->autoload();
         // 加载插件事件
-        $this->loadEvent();
-        // 加载自定义路由
+        // $this->loadEvent();
+        // // 加载自定义路由
         // $this->loadRoutes();
-        // 加载插件系统服务
+        // // 加载插件系统服务
         // $this->loadService();
-        // 加载插件命令
+        // // 加载插件命令
         // $this->loadCommand();
-        // 加载配置
+        // // 加载配置
         // $this->loadConfig();
         // 绑定插件容器
         $this->app->bind('addons', Service::class);
@@ -47,67 +49,81 @@ class Service extends \think\Service
     {
         $this->registerRoutes(function (Route $route) {
             // 只有在addons下进行注册解析
-            $path = $this->app->request->pathinfo();
+            // $path = $this->app->request->pathinfo();
 
-            $pathArr = explode("/", str_replace('.html','', str_replace('\\', '/', $path)));
-            if($pathArr[0] === 'addons') {
+            // // dump($path);
+
+            // $pathArr = explode("/", str_replace('.html','', str_replace('\\', '/', $path)));
+            // // var_dump($pathArr);
+
+            // if($pathArr[0] === 'addons') {
                 // 路由脚本
                 $execute = '\\taoser\\addons\\Route::execute';
 
                 // 注册插件公共中间件
                 if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
-                    $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
+                    // $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
                 }
 
+                // $e = "\\addons\\{$pathArr[1]}\\controller\\{$pathArr[2]}@{$pathArr[3]}";
+                // $n = "\\addons\\{$pathArr[1]}\\controller";
+
                 // 注册控制器路由
-                // $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+                $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
                 
                 // 使用路由分组
-                $route->group('addons', function () use ($route, $execute) {
-                    $route->rule(':addon/[:controller]/[:action]', $execute)
-                        ->middleware(Addons::class);
-                });
+                $route->group('addons',function () use ($route){
+                    $route->rule(':addon/:controller/:action',':controller/:action');
+                })->namespace('addons\:addon\controller');
 
                 // 自定义路由
                 $routes = (array) Config::get('addons.route', []);
-                foreach ($routes as $key => $val) {
-                    if (!$val) {
-                        continue;
-                    }
-                    if (is_array($val)) {
-                        $domain = $val['domain'];
-                        $rules = [];
-                        foreach ($val['rule'] as $k => $rule) {
-                            [$addon, $controller, $action] = explode('/', $rule);
-                            $rules[$k] = [
-                                'addon'        => $addon,
-                                'controller'    => $controller,
-                                'action'        => $action,
-                                'indomain'      => 1,
-                            ];
+
+                if(!empty($routes)) {
+                    foreach ($routes as $key => $val) {
+                        if (!$val) {
+                            continue;
                         }
-                        $route->domain($domain, function () use ($rules, $route, $execute) {
-                            // 动态注册域名的路由规则
-                            foreach ($rules as $k => $rule) {
-                                $route->rule($k, $execute)
-                                    ->name($k)
-                                    ->completeMatch(true)
-                                    ->append($rule);
+                        if (is_array($val)) {
+                            $domain = $val['domain'];
+                            $rules = [];
+                            foreach ($val['rule'] as $k => $rule) {
+                                [$addon, $controller, $action] = explode('/', $rule);
+                                $rules[$k] = [
+                                    'addon'        => $addon,
+                                    'controller'    => $controller,
+                                    'action'        => $action,
+                                    'indomain'      => 1,
+                                ];
                             }
-                        });
-                    } else {
-                        list($addon, $controller, $action) = explode('/', $val);
-                        $route->rule($key, $execute)
-                            ->name($key)
-                            ->completeMatch(true)
-                            ->append([
-                                'addon' => $addon,
-                                'controller' => $controller,
-                                'action' => $action
-                            ]);
+                            $route->domain($domain, function () use ($rules, $route, $execute) {
+                                // 动态注册域名的路由规则
+                                foreach ($rules as $k => $rule) {
+                                    $route->rule($k, $execute)
+                                        ->name($k)
+                                        ->completeMatch(true)
+                                        ->append($rule);
+                                }
+                            });
+                        } else {
+                            list($addon, $controller, $action) = explode('/', $val);
+                            $route->rule($key, $execute)
+                                ->name($key)
+                                ->completeMatch(true)
+                                ->append([
+                                    'addon' => $addon,
+                                    'controller' => $controller,
+                                    'action' => $action
+                                ]);
+                        }
                     }
                 }
-            }
+                $this->autoload();
+                $this->loadEvent();
+
+
+
+            // }
         });
     }
 
@@ -126,6 +142,7 @@ class Service extends \think\Service
         //配置
         // $addons_dir = scandir($this->addons_path);
         $addons_dir = Cache::get('addons_list');
+  
         foreach ($addons_dir as $name) {
             // if (in_array($name, ['.', '..'])) {
             //     continue;
@@ -139,7 +156,7 @@ class Service extends \think\Service
                 $files = glob($addons_route_dir . '*.php');
                 foreach ($files as $file) {
                     if (file_exists($file)) {
-                        $this->loadRoutesFrom($file);;
+                        $this->loadRoutesFrom($file);
                     }
                 }
             }
@@ -190,6 +207,7 @@ class Service extends \think\Service
     private function loadEvent()
     {
         $hooks = $this->app->isDebug() ? [] : Cache::get('hooks', []);
+        
         if (empty($hooks)) {
             $hooks = (array) Config::get('addons.hooks', []);
             // 初始化钩子
@@ -220,6 +238,8 @@ class Service extends \think\Service
     private function loadService()
     {
         $results = scandir($this->addons_path);
+
+        var_dump($results);
   
         $bind = [];
         foreach ($results as $name) {
@@ -325,8 +345,10 @@ class Service extends \think\Service
 
             Cache::set('addons_config', $config);
             Cache::set('addons_list', $addon_list);
+
             return $config;
         });
+
 // dump($conf);
 
         Config::set($conf, 'addons');

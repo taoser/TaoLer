@@ -3,6 +3,24 @@
 Please refer to [UPGRADING](UPGRADING.md) guide for upgrading to a major version.
 
 
+## 7.10.4 - 2025-05-22
+
+### Fixed
+
+- Fix IPv6 literal matching in no-proxy rules
+- Handle cURL multi completion messages without handles after cancelled transfers
+- Fix magic client request methods such as `options()` to uppercase inferred HTTP methods
+
+
+## 7.10.3 - 2025-05-20
+
+### Fixed
+
+- Fail clearly when an HTTP response header line is invalid
+- Remove middleware by name when the name is also a callable string
+- Treat empty request protocol versions as HTTP/1.1
+
+
 ## 7.10.2 - 2026-05-20
 
 ### Fixed
