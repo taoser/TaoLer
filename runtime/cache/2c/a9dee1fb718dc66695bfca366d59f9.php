@@ -1,4 +1,0 @@
-<?php
-//000000000600
- exit();?>
-a:31:{s:2:"id";s:3:"int";s:8:"webtitle";s:6:"string";s:7:"webname";s:6:"string";s:6:"domain";s:6:"string";s:8:"template";s:6:"string";s:4:"logo";s:6:"string";s:6:"m_logo";s:6:"string";s:5:"cache";s:3:"int";s:6:"upsize";s:3:"int";s:6:"uptype";s:6:"string";s:9:"copyright";s:6:"string";s:8:"keywords";s:6:"string";s:8:"descript";s:6:"string";s:5:"state";s:6:"string";s:7:"is_open";s:4:"enum";s:10:"is_comment";s:4:"enum";s:6:"is_reg";s:4:"enum";s:3:"icp";s:6:"string";s:8:"showlist";s:6:"string";s:9:"blackname";s:6:"string";s:15:"sys_version_num";s:6:"string";s:3:"key";s:6:"string";s:6:"clevel";s:3:"int";s:7:"api_url";s:6:"string";s:8:"base_url";s:6:"string";s:11:"upcheck_url";s:6:"string";s:11:"upgrade_url";s:6:"string";s:11:"create_time";s:3:"int";s:11:"update_time";s:3:"int";s:3:"_pk";s:2:"id";s:8:"_autoinc";s:2:"id";}

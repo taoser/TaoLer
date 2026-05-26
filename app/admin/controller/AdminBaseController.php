@@ -44,7 +44,10 @@ class AdminBaseController extends \app\BaseController
         $syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
         $runTime = $this->getRunTime();
 
-        View::config(['view_dir_name' => 'view']);
+        View::config([
+            'view_path'     => app_path() . 'admin' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
+            'view_dir_name' => 'view'
+            ]);
         View::assign(['domain'=>$this->getDomain(),'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime]);
 	}
 

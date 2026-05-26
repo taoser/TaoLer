@@ -42,7 +42,7 @@ return [
     // 默认模板渲染规则 1 解析为小写+下划线 2 全部转换小写 3 保持操作方法
     'auto_rule'     => 1,
     // 模板路径
-    // 'view_path'    => root_path() . 'view' . DIRECTORY_SEPARATOR . $template . DIRECTORY_SEPARATOR,
+    'view_path'    => root_path() . 'view' . DIRECTORY_SEPARATOR . $template . DIRECTORY_SEPARATOR,
     // 模板目录名
     'view_dir_name' => 'view' . DIRECTORY_SEPARATOR . $template,
     // 模板后缀
