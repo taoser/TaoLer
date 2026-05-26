@@ -72,7 +72,7 @@ class Msgres
      * @param array|$data
      * @return Response
      */
-	public static function success(string $strMsg = '',string $url = null, array $data = []): Response
+	public static function success(?string $strMsg, ?string $url = null, array $data = []): Response
     {
 		$result = [
             'code' => self::getCode('success'),
@@ -80,6 +80,7 @@ class Msgres
             'url' => $url,
             'data' => $data
         ];
+
 		return json($result);
 	}
 
@@ -90,7 +91,7 @@ class Msgres
      * @param string $data  返回数据
      * @return string|\think\response\Json
      */
-	public static function error(string $strMsg = '',string $url = null, $data = ''){
+	public static function error(?string $strMsg, ?string $url = null, $data = ''){
         $result = [
             'code' => self::getCode('error'),
             'msg' => self::getMsg($strMsg),

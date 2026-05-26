@@ -8,6 +8,7 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
 use app\facade\Category;
+use app\facade\Article as ArticleEntity;
 use app\index\model\PushJscode;
 use app\common\lib\Msgres;
 use app\common\lib\IdEncode;
@@ -34,12 +35,17 @@ class Article extends IndexBaseController
     	'logincheck' => ['except' 	=> ['cate','detail','download'] ],
     ];
 
+	/**
+	 * 文章模型
+	 * @var ArticleEntity
+	 */
     protected $model;
 
     public function initialize()
     {
         parent::initialize();
-        $this->model = new \app\facade\Article();
+
+        $this->model = new ArticleEntity();
     }
 
     //文章分类
@@ -124,7 +130,7 @@ class Article extends IndexBaseController
     }
 
     /**
-     * 添加帖子文章
+     * 添加内容
      * @return string|\think\Response|\think\response\Json|void
      */
     public function add()
@@ -206,13 +212,10 @@ class Article extends IndexBaseController
     }
 
     /**
-     * 编辑文章
-     * @param $id
-     * @return string|\think\Response|\think\response\Json|void
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
+	 * 编辑内容
+	 *
+	 * @return void
+	 */
     public function edit()
     {
 		$id = $this->request->param('id/d');

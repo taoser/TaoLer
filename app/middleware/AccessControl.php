@@ -1,9 +1,11 @@
 <?php
 namespace app\middleware;
 
+use think\Request;
+
 class AccessControl
 {
-    public function handle($request, \Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
 		
 		
