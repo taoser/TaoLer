@@ -58,7 +58,7 @@ class Menu extends AdminBaseController
                     'id'    => $v['id'],
                     'title' => Lang::get($v['title']),
                     'icon'  => 'layui-icon ' . $v['icon'],
-                    'href'  => (string) url($v['name']),
+                    'href'  => (string) url('/admin/'.str_replace('.','/',$v['name'])),
                     'pid'   => $v['pid'],
                     'sort'  => $v['sort'],
                     'ismenu' => $v['ismenu']
@@ -69,7 +69,11 @@ class Menu extends AdminBaseController
         //  $cmf_arr = array_column($menu, 'sort');
         // array_multisort($cmf_arr, SORT_ASC, $menu);
 
+        // halt($menu);
+
         $nav = $this->getTrees($menu);
+
+        // halt($nav);
 
         // 初始化控制台
         
@@ -240,7 +244,7 @@ class Menu extends AdminBaseController
                 "image"=> "/static/admin/images/logo.png"
             ],
             "menu"=> [
-                "data"=> (string) url('system.menu/getnav'),
+                "data"=> (string) url('get_nav'),
                 "method"=> "GET",
                 "accordion"=> true,
                 "collapse"=> false,

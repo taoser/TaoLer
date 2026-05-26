@@ -697,6 +697,9 @@ abstract class Rule
         if (is_string($route) && isset($option['prefix'])) {
             // 路由地址前缀
             $route = $option['prefix'] . $route;
+
+            // 修复：将控制器地址中的点号转换为反斜杠，支持多级控制器
+            $route = str_replace('.', '\\', $route);
         }
 
         // 替换路由地址中的变量

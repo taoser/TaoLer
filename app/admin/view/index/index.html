@@ -78,7 +78,7 @@
 				</span>
 				<span class="center"></span>
 				<span class="right">
-					Copyright © 2020-2024 aieok.com
+					Copyright © 2020-2026 aieok.com
 				</span>
 			</div>
 			<!-- 遮 盖 层 -->
@@ -111,10 +111,10 @@
 				
 				// 登出逻辑 
 				admin.logout(function(){
-					$.get("{:url('system.admin/logout')}",function(res){
+					$.get("{:url('/admin/system/admin/logout')}",function(res){
 						if(res.code === 0) {
 							popup.success("注销成功",function(){
-								location.href = "{:url('system.login/index')}";
+								location.href = "{:url('/admin/login/index')}";
 							})
 						}
 					});
@@ -127,7 +127,7 @@
 				admin.message(function(id, title, context, form) {});
 
 				$("#clearcache").click(function(){
-					$.get("{:url('system.admin/clearCache')}",function(res){
+					$.get("{:url('/admin/system/admin/clearCache')}",function(res){
 						if(res.code === 0) {
 							popup.success("清理成功");
 						}
@@ -141,7 +141,7 @@
 					title: '修改密码',
 					shade: 0.1,
 					area: ["350px", "300px"],
-					content: "{:url('system.admin/repass')}",
+					content: "{:url('/admin/system/admin/repass')}",
 					})
 				});
 

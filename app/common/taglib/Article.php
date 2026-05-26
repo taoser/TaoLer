@@ -127,9 +127,14 @@ class Article extends TagLib
         return '{$article.description}';
     }
 
+    // public function tagLink(array $tag, string $content): string
+    // {
+    //     return '{:url(\'detail\', [\'ename\' => $article.cate.ename,\'id\' => $article.id])->domain(true)}';
+    // }
+
     public function tagLink(array $tag, string $content): string
     {
-        return '{:url(\'detail\', [\'ename\' => $article.cate.ename,\'id\' => $article.id])->domain(true)}';
+        return '{$article.url}';
     }
 
     public function tagUrl(array $tag, string $content): string

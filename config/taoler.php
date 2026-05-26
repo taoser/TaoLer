@@ -20,7 +20,7 @@ return [
 	// 加盐
 	'salt'		=> 'taoler',
 	// 分表单表数量 默认100W
-	'single_table_num' => 10000 * 1, 
+	'single_table_num' => 100 * 1, 
 	// id加密字母表
 	'id_alphabet' => 'TBJi7WOsvkS4CfGg6A8wmloZr3KR1M5eQnxctqh0IzVpyEHLuaNX2FdPDUbYj9',
 	// id加密最小长度

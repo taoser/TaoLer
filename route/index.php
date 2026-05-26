@@ -2,9 +2,15 @@
 
 use think\facade\Route;
 
-Route::group('',function(){
-	Route::get('blog/index','user.Blog/index');
+Route::get('captcha/[:id]', "\\think\\captcha\\CaptchaController@index");
 
+Route::group('',function(){
+	// Route::get('user/blog','user\Blog/index');
+	// Route::get('user/blog','user.Blog/index');
+	
+	
+	Route::get('user.blog/index','user.blog/index');
+	Route::get('user/blog','user.blog/index');
 	// 定义首页路由
 	Route::get('/', 'index/index');
 	
@@ -90,6 +96,7 @@ Route::group('',function(){
 ])
 ->namespace('app\index\controller');
 
+// Route::get('user/blog','\app\index\controller\user\Blog@index');
 
 // 开启多模块URL自动解析 `8.1+`版本开始支持
 Route::auto();

@@ -362,11 +362,12 @@ class Category extends BaseEntity
                     } else {
                         $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id])->domain(true);
                     }
-                    
                     // $da['master_pic'] = $da['has_image'] > 0 ? $da['media']['images'][0] : '';
                 }
                 
                 unset($da);
+
+                
 
                 return $datas;
 

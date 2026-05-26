@@ -471,17 +471,17 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.10.1",
-            "version_normalized": "2.10.1.0",
+            "version": "2.10.2",
+            "version_normalized": "2.10.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "73ab136360b5dfd858006eae9795e8fe43c80361"
+                "reference": "a1bbdc172f32a25fe999965b65b6e71fd87da9ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/73ab136360b5dfd858006eae9795e8fe43c80361",
-                "reference": "73ab136360b5dfd858006eae9795e8fe43c80361",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/a1bbdc172f32a25fe999965b65b6e71fd87da9ed",
+                "reference": "a1bbdc172f32a25fe999965b65b6e71fd87da9ed",
                 "shasum": ""
             },
             "require": {
@@ -503,7 +503,7 @@
             "suggest": {
                 "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
             },
-            "time": "2026-05-20T09:27:36+00:00",
+            "time": "2026-05-25T22:58:15+00:00",
             "type": "library",
             "extra": {
                 "bamarni-bin": {
@@ -571,7 +571,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.10.1"
+                "source": "https://github.com/guzzle/psr7/tree/2.10.2"
             },
             "funding": [
                 {
@@ -2154,17 +2154,17 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.37.0",
-            "version_normalized": "1.37.0.0",
+            "version": "v1.38.0",
+            "version_normalized": "1.38.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315"
+                "reference": "6b177d03d2eb04a6c9d01bab9818fb93a30ce7fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/6a21eb99c6973357967f6ce3708cd55a6bec6315",
-                "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/6b177d03d2eb04a6c9d01bab9818fb93a30ce7fd",
+                "reference": "6b177d03d2eb04a6c9d01bab9818fb93a30ce7fd",
                 "shasum": ""
             },
             "require": {
@@ -2177,7 +2177,7 @@
             "suggest": {
                 "ext-mbstring": "For best performance"
             },
-            "time": "2026-04-10T17:25:58+00:00",
+            "time": "2026-05-25T14:08:27+00:00",
             "type": "library",
             "extra": {
                 "thanks": {
@@ -2218,7 +2218,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.37.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.38.0"
             },
             "funding": [
                 {

@@ -24,13 +24,13 @@ class Login extends AdminBaseController
 		if(Request::isAjax()){
 			$data = Request::param();
 
-			try{
-				validate(Admin::class)
-				->scene('Login')
-				->check($data);	
-			} catch(ValidateException $e){
-				return json(['code'=>-1,'msg'=>$e->getError()]);
-			}
+			// try{
+			// 	validate(Admin::class)
+			// 	->scene('Login')
+			// 	->check($data);	
+			// } catch(ValidateException $e){
+			// 	return json(['code'=>-1,'msg'=>$e->getError()]);
+			// }
 
 			$user = new \app\admin\model\Admin();
 			$result = $user->login($data);

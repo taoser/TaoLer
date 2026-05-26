@@ -5,7 +5,7 @@ class  Blog
 {
     public function index()
     {
-        return 'index';
+        return 'app\index\controller\user\Blog@index';
     }
     
 }
