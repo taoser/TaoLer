@@ -26,7 +26,9 @@ Route::group('admin',function () {
     // });
 
    
-})->middleware([\app\middleware\Install::class,\app\middleware\AdminAuth::class])
+})->middleware([
+    \app\middleware\AdminAuth::class
+])
 ->namespace('app\admin\controller');
 
 // 执照图片

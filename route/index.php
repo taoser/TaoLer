@@ -93,6 +93,10 @@ Route::group('',function(){
 	'id'   => '\w+',
 	'type' => '\w+',
 	'page'   => '\d+',
+])->middleware([
+	\app\middleware\Index::class,
+	\app\middleware\Browse::class,
+	\app\middleware\Message::class,
 ])
 ->namespace('app\index\controller');
 
