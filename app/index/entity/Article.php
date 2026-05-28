@@ -15,21 +15,12 @@ use app\common\entity\BaseEntity;
 
 class Article extends BaseEntity
 {
-    // 1. 字段常量管理（抽离到模型更佳）
-    const ARTICLE_LIST_FIELDS = [
-        'a.id', 'a.cate_id', 'a.user_id', 'a.title', 'a.content', 'a.description',
-        'a.create_time', 'a.pv', 'a.thum_img', 'a.has_image', 'a.has_video', 'a.has_audio',
-        'a.comments_num', 'a.flags'
-    ];
-    const CATE_RELATION_FIELDS = ['id', 'catename', 'ename'];
-    const USER_RELATION_FIELDS = ['id', 'name', 'nickname', 'user_img', 'vip'];
-
     // 新的数量, 数据介于两表之间分量时使用
-    protected static $newLimit;
+    protected static int $newLimit;
     // 当前分页数据偏移量
-    protected static $offset;
+    protected static int $offset;
     // 当前用到的数据总和
-    protected static $currentTotalNum = 0;
+    protected static int $currentTotalNum = 0;
 
     /**
      * 添加
@@ -532,6 +523,8 @@ class Article extends BaseEntity
      */
     public static function getRelationArticle(int $id, int $limit = 5): array
     {
+        if(empty($id)) return []; // 拦截null/0/''等空值
+        
         return Cache::remember('rela_'.$id, function() use($id,$limit) {
 
             $tagId = Taglist::where('article_id', $id)->value('tag_id');

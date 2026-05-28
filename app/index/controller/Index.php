@@ -57,7 +57,7 @@ class Index extends IndexBaseController
      */
     public function index()
     {
-
+		
 		// $a = Db::name('addon_lawyer_clue')->where('status',1)->whereDay('create_time')->count();
 		// halt($a);
 		// $subQuery = Article::suffix(1)

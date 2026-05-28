@@ -107,7 +107,7 @@ abstract class Addons
      * @param  mixed $value 变量的值
      * @return $this
      */
-    protected function assign($name, $value = '')
+    protected function assign(string|array $name, $value = null)
     {
 
         if (is_array($name)) {

@@ -58,7 +58,7 @@ use think\facade\Route;
 		Route::rule('postcode$','postcode');
 		Route::rule('sentemailcode$','sentMailCode');
 		Route::rule('respass$','respass');
-		Route::get('login_status', 'status')->name('login_status');
+		Route::get('login-status', 'status')->name('login_status');
 	})->prefix('login/');
 	
 	// comment

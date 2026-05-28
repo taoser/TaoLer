@@ -5,10 +5,9 @@ use think\Request;
 
 class AccessControl
 {
-    public function handle(Request $request, \Closure $next)
-    {
-		
-		
-		return $next($request);
-	}
+  public function handle(Request $request, \Closure $next)
+  {
+
+    return $next($request);
+  }
 }

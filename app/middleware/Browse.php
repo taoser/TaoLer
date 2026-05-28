@@ -2,13 +2,14 @@
 namespace app\middleware;
 
 use think\facade\Log;
+use think\Request;
 
 /**
  * 浏览记录日志中间件
  */
 class Browse
 {
-    public function handle($request, \Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
 		$agent = $request->header('user-agent');
 		$ip = $request->ip();
