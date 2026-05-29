@@ -1,6 +1,8 @@
 <?php
 namespace app\middleware;
 
+use think\Request;
+use think\exception\HttpException;
 use app\common\lib\JwtAuth;
 
 /**
@@ -14,7 +16,7 @@ use app\common\lib\JwtAuth;
 
 class AccessControl
 {
-    public function handle($request, \Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
 //        $header = $request->header();
 //
@@ -36,14 +38,30 @@ class AccessControl
 
         $path = $request->pathinfo();
 
-
         if(str_starts_with($path, 'addons/')) {
 
-            $pathArr = explode("/", str_replace('.html','', str_replace('\\','/',$path)));
+            // $pathArr = explode("/", str_replace('.html','', str_replace('\\','/',$path)));
+            // $addon = $pathArr[1];
+            // $controller = $pathArr[2];
+            // $action = $pathArr[3];
 
-            $addon = $pathArr[1];
-            $controller = $pathArr[2];
-            $action = $pathArr[3];
+            // 处理路由参数 有2种模式，一种是通过路由参数，一种是通过layer参数
+            $layer = $request->layer();
+            if(empty($layer)) {
+                $addon = $request->route('addon');
+                $controller = $request->route('controller');
+                $action = $request->route('action');
+            } else {
+                $addon = basename($layer);
+                $controller = $request->controller();
+                $action = $request->action();
+            }
+
+            if (empty($addon) || empty($controller) || empty($action)) {
+                throw new HttpException(500, lang('路由地址错误'));
+            }
+
+            // var_dump($addon,$controller, $action);
 
             // -------------反射
             $className = ucwords($controller);
@@ -54,11 +72,18 @@ class AccessControl
 
             $noNeedLogin = $properties['noNeedLogin'] ?? [];
             $noNeedAuth = $properties['noNeedAuth'] ?? [];
-
+            // 变小写
+            array_walk($noNeedLogin, function (&$item) {
+                if (is_string($item)) {
+                    $item = strtolower($item);
+                }
+            });
+            
             // 不需要登录
-            if (!in_array($action, $noNeedLogin)) {
+            if (!in_array(strtolower($action), $noNeedLogin)) {
                 if(!session('?user_id')){
-                    return redirect((string) url('index/user_login'));
+                    // return redirect('/login');
+                    return json(['code'=>-1,'msg'=>'请先登录']);        
                 }
             }
 

@@ -21,7 +21,6 @@
         "topthink/think-orm": "^4.0",
         "topthink/think-filesystem": "^3.0",
         "topthink/think-view": "^2.0",
-        "topthink/think-captcha": "^3.0",
         "taoser/think-auth": "^2.0",
         "taoser/think-addons": "^2.0",
         "taoser/think-setarr": "^0.0.5",
@@ -37,7 +36,8 @@
         "guzzlehttp/guzzle": "^7.8",
         "illuminate/container": "^11.29",
         "jaeger/querylist": "^4.4",
-        "sqids/sqids": "^0.5"
+        "sqids/sqids": "^0.5",
+        "topthink/think-captcha": "^3.0"
     },
     "require-dev": {
         "symfony/var-dumper": ">=4.2",

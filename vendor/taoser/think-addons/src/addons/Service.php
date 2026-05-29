@@ -11,7 +11,6 @@ use think\facade\Cache;
 use think\facade\Event;
 use taoser\addons\middleware\Addons;
 use think\facade\Request;
-use app\middleware\AccessControl;
 
 /**
  * 插件服务
@@ -27,15 +26,15 @@ class Service extends \think\Service
     {
         $this->addons_path = $this->getAddonsPath();
         // 加载系统语言包
-        // $this->loadLang();
+        $this->loadLang();
         // 自动载入插件
-        // $this->autoload();
+        $this->autoload();
         // 加载插件事件
-        // $this->loadEvent();
+        $this->loadEvent();
         // // 加载自定义路由
-        // $this->loadRoutes();
+        $this->loadRoutes();
         // // 加载插件系统服务
-        // $this->loadService();
+        $this->loadService();
         // // 加载插件命令
         // $this->loadCommand();
         // // 加载配置
@@ -47,84 +46,92 @@ class Service extends \think\Service
 
     public function boot()
     {
-        $this->registerRoutes(function (Route $route) {
-            // 只有在addons下进行注册解析
-            // $path = $this->app->request->pathinfo();
+        // 立即注册路由
+        $route = $this->app->route;
+        $execute = '\\taoser\\addons\\Route::execute';
+        
+        // 注册插件公共中间件
+        if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
+            $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
+        }
+        // 注册插件控制器路由
+        // $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+        $route->rule("addons/:addon/[:controller]/[:action]", $execute);
+        
+        // $route->group('addons', function () use ($route, $execute) {
+        //     $route->rule(':addon/:controller/:action', ':controller/:action');
+        // })
+        // // ->middleware(\app\middleware\AccessControl::class)
+        // ->namespace('addons\:addon\controller');
 
-            // // dump($path);
+        // 监听注册路由
 
-            // $pathArr = explode("/", str_replace('.html','', str_replace('\\', '/', $path)));
-            // // var_dump($pathArr);
+        // $this->registerRoutes(function (Route $route) {
+            
+        //     // 路由脚本
+        //     $execute = '\\taoser\\addons\\Route::execute';
 
-            // if($pathArr[0] === 'addons') {
-                // 路由脚本
-                $execute = '\\taoser\\addons\\Route::execute';
+        //     // 注册插件公共中间件
+        //     if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
+        //         // $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
+        //     }
 
-                // 注册插件公共中间件
-                if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
-                    // $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
-                }
+        //     // 注册控制器路由
+        //     // $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+            
+        //     // 使用路由分组
+        //     $route->group('addons',function () use ($route, $execute){
+        //         $route->rule(':addon/:controller/:action',':controller/:action');
+        //         // $route->rule(':addon/:controller/:action', $execute);
+        //     })
+        //     ->middleware(\app\middleware\AccessControl::class)
+        //     ->namespace('addons\:addon\controller');
 
-                // $e = "\\addons\\{$pathArr[1]}\\controller\\{$pathArr[2]}@{$pathArr[3]}";
-                // $n = "\\addons\\{$pathArr[1]}\\controller";
+        //     // 自定义路由
+        //     // $routes = (array) Config::get('addons.route', []);
 
-                // 注册控制器路由
-                $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
-                
-                // 使用路由分组
-                $route->group('addons',function () use ($route){
-                    $route->rule(':addon/:controller/:action',':controller/:action');
-                })->namespace('addons\:addon\controller');
+        //     // if(!empty($routes)) {
+        //     //     foreach ($routes as $key => $val) {
+        //     //         if (!$val) {
+        //     //             continue;
+        //     //         }
+        //     //         if (is_array($val)) {
+        //     //             $domain = $val['domain'];
+        //     //             $rules = [];
+        //     //             foreach ($val['rule'] as $k => $rule) {
+        //     //                 [$addon, $controller, $action] = explode('/', $rule);
+        //     //                 $rules[$k] = [
+        //     //                     'addon'        => $addon,
+        //     //                     'controller'    => $controller,
+        //     //                     'action'        => $action,
+        //     //                     'indomain'      => 1,
+        //     //                 ];
+        //     //             }
+        //     //             $route->domain($domain, function () use ($rules, $route, $execute) {
+        //     //                 // 动态注册域名的路由规则
+        //     //                 foreach ($rules as $k => $rule) {
+        //     //                     $route->rule($k, $execute)
+        //     //                         ->name($k)
+        //     //                         ->completeMatch(true)
+        //     //                         ->append($rule);
+        //     //                 }
+        //     //             });
+        //     //         } else {
+        //     //             list($addon, $controller, $action) = explode('/', $val);
+        //     //             $route->rule($key, $execute)
+        //     //                 ->name($key)
+        //     //                 ->completeMatch(true)
+        //     //                 ->append([
+        //     //                     'addon' => $addon,
+        //     //                     'controller' => $controller,
+        //     //                     'action' => $action
+        //     //                 ]);
+        //     //         }
+        //     //     }
+        //     // }
 
-                // 自定义路由
-                $routes = (array) Config::get('addons.route', []);
+        // });
 
-                if(!empty($routes)) {
-                    foreach ($routes as $key => $val) {
-                        if (!$val) {
-                            continue;
-                        }
-                        if (is_array($val)) {
-                            $domain = $val['domain'];
-                            $rules = [];
-                            foreach ($val['rule'] as $k => $rule) {
-                                [$addon, $controller, $action] = explode('/', $rule);
-                                $rules[$k] = [
-                                    'addon'        => $addon,
-                                    'controller'    => $controller,
-                                    'action'        => $action,
-                                    'indomain'      => 1,
-                                ];
-                            }
-                            $route->domain($domain, function () use ($rules, $route, $execute) {
-                                // 动态注册域名的路由规则
-                                foreach ($rules as $k => $rule) {
-                                    $route->rule($k, $execute)
-                                        ->name($k)
-                                        ->completeMatch(true)
-                                        ->append($rule);
-                                }
-                            });
-                        } else {
-                            list($addon, $controller, $action) = explode('/', $val);
-                            $route->rule($key, $execute)
-                                ->name($key)
-                                ->completeMatch(true)
-                                ->append([
-                                    'addon' => $addon,
-                                    'controller' => $controller,
-                                    'action' => $action
-                                ]);
-                        }
-                    }
-                }
-                $this->autoload();
-                $this->loadEvent();
-
-
-
-            // }
-        });
     }
 
     private function loadLang()
@@ -140,23 +147,38 @@ class Service extends \think\Service
     private function loadRoutes()
     {
         //配置
-        // $addons_dir = scandir($this->addons_path);
         $addons_dir = Cache::get('addons_list');
+
+        // 如果缓存不存在，直接扫描插件目录
+        if (empty($addons_dir)) {
+            $addons_dir = scandir($this->addons_path);
+        }
+        
+        // 如果仍然为空，直接返回
+        if (empty($addons_dir)) {
+            return;
+        }
   
         foreach ($addons_dir as $name) {
-            // if (in_array($name, ['.', '..'])) {
-            //     continue;
-            // }
-            // if(!is_dir($this->addons_path . $name)) continue;
-            $module_dir = $this->addons_path . $name .  DIRECTORY_SEPARATOR;
-            //路由配置文件
-            $addons_route_dir = $module_dir . 'route' .  DIRECTORY_SEPARATOR;
+            // 跳过 . 和 ..
+            if (in_array($name, ['.', '..'])) {
+                continue;
+            }
+            // 确保是目录
+            if (!is_dir($this->addons_path . $name)) {
+                continue;
+            }
+            
+            $module_dir = $this->addons_path . $name . DIRECTORY_SEPARATOR;
+            // 路由配置文件目录
+            $addons_route_dir = $module_dir . 'route' . DIRECTORY_SEPARATOR;
 
             if (file_exists($addons_route_dir) && is_dir($addons_route_dir)) {
                 $files = glob($addons_route_dir . '*.php');
                 foreach ($files as $file) {
                     if (file_exists($file)) {
-                        $this->loadRoutesFrom($file);
+                        // $this->loadRoutesFrom($file);
+                        include_once $file;
                     }
                 }
             }
@@ -238,8 +260,6 @@ class Service extends \think\Service
     private function loadService()
     {
         $results = scandir($this->addons_path);
-
-        var_dump($results);
   
         $bind = [];
         foreach ($results as $name) {

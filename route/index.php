@@ -2,12 +2,9 @@
 
 use think\facade\Route;
 
-Route::get('captcha/[:id]', "\\think\\captcha\\CaptchaController@index");
-
 Route::group('',function(){
 	// Route::get('user/blog','user\Blog/index');
 	// Route::get('user/blog','user.Blog/index');
-	
 	
 	Route::get('user.blog/index','user.blog/index');
 	Route::get('user/blog','user.blog/index');
@@ -41,13 +38,13 @@ Route::group('',function(){
 
 	// 登录注册
 	Route::group(function () {
-		Route::rule('user_login$','login/index')->name('user_login');
-		Route::rule('user_forget$','login/forget')->name('user_forget');
-		Route::rule('user_reg$','login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
+		Route::rule('login$','login/index')->name('user_login');
+		Route::rule('forget$','login/forget')->name('user_forget');
+		Route::rule('reg$','login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
 		Route::rule('postcode$','login/postcode');
 		Route::rule('sentemailcode$','login/sentMailCode');
 		Route::rule('respass$','login/respass');
-		Route::get('login_status', 'login/status')->name('login_status');
+		Route::get('login-status', 'login/status')->name('login_status');
 	});
 
 	// 用户中心
@@ -100,10 +97,8 @@ Route::group('',function(){
 ])
 ->namespace('app\index\controller');
 
-// Route::get('user/blog','\app\index\controller\user\Blog@index');
-
 // 开启多模块URL自动解析 `8.1+`版本开始支持
-Route::auto();
+// Route::auto();
 
 
 

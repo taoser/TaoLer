@@ -6,19 +6,19 @@
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\middleware\Auth.php
- * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
+ * Copyright (c) 2020~2026 http://www.aieok.com All rights reserved.
  */
 declare(strict_types=1);
 
 namespace app\middleware;
 
-use PgSql\Result;
 use taoser\think\Auth as UserAuth;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Request;
+use think\Response;
 
 class AdminAuth
 {

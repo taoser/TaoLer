@@ -31,7 +31,7 @@ use think\Response;
 class Index extends IndexBaseController
 {
 
-	public function showImg($filename) {
+	public function showImg(string $filename) {
 		// 3. 构建图片的完整物理路径
         $filePath = root_path() . 'data/' . $filename; // 或者 Filesystem::disk('local')->path($filename)
 
@@ -57,6 +57,9 @@ class Index extends IndexBaseController
      */
     public function index()
     {
+
+// 查看已注册的路由
+// dump(app('route')->getRuleList());
 
 
 	// return json(['code' => 200, 'msg' => 'success']);
