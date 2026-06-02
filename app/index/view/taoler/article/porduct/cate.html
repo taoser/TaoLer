@@ -1,0 +1,69 @@
+{extend name="public:base" /}
+
+{block name="title"}{$cateinfo.catename} - {$sysInfo.webname}{/block}
+{block name="keywords"}{$cateinfo.catename},{$sysInfo.webname}{/block}
+{block name="description"}{$cateinfo.desc}{/block}
+
+{block name="content"}
+    <main class="main">
+   <!-- 广告模块 -->
+    <div class="banner">
+        <div class="layui-container">
+            <span class="banner-title">{$cateinfo.catename}</span>
+        </div>
+    </div>
+    <!-- channel内容区 -->
+     <div class="product-content">
+        <div class="layui-container">
+            <div class="product-cate">
+                {$cateinfo.desc}
+            </div>
+            <div class="product-list">
+                <div class="layui-row layui-col-space20">
+                    {article:list}
+                    <div class="layui-col-md4">
+                        <div class="product-item">
+                        {gt name="article.has_image" value="0"}
+                        <a href="{article:link}" target="_blank">
+                            <img class="channel-list-img" src="{article:master_pic /}" alt="">
+                        </a>
+                        {/gt}
+                        <a href="{article:link}" target="_blank" class="product-title"><h3>{article:title}</h3></a>
+                        </div>
+                    </div>
+                    {/article:list}
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+</main>
+
+{__block__}
+
+<script>
+    layui.use(['laypage'], function(){
+	  var laypage = layui.laypage;
+	  var $ = layui.jquery;
+	  
+	  //执行一个laypage实例
+	  //执行一个laypage实例
+	  laypage.render({
+			elem: 'pages' //注意，这里的 test1 是 ID，不用加 # 号
+			,count: "{$__LISTS__.total}" //数据总数，从服务端得到
+			,limit: "{$__LISTS__['per_page']}"
+			,curr : "{$__LISTS__['current_page']}"
+			,first: false
+    		,last: false
+			//获取起始页
+			,jump: function(obj, first){
+				//首次不执行
+				if(!first){
+					window.location.href = '{$path}/'+obj.curr+'.html'; //跳转
+				}
+			}
+	  	})
+	});
+</script>
+{/block}

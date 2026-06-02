@@ -1,0 +1,65 @@
+{extend name="public:base"}
+
+{block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
+{block name="keywords"}{$article.keywords ?: $article.title}{/block}
+{block name="description"}{$article.title},{$article.description}{/block}
+{block name="meta"}
+  <style>
+    #container {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        font-family: "微软雅黑";
+    }
+    .article .map {
+        width: 800px;
+        height: 600px;
+        margin: 0 auto;
+    }
+    </style>
+{/block}
+
+{block name="content"}
+
+    <main class="main">
+    <!-- channel内容区 -->
+    <div class="article-content">
+        
+        <div class="layui-container layui-row">
+            <article class="article">
+                <h1>{article:title /}</h1>
+                <div class="detail"> {article:time} {article:author} · {system:webname}  浏览 {article:pv /}</div>
+                
+                <section>
+                    <!-- 地图 -->
+                    {if condition="$Request.param.id eq 21"}
+                    <div class="map">
+                        <div id="container"></div>
+                    </div>
+                    {/if}
+                    {article:content /}
+                </section>
+            </article>
+        </div>
+    </div>
+    <div class="aside-right-fixed">
+        <i>
+    </div>
+
+    </main>
+{__block__}
+
+
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=1.0&type=webgl&ak=FFa09d397126511d710fa6897e3d9103"></script>
+<script>
+    var map = new BMapGL.Map("container");          // 创建地图实例 
+    var point = new BMapGL.Point(122.213828,29.999493);  // 创建点坐标 
+    map.centerAndZoom(point, 19);                 // 初始化地图，设置中心点坐标和地图级别
+    var marker = new BMapGL.Marker(point);        // 创建标注   
+    map.addOverlay(marker);                     // 将标注添加到地图中
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    
+</script>
+
+{/block}

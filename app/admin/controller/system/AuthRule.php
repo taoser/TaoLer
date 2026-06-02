@@ -25,6 +25,7 @@ class AuthRule extends AdminBaseController
     //
     public function __construct()
     {
+		parent::initialize();
         $this->model = new AuthRuleModel();
     }
 

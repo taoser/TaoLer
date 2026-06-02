@@ -14,14 +14,15 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         '7448f3465e10b5f033e4babb31eb0b06' => __DIR__ . '/..' . '/topthink/think-orm/src/helper.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
         '0f675193b08f1d998bf8336679b91267' => __DIR__ . '/..' . '/jaeger/querylist/src/Collect/Support/helpers.php',
         'ccc59ff8a4c824e248d98aed04130ff5' => __DIR__ . '/..' . '/jaeger/querylist/src/Collect/Support/alias.php',
         '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
+        'd79a0e13e295db93891a9377e0888496' => __DIR__ . '/..' . '/topthink/think-dumper/src/helper.php',
         '8c783b3a3de2f6d9177022b5ccdcc841' => __DIR__ . '/..' . '/yansongda/pay/src/Functions.php',
         'd421242fd42b2ea6cd13f802bcf18a6e' => __DIR__ . '/../..' . '/extend/taoler/com/form.php',
     );
@@ -31,6 +32,7 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
+            'think\\dumper\\' => 13,
             'think\\captcha\\' => 14,
             'think\\' => 6,
             'taoser\\think\\' => 13,
@@ -131,6 +133,10 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         'think\\trace\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-trace/src',
+        ),
+        'think\\dumper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-dumper/src',
         ),
         'think\\captcha\\' => 
         array (

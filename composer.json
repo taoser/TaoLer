@@ -40,7 +40,7 @@
         "topthink/think-captcha": "^3.0"
     },
     "require-dev": {
-        "symfony/var-dumper": ">=4.2",
+        "topthink/think-dumper": "^1.0",
         "topthink/think-trace": "^2.0"
     },
     "autoload": {

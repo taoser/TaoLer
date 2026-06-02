@@ -48,10 +48,7 @@ class Index extends AdminBaseController
     
     public function index()
 	{
-        // return View::fetch('../app/admin/view/index/index');
-		return View::fetch('index');
-
-
+		return View::fetch();
     }
 
 	public function console1()

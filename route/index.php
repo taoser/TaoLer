@@ -38,33 +38,33 @@ Route::group('',function(){
 
 	// 登录注册
 	Route::group(function () {
-		Route::rule('login$','login/index')->name('user_login');
-		Route::rule('forget$','login/forget')->name('user_forget');
-		Route::rule('reg$','login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
-		Route::rule('postcode$','login/postcode');
-		Route::rule('sentemailcode$','login/sentMailCode');
-		Route::rule('respass$','login/respass');
+		Route::post('login$','login/index')->name('user_login');
+		Route::post('forget$','login/forget')->name('user_forget');
+		Route::post('reg$','login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
+		Route::post('postcode$','login/postcode');
+		Route::post('sentemailcode$','login/sentMailCode');
+		Route::post('respass$','login/respass');
 		Route::get('login-status', 'login/status')->name('login_status');
 	});
 
 	// 用户中心
 	Route::group('user',function () {
-		Route::get('<id>$', 'home')->name('user_home'); 
-		Route::get('index$', 'index')->name('user_index');
-		Route::get('set$', 'set');
-		Route::get('message$', 'message');
-		Route::get('post$', 'post');
-		Route::get('article$','myArticles');
-		Route::post('editpv$','editPv');
-		Route::post('updatetime$','updateTime');
-		Route::get('mycoll$','myCollect');
-		Route::get('colldel$','collDel');
-		Route::get('setpass$','setPass');
-		Route::get('activate$','activate');
-		Route::get('active$','active');
-		Route::get('uploadHeadImg$','uploadHeadImg');
-		Route::get('logout$', 'logout');
-	})->prefix('user/');
+		Route::get('<id>$', 'user/home')->name('user_home'); 
+		Route::get('index$', 'user/index')->name('user_index');
+		Route::get('set$', 'user/set');
+		Route::get('message$', 'user/message');
+		Route::get('post$', 'user/post');
+		Route::get('article$','user/myArticles');
+		Route::post('editpv$','user/editPv');
+		Route::post('updatetime$','user/updateTime');
+		Route::get('mycoll$','user/myCollect');
+		Route::get('colldel$','user/collDel');
+		Route::get('setpass$','user/setPass');
+		Route::get('activate$','user/activate');
+		Route::get('active$','user/active');
+		Route::get('uploadHeadImg$','user/uploadHeadImg');
+		Route::get('logout$', 'user/logout');
+	});
 
 	Route::get('index/reply$','index/reply')->name('user_reply');
 	Route::rule('search','Search/getSearch')->name('user_search');
@@ -72,15 +72,15 @@ Route::group('',function(){
 	
 	//tag
 	Route::group(function (){
-		Route::get('tag$','getAllTag')->name('get_all_tag');
-		Route::get('arttag$','getArticleTag')->name('get_art_tag');
-		Route::get('tag/<ename>$', 'list')->name('tag_list');
-	})->prefix('tag/');
+		Route::get('tag$','tag/getAllTag')->name('get_all_tag');
+		Route::get('arttag$','tag/getArticleTag')->name('get_art_tag');
+		Route::get('tag/<ename>$', 'tag/list')->name('tag_list');
+	});
 
 
 	// 测试图片访问
 	Route::get('fverify', 'staticfile/verify');
-	Route::rule('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
+	Route::get('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
 
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
 

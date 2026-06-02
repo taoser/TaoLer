@@ -1,0 +1,50 @@
+{extend name="public/base" /}
+<!--seo-->
+{block name="title"}{article:title /} - {taoler:name /}{/block} 
+{block name="keywords"}{article:keywords /}{/block}
+{block name="description"}{article:title /},{article:description /}{/block}
+{block name="ogtitle"}<meta property="og:title" content="{article:title /} - {taoler:name /}">{/block}
+{block name="ogdescription"}<meta property="og:description" content="{article:title /},{$article.description ?: ''}" />{/block}
+{block name="meta"}
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="{$article.create_time|date='c'}"/>
+<meta property="bytedance:published_time" content="{$article.create_time|date='c'}" />
+<meta property="bytedance:lrDate_time" content="{lrDate_time|date='c'}" />
+<meta property="bytedance:updated_time" content="{$article.update_time|date='c'}" />
+{/block}
+{block name="link"} {/block}
+{block name="column"}<div class="layui-hide-xs">{include file="/public/column" /}</div>{/block}
+<!--body-->
+{block name="content"}
+<div class="layui-container">
+		
+			<section class="fly-panel detail-box">
+
+				{//标题}
+				<h1>{article:title /}</h1>
+
+				{//内容}
+				<article class="detail-body photos" id="content">{article:content}</article>
+
+			</section>
+
+  <!--底部栏-->
+</div>
+{include file="public/menu" /}
+
+{/block}
+
+
+{block name="script"}
+<script>
+
+
+	layui.use(['laypage'], function(){
+		var $ = layui.jquery
+		,form = layui.form
+		,laypage = layui.laypage;
+
+	});
+</script>
+
+{/block}

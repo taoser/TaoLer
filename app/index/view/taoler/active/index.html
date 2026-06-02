@@ -1,0 +1,36 @@
+{extend name="public:base" /}
+
+{block name="title"}{$sysInfo.webname}-{$sysInfo.webtitle}{/block}
+{block name="column"}{include file="public/column" /}{/block}
+
+{block name="content"}
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+	<div style="width:500px; margin: 0 auto; font-size:30px;" id="active">账户激活成功</div>
+  </div>
+</div>
+{include file="public/menu" /}
+{/block}
+
+{block name="script"}
+<script>
+layui.use(function(){
+var $ = layui.jquery;
+var url = "{$Request.param.url}";
+$(function(){
+	$.post("{:url('Active/email')}",{"url": url},function(data){
+		if(data.code == 0){
+			layer.msg(data.msg,{icon:6,tiye:2000},function(){
+				location.href = data.url;
+			});
+		} else {
+			$("#active").html(data.msg);
+			layer.open({title:"账户激活失败",content:data.msg,icon:5,anim:6});
+		}
+		});
+	});
+	return false;
+});
+
+</script>
+{/block}

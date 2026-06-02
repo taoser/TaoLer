@@ -1,0 +1,172 @@
+{extend name="public:base" /}
+
+{block name="keywords"}{taoler:keywords /}{/block}
+{block name="description"}{taoler:description}{/block}
+{block name="ogtitle"}<meta property="og:title" content="{taoler:title /}" >{/block}
+{block name="ogdescription"}<meta property="og:description" content="{taoler:description /}" >{/block}
+{block name="ogimage"}<meta property="og:image" content="{taoler:logo /}" >{/block}
+{block name="meta"}{/block}
+{block name="link"}
+<!-- 特效丶样式 -->
+
+{/block}
+{block name="column"}{include file="public/column" /}{/block}
+{block name="content"}
+<div class="layui-container article-content">
+	<div class="layui-row layui-col-space15">
+		<!--左栏-->
+		<div class="layui-col-md8">
+			<!--首页幻灯-->
+			<div class="fly-panel">
+				<div class="layui-row">
+				  <div class="layui-carousel fly-topline" id="TAOLER-SLIDER">
+					<div carousel-item="">
+					  {taoler:slide}
+						<div time-limit="">
+						  <a href="{slide:url /}" target="_blank" rel="nofollow">
+							<img src="{slide:image /}" alt="{slide:title /}" />
+						  </a>
+						</div>
+					  {/taoler:slide}
+					</div>
+				  </div>
+				</div>
+			</div>
+
+			{taoler:section name="service"}
+				{section:title /} - {section:subtitle /}
+				<p></p>
+				{section:list}
+					{section:name /}- -
+				{/section:list}
+			{/taoler:section}
+
+			{taoler:section name="cc"}
+				{section:title /}
+				{section:subtitle /}
+				{section:list}
+					{section:name /}
+				{/section:list}
+			{/taoler:section}
+
+			<!--置顶文章-->
+			<div class="fly-panel">
+				<div class="fly-panel-title fly-filter">
+					<span>{:lang('top')}</span>
+					{if hook('signstatushook') == 1}
+					<a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin">{:lang('go sign')}</a>
+					{/if}
+				</div>
+				<ul class="fly-list">
+					{if config('taoler.config.top_show') == 1}
+						{// 列表}
+						{include file="public/index-top" /}
+					{else /}
+						{// 滚动}
+						<div class="layui-carousel" id="ID-carousel">
+							<div carousel-item>
+								{include file="public/index-top" /}
+							</div>
+						</div>
+					{/if}
+				</ul>
+			</div>
+
+			<!--文章列表-->
+			<section id="main" class="list-home list-grid list-grid-padding">
+				{article:list type="index"}
+				<article class="list-item block card-plain">
+					{gt name="article.has_image" value='0'}
+					<figure class="media media-3x2  d-none d-md-block">
+						<a class="media-content" href="{article:url /}" title="{article:title /}">
+							<img src="{article:master_pic /}" alt="{article:title /}">
+						</a>
+					</figure>
+					{/gt}
+					<div class="list-width list-content">
+						<div class="list-body">
+							<a href="{article:url /}" title="{article:title /}" >
+								<h3 class="list-title fanpian">{article:title /}</h3>
+								<div class="list-desc d-block d-md-block text-sm text-secondary my-3">
+									<p class="h-3x">{article:description /}</p>
+								</div>
+							</a>
+						</div>
+						<div class="list-footer">
+							<div class="d-flex flex-fill align-items-center text-muted text-xs">
+								<time class="d-inline-block" datetime="{$article.create_time}">{article:time /}</time>
+								<div class="d-inline-block mx-1 mx-md-2">
+									<a href="{article:cate name='link' /}" class="text-muted">{article:cate_name /}</a>
+								</div>
+								<div class="d-inline-block">
+									<a href="{article:user name='link' /}" class="text-muted" title="发布于{article:auther /}" rel="category">{article:author /}</a>
+									{eq name="article.has_image" value="1"} <span><i class="layui-icon layui-icon-picture" style="color: #5FB878;"></i></span>{/eq}
+									{eq name="article.has_video" value="1"} <span><i class="layui-icon layui-icon-play" style="color: #FF5722;"></i></span>{/eq}
+									{eq name="article.has_audio" value="1"} <span><i class="layui-icon layui-icon-speaker" style="color: #000000;"></i></span>{/eq}
+				
+								</div>
+								<div class="flex-fill"></div>
+								<div class="mx-1">
+									<span class="text-muted"><i class="iconfont icon-pinglun1" title="回答"></i> {article:comments_num}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</article>
+				{/article:list}
+			</section>
+
+			<!--更多帖子-->
+			<div class="fly-panel" style="margin-bottom: 0;">
+				<div style="text-align: center">
+					<div class="laypage-main">
+					<a href="{:url('cate',['ename'=>'all'])}" class="laypage-next">{:lang('more post')}</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		
+		{//右栏}
+		<div class="layui-col-md4">
+			<!-- 插件hook位 -->
+			{:hook('signhook', ['id'=>1])}
+		</div>
+	</div>
+</div>
+<!--移动端菜单-->
+{include file="public/menu" /}
+
+{/block}
+
+{block name="script"}
+<script>
+	layui.extend({
+  ads: '{/}/static/addons/ads/js/ads'
+}).use(['util','ads'], function(){
+		let util = layui.util;
+		let carousel = layui.carousel;
+
+		// 置顶文章
+		//tpl模板给发布时间赋值
+		$("time").each(function () {
+			var othis = $(this);
+			var datetime = othis.attr("datetime");
+			var posttime = util.timeAgo(datetime, 30);
+			othis.text(posttime);
+		});
+
+		// 渲染 - 设置时间间隔、动画类型、宽高度等属性
+		carousel.render({
+			elem: '#ID-carousel',
+			interval: 2000,
+			anim: 'updown',
+			arrow: 'none',
+			indicator: 'none',
+			width: 'auto',
+			height: '80px'
+		});
+
+	});
+</script>
+{/block}

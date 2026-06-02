@@ -1,0 +1,182 @@
+{extend name="public/base" /}
+
+{block name="title"}{:lang('retrieve password')}{/block}
+{block name="column"}{/block}
+{block name="content"}
+<div class="layui-container fly-marginTop">
+  <div class="fly-panel fly-panel-user" pad20>
+    <div class="layui-tab layui-tab-brief" lay-filter="user">
+      <ul class="layui-tab-title">
+        <li><a href="{$Request.domain}{:url('user_login')}">{:lang('login')}</a></li>
+        <li class="layui-this">{if cache('repass')==2}{:lang('reset password')}{else /}{:lang('retrieve password')}{/if}</li>
+      </ul>
+      <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+        <div class="layui-tab-item layui-show">
+		{//验证码}
+        {if cache('repass') == 'postcode'}
+		<div class="layui-form layui-form-pane">            
+			<div class="layui-form-item">
+			  <label class="layui-form-label">{:lang('captcha')}</label>
+			  <div class="layui-input-inline">
+				<input type="text" name="code" required lay-verify="required" autocomplete="off" class="layui-input">
+			  </div>
+			</div>
+			<div class="layui-form-item">
+				<button class="layui-btn" lay-submit lay-filter="user-get-code">{:lang('submit')}</button>
+				<span class="layui-btn" ><a href="{$Request.domain}{:url('login/forget')}">{:lang('go back')}</a></span>
+			</div>
+		</div>
+        {elseif cache('repass') == 'resetpass' /}
+		<!-- 重置密码 -->
+		<div class="fly-msg">{:lang('reset password')}</div>
+          <div class="layui-form layui-form-pane"  style="margin-top: 30px;">
+              <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label">{:lang('new password')}</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_pass" name="password" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">{:lang('6-16 characters')}</div>
+              </div>
+              <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">{:lang('confirm password')}</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_repass" name="repassword" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
+                <div class="layui-input-inline">
+                  <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid">
+				  <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important;">
+				  <img id="captcha" src="{:captcha_src()}" style="float:left; cursor:pointer;" id="captcha"  alt="captcha" />
+				  </div>
+                </div>
+              </div>
+              <div class="layui-form-item">
+			  <!--
+                <input type="hidden" name="name" value="{{d.username}}">
+                <input type="hidden" name="email" value="{{d.email}}">
+				-->
+                <button class="layui-btn" alert="1" lay-filter="user-reset-pass" lay-submit>{:lang('submit')}</button>
+              </div>
+          </div>
+          <div class="fly-error">该重置密码链接已失效，请重新校验您的信息</div>
+          <div class="fly-error">非法链接，请重新校验您的信息</div>
+		{else /}
+		{//发邮件}	
+		<div class="layui-form layui-form-pane">
+			<div class="layui-form-item">
+				<label for="L_email" class="layui-form-label">{:lang('email')}</label>
+				<div class="layui-input-inline">
+				  <input type="text" id="L_email" name="email" required lay-verify="required" placeholder="{:lang('email')}" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label for="L_vercode" class="layui-form-label">{:lang('captcha')}</label>
+				<div class="layui-input-inline">
+				  <input type="text" id="L_vercode" name="captcha" required lay-verify="required" placeholder="{:lang('please input the captcha')}" autocomplete="off" class="layui-input">
+				</div>
+				  <div class="layui-form-mid layui-word-aux" style="padding-top: 0px !important;">
+					  <img id="captcha" src="{:captcha_src()}?id=1" onclick="this.src='{:captcha_src()}?id=1'+Math.random();"  style="float:left; cursor:pointer;"  alt="captcha" />
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<button type="submit" name="submit" class="layui-btn" alert="1" lay-filter="user-forget-sendmail" lay-submit>{:lang('submit')}</button>
+			</div>
+		</div>
+		{/if}
+        </div>
+       </div>
+    </div>
+   </div>
+</div>
+{include file="public/menu" /}
+{/block}
+
+{block name="script"}
+<script>
+layui.use(function(){
+var $ = layui.jquery;
+var form = layui.form;
+var layer = layui.layer;
+	//设置资料
+	form.on('submit(user-forget-sendmail)', function(data){
+		var field = data.field;
+		var loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+		$.ajax({
+		type:'post',
+		url:"{:url('login/forget')}",
+		data:field,
+		dataType:"json",
+		success:function(data){
+			if(data.code == 0){
+			layer.close(loading);
+				layer.msg(data.msg,{icon:6,tiye:2000},function(){
+						location.href = data.url;
+				});
+			} else {
+			layer.close(loading);
+				layer.open({title:"发送失败",content:data.msg,icon:5,anim:6});
+				$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+			}}
+		});
+	return false;
+	});
+	//验证码
+	form.on('submit(user-get-code)', function(data){
+		var field = data.field;
+		var loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+		$.ajax({
+		type:'post',
+		url:"{:url('login/postcode')}",
+		data:field,
+		dataType:"json",
+		success:function(data){
+			if(data.code == 0){
+			layer.close(loading);
+				layer.msg(data.msg,{icon:6,tiye:2000},function(){
+						location.href = data.url;
+				});
+			} else {
+			layer.close(loading);
+				layer.open({title:"验证失败",content:data.msg,icon:5,anim:6});
+				$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+			}}
+		});
+	return false;
+	});
+	//修改密码
+	form.on('submit(user-reset-pass)', function(data){
+		var field = data.field;
+		var loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+		$.ajax({
+		type:'post',
+		url:"{:url('login/respass')}",
+		data:field,
+		dataType:"json",
+		success:function(data){
+			if(data.code == 0){
+			layer.close(loading);
+				layer.msg(data.msg,{icon:6,tiye:2000},function(){
+						location.href = data.url;
+				});
+			} else {
+			layer.close(loading);
+				layer.open({title:"修改失败",content:data.msg,icon:5,anim:6});
+				$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
+			}}
+		});
+	return false;
+	});
+
+});
+</script>
+{/block}

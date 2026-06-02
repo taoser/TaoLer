@@ -1,0 +1,61 @@
+<!--
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2021-12-06 16:04:51
+ * @LastEditTime: 2022-08-15 14:56:31
+ * @LastEditors: TaoLer
+ * @Description: 搜索引擎SEO优化设置
+ * @FilePath: \TaoLer\view\taoler\index\tag\index.html
+ * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+-->
+{extend name="public/base" /}
+{block name="title"}{tag:title /} - {$sysInfo.webname}{/block}
+{block name="keywords"}{$tag.keywords}{/block}
+{block name="description"}{tag:description /}{/block}
+{block name="ogtitle"}<meta property="og:title" content="{$tag.title} - {$sysInfo.webtitle}" />{/block}
+{block name="ogdescription"}<meta property="og:description" content="{$tag.description}" />{/block}
+{block name="column"}{include file="public/column" /}{/block}
+{block name="content"}
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md8">
+      <div class="fly-panel" style="margin-bottom: 0;">
+        <div class="fly-panel-title fly-filter"><a href="" class="layui-this">{tag:title /}共{tag:count /}条结果</a></div>
+        <ul class="fly-list">   
+		    {tag:list}
+          <li>
+            <a href="{article:user name='link'}" class="fly-avatar">
+              <img src="{article:author_avatar /}" alt="{article:author /}"><i class="iconfont icon-renzheng" title="认证信息"></i>  
+            </a>
+            <h2><a href="{$article.url}"  title="{$article.title}">{$article.title}</a></h2>
+            <div class="fly-list-info">
+              {if config('taoler.config.cate_show') == 1}
+              <a class="layui-badge" href="{article:cate name='link' /}">{article:cate_name /}</a>
+              {/if}
+              <a href="{article:user name='link'}" link><cite>{$article.user.name}</cite></a>
+              <span>{$article.create_time|date='Y-m-d'}</span>
+            </div>
+            {if ($article.is_hot == 1)}
+            <div class="fly-list-badge"><span class="layui-badge layui-bg-red">精帖</span></div>
+            {/if}
+          </li>
+        {/tag:list}
+        </ul>
+      </div>
+    </div>
+    {//右栏}
+    <div class="layui-col-md4">
+
+      <!--自定义-->
+      {notempty name="ad_comm"}
+      <div class="fly-panel" style="padding: 5px 0; text-align: center;">
+        {volist name="ad_comm" id="vo"}		
+        <a href="{$vo.slid_href}" target="_blank"><img src="{$Request.domain}{$vo.slid_img}" style="max-width: 100%;"></a>
+        {/volist}
+      </div>
+      {/notempty}
+    </div>
+  </div>
+</div>
+{include file="public/menu" /}
+{/block}
+{block name="script"}{/block}

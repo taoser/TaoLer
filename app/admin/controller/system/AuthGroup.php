@@ -31,8 +31,9 @@ class AuthGroup extends AdminBaseController
 	 */
 	protected $model = null;
 
-	public function __construct()
+	public function initialize()
     {
+		parent::initialize();
         $this->model = new AuthGroupModel;
     }
 
