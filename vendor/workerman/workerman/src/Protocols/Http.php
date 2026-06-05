@@ -78,8 +78,16 @@ class Http
     protected const HTTP_413 = "HTTP/1.1 413 Payload Too Large\r\nConnection: close\r\n\r\n";
 
     /**
+     * Request Header Fields Too Large.
+     *
+     * @var string
+     */
+    protected const HTTP_431 = "HTTP/1.1 431 Request Header Fields Too Large\r\nConnection: close\r\n\r\n";
+    
+    /**
      * Max bytes buffered while waiting for end of headers, and max offset of "\r\n\r\n" (header block size limit).
      */
+    
     protected const MAX_HEADER_LENGTH = 16384;
 
     /**
@@ -110,17 +118,17 @@ class Http
         $crlfPos = strpos($buffer, "\r\n\r\n");
         if (false === $crlfPos) {
             if (strlen($buffer) >= static::MAX_HEADER_LENGTH) {
-                $connection->end(static::HTTP_413, true);
+                $connection->end(static::HTTP_431, true);
             }
             return 0;
         }
 
         $length = $crlfPos + 4;
         if ($crlfPos >= static::MAX_HEADER_LENGTH) {
-            $connection->end(static::HTTP_413, true);
+            $connection->end(static::HTTP_431, true);
             return 0;
         }
-        $header = isset($buffer[$length]) ? substr($buffer, 0, $length) : $buffer;
+        $header = isset($buffer[$length + 1]) ? substr($buffer, 0, $length) : $buffer;
 
         if ($length <= TcpConnection::MAX_CACHE_STRING_LENGTH && isset($cache[$header])) {
             return $cache[$header];
@@ -129,7 +137,7 @@ class Http
         // Validate request line: METHOD SP origin-form SP HTTP/1.x
         $firstLineEnd = strpos($header, "\r\n");
         if (!preg_match(
-            '~^(?-i:GET|POST|OPTIONS|HEAD|DELETE|PUT|PATCH) /[^\x00-\x20\x7f]* (?-i:HTTP)/1\.(?<minor>[01])$~',
+            '~^(?-i:GET|POST|OPTIONS|HEAD|DELETE|PUT|PATCH) /[^\x00-\x20\x7f]* (?-i:HTTP)/1\.(?<minor>[0-9])$~',
             substr($header, 0, $firstLineEnd),
             $matches
         )) {
@@ -153,9 +161,13 @@ class Http
             $headers[strtolower($parts[0])][] = trim($parts[1], " \t");
         }
 
-        // Host: required for HTTP/1.1, must not be duplicated for any version (RFC 7230 §5.4)
+        // Host: required for HTTP/1.1, must not be duplicated for any version (RFC 9112 Section 3.2)
         $hostCount = count($headers['host'] ?? []);
-        if ($hostCount > 1 || ($matches['minor'] === '1' && $hostCount === 0)) {
+        if ($hostCount > 1 || ((int)$matches['minor'] > 0 && $hostCount === 0)) {
+            $connection->end(static::HTTP_400, true);
+            return 0;
+        }
+        if ($hostCount === 1 && !preg_match('/^(?:\[[^\]\r\n]+\]|[^\s:\/\[\]\r\n]+)(?::[0-9]+)?$/', $headers['host'][0])) {
             $connection->end(static::HTTP_400, true);
             return 0;
         }
@@ -193,7 +205,6 @@ class Http
         }
         return $length;
     }
-
 
     /**
      * Check the integrity of a chunked transfer-encoded request body.

@@ -17,11 +17,23 @@ use think\response\Json;
 class Category extends BaseEntity
 {
 
-    // 新的数量, 数据介于两表之间分量时使用
+
+    /**
+     * 新的数量, 数据介于两表之间分量时使用
+     * @var int
+     */
     protected static $newLimit;
-    // 当前分页数据偏移量
+    /**
+     * 当前分页数据偏移量
+     *
+     * @var int
+     */
     protected static $offset;
-    // 当前用到的数据总和
+    /**
+     * 当前用到的数据总和
+     *
+     * @var int
+     */
     protected static $currentTotalNum = 0;
 
 	// 查询类别信息
@@ -249,7 +261,6 @@ class Category extends BaseEntity
         if($map['totals']) {
 
             if($page > $lastPage) {
-                // throw new Exception('no data');
                 return [
                     'total'         => $map['totals'],
                     'per_page'      => $limit,
@@ -366,8 +377,6 @@ class Category extends BaseEntity
                 }
                 
                 unset($da);
-
-                
 
                 return $datas;
 

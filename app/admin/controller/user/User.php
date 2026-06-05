@@ -28,6 +28,10 @@ use think\response\Json;
 
 class User extends AdminBaseController
 {
+	public function initialize()
+	{
+		parent::initialize();
+	}
 
 	/**
 	 * 浏览
@@ -44,28 +48,37 @@ class User extends AdminBaseController
 	{
 		$page = Request::param('page/d', 1);
 		$limit = Request::param('limit/d', 10);
+		$param = Request::param(['id','name','email','sex','status']);
 
-		$datas = Request::param(['id','name','email','sex','status']);
+		$query = Db::name('user')
+		->alias('u')
+		->join('user_viprule v', 'u.vip = v.vip')
+		->field('u.id,name,nickname,user_img,phone,email,sex,last_login_ip,city,point,last_login_time,u.create_time,status,auth,note,v.nick as vipnick,u.vip');
 
-		$map = $this->getParamFilter($datas);
-
-		$query = Db::name('user')->alias('u')->join('user_viprule v', 'u.vip = v.vip');
-
-		if(!empty($map['id'])) {
-			$query->where('u.id', $map['id']);
-			unset($map['id']);
+		if(!empty($param['id'])) {
+			$query->where('u.id', $param['id']);
+		}
+		if(!empty($param['name'])){
+			$query->where('u.name|u.nickname', 'like', "%{$param['name']}%");
+		}
+		if(!empty($param['email'])){
+			$query->where('u.email', 'like', "%{$param['email']}%");
+		}
+		if(!empty($param['sex'])){
+			$query->where('u.sex', $param['sex']);
+		}
+		if(!empty($param['status'])){
+			$query->where('u.status', $param['status']);
 		}
 
 		$user = $query
-		->field('u.id,name,nickname,user_img,phone,email,sex,last_login_ip,city,point,last_login_time,u.create_time,status,auth,note,v.nick as vipnick,u.vip')
-		->where($map)
 		->where('u.delete_time', 0)
 		->order('u.id desc')
 		->page($page, $limit)
 		->select();
 
-		if($user->isEmpty()){
-			return json(['code'=>-1,'msg'=>'没有查询结果！']);
+		if(!$user->count()){
+			return json(['code' => -1, 'msg'=>'no data']);
 		}
 		
 		foreach($user as &$v){
@@ -271,15 +284,6 @@ class User extends AdminBaseController
 		}
 
 		return json(['code' => -1, 'msg' => '修改失败']);
-	}
-
-	//过滤数组中为空和null的值
-	public function filtrArr($arr)
-	{
-		if($arr === '' || $arr === null){
-            return false;
-        }
-        return true;
 	}
 
 }

@@ -9,7 +9,7 @@ return [
     // 自动侦测浏览器语言
     'auto_detect_browser' => true,
     // 允许的语言列表
-    'allow_lang_list'     => [],
+    'allow_lang_list'     => ['zh-cn', 'en-us'],
     // 多语言自动侦测变量名
     'detect_var'          => 'lang',
     // 是否使用Cookie记录

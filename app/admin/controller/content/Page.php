@@ -67,6 +67,7 @@ class Page extends AdminBaseController
         $page = PageEntity::field('id,cate_id,title,content,keywords,description,create_time')->with(['cate'=>function($query) {
             $query->field('id,catename');
         }])->find($id);
+        
         View::assign('page', $page);
 
         return View::fetch();

@@ -11,7 +11,6 @@
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
-use think\App;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\View;
@@ -19,13 +18,17 @@ use app\admin\model\AuthRule as AuthRuleModel;
 
 class AuthRule extends AdminBaseController
 {
-
+	/**
+	 * 权限模型
+	 * @var AuthRuleModel
+	 */
 	protected $model = null;
 
     //
-    public function __construct()
+    public function initialize()
     {
 		parent::initialize();
+
         $this->model = new AuthRuleModel();
     }
 
@@ -34,9 +37,7 @@ class AuthRule extends AdminBaseController
 	 */
 	public function index()
 	{
-		
 		return View::fetch();	
-		
 	}
 
 	public function list()

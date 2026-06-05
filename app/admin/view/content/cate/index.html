@@ -48,9 +48,10 @@
 {__block__}
 
 <script>
-    const CATE = "{:url('content.cate/list')}";
-    const DELETE = "{:url('content.cate/delete')}";
-    const CHECK = "{:url('content.cate/check')}";
+    const CATE = '/admin/content/cate/list';
+    const DELETE = '/admin/content/cate/delete';
+    const CHECK = '/admin/content/cate/check';
+    const ADD_EDIT = '/admin/content/cate/addEdit';
 
     layui.use(['treetable'],function () {
         let $ = layui.jquery;
@@ -108,7 +109,7 @@
 
         form.on('checkbox(cate-hot)', function(obj){
             var status = obj.elem.checked ? 1 : 0;
-            $.post(CHECK,{id:this.id, name:this.name, value: status},function(res){
+            $.post(CHECK,{id:this.id, name:this.name, value: status}, function(res){
                 if(res.code === 0){
                     layer.msg(res.msg,{icon:res.icon,time:2000})
                 } else {
@@ -134,7 +135,7 @@
                 title: '添加',
                 shade: 0.1,
                 area: ['550px', '710px'],
-                content: 'addEdit.html'
+                content: ADD_EDIT
             });
         }
 
@@ -144,7 +145,7 @@
                 title: '修改',
                 shade: 0.1,
                 area: ['550px', '710px'],
-                content: 'addEdit.html?id=' + obj.data.id
+                content: ADD_EDIT + '?id=' + obj.data.id
             });
         }
         window.remove = function(obj){

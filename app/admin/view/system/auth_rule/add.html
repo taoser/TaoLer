@@ -63,7 +63,8 @@
 	{__block__}
  
 	<script>
-    	const RULE_ADD = "{:url('system.AuthRule/add')}";
+    	const RULE_ADD = '/admin/system/authrule/add';
+		const RULE_TREE = '/admin/system/authrule/ruleTree';
 
     	layui.use(['xmSelect', 'iconPicker'], function(){
 			let $ = layui.jquery;
@@ -86,7 +87,7 @@
 			(function(){
 				$.ajax({
 					type: "get",
-					url: "{:url('system.AuthRule/ruleTree')}", 
+					url: RULE_TREE, 
 					success: function(res){
 						xmSelect.render({
 							el: '#menuSelectBox',

@@ -295,7 +295,7 @@ class Article extends TagLib
     {
         $type = empty($tag['type']) ? '' : $tag['type'];
         $num = empty($tag['num']) ? 10 : (int)$tag['num'];
-        $parse = match($type){
+        $parse = match($type) {
             "top"       => '<?php $__TOPS__ = \app\facade\Article::getTops('.$num.'); ?> {volist name="__TOPS__" id="article"}' .$content. '{/volist}',
             "good"      => '<?php $__GOODS__ = \app\facade\Article::getGoods('.$num.'); ?> {volist name="__GOODS__" id="article"}' .$content. '{/volist}',
             "comment"   => '<?php $__COMMENTS__ = \app\facade\Article::getHotComments('.$num.'); ?> {volist name="__COMMENTS__" id="article"}' .$content. '{/volist}',

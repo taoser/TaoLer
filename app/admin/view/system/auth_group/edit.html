@@ -70,7 +70,7 @@
 
 	<script>
 		// 数据接口
-		const AUTHGROUP_EDIT = "{:url('system.AuthGroup/edit')}";
+		const AUTHGROUP_EDIT = '/admin/system/AuthGroup/edit';
 
 		layui.use(['form', 'jquery'], function() {
 			let form = layui.form;
@@ -125,14 +125,15 @@
 					
 					}
 
-				if(level === '1'){
+					if(level === '1'){
 						var c = $(data.elem).siblings("input[type='checkbox']");
 						c.each(function(){
 							var e = $(this); 
 							e.next().removeClass("layui-form-checked");
-					});
-					//子项为0，菜单取消选择
-					var s = $(data.elem).parent().parent().children('li').children('div:first-of-type .layui-form-checked');
+						});
+
+						//子项为0，菜单取消选择
+						var s = $(data.elem).parent().parent().children('li').children('div:first-of-type .layui-form-checked');
 						if(s.length === 0){
 							$(data.elem).parent().parent().prev().removeClass("layui-form-checked");
 						}
@@ -180,8 +181,7 @@
 								icon: 1,
 								time: 1000
 							}, function() {
-								parent.layer.close(parent.layer.getFrameIndex(window
-									.name)); //关闭当前页
+								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
 								parent.layui.table.reload("role-table");
 							});
 						} else {

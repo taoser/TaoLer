@@ -182,7 +182,7 @@ class Think implements TemplateHandlerInterface
         $appDirMode = '';
         $isAddonsPath = false;
         $controllerPath = $request->controller();
-
+        // var_dump($controllerPath);
         // 获取视图根目录
         if (strpos($template, '@')) {
             // 跨模块调用
@@ -237,6 +237,7 @@ class Think implements TemplateHandlerInterface
         // dump('viewConfig:'. $this->config['view_dir_name']);
         // dump('view_path:'. $this->config['view_path']);
 
+        // 是否有自定义视图路径
         if ($this->config['view_path']) {
             $path = $this->config['view_path'] . $app . DIRECTORY_SEPARATOR;
             
@@ -264,7 +265,7 @@ class Think implements TemplateHandlerInterface
         $depr = $this->config['view_depr'];
 
         if (0 !== strpos($template, '/')) {
-
+            
             $template   = str_replace(['/', ':'], $depr, $template);
             $controller = $controller ?? $request->controller();
 
@@ -300,7 +301,14 @@ class Think implements TemplateHandlerInterface
                     }
 
                 } elseif (false === strpos($template, $depr)) {
-                    $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                    // 自定义模块 定义了模板路径的情况下，需要拼接控制器路径
+                    if($appDirMode == 'custom'){
+                        $template = $controllerPath . $depr . $template;
+                        $template = str_replace('/', DIRECTORY_SEPARATOR, $template);
+                        // dump('custom_tpl:'.$template);
+                    } else {
+                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                    }
                     // dump('template-2:'.$template);
                 }
             }

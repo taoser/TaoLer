@@ -9,7 +9,7 @@
 					<div class="layui-col-md2">
 						<label class="layui-form-label">用户名</label>
 						<div class="layui-input-block">
-							<input type="text" name="name" class="layui-input">
+							<input type="text" name="username" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-col-md2">
@@ -89,6 +89,12 @@
 {__block__}
 
 	<script>
+		const ADMIN_LIST = '/admin/system/admin/list';
+		const ADMIN_ADD = '/admin/system/admin/add';
+		const ADMIN_EDIT = '/admin/system/admin/edit';
+		const ADMIN_DELETE = '/admin/system/admin/delete';
+		const ADMIN_CHECK = '/admin/system/admin/check';
+		
 		layui.use(['common','popup'], function() {
 			let table = layui.table;
 			let form = layui.form;
@@ -168,7 +174,7 @@
 
 			table.render({
 				elem: '#user-table',
-				url: "{:url('system.admin/list')}",
+				url: ADMIN_LIST,
 				page: true,
 				cols: cols,
 				skin: 'line',
@@ -209,8 +215,8 @@
 			form.on('switch(user-enable)', function(obj) {
 				var status = obj.elem.checked ? 1 : -1;
 				$.ajax({
-					type:'post',
-					url:"{:url('system.admin/check')}",
+					type: 'post',
+					url: ADMIN_CHECK,
 					data:{"id": this.value, "status":status},
 					dataType:'json',
 					success:function(res){
@@ -232,7 +238,7 @@
 					title: '新增',
 					shade: 0.1,
 					area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'450px'],
-					content: 'add.html'
+					content: ADMIN_ADD
 				});
 			}
 
@@ -242,7 +248,7 @@
 					title: '修改',
 					shade: 0.1,
 					area: ['500px', '450px'],
-					content: 'edit.html?id=' + obj.data.id
+					content: ADMIN_EDIT + '?id=' + obj.data.id
 				});
 			}
 
@@ -254,7 +260,7 @@
 					layer.close(index);
 					let loading = layer.load();
 					$.ajax({
-						url: "{:url('system.admin/delete')}?id=" + obj.data['id'],
+						url: ADMIN_DELETE + "?id=" + obj.data['id'],
 						dataType: 'json',
 						type: 'delete',
 						success: function(res) {
@@ -288,7 +294,7 @@
 					layer.close(index);
 					let loading = layer.load();
 					$.ajax({
-						url: "{:url('system.admin/delete')}",
+						url: ADMIN_DELETE,
 						dataType: 'json',
 						type: 'delete',
 						data:{"id":checkIds}, 

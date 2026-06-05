@@ -25,8 +25,9 @@ class Index
     public function handle(Request $request, \Closure $next)
     {
         // 检查是否安装
-        $app = app('http')->getName();
-		if(!file_exists('./install.lock') && $app !== 'install'){
+        $app = $request->pathinfo();
+	
+		if(!file_exists('./install.lock') && str_starts_with($app, 'install/')){
 			return redirect('/install/index');
 		}
 

@@ -49,9 +49,11 @@
     {__block__}
 
     <script>
-        const RULES_URL = "{:url('system.AuthRule/list')}";
-        const RULES_DELETE = "{:url('system.AuthRule/delete')}";
-        const RULES_ENABLE = "{:url('system.AuthRule/check')}";
+        const RULES_URL = '/admin/system/AuthRule/list';
+        const RULES_ADD = '/admin/system/AuthRule/add';
+        const RULES_EDIT = '/admin/system/AuthRule/edit';
+        const RULES_DELETE = '/admin/system/AuthRule/delete';
+        const RULES_ENABLE = '/admin/system/AuthRule/check';
 
         layui.use(['treetable'],function () {
             let table = layui.table;
@@ -142,7 +144,7 @@
                     title: '新增',
                     shade: 0.1,
                     area: ['450px', '500px'],
-                    content: 'add.html'
+                    content: RULES_ADD
                 });
             }
 
@@ -152,7 +154,7 @@
                     title: '修改',
                     shade: 0.1,
                     area: ['450px', '500px'],
-                    content: 'edit.html?id=' + obj.data.id
+                    content: RULES_EDIT + '?id=' + obj.data.id
                 });
             }
 

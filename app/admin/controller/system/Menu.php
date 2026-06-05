@@ -11,6 +11,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
+use Override;
 use think\facade\Db;
 use taoser\think\Auth;
 use think\facade\Lang;
@@ -18,6 +19,14 @@ use think\facade\Session;
 
 class Menu extends AdminBaseController
 {
+
+
+    #[Override]
+    public function initialize()
+    {
+        parent::initialize();
+    }
+
     /**
      * pearadmin动态菜单栏
      * @return \think\response\Json
@@ -38,7 +47,7 @@ class Menu extends AdminBaseController
             "icon"  => "layui-icon layui-icon-console",
             "type"  => 1,
             "openType"  =>"_iframe",
-            "href"  => (string) url("index/console1"),
+            "href"  => (string) url("/admin/index/console1"),
             'sort'  => 1,
             'pid'   => 1,
         ];
@@ -55,13 +64,13 @@ class Menu extends AdminBaseController
         foreach ($auth_rule_list as $v) {
             if ($auth->check($v['name'], $this->aid) || $this->aid == 1) {
                 $menu[] = [
-                    'id'    => $v['id'],
-                    'title' => Lang::get($v['title']),
-                    'icon'  => 'layui-icon ' . $v['icon'],
-                    'href'  => (string) url('/admin/'.str_replace('.','/',$v['name'])),
-                    'pid'   => $v['pid'],
-                    'sort'  => $v['sort'],
-                    'ismenu' => $v['ismenu']
+                    'id'        => $v['id'],
+                    'title'     => Lang::get($v['title']),
+                    'icon'      => 'layui-icon ' . $v['icon'],
+                    'href'      => (string) url('/admin/'.str_replace('.','/',$v['name'])),
+                    'pid'       => $v['pid'],
+                    'sort'      => $v['sort'],
+                    'ismenu'    => $v['ismenu']
                 ];
             }
         }
@@ -109,7 +118,7 @@ class Menu extends AdminBaseController
             'id'    => 999,
             'title' => '用户后台',
             'icon'  => 'layui-icon layui-icon-console',
-            'href'  => (string) url("apps/delete"),
+            'href'  => (string) url("/admin/apps/delete"),
             'sort'  => 999,
             'type'  => 1,
             "openType"  => "_blank",
@@ -117,7 +126,7 @@ class Menu extends AdminBaseController
             'id'    => 999,
             'title' => '管理后台',
             'icon'  => 'layui-icon layui-icon-console',
-            'href'  => (string) url("apps/index"),
+            'href'  => (string) url("/admin/apps/index"),
             'sort'  => 999,
             'type'  => 1,
             "openType"  => "_blank",
@@ -260,7 +269,7 @@ class Menu extends AdminBaseController
                 "max"=> "30",
                 "index"=> [
                     "id"=> "501",
-                    "href"=> (string) url('index/console1'),
+                    "href"=> (string) url('/admin/index/console1'),
                     "title"=> "首页"
                 ]
             ],

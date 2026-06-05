@@ -95,8 +95,9 @@
 {__block__}
 
 <script>
-	const ADD_EDIT = "{:url('content.cate/addEdit')}";
-	const UPLOAD_URL = "{:url('content.cate/upload')}";
+	const ADD_EDIT = '/admin/content/cate/addEdit';
+	const UPLOAD_URL = '/admin/content/cate/upload';
+	const GET_CATE_TREE = '/admin/content/cate/getcatetree';
 
 	layui.use(['iconPicker', 'xmSelect','imgcom'], function(){
 		var $ = layui.jquery
@@ -148,7 +149,7 @@
 
         //分类菜单结构
 
-		$.get("{:url('content.cate/getCateTree')}",function(res) {
+		$.get(GET_CATE_TREE, function(res) {
 			var initPid = "{$cate.pid}";
 			// 渲染下拉树
 			xmSelect.render({

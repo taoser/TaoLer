@@ -13,6 +13,7 @@ namespace app\admin\model;
 use think\Model;
 use think\model\concern\SoftDelete;
 use think\facade\Lang;
+use think\Response;
 
 class AuthRule extends Model
 {
@@ -60,9 +61,9 @@ class AuthRule extends Model
     /**
      * 获取权限菜单数组
      *
-     * @return void
+     * @return  Response
      */
-    public function getAuthRuleArray()
+    public function getAuthRuleArray() :Response
     {
         $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')->select()->toArray();
         $ruls = [];
@@ -88,9 +89,9 @@ class AuthRule extends Model
 
         if(count($ruls)) {
             return json(['code' => 0, 'msg' => 'ok', 'count' => count($ruls), 'data'=>$ruls]);
-        } else {
-            return json(['code' => 0, 'msg' => 'no data','count' => null,'data'=>'']);
         }
+
+        return json(['code' => 0, 'msg' => 'no data','count' => null,'data'=>'']);
     }
 
 }

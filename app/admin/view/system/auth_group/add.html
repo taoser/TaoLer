@@ -64,7 +64,7 @@
 	
 	<script>
 		// 数据接口
-		const AUTHGROUP_ADD = "{:url('system.AuthGroup/add')}";
+		const AUTHGROUP_ADD = '/admin/system/AuthGroup/add';
 
 		layui.use(['form', 'jquery'], function() {
 			let form = layui.form;
@@ -170,8 +170,7 @@
 								icon: 1,
 								time: 1000
 							}, function() {
-								parent.layer.close(parent.layer.getFrameIndex(window
-									.name)); //关闭当前页
+								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
 								parent.layui.table.reload("role-table");
 							});
 						} else {

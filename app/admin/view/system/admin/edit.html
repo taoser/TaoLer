@@ -64,8 +64,9 @@
 			let $ = layui.jquery;
 
 			form.on('submit(user-save)', function(data) {
+				console.log(data.field);
 				$.ajax({
-					url: "{:url('system.admin/edit')}",
+					url: "{:url('/admin/system/admin/edit')}",
 					data: JSON.stringify(data.field),
 					dataType: 'json',
 					contentType: 'application/json',

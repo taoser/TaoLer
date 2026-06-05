@@ -49,13 +49,15 @@
 	{__block__}
   
 	<script>
+		const UPGRADE_KEY_EDIT = '/admin/system/upgrade/keyedit';
+
 		layui.use(['form', 'jquery'], function() {
 			let form = layui.form;
 			let $ = layui.jquery;
 
 			form.on('submit(key-save)', function(data) {
 				$.ajax({
-					url: "{:url('system.upgrade/keyedit')}",
+					url: UPGRADE_KEY_EDIT,
 					data: JSON.stringify(data.field),
 					dataType: 'json',
 					contentType: 'application/json',

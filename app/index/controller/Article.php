@@ -31,7 +31,7 @@ use tao\ResHelper;
 class Article extends IndexBaseController
 {
 	protected $middleware = [ 
-    	'logincheck' => ['except' 	=> ['cate','detail','download'] ],
+    	'logincheck' => ['except' 	=> ['list','detail','download'] ],
     ];
 
     protected $model;
@@ -42,8 +42,8 @@ class Article extends IndexBaseController
         $this->model = new \app\facade\Article();
     }
 
-    //文章分类
-    public function cate()
+    // 列表
+    public function list()
 	{
 		global $page;
 		//动态参数
@@ -54,15 +54,19 @@ class Article extends IndexBaseController
 		// 分类信息
 		$cateInfo = Category::getCateInfoByEname($ename);
 
+		// 单页分类
+		// type 1列表2单页3链接
 		if(!is_null($cateInfo) && $cateInfo->type == 2) {
-			$article = Db::name('page')->where('cate_id', $cateInfo->id)->find();
-			View::assign('article', $article);
+			$singleArticle = Db::name('page')->where('cate_id', $cateInfo->id)->find();
+			View::assign('article', $singleArticle);
+
+			return View::fetch('article/' . $cateInfo->tpl . '/single');
 		}
 
-		//当前页url
+		// 当前页url
 		$url = (string) url('cate_page', ['ename' => $ename, 'type' => $type, 'page' => $page]);
-		
-		$path = substr($url,0,strrpos($url,"/")); //返回最后/前面的字符串
+		// 返回最后/前面的字符串
+		$path = substr($url, 0, strrpos($url, "/"));
 		// 下一页url
 		$next = $path . '/' . ++$page . '.html';
 
@@ -76,7 +80,10 @@ class Article extends IndexBaseController
 
 		View::assign($assignArr);
 
-		$cateView = is_null($cateInfo) ? 'article/cate' : $path = $cateInfo->type == 2 ? 'article/' . $cateInfo->tpl . '/single' : 'article/' . $cateInfo->tpl . '/cate';
+		// $cateView = is_null($cateInfo) ? 'article/cate' : $path = $cateInfo->type == 2 ? 'article/' . $cateInfo->tpl . '/single' : 'article/' . $cateInfo->tpl . '/cate';
+
+		$cateView = is_null($cateInfo) ? 'article/list' : 'article/' . $cateInfo->tpl . '/list';
+		
 		return View::fetch($cateView);
     }
 

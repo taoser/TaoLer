@@ -15,10 +15,10 @@ Route::group('',function(){
 	Route::get('index/<page>$', 'index/index')->name('index_page');
 
 	// 定义文章分类路由
-    Route::get('<ename>-list$','article/cate')->name('cate');
-    Route::get('<ename>-list/type-<type>$', 'article/cate')->name('cate_type');
-    Route::get('<ename>-list/type-<type>/<page>$', 'article/cate')->name('cate_page');
-
+    Route::get('<ename>-list$','article/list')->name('cate');
+    Route::get('<ename>-list/type-<type>$', 'article/list')->name('cate_type');
+    Route::get('<ename>-list/type-<type>/<page>$', 'article/list')->name('cate_page');
+//
 	// 定义文章详情路由
 	// $detail_as = config('taoler.url_rewrite.article_as') ?: '<ename>/'; //详情页URL别称
 	Route::get('<ename>-list/<id>$', 'article/detail')->name('article_detail');

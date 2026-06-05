@@ -19,21 +19,20 @@ use app\admin\model\AuthGroup as AuthGroupModel;
 use app\admin\model\AuthGroupAccess;
 use app\admin\model\AuthRule as AuthRuleModel;
 use app\admin\model\Admin as adminModel;
-use LDAP\Result;
-use think\Response;
 
 
 class AuthGroup extends AdminBaseController
 {
 	/**
 	 *
-	 * @var [type]
+	 * @var AuthGroupModel
 	 */
 	protected $model = null;
 
 	public function initialize()
     {
 		parent::initialize();
+
         $this->model = new AuthGroupModel;
     }
 
@@ -44,35 +43,39 @@ class AuthGroup extends AdminBaseController
 	 */
 	public function index()
 	{
-		$roles = Db::name('auth_group')->field('id,title')->where('status',1)->select();
+		$roles = $this->model->field('id,title')->where('status',1)->select();
+
 		View::assign('roles',$roles);
+
 		return View::fetch();
 	}
 	
 	//角色
 	public function list()
 	{
-		
-		if(Request::isAjax()){
-			$data = Request::only(['id']);
-			$map = array_filter($data);
-			$role = Db::name('auth_group')->field('id,title,limits,descr,status')->where($map)->select();
-			$count = $role->count();
-			$res = [];
-			if($count){
-				$res = ['code'=>0,'msg'=>'','count'=>$count];			
-				foreach($role as $k => $v){
-				$data = ['id'=>$v['id'],'rolename'=>$v['title'],'limits'=>$v['limits'],'descr'=>$v['descr'],'check'=>$v['status']];
-				$res['data'][] = $data; 
-				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'没有查询结果！'];
-			}
-			return json($res);
+
+		$id = Request::param('id/d');
+		$query = $this->model->field('id,title,limits,descr,status');
+		if(!empty($id)){
+			$query->where('id', $id);
 		}
-		$roles = Db::name('auth_group')->field('id,title')->where('status',1)->select();
-		View::assign('roles',$roles);
-		return View::fetch('index');
+		$role = $query->select();
+		$count = $role->count();
+		$data = [];
+		if($count){
+			foreach($role as $k => $v){
+				$data[] = [
+					'id'		=> $v['id'],
+					'rolename'	=> $v['title'],
+					'limits'	=> $v['limits'],
+					'descr'		=> $v['descr'],
+					'check'		=> $v['status']
+				];
+			}
+
+			return json(['code'=>0,'msg'=>'ok','count'=>$count,'data'=>$data]);			
+		}
+		return json(['code'=>-1,'msg'=>'no data']);		
 	}
 	
 	//角色添加
@@ -125,8 +128,9 @@ class AuthGroup extends AdminBaseController
 	}
 
 	//角色删除
-	public function delete($id)
+	public function delete()
 	{
+		$id = Request::param('id');
 		$ids = explode(',',$id);
 		if(Request::isAjax()){
 			$role =AuthGroupModel::select($ids);
@@ -143,21 +147,17 @@ class AuthGroup extends AdminBaseController
 	//角色审核
 	public function check()
 	{
-		$data = Request::param();
+		$data = Request::param(['id','status']);
 
 		//获取状态
 		$res = Db::name('auth_group')->where('id',$data['id'])->save(['status' => $data['status']]);
 		if($res){
 			if($data['status'] == 1){
 				return json(['code'=>0,'msg'=>'角色审核通过','icon'=>6]);
-			} else {
-				return json(['code'=>0,'msg'=>'禁用此角色','icon'=>5]);
 			}
-			
-		}else {
-			return json(['code'=>-1,'msg'=>'审核出错']);
+			return json(['code'=>0,'msg'=>'禁用此角色','icon'=>5]);
 		}
-	
+		return json(['code'=>-1,'msg'=>'审核出错']);
 	}
 
 	/**

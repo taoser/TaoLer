@@ -21,11 +21,16 @@ use think\facade\Cookie;
 
 class Admin extends AdminBaseController
 {
+	/**
+     * 管理员模型
+     * @var AdminModel
+     */
     protected $model = null;
 
-    public function __construct(App $app)
+    public function initialize()
     {
-        parent::__construct($app);
+        parent::initialize();
+
         $this->model = new AdminModel();
     }
 
@@ -47,36 +52,34 @@ class Admin extends AdminBaseController
      */
 	public function list()
 	{
-		if(Request::isAjax()){
-			$data = Request::only(['id','username','mobile','email']);
-			$map = array_filter($data);
-            $admins = Db::name('admin')
-            ->field('id,avatar,username,mobile,email,last_login_ip,status,last_login_time')
-            ->where('delete_time',0)
-            ->where($map)
-            ->select();
+		$data = Request::only(['id','username','mobile','email']);
+		$map = array_filter($data);
+		$admins = Db::name('admin')
+		->field('id,avatar,username,mobile,email,last_login_ip,status,last_login_time')
+		->where('delete_time',0)
+		->where($map)
+		->select();
 
-            $count = $admins->count();
-            if($count){
-                $res = ['code'=>0,'msg'=>'','count'=>$count];
-                foreach($admins as $k => $v){
-                    $data = [
-                        'id'        => $v['id'],
-                        'avatar'    => $v['avatar'],
-                        'username'  => $v['username'],
-                        'phone'     => $v['mobile'],
-                        'email'     => $v['email'],
-                        'ip'        => $v['last_login_ip'],
-                        'check'     => $v['status'],
-                        'logintime' => date("Y-m-d", $v['last_login_time'])
-                    ];
-                    $res['data'][] = $data;
-                }
-            } else {
-                $res = ['code'=>-1,'msg'=>'没有查询结果！'];
-            }
-            return json($res);
-        }
+		$count = $admins->count();
+		if($count){
+			$data = [];
+			foreach($admins as $k => $v){
+				$data[] = [
+					'id'        => $v['id'],
+					'avatar'    => $v['avatar'],
+					'username'  => $v['username'],
+					'phone'     => $v['mobile'],
+					'email'     => $v['email'],
+					'ip'        => $v['last_login_ip'],
+					'check'     => $v['status'],
+					'logintime' => date("Y-m-d", $v['last_login_time'])
+				];
+			}
+
+			return json(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data]);
+		}
+
+		return json(['code' => 1,'msg' => 'no data']); 
 	}
 
 	
@@ -84,23 +87,21 @@ class Admin extends AdminBaseController
 	public function check()
 	{
 		$data = Request::only(['id', 'status']);
+
         if($data['id'] == 1 && $data['status'] == -1) {
-            return json(['code'=>-1,'msg'=>'无法禁用超级管理员']);
+            return json(['code' => -1, 'msg' => '无法禁用超级管理员']);
         }
 
 		//获取状态
 		$res = Db::name('admin')->where('id', $data['id'])->save(['status' => $data['status']]);
 		if($res){
-			if($data['status'] == 1){
-				return json(['code'=>0,'msg'=>'设置管理员通过','icon'=>6]);
-			} else {
-				return json(['code'=>0,'msg'=>'管理员已取消','icon'=>5]);
+			if($data['status']){
+				return json(['code' => 0, 'msg' => '设置管理员通过', 'icon' => 6]);
 			}
-			
-		} else {
-			return json(['code'=>-1,'msg'=>'审核出错']);
+			return json(['code' => 0, 'msg' => '管理员已取消', 'icon' => 5]);
 		}
-	
+
+		return json(['code' => -1, 'msg' => '审核出错']);
 	}
 	
 	//添加管理员
@@ -117,11 +118,10 @@ class Admin extends AdminBaseController
 			$admin = Db::name('admin')->save($data);
 			//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
 			if($admin){
-				$res = ['code'=>0,'msg'=>'添加成功'];
-			} else {
-				$res = ['code'=>-1,'msg'=>'添加失败'];
+				return json(['code'=>0,'msg'=>'添加成功']);
 			}
-			return json($res);
+
+			return json(['code'=>-1,'msg'=>'添加失败']);
 		}
 		//$auth_group = Db::name('auth_group')->select();
 		//View::assign(['auth_group'=>$auth_group]);
@@ -129,8 +129,9 @@ class Admin extends AdminBaseController
 	}
 	
 	//管理员编辑
-	public function edit($id)
+	public function edit()
 	{
+		$id = Request::param('id/d');
 		$admin = AdminModel::find($id);
 		
 		if(Request::isAjax()){
