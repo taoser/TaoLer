@@ -184,7 +184,7 @@ if (!function_exists('addons_url')) {
             }
         }
 
-        return Route::buildUrl("/addons/{$addons}/{$controller}/{$action}", $param)->suffix($suffix)->domain($domain);
+        return Route::buildUrl("/app/{$addons}/{$controller}/{$action}", $param)->suffix($suffix)->domain($domain);
     }
 }
 

@@ -1,133 +1,129 @@
 {extend name="public/form" /}
 
 {block name="body"}
-	<form class="layui-form" action="">
-		<div class="mainBox">
-			<div class="main-container">
-				<div class="layui-form-item layui-hide">
-					<input type="text" name="id" class="layui-input" value="{$user.id}">
+
+<form class="layui-form">
+	<div class="mainBox">
+		<div class="main-container">
+			<div class="layui-form-item">
+				<label class="layui-form-label">账号</label>
+				<div class="layui-input-block">
+					<input type="text" name="name" value="{$user.name}" lay-verify="title" autocomplete="off"
+						placeholder="请输入标题" class="layui-input" disabled>
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">账号</label>
-					<div class="layui-input-block">
-						<input type="text" name="name" value="{$user.name}" lay-verify="title" autocomplete="off"
-							placeholder="请输入标题" class="layui-input" disabled>
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-block">
+					<input type="text" name="email" value="{$user.email}" lay-verify="title"
+						autocomplete="off" placeholder="请输入邮箱" class="layui-input">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">邮箱</label>
-					<div class="layui-input-block">
-						<input type="text" name="email" value="{$user.email}" lay-verify="title"
-							autocomplete="off" placeholder="请输入邮箱" class="layui-input">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">密码</label>
+				<div class="layui-input-block">
+					<input type="text" name="password" value="" lay-verify="title" autocomplete="off"
+						placeholder="请输入密码" class="layui-input">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">密码</label>
-					<div class="layui-input-block">
-						<input type="text" name="password" value="" lay-verify="title" autocomplete="off"
-							placeholder="请输入密码" class="layui-input">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">电话</label>
+				<div class="layui-input-block">
+					<input type="text" name="phone" value="{$user.phone}" lay-verify="title" autocomplete="off"
+						placeholder="请输入电话" class="layui-input">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">电话</label>
-					<div class="layui-input-block">
-						<input type="text" name="phone" value="{$user.phone}" lay-verify="title" autocomplete="off"
-							placeholder="请输入电话" class="layui-input">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">头像</label>
+				<div class="layui-input-inline">
+					<input type="text" name="user_img" lay-verify="required" placeholder="请上传图片" autocomplete="off" class="layui-input" value="{$user.user_img}">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">头像</label>
-					<div class="layui-input-inline">
-						<input type="text" name="user_img" lay-verify="required" placeholder="请上传图片" autocomplete="off" class="layui-input" value="{$user.user_img}">
-					</div>
-					<button style="float: left;" type="button" class="pear-btn" dataid="{$user.id}" id="layuiadmin-upload-useradmin">上传图片</button> 
-					</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">性别</label>
-					<div class="layui-input-block">
-						<input type="radio" name="sex" value="0" title="男" {if condition="$user['sex'] eq 0"} checked {/if}>
-						<input type="radio" name="sex" value="1" title="女" {if condition="$user['sex'] eq 1"} checked {/if}>
-					</div>
+				<button style="float: left;" type="button" class="pear-btn" dataid="{$user.id}" id="layuiadmin-upload-useradmin">上传图片</button> 
+				</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">性别</label>
+				<div class="layui-input-block">
+					<input type="radio" name="sex" value="0" title="男" {if condition="$user['sex'] eq 0"} checked {/if}>
+					<input type="radio" name="sex" value="1" title="女" {if condition="$user['sex'] eq 1"} checked {/if}>
 				</div>
 			</div>
 		</div>
-		<div class="bottom">
-			<div class="button-container">
-				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
-					lay-filter="user-save">
-					<i class="layui-icon layui-icon-ok"></i>
-					提交
-				</button>
-				<button type="reset" class="pear-btn pear-btn-sm">
-					<i class="layui-icon layui-icon-refresh"></i>
-					重置
-				</button>
-			</div>
+	</div>
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+				lay-filter="user-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
 		</div>
-	</form>
+	</div>
+</form>
 
-	{__block__}
+{__block__}
 
-	<script>
-		layui.use(['form', 'jquery'], function() {
-			let form = layui.form;
-			let $ = layui.jquery;
-			let upload = layui.upload;
+<script>
 
-			form.on('submit(user-save)', function(data) {
-				$.ajax({
-					url: "{:url('user.user/edit')}",
-					data: JSON.stringify(data.field),
-					dataType: 'json',
-					contentType: 'application/json',
-					type: 'post',
-					success: function(result) {
-						if (result.code === 0) {
-							layer.msg(result.msg, {
-								icon: 1,
-								time: 1000
-							}, function() {
-								parent.layui.table.reload("user-table");
-								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-							});
-						} else {
-							layer.msg(result.msg, {
-								icon: 2,
-								time: 1000
-							});
-						}
+	const EDIT_URL = '/admin/user/user/edit';
+	const UPLOAD_IMG_URL = '/admin/user/user/uploadImg';
+
+	layui.use(['popup'], function() {
+		let form = layui.form;
+		let $ = layui.jquery;
+		let upload = layui.upload;
+		let popup = layui.popup;
+
+		form.on('submit(user-save)', function(data) {
+			data.field['id'] = layui.url().search['id'];
+			$.ajax({
+				url: EDIT_URL,
+				type: 'POST',
+				dataType: 'json',
+				data: data.field,
+				success: function(result) {
+					if (result.code) {
+						return popup.failure(result.msg);
 					}
-				})
-				return false;
-			});
-
-			//上传头像
-			upload.render({
-				elem: '#layuiadmin-upload-useradmin'
-				,url: "{:url('user.user/uploadImg')}"
-				,data: {type:'image'}
-				,accept: 'images'
-				,method: 'get'
-				,acceptMime: 'image/*'
-				,done: function(res){
-					$(this.item).prev("div").children("input").val(res.src);
-					if(res.code === 0){
-						layer.msg(res.msg,{
-							icon:6,
-							tiye:2000
-						});
-					} else {
-						layer.open({
-							title:"上传失败",
-							content:res.msg,
-							icon:5,
-							anim:6
-						});
-					}
+					return popup.success(result.msg, function() {
+						parent.layui.table.reload("user-table");
+						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+					});
 				}
-			});
+			})
+			return false;
+		});
 
-		})
-	</script>
+		//上传头像
+		upload.render({
+			elem: '#layuiadmin-upload-useradmin'
+			,url: UPLOAD_IMG_URL
+			,data: {type:'image'}
+			,accept: 'images'
+			,method: 'get'
+			,acceptMime: 'image/*'
+			,done: function(res){
+				$(this.item).prev("div").children("input").val(res.src);
+				if(res.code === 0){
+					layer.msg(res.msg,{
+						icon:6,
+						tiye:2000
+					});
+				} else {
+					layer.open({
+						title:"上传失败",
+						content:res.msg,
+						icon:5,
+						anim:6
+					});
+				}
+			}
+		});
+
+	})
+</script>
 
 {/block}

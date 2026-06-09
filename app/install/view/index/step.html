@@ -2,395 +2,453 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>引导安装</title>
+		<title>程序引导安装</title>
 		<link rel="stylesheet" href="/static/component/pear/css/pear.css" />
 		<link rel="stylesheet" href="/static/admin/css/install.css">
+		<style>
+			.run-sql {
+				width:100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				margin-top: 30px;
+			}
+			.layui-progress {
+				width: 800px;
+			}
+			.log-box {
+				background: #0f172a;
+				color: #e2e8f0;
+				border-radius: 10px;
+				width: 760px;
+				height: 600px;
+				overflow-y: auto;
+				font-family: 'Fira Code', 'Cascadia Code', monospace;
+				font-size: 13px;
+				padding: 16px;
+				margin: 20px 0;
+				box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+			}
+
+		</style>
 	</head>
 	<body class="pear-container">
-		<div class="layui-row layui-col-space10">
+				
+		<div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+			<div carousel-item>
 
-			<div class="layui-col-md12">
-				<div class="layui-card">
-					<div class="layui-card">
-						<div class="layui-card-body" style="padding-top: 40px;">
-							<div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
-								<div carousel-item>
-									<div>
-										
-										<form class="layui-form" action="javascript:void(0);" style="margin: 0 auto;max-width: 750px;padding-top: 20px;">
-											<div class="inside2">
-												<div class="inwp cl">
-													<h2>TaoLerCMS - 建站系统（以下简称TaoLer）安装协议：</h2>
-													<hr>
-													<p>1、欢迎使用TaoLer系统，她是一款轻量化、快速、便捷、简单的综合社区内容管理系统。</p>
-													<p>2、适用于学校、企业、社团组织、社区、政府、本地华商圈等综合型服务类型</p>
-													<p>3、本系统在作者能力范围内做到安全可靠，代码严禁，并力争进行长期更新支持、及时修复BUG，减少使用者的使用成本。</p>
-													<p>4、尽管程序在发布前已经过安全测试，但仍不能完全保证漏洞的存在和丢失数据的风险，作者不承担商业风险。</p>
-													<p>5、本程序版权归开发者所有，在未经过作者同意的情况下，严禁转售、赠送他人。</p>
-													<p>6、您可以在完全遵守本许可协议的基础上，免费下载安装使用，商业应用请联系作者授权。</p> 
-													<p>7、无论您是个人或组织、盈利与否、用途如何（包括以学习和研究为目的），均需仔细阅读本协议，包括免除或者限制开发团队责任的免责条款及对您的权利限制。请您审阅并接受或不接受本服务条款。如您不同意本服务条款及/或随时对其的修改，您应不使用或主动取消产品。否则，您的任何对产品中的相关服务的注册、登陆、下载、查看等使用行为将被视为您对本服务条款全部的完全接受，包括接受对服务条款随时所做的任何修改。</p>
-													<p>8、本协议一旦发生变更, TaoLer开发团队将在网页上公布修改内容。修改后的服务条款一旦在网站管理后台上公布即有效代替原来的服务条款。如果您选择接受本条款，即表示您同意接受协议各项条件的约束。如果您不同意本服务条款，则不能获得使用本服务的权利。您若有违反本条款规定，TaoLer有权随时中止或终止您对本程序的使用资格并保留追究相关法律责任的权利。</p>
-													<p>9、在理解、同意、并遵守本协议的全部条款后，方可开始使用本程序。本许可协议条款的解释，效力及纠纷的解决，适用于中华人民共和国大陆法律。</p>
-													<p>10、您使用本系统，需要遵循许可协议，一旦安装表示您已接受该系统各项条款。</p>
-												</div>
-												</br>
-											</div>
-											
-											<div class="layui-form-item">
-												<div class="layui-input-block">
-													<input type="checkbox" name="agrement" title="同意" checked>
-													<button class="pear-btn pear-btn-success" lay-submit lay-filter="formStep">
-														&emsp;下一步&emsp;
-													</button>
-												</div>
-											</div>
-										</form>
-									</div>
-
-									<div>
-										<form class="layui-form"  action="javascript:void(0);" style="margin: 0 auto;max-width: 600px;padding-top: 20px;">
-
-											<div class="layui-form-item inside2">
-												<div class="inwp cl">
-													<h2>环境检测：</h2>
-													<table  style="width:600px;">
-														<tr>
-															<th style="width:25%;">坏境</th>
-															<th style="width:25%;">最低配置</th>
-															<th style="width:25%;">当前配置</th>
-															<th style="width:25%;">是否符合</th>
-														</tr>
-														<tr>
-															<td>操作系统</td>
-															<td>不限</td>
-															<td>
-																<?php echo php_uname('s'); ?>
-															</td>
-															<td class="yes">√</td>
-														</tr>
-														<tr>
-															<td>php版本</td>
-															<td>&gt;7.4.0</td>
-															<td>
-																<?php echo PHP_VERSION ?>
-															</td>
-															<td>
-																<?php if (version_compare(PHP_VERSION, '7.4.0', '>=')): ?>
-																<span class="yes">√</span>
-																<?php else: ?>
-																×
-																<?php endif ?>
-															</td>
-														</tr>
-													</table>
-										
-													<h2>扩展检测：</h2>
-													<table style="width:600px;">
-														<tr>
-															<th width="25%">坏境</th>
-															<th width="25%">最低配置</th>
-															<th width="25%">当前配置</th>
-															<th width="25%">是否符合</th>
-														</tr>
-														<tr>
-															<td>数据库</td>
-															<td>Mysqli</td>
-															<td><?php
-																	$pdo = false;
-																	if(class_exists('PDO', false))
-																	{
-																	   if(defined('PDO::MYSQL_ATTR_USE_BUFFERED_QUERY'))
-																		{
-																			echo 'PDO_MYSQL';
-																			$pdo = true;
-																		}
-																		else
-																		{
-																			echo '不支持PDO_MYSQL';
-																		}
-																	}
-																	else
-																	{
-																		echo '不支持PDO_MYSQL';
-																	}
-																	if(!$pdo)
-																	{
-																		if (function_exists('mysqli_close'))
-																		{
-																			echo 'MySQLi';
-																			$pdo = true;
-																		}
-																	}
-																?>
-															</td>
-															<td>
-																<?php if ($pdo): ?>
-																<span class="yes">√</span>
-																<?php else: ?>
-																×
-																<?php endif; ?>
-															</td>
-										
-														</tr>
-														<tr>
-															<td>PDO</td>
-															<td>支持</td>
-															<td>
-																<?php if(extension_loaded('pdo')): ?>
-																Yes
-																<?php else: ?>
-																No
-																<?php endif; ?>
-															</td>
-															<td>
-																<?php if(extension_loaded('pdo')): ?>
-																<span class="yes">√</span>
-																<?php else: ?>
-																×
-																<?php endif; ?>
-															</td>
-														</tr>
-														<tr>
-															<td>fileinfo</td>
-															<td>支持</td>
-															<td>
-																<?php if(get_extension_funcs('fileinfo')): ?>
-																Yes
-																<?php else: ?>
-																No
-																<?php endif; ?>
-															</td>
-															<td>
-																<?php if(get_extension_funcs('fileinfo')): ?>
-																<span class="yes">√</span>
-																<?php else: ?>
-																×
-																<?php endif; ?>
-															</td>
-														</tr>
-													</table>
-										
-													<h2>目录权限：</h2>
-													<table style="width:600px;">
-														<tr>
-															<th width="25%">坏境</th>
-															<th width="25%">最低配置</th>
-															<th width="25%">当前配置</th>
-															<th width="25%">是否符合</th>
-														</tr>
-														<tr>
-															<td>app</td>
-															<td>可写</td>
-															<td>
-																<?php if (is_writable('../app')): ?> 可写
-																<?php else: ?> 不可写
-																<?php endif ?>
-															</td>
-															<td>
-																<?php if (is_writable('../app')): ?>
-																<span class="yes">√</span>
-																<?php else: ?>
-																×
-																<?php endif ?>
-															</td>
-														</tr>
-														<tr>
-															<td>config</td>
-															<td>可写</td>
-															<td>
-																<?php if (is_writable('../config')): ?> 可写
-																<?php else: ?> 不可写
-																<?php endif ?>
-															</td>
-															<td>
-																<?php if (is_writable('../config')): ?>
-																<span class="yes">√</span>
-																<?php else: ?> ×
-																<?php endif ?>
-															</td>
-														</tr>
-														<tr>
-															<td>public</td>
-															<td>可写</td>
-															<td>
-																<?php if (is_writable('../public')): ?> 可写
-																<?php else: ?> 不可写
-																<?php endif ?>
-															</td>
-															<td>
-																<?php if (is_writable('../public')): ?>
-																<span class="yes">√</span>
-																<?php else: ?>
-																×
-																<?php endif ?>
-															</td>
-														</tr>
-														<tr>
-															<td>runtime</td>
-															<td>可写</td>
-															<td>
-																<?php if (is_writable('../runtime')): ?> 可写
-																<?php else: ?> 不可写
-																<?php endif ?>
-															</td>
-															<td>
-																<?php if (is_writable('../runtime')): ?>
-																<span class="yes">√</span>
-																<?php else: ?>
-																×
-																<?php endif ?>
-															</td>
-														</tr>
-														<tr>
-															<td>view</td>
-															<td>可写</td>
-															<td>
-																<?php if (is_writable('../view')): ?> 可写
-																<?php else: ?> 不可写
-																<?php endif ?>
-															</td>
-															<td>
-																<?php if (is_writable('../view')): ?>
-																<span class="yes">√</span>
-																<?php else: ?>
-																×
-																<?php endif ?>
-															</td>
-														</tr>
-													</table>
-												</div>
-											</div>
-
-											<div class="layui-form-item">
-												<div class="layui-input-block">
-													<button type="button" class="pear-btn pear-btn-success pre">上一步</button>
-													<button class="pear-btn pear-btn-success" lay-submit lay-filter="formStep2">
-														&emsp;下一步&emsp;
-													</button>
-												</div>
-											</div>
-										</form>
-									</div>
-									<div class="inside2">
-										<div class="inwp cl">
-											<form class="layui-form" action="javascript:void(0);" style="margin: 0 auto;max-width: 600px;padding-top: 20px;" >
-												<h2>创建数据库：</h2>
-												<input type="hidden" name="DB_TYPE" value="mysql">
-												<div class="layui-form-item">
-													<label class="layui-form-label">数据库地址</label>
-													<div class="layui-input-block">
-														<input type="text" name="DB_HOST" value="127.0.0.1" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">数据库账号</label>
-													<div class="layui-input-block">
-														<input type="text" name="DB_USER" value="root" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">数据库密码</label>
-													<div class="layui-input-block">
-														<input type="text" name="DB_PWD" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">数据库端口</label>
-													<div class="layui-input-block">
-														<input type="text" name="DB_PORT" value="3306" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">数据库名</label>
-													<div class="layui-input-block">
-														<input type="text" type="text" name="DB_NAME" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">设置表前缀</label>
-													<div class="layui-input-block">
-														<input type="text" name="DB_PREFIX" value="tao_" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<h2>网站信息：</h2>
-								
-												<div class="layui-form-item">
-													<label class="layui-form-label">网站名称</label>
-													<div class="layui-input-block">
-														<input type="text" name="webname" placeholder="请输入网站名称" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">副标题</label>
-													<div class="layui-input-block">
-														<input type="text" name="webtitle" placeholder="请输入网站副标题" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<h2>管理员账号：</h2>
-												<div class="layui-form-item">
-													<label class="layui-form-label">用户名</label>
-													<div class="layui-input-block">
-														<input type="text" name="admin_user" placeholder="至少5字符" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">邮箱</label>
-													<div class="layui-input-block">
-														<input type="text" name="admin_email" placeholder="请输入正确邮箱" required lay-verify="email" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">登录密码</label>
-													<div class="layui-input-block">
-														<input type="password" name="admin_pass" placeholder="至少包含6个字符。可使用字母，数字和符号" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<label class="layui-form-label">密码确认</label>
-													<div class="layui-input-block">
-														<input type="password" name="admin_pass2" required lay-verify="required" autocomplete="off" class="layui-input">
-													</div>
-												</div>
-												<div class="layui-form-item">
-													<div class="layui-input-block">
-														<button type="button" class="pear-btn pear-btn-success pre">上一步</button>
-														<button class="pear-btn pear-btn-success" lay-submit lay-filter="formStep3">
-															&emsp;下一步&emsp;
-														</button>
-													</div>
-												</div>
-											</form>
-										</div>
-									</div>
-									<div>
-										<div style="text-align: center;margin-top: 90px;">
-											<i class="layui-icon layui-circle" style="color: white;font-size:30px;font-weight:bold;background: #52C41A;padding: 20px;line-height: 80px;">&#xe605;</i>
-											<div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
-												安装成功
-											</div>
-											<div style="font-size: 14px;color: #666;margin-top: 20px;">恭喜您心愿达成，祝马到成功！</div>
-										</div>
-										<div style="text-align: center;margin-top: 50px;">
-											<a href="/" class="pear-btn pear-btn-success next"  target="_blank">去前端查看</a>
-											<a href="/admin" class="pear-btn pear-btn-success"  target="_blank">去管理后台</a>
-										</div>
-									</div>
-								</div>
+				<div>
+					<form class="layui-form" action="javascript:void(0);" style="margin: 0 auto; max-width: 800px;padding-top: 20px;">
+						<div class="inside2">
+							<div class="inwp cl">
+								<h2>TaoLerCMS - 建站系统（以下简称TaoLer）安装协议：</h2>
+								<hr>
+								<p>1、欢迎使用TaoLer系统，她是一款轻量化、快速、便捷、简单的综合社区内容管理系统。</p>
+								<p>2、适用于学校、企业、社团组织、社区、政府、本地华商圈等综合型服务类型</p>
+								<p>3、本系统在作者能力范围内做到安全可靠，代码严禁，并力争进行长期更新支持、及时修复BUG，减少使用者的使用成本。</p>
+								<p>4、尽管程序在发布前已经过安全测试，但仍不能完全保证漏洞的存在和丢失数据的风险，作者不承担商业风险。</p>
+								<p>5、本程序版权归开发者所有，在未经过作者同意的情况下，严禁转售、赠送他人。</p>
+								<p>6、您可以在完全遵守本许可协议的基础上，免费下载安装使用，商业应用请联系作者授权。</p> 
+								<p>7、无论您是个人或组织、盈利与否、用途如何（包括以学习和研究为目的），均需仔细阅读本协议，包括免除或者限制开发团队责任的免责条款及对您的权利限制。请您审阅并接受或不接受本服务条款。如您不同意本服务条款及/或随时对其的修改，您应不使用或主动取消产品。否则，您的任何对产品中的相关服务的注册、登陆、下载、查看等使用行为将被视为您对本服务条款全部的完全接受，包括接受对服务条款随时所做的任何修改。</p>
+								<p>8、本协议一旦发生变更, TaoLer开发团队将在网页上公布修改内容。修改后的服务条款一旦在网站管理后台上公布即有效代替原来的服务条款。如果您选择接受本条款，即表示您同意接受协议各项条件的约束。如果您不同意本服务条款，则不能获得使用本服务的权利。您若有违反本条款规定，TaoLer有权随时中止或终止您对本程序的使用资格并保留追究相关法律责任的权利。</p>
+								<p>9、在理解、同意、并遵守本协议的全部条款后，方可开始使用本程序。本许可协议条款的解释，效力及纠纷的解决，适用于中华人民共和国大陆法律。</p>
+								<p>10、您使用本系统，需要遵循许可协议，一旦安装表示您已接受该系统各项条款。</p>
+							</div>
+							</br>
+						</div>
+						
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<input type="checkbox" name="agrement" title="同意">
+								<button class="pear-btn pear-btn-success" lay-submit lay-filter="formStep">
+									下一步
+								</button>
 							</div>
 						</div>
+					</form>
+				</div>
+
+				<div>
+					<form class="layui-form"  action="javascript:void(0);" style="margin: 0 auto;max-width: 800px;padding-top: 20px;">
+
+						<div class="layui-form-item inside2">
+							<div class="inwp cl">
+								<h2>环境检测：</h2>
+								<table  style="width:800px;">
+									<tr>
+										<th style="width:25%;">坏境</th>
+										<th style="width:25%;">最低配置</th>
+										<th style="width:25%;">当前配置</th>
+										<th style="width:25%;">是否符合</th>
+									</tr>
+									<tr>
+										<td>操作系统</td>
+										<td>不限</td>
+										<td>
+											<?php echo php_uname('s'); ?>
+										</td>
+										<td class="yes">√</td>
+									</tr>
+									<tr>
+										<td>php版本</td>
+										<td>&gt;=8.0.0</td>
+										<td>
+											<?php echo PHP_VERSION ?>
+										</td>
+										<td>
+											<?php if (version_compare(PHP_VERSION, '8.0.0', '>=')): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif ?>
+										</td>
+									</tr>
+								</table>
+					
+								<h2>扩展检测：</h2>
+								<table style="width:800px;">
+									<tr>
+										<th width="25%">坏境</th>
+										<th width="25%">最低配置</th>
+										<th width="25%">当前配置</th>
+										<th width="25%">是否符合</th>
+									</tr>
+									<tr>
+										<td>数据库</td>
+										<td>Mysqli</td>
+										<td><?php
+												$pdo = false;
+												if(class_exists('PDO', false))
+												{
+													if(defined('PDO::MYSQL_ATTR_USE_BUFFERED_QUERY'))
+													{
+														echo 'PDO_MYSQL';
+														$pdo = true;
+													}
+													else
+													{
+														echo '不支持PDO_MYSQL';
+													}
+												}
+												else
+												{
+													echo '不支持PDO_MYSQL';
+												}
+												if(!$pdo)
+												{
+													if (function_exists('mysqli_close'))
+													{
+														echo 'MySQLi';
+														$pdo = true;
+													}
+												}
+											?>
+										</td>
+										<td>
+											<?php if ($pdo): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif; ?>
+										</td>
+					
+									</tr>
+									<tr>
+										<td>PDO</td>
+										<td>支持</td>
+										<td>
+											<?php if(extension_loaded('pdo')): ?>
+											Yes
+											<?php else: ?>
+											No
+											<?php endif; ?>
+										</td>
+										<td>
+											<?php if(extension_loaded('pdo')): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif; ?>
+										</td>
+									</tr>
+									<tr>
+										<td>fileinfo</td>
+										<td>支持</td>
+										<td>
+											<?php if(get_extension_funcs('fileinfo')): ?>
+											Yes
+											<?php else: ?>
+											No
+											<?php endif; ?>
+										</td>
+										<td>
+											<?php if(get_extension_funcs('fileinfo')): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif; ?>
+										</td>
+									</tr>
+								</table>
+					
+								<h2>目录权限：</h2>
+								<table style="width:800px;">
+									<tr>
+										<th width="25%">坏境</th>
+										<th width="25%">最低配置</th>
+										<th width="25%">当前配置</th>
+										<th width="25%">是否符合</th>
+									</tr>
+									<tr>
+										<td>addons</td>
+										<td>可写</td>
+										<td>
+											<?php if (is_writable('../addons')): ?> 可写
+											<?php else: ?> 不可写
+											<?php endif ?>
+										</td>
+										<td>
+											<?php if (is_writable('../addons')): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif ?>
+										</td>
+									</tr>
+									<tr>
+										<td>app</td>
+										<td>可写</td>
+										<td>
+											<?php if (is_writable('../app')): ?> 可写
+											<?php else: ?> 不可写
+											<?php endif ?>
+										</td>
+										<td>
+											<?php if (is_writable('../app')): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif ?>
+										</td>
+									</tr>
+									<tr>
+										<td>config</td>
+										<td>可写</td>
+										<td>
+											<?php if (is_writable('../config')): ?> 可写
+											<?php else: ?> 不可写
+											<?php endif ?>
+										</td>
+										<td>
+											<?php if (is_writable('../config')): ?>
+											<span class="yes">√</span>
+											<?php else: ?> ×
+											<?php endif ?>
+										</td>
+									</tr>
+									<tr>
+										<td>public</td>
+										<td>可写</td>
+										<td>
+											<?php if (is_writable('../public')): ?> 可写
+											<?php else: ?> 不可写
+											<?php endif ?>
+										</td>
+										<td>
+											<?php if (is_writable('../public')): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif ?>
+										</td>
+									</tr>
+									<tr>
+										<td>runtime</td>
+										<td>可写</td>
+										<td>
+											<?php if (is_writable('../runtime')): ?> 可写
+											<?php else: ?> 不可写
+											<?php endif ?>
+										</td>
+										<td>
+											<?php if (is_writable('../runtime')): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif ?>
+										</td>
+									</tr>
+									<tr>
+										<td>view</td>
+										<td>可写</td>
+										<td>
+											<?php if (is_writable('../view')): ?> 可写
+											<?php else: ?> 不可写
+											<?php endif ?>
+										</td>
+										<td>
+											<?php if (is_writable('../view')): ?>
+											<span class="yes">√</span>
+											<?php else: ?>
+											×
+											<?php endif ?>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button type="button" class="pear-btn pear-btn-success pre">上一步</button>
+								<button class="pear-btn pear-btn-success" lay-submit lay-filter="formStep2">
+									下一步
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="inside2">
+					<div class="inwp cl">
+						<form class="layui-form" action="javascript:void(0);" style="margin: 0 auto;max-width: 800px;padding-top: 20px;" >
+							<h2>创建数据库：</h2>
+							<input type="hidden" name="DB_TYPE" value="mysql">
+							<div class="layui-form-item">
+								<label class="layui-form-label">数据库地址</label>
+								<div class="layui-input-block">
+									<input type="text" name="DB_HOST" value="127.0.0.1" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">数据库账号</label>
+								<div class="layui-input-block">
+									<input type="text" name="DB_USER" value="root" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">数据库密码</label>
+								<div class="layui-input-block">
+									<input type="text" name="DB_PWD" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">数据库端口</label>
+								<div class="layui-input-block">
+									<input type="text" name="DB_PORT" value="3306" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">数据库名</label>
+								<div class="layui-input-block">
+									<input type="text" type="text" name="DB_NAME" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">设置表前缀</label>
+								<div class="layui-input-block">
+									<input type="text" name="DB_PREFIX" value="tao_" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<h2>网站信息：</h2>
+			
+							<div class="layui-form-item">
+								<label class="layui-form-label">网站名称</label>
+								<div class="layui-input-block">
+									<input type="text" name="webname" placeholder="请输入网站名称" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">副标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="webtitle" placeholder="请输入网站副标题" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<h2>管理员账号：</h2>
+							<div class="layui-form-item">
+								<label class="layui-form-label">用户名</label>
+								<div class="layui-input-block">
+									<input type="text" name="admin_user" placeholder="至少5字符" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">邮箱</label>
+								<div class="layui-input-block">
+									<input type="text" name="admin_email" placeholder="请输入正确邮箱" required lay-verify="email" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">登录密码</label>
+								<div class="layui-input-block">
+									<input type="password" name="admin_pass" placeholder="至少包含6个字符。可使用字母，数字和符号" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">密码确认</label>
+								<div class="layui-input-block">
+									<input type="password" name="admin_pass2" required lay-verify="required" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-input-block">
+									<button type="button" class="pear-btn pear-btn-success pre">上一步</button>
+									<button class="pear-btn pear-btn-success" lay-submit lay-filter="formStep3" id="formStep3">
+										下一步
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<div>
+					<div class="run-sql">
+						<div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="sql-filter-progress">
+							<div class="layui-progress-bar" lay-percent="0%"></div>
+						</div>
+						<div class="log-box" id="logPanel">
+							<div class="log-entry info">🟢 就绪，点击「开始导入」执行 SQL 文件</div>
+							<div class="log-entry info">📌 请确保 SQL 文件路径配置正确 (config.php)</div>
+						</div>
+						<button type="button" class="pear-btn pear-btn-success pre" id="sql-install-pre">上一步</button>				
+					</div>
+				</div>
+				
+				<div>
+					<div style="text-align: center;margin-top: 90px;">
+						<i class="layui-icon layui-circle" style="color: white;font-size:30px;font-weight:bold;background: #52C41A;padding: 20px;line-height: 80px;">&#xe605;</i>
+						<div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
+							安装成功
+						</div>
+						<div style="font-size: 14px;color: #666;margin-top: 20px;">恭喜您心愿达成，祝马到成功！</div>
+					</div>
+					<div style="text-align: center;margin-top: 50px;">
+						<a href="/" class="pear-btn pear-btn-success next"  target="_blank">去前端查看</a>
+						<a href="/admin/index" class="pear-btn pear-btn-success"  target="_blank">去管理后台</a>
 					</div>
 				</div>
 			</div>
-			
 		</div>
+
 		<script src="/static/component/layui/layui.js"></script>
 		<script src="/static/component/pear/pear.js"></script>
 		<script>
+
+			// SSE 相关变量
+			let SSE_URL = '/install/index/start';  // 后端SSE接口地址
+			let eventSource = null;
+			let isImporting = false;
+			const logPanel = document.getElementById('logPanel');
+			const startBtn = document.getElementById('formStep3');
+			const sqlInstallPreBtn = document.getElementById('sql-install-pre');
+
 			layui.use(['form', 'step','code','element','toast'], function() {
-				var $ = layui.$,
-					form = layui.form,
-					step = layui.step;
+				let $ = layui.$;
+				let	form = layui.form;
+				let	step = layui.step;
 				let toast = layui.toast;
+				let element = layui.element;
 					
 				layui.code();
 
@@ -398,27 +456,30 @@
 					elem: '#stepForm',
 					filter: 'stepForm',
 					width: '100%',
-					stepWidth: '750px',
-					height: '950px',
-					stepItems: [{
-						title: '协议'
-					}, {
-						title: '检测'
-					}, {
-						title: '安装'
-					}, {
-						title: '成功'
-					}
-				]
+					stepWidth: '760px',
+					height: '900px',
+					stepItems: [
+						{
+							title: '协议'
+						}, {
+							title: '检测'
+						}, {
+							title: '配置'
+						}, {
+							title: '安装'
+						}, {
+							title: '成功'
+						}
+					]
 				});
 
-				//协议
+				// 同意协议
 				form.on('submit(formStep)', function(data) {
 					if(data.field.agrement == 'on') {
 						// 同意协议进行下一步
 						step.next('#stepForm');
 					} else {
-						toast.error({title:"错误消息",message:"您未同意协议，将要退出安装！"});
+						toast.error({title:"错误消息", message: "您未同意协议，将要退出安装！"});
 						// 不同意关闭安装页码
 						// var userAgent = navigator.userAgent;
 						// if (userAgent.indexOf("Firefox") != -1 || userAgent.indexOf("Chrome") != -1) {
@@ -433,27 +494,27 @@
 					return false;
 				});
 
-				// 配置检测
+				// 环境检测
 				form.on('submit(formStep2)', function(data) {
-					if ($('.yes').length < 10) {
-						toast.error({title:"错误消息",message:"您的配置或权限不符合要求,请检查"});
+					if ($('.yes').length < 11) {
+						toast.error({title: "错误消息", message:"您的配置或权限不符合要求,请检查"});
 					} else {
 						step.next('#stepForm');
 					}
-					
+
 					return false;
 				});
 
-				// 数据库信息
+				// 配置信息
 				form.on('submit(formStep3)', function(data) {
-					$.post("{:url('index/install')}", data.field, function(res){
-						if(res.code === 0) {
-							// 安装成功
-							step.next('#stepForm');
-						} else {
-							toast.error({title:"错误消息",message: res.msg});
-						}
-					})
+					// 下一步
+					step.next('#stepForm');
+					// 清空log
+					clearLog();
+					// 禁用上一步按钮
+					sqlInstallPreBtn.disabled = true;
+					// 开始导入
+					startImport(data.field);
 					
 					return false;
 				});
@@ -461,13 +522,181 @@
 				// 上一步
 				$('.pre').click(function() {
 					step.pre('#stepForm');
-					return false;
 				});
 
 				// $('.next').click(function() {
 				// 	step.next('#stepForm');
 				//     return false;
 				// });
+
+				// 辅助: 追加日志
+				function addLog(message, type = 'info') {
+					const logDiv = document.createElement('div');
+					logDiv.className = `log-entry ${type}`;
+					const timestamp = new Date().toLocaleTimeString();
+					let prefix = '';
+					if (type === 'success') prefix = '✅ ';
+					else if (type === 'error') prefix = '❌ ';
+					else if (type === 'progress') prefix = '⚡ ';
+					else if (type === 'info') prefix = 'ℹ️ ';
+					else if (type === 'ok') prefix = 'v ';
+					logDiv.innerHTML = `[${timestamp}] ${prefix}${message}`;
+					logPanel.appendChild(logDiv);
+					logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+				}
+
+				// 清空日志 (保留一条提示)
+				function clearLog() {
+					logPanel.innerHTML = '';
+				}
+
+				// 重置UI状态 (不影响SSE对象, 仅重置展示)
+				function resetUI() {
+					progressFill.style.width = '0%';
+					percentLabel.innerText = '0%';
+					executedCountSpan.innerText = '0';
+					totalStatementsSpan.innerText = '—';
+					extraInfoSpan.innerText = '';
+				}
+
+				// 关闭SSE连接
+				function closeSSE() {
+					if (eventSource) {
+						eventSource.close();
+						eventSource = null;
+					}
+					isImporting = false;
+					startBtn.disabled = false;
+					startBtn.innerHTML = '▶ 开始导入';
+				}
+
+				// 开始导入主逻辑
+				function startImport(formData) {
+					if (isImporting) {
+						addLog('导入任务正在进行中，请勿重复操作', 'error');
+						return;
+					}
+					// 清空之前进度相关的展示，但不清除全部日志（保留日志更友好，但也可选择重置部分）
+					// resetUI();
+					addLog('🚀 正在建立 SSE 连接...', 'info');
+					
+					// 关闭已有连接以防重复
+					if (eventSource) {
+						eventSource.close();
+						eventSource = null;
+					}
+					
+					// 创建 EventSource 指向后端的 SSE 端点 (可以根据需要加随机参数避免缓存)
+					const params = new URLSearchParams(formData).toString();
+					console.log('发送SSE请求，数据：', params);
+
+					eventSource = new EventSource(SSE_URL + '?' + params, {
+						headers: {
+							'Content-Type': 'application/json', // 文本返回格式
+						}
+					});
+
+					isImporting = true;
+					startBtn.disabled = true;
+					// startBtn.innerHTML = '⏳ 导入中...';
+
+					// 监听消息
+					eventSource.onmessage = function(event) {
+						try {
+							const data = JSON.parse(event.data);							
+							console.log('收到SSE消息:', data);
+
+							handleSSEMessage(data);
+							
+						} catch (e) {
+							addLog('解析消息失败: ' + event.data, 'error');
+						}
+					};
+
+					eventSource.onerror = function(err) {
+						if (eventSource && eventSource.readyState === EventSource.CLOSED) {
+							addLog('SSE 连接已关闭 (导入可能已完成或出错)', 'info');
+						} else {
+							addLog('SSE 连接异常，请刷新页面后重试', 'error');
+						}
+						closeSSE();
+						// 如果没收到完成事件但连接断了，提示检查后端
+						if (isImporting) {
+							addLog('连接意外中断，导入可能不完整，请检查后端错误日志', 'error');
+						}
+						isImporting = false;
+						startBtn.disabled = false;
+						// startBtn.innerHTML = '▶ 开始导入';
+					};
+				}
+
+				// 处理来自后端的SSE消息
+				function handleSSEMessage(data) {
+
+					const { type, message, current, total, percent, sql_preview, error } = data;
+					
+					switch(type) {
+						case 'init':
+							addLog(message || '初始化导入任务', 'info');
+							if (total && total > 0) {
+								// totalStatementsSpan.innerText = total;
+							}
+							break;
+						case 'info':
+							if(message){
+								addLog(message, 'info');
+							}
+							break;
+						case 'total':
+							if (total) {
+								// totalStatementsSpan.innerText = total;
+								addLog(`📄 共解析到 ${total} 条SQL语句，准备执行`, 'info');
+							}
+							break;
+						case 'progress':
+							if (current !== undefined && total !== undefined) {
+								// 设置进度值
+								element.progress('sql-filter-progress', percent + '%'); // 设置 50% 的进度
+							}
+							if (message) {
+								addLog(message, 'progress');
+							}
+							if (sql_preview) {
+								// 可选显示简短sql信息，避免撑爆日志
+								addLog(`🔹 语句预览: ${sql_preview}`, 'progress');
+							}
+							break;
+						case 'success':
+							addLog(message || '✅ 数据导入成功！', 'success');
+							// extraInfoSpan.innerText = '✨ 完成';
+							// progressFill.style.width = '100%';
+							// percentLabel.innerText = '100%';
+							// closeSSE();  // 完成后关闭连接
+							break;
+						case 'ok':
+							addLog(message || '✅ 安装完成！', 'ok');
+							closeSSE();  // 完成后关闭连接
+							step.next('#stepForm');
+							break;
+						case 'error':
+							addLog(`❌ 错误: ${message || error || '未知错误'}`, 'error');
+							
+							if (sql_preview) {
+								addLog(`失败语句: ${sql_preview}`, 'error');
+							}
+							// extraInfoSpan.innerText = '导入失败';
+							// 出错终止导入，关闭连接
+							closeSSE();
+							// 重置上一步导入按钮
+							sqlInstallPreBtn.disabled = false;
+
+							break;
+						default:
+
+							addLog(`未知消息类型: ${type}`, 'info');
+					}
+				}
+
 			})
 		</script>
 	</body>

@@ -56,7 +56,7 @@ class Service extends \think\Service
         }
         // 注册插件控制器路由
         // $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
-        $route->rule("addons/:addon/[:controller]/[:action]", $execute);
+        $route->rule("app/:addon/[:controller]/[:action]", $execute);
         
         // $route->group('addons', function () use ($route, $execute) {
         //     $route->rule(':addon/:controller/:action', ':controller/:action');
@@ -172,15 +172,27 @@ class Service extends \think\Service
             $module_dir = $this->addons_path . $name . DIRECTORY_SEPARATOR;
             // 路由配置文件目录
             $addons_route_dir = $module_dir . 'route' . DIRECTORY_SEPARATOR;
-
+            // 语言配置文件目录
+            $addons_lang_dir = $module_dir . 'lang' . DIRECTORY_SEPARATOR;
+            
             if (file_exists($addons_route_dir) && is_dir($addons_route_dir)) {
-                $files = glob($addons_route_dir . '*.php');
-                foreach ($files as $file) {
-                    if (file_exists($file)) {
+                $routeFiles = glob($addons_route_dir . '*.php');
+                foreach ($routeFiles as $route_file) {
+                    if (file_exists($route_file)) {
                         // $this->loadRoutesFrom($file);
-                        include_once $file;
+                        include_once $route_file;
                     }
                 }
+            }
+            if (file_exists($addons_lang_dir) && is_dir($addons_lang_dir)) {
+                $langFiles = glob($addons_lang_dir . '*.php');
+                $langFilesArray = [];
+                foreach ($langFiles as $lang_file) {
+                    if (file_exists($lang_file)) {
+                        $langFilesArray[] = $lang_file;
+                    }
+                }
+                Lang::load($langFilesArray);
             }
         }
     }

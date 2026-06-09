@@ -44,9 +44,10 @@ class Upgrade extends AdminBaseController
     protected $pn = '';
     protected $sys = '';
 	
-	public function __construct()
+	public function initialize()
 	{
 		parent::initialize();
+        // 初始化系统信息
 		$this->sys_version = Config::get('taoler.version');
 		$this->pn = Config::get('taoler.appname');
 		$this->sys = $this->getSystem();
@@ -100,6 +101,7 @@ class Upgrade extends AdminBaseController
 			}
 			return json($res);
 		}
+        
 		View::assign('key',$key);
 		return View::fetch();
 	}
@@ -107,7 +109,13 @@ class Upgrade extends AdminBaseController
 	//升级前的版本检测
 	public function check()
 	{
-        $cy = HttpHelper::post($this->sys['base_url'],['u'=>$this->sys['domain'], 'key' => $this->sys['key']])->toJson();
+
+        $cy = HttpHelper::post($this->sys['base_url'], 
+        [
+            'u'     =>$this->sys['domain'],
+            'key'   => $this->sys['key']
+        ])
+        ->toJson();
 
         if($cy->code == 0 && $cy->level !== $this->sys['clevel']){
             Db::name('system')->cache('system')->update(['clevel'=>$cy->level,'id'=>1]);

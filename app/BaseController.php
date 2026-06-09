@@ -243,16 +243,20 @@ abstract class BaseController
         return $upRes;
     }
 
-    //获取artcile内容所有图片，返回数组
-	protected function getArticleAllpic($str)
+    /**
+     * 获取artcile内容所有图片，返回数组
+     *
+     * @param string $str
+     * @return array
+     */
+	protected function getArticleAllpic(string $str) : array
 	{
 		//正则匹配<img src="http://img.com" />
+        $imgArr = [];
 		$pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png|\.jpeg]))[\'|\"].*?[\/]?>/";
 		preg_match_all($pattern,$str,$matchContent);
 		if(isset($matchContent[1])){
 			$imgArr = $matchContent[1];
-		}else{
-			$temp = "./images/no-image.jpg";//在相应位置放置一张命名为no-image的jpg图片
 		}
 	
 		return $imgArr;

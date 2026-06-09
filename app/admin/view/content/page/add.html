@@ -53,12 +53,17 @@
 {__block__}
 
 <script>
-	layui.use(['xmSelect'], function () {
+
+	const SINGLE_PAGE_Add = '/admin/content/page/add';
+	const SINGLE_CATE_TREE = '/admin/content/cate/getSingleCateTree';
+
+	layui.use(['xmSelect','popup'], function () {
 		var $ = layui.jquery, form = layui.form, upload = layui.upload;
 		var xmSelect = layui.xmSelect;
+		var popup = layui.popup;
 
 		// 分类选择 渲染下拉树
-		$.get("{:url('content.cate/getSingleArticleCateTree')}",function(res){
+		$.get(SINGLE_CATE_TREE, function(res){
 			xmSelect.render({
 				el: '#CateId',
 				name: 'cate_id',
@@ -92,26 +97,18 @@
 
 		form.on('submit(page-save)', function(data) {
 			$.ajax({
-				url: "{:url('content.page/add')}",
-				data: JSON.stringify(data.field),
+				url: SINGLE_PAGE_Add,
+				type: 'POST',
 				dataType: 'json',
-				contentType: 'application/json',
-				type: 'post',
+				data: data.field,
 				success: function(result) {
-					if (result.code === 0) {
-						layer.msg(result.msg, {
-						icon: 1,
-						time: 1000
-						}, function() {
-							parent.layui.table.reload("page-table");
-							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-						});
-					} else {
-						layer.msg(result.msg, {
-						icon: 2,
-						time: 1000
-						});
+					if (result.code) {
+						return popup.failure(result.msg);
 					}
+					return popup.success(result.msg,function(){
+						parent.layui.table.reload("page-table");
+						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+					});
 				}
 			})
 			return false;

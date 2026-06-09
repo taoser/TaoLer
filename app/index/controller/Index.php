@@ -61,7 +61,7 @@ class Index extends IndexBaseController
 	// hook('signhook', ['id'=>1]);
 
 // 查看已注册的路由
-// dump(app('route')->getRuleList());
+dump(app('route')->getRuleList());
 
 
 	// return json(['code' => 200, 'msg' => 'success']);

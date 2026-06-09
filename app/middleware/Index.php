@@ -26,8 +26,7 @@ class Index
     {
         // 检查是否安装
         $app = $request->pathinfo();
-	
-		if(!file_exists('./install.lock') && str_starts_with($app, 'install/')){
+		if(!file_exists('./install.lock') && !str_starts_with($app, 'install/')){
 			return redirect('/install/index');
 		}
 
@@ -93,7 +92,11 @@ class Index
 		
 	}
 
-	protected function getTaglibPreLoad()
+	/**
+	 * 获取标签库预加载
+	 * @return string
+	 */
+	protected function getTaglibPreLoad() : string
 	{
 		$taglib_pre_load = Cache::remember('taglib', function(){
 			$tagsArr = [];

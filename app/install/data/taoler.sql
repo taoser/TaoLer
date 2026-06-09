@@ -55,7 +55,7 @@ CREATE TABLE `tao_admin`  (
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '软删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_admin
@@ -66,13 +66,14 @@ INSERT INTO `tao_admin` VALUES (2, 'test', '测试账号', '95d6f8d0d0c3b45e5dbe
 -- ----------------------------
 -- Table structure for tao_area
 -- ----------------------------
+DROP TABLE IF EXISTS `tao_area`;
 CREATE TABLE `tao_area`  (
-  `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `parent_id` smallint UNSIGNED NOT NULL DEFAULT 0,
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parent_id` int UNSIGNED NOT NULL DEFAULT 0,
   `name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `parent_id`(`parent_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4069 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4069 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '区域' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_area
@@ -2251,7 +2252,7 @@ CREATE TABLE `tao_auth_group`  (
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户组权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户组权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_auth_group
@@ -2277,7 +2278,7 @@ CREATE TABLE `tao_auth_group_access`  (
   INDEX `uid`(`uid`) USING BTREE,
   INDEX `group_id`(`group_id`) USING BTREE,
   INDEX `uid_group_id`(`uid`, `group_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户组明细表' ROW_FORMAT = Fixed;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户组明细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_auth_group_access
@@ -2508,7 +2509,7 @@ CREATE TABLE `tao_collection`  (
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章收藏表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章收藏表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_comment
@@ -2547,7 +2548,7 @@ CREATE TABLE `tao_cunsult`  (
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '反馈表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '反馈表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_link
@@ -2583,7 +2584,7 @@ CREATE TABLE `tao_mail_server`  (
   `active` tinyint(1) NOT NULL DEFAULT 0 COMMENT '邮箱服务1激活0未激活',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '邮件服务器配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '邮件服务器配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_mail_server
@@ -2605,7 +2606,7 @@ CREATE TABLE `tao_message`  (
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_message_to
@@ -2623,7 +2624,7 @@ CREATE TABLE `tao_message_to`  (
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_mesto_receveid`(`receve_id`) USING BTREE COMMENT '收件人ID'
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息详细表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息详细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_page
@@ -2716,7 +2717,7 @@ CREATE TABLE `tao_system`  (
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_system
@@ -2788,7 +2789,7 @@ CREATE TABLE `tao_user`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE COMMENT '用户名查询用户索引',
   INDEX `email`(`email`) USING BTREE COMMENT 'email查询用户索引'
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user
@@ -2807,7 +2808,7 @@ CREATE TABLE `tao_user_area`  (
   `update_time` int UNSIGNED NOT NULL DEFAULT 0,
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user_area
@@ -2844,7 +2845,7 @@ CREATE TABLE `tao_user_sign`  (
   `stime` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '签到的时间',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户签到表' ROW_FORMAT = Fixed;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户签到表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_user_signrule
@@ -2858,7 +2859,7 @@ CREATE TABLE `tao_user_signrule`  (
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '升级时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户签到积分规则' ROW_FORMAT = Fixed;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户签到积分规则' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user_signrule
@@ -2886,7 +2887,7 @@ CREATE TABLE `tao_user_viprule`  (
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '升级时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user_viprule
@@ -2910,6 +2911,5 @@ CREATE TABLE `tao_user_zan`  (
   `type` tinyint NOT NULL DEFAULT 2 COMMENT '1文章点赞2评论点赞',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '点赞时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Fixed;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
-SET FOREIGN_KEY_CHECKS = 1;

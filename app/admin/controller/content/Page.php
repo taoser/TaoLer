@@ -52,6 +52,8 @@ class Page extends AdminBaseController
 
     public function edit()
     {
+        
+        
         if(Request::isPost()) {
             $data = Request::param(['id','title','cate_id','content','description', 'keywords']);
             try{
@@ -63,8 +65,8 @@ class Page extends AdminBaseController
         }
 
         $id = Request::param('id/d');
-
-        $page = PageEntity::field('id,cate_id,title,content,keywords,description,create_time')->with(['cate'=>function($query) {
+        $page = PageEntity::field('id,cate_id,title,content,keywords,description,create_time')
+        ->with(['cate'=>function($query) {
             $query->field('id,catename');
         }])->find($id);
         

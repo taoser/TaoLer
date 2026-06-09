@@ -38,7 +38,7 @@ class AccessControl
 
         $path = $request->pathinfo();
 
-        if(str_starts_with($path, 'addons/')) {
+        if(str_starts_with($path, 'app/')) {
 
             // $pathArr = explode("/", str_replace('.html','', str_replace('\\','/',$path)));
             // $addon = $pathArr[1];
