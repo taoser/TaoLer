@@ -11,11 +11,8 @@
 					<div class="layui-tab layui-tab-brief" lay-filter="website-tabs-brief">
 						<ul class="layui-tab-title">
 							<li class="layui-this" lay-id="website">网站设置</li>
-							{if hook('mailstatushook') ==1 }<li lay-id="email">邮箱服务</li>{/if}
 							<li lay-id="config">服务配置</li>
-							<li lay-id="domain">域名绑定</li>
-							<li lay-id="bind_map">应用映射</li>
-							<li lay-id="url_rewrite">URL美化</li>
+							{if hook('mailstatushook') ==1 }<li lay-id="email">邮箱服务</li>{/if}
 						</ul>
 						<div class="layui-tab-content">
 							<div class="layui-tab-item layui-show">
@@ -145,7 +142,7 @@
 									</div>
 								</div>
 							</div>
-							{:hook('mailsethook')}
+							
 							<div class="layui-tab-item">
 								<div class="layui-form" wid100 lay-filter="config">
 									<div class="layui-form-item">
@@ -283,86 +280,7 @@
 								</div>
 							</div>
 
-							<div class="layui-tab-item">
-								<div class="layui-form" wid100 lay-filter="domain">
-
-									<div class="layui-form-item">
-										<label class="layui-form-label">多域名开关</label>
-										<div class="layui-input-inline">
-											<input type="checkbox" name="domain_check" lay-skin="switch" lay-filter="domain_check" lay-text="开启|关闭" data-rul="{:url('system.set/setDomain')}" {if empty(config('app.domain_bind')) == false} checked {/if}>
-										</div>
-									</div>
-									<div id="set_domain" class="{if empty(config('app.domain_bind')) == true} layui-hide {/if}">
-										<div class="layui-form-item">
-											<label class="layui-form-label">Index前端</label>
-											<div class="layui-input-inline">
-												<input type="text" name="index" required lay-verify="required" placeholder="只需填写子域如www" value="{$index}" class="layui-input">
-											</div>
-											<div class="layui-form-mid layui-word-aux">访问则为www.aieok.com</div>
-										</div>
-										<div class="layui-form-item">
-											<label class="layui-form-label">Admin后端</label>
-											<div class="layui-input-inline">
-												<input type="text" name="admin" required lay-verify="required" placeholder="只需填写子域如admin" value="{$admin}" class="layui-input">
-											</div>
-											<div class="layui-form-mid layui-word-aux">访问则为admin.aieok.com</div>
-										</div>
-
-										<div class="layui-form-item">
-											<div class="layui-input-block">
-												<button class="pear-btn pear-btn-primary" lay-submit lay-filter="set_system_domain" data-url="{:url('system.set/setDomain')}">确认保存</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="layui-tab-item">
-								<div class="layui-form" wid100 lay-filter="bind_map">
-									<div class="layui-form-item">
-										<label class="layui-form-label">Index应用</label>
-										<div class="layui-input-inline">
-											<input type="text" name="index_map" required value="{$index_map}" class="layui-input">
-										</div>
-										<div class="layui-form-mid layui-word-aux">改变后原路径访问无效</div>
-									</div>
-									<div class="layui-form-item">
-										<label class="layui-form-label">Admin应用</label>
-										<div class="layui-input-inline">
-											<input type="text" name="admin_map" required value="{$admin_map}" class="layui-input">
-										</div>
-										<div class="layui-form-mid layui-word-aux">设置后需要使用新路径</div>
-									</div>
-									<div class="layui-form-item">
-										<div class="layui-input-block">
-											<button class="pear-btn pear-btn-primary" lay-submit lay-filter="set_bind_map" data-url="{:url('system.set/bindMap')}">确认保存</button>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="layui-tab-item">
-								<div class="layui-form" wid100 lay-filter="url_rewrite">
-									<div class="layui-form-item">
-										<label class="layui-form-label">帖子url字段</label>
-										<div class="layui-input-inline">
-											<input type="text" name="article_as" required value="{$url_re['article_as']}" class="layui-input">
-										</div>
-										<div id="artdesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/article/1.html</div>
-									</div>
-									<div class="layui-form-item">
-										<label class="layui-form-label">分类url字段</label>
-										<div class="layui-input-inline">
-											<input type="text" name="cate_as" required value="{$url_re['cate_as']}" class="layui-input">
-										</div>
-										<div id="catedesc" class="layui-form-mid layui-word-aux">如：www.aieok.com/cate/ask.html</div>
-									</div>
-									<div class="layui-form-item">
-										<div class="layui-input-block">
-											<button class="pear-btn pear-btn-primary" lay-submit lay-filter="set_url_rewrite" data-url="{:url('system.set/setUrl')}">确认保存</button>
-										</div>
-									</div>
-								</div>
-							</div>
+							{:hook('mailsethook')}
 
 						</div>
 					</div>

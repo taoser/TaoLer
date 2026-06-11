@@ -4,7 +4,7 @@
 {block name="body"}
     <div class="layui-card">
         <div class="layui-card-body">
-            <table id="rule-table" lay-filter="rule-table"></table>
+            <table id="table" lay-filter="table"></table>
         </div>
     </div>
 
@@ -55,11 +55,12 @@
         const RULES_DELETE = '/admin/system/AuthRule/delete';
         const RULES_ENABLE = '/admin/system/AuthRule/check';
 
-        layui.use(['treetable'],function () {
+        layui.use(['treetable','popup'],function () {
             let table = layui.table;
             let form = layui.form;
             let $ = layui.jquery;
             let treetable = layui.treetable;
+            let popup = layui.popup;
  
             treetable.render({
                 treeColIndex: 1,
@@ -69,7 +70,7 @@
                 skin:'line',
                 treeDefaultClose: true,
                 toolbar:'#power-toolbar',
-                elem: '#rule-table',
+                elem: '#table',
                 url: RULES_URL,
                 page: false,
                 cols: [[
@@ -85,7 +86,7 @@
                 ]]
             });
 
-            table.on('tool(rule-table)',function(obj){
+            table.on('tool(table)',function(obj){
                 if (obj.event === 'remove') {
                     window.remove(obj);
                 } else if (obj.event === 'edit') {
@@ -94,7 +95,7 @@
             })
 
 
-            table.on('toolbar(rule-table)', function(obj){
+            table.on('toolbar(table)', function(obj){
                 if(obj.event === 'add'){
                     window.add();
                 } else if(obj.event === 'refresh'){
@@ -102,40 +103,28 @@
                 } else if(obj.event === 'batchRemove'){
                     window.batchRemove(obj);
                 }  else if(obj.event === 'expandAll'){
-                        treetable.expandAll("#rule-table");
+                    treetable.expandAll("#table");
                 } else if(obj.event === 'foldAll'){
-                        treetable.foldAll("#rule-table");
+                    treetable.foldAll("#table");
                 }
             });
 
             form.on('switch(rule-enable)', function(obj) {
                 layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
                 var status = obj.elem.checked ? 1 : -1;
-                //执行用户审核
-                    $.ajax({
-                        type:'post',
-                        url: RULES_ENABLE,
-                        data:{"id":this.value,"status":status},
-                        dataType:'json',
-                        success:function(res){
-                            if(res.code === 0){
-                                layer.msg(res.msg,{
-                                    icon:res.icon,
-                                    time:2000
-                                }
-                                //,function(){location.reload();}
-                                );
-                            } else {
-                                layer.open({
-                                    title:'审核失败',
-                                    content:res.msg,
-                                    icon:5,
-                                    adim:6
-                                })
-                            }
+                $.ajax({
+                    type:'post',
+                    url: RULES_ENABLE,
+                    data:{id:this.value, status},
+                    dataType:'json',
+                    success:function(res){
+                        if(res.code) {
+                            return popup.failutre(res.msg);
                         }
-                    });
-                    return false;
+                        return popup.success(res.msg);
+                    }
+                });
+                return false;
             });
 
             window.add = function(){
@@ -160,23 +149,23 @@
 
             window.remove = function(obj){
                 layer.confirm('确定要删除该权限', {icon: 3, title:'提示'}, function(index){
-                    layer.close(index);
+    
                     let loading = layer.load();
                     $.ajax({
                         url: RULES_DELETE+"?id="+obj.data['powerId'],
                         dataType:'json',
                         type:'delete',
-                        success:function(result){
+                        success:function(res){
                             layer.close(loading);
-                            if(result.code === 0){
-                                layer.msg(result.msg,{icon:1,time:1000},function(){
-                                    obj.del();
-                                });
-                            }else{
-                                layer.msg(result.msg,{icon:2,time:1000});
+                            if(res.code) {
+                                return popup.failutre(res.msg);
                             }
+                            return popup.success(res.msg,function(){
+                                obj.del();
+                            });
                         }
                     })
+                    layer.close(index);
                 });
             }
 
@@ -204,21 +193,14 @@
                         url: MODULE_PATH + "batchRemove/" + ids,
                         dataType: 'json',
                         type: 'delete',
-                        success: function(result) {
+                        success: function(res) {
                             layer.close(loading);
-                            if (result.success) {
-                                layer.msg(result.msg, {
-                                    icon: 1,
-                                    time: 1000
-                                }, function() {
-                                    table.reload('user-table');
-                                });
-                            } else {
-                                layer.msg(result.msg, {
-                                    icon: 2,
-                                    time: 1000
-                                });
+                            if(res.code) {
+                                return popup.failutre(res.msg);
                             }
+                            return popup.success(res.msg, function() {
+                                table.reload('rule-table');
+                            });
                         }
                     })
                 });

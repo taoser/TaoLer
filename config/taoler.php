@@ -64,14 +64,4 @@ return [
 		'id_status'   => 0,
 
 	],
-
-	// URL美化
-	'url_rewrite' => [
-		// 详情url
-		'article_as'   => '',
-		// 分类url
-		'cate_as'   => '',
-	],
-
-	
 ];

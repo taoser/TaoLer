@@ -84,7 +84,11 @@ class AuthRule extends AdminBaseController
 				$data['level'] = 0;
 			}
 
-            return $this->model->saveRule($data);
+            $res = $this->model->saveRule($data);
+			if($res){
+				return json(['code' => 0,'msg' => 'ok']);
+			}
+			return json(['code' => -1,'msg' => 'error']);
 		}
 
 		$auth_rules = $this->model->getAuthRuleArray();
@@ -93,13 +97,14 @@ class AuthRule extends AdminBaseController
 	}
 	
 	//权限编辑
-	public function edit(\think\Request $request)
+	public function edit()
 	{
-		$id = $request->param('id/d');
+		$id = $this->request->param('id/d');
 		$rule = new AuthRuleModel();
 		
 		if(Request::isAjax()){
-			$data = Request::param(['id','pid','title','name','icon','sort','ismenu']);
+			$data = Request::param(['id/d','pid/d','title','name','icon','sort/d','ismenu/d']);
+	
 			//层级level
             $ruId = $rule->find($data['pid']); //查询出上级ID
 			if($ruId){
@@ -109,13 +114,18 @@ class AuthRule extends AdminBaseController
 				$data['level'] = 0;
 			}
 
-			$son = $this->model->where('pid',$data['id'])->select();//查询出下级
+			$son = $this->model->where('pid', $data['id'])->select();//查询出下级
             if(!empty($son)){
                 $son->update(['level' => $data['level'] + 1]);
             }
 
 			$rule = $this->model->find($data['id']);
-            return $rule->saveRule($data);
+
+            $res = $rule->saveRule($data);
+			if($res){
+				return json(['code' => 0,'msg' => 'ok']);
+			}
+			return json(['code' => -1,'msg' => 'error']);
 		}
 		
 		$auth_rules = $this->model->getAuthRuleArray();
@@ -154,11 +164,11 @@ class AuthRule extends AdminBaseController
 
     /**
      * 权限开关
-     * @return \think\response\Json
+     * @return Json
      */
-	public function check()
+	public function check() : Json
 	{
-		$data = Request::only(['id','status']);
+		$data = Request::only(['id/d','status/d']);
 		if($data['id'] == 1 || $data['id'] == 31) {
 			return json(['code' => -1, 'msg' => '不能关闭重要权限！']);
 		}
@@ -167,15 +177,11 @@ class AuthRule extends AdminBaseController
 		$res = Db::name('auth_rule')->save($data);
 		if($res){
 			if($data['status'] == 1){
-				return json(['code'=>0,'msg'=>'权限开启','icon'=>6]);
-			} else {
-				return json(['code'=>0,'msg'=>'权限禁用','icon'=>5]);
+				return json(['code'=>0,'msg'=>'权限开启']);
 			}
-			
-		}else {
-			return json(['code'=>-1,'msg'=>'审核出错']);
+			return json(['code'=>0,'msg'=>'权限禁用']);
 		}
-	
+		return json(['code'=>-1,'msg'=>'审核出错']);
 	}
 	
 	//排序

@@ -111,7 +111,7 @@
 				layer.close(loading);
 				if (res.code === 0) {
 					// 已件最新版本
-					toast.info({title:"通知消息", message: res.msg ,position: 'topRight'})
+					toast.info({title:"通知消息", message: res.msg, position: 'topRight'})
 				} else if (res.code === 1) {
 					// 可升级
 					$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+ res.data.up_num +'</span>个新版本：<span style="color:red">可更新至v' + res.data.version + ' [!重要:' + res.data.info + ']</span></div>');
@@ -125,7 +125,7 @@
 					});
 				} else {
 					// 服务器错误
-					toast.error({title:"服务器错误",message:res.msg});
+					toast.error({title: "服务器错误", message: res.msg});
 				}
 			});
 
@@ -164,21 +164,12 @@
 			}
 			,done: function(res){
 				layer.closeAll('loading'); //关闭loading
-				if(res.code == 0){
-					layer.msg(res.msg,{
-						icon:6,
-						tiye:2000
-					},function(){
-						location.reload();
-					});
-				} else {
-					layer.open({
-						title:"上传失败",
-						content:res.msg,
-						icon:5,
-						anim:6
-					});
+				if (res.code) {
+					return popup.failure(res.msg);
 				}
+				return popup.success(res.msg, function() {
+					location.reload()
+				});
 			}
 		});
 
@@ -196,7 +187,7 @@
 			$.ajax({
 				type:"post",
 				url: UPGRADE_KEY,
-				data:{"key":key},
+				data:{key},
 				daType:"json",
 				success:function (res){
 					if (res.code) {

@@ -18,6 +18,10 @@ use app\index\model\UserViprule;
 
 class Vip extends AdminBaseController
 {
+	public function initialize()
+	{
+		parent::initialize();
+	}
 
 	public function index()
 	{
@@ -54,31 +58,27 @@ class Vip extends AdminBaseController
 	{
 		$data = Request::only(['score','vip','nick','postnum','refreshnum']);
 		$vip = UserViprule::where('vip',$data['vip'])->find();
-		if($vip){
-			$res = ['code'=>-1,'msg'=>'vip等级不能重复设置'];
-		} else {
-			$result = UserViprule::create($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'设置vip等级成功'];
-			} else {
-				$res = ['code'=>-1,'msg'=>'vip保存失败'];
-			}
+		if(!is_null($vip)){
+			return json(['code'=>-1,'msg'=>'vip等级不能重复设置']);
 		}
-		return json($res);
+		$result = UserViprule::create($data);
+		if($result){
+			return json(['code'=>0,'msg'=>'设置vip等级成功']);
+		}
+		return json(['code'=>-1,'msg'=>'vip保存失败']);
 	}
 
 	//编辑VIP积分规则
-	public function edit($id)
+	public function edit()
 	{
+		$id = $this->request->param('id/d');
 		if(Request::isAjax()){
 			$data = Request::param();
 			$result = UserViprule::update($data);
 			if($result){
-				$res = ['code'=>0,'msg'=>'编辑成功'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'编辑失败'];
+				return json(['code'=>0,'msg'=>'编辑成功']);
 			}
-			return json($res);
+			return json(['code'=>-1,'msg'=>'编辑失败']);
 		}
 		$vip = Db::name('user_viprule')->find($id);
 		$level = UserViprule::column('vip');
@@ -92,12 +92,10 @@ class Vip extends AdminBaseController
 		if(Request::isAjax()){
 			$user =UserViprule::find($id);
 			$result = $user->delete();
-			
-				if($result){
-					return json(['code'=>0,'msg'=>'删除成功']);
-				}else{
-					return json(['code'=>-1,'msg'=>'删除失败']);
-				}
+			if($result){
+				return json(['code'=>0,'msg'=>'删除成功']);
+			}
+			return json(['code'=>-1,'msg'=>'删除失败']);
 		}
 	}
 

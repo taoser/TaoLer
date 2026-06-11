@@ -12,13 +12,16 @@ declare(strict_types=1);
 
 namespace app\middleware;
 
-use taoser\think\Auth as UserAuth;
+use think\facade\Lang;
+use think\facade\View;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Request;
 use think\Response;
+use taoser\think\Auth as UserAuth;
+
 
 class AdminAuth
 {
@@ -31,17 +34,30 @@ class AdminAuth
      */
     public function handle($request, \Closure $next)
     {
-    //    var_dump(Request::url(),Request::pathinfo(),$request->baseUrl(),$request->controller(), $request->action());
+        // 加载语言包
+        Lang::load([
+            app_path() . 'admin/lang/zh-cn.php',
+            app_path() . 'admin/lang/en-us.php',
+            app_path() . 'admin/lang/zh-tw.php',
+        ]);
 
+        // 配置视图路径
+        View::config([
+            'view_path'     => app_path() . 'admin' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
+            'view_dir_name' => 'view'
+        ]);
+
+        //    var_dump(Request::url(),Request::pathinfo(),$request->baseUrl(),$request->controller(), $request->action());
+        $path = $request->pathinfo();
 		//访问路径
-        $path = str_contains($request->pathinfo(), '.html') ? stristr($request->pathinfo(), ".html",true) : $request->pathinfo();
+        $path = str_contains($path, '.html') ? stristr($path, ".html",true) : $path;
 
-//    var_dump($path);
+        //    var_dump($path);
 		
-         //登陆前获取加密的Cookie
-         $cooAuth = Cookie::get('adminAuth');
+        //登陆前获取加密的Cookie
+        $cooAuth = Cookie::get('adminAuth');
 
-         if(!Session::has('admin_id')) {
+        if(!Session::has('admin_id')) {
             if(empty($cooAuth)){
                 //没有登录及当前非登录页重定向登录页
                 if(!in_array($path, ['login/index','login/register','admin/login'])) {
@@ -65,7 +81,7 @@ class AdminAuth
                 }
             }
 
-         }
+        }
         
         //登陆后无法访问登录页
         if(Session::has('admin_id')){

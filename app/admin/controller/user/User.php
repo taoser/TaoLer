@@ -28,9 +28,18 @@ use think\response\Json;
 
 class User extends AdminBaseController
 {
+	/**
+	 * 用户模型	
+	 * @var UserModel
+	 * @access private
+	 */
+	private $model;
+
 	public function initialize()
 	{
 		parent::initialize();
+
+		$this->model = new UserModel();
 	}
 
 	/**
@@ -73,22 +82,26 @@ class User extends AdminBaseController
 
 		$user = $query
 		->where('u.delete_time', 0)
-		->order('u.id desc')
-		->page($page, $limit)
-		->select();
+		->order('u.id desc');
 
-		if(!$user->count()){
+		$count = $user->count();
+
+		$users = $user->page($page, $limit)
+		->select()
+		->toArray();
+
+		if(!$count){
 			return json(['code' => -1, 'msg'=>'no data']);
 		}
 		
 		foreach($user as &$v){
-			$v['create_time']	=	date("Y-m-d H:i",$v['create_time']);
+			$v['create_time']	=	date("Y-m-d H:i", $v['create_time']);
 		}
 		unset($v);
 
 		$vipList = Db::name('user_viprule')->field('id,vip,nick as title')->select();
 
-		return json(['code'=>0,'msg'=>'ok','count' => count($user), 'data' => $user, 'viplist' => $vipList]);
+		return json(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $users, 'viplist' => $vipList]);
 		
 	}
 	
@@ -145,7 +158,8 @@ class User extends AdminBaseController
             }
 		}
 
-		$user = Db::name('user')->find(input('id'));
+		$id = Request::param('id/d');
+		$user = $this->model->find($id);
 		View::assign('user',$user);
 
 		return View::fetch();
@@ -157,7 +171,7 @@ class User extends AdminBaseController
 		$id = Request::param('id');
 		$ids = explode(',', $id);
 		
-		$user = UserModel::select($ids);
+		$user = $this->model->selectIn($ids);
 		$result = $user->delete();
 		
 		if($result){

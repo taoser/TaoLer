@@ -14,6 +14,7 @@ return [
 	'Set'		=> '设置',
 	'Server'	=> '服务',
 	'Content'	=> '内容',
+	'Free version' => '免费版本',
 	'Account management'	=> '账户管理',
 	'Account list'			=> '账户列表',
 	'Add account'			=> '添加账户',

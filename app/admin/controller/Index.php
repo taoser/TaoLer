@@ -19,6 +19,7 @@ use app\admin\model\Cunsult;
 use think\facade\Config;
 use app\common\lib\facade\HttpHelper;
 use app\index\model\Comment;
+use think\response\Json;
 
 class Index extends AdminBaseController
 {
@@ -29,7 +30,7 @@ class Index extends AdminBaseController
     protected $domain;
     protected $api;
 
-	public function __construct()
+	public function initialize()
 	{
         //控制器初始化显示左侧导航菜单
         parent::initialize();
@@ -170,29 +171,6 @@ class Index extends AdminBaseController
         }
 
         return lang('No new messages');
-    }
-
-    /**
-     * 检测
-     * @return mixed|string
-     */
-    public function check()
-    {
-        if(empty($this->sys['key'])) return json(['code' => -1, 'msg' => '请配置网站KEY']);
-        $data = ['u'=>$this->sys['domain'],'key'=>$this->sys['key']];
-
-        $response = HttpHelper::withHost()
-		->get('/v1/cy', [
-			'u'=>$this->sys['domain'],
-			'key'=>$this->sys['key']
-		])->toJson();
-
-        if($response->code == 0){
-            Db::name('system')->save(['id' => 1, 'clevel' => $response->data->level]);
-            return json(['code' => 0, 'msg' => $response->data->info, 'data' => $response->data]);
-        } else {
-            return json(['code' => -1, 'msg' => $response->msg]);
-        }
     }
 	
 	//本周发帖
@@ -338,40 +316,6 @@ class Index extends AdminBaseController
 		}
 	}
 	
-	// 系统调试
-	public function sysSys()
-	{
-		$status = input('status');
-	
-		//打开调试
-		$env = root_path().'.env';
-		$app = config_path().'app.php';
-
-		if(file_exists($env)){
-			$str = file_get_contents($env);
-			$appStr = file_get_contents($app);
-			$patk = '/APP_DEBUG[^\r?\n]*/';
-			$appPatk = '/'.'exception_tmpl'.'[^\r?\n]*/';
-			if($status == 'true'){
-				$reps = 'APP_DEBUG = true';
-				$appArr = "exception_tmpl' => app()->getThinkPath() . 'tpl/think_exception.tpl',";
-			} else {
-				$reps = 'APP_DEBUG = false';
-				$appArr = "exception_tmpl' => app()->getAppPath() . '404.html',";
-			}
-			$str = preg_replace($patk, $reps, $str);
-			file_put_contents($env, $str);
-
-			$appStr = preg_replace($appPatk, $appArr, $appStr);
-			$res = file_put_contents($app, $appStr) ? true : false;
-			if($res == true){
-				return json(['code'=>0,'msg'=>'设置成功']);
-			} else {
-				return json(['code'=>-1,'msg'=>'开启失败']);
-			}
-		}
-		
-	}
 	
 	public function layout(){
         return view();

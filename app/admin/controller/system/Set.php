@@ -31,9 +31,10 @@ class Set extends AdminBaseController
 
 	protected $sysInfo = '';
 	
-	public function __construct()
+	public function initialize()
 	{
         parent::initialize();
+
 		$this->sysInfo = $this->getSystem();
 	}
 
@@ -42,42 +43,9 @@ class Set extends AdminBaseController
     {
 		$template = Files::getDirName('../view');
 		$email = Db::name('admin')->where('id',1)->value('email');
-
-		// 应用映射
-		$index_map = array_search('index',config('app.app_map'));
-		$admin_map = array_search('admin',config('app.app_map'));
-		$index_map = $index_map ? $index_map : '';
-		$admin_map = $admin_map ? $admin_map : '';
-        View::assign(['sysInfo'=>$this->sysInfo,'template'=>$template,'email'=>$email,'index_map'=>$index_map,'admin_map'=>$admin_map]);
 		
-		// 域名绑定
-		if(!empty(config('app.domain_bind'))){
-			$data = array_flip(config('app.domain_bind'));
-			$domain_bind = [
-				'index' => isset($data['index']) ? $data['index'] : '',
-				'admin' => isset($data['admin']) ? $data['admin'] : '',
-			];
-		} else {
-			$domain_bind = [
-				'index' => '',
-				'admin' => '',
-			];
-		}
-		View::assign($domain_bind);
-
-		// url美化
-		$urlArr = config('taoler.url_rewrite');
-		$urlRe = [];
-		foreach($urlArr as $k => $v) {
-			if(!empty($v)) {
-				$urlRe[$k] = substr($v, 0, strrpos($v, '/'));
-			} else {
-				$urlRe[$k] = '';
-			}
- 		}
-		 
-		 View::assign('url_re',$urlRe);
-
+        View::assign(['sysInfo'=>$this->sysInfo,'template'=>$template,'email'=>$email]);
+		
 		return View::fetch();
     }
 	
@@ -319,5 +287,76 @@ class Set extends AdminBaseController
 		}
 		return json($res);
 	}
+
+	/**
+	 * 系统调试
+	 * @param string $status 调试状态
+	 * @return Json
+	 */
+	public function debugSwitch(): Json
+	{
+		$status = $this->request->param('status');
+	
+		try {
+			$envFile = root_path() . '.env';
+			$appConfigFile = config_path() . 'app.php';
+			
+			if(file_exists($envFile)) {
+
+				$envStr = file_get_contents($envFile);
+				$appStr = file_get_contents($appConfigFile);
+
+				$envPatk = '/APP_DEBUG[^\r?\n]*/';
+				$appPatk = '/'.'exception_tmpl'.'[^\r?\n]*/';
+
+				if($status == 'true'){
+					$envReps = 'APP_DEBUG = true';
+					$appReps = "exception_tmpl' => app()->getThinkPath() . 'tpl/think_exception.tpl',";
+					$msg = '调试开启';
+				} else {
+					$envReps = 'APP_DEBUG = false';
+					$appReps = "exception_tmpl' => app()->getAppPath() . '404.html',";
+					$msg = '调试关闭';
+				}
+
+				$envStr = preg_replace($envPatk, $envReps, $envStr);
+				$appStr = preg_replace($appPatk, $appReps, $appStr);
+
+				file_put_contents($envFile, $envStr);
+				file_put_contents($appConfigFile, $appStr);
+				
+				return json(['code' => 0, 'msg' => $msg]);
+			}
+
+		} catch (\Exception $e) {
+			return json(['code'=>-1,'msg'=>$e->getMessage()]);
+		}
+
+		return json(['code' => 0, 'msg' => '调试模式无法切换']);
+		
+	}
+
+	/**
+     * 检测
+     * @return Json
+     */
+    public function check() :Json
+    {
+        if(empty($this->sys['key'])) {
+			return json(['code' => -1, 'msg' => '请在 系统升级-》配置KEY']);
+		}
+        $data = ['u'=>$this->sys['domain'],'key'=>$this->sys['key']];
+
+        $response = HttpHelper::withHost()->get('/v1/cy', [
+			'u'=>$this->sys['domain'],
+			'key'=>$this->sys['key']
+		])->toJson();
+
+        if($response->code == 0){
+            Db::name('system')->save(['id' => 1, 'clevel' => $response->data->level]);
+            return json(['code' => 0, 'msg' => $response->data->info, 'data' => $response->data]);
+        }
+        return json(['code' => -1, 'msg' => $response->msg]);
+    }
 		
 }

@@ -43,19 +43,17 @@ class AuthRule extends Model
 
         if(count($authRules)) {
             return json(['code'=>0,'msg'=>'ok','data'=>$authRules]);
-        } else {
-            return json(['code'=>0,'msg'=>'no data','data'=>'']);
         }
+        return json(['code'=>0,'msg'=>'no data','data'=>'']);
     }
 
     public function saveRule($data)
     {
         $res = $this->save($data);
         if($res){
-            return json(['code'=>0,'msg'=>'权限成功']);
-        }else{
-            return json(['code'=>-1,'msg'=>'权限失败']);
+            return true;
         }
+        return false;
     }
 
     /**

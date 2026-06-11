@@ -1,176 +1,170 @@
 {extend name="public/form" /}
 
 {block name="body"}
-	<form class="layui-form" action="">
-		<div class="mainBox">
-			<div class="main-container">
-				<div class="layui-form-item layui-hide">
-					<input type="text" name="id" class="layui-input" value="{$rules.id}">
+
+<form class="layui-form">
+	<div class="mainBox">
+		<div class="main-container">
+			<div class="layui-form-item layui-hide">
+				<input type="text" name="id" class="layui-input" value="{$rules.id}">
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">上级菜单</label>
+				<div class="layui-input-block">
+					<div id="menuSelectBox" class="ew-xmselect-tree"></div>
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">上级菜单</label>
-					<div class="layui-input-block">
-						<div id="menuSelectBox" class="ew-xmselect-tree"></div>
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">标题</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" lay-verify="required" placeholder="标题即权限名称" autocomplete="off" class="layui-input" value="{$rules.title}">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">标题</label>
-					<div class="layui-input-inline">
-						<input type="text" name="title" lay-verify="required" placeholder="标题即权限名称" autocomplete="off" class="layui-input" value="{$rules.title}">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">权限地址</label>
+				<div class="layui-input-inline">
+					<input type="text" name="name" lay-verify="required" placeholder="controller/action" autocomplete="off" class="layui-input" value="{$rules.name}">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">权限地址</label>
-					<div class="layui-input-inline">
-						<input type="text" name="name" lay-verify="required" placeholder="controller/action" autocomplete="off" class="layui-input" value="{$rules.name}">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">图标</label>
+				<div class="layui-input-inline">
+				<input type="text" name="icon" id="iconPicker" lay-filter="iconPicker" value="{$rules.icon}" style="display:none;">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">图标</label>
-					<div class="layui-input-inline">
-					<input type="text" name="icon" id="iconPicker" lay-filter="iconPicker" value="{$rules.icon}" style="display:none;">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-inline">
+					<input type="text" name="sort" lay-verify="required" placeholder="排序序号" autocomplete="off" class="layui-input" value="{$rules.sort}">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">排序</label>
-					<div class="layui-input-inline">
-						<input type="text" name="sort" lay-verify="required" placeholder="排序序号" autocomplete="off" class="layui-input" value="{$rules.sort}">
-					</div>
-				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">类型</label>
-					<div class="layui-input-block">
-						<input type="radio" name="ismenu" lay-skin="primary" title="目录" value="0" {if condition="$rules.ismenu == 0"} checked {/if}>
-						<input type="radio" name="ismenu" lay-skin="primary" title="菜单" value="1" {if condition="$rules.ismenu == 1"} checked {/if}>
-						<input type="radio" name="ismenu" lay-skin="primary" title="权限" value="2" {if condition="$rules.ismenu == 2"} checked {/if}>
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型</label>
+				<div class="layui-input-block">
+					<input type="radio" name="ismenu" lay-skin="primary" title="目录" value="0" {if condition="$rules.ismenu == 0"} checked {/if}>
+					<input type="radio" name="ismenu" lay-skin="primary" title="菜单" value="1" {if condition="$rules.ismenu == 1"} checked {/if}>
+					<input type="radio" name="ismenu" lay-skin="primary" title="权限" value="2" {if condition="$rules.ismenu == 2"} checked {/if}>
 				</div>
 			</div>
 		</div>
-		<div class="bottom">
-			<div class="button-container">
-				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="rule-save">
-				<i class="layui-icon layui-icon-ok"></i>
-				提交
-				</button>
-				<button type="reset" class="pear-btn pear-btn-sm">
-				<i class="layui-icon layui-icon-refresh"></i>
-				重置
-				</button>
-			</div>
+	</div>
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="save">
+			<i class="layui-icon layui-icon-ok"></i>
+			提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+			<i class="layui-icon layui-icon-refresh"></i>
+			重置
+			</button>
 		</div>
-  	</form>
+	</div>
+</form>
 
-  	{__block__}
- 
-  	<script>
-		const RULE_EDIT = '/admin/system/authrule/edit';
-		const RULE_TREE = '/admin/system/authrule/ruleTree';
+{__block__}
 
-		layui.use(['form','jquery', 'xmSelect', 'iconPicker','dtree'], function(){
-			let $ = layui.jquery;
-			let form = layui.form ;
-			var xmSelect = layui.xmSelect;
-			var iconPicker = layui.iconPicker;
-			let dtree = layui.dtree;
-			var initPid = "{$rules['pid']}";
+<script>
+	const RULE_EDIT = '/admin/system/authrule/edit';
+	const RULE_TREE = '/admin/system/authrule/ruleTree';
+	const INIT_PID = "{$rules['pid']}";
 
-			// dtree.render({
-			// 	elem: "#Tree2",
-			// 	initLevel: "1",
-			// 	method: 'get',
-			// 	url: "/static/admin/data/dtree.json",
-			// 	select: true
-			// });
+	layui.use(['form','jquery', 'xmSelect', 'iconPicker','dtree','popup'], function(){
+		let $ = layui.jquery;
+		let form = layui.form ;
+		var xmSelect = layui.xmSelect;
+		var iconPicker = layui.iconPicker;
+		let dtree = layui.dtree;
+		let popup = layui.popup;
+
+		// dtree.render({
+		// 	elem: "#Tree2",
+		// 	initLevel: "1",
+		// 	method: 'get',
+		// 	url: "/static/admin/data/dtree.json",
+		// 	select: true
+		// });
+		
+		//初始化图标选择
+		iconPicker.render({
+			elem: '#iconPicker',
+			type: 'fontClass',
+			search: false,
+			page: true,
+			limit: 12,
+			click: function (data) {
+				//console.log(data);
+			}
+		});
 			
-			
-			//初始化图标选择
-			iconPicker.render({
-				elem: '#iconPicker',
-				type: 'fontClass',
-				search: false,
-				page: true,
-				limit: 12,
-				click: function (data) {
-					//console.log(data);
-				}
-			});
-				
-			//权限菜单结构
-			(function(){
+		//权限菜单结构
+		(function(){
 			$.ajax({
 				type: "get",
 				url: RULE_TREE, 
-				success: function(res){
-				var data = res.data;
+				success: function(res) {
+					var data = res.data;
 				
-						// 渲染下拉树
-						xmSelect.render({
-							el: '#menuSelectBox',
-							name: 'pid',
-							height: '250px',
-							layVerify: 'required',
-							layVerType: 'tips',
-							data: data,
-							initValue:  [initPid],
-							model: {label: {type: 'text'}},
-							prop: {
-								name: 'title',
-								value: 'id'
-							},
-							// radio: true,
-							clickClose: true,
-							tree: {
-								show: true,
-								indent: 15,
-								strict: false,
-								expandedKeys: [ 0 ], // 默认展开节点，true展开false不展开 数组展开在节点
-							},
-							on: function(data){ // 单选on模式
-								if(data.isAdd){
-									return data.change.slice(0, 1)
-								}
-							},
-							tips: '请选择上级菜单'
-						});
-					}
+					// 渲染下拉树
+					xmSelect.render({
+						el: '#menuSelectBox',
+						name: 'pid',
+						height: '250px',
+						layVerify: 'required',
+						layVerType: 'tips',
+						data: data,
+						initValue:  [INIT_PID],
+						model: {label: {type: 'text'}},
+						prop: {
+							name: 'title',
+							value: 'id'
+						},
+						// radio: true,
+						clickClose: true,
+						tree: {
+							show: true,
+							indent: 15,
+							strict: false,
+							expandedKeys: [ 0 ], // 默认展开节点，true展开false不展开 数组展开在节点
+						},
+						on: function(data){ // 单选on模式
+							if(data.isAdd){
+								return data.change.slice(0, 1)
+							}
+						},
+						tips: '请选择上级菜单'
+					});
+				}
 				
-				});
-			
-			})()
-
-			form.on('submit(rule-save)', function(data) {
-				$.ajax({
-					url: RULE_EDIT,
-					data: JSON.stringify(data.field),
-					dataType: 'json',
-					contentType: 'application/json',
-					type: 'post',
-					success: function(result) {
-						if (result.code === 0) {
-							layer.msg(result.msg, {
-								icon: 1,
-								time: 1000
-							}, function() {
-								// parent.layui.table.renderData('rule-table');
-								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-								parent.layui.treetable.reload('#rule-table');
-								// parent.layui.table.reload("rule-table");
-								// window.parent.location.reload();
-							});
-						} else {
-							layer.msg(result.msg, {
-								icon: 2,
-								time: 1000
-							});
-						}
-					}
-				})
-
-				return false;
 			});
 			
-		})
-	</script>
+		})()
+
+		// 提交表单
+		form.on('submit(save)', function(data) {
+
+			$.ajax({
+				type: 'POST',
+				url: RULE_EDIT,
+				data: data.field,
+				dataType: 'json',
+				success: function(res) {
+					if(res.code) {
+						return popup.failutre(res.msg);
+					}
+					return popup.success(res.msg, function() {
+						// parent.layui.table.renderData('table');
+						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+						parent.layui.treetable.reload('#table');
+						// window.parent.location.reload();
+					});
+				}
+			})
+
+			return false;
+		});
+		
+	})
+</script>
 
 {/block}

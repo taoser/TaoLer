@@ -21,29 +21,36 @@ use think\facade\Log;
 class Comment extends AdminBaseController
 {
 
+    /**
+     * 评论模型
+     * @var CommentModel
+     */
     protected $model;
 
-    public function __construct(App $app)
+    public function initialize()
     {
-        parent::__construct($app);
+        parent::initialize();
+
         $this->model = new CommentModel();
     }
 
-    /**
-     * 浏览
-     * @return string
-     */
 	public function index()
     {
         return View::fetch();
     }
+
+    // 编辑
+	public function edit()
+	{
+		return View::fetch();
+	}
 
 	/**
 	 * 帖子评论列表
 	 * 
 	 * 获取评论列表，支持按用户名、内容、状态进行筛选
 	 * 
-	 * @return Json 返回评论列表数据
+	 * @return \think\Response\Json 返回评论列表数据
 	 */
 	public function list()
 	{
@@ -130,12 +137,6 @@ class Comment extends AdminBaseController
         }
 	}
 	
-	//评论编辑
-	public function edit()
-	{
-		return View::fetch();
-	}
-	
 	/**
 	 * 评论删除
 	 * 
@@ -145,39 +146,39 @@ class Comment extends AdminBaseController
 	 */
 	public function delete()
 	{
-		if (Request::isAjax()) {
-            try {
-                $id = Request::param('id');
-                // 验证参数
-                if (empty($id)) {
-                    return json(['code' => -1, 'msg' => '参数错误']);
-                }
-                
-                // 处理ID列表
-                $ids = array_filter(explode(",", $id), function($item) {
-                    return is_numeric($item) && $item > 0;
-                });
-                
-                if (empty($ids)) {
-                    return json(['code' => -1, 'msg' => '无效的ID']);
-                }
-                
-                // 批量删除评论
-                $result = CommentModel::destroy($ids);
-                
-                if ($result) {
-                    return json(['code' => 0, 'msg' => '删除成功']);
-                } else {
-                    return json(['code' => -1, 'msg' => '删除失败']);
-                }
-            } catch (\Exception $e) {
-                // 记录错误日志
-                Log::error('Comment delete error: ' . $e->getMessage());
-                return json(['code' => -1, 'msg' => '系统错误，请稍后重试']);
+		
+        try {
+            $id = Request::param('id');
+            // 验证参数
+            if (empty($id)) {
+                return json(['code' => -1, 'msg' => '参数错误']);
             }
+            
+            // 处理ID列表
+            $ids = array_filter(explode(",", $id), function($item) {
+                return is_numeric($item) && $item > 0;
+            });
+            
+            if (empty($ids)) {
+                return json(['code' => -1, 'msg' => '无效的ID']);
+            }
+            
+            // 批量删除评论
+            $result = CommentModel::destroy($ids);
+            
+            if ($result) {
+                return json(['code' => 0, 'msg' => '删除成功']);
+            }
+
+            return json(['code' => -1, 'msg' => '删除失败']);
+            
+        } catch (\Exception $e) {
+            // 记录错误日志
+            Log::error('Comment delete error: ' . $e->getMessage());
+
+            return json(['code' => -1, 'msg' => '系统错误，请稍后重试']);
         }
         
-        return json(['code' => -1, 'msg' => '非法请求']);
 	}
 
 	/**
@@ -286,17 +287,9 @@ class Comment extends AdminBaseController
         } catch (\Exception $e) {
             // 记录错误日志
             Log::error('Comment checkSelect error: ' . $e->getMessage());
+
             return json(['code' => -1, 'msg' => '系统错误，请稍后重试', 'icon' => 5]);
         }
-	}
-	
-
-	
-	//array_filter过滤函数
-	public function  filtr($arr)
-    {
-        if($arr === '' || $arr === null) return false;
-        return true;
 	}
 
 }
