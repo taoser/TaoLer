@@ -247,8 +247,9 @@ class DbInstaller
             $this->close();
             return;
         }
-        
 
+        $this->sendMsg('success', "系统账号更新成功");
+        
     }
 
     // ====================== 关键：主动断开数据库连接 ======================

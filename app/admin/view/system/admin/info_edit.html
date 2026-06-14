@@ -1,9 +1,10 @@
 {extend name="public/form" /}
 
 {block name="link"}<link rel="stylesheet" href="/static/admin/css/other/person.css" />{/block}
+
 {block name="body"}
 
-  <form class="layui-form" action="">
+<form class="layui-form" action="">
     <div class="mainBox">
       	<div class="main-container">
 			<div class="layui-form-item layui-hide">
@@ -79,42 +80,43 @@
         </button>
       </div>
     </div>
-  </form>
+</form>
 
-  {__block__}
+{__block__}
 
-	<script>
-		layui.use(['form', 'jquery'], function() {
-			let form = layui.form;
-			let $ = layui.jquery;
+<script>
+	const INFO_URL = MODULE_NAME + '/system/admin/infoSet';
+	layui.use(['form', 'jquery'], function() {
+		let form = layui.form;
+		let $ = layui.jquery;
 
-			form.on('submit(userinfo-save)', function(data) {
-				$.ajax({
-					url: "{:url('system.admin/infoSet')}",
-					data: JSON.stringify(data.field),
-					dataType: 'json',
-					contentType: 'application/json',
-					type: 'post',
-					success: function(result) {
-						if (result.code === 0) {
-							layer.msg(result.msg, {
-							icon: 1,
-							time: 1000
-							}, function() {
-							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-							//parent.layui.table.reload("user-table");
-							});
-						} else {
-							layer.msg(result.msg, {
-							icon: 2,
-							time: 1000
-							});
-						}
+		form.on('submit(userinfo-save)', function(data) {
+			$.ajax({
+				url: INFO_URL,
+				data: JSON.stringify(data.field),
+				dataType: 'json',
+				contentType: 'application/json',
+				type: 'post',
+				success: function(result) {
+					if (result.code === 0) {
+						layer.msg(result.msg, {
+						icon: 1,
+						time: 1000
+						}, function() {
+						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+						//parent.layui.table.reload("user-table");
+						});
+					} else {
+						layer.msg(result.msg, {
+						icon: 2,
+						time: 1000
+						});
 					}
-				})
-				return false;
-			});
-		})
-	</script>
+				}
+			})
+			return false;
+		});
+	})
+</script>
 
 {/block}

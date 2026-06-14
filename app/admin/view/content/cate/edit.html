@@ -1,6 +1,7 @@
 {extend name="public/form" /}
 
 {block name="body"}
+
 <form class="layui-form" action="">
     <div class="mainBox">
         <div class="main-container">
@@ -95,9 +96,9 @@
 {__block__}
 
 <script>
-	const ADD_EDIT = '/admin/content/cate/addEdit';
-	const UPLOAD_URL = '/admin/content/cate/upload';
-	const GET_CATE_TREE = '/admin/content/cate/getcatetree';
+	const ADD_EDIT = MODULE_NAME + '/content/cate/addEdit';
+	const UPLOAD_URL = MODULE_NAME + '/content/cate/upload';
+	const GET_CATE_TREE = MODULE_NAME + '/content/cate/getcatetree';
 
 	layui.use(['iconPicker', 'xmSelect','imgcom'], function(){
 		var $ = layui.jquery

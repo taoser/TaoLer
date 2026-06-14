@@ -111,10 +111,10 @@
 				
 				// 登出逻辑 
 				admin.logout(function(){
-					$.get("{:url('/admin/system/admin/logout')}",function(res){
+					$.get("{:url('logout')}", function(res){
 						if(res.code === 0) {
-							popup.success("注销成功",function(){
-								location.href = "{:url('/admin/login/index')}";
+							popup.success("注销成功", function(){
+								location.href = "{:url('login')}";
 							})
 						}
 					});
@@ -127,7 +127,7 @@
 				admin.message(function(id, title, context, form) {});
 
 				$("#clearcache").click(function(){
-					$.get("{:url('/admin/system/admin/clearCache')}",function(res){
+					$.post("{:url('clear_cache')}",function(res){
 						if(res.code === 0) {
 							popup.success("清理成功");
 						}
@@ -137,11 +137,11 @@
 				// 修改密码
 				$("#resetPassword").click(function(){
 					layer.open({
-					type: 2,
-					title: '修改密码',
-					shade: 0.1,
-					area: ["350px", "300px"],
-					content: "{:url('/admin/system/admin/repass')}",
+						type: 2,
+						title: '修改密码',
+						shade: 0.1,
+						area: ["350px", "300px"],
+						content: "{:url('repass')}",
 					})
 				});
 

@@ -25,6 +25,8 @@ return [
 	'id_alphabet' => 'TBJi7WOsvkS4CfGg6A8wmloZr3KR1M5eQnxctqh0IzVpyEHLuaNX2FdPDUbYj9',
 	// id加密最小长度
 	'id_minlength' => 8,
+	// 模块名称
+	'module_name' => '/3MPasq1n',
 
 	// 项目配置
 	'config'	=>[

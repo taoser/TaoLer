@@ -65,8 +65,8 @@
 {__block__}
 
 <script>
-	const RULE_EDIT = '/admin/system/authrule/edit';
-	const RULE_TREE = '/admin/system/authrule/ruleTree';
+	const RULE_EDIT = MODULE_NAME + '/system/authrule/edit';
+	const RULE_TREE = MODULE_NAME + '/system/authrule/ruleTree';
 	const INIT_PID = "{$rules['pid']}";
 
 	layui.use(['form','jquery', 'xmSelect', 'iconPicker','dtree','popup'], function(){
@@ -150,7 +150,7 @@
 				dataType: 'json',
 				success: function(res) {
 					if(res.code) {
-						return popup.failutre(res.msg);
+						return popup.failure(res.msg);
 					}
 					return popup.success(res.msg, function() {
 						// parent.layui.table.renderData('table');

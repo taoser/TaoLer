@@ -4,46 +4,46 @@
 
 {block name="body"}
 
-	<div class="layui-card">
-		<div class="layui-card-body">
-			<form class="layui-form" action="">
-				<div class="layui-row layui-col-space15 ">
-					<div class="layui-col-md2">
-						<label class="layui-form-label">发帖人</label>
-						<div class="layui-input-block">
-							<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
-						</div>
-					</div>
-					<div class="layui-col-md2">
-						<label class="layui-form-label">状态</label>
-						<div class="layui-input-block">
-							<select name="sec">
-								<option value="">选择状态</option>
-								<option value="0">待处理</option>
-								<option value="1">已处理</option>
-								<option value="2">已驳回</option>
-							</select>
-						</div>
-					</div>
-					<div class="layui-col-md2">
-						<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
-							<i class="layui-icon layui-icon-search"></i>
-							查询
-						</button>
-						<button type="reset" class="pear-btn pear-btn-md">
-							<i class="layui-icon layui-icon-refresh"></i>
-							重置
-						</button>
+<div class="layui-card">
+	<div class="layui-card-body">
+		<form class="layui-form" action="">
+			<div class="layui-row layui-col-space15 ">
+				<div class="layui-col-md2">
+					<label class="layui-form-label">发帖人</label>
+					<div class="layui-input-block">
+						<input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
 					</div>
 				</div>
-			</form>
-		</div>
+				<div class="layui-col-md2">
+					<label class="layui-form-label">状态</label>
+					<div class="layui-input-block">
+						<select name="sec">
+							<option value="">选择状态</option>
+							<option value="0">待处理</option>
+							<option value="1">已处理</option>
+							<option value="2">已驳回</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-col-md2">
+					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
+						<i class="layui-icon layui-icon-search"></i>
+						查询
+					</button>
+					<button type="reset" class="pear-btn pear-btn-md">
+						<i class="layui-icon layui-icon-refresh"></i>
+						重置
+					</button>
+				</div>
+			</div>
+		</form>
 	</div>
-	<div class="layui-card">
-		<div class="layui-card-body">
-		<table id="table" lay-filter="table" ></table>
-		</div>
+</div>
+<div class="layui-card">
+	<div class="layui-card-body">
+	<table id="table" lay-filter="table" ></table>
 	</div>
+</div>
 
 
 

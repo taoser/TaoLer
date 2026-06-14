@@ -1,99 +1,102 @@
 {extend name="public/form" /}
 
 {block name="body"}
-	<form class="layui-form" action="">
-		<div class="mainBox">
-			<div class="main-container">
-				
-				<div class="layui-form-item">
-					<label class="layui-form-label">分类</label>
-					<div class="layui-input-block">
-						<select name="cate_id" disabled>
-							<option value="{$page.cate_id}">{$page.cate.catename}</option>
-						</select>
-					</div>
-				</div>
-				<div class="layui-form-item">
-					<label for="L_title" class="layui-form-label">{:lang('title')}</label>
-					<div class="layui-input-block">
-						<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$page.title}">
-					</div>
-				</div>
-				<div class="layui-form-item layui-form-text">
-					<div class="layui-input-block">
-					<textarea id="L_content" name="content" required lay-verify="required" placeholder="详细内容"  class="layui-textarea taonyeditor">{$page.content}</textarea>
-					</div>
-				</div>
 
-				<div class="layui-form-item">
-					<label class="layui-form-label">{:lang('描述')}</label>
-					<div class="layui-input-block">
-						<textarea name="description" class="layui-textarea" placeholder="SEO描述">{$page.description}</textarea>
-					</div>
+<form class="layui-form" action="">
+	<div class="mainBox">
+		<div class="main-container">
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">分类</label>
+				<div class="layui-input-block">
+					<select name="cate_id" disabled>
+						<option value="{$page.cate_id}">{$page.cate.catename}</option>
+					</select>
 				</div>
-				{//关键词}
-				<div class="layui-form-item">
-					<label class="layui-form-label">{:lang('关键词')}</label>
-					<div class="layui-input-block">
-						<input type="text" class="layui-input" name="keywords" value="{$page.keywords}" placeholder="多个英文逗号隔开" title="添加关键词" />
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label for="L_title" class="layui-form-label">{:lang('title')}</label>
+				<div class="layui-input-block">
+					<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="{$page.title}">
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<div class="layui-input-block">
+				<textarea id="L_content" name="content" required lay-verify="required" placeholder="详细内容"  class="layui-textarea taonyeditor">{$page.content}</textarea>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">{:lang('描述')}</label>
+				<div class="layui-input-block">
+					<textarea name="description" class="layui-textarea" placeholder="SEO描述">{$page.description}</textarea>
+				</div>
+			</div>
+			{//关键词}
+			<div class="layui-form-item">
+				<label class="layui-form-label">{:lang('关键词')}</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" name="keywords" value="{$page.keywords}" placeholder="多个英文逗号隔开" title="添加关键词" />
 				</div>
 			</div>
 		</div>
-		<div class="bottom">
-			<div class="button-container">
-				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="page-save">
-					<i class="layui-icon layui-icon-ok"></i>
-					提交
-				</button>
-				<button type="reset" class="pear-btn pear-btn-sm">
-					<i class="layui-icon layui-icon-refresh"></i>
-					重置
-				</button>
-			</div>
+	</div>
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="page-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
 		</div>
-	</form>
+	</div>
+</form>
 
-	{__block__}
+{__block__}
 
-	<script>
-		const SINGLE_PAGE_Edit = '/admin/content/page/edit';
-		layui.use(['popup'], function(){
-			var $ = layui.jquery
-			,form = layui.form
-			,layer = layui.layer
-			,popup = layui.popup;
+<script>
 
-			form.on('submit(page-save)', function(data) {
-				data.field['id'] = layui.url().search['id'];
-				var loadIndex = layer.load(2);
-				$.ajax({
-					url: SINGLE_PAGE_Edit,
-					type: 'POST',
-					dataType: 'json',
-					data: data.field,
-					success: function(result) {
-						layer.close(loadIndex);
-						if (result.code) {
-							return popup.failure(result.msg);
-						}
-						return popup.success(result.msg,function(){
-							parent.layui.table.reload("page-table");
-							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-						});
-					}
-				})
-				return false;
-			});
-
-		});
-    </script>
+	const SINGLE_PAGE_Edit = MODULE_NAME + '/content/page/edit';
 	
-	{// 编辑器}
-	{:hook('ueditor')}
-	{:hook('taonyeditor')}
-	{// 百度标题词条}
+	layui.use(['popup'], function(){
+		var $ = layui.jquery
+		,form = layui.form
+		,layer = layui.layer
+		,popup = layui.popup;
 
-	{// 百度关键词}
+		form.on('submit(page-save)', function(data) {
+			data.field['id'] = layui.url().search['id'];
+			var loadIndex = layer.load(2);
+			$.ajax({
+				url: SINGLE_PAGE_Edit,
+				type: 'POST',
+				dataType: 'json',
+				data: data.field,
+				success: function(result) {
+					layer.close(loadIndex);
+					if (result.code) {
+						return popup.failure(result.msg);
+					}
+					return popup.success(result.msg,function(){
+						parent.layui.table.reload("page-table");
+						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+					});
+				}
+			})
+			return false;
+		});
+
+	});
+</script>
+
+{// 编辑器}
+{:hook('ueditor')}
+{:hook('taonyeditor')}
+{// 百度标题词条}
+
+{// 百度关键词}
 
 {/block}

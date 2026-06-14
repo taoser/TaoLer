@@ -10,6 +10,7 @@
 {/block}
 
 {block name="body"}
+
 <form class="layui-form" action="">
 	<div class="mainBox">
 		<div class="main-container">
@@ -74,10 +75,10 @@
 
 <script>
 
-	const ADD_URL = '/admin/content/article/add';
-	const CATE_TREE_URL = '/admin/content/cate/getArticleCateTree';
-	const TAG_URL = '/admin/content/tag/getAllTag';
-	const UPLOAD_URL = '/admin/content/article/uploads';
+	const ADD_URL = MODULE_NAME + '/content/article/add';
+	const CATE_TREE_URL = MODULE_NAME + '/content/cate/getArticleCateTree';
+	const TAG_URL = MODULE_NAME + '/content/tag/getAllTag';
+	const UPLOAD_URL = MODULE_NAME + '/content/article/uploads';
 
 	
 	layui.use(['xmSelect','popup'], function () {

@@ -12,6 +12,7 @@ header('Access-Control-Allow-Origin: *');
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Session;
+use think\facade\Config;
 
 class Index
 {
@@ -66,7 +67,7 @@ class Index
             // 执行sql文件安装
             $installer->run();
 			
-		$db_str = <<<EOV
+		$dbStr = <<<EOV
 <?php
 return [
 	// 默认使用的数据库连接配置
@@ -129,7 +130,7 @@ EOV;
             $database = config_path() . 'database.php';
             if (file_exists($database) && is_writable($database)) {
                 $fp = fopen($database,"w");
-                $resf = fwrite($fp, $db_str);
+                $resf = fwrite($fp, $dbStr);
                 fclose($fp);
                 if(!$resf) {
                     $installer->sendMsg('error', "数据库配置文件创建失败！");
@@ -139,6 +140,8 @@ EOV;
                 $installer->sendMsg('error', "config/database.php 无写入权限");
                 return;
             }
+
+            $installer->sendMsg('success', "config/database.php 数据写入成功");
         }
 
         $env = <<<ENV
@@ -156,12 +159,45 @@ DEFAULT_LANG = zh-cn
 ENV;
         file_put_contents(root_path() . '.env', $env);
 
+        $installer->sendMsg('success', "config/.env 数据写入成功");
+
+        // 创建随机后台模块路径
+        $taolerFile = config_path() . 'taoler.php';
+        if (file_exists($taolerFile) && is_writable($taolerFile)) {
+            try {
+                $module_name = Config::get('taoler.module_name');
+                $taolerStr = file_get_contents($taolerFile);
+
+                $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                $modStr = '/' .substr(str_shuffle($chars), 0, 8);
+
+                $taolerStr = str_replace($module_name, $modStr, $taolerStr);
+
+                Config::set(['module_name' => $modStr], 'taoler');
+
+                $resTaoler = file_put_contents($taolerFile, $taolerStr);
+
+                if(!$resTaoler) {
+                    $installer->sendMsg('error', "数据库配置文件创建失败！");
+                    return;
+                }
+
+            } catch (\Exception $e) {
+                $installer->sendMsg('error', $e->getMessage());
+                return;
+            }
+            
+        } else {
+            $installer->sendMsg('error', "config/taoler.php 无写入权限");
+            return;
+        }
+
         //安装上锁
         file_put_contents('./install.lock', date("Y-m-d H:i:s"));
 
         Session::clear();
 
-        $installer->sendMsg('ok', "安装成功");
+        $installer->sendMsg('ok', "安装成功", ['url' => $modStr.'/index']);
         
         return;        
 	}

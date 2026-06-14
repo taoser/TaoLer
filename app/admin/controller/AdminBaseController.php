@@ -44,8 +44,11 @@ class AdminBaseController extends \app\BaseController
         $sys = $this->getSystem();
         $syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
         $runTime = $this->getRunTime();
+        
+        // 用于加密的模块名称 访问路径前缀
+        $moduleName = Config::get('taoler.module_name');
 
-        View::assign(['domain'=>$this->getDomain(),'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime]);
+        View::assign(['moduleName'=>$moduleName,'domain'=>$this->getDomain(),'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime,]);
 	}
 
      /**

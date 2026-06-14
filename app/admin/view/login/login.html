@@ -107,7 +107,7 @@
 				/// 登录
 				$.ajax({
 					type: "post"
-					,url: "{:url('login/index')}" //实际使用请改成服务端真实接口
+					,url: "{:url('login')}" //实际使用请改成服务端真实接口
 					,data: data.field
 					,success: function(res){
 						if(res.code === 0){
@@ -119,7 +119,7 @@
 								done: function () {
 									popup.success("登录成功", function () {
 										//登入成功的提示与跳转
-										location.href = "{:url('index/index')}"
+										location.href = "{:url(MODULE_NAME + '/index/index')}"
 									});
 								}
 							})

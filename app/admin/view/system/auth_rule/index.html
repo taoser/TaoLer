@@ -49,11 +49,11 @@
     {__block__}
 
     <script>
-        const RULES_URL = '/admin/system/AuthRule/list';
-        const RULES_ADD = '/admin/system/AuthRule/add';
-        const RULES_EDIT = '/admin/system/AuthRule/edit';
-        const RULES_DELETE = '/admin/system/AuthRule/delete';
-        const RULES_ENABLE = '/admin/system/AuthRule/check';
+        const RULES_URL = MODULE_NAME + '/system/AuthRule/list';
+        const RULES_ADD = MODULE_NAME + '/system/AuthRule/add';
+        const RULES_EDIT = MODULE_NAME + '/system/AuthRule/edit';
+        const RULES_DELETE = MODULE_NAME + '/system/AuthRule/delete';
+        const RULES_ENABLE = MODULE_NAME + '/system/AuthRule/check';
 
         layui.use(['treetable','popup'],function () {
             let table = layui.table;
@@ -119,7 +119,7 @@
                     dataType:'json',
                     success:function(res){
                         if(res.code) {
-                            return popup.failutre(res.msg);
+                            return popup.failure(res.msg);
                         }
                         return popup.success(res.msg);
                     }
@@ -158,7 +158,7 @@
                         success:function(res){
                             layer.close(loading);
                             if(res.code) {
-                                return popup.failutre(res.msg);
+                                return popup.failure(res.msg);
                             }
                             return popup.success(res.msg,function(){
                                 obj.del();
@@ -196,7 +196,7 @@
                         success: function(res) {
                             layer.close(loading);
                             if(res.code) {
-                                return popup.failutre(res.msg);
+                                return popup.failure(res.msg);
                             }
                             return popup.success(res.msg, function() {
                                 table.reload('rule-table');

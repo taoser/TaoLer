@@ -39,57 +39,6 @@ layui.define(['form', 'upload'], function(exports){
       }
     }
   });
-  
-  //网站信息设置
-  form.on('submit(set_website)', function(obj){
-    //layer.msg(JSON.stringify(obj.field));
-    var URL = $(this).data('url');
-    loading = layer.load(2, {
-          shade: [0.2, '#000']
-        });
-    //提交修改
-    
-    $.ajax({
-    type: "post"
-    ,url: URL
-    ,data: obj.field
-    ,success: function(data){
-      if (data.code == 0) {
-        layer.close(loading);
-          layer.msg(data.msg,{
-            icon:6,
-            time:2000
-          });
-        } else {
-          layer.close(loading);
-          layer.open({
-            tiele:'设置失败',
-            content:data.msg,
-            icon:5,
-            anim:6
-          });
-        }
-    }
-    });
-    
-    return false;
-  });
-
-  //网站系统配置
-  form.on('submit(set_system_config)', function(data){
-    var field = data.field;
-    var URL = $(this).data('url');
-    $.post(URL, field,function(res){
-      if(res.code === 0){
-        layer.msg(res.msg,{icon:6,tiye:2000},function(){
-          location.reload();
-        });
-      } else {
-        layer.open({title:"设置失败",content:res.msg,icon:5,anim:6});
-      }
-    });
-    return false;
-  });
 
   //域名配置
   form.on('submit(set_system_domain)', function(data){

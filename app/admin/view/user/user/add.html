@@ -62,7 +62,8 @@
 {__block__}
 
 <script>
-	const ADD_URL = '/admin/user/user/add';
+	const ADD_URL = MODULE_NAME + '/user/user/add';
+	const UPLOAD_IMG_URL = MODULE_NAME + '/user/user/upload';
 
 	layui.use(['upload', 'popup'], function() {
 		let form = layui.form;

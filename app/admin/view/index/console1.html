@@ -437,10 +437,10 @@
 {__block__}
 
 <script>
-	const indexForums = "{:url('/admin/index/forums')}";	//帖子
-	const indexReplys = "{:url('/admin/index/replys')}";		//回复
-	const NEWS = "{:url('/admin/index/news')}";	 //动态
-	const indexReply = "{:url('/admin/index/reply')}";	//反馈
+	const indexForums = MODULE_NAME + '/index/forums';	//帖子
+	const indexReplys = MODULE_NAME + '/index/replys';		//回复
+	const NEWS = MODULE_NAME + '/index/news';	 //动态
+	const REPLY_URL = MODULE_NAME + '/index/reply';	//反馈
 	const v = layui.v;
 
 	layui.use(['layer', 'echarts',  'carousel', 'element', 'count', 'toast', 'form'], function() {
@@ -664,9 +664,9 @@
 		//反馈
 		table.render({
 			elem: '#console-topreply'
-			,url: indexReply //评论接口
-			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-				layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
+			,url: REPLY_URL 
+			,page: {
+				layout: ['limit', 'count', 'prev', 'page', 'next'],
 				curr: 1, //设定初始在第 5 页
 				groups: 1, //只显示 1 个连续页码
 				first: false, //不显示首页
@@ -733,7 +733,7 @@
 			var that = this;
 			// 禁用调试按钮
 			that.disabled = true;
-			$.post("{:url('/admin/system/set/debugSwitch')}", {status}, function(res) {
+			$.post(MODULE_NAME + '/system/set/debugSwitch', {status}, function(res) {
 				that.disabled = false;
 				if (res.code) {
 					return toast.error({title:"错误消息", message: res.msg})
@@ -745,7 +745,7 @@
 
 		//系统检测
 		$("#check").click(function (){
-			$.get("{:url('/admin/system/set/check')}", function (res){
+			$.get(MODULE_NAME + '/system/set/check', function (res){
 				if(res.code === 0) {
 					$("#cy").html(res.data.info);
 					toast.info({title:"提示消息", message:res.msg});
@@ -757,12 +757,12 @@
 
 		// 升级检测
 		$(function (){
-			$.get("{:url('/admin/system/upgrade/check')}",function (res){
+			$.get(MODULE_NAME + '/system/upgrade/check', function (res){
 				//可升级
 				if (res.code) {
 					layer.confirm('发现新版本V' + res.data.version + '，确定升级？', {icon: 3, title:'系统检测'}, function(index) {
 						var loadIndex = layer.load(0);
-						$.get("{:url('system.upgrade/upload')}",function (res){
+						$.get(MODULE_NAME + '/system/upgrade/upload', function (res){
 							layer.close(loadIndex)
 							if (res.code) {
 								return toast.error({title:"服务器错误", message:res.msg})

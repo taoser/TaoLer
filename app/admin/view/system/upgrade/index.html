@@ -84,13 +84,13 @@
 
 <script>
 
-	const UPGRADE_CHECK = '/admin/system/upgrade/check';
-	const UPGRADE_UPLOAD = '/admin/system/upgrade/upload';
-	const UPGRADE_KEY = '/admin/system/upgrade/key';
-	const UPGRADE_KEY_EDIT = '/admin/system/upgrade/keyedit';
-	const UPGRADE_KEY_SAVE = '/admin/system/upgrade/keysave';
-	const UPGRADE_KEY_EDIT_SAVE = '/admin/system/upgrade/keyedit/save';
-	const UPGRADE_ZIP = '/admin/system/upgrade/uploadzip';
+	const UPGRADE_CHECK = MODULE_NAME + '/system/upgrade/check';
+	const UPGRADE_UPLOAD = MODULE_NAME + '/system/upgrade/upload';
+	const UPGRADE_KEY = MODULE_NAME + '/system/upgrade/key';
+	const UPGRADE_KEY_EDIT = MODULE_NAME + '/system/upgrade/keyedit';
+	const UPGRADE_KEY_SAVE = MODULE_NAME + '/system/upgrade/keysave';
+	const UPGRADE_KEY_EDIT_SAVE = MODULE_NAME + '/system/upgrade/keyedit/save';
+	const UPGRADE_ZIP = MODULE_NAME + '/system/upgrade/uploadzip';
 
 	layui.use(['toast','notify','layer','form','upload','popup'], function(){
 		var $ = layui.jquery

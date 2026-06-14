@@ -3,6 +3,7 @@
 {block name="title"}分类管理{/block}
 
 {block name="body"}
+
 <div class="layui-card">
     <div class="layui-card-body">
         <table id="cate-table" lay-filter="cate-table"></table>
@@ -48,10 +49,10 @@
 {__block__}
 
 <script>
-    const CATE = '/admin/content/cate/list';
-    const DELETE = '/admin/content/cate/delete';
-    const CHECK = '/admin/content/cate/check';
-    const ADD_EDIT = '/admin/content/cate/addEdit';
+    const CATE = MODULE_NAME + '/content/cate/list';
+    const DELETE = MODULE_NAME + '/content/cate/delete';
+    const CHECK = MODULE_NAME + '/content/cate/check';
+    const ADD_EDIT = MODULE_NAME + '/content/cate/addEdit';
 
     layui.use(['treetable'],function () {
         let $ = layui.jquery;

@@ -64,8 +64,8 @@
 {__block__}
 
 <script>
-	const RULE_ADD = '/admin/system/authrule/add';
-	const RULE_TREE = '/admin/system/authrule/ruleTree';
+	const RULE_ADD = MODULE_NAME + '/system/authrule/add';
+	const RULE_TREE = MODULE_NAME + '/system/authrule/ruleTree';
 
 	layui.use(['xmSelect', 'iconPicker'], function(){
 		let $ = layui.jquery;
@@ -132,24 +132,16 @@
 				dataType: 'json',
 				contentType: 'application/json',
 				type: 'post',
-				success: function(result) {
-					if (result.code === 0) {
-						layer.msg(result.msg, {
-							icon: 1,
-							time: 1000
-						}, function() {
-							
-							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-							parent.layui.treetable.reload('#table');
-							// parent.layui.table.reload("table");
-							// window.parent.location.reload();
-						});
-					} else {
-						layer.msg(result.msg, {
-							icon: 2,
-							time: 1000
-						});
+				success: function(res) {
+					if(res.code) {
+						return popup.failure(res.msg);
 					}
+					return popup.success(res.msg, function() {
+						// parent.layui.table.renderData('table');
+						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+						parent.layui.treetable.reload('#table');
+						// window.parent.location.reload();
+					});
 				}
 			})
 			return false;

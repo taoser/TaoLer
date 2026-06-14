@@ -59,10 +59,10 @@
 
 <script>
 
-    const LIST_URL = "{:url('service.section/list')}";
-    const DELETE = "{:url('service.section/delete')}";
-    const CHECK = "{:url('service.section/check')}";
-    const DELETE_SUB = "{:url('service.section/deleteSub')}";
+    const LIST_URL = MODULE_NAME + '/service/section/list';
+    const DELETE = MODULE_NAME + '/service/section/delete';
+    const CHECK = MODULE_NAME + '/service/section/check';
+    const DELETE_SUB = MODULE_NAME + '/service/section/deleteSub';
 
     layui.use(function () {
         let $ = layui.jquery;
@@ -109,7 +109,6 @@
             ],
 
             click: function(obj, othis){
-                // console.log(obj,this.id)
                 var data = new Object();
                 data.id = this.id;
 
@@ -125,8 +124,6 @@
             }
         });
 
-
-        //第一个实例
         table.render({
             elem: '#section-table'
             ,url: LIST_URL

@@ -50,7 +50,8 @@
 {__block__}
 
 <script>
-	const UPGRADE_KEY_EDIT = '/admin/system/upgrade/keyedit';
+	
+	const UPGRADE_KEY_EDIT = MODULE_NAME + '/system/upgrade/keyedit';
 
 	layui.use(['popup'], function() {
 		let $ = layui.jquery;
@@ -69,7 +70,8 @@
 						return popup.failure(res.msg);
 					}
 					return popup.success(res.msg, function() {
-						location.reload()
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+						parent.location.reload();
 					});
 				}
 			})

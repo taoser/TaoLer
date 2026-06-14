@@ -1,202 +1,204 @@
 {extend name="public/form" /}
 
 {block name="body"}
-	<form class="layui-form" action="">
-		<div class="mainBox">
-			<div class="main-container">
-				<div class="layui-form-item">
-					<label class="layui-form-label">上级栏目*</label>
-					<div class="layui-input-block">
-						<div id="menuSelectBox" class="ew-xmselect-tree"></div>
-					</div>
+
+<form class="layui-form" action="">
+	<div class="mainBox">
+		<div class="main-container">
+			<div class="layui-form-item">
+				<label class="layui-form-label">上级栏目*</label>
+				<div class="layui-input-block">
+					<div id="menuSelectBox" class="ew-xmselect-tree"></div>
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">名称*</label>
-					<div class="layui-input-block">
-						<input type="text" name="catename" lay-verify="required" placeholder="栏目名称*" autocomplete="off" class="layui-input">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">名称*</label>
+				<div class="layui-input-block">
+					<input type="text" name="catename" lay-verify="required" placeholder="栏目名称*" autocomplete="off" class="layui-input">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">别名*</label>
-					<div class="layui-input-block">
-						<input type="text" name="ename" lay-verify="required" placeholder="英文别名*" autocomplete="off" class="layui-input">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">别名*</label>
+				<div class="layui-input-block">
+					<input type="text" name="ename" lay-verify="required" placeholder="英文别名*" autocomplete="off" class="layui-input">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">类型*</label>
-					<div class="layui-input-block">
-						<select name="type">
-							<option value="1">列表</option>
-							<option value="2">单页</option>
-							<option value="3">链接</option>
-						</select>
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型*</label>
+				<div class="layui-input-block">
+					<select name="type">
+						<option value="1">列表</option>
+						<option value="2">单页</option>
+						<option value="3">链接</option>
+					</select>
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">模板*</label>
-					<div class="layui-input-block">
-						<select name="tpl" lay-verify="required">
-							{volist name="template" id="vo"}
-							<option value="{$vo}">{$vo}</option>
-							{/volist}
-						</select>
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">模板*</label>
+				<div class="layui-input-block">
+					<select name="tpl" lay-verify="required">
+						{volist name="template" id="vo"}
+						<option value="{$vo}">{$vo}</option>
+						{/volist}
+					</select>
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">链接</label>
-					<div class="layui-input-block">
-						<input type="text" name="url" lay-verify="" placeholder="类型 为链接 必填" autocomplete="off" class="layui-input">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">链接</label>
+				<div class="layui-input-block">
+					<input type="text" name="url" lay-verify="" placeholder="类型 为链接 必填" autocomplete="off" class="layui-input">
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">图标</label>
-					<div class="layui-input-block">
-						<input type="text" name="icon" placeholder="图标" id="iconPicker" lay-filter="iconPicker" style="display:none;" class="layui-input">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">图标</label>
+				<div class="layui-input-block">
+					<input type="text" name="icon" placeholder="图标" id="iconPicker" lay-filter="iconPicker" style="display:none;" class="layui-input">
 				</div>
-				<div class="layui-form-item" id="img">
-					<label class="layui-form-label">图片</label>
-					<div class="layui-input-inline">
-						<input type="text" name="image" lay-verify="" placeholder="上传图片" autocomplete="off" lay-filter="iconPicker" class="layui-input" >
-					</div>
-					<button style="float: left;" type="button" class="layui-btn" id="upload-cate-img">选图</button>
+			</div>
+			<div class="layui-form-item" id="img">
+				<label class="layui-form-label">图片</label>
+				<div class="layui-input-inline">
+					<input type="text" name="image" lay-verify="" placeholder="上传图片" autocomplete="off" lay-filter="iconPicker" class="layui-input" >
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">SEO描述</label>
-					<div class="layui-input-block">
-						<textarea type="text" name="desc" lay-verify="required" placeholder="类目SEO描述*" autocomplete="off" class="layui-textarea"></textarea>
-					</div>
+				<button style="float: left;" type="button" class="layui-btn" id="upload-cate-img">选图</button>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">SEO描述</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="desc" lay-verify="required" placeholder="类目SEO描述*" autocomplete="off" class="layui-textarea"></textarea>
 				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">排序</label>
-					<div class="layui-input-block">
-						<input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input">
-					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 		</div>
-		<div class="bottom">
-			<div class="button-container">
-				<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="cate-save">
-					<i class="layui-icon layui-icon-ok"></i>
-					提交
-				</button>
-				<button type="reset" class="pear-btn pear-btn-sm">
-					<i class="layui-icon layui-icon-refresh"></i>
-					重置
-				</button>
-			</div>
+	</div>
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="cate-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
 		</div>
-	</form>
+	</div>
+</form>
 
-	{__block__}
+{__block__}
 
-	<script>
+<script>
 
-		const ADD_EDIT = '/admin/content/cate/addEdit';
-		const UPLOAD_URL = '/admin/content/cate/upload';
-		const GET_CATE_TREE = '/admin/content/cate/getcatetree';
+	const ADD_EDIT = MODULE_NAME + '/content/cate/addEdit';
+	const UPLOAD_URL = MODULE_NAME + '/content/cate/upload';
+	const GET_CATE_TREE = MODULE_NAME + '/content/cate/getcatetree';
 
-		layui.use(['iconPicker', 'xmSelect','imgcom'], function(){
-			var $ = layui.jquery
-			,form = layui.form ;
-			var iconPicker = layui.iconPicker;
-			var xmSelect = layui.xmSelect;
-			let upload = layui.upload;
-			let imgcom = layui.imgcom;
-			
-			//初始化图标选择
-			iconPicker.render({
-				elem: '#iconPicker',
-				type: 'fontClass',
-				search: false,
-				page: true,
-				limit: 12,
-				click: function (data) {
-					//console.log(data);
-				}
-			});
+	layui.use(['iconPicker', 'xmSelect','imgcom'], function(){
+		var $ = layui.jquery
+		,form = layui.form ;
+		var iconPicker = layui.iconPicker;
+		var xmSelect = layui.xmSelect;
+		let upload = layui.upload;
+		let imgcom = layui.imgcom;
+		
+		//初始化图标选择
+		iconPicker.render({
+			elem: '#iconPicker',
+			type: 'fontClass',
+			search: false,
+			page: true,
+			limit: 12,
+			click: function (data) {
+				//console.log(data);
+			}
+		});
 
-			form.on('submit(cate-save)', function(data) {
-				data.field.is_single = data.field.is_single == 'on' ? 1 : 0;
-				$.ajax({
-					url: ADD_EDIT,
-					data: JSON.stringify(data.field),
-					dataType: 'json',
-					contentType: 'application/json',
-					type: 'post',
-					success: function(result) {
-						if (result.code === 0) {
-							layer.msg(result.msg, {
-								icon: 1,
-								time: 1000
-							}, function() {
-								parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-								parent.layui.treetable.reload('#cate-table');
-							});
-						} else {
-							layer.msg(result.msg, {
-								icon: 2,
-								time: 1000
-							});
-						}
-					}
-				})
-				return false;
-			});
-
-			//分类菜单结构
-			$.get(GET_CATE_TREE, function(res) {
-				// 渲染下拉树
-				xmSelect.render({
-					el: '#menuSelectBox',
-					name: 'pid',
-					height: '250px',
-					layVerify: 'required',
-					layVerType: 'tips',
-					data: res.data,
-					model: {label: {type: 'text'}},
-					prop: {
-						name: 'catename',
-						value: 'id'
-					},
-					clickClose: true,
-					tree: {
-						show: true,
-						indent: 15,
-						strict: false,
-						expandedKeys: true
-					},
-					on: function(data){ // 单选on模式
-						if(data.isAdd){
-							return data.change.slice(0, 1)
-						}
-					},
-					tips: '请选择上级菜单'
-				})
-			});
-
-			//上传图片
-			upload.render({
-				elem: '#upload-cate-img'
-				,url: UPLOAD_URL
-				,data:{type:'image'}
-				,accept: 'images'
-				,acceptMime: 'image/*'
-				,auto: false
-				,choose: function (obj) { //选择文件后的回调
-						imgcom.uploads(obj);
-					}
-				,done: function(res){
-					$(this.item).prev("div").children("input").val(res.src)
-					if(res.code === 0){
-						layer.msg(res.msg,{icon:6,tiye:2000});
+		form.on('submit(cate-save)', function(data) {
+			data.field.is_single = data.field.is_single == 'on' ? 1 : 0;
+			$.ajax({
+				url: ADD_EDIT,
+				data: JSON.stringify(data.field),
+				dataType: 'json',
+				contentType: 'application/json',
+				type: 'post',
+				success: function(result) {
+					if (result.code === 0) {
+						layer.msg(result.msg, {
+							icon: 1,
+							time: 1000
+						}, function() {
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+							parent.layui.treetable.reload('#cate-table');
+						});
 					} else {
-						layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+						layer.msg(result.msg, {
+							icon: 2,
+							time: 1000
+						});
 					}
 				}
-			});
+			})
+			return false;
+		});
 
-		})
-	</script>
+		//分类菜单结构
+		$.get(GET_CATE_TREE, function(res) {
+			// 渲染下拉树
+			xmSelect.render({
+				el: '#menuSelectBox',
+				name: 'pid',
+				height: '250px',
+				layVerify: 'required',
+				layVerType: 'tips',
+				data: res.data,
+				model: {label: {type: 'text'}},
+				prop: {
+					name: 'catename',
+					value: 'id'
+				},
+				clickClose: true,
+				tree: {
+					show: true,
+					indent: 15,
+					strict: false,
+					expandedKeys: true
+				},
+				on: function(data){ // 单选on模式
+					if(data.isAdd){
+						return data.change.slice(0, 1)
+					}
+				},
+				tips: '请选择上级菜单'
+			})
+		});
+
+		//上传图片
+		upload.render({
+			elem: '#upload-cate-img'
+			,url: UPLOAD_URL
+			,data:{type:'image'}
+			,accept: 'images'
+			,acceptMime: 'image/*'
+			,auto: false
+			,choose: function (obj) { //选择文件后的回调
+					imgcom.uploads(obj);
+				}
+			,done: function(res){
+				$(this.item).prev("div").children("input").val(res.src)
+				if(res.code === 0){
+					layer.msg(res.msg,{icon:6,tiye:2000});
+				} else {
+					layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+				}
+			}
+		});
+
+	})
+</script>
+
 {/block}

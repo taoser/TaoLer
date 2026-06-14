@@ -1,6 +1,7 @@
 {extend name="public/form" /}
 
 {block name="body"}
+
 <form class="layui-form">
 	<div class="mainBox">
 		<div class="main-container">
@@ -54,8 +55,8 @@
 
 <script>
 
-	const SINGLE_PAGE_Add = '/admin/content/page/add';
-	const SINGLE_CATE_TREE = '/admin/content/cate/getSingleCateTree';
+	const SINGLE_PAGE_Add = MODULE_NAME + '/content/page/add';
+	const SINGLE_CATE_TREE = MODULE_NAME + '/content/cate/getSingleCateTree';
 
 	layui.use(['xmSelect','popup'], function () {
 		var $ = layui.jquery, form = layui.form, upload = layui.upload;

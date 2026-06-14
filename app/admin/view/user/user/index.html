@@ -129,18 +129,18 @@
 
 <script>
 
-	const USER_LIST = '/admin/user/user/list';
-	const USER_SAVE = '/admin/user/user/save';
-	const USER_EDIT = '/admin/user/user/edit';
-	const USER_DELETE = '/admin/user/user/delete';
-	const USER_REMOVE = '/admin/user/user/delete';
-	const USER_CLEAR = '/admin/user/user/clear';
-	const USER_ENABLE = '/admin/user/user/enable';
-	const USER_BATCH_REMOVE = '/admin/user/user/batchRemove';
+	const USER_LIST = MODULE_NAME + '/user/user/list';
+	const USER_SAVE = MODULE_NAME + '/user/user/save';
+	const USER_EDIT = MODULE_NAME + '/user/user/edit';
+	const USER_DELETE = MODULE_NAME + '/user/user/delete';
+	const USER_REMOVE = MODULE_NAME + '/user/user/delete';
+	const USER_CLEAR = MODULE_NAME + '/user/user/clear';
+	const USER_ENABLE = MODULE_NAME + '/user/user/enable';
+	const USER_BATCH_REMOVE = MODULE_NAME + '/user/user/batchRemove';
 
-	const USER_EDIT_VIP_LEVEL = '/admin/user/user/editVipLevel';
-	const USER_EDIT_FIELD = '/admin/user/user/editField';
-	const USER_CHECK = '/admin/user/user/check';
+	const USER_EDIT_VIP_LEVEL = MODULE_NAME + '/user/editVipLevel';
+	const USER_EDIT_FIELD = MODULE_NAME + '/user/editField';
+	const USER_CHECK = MODULE_NAME + '/user/check';
 
 	layui.use(['common','admin'], function() {
 		let $ = layui.jquery;

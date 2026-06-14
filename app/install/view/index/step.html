@@ -421,11 +421,11 @@
 						<div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
 							安装成功
 						</div>
-						<div style="font-size: 14px;color: #666;margin-top: 20px;">恭喜您心愿达成，祝马到成功！</div>
+						<div style="font-size: 14px;color: #666;margin-top: 20px;">恭喜安装完成，祝马到成功！请牢记收藏后台地址，不要外泄！</div>
 					</div>
 					<div style="text-align: center;margin-top: 50px;">
 						<a href="/" class="pear-btn pear-btn-success next"  target="_blank">去前端查看</a>
-						<a href="/admin/index" class="pear-btn pear-btn-success"  target="_blank">去管理后台</a>
+						<a href="" class="pear-btn pear-btn-success" id="goAdminLink" target="_blank">去管理后台</a>
 					</div>
 				</div>
 			</div>
@@ -676,6 +676,9 @@
 						case 'ok':
 							addLog(message || '✅ 安装完成！', 'ok');
 							closeSSE();  // 完成后关闭连接
+							if(data.url){
+								goAdminLink.href = data.url;
+							}
 							step.next('#stepForm');
 							break;
 						case 'error':

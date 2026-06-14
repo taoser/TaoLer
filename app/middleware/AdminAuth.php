@@ -34,6 +34,10 @@ class AdminAuth
      */
     public function handle($request, \Closure $next)
     {
+        // if(empty($request->param('sec')) || $request->param('sec') != 100){
+        //     return response('403','403','text/plain');
+        // }
+
         // 加载语言包
         Lang::load([
             app_path() . 'admin/lang/zh-cn.php',
