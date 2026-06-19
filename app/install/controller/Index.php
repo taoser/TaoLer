@@ -165,15 +165,16 @@ ENV;
         $taolerFile = config_path() . 'taoler.php';
         if (file_exists($taolerFile) && is_writable($taolerFile)) {
             try {
-                $module_name = Config::get('taoler.module_name');
+                $moduleName = Config::get('taoler.admin_module_name');
                 $taolerStr = file_get_contents($taolerFile);
 
                 $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                $modStr = '/' .substr(str_shuffle($chars), 0, 8);
+                // 随机生成8位字符串
+                $modStr = '/' . substr(str_shuffle($chars), 0, 8);
 
-                $taolerStr = str_replace($module_name, $modStr, $taolerStr);
+                $taolerStr = str_replace($moduleName, $modStr, $taolerStr);
 
-                Config::set(['module_name' => $modStr], 'taoler');
+                Config::set(['admin_module_name' => $modStr], 'taoler');
 
                 $resTaoler = file_put_contents($taolerFile, $taolerStr);
 

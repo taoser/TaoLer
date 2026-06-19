@@ -13,6 +13,27 @@
 </script>
 <script src="/static/layui/layui.js"></script>
 <script src="/static/component/pear/pear.js"></script>
+<script>
+  layui.use(function() {
+    const URL = MODULE_NAME + '/system/admin/getRules';
+    let $ = layui.$;
+    $.ajax({
+      url: URL,
+      type: "POST",
+      dataType: 'json',
+      success: function(res) {
+        var codes = res.data || [];
+         // 细分权限
+        layui.each(codes, function (k, code) {
+          codes[k] = '*[permission^="'+code+'"]';
+        });
+        if (codes.length) {
+          $("head").append("<style> *[permission]{display: none;} " + codes.join(",") + "{display: initial}</style>");
+        }
+      }
+    })
+  })
+</script>
 {/block}
 </body>
 </html>

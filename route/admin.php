@@ -7,18 +7,22 @@ use think\facade\Config;
 // 执照图片
 Route::rule('data/storage/[:id]/licence_pic/:name$', 'addons.jida.Lawyer/showImg')->name('lic_img');
 
-$moduleName = Config::get('taoler.module_name');
+$moduleName = Config::get('taoler.admin_module_name');
 
 Route::group($moduleName, function () {
 
     Route::get('/','index/index');
-    Route::get('index','index/index');
+    Route::get('index','index/index')->name('admin-index');
     // 登录接口
-    Route::post('login$','login/index')->name('login');
+    Route::rule('login$','login/index')->name('admin-login');
+    // 注册接口
+    Route::rule('register$','login/register')->name('admin-register');
     // 注出接口
-    Route::post('logout$','system.admin/logout')->name('logout');
+    Route::rule('logout$','system.admin/logout')->name('admin-logout');
     // 修改密码接口
-    Route::post('system/repass$','system.admin/repass')->name('repass');
+    Route::rule('system/repass$','system.admin/repass')->name('admin-repass');
+    // 基本资料接口
+    Route::rule('system/info$','system.admin/info')->name('admin-info');
     // 清理缓存接口
     Route::post('system/clearcache$','system.admin/clearCache')->name('clear_cache');
     // 获取菜单接口

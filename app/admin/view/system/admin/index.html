@@ -47,11 +47,11 @@
 </div>
 
 <script type="text/html" id="user-toolbar">
-	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="system.admin.add">
 		<i class="layui-icon layui-icon-add-1"></i>
 		新增
 	</button>
-	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="system.admin.delete">
 		<i class="layui-icon layui-icon-delete"></i>
 		删除
 	</button>
@@ -59,13 +59,13 @@
 <script type="text/html" id="imgTpl"> 
 	<img src= "/{{d.avatar}}" style="width: 30px; height: 30px;" />
 </script>
-<script type="text/html" id="user-bar">
-	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove" {{#if (d.id == 1){ }} disabled {{# } }} ><i class="layui-icon layui-icon-delete"></i></button>
+<script type="text/html" id="user-bar-template">
+	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit" permission="system.admin.edit"><i class="layui-icon layui-icon-edit"></i></button>
+	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove" {{#if (d.id == 1){ }} disabled {{# } }} permission="system.admin.delete"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
 
 <script type="text/html" id="user-enable">
-	<input type="checkbox" name="enable" value="{{d.id}}" {{#if (d.id == 1){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.check == 1 ? 'checked' : '' }} />
+	<input type="checkbox" name="enable" value="{{d.id}}" style="display:none;" permission="system.admin.enable" {{#if (d.id == 1){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.check == 1 ? 'checked' : '' }} />
 </script>
 
 <script type="text/html" id="buttonAuth">
@@ -95,7 +95,7 @@
 	const ADMIN_ADD = MODULE_NAME + '/system/admin/add';
 	const ADMIN_EDIT = MODULE_NAME + '/system/admin/edit';
 	const ADMIN_DELETE = MODULE_NAME + '/system/admin/delete';
-	const ADMIN_CHECK = MODULE_NAME + '/system/admin/check';
+	const ADMIN_CHECK = MODULE_NAME + '/system/admin/check';	
 	
 	layui.use(['common','popup'], function() {
 		let table = layui.table;
@@ -167,9 +167,9 @@
 				},
 				{
 					title: '操作',
-					toolbar: '#user-bar',
 					align: 'center',
-					width: 130
+					width: 130,
+					templet: '#user-bar-template'
 				}
 			]
 		]
@@ -185,7 +185,14 @@
 				title: '刷新',
 				layEvent: 'refresh',
 				icon: 'layui-icon-refresh',
-			}, 'filter', 'print', 'exports']
+			}, 'filter', 'print', 'exports'],
+			done: function(res, curr, count, origin){
+				// console.log(res); // 得到当前渲染的数据
+				// console.log(curr);  // 得到当前页码
+				// console.log(count); // 得到数据总量
+				// console.log(origin); // 回调函数所执行的来源 --- 2.8.7+
+				// 页面DOM加载完成后执行 初始化权限
+			},
 		});
 
 		table.on('tool(user-table)', function(obj) {
@@ -318,7 +325,14 @@
 		window.refresh = function(param) {
 			table.reload('user-table');
 		}
+
+		window.onload = function(){
+	
+	
+		}
 	})
+
+	
 
 </script>
 

@@ -43,7 +43,7 @@
 						<a class="layui-icon layui-icon-username" href="javascript:;"></a>
 						<!-- 功 能 菜 单 -->
 						<dl class="layui-nav-child">
-							<dd><a user-menu-url="{:url('system.admin/info')}" user-menu-id="5555" user-menu-title="基本资料">基本资料</a></dd>
+							<dd><a href="javascript:void(0);" id="updataInfo">基本资料</a></dd>
 							<dd><a href="javascript:void(0);" id="resetPassword">修改密码</a></dd>
 							<dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
 						</dl>
@@ -111,10 +111,10 @@
 				
 				// 登出逻辑 
 				admin.logout(function(){
-					$.get("{:url('logout')}", function(res){
+					$.get("{:url('admin-logout')}", function(res){
 						if(res.code === 0) {
 							popup.success("注销成功", function(){
-								location.href = "{:url('login')}";
+								location.href = "{:url('admin-login')}";
 							})
 						}
 					});
@@ -141,7 +141,18 @@
 						title: '修改密码',
 						shade: 0.1,
 						area: ["350px", "300px"],
-						content: "{:url('repass')}",
+						content: "{:url('admin-repass')}",
+					})
+				});
+
+				// 基本资料
+				$("#updataInfo").click(function(){
+					layer.open({
+						type: 2,
+						title: '基本资料',
+						shade: 0.1,
+						area: ["350px", "400px"],
+						content: "{:url('admin-info')}",
 					})
 				});
 

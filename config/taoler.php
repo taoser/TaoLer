@@ -26,7 +26,7 @@ return [
 	// id加密最小长度
 	'id_minlength' => 8,
 	// 模块名称
-	'module_name' => '/3MPasq1n',
+	'admin_module_name' => '/3MPasq1n',
 
 	// 项目配置
 	'config'	=>[

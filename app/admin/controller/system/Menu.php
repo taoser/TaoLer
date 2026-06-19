@@ -40,7 +40,7 @@ class Menu extends AdminBaseController
         // 菜单数组
         $menu   = [];
 
-        $moduleName = config('taoler.module_name');
+        $moduleName = config('taoler.admin_module_name');
 
         // 初始菜单
         $menu[] = [
@@ -249,7 +249,7 @@ class Menu extends AdminBaseController
     // 后台菜单控制
     public function getMenuJsonData()
     {
-        $moduleName = config('taoler.module_name');
+        $moduleName = config('taoler.admin_module_name');
 
         $menu = [
             "logo" => [

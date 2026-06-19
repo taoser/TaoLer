@@ -46,7 +46,7 @@ class AdminBaseController extends \app\BaseController
         $runTime = $this->getRunTime();
         
         // 用于加密的模块名称 访问路径前缀
-        $moduleName = Config::get('taoler.module_name');
+        $moduleName = Config::get('taoler.admin_module_name');
 
         View::assign(['moduleName'=>$moduleName,'domain'=>$this->getDomain(),'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime,]);
 	}

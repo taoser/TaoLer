@@ -38,6 +38,15 @@ class AdminAuth
         //     return response('403','403','text/plain');
         // }
 
+        $adminModuleName = Config::get('taoler.admin_module_name');
+        $controller = $request->controller();
+        $action = $request->action();
+        // var_dump($controller);
+        // var_dump($action);
+        $path = strtolower($controller) . '/' . strtolower($action);
+
+        // var_dump($path);
+
         // 加载语言包
         Lang::load([
             app_path() . 'admin/lang/zh-cn.php',
@@ -50,27 +59,21 @@ class AdminAuth
             'view_path'     => app_path() . 'admin' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
             'view_dir_name' => 'view'
         ]);
-
-        //    var_dump(Request::url(),Request::pathinfo(),$request->baseUrl(),$request->controller(), $request->action());
-        $path = $request->pathinfo();
-		//访问路径
-        $path = str_contains($path, '.html') ? stristr($path, ".html",true) : $path;
-
-        //    var_dump($path);
-		
+           
         //登陆前获取加密的Cookie
         $cooAuth = Cookie::get('adminAuth');
 
         if(!Session::has('admin_id')) {
             if(empty($cooAuth)){
-                //没有登录及当前非登录页重定向登录页
-                if(!in_array($path, ['login/index','login/register','admin/login'])) {
-                    return redirect((string) url('login/index'));
+                //没有登录 当前非登录页重定向登录页
+                if(!in_array($path, ['login/index','login/register','admin/login', $adminModuleName, $adminModuleName.'/index'])) {
+                    return redirect((string) url('admin-login'));
+                    return false;
                 }
 
             } else {
                 
-                $resArr = explode(':',$cooAuth);
+                $resArr = explode(':', $cooAuth);
                 $userId = end($resArr);
                 //检验用户
                 $user = Db::name('admin')->where('id',$userId)->find();
@@ -87,10 +90,10 @@ class AdminAuth
 
         }
         
-        //登陆后无法访问登录页
+        //登陆后无法访问登录页、忘记密码页、注册页
         if(Session::has('admin_id')){
-            if(in_array($path, ['login/index','login/register'])){
-                return redirect((string) url('index/index'));
+            if(in_array($path, ['login/index','login/register','register/index'])){
+                return redirect((string) url('admin-index'));
             }
         }
 
@@ -104,20 +107,20 @@ class AdminAuth
                 'login/index',
                 'login/register',
                 'admin/index',
-                'system.menu/getnav',
+                'system/menu/getnav',
                 'index/index',
                 'index/console1',
                 'index/console2',
                 'index/news',
-                'menu/getMenuNavbar',
+                'menu/getmenunavbar',
                 'index/home',
-                'Admin/info',
-                'system.admin/repass',
-                'system.admin/logout',
-                'system.menu/getMenuJsonData',
-                'Index/cunsult',
-                'Index/replys',
-                'Index/reply',
+                'admin/info',
+                'system/admin/repass',
+                'system/admin/logout',
+                'system/menu/getmenujsondata',
+                'index/cunsult',
+                'index/replys',
+                'index/reply',
             ];
 
             if (!in_array($path, $not_check_list)) {

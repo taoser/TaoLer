@@ -17,6 +17,9 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
+use taoser\think\Auth;
+use think\response\Json;
+
 
 
 class Admin extends AdminBaseController
@@ -185,7 +188,7 @@ class Admin extends AdminBaseController
         }
         $authGroupTitle = implode('|', $authName);
 
-		View::assign(['admin'=>$admin,'authGroupTitle'=>$authGroupTitle]);
+		View::assign(['admin' => $admin, 'authGroupTitle' => $authGroupTitle]);
 		return View::fetch();
     }
 
@@ -260,5 +263,37 @@ class Admin extends AdminBaseController
 		Session::clear();
 		
 		return json(['code'=>0,'msg'=>'退出成功' ]);
+	}
+
+	/**
+	 * 获取管理员权限规则
+	 *
+	 * @return \think\response\Json
+	 */
+	public function getRules() :Json
+	{
+		$codes = [];
+		$ruleArr = [];
+
+		$groupIdArr = Db::name('auth_group_access')->where('uid', $this->aid)->where('status',1)->group('group_id')->column('group_id');
+		
+		if(!is_null($groupIdArr)) {
+			$rules = Db::name('auth_group')->whereIn('id', $groupIdArr)->where('status', 1)->column('rules');
+			// 遍历拆分 + 合并 + 去重 + 重置下标
+			$temp = [];
+			foreach ($rules as $item) {
+				$temp = array_merge($temp, explode(',', $item));
+			}
+			$ruleArr = array_values(array_unique($temp));
+		}
+
+		if(!empty($ruleArr)){
+			$nameArr = Db::name('auth_rule')->whereIn('id', $ruleArr)->where('status',1)->where('ismenu',2)->column('name');
+			foreach($nameArr as $v){
+				$codes[] = str_replace('/', '.', strtolower(trim($v)));
+			}
+		}
+
+		return json(['code' => 0, 'msg' => 'ok', 'data' => $codes]);
 	}
 }

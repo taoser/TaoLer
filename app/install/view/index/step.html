@@ -614,12 +614,15 @@
 					};
 
 					eventSource.onerror = function(err) {
+
 						if (eventSource && eventSource.readyState === EventSource.CLOSED) {
 							addLog('SSE 连接已关闭 (导入可能已完成或出错)', 'info');
 						} else {
 							addLog('SSE 连接异常，请刷新页面后重试', 'error');
 						}
+
 						closeSSE();
+						
 						// 如果没收到完成事件但连接断了，提示检查后端
 						if (isImporting) {
 							addLog('连接意外中断，导入可能不完整，请检查后端错误日志', 'error');
@@ -687,11 +690,13 @@
 							if (sql_preview) {
 								addLog(`失败语句: ${sql_preview}`, 'error');
 							}
+							
+							// 重置上一步导入按钮
+							sqlInstallPreBtn.disabled = false;
+
 							// extraInfoSpan.innerText = '导入失败';
 							// 出错终止导入，关闭连接
 							closeSSE();
-							// 重置上一步导入按钮
-							sqlInstallPreBtn.disabled = false;
 
 							break;
 						default:

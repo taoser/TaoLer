@@ -45,7 +45,7 @@ class Login extends AdminBaseController
 	public function register()
 	{
 		if(Session::has('admin_id')){
-			return redirect('index/index');
+			return redirect((string) url('admin-index'));
 		}
 		
 		return View::fetch('register');
@@ -55,7 +55,7 @@ class Login extends AdminBaseController
 	public function forget()
 	{
 		if(Session::has('admin_id')){
-			return redirect('index/index');
+			return redirect((string) url('admin-index'));
 		}
 		
 		return View::fetch('forget');
