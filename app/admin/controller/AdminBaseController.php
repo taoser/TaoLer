@@ -48,10 +48,17 @@ class AdminBaseController extends \app\BaseController
         // 用于加密的模块名称 访问路径前缀
         $moduleName = Config::get('taoler.admin_module_name');
 
-        View::assign(['moduleName'=>$moduleName,'domain'=>$this->getDomain(),'insurl'=>$sys['domain'],'syscy'=>$syscy,'clevel'=>$sys['clevel'],'runTime'=>$runTime,]);
+        View::assign([
+            'moduleName'    => $moduleName,
+            'domain'        => $this->getDomain(),
+            'insurl'        => $sys['domain'],
+            'syscy'         => $syscy,
+            'clevel'        => $sys['clevel'],
+            'runTime'       => $runTime
+        ]);
 	}
 
-     /**
+    /**
      * 菜单无限极分类
      *
      * @param array $data 包含有pid的rule权限数组
@@ -68,17 +75,14 @@ class AdminBaseController extends \app\BaseController
                 $child = $this->getRuleTree($data, $v['id']);
                 // 有子类
                 if(!empty($child)) {
-                    // foreach($child as $m => $n) {
-                    //     $v['children'][$m] = $n;
-                    //     //$v['children'][$m]['type'] = 1;
-                    //     //$v['children'][$m]['openType'] = '_iframe';
-                    // }
                     $v['type'] = $v['pid'] == 0 ? 0 : $v['ismenu'];
                     $v['children'] = $child;
+                    $v['isParent'] = true;
                 } else {
                     // 没有子菜单type=1
                     $v['type'] = 1;
                     $v['openType'] = '_iframe';
+                    $v['isParent'] = false;
                 }
                 
                 //把数组放到$tree中
@@ -100,19 +104,12 @@ class AdminBaseController extends \app\BaseController
         $admin_id = $this->aid;
         $auth     = new Auth();
 
-        $auth_rule_list = Db::name('auth_rule')->where(['status'=> 1, 'ismenu'=>1, 'delete_time'=> 0])->select();
+        $auth_rule_list = Db::name('auth_rule')
+        ->where(['status' => 1, 'ismenu' => 1, 'delete_time'=> 0])
+        ->select();
+
         foreach ($auth_rule_list as $value) {
             if ($auth->check($value['name'], $admin_id) || $admin_id == 1) {
-                // 查询是否设置映射
-                // $map = array_search('admin',config('app.app_map'));
-                // //dump($map,$value);
-                // //stripos($value);
-                // if($map){
-                //     $menu[] = strtr($value,'admin',$map);
-                // } else {
-                //     $menu[] = $value;
-                // }
-                //dump($menu);
                 $menu[] = $value;
             }
         }
@@ -122,19 +119,25 @@ class AdminBaseController extends \app\BaseController
 	
 	/**
      * 获取角色菜单
-     * $type 1 admin后端权限,2 index前端权限
+     * $type 1 admin后端权限, 2 index前端权限
      */
     protected function getRoleMenu($type)
     {
         $menu     = [];
-        $auth_rule_list = Db::name('auth_rule')->field('id,pid,title,sort,level')->where(['delete_time'=> 0, 'status'=> 1,'type'=> $type])->select()->toArray();
+
+        $auth_rule_list = Db::name('auth_rule')
+        ->field('id,pid,title,sort,level')
+        ->where(['delete_time'=> 0, 'status'=> 1,'type'=> $type])
+        ->select()
+        ->toArray();
         // 排序
         $cmf_arr = array_column($auth_rule_list, 'sort');
         array_multisort($cmf_arr, SORT_ASC, $auth_rule_list);
+
         foreach ($auth_rule_list as $value) {
                 $menu[] = [
-                    'id' => $value['id'],
-                    'pid' => $value['pid'],
+                    'id'    => $value['id'],
+                    'pid'   => $value['pid'],
                     'title' => Lang::get($value['title']),
                     'level' => $value['level']
                 ];  
@@ -147,12 +150,16 @@ class AdminBaseController extends \app\BaseController
     {
         //清理缓存
         Cache::clear(); 
-		$atemp = str_replace('\\',"/",app()->getRootPath().'runtime/admin/temp/');
+		$temp = str_replace('\\',"/",app()->getRootPath().'runtime/temp/');
+        $cache = str_replace('\\',"/",app()->getRootPath().'runtime/cache/');
+
 		$itemp = str_replace('\\',"/",app()->getRootPath().'runtime/index/temp/');
-		$cache = str_replace('\\',"/",app()->getRootPath().'runtime/cache/');
-		Files::delDirAndFile($atemp);
-		Files::delDirAndFile($itemp);
+		
+		Files::delDirAndFile($temp);
         Files::delDirAndFile($cache);
+        
+		Files::delDirAndFile($itemp);
+        
 		return true;
     }
 

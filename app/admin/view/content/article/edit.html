@@ -94,6 +94,8 @@
 		var xmSelect = layui.xmSelect;
 		let popup = layui.popup;
 
+		let INIT_CID = "{$article.cate_id}";
+
 		//1.渲染标签
 		var addTags = xmSelect.render({
 			el: '#tag',
@@ -126,7 +128,6 @@
 
 		// 分类选择
 		$.get(CATE_TREE_URL, function(res){
-			var INIT_CID = "{$article.cate_id}";
 			// 渲染下拉树
 			xmSelect.render({
 				el: '#CateId',

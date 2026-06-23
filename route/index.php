@@ -84,6 +84,10 @@ Route::group('',function(){
 
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
 
+	Route::miss(function() {
+		return '404 Not Found!';
+	});
+
 })
 ->pattern([
 	'ename' => '[\w|\-]+',

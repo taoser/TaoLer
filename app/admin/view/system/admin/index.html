@@ -65,14 +65,26 @@
 </script>
 
 <script type="text/html" id="user-enable">
-	<input type="checkbox" name="enable" value="{{d.id}}" style="display:none;" permission="system.admin.enable" {{#if (d.id == 1){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.check == 1 ? 'checked' : '' }} />
+	<div permission="system.admin.check">
+		<input type="checkbox" name="enable" value="{{d.id}}" permission="system.admin.enable" {{#if (d.id == 1){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.check == 1 ? 'checked' : '' }} />
+	</div>
 </script>
 
 <script type="text/html" id="buttonAuth">
 	{{#  if(d.id == '1'){ }}
 		<input type="checkbox" name="auth" lay-skin="primary"  checked disabled >
 	{{#  } else { }}
-		{if condition="checkRuleButton('admin/auth')"}<input type="checkbox" name="auth" lay-skin="primary" lay-filter="auth" {{# if(d.auth ==1){ }} checked value="0"{{#  } else { }}value="1"{{#  } }} id="{{d.id}}" >{else}<button class="pear-btn pear-btn-xs  pear-btn-disabled">无权限</button>{/if}
+		{if condition="checkRuleButton('admin/auth')"}
+			<input type="checkbox" name="auth" id="{{d.id}}" lay-skin="primary" lay-filter="auth" 
+			{{# if(d.auth == 1){ }}
+				checked value="0"
+			{{#  } else { }}
+				value="1"
+			{{#  } }} 
+			>
+		{else}
+			<button class="pear-btn pear-btn-xs  pear-btn-disabled">无权限</button>
+		{/if}
 	{{#  } }}
 </script>
 
@@ -102,6 +114,7 @@
 		let form = layui.form;
 		let $ = layui.jquery;
 		let common = layui.common;
+		let popup = layui.popup;
 
 		let cols = [
 			[{
@@ -229,13 +242,12 @@
 				data:{"id": this.value, "status":status},
 				dataType:'json',
 				success:function(res){
-					if(res.code === 0){
-						return layui.popup.success(res.msg,function(){
-							table.reload('user-table')
-						});
-					} else {
-						return layui.popup.failure(res.msg);
+					if(res.code){
+						return popup.failure(res.msg);
 					}
+					return popup.success(res.msg,function(){
+						table.reload('user-table')
+					});
 				}
 			});
 			return false;
@@ -269,19 +281,19 @@
 				layer.close(index);
 				let loading = layer.load();
 				$.ajax({
-					url: ADMIN_DELETE + "?id=" + obj.data['id'],
+					url: ADMIN_DELETE,
 					dataType: 'json',
 					type: 'delete',
+					data: {"id": obj.data['id']},
 					success: function(res) {
 						layer.close(loading);
 						if (res.code === 0) {
-							return layui.popup.success(res.msg,function(){
+							return popup.success(res.msg,function(){
 								obj.del();
 								table.reload('user-table')
 							});
-						} else {
-							return layui.popup.failure(res.msg);
 						}
+						return popup.failure(res.msg);
 					}
 				})
 				return false;
@@ -309,13 +321,12 @@
 					data:{"id":checkIds}, 
 					success: function(res) {
 						layer.close(loading);
-						if (res.success) {
-							return layui.popup.success(res.msg,function() {
-								table.reload('user-table');
-							});
-						} else {
-							return layui.popup.failure(res.msg);
+						if (res.code) {
+							return popup.failure(res.msg);
 						}
+						return popup.success(res.msg,function() {
+							table.reload('user-table');
+						});
 					}
 				})
 				return false;

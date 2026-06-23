@@ -117,6 +117,7 @@ class AdminAuth
                 'admin/info',
                 'system/admin/repass',
                 'system/admin/logout',
+                'system/admin/infoSet',
                 'system/menu/getmenujsondata',
                 'index/cunsult',
                 'index/replys',

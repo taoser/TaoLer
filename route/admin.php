@@ -23,6 +23,8 @@ Route::group($moduleName, function () {
     Route::rule('system/repass$','system.admin/repass')->name('admin-repass');
     // 基本资料接口
     Route::rule('system/info$','system.admin/info')->name('admin-info');
+    // 基本资料设置接口
+    Route::get('system/infoedit$','system.admin/infoEdit')->name('admin-infoEdit');
     // 清理缓存接口
     Route::post('system/clearcache$','system.admin/clearCache')->name('clear_cache');
     // 获取菜单接口
@@ -32,6 +34,10 @@ Route::group($moduleName, function () {
 
     Route::rule(':controller/:action$',':controller/:action');
     Route::rule(':dirname/:controller/:action$',':dirname.:controller/:action');
+
+    Route::miss(function() {
+        return '404 Not Found!';
+    });
     
 })->middleware([
     \app\middleware\AdminAuth::class

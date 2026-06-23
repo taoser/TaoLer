@@ -898,7 +898,6 @@ class Article extends BaseEntity
             if($page > $lastPage) {
                 throw new Exception('no data');
             }
-
             
             // 最大偏移量
             $maxNum = $page * $limit;
@@ -942,7 +941,7 @@ class Article extends BaseEntity
                     ])
                     // ->withCount(['comments'])
                     ->order('id', 'desc')
-                    ->append(['aurl'])
+                    ->append(['url'])
                     ->select()
                     ->toArray();
                     
@@ -977,7 +976,7 @@ class Article extends BaseEntity
                         }
                     ])
                     ->order('id', 'desc')
-                    ->append(['aurl'])
+                    ->append(['url'])
                     ->select()
                     ->toArray();
                     

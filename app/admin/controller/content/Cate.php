@@ -11,16 +11,23 @@
 namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
+use Exception;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\facade\Category;
 use taoler\com\Files;
 use think\Response\Json;
-use Exception;
 
 class Cate extends AdminBaseController
 {
+
+
+    public function initialize()
+    {
+        parent::initialize();
+    }
+
     /**
      * 浏览
      * @return string
@@ -35,6 +42,27 @@ class Cate extends AdminBaseController
 	{
         return Category::getList();
 	}
+
+    public function getCateTreeList()
+    {
+        $cates = Db::name('cate')
+		->field('id,pid,ename,type,sort,catename,tpl,icon,status,is_hot,desc,url,image')
+		->select()
+		->toArray();
+
+		if(empty($cates)) {
+			return json(['code' => 1, 'msg' => 'no data！']);
+		}
+
+		foreach($cates as $key => $value){
+			// $authRules[$key]['title'] = Lang::get($value['title']);
+			$cates[$key]['icon'] = empty($value['icon']) ? '' : 'layui-icon ' . $value['icon'];
+		}
+
+		$data = $this->getRuleTree($cates);
+
+		return json(['code' => 0,'msg' => 'ok','data' => $data]);
+    }
 
     //添加和编辑帖子分类 废弃
     public function addEdit()

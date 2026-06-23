@@ -1,212 +1,224 @@
 {extend name="public/base" /}
 
 {block name="title"}权限菜单{/block}
+
 {block name="body"}
-    <div class="layui-card">
-        <div class="layui-card-body">
-            <table id="table" lay-filter="table"></table>
-        </div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="table" lay-filter="table"></table>
     </div>
+</div>
 
-    <script type="text/html" id="power-toolbar">
-        <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
-            <i class="layui-icon layui-icon-add-1"></i>
-            新增
-        </button>
-        <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-            <i class="layui-icon layui-icon-delete"></i>
-            删除
-        </button>
-        <button class="pear-btn pear-btn-success pear-btn-md" lay-event="expandAll">
-            <i class="layui-icon layui-icon-spread-left"></i>
-            展开
-        </button>
-        <button class="pear-btn pear-btn-success pear-btn-md" lay-event="foldAll">
-            <i class="layui-icon layui-icon-shrink-right"></i>
-            折叠
-        </button>
-    </script>
+<script type="text/html" id="toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="expandAll">
+        <i class="layui-icon layui-icon-spread-left"></i>
+        展开/折叠
+    </button>
+</script>
 
-    <script type="text/html" id="power-bar">
-        <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-        <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove" {{#if (d.id == 1 || d.id == 31){ }} disabled {{# } }} ><i class="layui-icon layui-icon-delete"></i></button>
-    </script>
+<script type="text/html" id="bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove" {{#if (d.id == 1 || d.id == 31){ }} disabled {{# } }} ><i class="layui-icon layui-icon-delete"></i></button>
+</script>
 
-    <script type="text/html" id="power-type">
-        {{#if (d.powerType == '0') { }}
-        <span>目录</span>
-        {{# }else if(d.powerType == '1'){ }}
-        <span>菜单</span>
-        {{# }else if(d.powerType == '2'){ }}
-        <span>权限</span>
-        {{# } }}
-    </script>
+<script type="text/html" id="power-type">
+    {{#if (d.powerType == '0') { }}
+    <span>目录</span>
+    {{# }else if(d.powerType == '1'){ }}
+    <span>菜单</span>
+    {{# }else if(d.powerType == '2'){ }}
+    <span>权限</span>
+    {{# } }}
+</script>
 
-    <script type="text/html" id="power-enable">
-        <input type="checkbox" name="enable" value="{{d.id}}" {{# if (d.id == 1 || d.id == 31){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="rule-enable"  {{ d.enable == 1 ? 'checked' : '' }} />
-    </script>
+<script type="text/html" id="power-enable">
+    <input type="checkbox" name="enable" value="{{d.id}}" {{# if (d.id == 1 || d.id == 31){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="rule-enable"  {{ d.enable == 1 ? 'checked' : '' }} />
+</script>
 
-    {__block__}
+{__block__}
 
-    <script>
-        const RULES_URL = MODULE_NAME + '/system/AuthRule/list';
-        const RULES_ADD = MODULE_NAME + '/system/AuthRule/add';
-        const RULES_EDIT = MODULE_NAME + '/system/AuthRule/edit';
-        const RULES_DELETE = MODULE_NAME + '/system/AuthRule/delete';
-        const RULES_ENABLE = MODULE_NAME + '/system/AuthRule/check';
+<script>
+    const RULES_URL = MODULE_NAME + '/system/AuthRule/list';
+    const RULES_ADD = MODULE_NAME + '/system/AuthRule/add';
+    const RULES_EDIT = MODULE_NAME + '/system/AuthRule/edit';
+    const RULES_DELETE = MODULE_NAME + '/system/AuthRule/delete';
+    const RULES_ENABLE = MODULE_NAME + '/system/AuthRule/check';
 
-        layui.use(['treetable','popup'],function () {
-            let table = layui.table;
-            let form = layui.form;
-            let $ = layui.jquery;
-            let treetable = layui.treetable;
-            let popup = layui.popup;
- 
-            treetable.render({
-                treeColIndex: 1,
-                treeSpid: 0,
-                treeIdName: 'powerId',
-                treePidName: 'parentId',
-                skin:'line',
-                treeDefaultClose: true,
-                toolbar:'#power-toolbar',
-                elem: '#table',
-                url: RULES_URL,
-                page: false,
-                cols: [[
-                    {type: 'checkbox'},
-                    {field: 'id', width: 100,  title: '权限ID'},
-                    {field: 'powerName', minWidth: 200, title: '权限名称'},
-                    {field: 'icon', title: '图标',templet:'<div><i class="layui-icon {{d.icon}}"></i></div>'},
-                    {field: 'powerType', title: '权限类型',templet:'#power-type'},
-                    {field: 'powerUrl', title: '权限地址', minWidth: 150},
-                    {field: 'enable', title: '是否可用',templet:'#power-enable'},
-                    {field: 'sort', title: '排序'},
-                    {title: '操作',templet: '#power-bar', width: 150, align: 'center'}
-                ]]
-            });
+    const RULES_TREE_URL = MODULE_NAME + '/system/AuthRule/getRuleTreeList';
 
-            table.on('tool(table)',function(obj){
-                if (obj.event === 'remove') {
-                    window.remove(obj);
-                } else if (obj.event === 'edit') {
-                    window.edit(obj);
+    layui.use(['popup'],function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let popup = layui.popup;
+        let treeTable = layui.treeTable;
+
+        // 折叠/展开所有节点
+        let onExpandAll = false;
+
+
+        // 渲染
+        var inst = treeTable.render({
+            elem: '#table',
+            url: RULES_TREE_URL, // 此处为静态模拟数据，实际使用时需换成真实接口
+            tree: {
+            /*
+            // 异步加载子节点
+            async: {
+                enable: true,
+                url: '/static/json/2/treeTable/demo-async.json', // 此处为静态模拟数据，实际使用时需换成真实接口
+                autoParam: ["parentId=id"]
+            }
+            */
+                customName: {
+                    name:'title',
+                    id:'id',
+                    pid:'pid',
+                    icon: 'icon',
                 }
-            })
+            },
+            // maxHeight: '100%',
+            toolbar: '#toolbar',
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'id', width: 80,  title: 'ID'},
+                {field: 'title', minWidth: 200, title: '权限名称'},
+                {field: 'name', minWidth: 200, title: '权限地址'},
+                {field: 'type', width: 100, title: '权限类型',templet:'#power-type', align: 'center'},
+                {field: 'enable', width: 100, title: '是否可用',templet:'#power-enable', align: 'center'},
+                {field: 'sort',width: 80, title: '排序', align: 'center'},
+                {title: '操作',templet: '#bar', width: 150, align: 'center'}
+            ]]
+        });
 
+        table.on('tool(table)',function(obj){
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        })
 
-            table.on('toolbar(table)', function(obj){
-                if(obj.event === 'add'){
-                    window.add();
-                } else if(obj.event === 'refresh'){
-                    window.refresh();
-                } else if(obj.event === 'batchRemove'){
-                    window.batchRemove(obj);
-                }  else if(obj.event === 'expandAll'){
-                    treetable.expandAll("#table");
-                } else if(obj.event === 'foldAll'){
-                    treetable.foldAll("#table");
+        table.on('toolbar(table)', function(obj){
+            if(obj.event === 'add'){
+                window.add();
+            } else if(obj.event === 'refresh'){
+                window.refresh();
+            } else if(obj.event === 'batchRemove'){
+                window.batchRemove(obj);
+            }  else if(obj.event === 'expandAll'){
+                onExpandAll = !onExpandAll;
+                treeTable.expandAll("table", onExpandAll);
+            }
+        });
+
+        form.on('switch(rule-enable)', function(obj) {
+            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+            var status = obj.elem.checked ? 1 : -1;
+            $.ajax({
+                type:'post',
+                url: RULES_ENABLE,
+                data:{id:this.value, status},
+                dataType:'json',
+                success:function(res){
+                    if(res.code) {
+                        return popup.failure(res.msg);
+                    }
+                    return popup.success(res.msg);
                 }
             });
+            return false;
+        });
 
-            form.on('switch(rule-enable)', function(obj) {
-                layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
-                var status = obj.elem.checked ? 1 : -1;
+        window.add = function(){
+            layer.open({
+                type: 2,
+                title: '新增',
+                shade: 0.1,
+                area: ['450px', '500px'],
+                content: RULES_ADD
+            });
+        }
+
+        window.edit = function(obj){
+            layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['450px', '500px'],
+                content: RULES_EDIT + '?id=' + obj.data.id
+            });
+        }
+
+        window.remove = function(obj){
+            layer.confirm('确定要删除该权限', {icon: 3, title:'提示'}, function(index){
+
+                let loading = layer.load();
                 $.ajax({
-                    type:'post',
-                    url: RULES_ENABLE,
-                    data:{id:this.value, status},
+                    url: RULES_DELETE+"?id="+obj.data['powerId'],
                     dataType:'json',
+                    type:'delete',
                     success:function(res){
+                        layer.close(loading);
                         if(res.code) {
                             return popup.failure(res.msg);
                         }
-                        return popup.success(res.msg);
+                        return popup.success(res.msg,function(){
+                            obj.del();
+                        });
                     }
+                })
+                layer.close(index);
+            });
+        }
+
+        window.batchRemove = function(obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
                 });
                 return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].powerId + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些权限', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: MODULE_PATH + "batchRemove/" + ids,
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function(res) {
+                        layer.close(loading);
+                        if(res.code) {
+                            return popup.failure(res.msg);
+                        }
+                        return popup.success(res.msg, function() {
+                            table.reload('rule-table');
+                        });
+                    }
+                })
             });
-
-            window.add = function(){
-                layer.open({
-                    type: 2,
-                    title: '新增',
-                    shade: 0.1,
-                    area: ['450px', '500px'],
-                    content: RULES_ADD
-                });
-            }
-
-            window.edit = function(obj){
-                layer.open({
-                    type: 2,
-                    title: '修改',
-                    shade: 0.1,
-                    area: ['450px', '500px'],
-                    content: RULES_EDIT + '?id=' + obj.data.id
-                });
-            }
-
-            window.remove = function(obj){
-                layer.confirm('确定要删除该权限', {icon: 3, title:'提示'}, function(index){
-    
-                    let loading = layer.load();
-                    $.ajax({
-                        url: RULES_DELETE+"?id="+obj.data['powerId'],
-                        dataType:'json',
-                        type:'delete',
-                        success:function(res){
-                            layer.close(loading);
-                            if(res.code) {
-                                return popup.failure(res.msg);
-                            }
-                            return popup.success(res.msg,function(){
-                                obj.del();
-                            });
-                        }
-                    })
-                    layer.close(index);
-                });
-            }
-
-            window.batchRemove = function(obj) {
-                let data = table.checkStatus(obj.config.id).data;
-                if (data.length === 0) {
-                    layer.msg("未选中数据", {
-                        icon: 3,
-                        time: 1000
-                    });
-                    return false;
-                }
-                let ids = "";
-                for (let i = 0; i < data.length; i++) {
-                    ids += data[i].powerId + ",";
-                }
-                ids = ids.substr(0, ids.length - 1);
-                layer.confirm('确定要删除这些权限', {
-                    icon: 3,
-                    title: '提示'
-                }, function(index) {
-                    layer.close(index);
-                    let loading = layer.load();
-                    $.ajax({
-                        url: MODULE_PATH + "batchRemove/" + ids,
-                        dataType: 'json',
-                        type: 'delete',
-                        success: function(res) {
-                            layer.close(loading);
-                            if(res.code) {
-                                return popup.failure(res.msg);
-                            }
-                            return popup.success(res.msg, function() {
-                                table.reload('rule-table');
-                            });
-                        }
-                    })
-                });
-            }
-        })
-    </script>
+        }
+    })
+</script>
 
 {/block}        
 

@@ -11,6 +11,7 @@
 namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
+use Exception;
 use app\facade\Article as ArticleModel;
 use app\facade\Category;
 use think\facade\View;
@@ -18,7 +19,6 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
 use think\response\Json;
-use Exception;
 
 use app\common\service\ArticleService;
 use app\common\strategy\ArticleValidation;
@@ -32,6 +32,7 @@ use app\common\observer\ObserverManager;
 use app\common\observer\LogObserver;
 use app\common\observer\TagObserver;
 use app\common\observer\MailObserver;
+
 
 
 class Article extends AdminBaseController
@@ -63,7 +64,12 @@ class Article extends AdminBaseController
         $list = $this->model::getFilterList($data, $page, $limit);
         
         if($list['total']) {
-            return json(['code' => 0, 'msg' => 'ok', 'data' => $list['data'], 'count' => $list['total']]);
+            return json([
+                'code'  => 0,
+                'msg'   => 'ok',
+                'data'  => $list['data'],
+                'count' => $list['total']
+            ]);
         }
         
         return json(['code' => -1, 'msg' => 'no data']);

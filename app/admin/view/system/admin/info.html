@@ -69,13 +69,15 @@
 {__block__}
 
 <script>
+
+	const INFO_EDIT_URL = MODULE_NAME + '/system/admin/infoedit';
+	const UPDATE_AVATAR_URL = MODULE_NAME + '/system/admin/avatar';
+
 	layui.use(['jquery', 'element', 'layer', 'convert'], function () {
 		var element = layui.element,
 			layer = layui.layer,
 			$ = layui.jquery,
 			convert = layui.convert;
-
-		let MODULE_PATH = "operate/";
 		
 		var image = new Image();
 		image.src = "/static/admin/images/avatar.jpg";
@@ -95,7 +97,7 @@
 				title: '更换图片',
 				shade: 0.1,
 				area: ["900px", "500px"],
-				content: MODULE_PATH + 'profile.html',
+				content: UPDATE_AVATAR_URL,
 				btn: ['确定', '取消'],
 				yes: function (index, layero) {
 					window['layui-layer-iframe' + index].submitForm();
@@ -110,7 +112,7 @@
 				title: '修改资料',
 				shade: 0.1,
 				area: ["450px", "600px"],
-				content: 'infoEdit.html',
+				content: INFO_EDIT_URL,
 				// btn: ['确定', '取消'],
 				// yes: function (index, layero) {
 				// 	window['layui-layer-iframe' + index].submitForm();

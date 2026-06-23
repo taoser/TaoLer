@@ -15,6 +15,8 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\View;
 use app\admin\model\AuthRule as AuthRuleModel;
+use think\facade\Lang;
+use think\Response\Json;
 
 class AuthRule extends AdminBaseController
 {
@@ -40,9 +42,34 @@ class AuthRule extends AdminBaseController
 		return View::fetch();	
 	}
 
+	// 可能要废弃 ??? 2026.6.23
 	public function list()
 	{
 		return $this->model->getAuthRuleArray();
+	}
+
+	// 权限树列表 + 2026.6.23
+	public function getRuleTreeList()
+	{
+		$authRules = Db::name('auth_rule')
+		->field('id,pid,title,name,icon,status,ismenu,sort,create_time')
+		->select()
+		->toArray();
+
+		if(empty($authRules)) {
+			return json(['code' => 1, 'msg' => '权限列表为空！']);
+		}
+
+		foreach($authRules as $key => $value){
+			// $authRules[$key]['title'] = Lang::get($value['title']);
+			$authRules[$key]['icon'] = empty($value['icon']) ? '' : 'layui-icon ' . $value['icon'];
+			$authRules[$key]['enable'] = $value['status'];
+			$authRules[$key]['powerType'] = $value['ismenu'];
+		}
+
+		$data = $this->getRuleTree($authRules);
+
+		return json(['code' => 0,'msg' => 'ok','data' => $data]);
 	}
 
     /**
