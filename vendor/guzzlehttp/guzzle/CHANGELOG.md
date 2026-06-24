@@ -3,6 +3,17 @@
 Please refer to [UPGRADING](UPGRADING.md) guide for upgrading to a major version.
 
 
+## 7.12.3 - 2026-06-23
+
+### Changed
+
+- Adjusted `guzzlehttp/psr7` version constraint to `^2.12.3`
+
+### Security
+
+- Treat IP and numeric cookie domains as exact-match-only (GHSA-g446-98w2-8p5w)
+
+
 ## 7.12.2 - 2026-06-23
 
 ### Fixed

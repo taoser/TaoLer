@@ -5,78 +5,82 @@
 {block name="body"}
 
 <div class="layui-card">
+	<div class="layui-card-header">升级服务</div>
 	<div class="layui-card-body">
-		<div class="layui-card-header">升级服务</div>
-		<div class="layui-card-body">
-			<div class="layui-form" wid100 lay-filter="">
 
-				{if ($ver_num.key == '')}
+		<div class="layui-form">
 
-				<div class="layui-form-item">
-					<label class="layui-form-label">配置Key</label>
-					<div class="layui-input-inline">
-					<input type="text" name="key" value="{$ver_num.key}" required class="layui-input" placeholder="填写申请得到在Key">
-					</div>
-					<div class="layui-input-inline layui-input-company"><button style="float: left;" type="button" class="pear-btn pear-btn-sm" id="upgrade-key">保存</button></div>
-					<div class="layui-form-mid layui-word-aux" >无Key不能升级</div>
-					<div class="layui-form-mid layui-word-aux " ><a href="https://www.aieok.com/article/user/key.html" target="_blank">去官网申请Key</a></div>
+			{if ($ver_num.key == '')}
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">配置Key</label>
+				<div class="layui-input-inline">
+				<input type="text" name="key" value="{$ver_num.key}" required class="layui-input" placeholder="填写申请得到在Key">
 				</div>
-
-				{else /}
-
-				<div class="layui-form-item">
-					<label class="layui-form-label">网站KEY</label>
-					<div class="layui-form-item layui-hide">
-						<input  type="text" name="key" value="{$ver_num.key}"  class="layui-input">
-					</div>
-					<div class="layui-form-mid layui-word-aux " ><span style="color:red">{$ver_num.key}</span></div>
-					<div class="layui-input-inline layui-input-company">
-						{if condition="checkRuleButton('Upgrade/keyedit')"}
-						<a class="pear-btn pear-btn-primary pear-btn-xs" lay-event="edit" id-data="{:url('upgrade/keyedit')}" ><i class="layui-icon layui-icon-edit"></i>修改？</a>
-						{else /}
-						<a class="pear-btn pear-btn-primary pear-btn-xm pear-btn-disabled" ><i class="layui-icon layui-icon-edit"></i>修改？</a>
-						{/if}
-					</div>
-				</div>
-				<div class="layui-form-item">
-					<label class="layui-form-label">当前版本</label>
-					<div class="layui-input-inline" id="ver_nums" >Taoler v_{:config('taoler.version')}</div>
-					<div class="layui-upload">
-						{if condition="checkRuleButton('Upgrade/check')"}
-						<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" data-url="{$ver_num.upcheck_url}" id="upload-check">检查更新</button>
-						{else /}
-						<button type="button" class="pear-btn pear-btn-primary pear-btn-sm pear-btn-disabled">检查更新</button>
-						{/if}
-					</div>
-				</div>				
-				<div class="layui-form-item">
-					<label class="layui-form-label">手动更新</label>
-					<div class="layui-upload">
-
-						{if condition="checkRuleButton('Upgrade/uploadzip')"}
-						<button type="button" class="pear-btn pear-btn-sm" id="select-file">选择文件</button>
-						<button type="button" class="pear-btn pear-btn-sm" id="upgrade-sys-button">开始升级</button>
-						{else /}
-						<button type="button" class="pear-btn pear-btn-sm pear-btn-disabled">无权限</button>
-						{/if}
-
-					</div>
-				</div>
-				
-				{/if}
-				
-				<div  style="margin-top: 10px;">
-					<div class="layui-form-item">
-						<div class="layui-card-header">升级说明</div>
-						<div style="padding-left: 20px;">1.升级服务需要去官网申请key配置文件</div>
-						<div style="padding-left: 20px;">2.多个版本需要升级时,会自行判断依次序升级</div>
-						<div style="padding-left: 20px;">3.升级过程尽管会自动备份文件，但为了安全起见可以自行备份文件</div>
-						<div style="padding-left: 20px;">4.在某些特殊场合，可能需要手动升级</div>
-					</div>
-				</div>
-				
+				<div class="layui-input-inline layui-input-company"><button style="float: left;" type="button" class="pear-btn pear-btn-sm" id="upgrade-key">保存</button></div>
+				<div class="layui-form-mid layui-word-aux" >无Key不能升级</div>
+				<div class="layui-form-mid layui-word-aux " ><a href="https://www.aieok.com/article/user/key.html" target="_blank">去官网申请Key</a></div>
 			</div>
+
+			{else /}
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">网站Key:</label>
+				<div class="layui-form-item layui-hide">
+					<input  type="text" name="key" value="{$ver_num.key}"  class="layui-input">
+				</div>
+				<div class="layui-input-inline layui-input-wrap" >
+					<span style="color:red">{$ver_num.key}</span>
+				</div>
+				<div class="layui-form-mid">
+					{if condition="checkRuleButton('Upgrade/keyedit')"}
+					<a class="pear-btn pear-btn-primary pear-btn-xs" lay-event="edit" id-data="{:url('upgrade/keyedit')}" ><i class="layui-icon layui-icon-edit"></i>修改？</a>
+					{else /}
+					<a class="pear-btn pear-btn-primary pear-btn-xm pear-btn-disabled" ><i class="layui-icon layui-icon-edit"></i>修改？</a>
+					{/if}
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">当前版本:</label>
+				<div class="layui-input-inline layui-input-wrap" id="ver_nums" >
+					Taoler_{:config('taoler.version')}
+				</div>
+				<div class="layui-form-mid">
+					{if condition="checkRuleButton('Upgrade/check')"}
+					<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" data-url="{$ver_num.upcheck_url}" id="upload-check">检查更新</button>
+					{else /}
+					<button type="button" class="pear-btn pear-btn-primary pear-btn-sm pear-btn-disabled">检查更新</button>
+					{/if}
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">手动更新:</label>
+				<div class="layui-form-mid">
+					{if condition="checkRuleButton('Upgrade/uploadzip')"}
+					<button type="button" class="pear-btn pear-btn-sm" id="select-file">选择文件</button>
+					<button type="button" class="pear-btn pear-btn-sm" id="upgrade-sys-button">开始升级</button>
+					{else /}
+					<button type="button" class="pear-btn pear-btn-sm pear-btn-disabled">无权限</button>
+					{/if}
+
+				</div>
+			</div>
+			
+			{/if}
+			
 		</div>
+	</div>
+</div>
+
+<div class="layui-card">
+	<div class="layui-card-header">升级说明</div>
+	<div class="layui-card-body">
+		<p>1.升级服务需要去官网申请key配置文件</p>
+		<p>2.多个版本需要升级时,会自行判断依次序升级</p>
+		<p>3.升级过程尽管会自动备份文件，但为了安全起见可以自行备份文件</p>
+		<p>4.在某些特殊场合，可能需要手动升级系统</p>
 	</div>
 </div>
 
@@ -109,23 +113,21 @@
 		
 			$.get(UPGRADE_CHECK, function (res){
 				layer.close(loading);
-				if (res.code === 0) {
-					// 已件最新版本
-					toast.info({title:"通知消息", message: res.msg, position: 'topRight'})
-				} else if (res.code === 1) {
-					// 可升级
+				if (res.code === 0) { // 已件最新版本
+					toast.info({title:"通知消息", message: res.msg, position: 'topCenter'})
+				} else if (res.code === 1) { // 可升级
 					$('div#ver_nums').after('<div class="layui-input-inline layui-input-company">发现<span style="color:red">'+ res.data.up_num +'</span>个新版本：<span style="color:red">可更新至v' + res.data.version + ' [!重要:' + res.data.info + ']</span></div>');
 					$('button#upload-check').hide();
 					// 更新系统
 					layer.confirm('更新v' + res.data.version + ',升级说明：<span style="color:red">[!重要：' + res.data.info + ']</span><br>确定升级？',{icon: 3, title:'升级系统'}, function(index){
-						// 更新
+						// 更新系统
 						uploads();
 						// 关闭load加载层
 						layer.close(index);	
 					});
 				} else {
 					// 服务器错误
-					toast.error({title: "服务器错误", message: res.msg});
+					toast.error({title: "服务器错误", message: res.msg, position: 'topCenter'});
 				}
 			});
 

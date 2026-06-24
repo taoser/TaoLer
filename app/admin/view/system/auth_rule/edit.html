@@ -21,7 +21,7 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">权限地址</label>
+				<label class="layui-form-label">标识</label>
 				<div class="layui-input-inline">
 					<input type="text" name="name" lay-verify="required" placeholder="controller/action" autocomplete="off" class="layui-input" value="{$rules.name}">
 				</div>
@@ -69,11 +69,11 @@
 	const RULE_TREE = MODULE_NAME + '/system/authrule/ruleTree';
 	const INIT_PID = "{$rules['pid']}";
 
-	layui.use(['form','jquery', 'xmSelect', 'iconPicker','dtree','popup','treeTable'], function(){
+	layui.use(['form', 'jquery', 'xmSelect', 'iconPicker','dtree','popup','treeTable'], function(){
 		let $ = layui.jquery;
 		let form = layui.form ;
-		var xmSelect = layui.xmSelect;
-		var iconPicker = layui.iconPicker;
+		let xmSelect = layui.xmSelect;
+		let iconPicker = layui.iconPicker;
 		let dtree = layui.dtree;
 		let popup = layui.popup;
 
@@ -152,14 +152,11 @@
 						return popup.failure(res.msg);
 					}
 					return popup.success(res.msg, function() {
-						// parent.layui.table.renderData('table');
 						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-						// parent.layui.treetable.reload('#table');
 						parent.layui.treeTable.reloadData('table')
 					});
 				}
 			})
-
 			return false;
 		});
 		
