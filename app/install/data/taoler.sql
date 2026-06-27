@@ -18,9 +18,9 @@ DROP TABLE IF EXISTS `tao_ad_slide`;
 CREATE TABLE `tao_ad_slide`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1pc,2移动',
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
-  `image` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '幻灯图片地址',
-  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '链接',
+  `title` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
+  `image` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '幻灯图片地址',
+  `url` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '链接',
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '描述',
   `sort` int UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序',
   `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
@@ -31,7 +31,7 @@ CREATE TABLE `tao_ad_slide`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`id` ASC) USING BTREE COMMENT 'id',
   INDEX `idx_type_status_sort`(`type` ASC, `status` ASC, `sort` ASC) USING BTREE COMMENT '状态类型排序'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '广告轮播' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_admin
@@ -39,23 +39,23 @@ CREATE TABLE `tao_ad_slide`  (
 DROP TABLE IF EXISTS `tao_admin`;
 CREATE TABLE `tao_admin`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
-  `username` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '管理员账户',
-  `nickname` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
-  `password` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '密码',
-  `email` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '邮箱',
-  `mobile` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '手机号',
+  `username` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '管理员账户',
+  `nickname` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
+  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '密码',
+  `email` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮箱',
+  `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '手机号',
   `sex` tinyint(1) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT '0女1男',
-  `avatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'static/admin/images/avatar.jpg' COMMENT '头像',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'static/admin/images/avatar.jpg' COMMENT '头像',
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1启用0待审-1禁用',
   `auth_group_id` smallint NOT NULL DEFAULT 0 COMMENT '1超级管理员0是普通管理员',
-  `remarks` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '备注',
-  `last_login_ip` varchar(70) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '最后登录IP',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '备注',
+  `last_login_ip` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '最后登录IP',
   `last_login_time` int NOT NULL DEFAULT 0 COMMENT '最后登录时间',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '软删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_admin
@@ -70,10 +70,10 @@ DROP TABLE IF EXISTS `tao_area`;
 CREATE TABLE `tao_area`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `parent_id` int UNSIGNED NOT NULL DEFAULT 0,
-  `name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `name` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `parent_id`(`parent_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4069 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '区域' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4069 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '区域' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_area
@@ -2201,10 +2201,10 @@ CREATE TABLE `tao_article`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `cate_id` int UNSIGNED NOT NULL COMMENT '栏目id',
   `user_id` int UNSIGNED NOT NULL COMMENT '用户id',
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标题',
   `thum_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '缩略图',
-  `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '关键词',
-  `description` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'seo描述',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'seo描述',
   `content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
   `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT 'ip地址',
   `type` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '类型1文章2视频3音频',
@@ -2243,16 +2243,16 @@ CREATE TABLE `tao_article_flag`  (
 DROP TABLE IF EXISTS `tao_auth_group`;
 CREATE TABLE `tao_auth_group`  (
   `id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '角色ID',
-  `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '角色名称',
-  `rules` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '拥有权限',
-  `limits` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '权限范围',
-  `descr` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '权限描述',
+  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '角色名称',
+  `rules` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '拥有权限',
+  `limits` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '权限范围',
+  `descr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '权限描述',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '角色状态1可用0禁止',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户组权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户组权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_auth_group
@@ -2278,7 +2278,7 @@ CREATE TABLE `tao_auth_group_access`  (
   INDEX `uid`(`uid`) USING BTREE,
   INDEX `group_id`(`group_id`) USING BTREE,
   INDEX `uid_group_id`(`uid`, `group_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户组明细表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户组明细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_auth_group_access
@@ -2293,7 +2293,7 @@ DROP TABLE IF EXISTS `tao_auth_rule`;
 CREATE TABLE `tao_auth_rule`  (
   `id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '权限主键ID',
   `pid` smallint UNSIGNED NOT NULL DEFAULT 0 COMMENT '父级ID',
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '权限地址名称',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '权限地址名称',
   `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '权限标题',
   `type` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '类型',
   `status` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '1启用,0禁用',
@@ -2301,7 +2301,7 @@ CREATE TABLE `tao_auth_rule`  (
   `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图标',
   `ismenu` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '0目录,1菜单2按钮',
   `sort` int UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序',
-  `condition` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `condition` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
@@ -2466,14 +2466,14 @@ DROP TABLE IF EXISTS `tao_cate`;
 CREATE TABLE `tao_cate`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `pid` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '上级id',
-  `ename` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '分类别名',
+  `ename` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类别名',
   `type` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '1列表2单页3链接',
   `catename` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '导航名称',
-  `tpl` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'default' COMMENT '详情模板',
-  `icon` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '图标',
-  `image` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '图片路径',
+  `tpl` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'default' COMMENT '详情模板',
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图标',
+  `image` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图片路径',
   `desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '简介',
-  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'url',
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'url',
   `status` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态',
   `is_hot` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否是热点',
   `sort` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序',
@@ -2504,12 +2504,12 @@ CREATE TABLE `tao_collection`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `article_id` int NOT NULL COMMENT '文章id',
   `user_id` int NOT NULL COMMENT '用户id',
-  `auther` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '作者',
-  `collect_title` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收藏帖子标题',
+  `auther` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '作者',
+  `collect_title` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '收藏帖子标题',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章收藏表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章收藏表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_comment
@@ -2542,13 +2542,13 @@ DROP TABLE IF EXISTS `tao_cunsult`;
 CREATE TABLE `tao_cunsult`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` tinyint NOT NULL COMMENT '问题类型1问题资讯2提交BUG',
-  `title` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '问题',
-  `content` tinytext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '内容',
+  `title` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '问题',
+  `content` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
   `poster` tinyint NOT NULL COMMENT '发送人ID',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '反馈表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '反馈表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_link
@@ -2556,9 +2556,9 @@ CREATE TABLE `tao_cunsult`  (
 DROP TABLE IF EXISTS `tao_link`;
 CREATE TABLE `tao_link`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
-  `logo` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '幻灯图片地址',
-  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '链接',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '幻灯图片地址',
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '链接',
   `sort` int UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序',
   `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
   `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
@@ -2576,15 +2576,15 @@ CREATE TABLE `tao_link`  (
 DROP TABLE IF EXISTS `tao_mail_server`;
 CREATE TABLE `tao_mail_server`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `mail` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱设置',
-  `host` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱服务地址',
+  `mail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱设置',
+  `host` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱服务地址',
   `port` smallint NOT NULL COMMENT '邮箱端口',
-  `nickname` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
-  `password` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱密码',
+  `nickname` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
+  `password` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '邮箱密码',
   `active` tinyint(1) NOT NULL DEFAULT 0 COMMENT '邮箱服务1激活0未激活',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '邮件服务器配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '邮件服务器配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_mail_server
@@ -2597,16 +2597,16 @@ INSERT INTO `tao_mail_server` VALUES (1, 'xxxx@aliyun.com', 'smtp.aliyun.com', 2
 DROP TABLE IF EXISTS `tao_message`;
 CREATE TABLE `tao_message`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '消息ID',
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '消息标题',
-  `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '消息内容',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '消息标题',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '消息内容',
   `user_id` int NOT NULL COMMENT '发送人ID',
-  `link` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '链接',
+  `link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '链接',
   `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '消息类型0系统消息1普通消息',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_message_to
@@ -2616,7 +2616,7 @@ CREATE TABLE `tao_message_to`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '消息ID',
   `send_id` int NOT NULL COMMENT '发送人ID',
   `receve_id` int NOT NULL COMMENT '接收人ID',
-  `message_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '消息标题',
+  `message_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '消息标题',
   `message_type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '消息类型0系统消息1普通消息',
   `is_read` tinyint(1) NOT NULL DEFAULT 0 COMMENT '消息状态',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -2624,7 +2624,7 @@ CREATE TABLE `tao_message_to`  (
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_mesto_receveid`(`receve_id`) USING BTREE COMMENT '收件人ID'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '消息详细表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '消息详细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_page
@@ -2634,10 +2634,10 @@ CREATE TABLE `tao_page`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `cate_id` int UNSIGNED NOT NULL COMMENT '类别id',
   `pv` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览',
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
-  `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '内容',
-  `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '关键词',
-  `description` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '简介',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标题',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '关键词',
+  `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '简介',
   `create_time` datetime NOT NULL COMMENT '时间',
   `update_time` datetime NOT NULL COMMENT '更新',
   PRIMARY KEY (`id`) USING BTREE,
@@ -2650,7 +2650,7 @@ CREATE TABLE `tao_page`  (
 DROP TABLE IF EXISTS `tao_section`;
 CREATE TABLE `tao_section`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标题',
   `subtitle` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '副标题',
   `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '英文别名',
   `create_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -2668,10 +2668,10 @@ DROP TABLE IF EXISTS `tao_section_access`;
 CREATE TABLE `tao_section_access`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `section_id` int UNSIGNED NOT NULL COMMENT 'pid',
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标题',
   `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图标',
-  `image` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '幻灯图片地址',
-  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '链接',
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '幻灯图片地址',
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '链接',
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '描述',
   `sort` int UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序',
   `create_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -2688,36 +2688,36 @@ CREATE TABLE `tao_section_access`  (
 DROP TABLE IF EXISTS `tao_system`;
 CREATE TABLE `tao_system`  (
   `id` tinyint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `webname` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '网站名称',
-  `webtitle` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `domain` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `template` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '模板',
-  `logo` varchar(70) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '网站logo',
-  `m_logo` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '/static/res/images/logo-m.png' COMMENT '移动端logo',
+  `webname` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '网站名称',
+  `webtitle` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `domain` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `template` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '模板',
+  `logo` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '网站logo',
+  `m_logo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '/static/res/images/logo-m.png' COMMENT '移动端logo',
   `cache` tinyint NOT NULL DEFAULT 0 COMMENT '缓存时间分钟',
   `upsize` int NOT NULL DEFAULT 0 COMMENT '上传文件大小KB',
-  `uptype` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '上传文件类型',
-  `copyright` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '版权',
-  `keywords` tinytext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '网站关键字',
-  `descript` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '网站描述',
-  `state` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '网站声明',
-  `is_open` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '是否开启站点1开启0关闭',
-  `is_comment` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '是否开启评论1开启0关闭',
-  `is_reg` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '是否开放注册1开启0禁止',
-  `icp` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '备案',
-  `showlist` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '统计代码',
-  `blackname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '注册黑名单',
-  `sys_version_num` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统版本',
-  `key` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'key',
+  `uptype` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '上传文件类型',
+  `copyright` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '版权',
+  `keywords` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '网站关键字',
+  `descript` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '网站描述',
+  `state` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '网站声明',
+  `is_open` enum('0','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否开启站点1开启0关闭',
+  `is_comment` enum('0','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否开启评论1开启0关闭',
+  `is_reg` enum('0','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '是否开放注册1开启0禁止',
+  `icp` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '备案',
+  `showlist` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '统计代码',
+  `blackname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '注册黑名单',
+  `sys_version_num` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '系统版本',
+  `key` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'key',
   `clevel` tinyint(1) NOT NULL DEFAULT 0,
-  `api_url` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'api',
-  `base_url` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `upcheck_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '版本检测',
-  `upgrade_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '升级地址',
+  `api_url` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'api',
+  `base_url` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `upcheck_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '版本检测',
+  `upgrade_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '升级地址',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_system
@@ -2730,16 +2730,16 @@ INSERT INTO `tao_system` VALUES (1, 'TaoLer', 'TaoLer社区-www.aieok.com', '', 
 DROP TABLE IF EXISTS `tao_tag`;
 CREATE TABLE `tao_tag`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'tag自增id',
-  `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
-  `ename` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '英文名',
-  `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关键词',
-  `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '摘要',
-  `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标签',
+  `name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
+  `ename` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '英文名',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '关键词',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '摘要',
+  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标签',
   `create_time` int UNSIGNED NOT NULL COMMENT '创建时间',
   `update_time` int UNSIGNED NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `ename`(`ename` ASC) USING BTREE COMMENT 'ename查询tag索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文章tag表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章tag表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_taglist
@@ -2753,7 +2753,7 @@ CREATE TABLE `tao_taglist`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `tag_id`(`tag_id` ASC) USING BTREE COMMENT 'tagID索引',
   INDEX `article_id`(`article_id` ASC) USING BTREE COMMENT '文章ID查询索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'tag详细列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'tag详细列表' ROW_FORMAT = Dynamic;
 
 
 -- ----------------------------
@@ -2762,23 +2762,23 @@ CREATE TABLE `tao_taglist`  (
 DROP TABLE IF EXISTS `tao_user`;
 CREATE TABLE `tao_user`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `name` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
-  `password` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码',
-  `phone` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '手机',
-  `email` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '邮箱',
+  `name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名',
+  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
+  `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '手机',
+  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮箱',
   `active` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1激活账户0未激活',
-  `nickname` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
-  `city` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '归属地',
-  `sex` enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '性别0男1女',
-  `sign` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '签名',
-  `user_img` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '头像',
-  `auth` enum('1','0') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '管理员权限0普通1超级',
+  `nickname` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
+  `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '归属地',
+  `sex` enum('0','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '性别0男1女',
+  `sign` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '签名',
+  `user_img` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '头像',
+  `auth` enum('1','0') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '管理员权限0普通1超级',
   `point` int NOT NULL DEFAULT 0 COMMENT '积分',
   `area_id` int NULL DEFAULT NULL COMMENT '用户所属区域ID',
-  `status` enum('1','0','-1') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '1' COMMENT '1启用0待审-1禁用',
+  `status` enum('1','0','-1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1' COMMENT '1启用0待审-1禁用',
   `vip` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'vip',
-  `note` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '备注信息',
-  `last_login_ip` varchar(70) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '最后登陆ip',
+  `note` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '备注信息',
+  `last_login_ip` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '最后登陆ip',
   `last_login_time` int NOT NULL DEFAULT 0 COMMENT '最后登陆时间',
   `login_error_num` tinyint(1) NOT NULL DEFAULT 0 COMMENT '登陆错误次数',
   `login_error_time` int NOT NULL DEFAULT 0 COMMENT '登陆错误时间',
@@ -2789,7 +2789,7 @@ CREATE TABLE `tao_user`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE COMMENT '用户名查询用户索引',
   INDEX `email`(`email`) USING BTREE COMMENT 'email查询用户索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user
@@ -2802,13 +2802,13 @@ INSERT INTO `tao_user` VALUES (1, 'admin', '95d6f8d0d0c3b45e5dbe4057da1b149e', '
 DROP TABLE IF EXISTS `tao_user_area`;
 CREATE TABLE `tao_user_area`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `area` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '所属区域',
-  `asing` varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '区域简称',
+  `area` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '所属区域',
+  `asing` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '区域简称',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0,
   `update_time` int UNSIGNED NOT NULL DEFAULT 0,
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user_area
@@ -2830,7 +2830,7 @@ CREATE TABLE `tao_user_article_log`  (
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '记录时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `uid`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户发文刷新日志记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户发文刷新日志记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_user_sign
@@ -2845,7 +2845,7 @@ CREATE TABLE `tao_user_sign`  (
   `stime` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '签到的时间',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户签到表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户签到表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tao_user_signrule
@@ -2859,7 +2859,7 @@ CREATE TABLE `tao_user_signrule`  (
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '升级时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户签到积分规则' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户签到积分规则' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user_signrule
@@ -2876,9 +2876,9 @@ DROP TABLE IF EXISTS `tao_user_viprule`;
 CREATE TABLE `tao_user_viprule`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户等级ID',
   `vip` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'vip等级',
-  `score` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '积分区间',
-  `nick` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '认证昵称',
-  `rules` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '权限',
+  `score` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '积分区间',
+  `nick` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '认证昵称',
+  `rules` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '权限',
   `postnum` int NOT NULL DEFAULT 10 COMMENT '日发帖数量',
   `postpoint` int NOT NULL DEFAULT 0 COMMENT '发文扣积分',
   `refreshnum` int NOT NULL DEFAULT 10 COMMENT '日刷贴数量',
@@ -2887,7 +2887,7 @@ CREATE TABLE `tao_user_viprule`  (
   `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '升级时间',
   `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_user_viprule
@@ -2911,5 +2911,5 @@ CREATE TABLE `tao_user_zan`  (
   `type` tinyint NOT NULL DEFAULT 2 COMMENT '1文章点赞2评论点赞',
   `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '点赞时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 

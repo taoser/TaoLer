@@ -101,17 +101,16 @@
 
 			// 登 录 提 交
 			form.on('submit(login)', function (data) {
-
+				$("#login-submit").addClass('layui-btn-disabled').attr('disabled', true);
 				/// 验证
 
 				/// 登录
 				$.ajax({
 					type: "post"
-					,url: "{:url('admin-login')}" //实际使用请改成服务端真实接口
+					,url: "{:url('admin-login')}"
 					,data: data.field
-					,success: function(res){
+					,success: function(res) {
 						if(res.code === 0){
-								
 							//动画
 							button.load({
 								elem: '.login',
@@ -125,11 +124,12 @@
 							})
 
 						} else {
+							$("#login-submit").removeClass('layui-btn-disabled').attr('disabled', false);
 							layer.open({title:'登陆失败', content:res.msg, icon:5, anim:6});
 							layui.jquery('#captcha').attr('src', '{:captcha_src()}?' + Math.random());
-							}
-
 						}
+						
+					}
 				});
 				
 				return false;

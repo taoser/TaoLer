@@ -11,6 +11,11 @@ use think\facade\Request;
 
 class Feedback extends AdminBaseController
 {
+    public function initialize()
+    {
+        parent::initialize();
+    }
+    
     public function index()
     {
         return View::fetch();
@@ -31,23 +36,23 @@ class Feedback extends AdminBaseController
         ->limit($limit)
         ->select();
 
-        if(!$feed->isEmpty()) {
-            return json([
-                'code' => 0,
-                'msg' => 'ok',
-                'data' => $feed->all(),
-                'count' => count($feed)
-            ]);
+        if($feed->isEmpty()) {
+            return json(['code' => -1, 'msg' => 'no data']);
         }
 
-        return json(['code' => -1, 'msg' => 'no data']);
+        return json([
+            'code'  => 0,
+            'msg'   => 'ok',
+            'data'  => $feed->all(),
+            'count' => count($feed)
+        ]);
     }
 
     public function reply()
     {
         $id = Request::param('id/d');
         $feed = Db::name('feedback')->where('id', $id)->find();
-        if(!empty($feed['reply'])) {
+        if(!is_null($feed) && !empty($feed['reply'])) {
             $feed['reply'] = json_decode($feed['reply'], true);
         }
 
@@ -56,10 +61,10 @@ class Feedback extends AdminBaseController
             $id = Request::param('id/d');
             
             $feed['reply'][] = [
-                'username' => 'admin',
-                'recontent' => $recontent,
-                'mine'    => false,
-                'reply_time' => date('Y-m-d H:i:s', time())
+                'username'      => session('admin_name'),
+                'recontent'     => $recontent,
+                'mine'          => false,
+                'reply_time'    => date('Y-m-d H:i:s')
             ];
 
             try{

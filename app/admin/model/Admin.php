@@ -50,8 +50,12 @@ class Admin extends Model
         return $this->hasMany(AuthGroupAccess::class,'uid');
     }
 	
-	//登陆校验
-    public function login($data)
+	/**
+	 * 登陆校验
+	 * @param array $data
+	 * @return bool
+	 */
+    public function login(array $data)
     {
         //查询用户
         $admin = $this->where('username',$data['username'])->where('delete_time',0)->find();
@@ -71,7 +75,7 @@ class Admin extends Model
 			
 			//将用户数据写入Session
 			Session::set('admin_id',$admin['id']);
-			Session::set('admin_name',$admin['username']);
+			Session::set('admin_name', $admin['username']);
 			
 			if(isset($data['remember'])){
 				$salt = Config::get('taoler.salt');
@@ -80,19 +84,16 @@ class Admin extends Model
 				Cookie::set('adminAuth',$auth,604800);
 			}
 
-			Db::name('admin')->where('id',$admin['id'])->update(
-                        [
-                            'last_login_time' => time(),
-                            'last_login_ip' => request()->ip(),
-                        ]
-                );
-					
-            //用户名密码正确返回1
-            $res = ['code' =>0, 'msg' => '登陆成功', 'url'=>(string) url('index/index')];
-        } else {
-			$res = ['code' =>-1, 'msg'=>'用户名或密码错误', 'url'=>(string) url('admin/login')];
-		}
-		return json($res);
+			self::where('id', $admin['id'])->update([
+				'last_login_time'	=> time(),
+				'last_login_ip'		=> request()->ip(),
+			]);
+
+			return true;
+        }
+
+		return false;
+		
     }
 	
 	//修改密码

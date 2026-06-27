@@ -1,5 +1,3 @@
-
- 
 layui.define(['form', 'upload'], function(exports){
   var $ = layui.jquery
   ,layer = layui.layer

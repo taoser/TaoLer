@@ -11,6 +11,11 @@ use Exception;
 
 class Page extends AdminBaseController
 {
+    public function initialize()
+    {
+        parent::initialize();
+    }
+
     public function index()
     {
         return View::fetch();

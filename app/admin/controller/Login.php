@@ -22,7 +22,7 @@ class Login extends AdminBaseController
 	public function index()
 	{	
 		if(Request::isAjax()){
-			$data = Request::param();
+			$data = Request::param(['username','password','captcha','remember']);
 
 			try{
 				validate(Admin::class)
@@ -34,8 +34,10 @@ class Login extends AdminBaseController
 
 			$user = new \app\admin\model\Admin();
 			$result = $user->login($data);
-
-			return $result;
+			if($result){
+				return json(['code' => 0, 'msg' => '登陆成功', 'url' => (string) url('admin-index')]);
+			}
+			return json(['code' => -1, 'msg' => '用户名或密码错误']);
 		}
 		
 		return View::fetch('login');

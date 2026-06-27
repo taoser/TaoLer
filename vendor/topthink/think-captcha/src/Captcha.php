@@ -237,7 +237,8 @@ class Captcha
         // 输出图像
         imagepng($this->im);
         $content = ob_get_clean();
-        imagedestroy($this->im);
+        // imagedestroy($this->im);
+        unset($this->im);
 
         // API调用模式
         if ($this->api) {
