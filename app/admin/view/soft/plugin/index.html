@@ -1,0 +1,220 @@
+{extend name="public/base" /}
+
+{block name="title"}插件管理{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+	<div class="layui-card-body">
+		<form class="layui-form">
+			<div class="layui-form-item">
+				<div class="layui-form-item layui-inline">
+					<label class="layui-form-label">名称</label>
+					<div class="layui-input-inline">
+						<input type="text" name="app_name" placeholder="插件/标题/描述/作者" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item layui-inline">
+					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="query">
+						<i class="layui-icon layui-icon-search"></i>
+						查询
+					</button>
+					<button type="reset" class="pear-btn pear-btn-md">
+						<i class="layui-icon layui-icon-refresh"></i>
+						重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="layui-card">
+	<div class="layui-card-body">
+		<table id="plugin-list" lay-filter="plugin-list"></table>
+	</div>
+</div>
+
+<script type="text/html" id="toolbar">
+	<div class="pear-btn-group">
+		<button class="pear-btn pear-btn-sm pear-btn-primary online-btn" lay-event="all">全部</button>
+		<button class="pear-btn pear-btn-sm online-btn" lay-event="free">免费</button>
+		<button class="pear-btn pear-btn-sm online-btn" lay-event="installed">已安装</button>
+		<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="add">离线安装</button>
+	</div>
+</script>
+
+<script type="text/html" id="addons-bar">
+	{{#  if(d.have_newversion === 1){ }}
+		<button class="pear-btn pear-btn-danger pear-btn-xs" lay-event="install"><i class="layui-icon layui-icon-upload-circle"></i>升级</button>
+	{{# } else { }}
+		{{# if(d.isInstall === 1) { }}
+			<button class="pear-btn pear-btn-normal pear-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</button>
+		{{# } else { }}
+			<button class="pear-btn pear-btn-xs" lay-event="install" data-url="{:url('addon.addons/install')}" ><i class="layui-icon layui-icon-edit"></i>安装</button>
+			<select id="vers{{d.name}}" name="sss" class="layui-border" lay-ignore lay-filter="versSelect">
+				{{# d.vers.forEach(function(item, index){ }}
+				<option value="{{ item }}">{{ item }}</option>
+				{{# }); }}
+			</select>
+		{{# } }}
+	{{# } }}
+</script>
+
+	<script type="text/html" id="ver-tpl">
+		<div>{{d.ver_num}} {{#  if(d.have_newversion == 1) { }} <span class="layui-badge-dot"></span> {{#  } }}</div>
+	</script>
+
+	<script type="text/html" id="plgin-status">
+		<input type="checkbox" name="{{d.name}}" lay-skin="switch" lay-filter="enable" lay-text="启动|禁用" {{#  if(d.status == 1){ }} checked {{#  } }}>
+	</script>
+
+	<script type="text/html" id="addons-installed-tool">
+		<button class="pear-btn pear-btn-normal pear-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</button>
+		<button class="pear-btn pear-btn-danger pear-btn-xs" lay-event="uninstall"><i class="layui-icon layui-icon-delete"></i>卸载</button>
+	</script>
+
+	{include file="public/user_login" /}
+
+	{__block__}
+
+	<script>
+		const ADDON_LIST_URL = MODULE_NAME + '/soft/plugin/getList';
+		const LIST_URL = MODULE_NAME + '/soft/plugin/list';
+		const CHECK_URL = MODULE_NAME + '/soft/plugin/check';
+		const INSTALLED_URL = MODULE_NAME + '/soft/plugin/installed';
+		const ADD_URL = MODULE_NAME + '/soft/plugin/add';
+		const CONFIG_URL = MODULE_NAME + '/soft/plugin/config';
+
+		const IS_PAY_URL = MODULE_NAME + '/soft/plugin/isPay';
+		const USER_LOGIN_URL = MODULE_NAME + '/soft/plugin/userLogin';
+		const UNINSTALL_URL = MODULE_NAME + '/soft/plugin/uninstall';	
+		const ENABLE_URL = MODULE_NAME + '/soft/plugin/enable';
+		const INSTALL_URL = MODULE_NAME + '/soft/plugin/install';
+		const UPGRADE_URL = MODULE_NAME + '/soft/plugin/upgrade';
+
+		layui.use(['toast','plugin'], function(){
+			var $ = layui.jquery
+			,table = layui.table
+			,form = layui.form
+			,upload = layui.upload;
+			var toast = layui.toast;
+			
+			let cols = [[
+				{type: 'checkbox'},
+				{title: '序号', type: 'numbers'},
+				{field: 'name', title: '插件', width: 150},
+				{field: 'title', title: '标题', width: 200},
+				{field: 'description', title: '简介', minWidth: 200},
+				{field: 'author', title: '作者', width: 100},
+				{field: 'price', title: '价格(元)', width: 85},
+				{field: 'downloads', title: '下载', width: 70},
+				{field: 'version', title: '版本', templet: '#ver-tpl', width: 75},
+				{title: '操作', width: 165, align: 'center', toolbar: '#addons-bar'}
+			]];
+			
+			let localCols  = [[
+				{type: 'numbers'},
+				{field: 'name', title: '插件', width:  120},
+				{field: 'title',title: '标题', width:  100},
+				{field: 'version', title: '版本'},
+				{field: 'author', title: '作者', width:  80},
+				{field: 'description', title: '简介', minWidth:  200},
+				{field: 'install', title: '安装', width: 100},
+				{field: 'ctime', title: '到期时间', width: 100},
+				{title: '状态', width:  95, templet: '#plgin-status'},
+				{title: '操作', width: 160, 'align': 'center', toolbar:  '#addons-installed-tool'}
+			]];
+
+			//渲染表格
+			var addonTable = table.render({
+				elem: "#plugin-list",
+				url: LIST_URL,
+				page: true,
+				cols: cols,
+				skin: 'line',
+				toolbar: "#toolbar",
+				limit: 15,
+				text: "对不起，加载出现异常！"
+			});
+
+			table.on('toolbar(plugin-list)', function(obj){
+				if(obj.event === 'installed') {				
+					window.installed(obj.event);
+				} else if(obj.event === 'add'){
+					//window.add();
+				} else {
+					// all,free,pay
+					window.all(obj.event);
+				}
+			});
+
+			
+
+			// 全部/免费/付费
+			window.all = function (type) {
+				// 重新渲染
+				table.reload('plugin-list',{
+					where: {
+						type : type
+					},
+					cols: cols,
+					page: {
+						curr: 1 //重新从第 1 页开始
+					}
+				});
+			}
+
+			// 已安装
+			window.installed = function (type) {
+				table.reload('plugin-list', {
+					where: {
+						type : type
+					},
+					cols: localCols,
+					page: {
+						curr: 1 
+					}
+				});
+			}
+
+			window.add = function(){
+				layer.open({
+					type: 2
+					,title: '添加插件'
+					,content: 'add.html'
+					,area: ['400px', '300px']
+				});
+			}
+
+			form.render('select'); // 渲染所在容器内的 select 元素
+
+			//监听版本选择
+			form.on('select(versSelect)', function(obj){
+				layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+			});
+
+			form.on('submit(query)', function(data) {
+				table.reload('plugin-list', {
+					where: {app_name: data.field.app_name, page: 1}
+				})
+				return false;
+			});
+
+			// 启动禁用
+			form.on('switch(enable)', function(data){
+				var data = data.elem;
+				$.post(CHECK_URL, { name: data.name }, function(res){
+					if(res.code === 0){
+						toast.success({title:"成功消息",message:res.msg,position: 'topRight'});
+					} else {
+						toast.error({title:"失败消息",message:res.msg,position: 'topRight'});
+					}
+					table.reloadData("plugin-list", {}, 'deep');
+				});
+				return false;
+			});
+
+		});
+	</script>
+{/block}

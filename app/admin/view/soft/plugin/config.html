@@ -58,27 +58,29 @@
 
 {__block__}
 
-	<script>
-		layui.use(['upload','toast'], function(){
-			var $ = layui.$,upload = layui.upload,form = layui.form,toast = layui.toast;
-			
-			upload.render({
-				elem: '.upload-select'
-				,url: "{:url('addon.addons/uploads')}"
-				,data: {type:'image'}
-				,accept: 'images'
-				,method: 'get'
-				,acceptMime: 'image/*'
-				,done: function(res){
-					$(this.item).prevAll("input").val(res.url);
-					if(res.status === 0){
-						toast.success({title:"成功",message:res.msg,position: 'topRight'});
-					} else {
-						toast.error({title:"失败",message:res.msg,position: 'topRight'});
-					}
+<script>
+	const UPLOAD_URL = MODULE_NAME + '/soft/plugin/uploads';
+
+	layui.use(['upload','toast'], function(){
+		var $ = layui.$,upload = layui.upload,form = layui.form,notify=layui.notify;
+		//上传
+		upload.render({
+			elem: '.upload-select'
+			,url: UPLOAD_URL
+			,data: {type:'image'}
+			,accept: 'images'
+			,method: 'get'
+			,acceptMime: 'image/*'
+			,done: function(res){
+				$(this.item).prevAll("input").val(res.url);
+				if(res.status === 0){
+					toast.success({title:"成功",message:res.msg,position: 'topRight'});
+				} else {
+					toast.error({title:"失败",message:res.msg,position: 'topRight'});
 				}
-			});
-		})
-	</script>
+			}
+		});
+	})
+</script>
 
 {/block}

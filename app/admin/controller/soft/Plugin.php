@@ -1,14 +1,14 @@
 <?php
 /*
  * @Program: TaoLer 2023/3/15
- * @FilePath: app\admin\controller\addon\Addons.php
- * @Description: Addons
- * @LastEditTime: 2023-03-15 22:40:04
+ * @FilePath: app\admin\controller\soft\Plugin.php
+ * @Description: Plugin
+ * @LastEditTime: 2026-06-30 22:40:04
  * @Author: Taoker <317927823@qq.com>
- * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ * @Copyright (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
 
-namespace app\admin\controller\addon;
+namespace app\admin\controller\soft;
 
 use app\admin\controller\AdminBaseController;
 use app\common\lib\SqlFile;
@@ -17,17 +17,22 @@ use think\Exception;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Config;
+use think\facade\Db;
 use app\admin\model\AuthRule;
-use app\admin\model\Addons as AddonsModel;
 use think\response\Json;
 use taoler\com\Files;
 use app\common\lib\facade\HttpHelper;
 use app\common\lib\FileHelper;
 
 
-class Addons extends AdminBaseController
+class Plugin extends AdminBaseController
 {
     protected $menu = [];
+
+    public function initialize()
+    {
+        parent::initialize();
+    }
 
     /**
      * 浏览插件
@@ -45,67 +50,59 @@ class Addons extends AdminBaseController
      */
     public function list()
     {
-        $param = Request::param();
-        $data = ['page' => $param['page'] ?? 1, 'limit' => $param['limit'] ?? 10, 'type' => $param['type'] ?? 'all'];
-        $res = [];
-        //本地插件列表
-        $localAddons = Files::getDirName('../addons/');
+        $page = $this->request->param('page/d', 1);
+        $limit = $this->request->param('limit/d', 10);
+        $type = $this->request->param('type/s', 'all');
+        $appName = $this->request->param('app_name/s');
+        
+        // 本地插件列表
+        $localPlguin = $this->getLocalPlugins();
 
-        // 排除公共中间件目录
-        $key1 = array_search('middleware', $localAddons, true);
-
-        if($key1 !== false) {
-            unset($localAddons[$key1]);
-        }
-
-        // 若不存在info.ini，只有文件夹，表示没有安装成功
-        foreach($localAddons as $name) {
-            $in = str_replace('\\', '/', root_path() . "addons/$name/info.ini");
-            if(!file_exists($in)) {
-                $key2 = array_search($name, $localAddons, true);
-                unset($localAddons[$key2]);
-            }
-        }  
-
-        if($data['type'] == 'installed') {
-            $count = count($localAddons); // 安装总数
+        if($type == 'installed') {
+            $count = count($localPlguin); // 安装总数
             // 已安装
             if ($count) {
-                $res = ['code' => 0, 'msg' => 'ok', 'count' => $count];
+                  
                 // 数组分组
-                $arr = array_chunk($localAddons, $data['limit']);
+                $arr = array_chunk($localPlguin, $limit);
                 // 选中的页码数组
-                $arrAddon = $arr[$data['page'] - 1];
-                // $data数据
+                $arrAddon = $arr[$page - 1];
+                // 数据
+                $res = [];
                 foreach ($arrAddon as $k => $v) {
                     $info_file = '../addons/' . $v . '/info.ini';
                     $info = parse_ini_file($info_file);
-                    $info['show'] = $info['status'] ? '启用' : '禁用';
-                    $info['install'] = $info['status'] ? '是' : '否';
-                    $res['data'][] = $info;
+                    $info['install'] = $info['install'] ? '√' : '×';
+                    $res[] = $info;
                 }
-
-                return json($res);
+                return json(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $res]);
             }
-            return json(['code' => -1, 'msg' => '没有安装任何插件']);
+
+            return json(['code' => -1, 'msg' => 'no installed plugins']);
         }
 
         try{
             // 在线插件
-            $response = HttpHelper::withHost()->post('/v1/getaddonlist', $data);
+            $response = HttpHelper::withHost()->post('/v2/getaddonlist', ['type' => $type, 'page' => $page, 'limit' => $limit, 'app_name' => $appName]);
+            
             if($response->ok()) {
                 $addons = $response->toJson();
+
                 // $data数据 与本地文件对比
                 $data = [];
                 foreach($addons->data as $v){
-                    if(in_array($v->name, $localAddons)) {
+                    if(in_array($v->name, $localPlguin)) {
                         $info = get_addons_info($v->name);
                         //已安装
                         $v->isInstall = 1;
                         //判断是否有新版本
-                        if($v->version > $info['version']) $v->have_newversion = 1;
-                        $v->price =  $v->price ? $v->price : '免费';
+                        if(version_compare($v->version, $info['version'], '>')) {
+                            $v->have_newversion = 1;
+                        }
+
+                        $v->price =  $v->price > 0 ? $v->price : '免费';
                     }
+
                     $data[] = $v;
                 };
 
@@ -189,7 +186,7 @@ class Addons extends AdminBaseController
             }
             
             // 设置插件info
-            set_addons_info($data['name'],['status' => 1,'install' => 1]);
+            set_addons_info($data['name'], ['status' => 1, 'install' => 1]);
 
         } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
@@ -327,19 +324,23 @@ class Addons extends AdminBaseController
      * @return Json
      * @throws Exception
      */
-    public function check(){
-        $name = input('name');
-        $info = get_addons_info($name);
+    public function check()
+    {
+        $name = $this->request->param('name');
+        
         try{
+            $info = get_addons_info($name);
             $arr = ['status' => $info['status'] ? 0 :1];
-            set_addons_info($name,$arr);
+            set_addons_info($name, $arr);
             $class = get_addons_instance($name);
+
             if($arr['status']) {
                 $res = ['code'=>0,'msg'=>'启用成功'];
             } else {
                 $res = ['code'=>0,'msg'=>'已被禁用'];
             }
-            $info['status']==1 ?$class->enabled():$class->disabled();
+
+            $info['status'] == 1 ? $class->enabled() : $class->disabled();
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
@@ -355,9 +356,19 @@ class Addons extends AdminBaseController
      */
     public function config()
     {
-        $name = input('name');
-        $config = get_addons_config($name);
-        if(empty($config)) return json(['code'=>-1,'msg'=>'无配置项！无需操作']);
+        $name = Request::param('name');
+
+        // !!!获取插件配置 只能引用文件解析，不能使用get_addons_config()，否则会加载视图文件
+        $configFile =  root_path() . 'addons' . DS . $name . DS . 'config.php';
+        if(!is_file($configFile)) {
+            return json(['code' => -1, 'msg' => '无配置项！无需操作']);
+        }
+
+        $config = include $configFile;
+
+        if(empty($config)) {
+            return json(['code' => -1, 'msg' => '配置项为空！请正确配置']);
+        }
 
         if(Request::isAjax()){
             $params = Request::param('params/a',[],'trim');
@@ -389,16 +400,18 @@ class Addons extends AdminBaseController
                 }
                 unset($v);
                 set_addons_config($name, $config);
-
             }
+
             return json(['code'=>0,'msg'=>'配置成功！']);
         }
 
         //模板引擎初始化
-        $view = ['formData' => $config, 'title' => 'title'];
-        View::assign($view);
+
+        View::assign(['formData' => $config, 'title' => 'title']);
+
         $configFile = root_path() . 'addons' . DS . $name . DS . 'config.html';
         $viewFile = is_file($configFile) ? $configFile : '';
+
 
         return View::fetch($viewFile);
 
@@ -591,6 +604,27 @@ class Addons extends AdminBaseController
         $addons = $response->toJson();
         if($addons->code === 0) return true;
         return false;
+    }
+
+    /**
+     * 获取本地插件列表
+     * @return array
+     */
+    protected function getLocalPlugins() :array
+    {
+        // 本地插件列表
+        $localPlguin = Files::getDirName('../addons/');
+
+        // 若不存在info.ini，只有文件夹，表示没有安装成功
+        foreach($localPlguin as $name) {
+            $iniFile = str_replace('\\', '/', root_path() . "addons/$name/info.ini");
+            if(!file_exists($iniFile)) {
+                $key = array_search($name, $localPlguin, true);
+                unset($localPlguin[$key]);
+            }
+        }
+
+        return $localPlguin;
     }
 
 
