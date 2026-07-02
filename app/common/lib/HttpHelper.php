@@ -301,7 +301,7 @@ class HttpHelper
     /**
      * 判断请求是否成功（2xx状态码）
      */
-    public function ok(): bool
+    public function ok()
     {
         return $this->response && 
                $this->response->getStatusCode() >= 200 && 

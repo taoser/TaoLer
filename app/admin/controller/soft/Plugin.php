@@ -59,9 +59,21 @@ class Plugin extends AdminBaseController
         $localPlguin = $this->getLocalPlugins();
 
         if($type == 'installed') {
-            $count = count($localPlguin); // 安装总数
+
+            $total = count($localPlguin); // 安装总数
             // 已安装
-            if ($count) {
+            if ($total) {
+
+                // 搜索本地已安装插件
+                if(!empty($appName)) {
+                    $localPlguin = array_filter($localPlguin, function($v) use($appName){
+                        return strpos($v, $appName) !== false;
+                    });
+                    $total = count($localPlguin); // 安装总数
+                    if($total == 0) {
+                        return json(['code' => -1, 'msg' => 'no installed plugins']);
+                    }
+                }
                   
                 // 数组分组
                 $arr = array_chunk($localPlguin, $limit);
@@ -75,7 +87,7 @@ class Plugin extends AdminBaseController
                     $info['install'] = $info['install'] ? '√' : '×';
                     $res[] = $info;
                 }
-                return json(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $res]);
+                return json(['code' => 0, 'msg' => 'ok', 'count' => $total, 'data' => $res]);
             }
 
             return json(['code' => -1, 'msg' => 'no installed plugins']);
@@ -85,29 +97,35 @@ class Plugin extends AdminBaseController
             // 在线插件
             $response = HttpHelper::withHost()->post('/v2/getaddonlist', ['type' => $type, 'page' => $page, 'limit' => $limit, 'app_name' => $appName]);
             
-            if($response->ok()) {
-                $addons = $response->toJson();
-
-                // $data数据 与本地文件对比
-                $data = [];
-                foreach($addons->data as $v){
-                    if(in_array($v->name, $localPlguin)) {
-                        $info = get_addons_info($v->name);
-                        //已安装
-                        $v->isInstall = 1;
-                        //判断是否有新版本
-                        if(version_compare($v->version, $info['version'], '>')) {
-                            $v->have_newversion = 1;
-                        }
-
-                        $v->price =  $v->price > 0 ? $v->price : '免费';
-                    }
-
-                    $data[] = $v;
-                };
-
-                return json(['code' => 0, 'msg' => 'ok', 'count' => $addons->count, 'data' => $data]);
+            if(!$response->ok()) {
+                return json(['code' => -1, 'msg' => '网络请求异常！']);
             }
+
+            $res = $response->toJson();
+            if(!$res->code == 0) {
+                return json(['code' => -1, 'msg' => $res->msg]);
+            }
+            // $data数据 与本地文件对比
+            $data = [];
+            foreach($res->data as $v){
+                if(in_array($v->name, $localPlguin)) {
+                    $info = get_addons_info($v->name);
+                    // 存在本地的均为已安装
+                    $v->isInstall = 1;
+                    //判断是否有新版本
+                    if(version_compare($v->version, $info['version'], '>')) {
+                        $v->have_newversion = 1;
+                    }
+                    $v->status = $info['status'] == 1 ? 1 : 0;
+
+                    $v->price =  $v->price > 0 ? $v->price : '免费';
+                }
+
+                $data[] = $v;
+            };
+
+            return json(['code' => 0, 'msg' => 'ok', 'count' => $res->count, 'data' => $data]);
+            
         } catch(Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
@@ -146,7 +164,7 @@ class Plugin extends AdminBaseController
      */
     public function install(array $data = [])
     {
-        $data = Request::only(['name','version','uid/d','token']);
+        $data = Request::only(['name', 'version', 'uid/d', 'token']);
         $data['type'] = 'install';
         
         // 接口
@@ -272,10 +290,11 @@ class Plugin extends AdminBaseController
      * @return Json
      * @throws Exception
      */
-    public function uninstall(string $name = '')
+    public function uninstall(?string $name = null)
     {
-        $name = input('name') ?? $name;
-        
+        if($name === null) {
+            $name = $this->request->param('name');
+        }
         
         try {
             // 执行插件卸载
@@ -312,11 +331,12 @@ class Plugin extends AdminBaseController
             if(file_exists($admin_validate)) Files::delDir($admin_validate);
             if(file_exists($addon_public)) Files::delDir($addon_public);
 
+            return json(['code' => 0, 'msg' => '插件卸载成功']);
+
         } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
-
-        return json(['code' => 0, 'msg' => '插件卸载成功']);
+        
     }
 
     /**
@@ -348,6 +368,22 @@ class Plugin extends AdminBaseController
         return json($res);
     }
 
+    protected function getConfigArray($name)
+    {
+        // !!!获取插件配置 只能引用文件解析，不能使用get_addons_config()，否则会加载视图文件
+        $configFile =  root_path() . 'addons' . DS . $name . DS . 'config.php';
+        if(!is_file($configFile)) {
+            throw new Exception(lang('无配置,无需操作!'));
+        }
+
+        $config = include $configFile;
+
+        if(empty($config)) {
+            throw new Exception(lang('配置项为空！请正确配置'));
+        }
+        return $config;
+    }
+
     /**
      * 配置插件
      * @param $name
@@ -357,56 +393,13 @@ class Plugin extends AdminBaseController
     public function config()
     {
         $name = Request::param('name');
-
-        // !!!获取插件配置 只能引用文件解析，不能使用get_addons_config()，否则会加载视图文件
-        $configFile =  root_path() . 'addons' . DS . $name . DS . 'config.php';
-        if(!is_file($configFile)) {
-            return json(['code' => -1, 'msg' => '无配置项！无需操作']);
-        }
-
-        $config = include $configFile;
-
-        if(empty($config)) {
-            return json(['code' => -1, 'msg' => '配置项为空！请正确配置']);
-        }
-
-        if(Request::isAjax()){
-            $params = Request::param('params/a',[],'trim');
-            halt($params);
-
-            if ($params) {
-                foreach ($config as $k => &$v) {
-                    if (isset($params[$k])) {
-                        if ($v['type'] == 'array') {
-                            $arr = [];
-                            $params[$k] = is_array($params[$k]) ? $params[$k] :[];
-                            foreach ($params[$k]['key'] as $kk=>$vv){
-                                $arr[$vv] =  $params[$k]['value'][$kk];
-                            }
-                            $params[$k] = $arr;
-                            $value = $params[$k];
-                            $v['content'] = [];
-                            $v['value'] = $value;
-                        } elseif ($v['type'] == 'select'){
-                            $value = [(int)$params[$k]];
-                            $v['value'] = $value;
-                            $v['content'] = $value;
-                        } else {
-                            $value =  $params[$k];
-                        }
-
-                        $v['value'] = $value;
-                    }
-                }
-                unset($v);
-                set_addons_config($name, $config);
-            }
-
-            return json(['code'=>0,'msg'=>'配置成功！']);
+        try{
+            $config = $this->getConfigArray($name);
+        } catch (Exception $e) {
+           return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
 
         //模板引擎初始化
-
         View::assign(['formData' => $config, 'title' => 'title']);
 
         $configFile = root_path() . 'addons' . DS . $name . DS . 'config.html';
@@ -414,6 +407,56 @@ class Plugin extends AdminBaseController
 
 
         return View::fetch($viewFile);
+
+    }
+
+    /**
+     * 配置插件提交
+     * @return Json
+     * @throws Exception | \think\Response
+     */
+    public function configSet()
+    {
+        $name = Request::param('name');
+        $params = Request::param('params/a',[],'trim');
+
+        if (empty($params)) {
+            return json(['code' => -1,'msg' => 'no params！']);
+        }
+        
+        try {
+            $config = $this->getConfigArray($name);
+
+            foreach ($config as $k => &$v) {
+                if (isset($params[$k])) {
+                    if ($v['type'] == 'array') {
+                        $arr = [];
+                        $params[$k] = is_array($params[$k]) ? $params[$k] :[];
+                        foreach ($params[$k]['key'] as $kk => $vv){
+                            $arr[$vv] =  $params[$k]['value'][$kk];
+                        }
+                        $params[$k] = $arr;
+                        $value = $params[$k];
+                        $v['content'] = [];
+                        $v['value'] = $value;
+                    } elseif ($v['type'] == 'select'){
+                        $value = [(int)$params[$k]];
+                        $v['value'] = $value;
+                        $v['content'] = $value;
+                    } else {
+                        $value =  $params[$k];
+                    }
+
+                    $v['value'] = $value;
+                }
+            }
+            unset($v);
+            set_addons_config($name, $config);
+
+            return json(['code' => 0,'msg' => '配置成功！']);
+        } catch (Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
+        }
 
     }
 
