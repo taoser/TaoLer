@@ -169,7 +169,7 @@ abstract class Addons
         // 文件配置
         $info_file = $this->addon_path . 'info.ini';
         if (is_file($info_file)) {
-            $_info = parse_ini_file($info_file, true, INI_SCANNER_TYPED) ?: [];
+            $_info = parse_ini_file($info_file, true, INI_SCANNER_RAW) ?: [];
             $_info['url'] = addons_url();
             $info = array_merge($_info, $info);
         }

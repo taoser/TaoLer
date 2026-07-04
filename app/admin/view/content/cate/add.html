@@ -122,11 +122,8 @@
 				if(!value){
 					return '请输入';
 				}
-				if (!new RegExp("^[a-zA-Z0-9-]+$").test(value)) {
+				if (!new RegExp("^[a-zA-Z]+[a-zA-Z0-9-]+$").test(value)) {
 					return '英文名不能有特殊字符';
-				}
-				if (/(^_)|(__)|(_+$)/.test(value)) {
-					return '首尾不能出现下划线';
 				}
 				if (/^\d+$/.test(value)) {
 					return '不能全为数字';

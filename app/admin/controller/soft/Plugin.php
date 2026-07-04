@@ -23,6 +23,7 @@ use think\response\Json;
 use taoler\com\Files;
 use app\common\lib\facade\HttpHelper;
 use app\common\lib\FileHelper;
+use app\common\lib\JwtAuth;
 
 
 class Plugin extends AdminBaseController
@@ -58,18 +59,20 @@ class Plugin extends AdminBaseController
         // 本地插件列表
         $localPlguin = $this->getLocalPlugins();
 
+        // 已安装插件列表
         if($type == 'installed') {
 
             $total = count($localPlguin); // 安装总数
-            // 已安装
+            
             if ($total) {
 
                 // 搜索本地已安装插件
                 if(!empty($appName)) {
+                    // 搜索插件名
                     $localPlguin = array_filter($localPlguin, function($v) use($appName){
                         return strpos($v, $appName) !== false;
                     });
-                    $total = count($localPlguin); // 安装总数
+                    $total = count($localPlguin); // 搜索插件总数
                     if($total == 0) {
                         return json(['code' => -1, 'msg' => 'no installed plugins']);
                     }
@@ -80,14 +83,14 @@ class Plugin extends AdminBaseController
                 // 选中的页码数组
                 $arrAddon = $arr[$page - 1];
                 // 数据
-                $res = [];
+                $installedPlugins = [];
                 foreach ($arrAddon as $k => $v) {
                     $info_file = '../addons/' . $v . '/info.ini';
                     $info = parse_ini_file($info_file);
                     $info['install'] = $info['install'] ? '√' : '×';
-                    $res[] = $info;
+                    $installedPlugins[] = $info;
                 }
-                return json(['code' => 0, 'msg' => 'ok', 'count' => $total, 'data' => $res]);
+                return json(['code' => 0, 'msg' => 'ok', 'count' => $total, 'data' => $installedPlugins]);
             }
 
             return json(['code' => -1, 'msg' => 'no installed plugins']);
@@ -95,8 +98,13 @@ class Plugin extends AdminBaseController
 
         try{
             // 在线插件
-            $response = HttpHelper::withHost()->post('/v2/getaddonlist', ['type' => $type, 'page' => $page, 'limit' => $limit, 'app_name' => $appName]);
-            
+            $response = HttpHelper::withHost()->post('/v2/plugin/list', [
+                'type'      => $type,
+                'page'      => $page,
+                'limit'     => $limit,
+                'app_name'  => $appName
+            ]);
+            // halt($response);
             if(!$response->ok()) {
                 return json(['code' => -1, 'msg' => '网络请求异常！']);
             }
@@ -111,14 +119,17 @@ class Plugin extends AdminBaseController
                 if(in_array($v->name, $localPlguin)) {
                     $info = get_addons_info($v->name);
                     // 存在本地的均为已安装
-                    $v->isInstall = 1;
+                    $v->isInstalled = 1;
                     //判断是否有新版本
                     if(version_compare($v->version, $info['version'], '>')) {
-                        $v->have_newversion = 1;
+                        $v->has_new_version = 1;
                     }
                     $v->status = $info['status'] == 1 ? 1 : 0;
 
                     $v->price =  $v->price > 0 ? $v->price : '免费';
+                } else {
+                    $v->isInstalled = 0;
+                    $v->has_new_version = 0;
                 }
 
                 $data[] = $v;
@@ -158,21 +169,25 @@ class Plugin extends AdminBaseController
     }
 
     /**
-     * 安装，
+     * 安装插件
      * @param array $data
      * @return Json
      */
     public function install(array $data = [])
     {
-        $data = Request::only(['name', 'version', 'uid/d', 'token']);
+        $data = Request::only(['name', 'token', 'version']);
         $data['type'] = 'install';
-        
-        // 接口
-        $response = HttpHelper::withHost()->post('/v1/getaddons', $data)->toJson();
-        // -2未付款 -1安装失败
-        if($response->code < 0) return json($response);
 
         try{
+            $response = HttpHelper::withHost()->post('/v2/plugin/get', $data)->toJson();
+
+            // halt($response);
+
+
+            // -2未付款 -1安装失败
+            if($response->code < 0) {
+                return json($response);
+            }
             // 文件
             $this->addonsFileCheckInstall($data['name'], $response->addons_src);
 
@@ -223,16 +238,17 @@ class Plugin extends AdminBaseController
      */
     public function upgrade()
     {
-        $data = Request::only(['name','uid','token']);
+        $data = Request::only(['name','token']);
         $info = get_addons_info($data['name']);
         $data['version'] = $info['version'];
         $data['type'] = 'upgrade';
 
-        // 接口
-        $response = HttpHelper::withHost()->post('/v1/getaddons', $data)->toJson();
-        if($response->code < 0) return json($response);
-
         try {
+            // 接口
+            $response = HttpHelper::withHost()->post('/v2/plugin/get', $data)->toJson();
+            if($response->code < 0) return json($response);
+
+        
             // 获取原配置信息
             $config = get_addons_config($data['name']);
 
@@ -468,7 +484,7 @@ class Plugin extends AdminBaseController
      * @param integer $type 菜单类型
      * @return void
      */
-    public function insertMenu(array $menu, int $pid = 0, int $type = 1)
+    protected function insertMenu(array $menu, int $pid = 0, int $type = 1)
     {
         try {
 
@@ -505,7 +521,7 @@ class Plugin extends AdminBaseController
      * @return void
      * @throws Exception
      */
-    public function removeMenu(array $menu, string $module = 'addon')
+    protected function removeMenu(array $menu, string $module = 'addon')
     {
         try {
             foreach ($menu as $k => $v){
@@ -534,7 +550,9 @@ class Plugin extends AdminBaseController
      */
     public function userLogin()
     {
-        $response = HttpHelper::withHost()->post('/v1/user/login', Request::param())->toJson();
+        $param = Request::only(['name','password']);
+
+        $response = HttpHelper::withHost()->post('/v1/user/login_api', $param)->toJson();
         return json($response);
     }
 
@@ -544,19 +562,25 @@ class Plugin extends AdminBaseController
      */
     public function pay()
     {
-        $data = Request::only(['id','name','version','uid/d','price']);
+        $data = Request::only(['id/d','name','token']);
 
-        $response = HttpHelper::withHost()->post('/v1/createOrder', $data);
+        try{
+            $response = HttpHelper::withHost()->post('/v2/plugin/pay', $data);
 
-        if ($response->ok()) {
-            $res = $response->toArray();
+            if ($response->ok()) {
+                return json($response->toJson());
+            }
 
-            View::assign('orderData',$res['data']);
-            return View::fetch();
+            return json(['code'=>0,'msg'=>'支付成功！', 'data'=>[
+                'out_order_no'=> 'PL20260704164904599297847', 
+                'total_amount'=> '0.01', 
+                'subject'=> 'bacimg', 
+                'qr_code_img'=> 'https://qr.alipay.com/bax08547oxrqj8owbxky5596'
+            ]]);
 
+        } catch (Exception $e) {
+            return json(['code'=>-1,'msg'=>$e->getMessage()]);
         }
-
-        return json($response->toJson());
     }
 
     /**
@@ -565,13 +589,9 @@ class Plugin extends AdminBaseController
      */
     public function isPay()
     {
-        $param = Request::only(['name','userinfo']);
-        $data = [
-            'name'=>$param['name'],
-            'uid'=> $param['userinfo']['uid'],
-        ];
-
-        $response = HttpHelper::withHost()->post('/v1/ispay', $data)->toJson();
+        $param = Request::only(['name','token']);
+  
+        $response = HttpHelper::withHost()->post('/v1/ispay', $param)->toJson();
         return json($response);
     }
 

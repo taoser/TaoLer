@@ -40,11 +40,11 @@
 		<button class="pear-btn pear-btn-sm {{# if(layui.cache.btn.type == 'all'){ }} pear-btn-primary {{# } }}" lay-event="all">全部</button>
 		<button class="pear-btn pear-btn-sm {{# if(layui.cache.btn.type == 'free'){ }} pear-btn-primary {{# } }}" lay-event="free">免费</button>
 		<button class="pear-btn pear-btn-sm {{# if(layui.cache.btn.type == 'installed'){ }} pear-btn-primary {{# } }}" lay-event="installed">已安装</button>
-		<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="add">离线安装</button>
+		<button class="pear-btn pear-btn-sm pear-btn-danger " lay-event="add">离线安装</button>
 	</div>
 </script>
 
-<script type="text/html" id="ver_num">
+<script type="text/html" id="version">
 	<div>{{d.version}} {{#  if(d.have_newversion == 1) { }} <span class="layui-badge-dot"></span> {{#  } }}</div>
 </script>
 
@@ -52,26 +52,34 @@
 	<input type="checkbox" name="{{d.name}}" lay-skin="switch" lay-filter="enable" lay-text="启动|禁用" {{#  if(d.status == 1){ }} checked {{#  } }}>
 </script>
 
-<script type="text/html" id="addons-bar">
-	{{#  if(d.have_newversion === 1){ }}
-		<button class="pear-btn pear-btn-danger pear-btn-xs" lay-event="install"><i class="layui-icon layui-icon-upload-circle"></i>升级</button>
-	{{# } else { }}
-		{{# if(d.isInstall === 1) { }}
-			<button class="pear-btn pear-btn-normal pear-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</button>
-		{{# } else { }}
-			<button class="pear-btn pear-btn-xs" lay-event="install"><i class="layui-icon layui-icon-edit"></i>安装</button>
-			<select id="vers{{d.name}}" name="sss" class="layui-border" lay-ignore lay-filter="versSelect">
-				{{# d.vers.forEach(function(item, index){ }}
-				<option value="{{ item }}">{{ item }}</option>
-				{{# }); }}
-			</select>
+<script type="text/html" id="online-tool">
+
+	{{#  if(d.isInstalled === 1){ }}
+	
+		{{#  if(d.has_new_version === 1){ }}
+		<button class="pear-btn pear-btn-sm pear-btn-primary" lay-event="upgrade" title="升级">
+			<i class="pear-icon pear-icon-upload"></i>
+		</button>
 		{{# } }}
+		<button class="pear-btn pear-btn-sm pear-btn" lay-event="config" title="配置">
+			<i class="pear-icon pear-icon-setting"></i>
+		</button>
+		
+	{{# } else { }}
+		<button class="pear-btn pear-btn-sm pear-btn-danger" lay-event="install" title="安装">
+			<i class="pear-icon pear-icon-download"></i>
+		</button>
 	{{# } }}
+
 </script>
 
-<script type="text/html" id="addons-installed-tool">
-	<button class="pear-btn pear-btn-normal pear-btn-xs" lay-event="config"><i class="layui-icon layui-icon-set"></i>设置</button>
-	<button class="pear-btn pear-btn-danger pear-btn-xs" lay-event="uninstall"><i class="layui-icon layui-icon-delete"></i>卸载</button>
+<script type="text/html" id="installed-tool">
+	<button class="pear-btn pear-btn-sm pear-btn-normal" lay-event="config" title="配置">
+		<i class="layui-icon layui-icon-set"></i>
+	</button>
+	<button class="pear-btn pear-btn-sm pear-btn-danger" lay-event="uninstall" title="卸载">
+		<i class="layui-icon layui-icon-delete"></i>
+	</button>
 </script>
 
 {include file="public/user_login" /}
@@ -79,22 +87,31 @@
 {__block__}
 
 <script>
-	const ADDON_LIST_URL = MODULE_NAME + '/soft/plugin/getList';
+
+	// 插件列表
 	const LIST_URL = MODULE_NAME + '/soft/plugin/list';
+	// 启用插件
 	const ENABLE_URL = MODULE_NAME + '/soft/plugin/enable';
+	// 检查插件是否已安装
 	const CHECK_URL = MODULE_NAME + '/soft/plugin/check';
 
+	// 安装插件
 	const INSTALL_URL = MODULE_NAME + '/soft/plugin/install';
+	// 升级插件
 	const UPGRADE_URL = MODULE_NAME + '/soft/plugin/upgrade';
+	// 卸载插件
 	const UNINSTALL_URL = MODULE_NAME + '/soft/plugin/uninstall';
+	// 配置插件
 	const CONFIG_URL = MODULE_NAME + '/soft/plugin/config';
+	// 配置插件设置
 	const CONFIG_SET_URL = MODULE_NAME + '/soft/plugin/configSet';
-
+	// 用户登录
 	const USER_LOGIN_URL = MODULE_NAME + '/soft/plugin/userLogin';
+	// 支付
 	const PAY_URL = MODULE_NAME + '/soft/plugin/pay';
+	// 是否支付
 	const IS_PAY_URL = MODULE_NAME + '/soft/plugin/isPay';
 
-	const INSTALLED_URL = MODULE_NAME + '/soft/plugin/installed';
 	const ADD_URL = MODULE_NAME + '/soft/plugin/add';
 
 	layui.use(['toast','plugin'], function(){
@@ -109,29 +126,27 @@
 		}
 		
 		let cols = [[
-			{type: 'checkbox'},
 			{title: '序号', type: 'numbers'},
-			{field: 'name', title: '插件', width: 150},
-			{field: 'title', title: '标题', width: 200},
-			{field: 'description', title: '简介', minWidth: 200},
-			{field: 'author', title: '作者', width: 100},
+			{field: 'name', title: '插件', width: 150,},
+			{field: 'version', title: '版本', templet: '#version', width: 75},
+			{title: '简介', minWidth: 200, templet: '<div>【{{= d.title}}】 - {{= d.description}}</div>'},
 			{field: 'price', title: '价格(元)', width: 85},
-			{field: 'downloads', title: '下载', width: 70},
-			{field: 'version', title: '版本', templet: '#ver_num', width: 75},
-			{title: '操作', width: 165, align: 'center', toolbar: '#addons-bar'}
+			{field: 'author', title: '作者', width: 100},
+			{field: 'down_num', title: '下载', width: 70},
+			{title: '操作', width: 120, templet: '#online-tool', align: 'center'}
 		]];
 		
 		let localCols  = [[
-			{type: 'numbers'},
+			{type: 'checkbox'},
+			{title: '序号', type: 'numbers'},
 			{field: 'name', title: '插件', width:  120},
-			{field: 'title',title: '标题', width:  100},
-			{field: 'version', title: '版本'},
+			{field: 'version', title: '版本', width: 75},
+			{title: '简介', minWidth: 200, templet: '<div>【{{= d.title}}】 - {{= d.description}}</div>'},
 			{field: 'author', title: '作者', width:  80},
-			{field: 'description', title: '简介', minWidth:  200},
-			{field: 'install', title: '安装', width: 100},
+			{field: 'install', title: '安装', width: 100, align:'center'},
 			{field: 'ctime', title: '到期时间', width: 100},
 			{title: '状态', width:  95, templet: '#plgin-status'},
-			{title: '操作', width: 160, 'align': 'center', toolbar:  '#addons-installed-tool'}
+			{title: '操作', width: 120, 'align': 'center', templet:  '#installed-tool'}
 		]];
 
 		//渲染表格

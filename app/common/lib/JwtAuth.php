@@ -25,11 +25,15 @@ class JwtAuth
     // 刷新令牌过期时间（秒）
     private static int $refreshExpireTime = 86400 * 60;
 
+    // 标记是否已初始化
+    private static bool $isInit = false;
+
     /**
      * 初始化配置
      */
     public static function init()
     {
+        if (self::$isInit) return;
         // 从配置文件获取JWT配置
         $jwtConfig = config('jwt');
         
@@ -43,6 +47,7 @@ class JwtAuth
         if (strlen(self::$key) < 32) {
             throw new Exception('JWT secret key must be at least 32 characters long');
         }
+        self::$isInit = true;
     }
 
     /**
@@ -50,13 +55,10 @@ class JwtAuth
      * @param array $data 要编码的数据
      * @return string 生成的JWT令牌
      */    
-    public static function encode(array $data)
+    public static function encode(array $data): string
     {
-        // 确保初始化
-        if (!self::$key) {
-            self::init();
-        }
-        
+        self::init();
+
         $time = time();      
         $payload = [
             "iss"  => self::$iss,
@@ -64,13 +66,12 @@ class JwtAuth
             "iat"  => $time,      
             "nbf"  => $time,        
             "exp"  => $time + self::$expireTime,          
-            "jti"  => uniqid(), // JWT ID，用于防止重放攻击
+            "jti"  => self::generateJti(), // 使用更安全的jti生成方法
             "data" => $data,  
         ];
         
         try {
-            $token = JWT::encode($payload, self::$key, self::$alg);
-            return $token;
+            return JWT::encode($payload, self::$key, self::$alg);
         } catch (Exception $e) {
             throw new Exception('Failed to generate token: ' . $e->getMessage(), 500);
         }
@@ -82,22 +83,12 @@ class JwtAuth
      * @return object 解码后的数据
      * @throws Exception 验证失败时抛出异常
      */
-    public static function verify(string $token)
+    public static function verify(string $token): object
     {
-        // 确保初始化
-        if (!self::$key) {
-            self::init();
-        }
-        
-        try {
-            // 对token进行解码
-            $decoded = JWT::decode($token, new Key(self::$key, self::$alg));
-            
-            // 检测token附加数据中是否存在用户id
-            if (empty($decoded->data->uid)) {
-                throw new Exception('The token does not contain user information');
-            }
+        self::init();
 
+        try {
+            $decoded = JWT::decode($token, new Key(self::$key, self::$alg));
             return $decoded->data;
             
         } catch (ExpiredException $e) {
@@ -111,17 +102,20 @@ class JwtAuth
         }
     }
 
-    public static function decode(string $token)
+    /**
+     * 仅解码token（不验证过期时间）
+     * @param string $token JWT令牌
+     * @return object 解码后的数据
+     */
+    public static function decode(string $token): object
     {
+        self::init();
         try {
-            // 对token进行解码
-            $decoded = JWT::decode($token, new Key(self::$key, self::$alg));
-            
-            // 检测token附加数据中是否存在用户id
-            if (empty($decoded->data->uid)) {
-                throw new Exception('The token does not contain user information');
-            }
-
+            // 使用宽松模式解码，不验证过期时间
+            $decoded = JWT::decode(
+                $token, 
+                new Key(self::$key, self::$alg)
+            );
             return $decoded->data;
             
         } catch (Exception $e) {
@@ -135,7 +129,7 @@ class JwtAuth
      * @return string 提取的令牌
      * @throws Exception 当请求头中没有有效的Authorization时抛出
      */
-    public static function getHeaderToken(array $header)
+    public static function getHeaderToken(array $header): string
     {
         if (!isset($header['authorization'])) {
             throw new Exception('Authorization header is required', 401);
@@ -154,13 +148,10 @@ class JwtAuth
      * @param array $data 要编码的数据
      * @return string 生成的刷新令牌
      */
-    public static function generateRefreshToken(array $data)
+    public static function generateRefreshToken(array $data): string
     {
-        // 确保初始化
-        if (!self::$key) {
-            self::init();
-        }
-        
+        self::init();
+
         $time = time();      
         $payload = [
             "iss"  => self::$iss,
@@ -168,14 +159,13 @@ class JwtAuth
             "iat"  => $time,      
             "nbf"  => $time,        
             "exp"  => $time + self::$refreshExpireTime,          
-            "jti"  => uniqid(),
+            "jti"  => self::generateJti(),
             "type" => "refresh", // 标记为刷新令牌
             "data" => $data,  
         ];
         
         try {
-            $token = JWT::encode($payload, self::$key, self::$alg);
-            return $token;
+            return JWT::encode($payload, self::$key, self::$alg);
         } catch (Exception $e) {
             throw new Exception('Failed to generate refresh token: ' . $e->getMessage(), 500);
         }
@@ -187,20 +177,17 @@ class JwtAuth
      * @return string 新的访问令牌
      * @throws Exception 刷新失败时抛出异常
      */
-    public static function refreshToken(string $refreshToken)
+    public static function refreshToken(string $refreshToken): string
     {
-        // 确保初始化
-        if (!self::$key) {
-            self::init();
-        }
-        
+        self::init();
+
         try {
-            // 解码刷新令牌
+            // 解码刷新令牌（严格验证）
             $decoded = JWT::decode($refreshToken, new Key(self::$key, self::$alg));
             
             // 验证是否为刷新令牌
             if (empty($decoded->type) || $decoded->type !== 'refresh') {
-                throw new Exception('Invalid refresh token');
+                throw new Exception('Invalid token type for refresh');
             }
             
             // 检测token附加数据中是否存在用户id
@@ -211,16 +198,29 @@ class JwtAuth
             // 生成新的访问令牌
             return self::encode((array) $decoded->data);
             
+        } catch (ExpiredException $e) {
+            throw new Exception('Refresh token has expired', 401);
+        } catch (SignatureInvalidException $e) {
+            throw new Exception('Invalid refresh token signature', 401);
         } catch (Exception $e) {
             throw new Exception('Failed to refresh token: ' . $e->getMessage(), 401);
         }
     }
 
     /**
+     * 生成安全的JWT ID
+     * @return string 随机生成的jti
+     */
+    private static function generateJti(): string
+    {
+        return bin2hex(random_bytes(16)); // 生成32位随机字符串
+    }
+
+    /**
      * 设置令牌过期时间
      * @param int $seconds 过期时间（秒）
      */
-    public static function setExpireTime(int $seconds)
+    public static function setExpireTime(int $seconds): void
     {
         self::$expireTime = $seconds;
     }
@@ -229,7 +229,7 @@ class JwtAuth
      * 设置刷新令牌过期时间
      * @param int $seconds 过期时间（秒）
      */
-    public static function setRefreshExpireTime(int $seconds)
+    public static function setRefreshExpireTime(int $seconds): void
     {
         self::$refreshExpireTime = $seconds;
     }
@@ -238,7 +238,7 @@ class JwtAuth
      * 设置加密算法
      * @param string $alg 算法名称
      */
-    public static function setAlgorithm(string $alg)
+    public static function setAlgorithm(string $alg): void
     {
         self::$alg = $alg;
     }

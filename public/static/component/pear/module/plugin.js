@@ -4,12 +4,11 @@
  * www.aieok.com
  */
 
-layui.define(['toast','common','loading'], function (exports) {
+layui.define(['toast','loading'], function (exports) {
 	let $ = layui.jquery;
 	let table = layui.table;
 	let toast = layui.toast;
 	let layer = layui.layer;
-	let common = layui.common;
 	let loading = layui.loading;
 	let form = layui.form;
 
@@ -63,7 +62,6 @@ layui.define(['toast','common','loading'], function (exports) {
 							if (res.code === 0) { // 登录成功
 								layer.close(index); // 关闭弹层
 								api.userinfo.set(res.data);
-								//toast.success({title:"登录成功", message:res.msg,position: 'topRight'});
 								// 安装插件
 								install(data);
 							} else {
@@ -86,8 +84,50 @@ layui.define(['toast','common','loading'], function (exports) {
 		});
 	}
 
+	var payHtml = function (data) {
+			let html = `
+				<div class="layui-card">
+					<div class="layui-card-header">授权</div>
+					<div class="layui-card-body">
+						<div class="layui-row">
+							<div class="order-info" style="margin:10px 0px; line-height: 30px;">
+								<p>订单标题：<em>${data.subject}</em></p>
+								<p>订单编号：<em>${data.out_order_no}</em></p>
+								<p>订单价格：<em class="scanpay-price">￥${data.total_amount}</em> 元</p>
+							</div>
+						</div>
+						<div class="layui-row">
+							<div class="layui-col-sm6">
+								<div class="pay-type" style="margin-bottom: 20px;">
+									<div style="padding: 5px; text-align: center;"><img src="/static/admin/images/alipay.jpg" style="height:80px;"></div>
+								</div>
+								<div class="soft-info" style="margin-bottom: 20px;">
+									<div>不支持退款</div>
+									<br />
+									<div>软件协议:本软件为原作者拥有版权权限，购买软件可以商用，禁止出售第三方行为。</div>
+								</div>
+							</div>
+							<div class="layui-col-sm6">
+								<div class="qrcode" data-text="支付宝当面付" style="padding: 5px; text-align: center;">
+									<img src="${data.qr_code_img}">
+								</div>
+								<div class="pay-tips" style="line-height:20px;text-align: center;margin-bottom: 20px;">
+									<p>请使用支付宝扫一扫<br>扫描二维码进行支付</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			`;
+
+			return html;
+		}
+
+
 	// 安装
 	var install = function (data) {
+
 		// 检测权限
 		var userinfo = api.userinfo.get();
 		if(!userinfo) {
@@ -100,30 +140,40 @@ layui.define(['toast','common','loading'], function (exports) {
 			layer.close(index);
 			loading.Load(1, '安装中...');
 
-			$.post(INSTALLED_URL, { name: data.name, version: data.version, uid: userinfo.uid, token: userinfo.token }, function (res) {
+			$.post(INSTALL_URL, {name: data.name, version: data.version, token: userinfo.token}, function (res) {
 				loading.loadRemove(1000);
+
 				// 需要支付
 				if (res.code === -2) {
-					layer.open({
-						type: 2,
-						area: [common.isModile()?'100%':'800px', common.isModile()?'100%':'600px'],
-						fixed: false, //不固定
-						maxmin: true,
-						content: PAY_URL + "?id=" + data.id+ "&name=" + data.name + "&version=" + data.version + "&uid=" + userinfo.uid + "&price=" + data.price,
-						success: function (layero, index){
+					// 支付
+					$.post(PAY_URL, {id: data.id, name: data.name, token: userinfo.token}, function (result){
+						if(result.code === 0) {
+							console.log(result.data);
 
-							// 订单轮询
-							var intervalPay = setInterval(function() {
-								$.post(IS_PAY_URL, {name: data.name, userinfo: userinfo}, function (result){
-									if(result.code === 0) {
-										layer.close(index);
-										clearInterval(intervalPay);
-										// 安装插件
-										install(data);
-									}
-								});
-							}, 3000);
+							let HTML = payHtml(result.data);
 
+							layer.open({
+								type: 1,
+								area: ['800px', '600px'],
+								fixed: false, //不固定
+								maxmin: true,
+								content: HTML,
+								success: function (layero, index){
+
+									// 订单轮询
+									var intervalPay = setInterval(function() {
+										$.post(IS_PAY_URL, {name: data.name, token: userinfo.token}, function (result){
+											if(result.code === 0) {
+												layer.close(index);
+												clearInterval(intervalPay);
+												// 安装插件
+												install(data);
+											}
+										});
+									}, 3000);
+
+								}
+							});
 						}
 					});
 				}
@@ -217,33 +267,36 @@ layui.define(['toast','common','loading'], function (exports) {
 						layer.close(index); //关闭弹层
 						submit.trigger("click");
 					},
-					success: function (layero, index) {
-						var forms = layero.find("iframe").contents().find(".layui-form");
-						var button = forms.find("button");
-						//事件委托
-						forms.on("click", "button", function (data) {
-							var even = this.getAttribute("lay-event");
-							var names = this.dataset.name;
-						// if (even == "addInput") {
-						//   var html = '<div class="layui-form-item">\n' +
-						//       '<label class="layui-form-label"></label>\n' +
-						//       '<div class="layui-input-inline">\n' +
-						//       ' <input type="text" name="'+ names +'[key][]" value="" placeholder="key" autocomplete="off" class="layui-input input-double-width">\n' +
-						//       '</div>\n' +
-						//       '<div class="layui-input-inline">\n' +
-						//       ' <input type="text" name="'+ names +'[value][]" value="" placeholder="value" autocomplete="off" class="layui-input input-double-width">\n' +
-						//       '</div>\n' +
-						//       '<button data-name="'+ names +'" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">\n' +
-						//       ' <i class="layui-icon"></i>\n' +
-						//       '</button>\n' +
-						//       '</div>';
-						//   $(this).parent().parent().append(html);
-						// } else {
-						//   $(this).parent().remove();
-						// }
-						});
-					},
-				});
+
+					// success: function (layero, index) {
+					// 	var forms = layero.find("iframe").contents().find(".layui-form");
+					// 	var button = forms.find("button");
+					// 	//事件委托
+					// 	forms.on("click", "button", function (data) {
+					// 		var even = this.getAttribute("lay-event");
+					// 		var names = this.dataset.name;
+					// 	// if (even == "addInput") {
+					// 	//   var html = '<div class="layui-form-item">\n' +
+					// 	//       '<label class="layui-form-label"></label>\n' +
+					// 	//       '<div class="layui-input-inline">\n' +
+					// 	//       ' <input type="text" name="'+ names +'[key][]" value="" placeholder="key" autocomplete="off" class="layui-input input-double-width">\n' +
+					// 	//       '</div>\n' +
+					// 	//       '<div class="layui-input-inline">\n' +
+					// 	//       ' <input type="text" name="'+ names +'[value][]" value="" placeholder="value" autocomplete="off" class="layui-input input-double-width">\n' +
+					// 	//       '</div>\n' +
+					// 	//       '<button data-name="'+ names +'" type="button" class="layui-btn layui-btn-danger layui-btn-sm removeInupt" lay-event="removeInupt">\n' +
+					// 	//       ' <i class="layui-icon"></i>\n' +
+					// 	//       '</button>\n' +
+					// 	//       '</div>';
+					// 	//   $(this).parent().parent().append(html);
+					// 	// } else {
+					// 	//   $(this).parent().remove();
+					// 	// }
+					// 	});
+					// },
+
+				})
+				
 			});
 		}
 
