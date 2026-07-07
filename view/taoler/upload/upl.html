@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Layui分片上传 修复无响应｜取消+断线续传</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui-src/dist/css/layui.css">
+  <style>
+    .upload-box {width:720px;margin:30px auto;}
+    .file-item {border:1px solid #eee;padding:12px;margin:10px 0;border-radius:4px;}
+    .file-name {font-size:14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+    .layui-progress {margin:8px 0;}
+    .tip-text {font-size:13px;color:#666;}
+    .cancel-btn{margin-left:10px;}
+  </style>
+</head>
+<body>
+<div class="upload-box">
+  <div class="layui-card">
+    <div class="layui-card-header">大文件分片上传（修复选择无响应）</div>
+    <div class="layui-card-body">
+      <button class="layui-btn" id="uploadBtn">选择多个文件</button>
+      <div id="uploadList"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/layui-src/dist/layui.js"></script>
+<script>
+layui.use(['upload', 'jquery', 'layer'], function(){
+  const upload = layui.upload;
+  const $ = layui.jquery;
+  const layer = layui.layer;
+
+  const chunkSize = 2 * 1024 * 1024;
+  const maxTotalSize = 10 * 1024 * 1024 * 1024;
+  const allowExt = ['mp4','avi','mov','zip','rar','7z','pdf','jpg','jpeg','png','gif'];
+  const maxConcurrent = 3;
+  let uploadQueue = [];
+  let runningCount = 0;
+  // 取消标记：存储文件ID是否需要终止上传
+  let cancelMap = {};
+
+  // 保存上传实例
+  const uploadInst = upload.render({
+    elem: '#uploadBtn',
+    url: '/upload/chunk',
+    multiple: true,
+    auto: false,
+    accept: 'file',
+    choose: function(obj){
+      try {
+        // 关键修复：清空内置文件输入框，解决第二次选择无响应
+        uploadInst.config.elem.next()[0].value = '';
+
+        if (!obj || !obj.files || obj.files.length === 0) return;
+        const fileList = obj.files;
+
+        // 循环遍历文件，立刻渲染DOM（不再等待异步）
+        for (let i = 0; i < fileList.length; i++) {
+          const file = fileList[i];
+          if(!checkFileSafe(file)) continue;
+
+          const fileId = Date.now() + '_' + Math.random().toString(36).slice(2);
+          const domId = `file_${fileId}`;
+          // 初始化取消标记为false
+          cancelMap[fileId] = false;
+
+          const html = `
+            <div class="file-item" id="${domId}" data-fileid="${fileId}">
+              <div class="file-name">
+                <span>${file.name}</span>
+                <div>
+                  <span class="layui-text-desc">${formatSize(file.size)}</span>
+                  <button class="layui-btn layui-btn-danger layui-btn-xs cancel-btn" data-fileid="${fileId}">取消</button>
+                </div>
+              </div>
+              <div class="layui-progress">
+                <div class="layui-progress-bar" lay-percent="0%"></div>
+              </div>
+              <div class="tip-text">读取分片状态中...</div>
+            </div>
+          `;
+          $('#uploadList').append(html);
+          // 查询后端已上传分片，加入队列
+          loadUploadedChunk(file, fileId, domId);
+        }
+      } catch (e) {
+        console.error('choose回调报错：', e);
+        layer.msg('文件读取失败，请重试', {icon:2});
+      }
+    }
+  });
+
+  // 取消按钮事件委托
+  $('#uploadList').on('click','.cancel-btn',function(){
+    const fileId = $(this).data('fileid');
+    // 1. 标记为取消，上传循环自动跳过
+    cancelMap[fileId] = true;
+    // 2. 从等待队列移除
+    uploadQueue = uploadQueue.filter(item=>item.fileId !== fileId);
+    // 3. 请求后端清理分片文件
+    $.post('/upload/cancel',{fileId},()=>{
+      $(`#file_${fileId}`).remove();
+      layer.msg('已取消上传并清理临时分片');
+    })
+  })
+
+  // 查询后端已上传分片列表
+  function loadUploadedChunk(file, fileId, domId){
+    $.post('/upload/getChunkList',{fileId},res=>{
+      if(res.code !== 1) return;
+      const uploadedArr = res.data || [];
+      uploadQueue.push({file, fileId, domId, uploadedArr});
+      runUploadQueue();
+    })
+  }
+
+  // 队列调度控制并发
+  function runUploadQueue(){
+    if(runningCount >= maxConcurrent || uploadQueue.length === 0) return;
+    runningCount++;
+    const task = uploadQueue.shift();
+    uploadSingleFile(task.file, task.fileId, task.domId, task.uploadedArr).finally(()=>{
+      runningCount--;
+      runUploadQueue();
+    })
+  }
+
+  /**
+   * 单文件分片上传（移除AbortController，使用标记位取消，全浏览器兼容）
+   */
+  async function uploadSingleFile(file, fileId, domId, uploadedArr){
+    const $box = $(`#${domId}`);
+    const $bar = $box.find('.layui-progress-bar');
+    const $tip = $box.find('.tip-text');
+    const totalChunks = Math.ceil(file.size / chunkSize);
+
+    let uploadedTotal = uploadedArr.reduce((sum,idx)=>sum + chunkSize,0);
+    if(uploadedTotal > file.size) uploadedTotal = file.size;
+    let lastLoaded = 0;
+    let lastTime = Date.now();
+    $tip.text(`续传，已上传${uploadedArr.length}个分片`);
+
+    try {
+      for(let i=0; i<totalChunks; i++){
+        // 检测是否手动取消，直接终止循环
+        if(cancelMap[fileId]) throw new Error('user_cancel');
+        // 跳过已上传分片
+        if(uploadedArr.includes(i)) continue;
+
+        const start = i * chunkSize;
+        const end = Math.min(start + chunkSize, file.size);
+        const chunk = file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append('file', chunk);
+        formData.append('fileId', fileId);
+        formData.append('index', i);
+
+        // 同步等待分片上传，无signal兼容问题
+        await new Promise((resolve, reject) => {
+          $.ajax({
+            url: '/upload/chunk',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhr: function(){
+              const xhr = new XMLHttpRequest();
+              xhr.upload.addEventListener('progress', e=>{
+                if(!e.lengthComputable) return;
+                // 取消检测
+                if(cancelMap[fileId]) return;
+                const now = Date.now();
+                const deltaTime = now - lastTime;
+                const allLoaded = uploadedTotal + e.loaded;
+
+                let speed = 0;
+                if(deltaTime > 0){
+                  const deltaLoaded = e.loaded - lastLoaded;
+                  speed = (deltaLoaded / deltaTime) * 1000 / 1024;
+                }
+                lastLoaded = e.loaded;
+                lastTime = now;
+
+                const percent = (allLoaded / file.size * 100).toFixed(1);
+                $bar.css('width', percent + '%');
+                $tip.text(`上传进度：${percent}% | 速度：${speed.toFixed(1)} KB/s`);
+              })
+              return xhr;
+            },
+            success: function(){
+              resolve();
+            },
+            error: function(xhr, errType){
+              reject(errType);
+            }
+          })
+        })
+
+        uploadedTotal += chunk.size;
+        lastLoaded = 0;
+      }
+
+      // 全部分片完成，合并文件
+      $.post('/upload/merge', {
+        fileId: fileId,
+        fileName: file.name,
+        total: totalChunks
+      }, res=>{
+        if(res.code === 1){
+          $bar.css('width', '100%');
+          $tip.html('<span style="color:green;">✅上传成功，文件地址：</span>' + res.url);
+          $box.find('.cancel-btn').hide();
+          delete cancelMap[fileId];
+        }else{
+          $tip.html('<span style="color:red;">❌上传失败：' + res.msg + '</span>');
+        }
+      })
+    } catch(err){
+      // 区分手动取消 / 网络错误
+      if(err.message === 'user_cancel'){
+        $tip.html('<span style="color:#999;">已手动取消上传</span>');
+      }else{
+        $tip.html('<span style="color:red;">❌网络断开，可重新选择文件续传</span>');
+      }
+      delete cancelMap[fileId];
+    }
+  }
+
+  // 前端文件安全校验
+  function checkFileSafe(file){
+    const fileName = file.name;
+    if(file.size > maxTotalSize){
+      layer.msg(`【${fileName}】文件超过10GB，禁止上传`, {icon:2});
+      return false;
+    }
+    const suffix = fileName.split('.').pop().toLowerCase();
+    if(!allowExt.includes(suffix)){
+      layer.msg(`【${fileName}】文件类型不允许上传`, {icon:2});
+      return false;
+    }
+    if(/(\.\.|\/|\\|\%00)/.test(fileName)){
+      layer.msg(`【${fileName}】文件名包含非法字符`, {icon:2});
+      return false;
+    }
+    return true;
+  }
+
+  // 文件大小格式化
+  function formatSize(bytes){
+    if(bytes < 1024) return bytes + ' B';
+    if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    if(bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+  }
+})
+</script>
+</body>

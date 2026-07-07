@@ -31,11 +31,11 @@
 <script type="text/html" id="is-hot">
     <input type="checkbox" name="is_hot" id="{{d.id}}" lay-skin="primary" lay-filter="cate-hot"  {{ d.is_hot == 1 ? 'checked' : '' }} />
 </script>
-<script type="text/html" id="is-type">
+<script type="text/html" id="cate-type">
     <div>
-        {{# if(d.type == 1) { }}
+        {{# if(d.type === 1) { }}
             列表
-        {{# } else if(d.type == 2) { }}
+        {{# } else if(d.type === 2) { }}
             单页
         {{# } else { }}
             链接
@@ -91,7 +91,7 @@
                 {field: 'id', title: 'ID',width: 50}
                 ,{field: 'catename', title: '栏目名称', width: 150}
                 ,{field: 'ename', title: '别名', width: 100}
-                ,{field: 'type', title: '类型', align: 'center',width: 50, templet: '#is-type'}
+                ,{field: 'type', title: '类型', align: 'center',width: 50, templet: '#cate-type'}
                 ,{field: 'tpl',title: '模板', align: 'center',width: 100}
                 ,{title: '图标', align: 'center',width: 50, templet: '<div><i class="layui-icon {{d.icon}}"></i></div>'}
                 ,{title: '图片', align: 'center',width: 50, templet: '<div><img src="{{- d.image }}" style="width: 60px;"></div>'}

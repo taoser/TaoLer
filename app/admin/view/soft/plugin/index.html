@@ -37,9 +37,9 @@
 
 <script type="text/html" id="toolbar">
 	<div class="pear-btn-group">
-		<button class="pear-btn pear-btn-sm {{# if(layui.cache.btn.type == 'all'){ }} pear-btn-primary {{# } }}" lay-event="all">全部</button>
-		<button class="pear-btn pear-btn-sm {{# if(layui.cache.btn.type == 'free'){ }} pear-btn-primary {{# } }}" lay-event="free">免费</button>
-		<button class="pear-btn pear-btn-sm {{# if(layui.cache.btn.type == 'installed'){ }} pear-btn-primary {{# } }}" lay-event="installed">已安装</button>
+		<button class="pear-btn pear-btn-sm {{# if(layui.cache.plugin.type == 'all'){ }} pear-btn-primary {{# } }}" lay-event="all">全部</button>
+		<button class="pear-btn pear-btn-sm {{# if(layui.cache.plugin.type == 'free'){ }} pear-btn-primary {{# } }}" lay-event="free">免费</button>
+		<button class="pear-btn pear-btn-sm {{# if(layui.cache.plugin.type == 'installed'){ }} pear-btn-primary {{# } }}" lay-event="installed">已安装</button>
 		<button class="pear-btn pear-btn-sm pear-btn-danger " lay-event="add">离线安装</button>
 	</div>
 </script>
@@ -106,7 +106,7 @@
 	// 配置插件设置
 	const CONFIG_SET_URL = MODULE_NAME + '/soft/plugin/configSet';
 	// 用户登录
-	const USER_LOGIN_URL = MODULE_NAME + '/soft/plugin/userLogin';
+	const USER_LOGIN_URL = MODULE_NAME + '/user/user/userLogin';
 	// 支付
 	const PAY_URL = MODULE_NAME + '/soft/plugin/pay';
 	// 是否支付
@@ -121,7 +121,8 @@
 		,upload = layui.upload;
 		var toast = layui.toast;
 
-		layui.cache.btn = {
+		// 点击按钮缓存类型
+		layui.cache.plugin = {
 			type: 'all'
 		}
 		
@@ -132,7 +133,7 @@
 			{title: '简介', minWidth: 200, templet: '<div>【{{= d.title}}】 - {{= d.description}}</div>'},
 			{field: 'price', title: '价格(元)', width: 85},
 			{field: 'author', title: '作者', width: 100},
-			{field: 'down_num', title: '下载', width: 70},
+			{field: 'down_num', title: '下载', width: 70, align:'center'},
 			{title: '操作', width: 120, templet: '#online-tool', align: 'center'}
 		]];
 		
@@ -163,7 +164,7 @@
 
 		table.on('toolbar(plugin-list)', function(obj){
 			type = obj.event;
-			layui.cache.btn.type = type;
+			layui.cache.plugin.type = type;
 			if(obj.event === 'installed') {				
 				window.installed(obj.event);
 			} else if(obj.event === 'add'){
@@ -218,7 +219,7 @@
 		});
 
 		form.on('submit(query)', function(data) {
-			var type = layui.cache.btn.type;
+			var type = layui.cache.plugin.type;
 			table.reload('plugin-list', {
 				where: {app_name: data.field.app_name, type: type, page: 1}
 			})

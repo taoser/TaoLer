@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>多文件并行分片上传-并发控制+实时速度</title>
+    <style>
+        .wrap{width:600px;margin:40px auto;}
+        .item{border:1px solid #eee;padding:12px;margin:10px 0;border-radius:6px;}
+        .name{font-size:14px;margin-bottom:6px;display:flex;justify-content:space-between;}
+        .progress-wrap{width:100%;height:20px;background:#eee;overflow:hidden;margin:6px 0;}
+        .progress-bar{height:100%;background:#3690ff;width:0%;transition:.1s linear;}
+        .tip{margin-top:4px;font-size:13px;color:#666;}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <input type="file" id="fileInput" multiple>
+    <div id="fileList"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script>
+    // 全局配置
+    const chunkSize = 2 * 1024 * 1024;    // 2MB分片
+    const maxTotalSize = 10 * 1024 * 1024 * 1024;
+    const allowExt = ['mp4','avi','mov','zip','rar','7z','pdf','jpg','jpeg','png','gif'];
+    const $list = $('#fileList');
+
+    // 并发队列控制
+    const maxConcurrent = 3; // 最大同时上传3个文件
+    let uploadQueue = [];
+    let runningCount = 0;
+
+    const CHUNK_URL = '{:url("upload/chunk")}';
+    const MERGE_URL = '{:url("upload/merge")}'
+
+    // 选择多文件
+    $('#fileInput').on('change', function () {
+        const files = this.files;
+        if (!files.length) return;
+
+        Array.from(files).forEach(file => {
+            // 前端安全校验
+            if (!checkFileSafe(file)) return;
+
+            // 唯一标识
+            const fileId = Date.now() + '_' + Math.random().toString(36).slice(2);
+            const domId = `file_${fileId}`;
+            // 渲染进度DOM
+            $list.append(`
+                <div class="item" id="${domId}">
+                    <div class="name">
+                        <span>${file.name}</span>
+                        <span class="size-text">${formatSize(file.size)}</span>
+                    </div>
+                    <div class="progress-wrap">
+                        <div class="progress-bar"></div>
+                    </div>
+                    <div class="tip">等待排队上传...</div>
+                </div>
+            `);
+            // 加入上传队列
+            uploadQueue.push({
+                file,
+                fileId,
+                domId
+            });
+        })
+        // 清空input，支持重复选择
+        this.value = '';
+        // 启动队列调度
+        runUploadQueue();
+    })
+
+    /**
+     * 队列调度器：控制并发数量
+     */
+    function runUploadQueue() {
+        if (runningCount >= maxConcurrent || uploadQueue.length === 0) return;
+        runningCount++;
+        const task = uploadQueue.shift();
+        uploadSingleFile(task.file, task.fileId, task.domId)
+            .finally(() => {
+                runningCount--;
+                runUploadQueue();
+            })
+    }
+
+    /**
+     * 前端安全校验单文件
+     */
+    function checkFileSafe(file) {
+        const fileName = file.name;
+        // 大小校验
+        if (file.size > maxTotalSize) {
+            alert(`文件【${fileName}】超过10GB，禁止上传`);
+            return false;
+        }
+        // 后缀白名单
+        const suffix = fileName.split('.').pop().toLowerCase();
+        if (!allowExt.includes(suffix)) {
+            alert(`文件【${fileName}】类型不允许`);
+            return false;
+        }
+        // 路径穿越字符过滤
+        if (/(\.\.|\/|\\|\%00)/.test(fileName)) {
+            alert(`文件【${fileName}】名称非法`);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 上传单个文件（独立进度 + 实时速度计算）
+     */
+    async function uploadSingleFile(file, fileId, domId) {
+        const $box = $(`#${domId}`);
+        const $bar = $box.find('.progress-bar');
+        const $tip = $box.find('.tip');
+
+        const totalChunks = Math.ceil(file.size / chunkSize);
+        let uploadedTotal = 0;
+        let lastLoaded = 0;
+        let lastTime = Date.now();
+
+        $tip.text('分片上传中...');
+
+        try {
+            // 循环上传分片
+            for (let i = 0; i < totalChunks; i++) {
+                const start = i * chunkSize;
+                const end = Math.min(start + chunkSize, file.size);
+                const chunk = file.slice(start, end);
+
+                const formData = new FormData();
+                formData.append('file', chunk);
+                formData.append('fileId', fileId);
+                formData.append('index', i);
+
+                await $.ajax({
+                    url: CHUNK_URL,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhr: function () {
+                        const xhr = new XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', e => {
+                            if (!e.lengthComputable) return;
+                            const now = Date.now();
+                            const deltaTime = now - lastTime;
+                            const allLoaded = uploadedTotal + e.loaded;
+
+                            // 计算上传速度 KB/s
+                            let speed = 0;
+                            if (deltaTime > 0) {
+                                const deltaLoaded = e.loaded - lastLoaded;
+                                speed = (deltaLoaded / deltaTime) * 1000 / 1024;
+                            }
+                            lastLoaded = e.loaded;
+                            lastTime = now;
+
+                            const percent = (allLoaded / file.size * 100).toFixed(1);
+                            $bar.css('width', percent + '%');
+                            $tip.text(`上传中 ${percent}% | 速度：${speed.toFixed(1)} KB/s`);
+                        });
+                        return xhr;
+                    }
+                })
+                uploadedTotal += chunk.size;
+                lastLoaded = 0;
+            }
+
+            // 分片全部传完，合并文件
+            $.post(MERGE_URL, {
+                fileId: fileId,
+                fileName: file.name,
+                total: totalChunks
+            }, res => {
+                if (res.code === 0) {
+                    $bar.css('width', '100%');
+                    $tip.text(`✅上传成功：${res.url}`);
+                } else {
+                    $tip.text(`❌失败：${res.msg}`);
+                }
+            })
+        } catch (err) {
+            $tip.text('❌上传请求异常，请重试');
+            // $tip.text(err.message);
+        }
+    }
+
+    /**
+     * 文件大小格式化
+     */
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+        if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+        return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+    }
+
+</script>
+</body>
+</html>

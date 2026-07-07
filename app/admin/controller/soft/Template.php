@@ -20,90 +20,163 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use ZipArchive;
 use app\common\lib\FileHelper;
-use app\common\lib\facade\HttpHelper;
+use app\common\facade\HttpHelper;
 
 class Template extends AdminBaseController
 {
     protected string $frameworkVersion;
     protected array $info;
+    protected $http;
 
     public function initialize()
     {
         parent::initialize();
 
         $this->frameworkVersion = config('taoler.version');
+
+        $this->http = new HttpHelper();
     }
 
     // 本地模板放最前面
     public function index()
     {
-        $page = $this->request->param('page', 1);
-        $limit = $this->request->param('limit', 8);
-        
-        $nowTplName = $this->getSystem()['template'];
-        $infoArr = $this->getViewInfos();
-        $localInfoNum = count($infoArr);
+        return View::fetch();
+    }
 
-        $limitNum = $limit - $localInfoNum;
+    public function list()
+    {
+        $page = $this->request->param('page/d', 1);
+        $limit = $this->request->param('limit/d', 8);
+        $type = $this->request->param('type/s', 'all');
+        $appName = $this->request->param('app_name/s', '');
+
+        // 当前模板
+        $currentTplName = $this->getSystem()['template'];
+        // 已安装模板
+        $localTpl = $this->getAllTplInfo();
+
+        // 已安装模板名称数组
+        $tplNameArr = array_keys($localTpl);
+
+
+        $result = HttpHelper::withHost()->post('/v2/template/list', 
+            [
+                'type'          => $type,
+                'app_name'      => $appName,
+                'installed_name'=> $tplNameArr,
+                'page'          => $page,
+                'limit'         => $limit
+            ]);
+
+        if(!HttpHelper::ok()) {
+            return json(['code' => -1, 'msg' => $result->getLastError()]);
+        }
 
         $datas = [];
 
-        $list = HttpHelper::withHost()->post('/v1/template/index',[
-            'page' => $page,
-            'limit' => $limitNum
-        ])->toJson();
+        try {
+            $response = $result->toJson();
 
-        if($list->code > 0) {
-            foreach($list->data as $v) {
+            // 已安装模板
+            if($type === 'installed') {
+                
+                // 搜索本地模板
+                if(!empty($appName)) {
+                    if(array_key_exists($appName, $localTpl)) {
+                        $local = $localTpl[$appName];
+                        $localTpl = []; // 清空数组
+                        $localTpl[] = $local;
+                    }
+                }
+                
+                // 已安装模板数量
+                $localCount = count($localTpl);
+
+                if($localCount === 0) {
+                    return json(['code' => -1, 'msg' => 'success', 'count' => 0, 'data' => []]);
+                }
+
+                foreach($localTpl as $local) {
+                    $data = [];
+                    $data['update']     = false;
+                    $data['installed']  = true;
+                    $data['enable']     = $local['name'] === $currentTplName;
+                    // 在线和本地版本对比
+                    if($response->code === 0) {
+                        foreach($response->data as $online) {
+                            if($online->name !== $local['name']) {
+                                continue;
+                            }
+                            if (version_compare($online->version, $local['version'], '>')) {
+                                $data['update'] = true;
+                            }
+                        }
+                    }
+                    $datas[] = array_merge((array)$local, $data); 
+                }
+
+                return json(['code' => 0, 'msg' => 'success', 'count' => $localCount, 'data' => $datas]);
+
+            }
+
+            if($response->code !== 0) {
+                return json($response);
+            }
+
+            // 所有在线模板
+            if($response->count === 0) {
+                return json(['code' => -1, 'msg' => 'no data', 'count' => 0, 'data' => []]);
+            }
+            
+            foreach($response->data as $v) {
 
                 $data = [];
                 // 是否可升级标志
                 $data['update'] = false;
                 // 启用标志
-                $data['enable'] = false;
+                $data['enable'] = $v->name === $currentTplName;
                 // 是否已下载本地
-                $data['local'] = false;
- 
-                if(array_key_exists($v->name, $infoArr)) {
-                    $data['local'] = true;
-                    if (version_compare($v->version, $infoArr[$v->name]['version'], '>')) {
+                $data['installed'] = false;
+
+                if(array_key_exists($v->name, $localTpl)) {
+                    $data['installed'] = true;
+                    if (version_compare($v->version, $localTpl[$v->name]['version'], '>')) {
                         $data['update'] = true;
                     }
                 }
-    
-                if($v->name === $nowTplName) {
-                    $data['enable'] = true;
-                }
-                // var_dump($v);
 
                 $datas[] = array_merge((array)$v, $data); 
             }
+            
+
+            // // 本地模板合同
+            // $listNameArr = array_column($datas, 'name');
+
+            // foreach($localTpl as $k => $v) {
+            //     if(!in_array($k, $listNameArr)) {
+
+            //         $infoPath = str_replace('\\','/', root_path().'view/'.$k.'/info.ini');
+            //         if(file_exists($infoPath)) {
+            //             // 单文件配置
+            //             $ini = $this->getTplInfo($infoPath);
+
+            //             // 本地放数组最前面
+            //             array_unshift($datas, $ini);
+            //         }
+            //     }
+            // }
+
+            return json(['code' => 0, 'msg' => 'success', 'data' => $datas]);
+
+        } catch (\Exception $e) {
+            return json(['code' => 0, 'msg' => $e->getMessage()]);
         }
 
-        // 本地模板
-        $listNameArr = array_column($datas, 'name');
 
-        foreach($infoArr as $k => $v) {
-            if(!in_array($k, $listNameArr)) {
-
-                $infoPath = str_replace('\\','/', root_path().'view/'.$k.'/info.ini');
-                if(file_exists($infoPath)) {
-                    // 单文件配置
-                    $ini = $this->getViewInfo($infoPath);
-
-                    // 本地放数组最前面
-                    array_unshift($datas, $ini);
-                }
-            }
-        }
-
-        View::assign('template', $datas);
-
-        return View::fetch();
     }
 
     // 获取所有模板配置文件
-    public function getViewInfos(): array
+    public function getAllTplInfo(): array
     {
         $viewPath = root_path() . 'view';
         $tpl = scandir($viewPath);
@@ -126,7 +199,7 @@ class Template extends AdminBaseController
     }
 
     // 获取本地模板配置信息，可以传入路径或者模板名称
-    public function getViewInfo(string $name): array
+    public function getTplInfo(string $name): array
     {
         if(file_exists($name)) {
             $infoPath = $name;
@@ -135,13 +208,13 @@ class Template extends AdminBaseController
         }
 
         $info = [];
-        $nowTplName = $this->getSystem()['template'];
+        $currentTplName = $this->getSystem()['template'];
         if(file_exists($infoPath)) {
             $ini = parse_ini_file($infoPath);
             $ini['update'] = false;
-            $ini['local'] = true;
+            $ini['installed'] = true;
             // 是否在使用中
-            if($ini['name'] === $nowTplName) {
+            if($ini['name'] === $currentTplName) {
                 $ini['enable'] = true;
             } else {
                 $ini['enable'] = false;
@@ -158,24 +231,32 @@ class Template extends AdminBaseController
     public function install() {
 
         $name = Request::param('name');
-        $frameworkVersion = config('taoler.version');
+        $framework = config('taoler.version');
+        $token = Request::param('token');
+        $version = Request::param('version');
 
-        $tpl = HttpHelper::withHost()->post('/v1/template/install', [
-            'name' => $name,
-            'frame_version' => $frameworkVersion
-        ])->toJson();
+        $result = HttpHelper::withHost()->post('/v2/template/get', [
+            'name'      => $name,
+            'token'     => $token,
+            'framework' => $framework,
+            'version'   => $version,
+            'type'      => 'install'
+        ]);
 
-        if($tpl->code < 0 ) {
-            return $tpl;
-        }       
-
-        $viewPath = str_replace('\\','/',root_path()."runtime/view/$name/");
+        if(!$result->ok()) {
+            return json(['code' => -1, 'msg' => $result->getLastMessage()]);
+        }
 
         try {
+            $response = $result->toJson();
+            if($response->code !== 0) {
+                return json($response);
+            }
 
+            $viewPath = str_replace('\\','/',root_path()."runtime/view/$name/");
             $tplZip = $viewPath."$name.zip";
             // 下载文件
-            FileHelper::downloadFile($tpl->data->url, $tplZip);
+            FileHelper::downloadFile($response->data->url, $tplZip);
             // 解压zip到runtime目录
             FileHelper::unZip($tplZip, $viewPath, true);
 
@@ -185,13 +266,14 @@ class Template extends AdminBaseController
             FileHelper::copyFolder($viewPath, root_path(), $reserve);
             // 删除
             FileHelper::deleteFolder($viewPath);
+
+            return json(['code'  => 0, 'msg'   => 'ok']);
             
         } catch(Exception $e) {
             // throw new Exception('解压缩失败'.$e->getMessage());
-            return json(['code' => 0, 'msg' => $e->getMessage()]);
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
-
-        return json(['code'  => 1,'msg'   => 'ok']);
+        
     }
 
     // 启用
@@ -205,15 +287,15 @@ class Template extends AdminBaseController
 
             Db::name('cate')->where('status', 1)->update(['tpl' => 'default']);
 
-            return json(['code'  => 1,'msg'   => 'ok']);
+            return json(['code'  => 0,'msg'   => 'ok']);
         } catch(Exception $e) {
-            return json(['code' => 0, 'msg' => $e->getMessage()]);
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
 
     }
 
     // 删除
-    public function delete() {
+    public function uninstall() {
         $name = Request::param('name');
 
         $infoArr = $this->getViewInfos();
@@ -238,8 +320,8 @@ class Template extends AdminBaseController
         
     }
 
-    // 更新
-    public function update()
+    // 升级
+    public function upgrade()
     {
         $name = Request::param('name');
     
@@ -277,10 +359,54 @@ class Template extends AdminBaseController
             return json(['code' => 0, 'msg' => $e->getMessage()]);
         }
 
-
-       
-
         return json(['code'  => 1,'msg'   => 'ok']);
+    }
+
+    /**
+     * 订单
+     * @return string|Json
+     */
+    public function pay()
+    {
+        $data = Request::only(['id/d','name','token']);
+
+        try{
+            $response = HttpHelper::withHost()->post('/v2/template/pay', $data);
+
+            if ($response->ok()) {
+                $res = $response->toJson();
+                return json($res);
+            }
+
+            // return json(['code'=>0,'msg'=>'支付成功！', 'data'=>[
+            //     'out_order_no'=> 'PL20260704230332093707316', 
+            //     'total_amount'=> '0.01', 
+            //     'subject'=> 'bacimg', 
+            //     'qr_code_img'=> 'https://qr.alipay.com/bax08547oxrqj8owbxky5596'
+            // ]]);
+
+        } catch (Exception $e) {
+            return json(['code'=>-1,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    /**
+     * 支付查询
+     * @return Json
+     */
+    public function isPay()
+    {
+        $param = Request::only(['name','token']);
+        try{
+            $response = HttpHelper::withHost()->post('/v2/template/ispay', $param);
+            
+            if(!HttpHelper::ok()) {
+                return json(['code'=>-1,'msg'=>$response->getLastMessage()]);
+            }
+            return json($response->toJson());
+        } catch (Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
+        }
     }
 
 }

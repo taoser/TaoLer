@@ -32,7 +32,8 @@ class Index
 
         // 配置视图路径
         View::config([
-            'view_path'			=> app_path() .'index' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
+            // 'view_path'			=> app_path() .'index' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
+			'view_path'			=> root_path()  . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
 			'view_dir_name'		=> 'view' . DIRECTORY_SEPARATOR . $this->getTemplate(),
 			'taglib_pre_load'	=> $this->getTaglibPreLoad(),
         ]);

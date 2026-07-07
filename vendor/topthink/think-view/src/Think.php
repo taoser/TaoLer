@@ -147,6 +147,8 @@ class Think implements TemplateHandlerInterface
 
         $app   = $app ? str_replace('.', DIRECTORY_SEPARATOR, $app) . DIRECTORY_SEPARATOR : '';
 
+        var_dump($app);
+
         $paths = [
             // 多应用|自定义多模块
             $this->app->getBasePath() . $app . $view,
@@ -156,7 +158,7 @@ class Think implements TemplateHandlerInterface
             $this->app->getRootPath() . $view . $app
         ];
 
-        // dump($paths);
+        dump($paths);
 
         foreach ($paths as $path) {
             if (is_dir($path)) {
@@ -178,9 +180,11 @@ class Think implements TemplateHandlerInterface
         // 分析模板文件规则
         $request = $this->app['request'];
         // var_dump('视图根目录\n',strpos($template, '@'));
-
+        // 应用目录模式 custom|default
         $appDirMode = '';
+        // 是否是插件路径
         $isAddonsPath = false;
+        // 控制器路径
         $controllerPath = $request->controller();
         // var_dump($controllerPath);
         // 获取视图根目录
@@ -200,7 +204,7 @@ class Think implements TemplateHandlerInterface
             if(str_contains($controllerPath,'/') && !str_contains($request->layer(),'.')) {
                 $appDirMode = 'custom';
             }
-
+            // 默认单应用多模块 app/controller/index,app/controller/admin
             if(!str_contains($controllerPath,'/') && !str_contains($request->layer(),'.')) {
                 $appDirMode = 'default';
             }
@@ -208,9 +212,9 @@ class Think implements TemplateHandlerInterface
             if(str_contains($controllerPath,'/')){
 
                 if(!str_contains($request->layer(),'.')) {
-                    $app        = $request->layer();
+                    $app = $request->layer();
                 } else {
-                    // 路径最后一个/位置
+                    //
                     $path_pos = strrpos($controllerPath, '/');
                     $name_path = substr($controllerPath, 0, $path_pos);
                     $app = $request->layer(). DIRECTORY_SEPARATOR . $name_path;
@@ -234,33 +238,45 @@ class Think implements TemplateHandlerInterface
             $isAddonsPath = true;
         }
 
+        // dump($app);
         // dump('viewConfig:'. $this->config['view_dir_name']);
         // dump('view_path:'. $this->config['view_path']);
 
         // 是否有自定义视图路径
         if ($this->config['view_path']) {
+           
             $path = $this->config['view_path'] . $app . DIRECTORY_SEPARATOR;
+            // dump(1,$path);
+            
+            if($app == 'index') {
+                $path = $this->config['view_path'];
+                //  dump(2,$path);
+            }
             
             // 自定义结构 layer路径中view_path中，表示自定义模块结构
             if(str_contains($this->config['view_path'], $app)){
                 $path = $this->config['view_path'];
+                // dump(3,$path);
             }
             // 插件
             if(str_contains($this->config['view_path'], 'addons')){
                 $path = $this->config['view_path'];
+                // dump(4,$path);
             }
             // 自定义模块结构
             if($appDirMode == 'custom'){
                 $path = $this->config['view_path'];
+                // dump(5,$path);
             }
-
+            
         } else {
 
             $path = $this->getViewPath($app ?? $this->app->http->getName());
             $this->template->view_path = $path;
-
-            // dump('no_view_path:'. $path);
+            // dump(6,$path);
         }
+
+        // dump(7,$path);
 
         $depr = $this->config['view_depr'];
 

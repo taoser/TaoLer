@@ -54,7 +54,7 @@ class Plugin extends AdminBaseController
         $page = $this->request->param('page/d', 1);
         $limit = $this->request->param('limit/d', 10);
         $type = $this->request->param('type/s', 'all');
-        $appName = $this->request->param('app_name/s');
+        $appName = $this->request->param('app_name/s', '');
         
         // 本地插件列表
         $localPlguin = $this->getLocalPlugins();
@@ -173,21 +173,28 @@ class Plugin extends AdminBaseController
      * @param array $data
      * @return Json
      */
-    public function install(array $data = [])
+    public function install(?array $data = [])
     {
-        $data = Request::only(['name', 'token', 'version']);
+        if(empty($data)) {
+            $data = Request::only(['name', 'token', 'version']);
+        }
         $data['type'] = 'install';
 
-        try{
-            $response = HttpHelper::withHost()->post('/v2/plugin/get', $data)->toJson();
+        $result = HttpHelper::withHost()->post('/v2/plugin/get', $data);
 
-            // halt($response);
+        if(!$result->ok()) {
+            return json(['code' => -1, 'msg' => $result->getLastMessage()]);
+        }
 
+        try {
+            
+            $response = $result->toJson();
 
             // -2未付款 -1安装失败
             if($response->code < 0) {
                 return json($response);
             }
+
             // 文件
             $this->addonsFileCheckInstall($data['name'], $response->addons_src);
 
@@ -248,12 +255,11 @@ class Plugin extends AdminBaseController
             $response = HttpHelper::withHost()->post('/v2/plugin/get', $data)->toJson();
             if($response->code < 0) return json($response);
 
-        
             // 获取原配置信息
             $config = get_addons_config($data['name']);
 
             // 文件升级安装
-            $this->addonsFileCheckInstall($data['name'], $response->addons_src);
+            $this->addonsFileCheckInstall($data['name'], $response->file_src);
             // 先恢复原来的info版本
             set_addons_info($data['name'], ['version' => $info['version']]);
 
@@ -271,7 +277,7 @@ class Plugin extends AdminBaseController
             }
 
             // 升级sql
-            $sqlUpdateFile = root_path()."addons/{$data['name']}/data/update_{$response->version}.sql";
+            $sqlUpdateFile = root_path() . "addons/{$data['name']}/data/update_{$response->version}.sql";
             if(file_exists($sqlUpdateFile)) {
                 SqlFile::dbExecute($sqlUpdateFile);
             }
@@ -292,12 +298,10 @@ class Plugin extends AdminBaseController
             if(!$isMenuEmpty){
                 $this->insertMenu($menu, (int)$pid, 1);
             }
-            
+            return json(['code' => 0, 'msg' => "{$response->version}版本升级成功！"]);
         } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
-
-        return json(['code' => 0, 'msg' => "{$response->version}版本升级成功！"]);
     }
 
     /**
@@ -543,19 +547,6 @@ class Plugin extends AdminBaseController
         return true;
     }
 
-
-    /**
-     * 用户登录
-     * @return mixed|Json
-     */
-    public function userLogin()
-    {
-        $param = Request::only(['name','password']);
-
-        $response = HttpHelper::withHost()->post('/v1/user/login_api', $param)->toJson();
-        return json($response);
-    }
-
     /**
      * 订单
      * @return string|Json
@@ -568,15 +559,16 @@ class Plugin extends AdminBaseController
             $response = HttpHelper::withHost()->post('/v2/plugin/pay', $data);
 
             if ($response->ok()) {
-                return json($response->toJson());
+                $res = $response->toJson();
+                return json($res);
             }
 
-            return json(['code'=>0,'msg'=>'支付成功！', 'data'=>[
-                'out_order_no'=> 'PL20260704164904599297847', 
-                'total_amount'=> '0.01', 
-                'subject'=> 'bacimg', 
-                'qr_code_img'=> 'https://qr.alipay.com/bax08547oxrqj8owbxky5596'
-            ]]);
+            // return json(['code'=>0,'msg'=>'支付成功！', 'data'=>[
+            //     'out_order_no'=> 'PL20260704230332093707316', 
+            //     'total_amount'=> '0.01', 
+            //     'subject'=> 'bacimg', 
+            //     'qr_code_img'=> 'https://qr.alipay.com/bax08547oxrqj8owbxky5596'
+            // ]]);
 
         } catch (Exception $e) {
             return json(['code'=>-1,'msg'=>$e->getMessage()]);
@@ -590,9 +582,16 @@ class Plugin extends AdminBaseController
     public function isPay()
     {
         $param = Request::only(['name','token']);
-  
-        $response = HttpHelper::withHost()->post('/v1/ispay', $param)->toJson();
-        return json($response);
+        try{
+            $response = HttpHelper::withHost()->post('/v2/plugin/ispay', $param);
+            
+            if(!HttpHelper::ok()) {
+                return json(['code'=>-1,'msg'=>$response->getLastMessage()]);
+            }
+            return json($response->toJson());
+        } catch (Exception $e) {
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
+        }
     }
 
     /**

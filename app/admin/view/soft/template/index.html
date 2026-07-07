@@ -1,195 +1,82 @@
 {extend name="public/base" /}
 
 {block name="title"}模板{/block}
+
 {block name="body"}
 
-	<div class="layui-card">
-		<div class="layui-card-header">模板市场</div>
-		<div class="layui-card-body">
-
-			<!-- <form class="layui-form layui-form-pane">
-				<div class="layui-form-item">
-					<label class="layui-form-label">类型</label>
-					<div class="layui-input-inline">
-						<input type="text" name="realName" id="realName" placeholder="" class="layui-input">
-					</div>
-					<label class="layui-form-label">名称</label>
-					<div class="layui-input-inline">
-						<input type="text" name="username" id="username" placeholder="" class="layui-input">
-					</div>
-					<div class="layui-inline">
-						<button type="submit" class="pear-btn pear-btn-primary" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i>
-							搜 索</button>
-						<button type="submit" class="pear-btn pear-btn-primary" lay-submit lay-filter="data-btn"><i class="layui-icon">&#xe615;</i>
-							获取数据</button>
-						<button type="submit" class="pear-btn pear-btn-primary" lay-submit lay-filter="data-checked-btn"><i class="layui-icon">&#xe615;</i>
-							获取选中数据</button>
-					</div>
+<div class="layui-card">
+	<div class="layui-card-body">
+		<form class="layui-form layui-form-pane">
+		
+			<div class="layui-form-item">
+				<label class="layui-form-label">模版</label>
+				<div class="layui-input-inline">
+					<input type="text" name="app_name" id="appName" placeholder="名称/标题/描述/作者"  class="layui-input">
 				</div>
-			</form> -->
-			
-			<div class="layui-row layui-col-space30">
-				{volist name="template" id="vo"}
-				<div class="layui-col-md3 ew-datagrid-item" data-index="{}" data-number="1" >
-					<div class="project-list-item" style="border: 1px solid #efefef;">
-						<img class="project-list-item-cover" src="{$vo.thum_img}">
-						<div class="project-list-item-body">
-							<h2 class="layui-elip">{$vo.name}</h2>
-							<div class="project-list-item-text ">{$vo.ver_desc}</div>
-							<div class="project-list-item-desc">
-								<span class="time">版本:{$vo.version}</span>
-								<div class="ew-head-list">
-									<span class="time">{$vo.time}</span>
-								</div>
-							</div>
-							<div class="project-list-item-desc" style="margin-top: 15px;">
-								<div class="layui-btn-group">
-									{if (!$vo.local)}
-									<button type="button" lay-on="install" data-name="{$vo.name}" theme="default" class="enable layui-btn layui-bg-blue layui-btn-sm">安装</button>
-									{/if}
-
-									{if ($vo.local) AND (!$vo.enable)}
-									<button type="button" lay-on="enable" data-name="{$vo.name}" theme="default" class="enable layui-btn layui-btn-sm">启用</button>
-									{/if}
-									{if (!$vo.enable) AND ($vo.local)}
-									<button type="button" lay-on="delete" data-name="{$vo.name}" theme="default" class="enable layui-btn layui-btn-sm layui-btn-danger">删除</button>
-									{/if}
-
-									{if ($vo.enable)}
-									<button type="button" theme="default" class="layui-btn layui-btn-sm layui-btn-primary">使用中</button>
-									{/if}
-								</div>
-								{if $vo.update}
-								<div class="ew-head-list">
-									<button type="button" lay-on="update" data-name="{$vo.name}" theme="default" class="enable layui-btn layui-btn-sm layui-bg-orange">更新</button>
-								</div>
-								{/if}
-							</div>
-						</div>
-					</div>
+				<div class="layui-inline">
+					<button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="search-btn"><i class="layui-icon">&#xe615;</i>
+						搜 索
+					</button>
+					<button type="reset" class="pear-btn pear-btn-md">
+						<i class="layui-icon layui-icon-refresh"></i>
+						重置
+					</button>
 				</div>
-				{/volist}
+				<div class="layui-btn-group layui-inline">
+					<button type="button" class="layui-btn layui-btn-primary layui-bg-blue" lay-on="all">
+						全部
+					</button>
+					<button type="button" class="layui-btn layui-btn-primary" lay-on="free">
+						<i class="layui-icon layui-icon-add-1">免费</i>
+					</button>
+					<button type="button" class="layui-btn layui-btn-primary" lay-on="installed">
+						<i class="layui-icon layui-icon-edit">已安装</i>
+					</button>
+					<button type="button" class="layui-btn layui-btn-primary" lay-on="import">
+						<i class="layui-icon layui-icon-delete">导入</i>
+					</button>
+				</div>
 			</div>
-			
-			<div id="currentTableId2"></div>
-		</div>
+		</form>
 	</div>
-	
-	{__block__}
+</div>
 
-	<script>
-		layui.use(['jquery', 'card','toast','loading'], function() {
+<div id="tplId"></div>
 
-			let table = layui.table;
-			let form = layui.form;
-			let $ = layui.jquery;
-			let layer = layui.layer;
-			let card = layui.card;
-			let util = layui.util;
-			let toast = layui.toast;
-			let loading = layui.loading;
+{include file="public/user_login" /}
 
-			// HTML 转义
-			util.event({
-				install: function() {
-					var name = $(this).attr('data-name');
-					loading.Load(4, "安装模板");
-					$.post("{:url('addon.template/install')}", {name}, function(res) {
-						loading.loadRemove(1000);
-						if(res.code === 1) {
-							toast.success({title:"成功消息",message:res.msg})
-							window.location.reload();
-						} else {
-							toast.error({title:"危险消息",message:res.msg})
-						}
-					})
-					return false;
-				},
-				enable: function() {
-					var name = $(this).attr('data-name');
-					loading.Load(5, "启用模板");
-					$.post("{:url('addon.template/enable')}", {name}, function(res) {
-						loading.loadRemove(1000);
-						if(res.code === 1) {
-							toast.success({title:"成功消息",message:res.msg})
-							window.location.reload();
-						} else {
-							toast.error({title:"危险消息",message:res.msg})
-						}
-					})
-					
-					return false;
-				},
-				delete: function() {
-					var name = $(this).attr('data-name');
-					layer.confirm('确定要删除?', {
-						icon: 3,
-						title: '提示'
-					}, function(index) {
-						layer.close(index);
-						loading.Load(2, "删除模板");
-						$.post("{:url('addon.template/delete')}", {name}, function(res) {
-							loading.loadRemove(1000);
-							if(res.code === 1) {
-								toast.success({title:"成功消息",message:res.msg})
-								window.location.reload();
-							} else {
-								toast.error({title:"危险消息",message:res.msg})
-							}
-						})
-					});
-					
-					return false;
-				},
-				update: function(){
-					var name = $(this).attr('data-name');
-					loading.Load(3,message);
-					$.post("{:url('addon.template/update')}", {name}, function(res) {
-						loading.loadRemove(1000);
-						if(res.code === 1) {
-							toast.success({title:"成功消息",message:res.msg})
-							// window.location.reload();
-						} else {
-							toast.error({title:"危险消息",message:res.msg})
-						}
-					})
-					return false;
-				}
-			});
+{__block__}
 
-			card.render({
-				elem: '#currentTableId',
-				url: '/static/admin/data/card.json', // 接口数据
-				data: [], // 静态数据 
-				page: true, // 是否分页
-				limit: 8, // 每页数量
-				linenum: 4, // 每行数量
-				clickItem: function(data){ // 单击事件
-					console.log(data)
-				}
-			})
-			
-			// 监听搜索操作
-			form.on('submit(data-search-btn---)', function(data) {
-				queryJson = data.field;
-				card.reload("currentTableId", {
-					where: queryJson,
-				});
-				return false;
-			});
+<script>
 
-			form.on('submit(data-checked-btn---)', function() {
-				var data = card.getChecked("currentTableId");
-				layer.msg(JSON.stringify(data));
-				return false;
-			});
+// 模版列表
+	const LIST_URL = MODULE_NAME + '/soft/template/list';
+	// 启用模版
+	const ENABLE_URL = MODULE_NAME + '/soft/template/enable';
+	// 检查模版是否已安装
+	const CHECK_URL = MODULE_NAME + '/soft/template/check';
 
-			form.on('submit(data-btn---)', function() {
-				var data = card.getAllData("currentTableId");
-				layer.msg(JSON.stringify(data));
-				return false;
-			});
-		})
-	</script>
+	// 安装模版
+	const INSTALL_URL = MODULE_NAME + '/soft/template/install';
+	// 升级模版
+	const UPGRADE_URL = MODULE_NAME + '/soft/template/upgrade';
+	// 卸载模版
+	const UNINSTALL_URL = MODULE_NAME + '/soft/template/uninstall';
+	// 配置模版	
+	const CONFIG_URL = MODULE_NAME + '/soft/template/config';
+	// 配置模版设置
+	const CONFIG_SET_URL = MODULE_NAME + '/soft/template/configSet';
+	// 用户登录
+	const USER_LOGIN_URL = MODULE_NAME + '/user/user/userLogin';
+	// 支付
+	const PAY_URL = MODULE_NAME + '/soft/template/pay';
+	// 是否支付
+	const IS_PAY_URL = MODULE_NAME + '/soft/template/isPay';
+
+layui.use(['jquery','template'], function() {
+	let $ = layui.jquery;
+
+})
+</script>
 
 {/block}

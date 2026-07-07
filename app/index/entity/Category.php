@@ -107,7 +107,7 @@ class Category extends BaseEntity
     // 分类表
     public function getList()
     {
-        $data = $this->field('id,pid,ename,type,sort,catename,tpl,icon,status,is_hot,desc,url,image')->append(['url'])->select()->toArray();
+        $data = self::where('status', 1)->field('id,pid,ename,type,sort,catename,tpl,icon,status,is_hot,desc,url,image')->append(['url'])->select()->toArray();
         if(count($data)) {
             // 排序
             $cmf_arr = array_column($data, 'sort');

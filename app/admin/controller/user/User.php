@@ -22,6 +22,7 @@ use app\facade\User as UserModel;
 use app\common\lib\Uploads;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
+use app\common\facade\HttpHelper;
 
 use Exception;
 use think\response\Json;
@@ -299,5 +300,21 @@ class User extends AdminBaseController
 
 		return json(['code' => -1, 'msg' => '修改失败']);
 	}
+
+	    /**
+     * 用户登录
+     * @return mixed|Json
+     */
+    public function userLogin()
+    {
+        $param = Request::only(['name','password']);
+
+        $result = HttpHelper::withHost()->post('/v1/user/login_api', $param);
+
+		if(!HttpHelper::ok()) {
+			return json(['code'=>-1,'msg'=>$result->getLastMessage()]);
+		}
+        return json($result->toJson());
+    }
 
 }

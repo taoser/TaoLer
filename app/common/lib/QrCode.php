@@ -58,7 +58,6 @@ class QrCode
             labelFont: new OpenSans(20),
             labelAlignment: LabelAlignment::Center
         );
-
         $result = $builder->build();
         header('Content-Type: ' . $result->getMimeType());
         return $result->getDataUri();

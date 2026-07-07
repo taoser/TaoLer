@@ -4,7 +4,7 @@
  * www.aieok.com
  */
 
-layui.define(['toast','loading'], function (exports) {
+layui.define(['toast','loading','storage'], function (exports) {
 	let $ = layui.jquery;
 	let table = layui.table;
 	let toast = layui.toast;
@@ -12,25 +12,30 @@ layui.define(['toast','loading'], function (exports) {
 	let loading = layui.loading;
 	let form = layui.form;
 
+
+	// 插件接口
 	var api = {
-		userinfo: {
-			get: function () {
-				var userinfo = localStorage.getItem("taoleradmin_userinfo");
-				return userinfo ? JSON.parse(userinfo) : null;
+		local: {
+			get: function (name) {
+				var data = localStorage.getItem(name);
+				return data ? JSON.parse(data) : null;
 			},
-			set: function (data) {
+			set: function (name, data) {
 				if (data) {
-					localStorage.setItem("taoleradmin_userinfo", JSON.stringify(data));
+					localStorage.setItem(name, JSON.stringify(data));
 				}
 			},
-			remove: function () {
-				localStorage.removeItem("taoleradmin_userinfo");
+			remove: function (name) {
+				if(name) {
+					localStorage.removeItem(name);
+				}
 			}
 		}
 	}
 
 	// 登录
-	var goLogin = function (data) {
+	var goLogin = function (data, event) {
+
 		layer.confirm('你还未登录TaoLer社区账号, 请登录后操作!', {
 			title : '温馨提示',
 			btnAlign: 'c',
@@ -61,9 +66,13 @@ layui.define(['toast','loading'], function (exports) {
 						success: function (res) {
 							if (res.code === 0) { // 登录成功
 								layer.close(index); // 关闭弹层
-								api.userinfo.set(res.data);
-								// 安装插件
-								install(data);
+								// 登录成功后，设置用户信息
+								//api.userinfo.set(res.data);
+								api.local.set("tao-admin-info", res.data);
+
+								// 安装或者升级插件
+								doEvent(data, event);
+
 							} else {
 								toast.warning({title:"警告消息", message:res.msg, position: 'topRight'});
 								return false;
@@ -84,114 +93,160 @@ layui.define(['toast','loading'], function (exports) {
 		});
 	}
 
+	// 支付html
 	var payHtml = function (data) {
+
 			let html = `
-				<div class="layui-card">
-					<div class="layui-card-header">授权</div>
-					<div class="layui-card-body">
-						<div class="layui-row">
+			<div class="layui-card">
+				<div class="layui-card-header">授权</div>
+				<div class="layui-card-body">
+					<div class="layui-row">
+						<div class="layui-col-sm6">
 							<div class="order-info" style="margin:10px 0px; line-height: 30px;">
-								<p>订单标题：<em>${data.subject}</em></p>
+								<p>订单内容：<em>${data.subject}</em></p>
 								<p>订单编号：<em>${data.out_order_no}</em></p>
-								<p>订单价格：<em class="scanpay-price">￥${data.total_amount}</em> 元</p>
+								<p>订单价格：<em>￥${data.total_amount}</em> 元</p>
+							</div>
+							<div class="pay-type" style="margin-bottom: 20px;">
+								<div style="padding: 5px; text-align: center;"><img src="/static/admin/images/alipay.jpg" style="height:80px;"></div>
+							</div>
+							<div class="soft-info" style="margin-bottom: 20px;">
+								<p>注意：软件为虚拟商品，购买后不支持退款！</p>
+								<br />
+								<p>软件协议: 本软件版权为作者所有，购买软件可以商用，但禁止出售或分享给第三方使用及进行违法为目的的活动，否则一切后果将自负。</p>
 							</div>
 						</div>
-						<div class="layui-row">
-							<div class="layui-col-sm6">
-								<div class="pay-type" style="margin-bottom: 20px;">
-									<div style="padding: 5px; text-align: center;"><img src="/static/admin/images/alipay.jpg" style="height:80px;"></div>
-								</div>
-								<div class="soft-info" style="margin-bottom: 20px;">
-									<div>不支持退款</div>
-									<br />
-									<div>软件协议:本软件为原作者拥有版权权限，购买软件可以商用，禁止出售第三方行为。</div>
-								</div>
+						<div class="layui-col-sm6">
+							<div data-text="支付宝当面付" style="padding: 5px; text-align: center;">
+								<img src="${data.qr_code_img}">
 							</div>
-							<div class="layui-col-sm6">
-								<div class="qrcode" data-text="支付宝当面付" style="padding: 5px; text-align: center;">
-									<img src="${data.qr_code_img}">
-								</div>
-								<div class="pay-tips" style="line-height:20px;text-align: center;margin-bottom: 20px;">
-									<p>请使用支付宝扫一扫<br>扫描二维码进行支付</p>
-								</div>
+							<div style="line-height:20px;text-align: center;margin-bottom: 20px;">
+								<p>请使用支付宝扫一扫<br>扫描二维码进行支付</p>
 							</div>
 						</div>
 					</div>
-
 				</div>
-			`;
+			</div>`;
 
-			return html;
-		}
+		return html;
+	}
+
+	// 安装插件
+	var goInstall = function (URL, data) {
+
+		$.post(URL, {name: data.name, version: data.version, token: data.token}, function (res) {
+
+			loading.loadRemove(1000);
+
+			// 未支付
+			if (res.code === -2) {
+				// 去支付
+				goPay(URL, data);
+				return false;
+			}
+
+			// 安装成功
+			if (res.code === 0) {
+				toast.success({title:"安装成功", message: res.msg, position: 'topRight'});
+				// 重载
+				table.reloadData("plugin-list",{},'deep');
+			}
+
+			// 安装失败
+			if (res.code === -1) {
+				toast.error({title: "安装失败", message: res.msg, position: 'topRight'});
+				return false;
+			}
+
+		});
+	}
+	// 支付
+	var goPay = function (URL, data) {
+
+		$.post(PAY_URL, {id: data.id, name: data.name, token: data.token}, function (ress){
+			if(ress.code === 0) {
+				
+				let HTML = payHtml(ress.data);
+				let intervalPay = null;
+
+				layer.open({
+					type: 1,
+					title: '支付信息',
+					area: ['800px', '600px'],
+					fixed: false, //不固定
+					maxmin: true,
+					content: HTML,
+					success: function (layero, openIndex){
+
+						// 订单轮询
+						intervalPay = setInterval(function() {
+							$.post(IS_PAY_URL, {name: data.name, token: data.token}, function (result){
+								if(result.code === 0) {
+									layer.close(openIndex);
+									clearInterval(intervalPay);
+									// 安装插件
+									goInstall(URL, data);
+
+								} else if(result.code === 1) { // 待付款、交易关闭、交易结束等状态
+									console.log(result.msg);
+								} else if(result.code === -1 || result.code === 2) {
+									clearInterval(intervalPay);
+									layer.close(openIndex);
+									layer.alert(result.msg);
+									return false;
+								}
+							});
+						}, 3000);
+
+					},
+					end: function () {
+						clearInterval(intervalPay);
+					}
+				});
+			}
+		});
+	}
 
 
 	// 安装
-	var install = function (data) {
+	var doEvent = function (data, event) {
 
 		// 检测权限
-		var userinfo = api.userinfo.get();
-		if(!userinfo) {
-			goLogin(data);
+		//var userinfo = api.userinfo.get();
+		var adminInfo = api.local.get("tao-admin-info");
+
+		// 未登录
+		if(!adminInfo) {
+			goLogin(data, event);
 			return false;
 		}
 
+		// 登陆后把token放data中
+		if(!data.token) {
+			data.token = adminInfo.token;
+		}
+
+		var URL = "";
+		var CONTENT = "";
+		
+		// 安装
+		if(event === "install") {
+			URL = INSTALL_URL;
+			CONTENT = "立即安装？";
+		}
+		// 升级
+		if(event === "upgrade") {
+			URL = UPGRADE_URL;
+			CONTENT = "立即升级？";
+		}
+
 		// 已登录时
-		layer.confirm("立即安装？", "vcenter", function(index){
+		layer.confirm(CONTENT, "vcenter", function(index){
 			layer.close(index);
 			loading.Load(1, '安装中...');
-
-			$.post(INSTALL_URL, {name: data.name, version: data.version, token: userinfo.token}, function (res) {
-				loading.loadRemove(1000);
-
-				// 需要支付
-				if (res.code === -2) {
-					// 支付
-					$.post(PAY_URL, {id: data.id, name: data.name, token: userinfo.token}, function (result){
-						if(result.code === 0) {
-							console.log(result.data);
-
-							let HTML = payHtml(result.data);
-
-							layer.open({
-								type: 1,
-								area: ['800px', '600px'],
-								fixed: false, //不固定
-								maxmin: true,
-								content: HTML,
-								success: function (layero, index){
-
-									// 订单轮询
-									var intervalPay = setInterval(function() {
-										$.post(IS_PAY_URL, {name: data.name, token: userinfo.token}, function (result){
-											if(result.code === 0) {
-												layer.close(index);
-												clearInterval(intervalPay);
-												// 安装插件
-												install(data);
-											}
-										});
-									}, 3000);
-
-								}
-							});
-						}
-					});
-				}
-
-				// 安装成功
-				if (res.code === 0) {
-					toast.success({title:"安装成功",message:res.msg,position: 'topRight'});
-					// 重载
-					table.reloadData("plugin-list",{},'deep');
-				}
-
-				// 安装失败
-				if (res.code === -1) {
-					toast.error({title:"安装失败",message:res.msg,position: 'topRight'});
-				}
-
-			});
-
+			// 安装插件
+			goInstall(URL, data);
+			// loading.loadRemove(1000);
 		});
     }
 
@@ -204,7 +259,7 @@ layui.define(['toast','loading'], function (exports) {
 
 		//安装插件
 		if (event === "install" || event === "upgrade") {
-			install(data);
+			doEvent(data, event);
 		}
 
 		// 卸载插件

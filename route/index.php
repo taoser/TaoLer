@@ -5,7 +5,16 @@ use think\facade\Route;
 Route::group('',function(){
 	// Route::get('user/blog','user\Blog/index');
 	// Route::get('user/blog','user.Blog/index');
+
+
+	// 上传路由
+	Route::get('upload/index','upload/index');
+	Route::post('upload/chunk','upload/chunk');
+	Route::post('upload/merge','upload/merge');
+	Route::post('upload/getUploadedChunk','upload/getUploadedChunk');
+	Route::post('upload/cancelUpload','upload/cancelUpload');
 	
+	// 定义首页路由
 	Route::get('user.blog/index','user.blog/index');
 	Route::get('user/blog','user.blog/index');
 	// 定义首页路由
@@ -84,9 +93,9 @@ Route::group('',function(){
 
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
 
-	Route::miss(function() {
-		return '404 Not Found!';
-	});
+	// Route::miss(function() {
+	// 	return '404 Not Found!';
+	// });
 
 })
 ->pattern([

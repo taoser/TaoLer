@@ -58,9 +58,9 @@ class Cate extends AdminBaseController
 			// $authRules[$key]['title'] = Lang::get($value['title']);
 			$cates[$key]['icon'] = empty($value['icon']) ? '' : 'layui-icon ' . $value['icon'];
 		}
-
+	
 		$data = $this->getRuleTree($cates);
-
+		// halt($data);
 		return json(['code' => 0,'msg' => 'ok','data' => $data]);
     }
 
@@ -226,6 +226,40 @@ class Cate extends AdminBaseController
             'count' => $count,
             'data'  => $data
         ]);
+    }
+
+    /**
+     * 菜单无限极分类
+     *
+     * @param array $data 包含有pid的rule权限数组
+     * @param integer $pId 父ID
+     * @return array
+     */
+    public function getRuleTree(array $data, int $pId = 0): array
+    {
+        // 递归
+        $tree = [];
+        foreach ($data as $k => $v) {
+            //第一次遍历,找到父节点为根节点的节点 也就是pid=0的节点
+            if ($v['pid'] == $pId) {
+                $child = $this->getRuleTree($data, $v['id']);
+                // 有子类
+                if(!empty($child)) {
+                    $v['children'] = $child;
+                    $v['isParent'] = true;
+                } else {
+                    $v['openType'] = '_iframe';
+                    $v['isParent'] = false;
+                }
+                
+                //把数组放到$tree中
+                $tree[] = $v;
+                //把这个节点从数组中移除,减少后续递归消耗
+                unset($data[$k]);
+            }
+        }
+       
+        return $tree;
     }
 
 
