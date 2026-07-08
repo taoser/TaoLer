@@ -165,9 +165,10 @@ layui.define(['toast','loading','storage'], function (exports) {
 
 		$.post(PAY_URL, {id: data.id, name: data.name, token: data.token}, function (ress){
 			if(ress.code === 0) {
-				
+
 				let HTML = payHtml(ress.data);
 				let intervalPay = null;
+				let outOrderNo = ress.data.out_order_no;
 
 				layer.open({
 					type: 1,
@@ -177,33 +178,40 @@ layui.define(['toast','loading','storage'], function (exports) {
 					maxmin: true,
 					content: HTML,
 					success: function (layero, openIndex){
-
 						// 订单轮询
 						intervalPay = setInterval(function() {
-							$.post(IS_PAY_URL, {name: data.name, token: data.token}, function (result){
+
+							$.post(IS_PAY_URL, {out_order_no: outOrderNo, token: data.token}, function (result){
 								if(result.code === 0) {
 									layer.close(openIndex);
 									clearInterval(intervalPay);
 									// 安装插件
 									goInstall(URL, data);
 
-								} else if(result.code === 1) { // 待付款、交易关闭、交易结束等状态
+								} else if(result.code === 1) { // 待付款
 									console.log(result.msg);
-								} else if(result.code === -1 || result.code === 2) {
+								} else if(result.code === -1 || result.code === 2) { // 交易关闭、交易结束等状态
 									clearInterval(intervalPay);
 									layer.close(openIndex);
 									layer.alert(result.msg);
-									return false;
 								}
 							});
 						}, 3000);
 
 					},
+					// 关闭弹层时清除定时询
 					end: function () {
 						clearInterval(intervalPay);
 					}
 				});
 			}
+
+			// 已支付过
+			if(ress.code === 1) {
+				// 安装插件
+				goInstall(URL, data);
+			}
+
 		});
 	}
 
@@ -254,8 +262,6 @@ layui.define(['toast','loading','storage'], function (exports) {
 	table.on("tool(plugin-list)", function (obj) {
 		var data = obj.data;
 		var event = obj.event;
-
-		console.log(data,event);
 
 		//安装插件
 		if (event === "install" || event === "upgrade") {

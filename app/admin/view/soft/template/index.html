@@ -75,6 +75,28 @@
 
 layui.use(['jquery','template'], function() {
 	let $ = layui.jquery;
+	let template = layui.template;
+	let form = layui.form;
+
+	// 渲染
+	template.render({
+		elem: '#tplId',
+		url: LIST_URL,
+		page: true,
+		height: 30,
+		data: {}
+	});
+
+	// 监听搜索操作
+	form.on('submit(search-btn)', function(data) {
+		field = data.field;
+		field.type = layui.cache.tpl.type;
+
+		template.reload("tplId", {
+			where: field,
+		});
+		return false;
+	});
 
 })
 </script>

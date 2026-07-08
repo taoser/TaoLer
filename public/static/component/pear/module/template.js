@@ -73,16 +73,19 @@ layui.define(['toast','loading','storage'], function (exports) {
 							<div class="project-list-item">
 								<img class="project-list-item-cover" src="${vo.image || ''}">
 								<div class="project-list-item-body">
-									<h2 class="layui-elip">${vo.name || ''}</h2>
+									<div style="display: flex; justify-content: space-between; align-items: center;">
+										<h2 class="layui-elip">${vo.name || ''}</h2>
+										<span style="color: #FF4D4F;">${vo.price || ''}</span>
+									</div>
 									<div class="project-list-item-text">${vo.description || ''}</div>
 									<div class="project-list-item-desc">
 										<span class="time">版本:${vo.version || ''}</span>
 										<div class="ew-head-list">
-										<span class="time">${vo.time || ''}</span>
+											<span class="time">${vo.time || ''}</span>
+										</div>
 									</div>
-								</div>
-								<div class="project-list-item-desc" style="margin-top: 15px; height: ${self.height}px;">
-									<div class="layui-btn-group">`;
+									<div class="project-list-item-desc" style="margin-top: 15px; height: ${self.height}px;">
+										<div class="layui-btn-group">`;
 
 								if (vo.enable) {
 									html += `<button type="button" class="layui-btn layui-btn-sm layui-btn-primary">使用中</button>`;
@@ -94,19 +97,19 @@ layui.define(['toast','loading','storage'], function (exports) {
 										html += `<button type="button" lay-on="delete" data-name="${vo.name}" class="layui-btn layui-btn-sm layui-btn-danger">删除</button>`;
 									}
 								}
-							html += `</div>`;
+								html += `</div>`;
 
-								if (vo.update) {
-									html += `
-									<div class="ew-head-list">
-										<button type="button" lay-on="upgrade" data-name="${vo.name}" data-version="${vo.version}" class="layui-btn layui-btn-sm layui-bg-orange">更新</button>
-									</div>`;
-								}
+									if (vo.update) {
+										html += `
+										<div class="ew-head-list">
+											<button type="button" lay-on="upgrade" data-name="${vo.name}" data-version="${vo.version}" class="layui-btn layui-btn-sm layui-bg-orange">更新</button>
+										</div>`;
+									}
 
-						html += `</div>
+							html += `</div>
+								</div>
 							</div>
-						</div>
-					</div>`;
+						</div>`;
 					htmlStr += html;
 				});
 					
@@ -216,7 +219,7 @@ layui.define(['toast','loading','storage'], function (exports) {
 	};
 
 	// 登录
-	var goLogin = function (data, event) {
+	function goLogin(data, event) {
 
 		layer.confirm('你还未登录TaoLer社区账号, 请登录后操作!', {
 			title : '温馨提示',
@@ -314,7 +317,7 @@ layui.define(['toast','loading','storage'], function (exports) {
 	}
 
 	// 安装插件
-	var goInstall = function (URL, data) {
+	function goInstall(URL, data) {
 
 		$.post(URL, {name: data.name, version: data.version, token: data.token}, function (res) {
 
@@ -344,13 +347,14 @@ layui.define(['toast','loading','storage'], function (exports) {
 	}
 
 	// 支付
-	var goPay = function (URL, data) {
+	function goPay(URL, data) {
 
-		$.post(PAY_URL, {id: data.id, name: data.name, token: data.token}, function (ress){
+		$.post(PAY_URL, {name: data.name, token: data.token}, function (ress){
 			if(ress.code === 0) {
 				
 				let HTML = payHtml(ress.data);
 				let intervalPay = null;
+				let outOrderNo = ress.data.out_order_no;
 
 				layer.open({
 					type: 1,
@@ -363,20 +367,19 @@ layui.define(['toast','loading','storage'], function (exports) {
 
 						// 订单轮询
 						intervalPay = setInterval(function() {
-							$.post(IS_PAY_URL, {name: data.name, token: data.token}, function (result){
+							$.post(IS_PAY_URL, {out_order_no: outOrderNo, token: data.token}, function (result){
 								if(result.code === 0) {
 									layer.close(openIndex);
 									clearInterval(intervalPay);
 									// 安装插件
 									goInstall(URL, data);
 
-								} else if(result.code === 1) { // 待付款、交易关闭、交易结束等状态
+								} else if(result.code === 1) { // 待付款
 									console.log(result.msg);
-								} else if(result.code === -1 || result.code === 2) {
+								} else if(result.code === -1 || result.code === 2) { // 交易关闭、交易结束等状态
 									clearInterval(intervalPay);
 									layer.close(openIndex);
 									layer.alert(result.msg);
-									return false;
 								}
 							});
 						}, 3000);
@@ -387,12 +390,17 @@ layui.define(['toast','loading','storage'], function (exports) {
 					}
 				});
 			}
+			// 支付过，直接安装
+			if(ress.code === 1) {
+				// 安装插件
+				goInstall(URL, data);
+			}
 		});
 	}
 
 
 	// 安装
-	var doEvent = function (data, event) {
+	function doEvent(data, event) {
 
 		// 检测权限
 		//var userinfo = api.userinfo.get();
@@ -433,15 +441,6 @@ layui.define(['toast','loading','storage'], function (exports) {
 		});
     }
 
-	// 渲染
-	tpl.render({
-		elem: '#tplId',
-		url: LIST_URL,
-		page: true,
-		height: 30,
-		data: {}
-	});
-
 	// 事件
 	util.on({
 		install: function() {
@@ -449,8 +448,8 @@ layui.define(['toast','loading','storage'], function (exports) {
 			var version = $(this).attr('data-version');
 
 			var data = {
-				name: name,
-				version: version
+				name,
+				version
 			}
 
 			doEvent(data, 'install');
@@ -463,8 +462,8 @@ layui.define(['toast','loading','storage'], function (exports) {
 			var version = $(this).attr('data-version');
 
 			var data = {
-				name: name,
-				version: version
+				name,
+				version
 			}
 			loading.Load(3,message);
 			doEvent(data, 'upgrade');
@@ -542,6 +541,9 @@ layui.define(['toast','loading','storage'], function (exports) {
 			$(this).addClass('layui-bg-blue');
 		},
 		import: function(){
+			layer.alert("暂未开放导入功能");
+			return false;
+
 			tpl.reload({
 				where:{
 					type: 'import'
@@ -552,17 +554,6 @@ layui.define(['toast','loading','storage'], function (exports) {
 			$(this).addClass('layui-bg-blue');
 		},
 	});
-	
-	// 监听搜索操作
-	form.on('submit(search-btn)', function(data) {
-		field = data.field;
-		field.type = layui.cache.tpl.type;
 
-		tpl.reload("tplId", {
-			where: field,
-		});
-		return false;
-	});
-
-  exports("template", {});
+  exports("template", tpl);
 });

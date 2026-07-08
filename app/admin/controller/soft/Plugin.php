@@ -11,8 +11,7 @@
 namespace app\admin\controller\soft;
 
 use app\admin\controller\AdminBaseController;
-use app\common\lib\SqlFile;
-use app\common\lib\Zip;
+
 use think\Exception;
 use think\facade\View;
 use think\facade\Request;
@@ -21,10 +20,11 @@ use think\facade\Db;
 use app\admin\model\AuthRule;
 use think\response\Json;
 use taoler\com\Files;
-use app\common\lib\facade\HttpHelper;
 use app\common\lib\FileHelper;
+use app\common\facade\HttpHelper;
 use app\common\lib\JwtAuth;
-
+use app\common\lib\SqlFile;
+use app\common\lib\Zip;
 
 class Plugin extends AdminBaseController
 {
@@ -41,6 +41,12 @@ class Plugin extends AdminBaseController
      */
     public function index()
     {
+        // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ3d3cuYWllb2suY29tIiwiYXVkIjoid3d3LmFpZW9rLmNvbSIsImlhdCI6MTc4MzQxODIyMywibmJmIjoxNzgzNDE4MjIzLCJleHAiOjE3ODYwMTAyMjMsImp0aSI6ImY0ZWYwNzYzNWI5NDk1MTY4MGNiMGIyYmJlYzA5ZWY1IiwiZGF0YSI6eyJ1aWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJhdmF0YXIiOiJodHRwczovL3d3dy5haWVvay5jb20vc3RvcmFnZS8xL2hlYWRfcGljLzIwMjMwOTIzL2UwNzE1M2Q4ZmZmNDJlMzZkOTQ4ZDQxMDNjYmJlNTQzLmdpZiJ9fQ.m_QcE4QN2yQ77K_pkrFP-Do_atT0ymVYxBJ8DMtOnM0";
+
+        // $res = $this->isPay('bacimg', $token);
+
+        // halt($res->getData());
+
         return View::fetch();
     }
 
@@ -143,31 +149,6 @@ class Plugin extends AdminBaseController
         
     }
 
-    // 插件文件升级检查
-    protected function addonsFileCheckInstall($name, $url) {
-
-        //拼接路径
-        $addons_dir = str_replace('\\','/', root_path() . 'runtime' . DS . 'addons' . DS . $name . DS);
- 
-        // 2.把远程文件放入本地
-        $package_file = $addons_dir . $name . '.zip';  //升级的压缩包文件路径
-
-        // 下载文件
-        FileHelper::downloadFile($url, $package_file);
-
-        // 解压zip到runtime目录
-        FileHelper::unZip($package_file, $addons_dir, true);
-
-        // 只能复制目录包含的路径，避险
-        $reserve = "addons/$name";
-        // 复制
-        FileHelper::copyFolder($addons_dir, root_path(), $reserve);
-        // 删除
-        FileHelper::deleteFolder($addons_dir);
-
-        return true;
-    }
-
     /**
      * 安装插件
      * @param array $data
@@ -179,13 +160,13 @@ class Plugin extends AdminBaseController
             $data = Request::only(['name', 'token', 'version']);
         }
         $data['type'] = 'install';
-
+        
         $result = HttpHelper::withHost()->post('/v2/plugin/get', $data);
 
         if(!$result->ok()) {
             return json(['code' => -1, 'msg' => $result->getLastMessage()]);
         }
-
+        
         try {
             
             $response = $result->toJson();
@@ -196,7 +177,7 @@ class Plugin extends AdminBaseController
             }
 
             // 文件
-            $this->addonsFileCheckInstall($data['name'], $response->addons_src);
+            $this->addonsFileCheckInstall($data['name'], $response->file_src);
 
             // 执行数据库
             $sqlInstallFile = root_path(). 'addons' . DS . $data['name'] . DS . 'install.sql';
@@ -228,13 +209,13 @@ class Plugin extends AdminBaseController
             // 设置插件info
             set_addons_info($data['name'], ['status' => 1, 'install' => 1]);
 
+            Files::delDirAndFile('../runtime/addons/'.$data['name'] . DS);
+
+            return json(['code' => 0, 'msg' => '插件安装成功！']);
+
         } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
-
-        Files::delDirAndFile('../runtime/addons/'.$data['name'] . DS);
-
-        return json(['code' => 0, 'msg' => '插件安装成功！']);
 
     }
 
@@ -388,22 +369,6 @@ class Plugin extends AdminBaseController
         return json($res);
     }
 
-    protected function getConfigArray($name)
-    {
-        // !!!获取插件配置 只能引用文件解析，不能使用get_addons_config()，否则会加载视图文件
-        $configFile =  root_path() . 'addons' . DS . $name . DS . 'config.php';
-        if(!is_file($configFile)) {
-            throw new Exception(lang('无配置,无需操作!'));
-        }
-
-        $config = include $configFile;
-
-        if(empty($config)) {
-            throw new Exception(lang('配置项为空！请正确配置'));
-        }
-        return $config;
-    }
-
     /**
      * 配置插件
      * @param $name
@@ -481,94 +446,21 @@ class Plugin extends AdminBaseController
     }
 
     /**
-     * 插入插件菜单
-     *
-     * @param array $menu 菜单数组
-     * @param integer $pid 父ID
-     * @param integer $type 菜单类型
-     * @return void
-     */
-    protected function insertMenu(array $menu, int $pid = 0, int $type = 1)
-    {
-        try {
-
-            foreach($menu as $v){
-                $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
-                
-                $v['pid'] = $pid;
-                $v['name'] = trim($v['name'],'/');
-                $v['type'] = $type;
-
-                $menu_rule = AuthRule::withTrashed()->where('name', $v['name'])->findOrEmpty();
-                if(!$menu_rule->isEmpty()){
-                    $menu_rule->restore();
-                } else {
-                    $menu_rule = AuthRule::create($v);
-                }
-
-                if ($hasChild) {
-                    $this->insertMenu($v['sublist'], $menu_rule->id, $type);
-                }
-            }
-
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-
-        return true;
-    }
-
-    /**
-     * 循环删除插件菜单
-     * @param array $menu 菜单数组
-     * @param string $module 插件模式 预留功能
-     * @return void
-     * @throws Exception
-     */
-    protected function removeMenu(array $menu, string $module = 'addon')
-    {
-        try {
-            foreach ($menu as $k => $v){
-                $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
-                $v['name'] = trim($v['name'], '/');
-
-                $menu_rule = AuthRule::withTrashed()->where('name', $v['name'])->findOrEmpty();
-                if(!$menu_rule->isEmpty()){
-                    $menu_rule->delete(true);
-                    if ($hasChild) {
-                        $this->removeMenu($v['sublist']);
-                    }
-                }
-            }
-
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-        return true;
-    }
-
-    /**
      * 订单
      * @return string|Json
      */
     public function pay()
     {
         $data = Request::only(['id/d','name','token']);
+        $result = HttpHelper::withHost()->post('/v2/plugin/pay', $data);
+        if(!HttpHelper::ok()) {
+            return json(['code'=>-1,'msg'=>$result->getLastError()]);
+        }
 
         try{
-            $response = HttpHelper::withHost()->post('/v2/plugin/pay', $data);
+            $response = $result->toJson();
 
-            if ($response->ok()) {
-                $res = $response->toJson();
-                return json($res);
-            }
-
-            // return json(['code'=>0,'msg'=>'支付成功！', 'data'=>[
-            //     'out_order_no'=> 'PL20260704230332093707316', 
-            //     'total_amount'=> '0.01', 
-            //     'subject'=> 'bacimg', 
-            //     'qr_code_img'=> 'https://qr.alipay.com/bax08547oxrqj8owbxky5596'
-            // ]]);
+            return json($response);
 
         } catch (Exception $e) {
             return json(['code'=>-1,'msg'=>$e->getMessage()]);
@@ -581,14 +473,19 @@ class Plugin extends AdminBaseController
      */
     public function isPay()
     {
-        $param = Request::only(['name','token']);
+        $params = Request::only(['out_order_no','token']);
+
+        $result = HttpHelper::withHost()->post('/v2/plugin/ispay', $params);
+        
+        if(!HttpHelper::ok()) {
+            return json(['code' => -1, 'msg' => $result->getLastError()]);
+        }
+
         try{
-            $response = HttpHelper::withHost()->post('/v2/plugin/ispay', $param);
+            $response = $result->toJson();
             
-            if(!HttpHelper::ok()) {
-                return json(['code'=>-1,'msg'=>$response->getLastMessage()]);
-            }
-            return json($response->toJson());
+            return json($response);
+
         } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
@@ -668,6 +565,47 @@ class Plugin extends AdminBaseController
         return false;
     }
 
+    // 插件文件升级检查
+    protected function addonsFileCheckInstall($name, $url) {
+
+        //拼接路径
+        $addons_dir = str_replace('\\','/', root_path() . 'runtime' . DS . 'addons' . DS . $name . DS);
+ 
+        // 2.把远程文件放入本地
+        $package_file = $addons_dir . $name . '.zip';  //升级的压缩包文件路径
+
+        // 下载文件
+        FileHelper::downloadFile($url, $package_file);
+
+        // 解压zip到runtime目录
+        FileHelper::unZip($package_file, $addons_dir, true);
+
+        // 只能复制目录包含的路径，避险
+        $reserve = "addons/$name";
+        // 复制
+        FileHelper::copyFolder($addons_dir, root_path(), $reserve);
+        // 删除
+        FileHelper::deleteFolder($addons_dir);
+
+        return true;
+    }
+
+    protected function getConfigArray($name)
+    {
+        // !!!获取插件配置 只能引用文件解析，不能使用get_addons_config()，否则会加载视图文件
+        $configFile =  root_path() . 'addons' . DS . $name . DS . 'config.php';
+        if(!is_file($configFile)) {
+            throw new Exception(lang('无配置,无需操作!'));
+        }
+
+        $config = include $configFile;
+
+        if(empty($config)) {
+            throw new Exception(lang('配置项为空！请正确配置'));
+        }
+        return $config;
+    }
+
     /**
      * 获取本地插件列表
      * @return array
@@ -689,5 +627,71 @@ class Plugin extends AdminBaseController
         return $localPlguin;
     }
 
+    /**
+     * 插入插件菜单
+     *
+     * @param array $menu 菜单数组
+     * @param integer $pid 父ID
+     * @param integer $type 菜单类型
+     * @return void
+     */
+    protected function insertMenu(array $menu, int $pid = 0, int $type = 1)
+    {
+        try {
+
+            foreach($menu as $v){
+                $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
+                
+                $v['pid'] = $pid;
+                $v['name'] = trim($v['name'],'/');
+                $v['type'] = $type;
+
+                $menu_rule = AuthRule::withTrashed()->where('name', $v['name'])->findOrEmpty();
+                if(!$menu_rule->isEmpty()){
+                    $menu_rule->restore();
+                } else {
+                    $menu_rule = AuthRule::create($v);
+                }
+
+                if ($hasChild) {
+                    $this->insertMenu($v['sublist'], $menu_rule->id, $type);
+                }
+            }
+
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+        return true;
+    }
+
+    /**
+     * 循环删除插件菜单
+     * @param array $menu 菜单数组
+     * @param string $module 插件模式 预留功能
+     * @return void
+     * @throws Exception
+     */
+    protected function removeMenu(array $menu, string $module = 'addon')
+    {
+        try {
+            foreach ($menu as $k => $v){
+                $hasChild = isset($v['sublist']) && $v['sublist'] ? true : false;
+                $v['name'] = trim($v['name'], '/');
+
+                $menu_rule = AuthRule::withTrashed()->where('name', $v['name'])->findOrEmpty();
+                if(!$menu_rule->isEmpty()){
+                    $menu_rule->delete(true);
+                    if ($hasChild) {
+                        $this->removeMenu($v['sublist']);
+                    }
+                }
+            }
+
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+        return true;
+    }
 
 }
