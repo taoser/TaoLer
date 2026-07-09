@@ -20,6 +20,9 @@ use think\facade\Config;
 use app\common\lib\facade\HttpHelper;
 use app\index\model\Comment;
 use think\response\Json;
+use Yansongda\Pay\Pay;
+use app\common\PayContainer;
+use think\Container;
 
 class Index extends AdminBaseController
 {

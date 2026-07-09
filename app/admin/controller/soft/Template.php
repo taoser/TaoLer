@@ -333,7 +333,7 @@ class Template extends AdminBaseController
         $response = HttpHelper::withHost()->post('/v2/template/ispay', $param);
             
         if(!HttpHelper::ok()) {
-            return json(['code'=>-1,'msg'=>$response->getLastMessage()]);
+            return json(['code' => -1, 'msg' => $response->getLastMessage()]);
         }
         try{
             return json($response->toJson());

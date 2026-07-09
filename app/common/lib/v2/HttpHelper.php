@@ -327,9 +327,11 @@ class HttpHelper
         }
 
         $result = json_decode($body, $asArray);
+
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->lastErrorMessage = 'JSON解析失败: ' . json_last_error_msg();
-            throw new RuntimeException($this->lastErrorMessage);
+            $errMsg = 'JSON解析失败: ' . json_last_error_msg() . " 响应内容：" . substr($body, 0, 500);
+            $this->lastErrorMessage = $errMsg;
+            throw new RuntimeException($errMsg);
         }
 
         return $result;

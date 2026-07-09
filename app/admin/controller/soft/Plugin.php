@@ -13,6 +13,7 @@ namespace app\admin\controller\soft;
 use app\admin\controller\AdminBaseController;
 
 use think\Exception;
+use think\RuntimeException;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Config;
@@ -110,9 +111,9 @@ class Plugin extends AdminBaseController
                 'limit'     => $limit,
                 'app_name'  => $appName
             ]);
-            // halt($response);
+            
             if(!$response->ok()) {
-                return json(['code' => -1, 'msg' => '网络请求异常！']);
+                return json(['code' => -1, 'msg' => $response->getLastError()]);
             }
 
             $res = $response->toJson();
@@ -462,8 +463,12 @@ class Plugin extends AdminBaseController
 
             return json($response);
 
+        } catch (RuntimeException $e) {
+            echo $e->getMessage();
+            // 获取原始文本调试
+            echo $result->getBody();
         } catch (Exception $e) {
-            return json(['code'=>-1,'msg'=>$e->getMessage()]);
+            return json(['code'=> -1, 'msg' => $e->getMessage()]);
         }
     }
 

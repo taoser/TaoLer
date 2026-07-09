@@ -98,7 +98,7 @@ layui.define(['toast','loading','storage'], function (exports) {
 
 			let html = `
 			<div class="layui-card">
-				<div class="layui-card-header">授权</div>
+				<div class="layui-card-header">软件授权</div>
 				<div class="layui-card-body">
 					<div class="layui-row">
 						<div class="layui-col-sm6">
@@ -113,7 +113,7 @@ layui.define(['toast','loading','storage'], function (exports) {
 							<div class="soft-info" style="margin-bottom: 20px;">
 								<p>注意：软件为虚拟商品，购买后不支持退款！</p>
 								<br />
-								<p>软件协议: 本软件版权为作者所有，购买软件可以商用，但禁止出售或分享给第三方使用及进行违法为目的的活动，否则一切后果将自负。</p>
+								<p>协议: 本软件版权为作者所有，购买软件后可进行商用，但禁止出售或分享给第三方使用。严禁使用本软件进行违法活动，否则一切后果将自行承担。</p>
 							</div>
 						</div>
 						<div class="layui-col-sm6">

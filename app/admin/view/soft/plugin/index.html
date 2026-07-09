@@ -168,7 +168,7 @@
 			if(obj.event === 'installed') {				
 				window.installed(obj.event);
 			} else if(obj.event === 'add'){
-				//window.add();
+				window.add();
 			} else {
 				// all,free,pay
 				window.all(obj.event);
@@ -203,6 +203,9 @@
 		}
 
 		window.add = function(){
+			layer.alert('离线插件添加功能暂未开放');
+			return false;
+			
 			layer.open({
 				type: 2
 				,title: '添加插件'
