@@ -16,6 +16,7 @@ use think\Exception;
 use think\RuntimeException;
 use think\facade\View;
 use think\facade\Request;
+use think\facade\Log;
 use think\facade\Config;
 use think\facade\Db;
 use app\admin\model\AuthRule;
@@ -42,12 +43,6 @@ class Plugin extends AdminBaseController
      */
     public function index()
     {
-        // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ3d3cuYWllb2suY29tIiwiYXVkIjoid3d3LmFpZW9rLmNvbSIsImlhdCI6MTc4MzQxODIyMywibmJmIjoxNzgzNDE4MjIzLCJleHAiOjE3ODYwMTAyMjMsImp0aSI6ImY0ZWYwNzYzNWI5NDk1MTY4MGNiMGIyYmJlYzA5ZWY1IiwiZGF0YSI6eyJ1aWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJhdmF0YXIiOiJodHRwczovL3d3dy5haWVvay5jb20vc3RvcmFnZS8xL2hlYWRfcGljLzIwMjMwOTIzL2UwNzE1M2Q4ZmZmNDJlMzZkOTQ4ZDQxMDNjYmJlNTQzLmdpZiJ9fQ.m_QcE4QN2yQ77K_pkrFP-Do_atT0ymVYxBJ8DMtOnM0";
-
-        // $res = $this->isPay('bacimg', $token);
-
-        // halt($res->getData());
-
         return View::fetch();
     }
 
@@ -178,7 +173,7 @@ class Plugin extends AdminBaseController
             }
 
             // 文件
-            $this->addonsFileCheckInstall($data['name'], $response->file_src);
+            $this->addonsFileCheckInstall($data['name'], $response->data->file_src);
 
             // 执行数据库
             $sqlInstallFile = root_path(). 'addons' . DS . $data['name'] . DS . 'install.sql';
@@ -231,17 +226,23 @@ class Plugin extends AdminBaseController
         $info = get_addons_info($data['name']);
         $data['version'] = $info['version'];
         $data['type'] = 'upgrade';
-
+        
+        $result = HttpHelper::withHost()->post('/v2/plugin/get', $data);
+        if(!$result->ok()) {
+            return json(['code' => -1, 'msg' => $result->getLastError()]);
+        }
+        
         try {
-            // 接口
-            $response = HttpHelper::withHost()->post('/v2/plugin/get', $data)->toJson();
-            if($response->code < 0) return json($response);
+            $response = $result->toJson();
+            if($response->code < 0) {
+                return json($response);
+            }
 
             // 获取原配置信息
             $config = get_addons_config($data['name']);
 
             // 文件升级安装
-            $this->addonsFileCheckInstall($data['name'], $response->file_src);
+            $this->addonsFileCheckInstall($data['name'], $response->data->file_src);
             // 先恢复原来的info版本
             set_addons_info($data['name'], ['version' => $info['version']]);
 
@@ -259,7 +260,7 @@ class Plugin extends AdminBaseController
             }
 
             // 升级sql
-            $sqlUpdateFile = root_path() . "addons/{$data['name']}/data/update_{$response->version}.sql";
+            $sqlUpdateFile = root_path() . "addons/{$data['name']}/data/update_{$response->data->version}.sql";
             if(file_exists($sqlUpdateFile)) {
                 SqlFile::dbExecute($sqlUpdateFile);
             }
@@ -273,14 +274,16 @@ class Plugin extends AdminBaseController
             }
 
             // 更新现在的新版本info
-            $info['version'] = number_format($response->version, 1); // 写入版本号
+            $info['version'] = number_format($response->data->version, 1); // 写入版本号
             set_addons_info($data['name'], $info);
     
             //恢复菜单
             if(!$isMenuEmpty){
                 $this->insertMenu($menu, (int)$pid, 1);
             }
-            return json(['code' => 0, 'msg' => "{$response->version}版本升级成功！"]);
+
+            return json(['code' => 0, 'msg' => "{$response->data->version}版本升级成功！"]);
+            
         } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }

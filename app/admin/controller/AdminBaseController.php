@@ -30,8 +30,6 @@ class AdminBaseController extends \app\BaseController
 
     protected $aid = '';
 
-    protected $appName = '';
-
     /**
      * 初始化菜单
      */
@@ -150,15 +148,12 @@ class AdminBaseController extends \app\BaseController
     {
         //清理缓存
         Cache::clear(); 
-		$temp = str_replace('\\',"/",app()->getRootPath().'runtime/temp/');
-        $cache = str_replace('\\',"/",app()->getRootPath().'runtime/cache/');
+		$temp = str_replace('\\',"/", runtime_path().'temp/');
+        $cache = str_replace('\\',"/", runtime_path().'cache/');
 
-		$itemp = str_replace('\\',"/",app()->getRootPath().'runtime/index/temp/');
 		
 		Files::delDirAndFile($temp);
         Files::delDirAndFile($cache);
-        
-		Files::delDirAndFile($itemp);
         
 		return true;
     }

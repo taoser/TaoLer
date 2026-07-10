@@ -12,19 +12,18 @@ namespace app\admin\controller\soft;
 
 use app\admin\controller\AdminBaseController;
 use Exception;
+use ZipArchive;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Request;
-use taoler\com\Files;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use ZipArchive;
 use app\common\lib\FileHelper;
 use app\common\facade\HttpHelper;
+use taoler\com\Files;
 
 class Template extends AdminBaseController
 {
-    protected string $frameworkVersion;
     protected array $info;
     protected $http;
 
@@ -32,9 +31,23 @@ class Template extends AdminBaseController
     {
         parent::initialize();
 
-        $this->frameworkVersion = config('taoler.version');
-
         $this->http = new HttpHelper();
+
+        // 动态新增一个通道配置再设为默认
+        Config::set([
+            'default' => 'pay',
+			'channels' => [
+				'pay' => [
+					'type'      => 'file',
+					'json'      => true,
+					'path'      => runtime_path() . 'log/pay',
+					'time_format'  =>    'Y-m-d H:i:s',
+					'format'    => '[%s][%s] %s',
+				],
+			],	
+		], 'log');
+
+		Log::channel('pay');
     }
 
     // 本地模板放最前面
@@ -166,7 +179,7 @@ class Template extends AdminBaseController
 
             return json(['code' => 0, 'msg' => 'success', 'data' => $datas]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
 
@@ -193,10 +206,10 @@ class Template extends AdminBaseController
                 return json($response);
             }
 
-            $viewPath = str_replace('\\','/',root_path()."runtime/view/$name/");
+            $viewPath = str_replace('\\','/', runtime_path()."view/$name/");
             $tplZip = $viewPath."$name.zip";
             // 下载文件
-            FileHelper::downloadFile($response->data->url, $tplZip);
+            FileHelper::downloadFile($response->data->file_src, $tplZip);
             // 解压zip到runtime目录
             FileHelper::unZip($tplZip, $viewPath, true);
 
@@ -210,7 +223,6 @@ class Template extends AdminBaseController
             return json(['code'  => 0, 'msg'   => 'ok']);
             
         } catch(Exception $e) {
-            // throw new Exception('解压缩失败'.$e->getMessage());
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
         
@@ -240,18 +252,18 @@ class Template extends AdminBaseController
                 return $response;
             } 
 
-            $viewPath = str_replace('\\','/',root_path()."runtime/view/$name/");
+            $viewPath = str_replace('\\','/', runtime_path()."view/$name/");
         
             $tplZip = $viewPath."$name.zip";
             // 下载文件
-            FileHelper::downloadFile($response->data->url, $tplZip);
+            FileHelper::downloadFile($response->data->file_src, $tplZip);
             // 解压zip到runtime目录
             FileHelper::unZip($tplZip, $viewPath, true);
 
             FileHelper::copyFolder($viewPath, root_path(), "view/$name");
             FileHelper::deleteFolder($viewPath);
             
-            return json(['code'  => 0,'msg'   => 'ok']);
+            return json(['code'  => 0, 'msg'   => 'ok']);
 
         } catch(Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
@@ -294,12 +306,9 @@ class Template extends AdminBaseController
             Files::delDir($viewPath);
             Files::delDir($staticPath);
 
-            return json([
-                'code'  => 1,
-                'msg'   => 'ok'
-            ]);
+            return json(['code'  => 0, 'msg'   => 'ok']);
         } catch(Exception $e) {
-            return json(['code' => 0, 'msg' => $e->getMessage()]);
+            return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
         
     }
@@ -313,7 +322,7 @@ class Template extends AdminBaseController
         $data = Request::only(['name','token']);
         $response = HttpHelper::withHost()->post('/v2/template/pay', $data);
         if(!$response->ok()) {
-            return json(['code'=>-1,'msg'=>$response->getLastError()]);
+            return json(['code' => -1, 'msg' => $response->getLastError()]);
         }
 
         try{
@@ -333,7 +342,7 @@ class Template extends AdminBaseController
         $response = HttpHelper::withHost()->post('/v2/template/ispay', $param);
             
         if(!HttpHelper::ok()) {
-            return json(['code' => -1, 'msg' => $response->getLastMessage()]);
+            return json(['code' => -1, 'msg' => $response->getLastError()]);
         }
         try{
             return json($response->toJson());

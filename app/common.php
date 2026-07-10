@@ -6,22 +6,21 @@ use think\facade\Db;
 use think\facade\Session;
 use taoser\think\Auth;
 
-//根据用户主键ID，查询用户名称
-if(!function_exists('getUserName'))
+if(!function_exists('create_order_no'))
 {
-    function getUserName($uid)
+    /**
+     * 生成唯一订单号
+     * @param string $prefix 订单号前缀
+     * @return string
+     */
+    function create_order_no(?string $prefix =''): string
     {
-       return Db::name('user')->where('id', $uid)->value('name');
+        $rand = str_pad(random_int(1000, 9999), 4, '0', STR_PAD_LEFT);
+        
+        return $prefix . date('YmdHis') . substr(microtime(), 2, 6) . $rand;
     }
 }
 
-if(!function_exists('getUserImg'))
-{
-    function getUserImg($uid)
-    {
-       return Db::name('user')->where('id', $uid)->value('user_img');
-    }
-}
 
 //过滤文章摘要
 function getArtContent($content)
@@ -35,15 +34,6 @@ function getArtContent($content)
     $content = preg_replace('/\s*/','',$content);
     $content = preg_replace('/\[[^\]]+\]/','',$content);
     return mb_substr($content,0,150).'...';
-}
-
-//根据帖子收藏主键ID，查询帖子名称
-if(!function_exists('getArticName'))
-{
-    function getArticName($article_id)
-    {
-       return Db::name('article')->where('id',$article_id)->value('title');
-    }
 }
 
 //根据评论时间查询是否已过修改期

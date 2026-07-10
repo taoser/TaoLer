@@ -15,9 +15,10 @@ use think\facade\Db;
 use think\facade\Session;
 use think\facade\Request;
 use think\facade\Cache;
-use app\admin\model\Cunsult;
+use think\facade\Log;
 use think\facade\Config;
 use app\common\lib\facade\HttpHelper;
+use app\admin\model\Cunsult;
 use app\index\model\Comment;
 use think\response\Json;
 use Yansongda\Pay\Pay;
@@ -52,6 +53,7 @@ class Index extends AdminBaseController
     
     public function index()
 	{
+		
 		return View::fetch();
     }
 
