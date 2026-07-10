@@ -69,16 +69,15 @@ $gif->setLoops(12);
 $data = $gif->encode();
 ```
 
-
 ## Requirements
 
-- PHP >= 8.1
+- PHP >= 8.3
 
 ## Development & Testing
 
-With this package comes a Docker image to build a test suite and analysis
-container. To build this container you have to have Docker installed on your
-system. You can run all tests with this command.
+With this package comes a Docker docker test runners. To build this container
+you have to have Docker installed on your system. You can run all tests with
+this command.
 
 ```bash
 docker-compose run --rm --build tests

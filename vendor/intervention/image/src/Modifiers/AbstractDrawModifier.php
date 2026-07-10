@@ -4,44 +4,66 @@ declare(strict_types=1);
 
 namespace Intervention\Image\Modifiers;
 
+use Intervention\Image\Color;
 use Intervention\Image\Drivers\SpecializableModifier;
-use Intervention\Image\Exceptions\DecoderException;
+use Intervention\Image\Exceptions\ColorDecoderException;
+use Intervention\Image\Exceptions\ModifierException;
+use Intervention\Image\Exceptions\StateException;
 use Intervention\Image\Interfaces\ColorInterface;
 use Intervention\Image\Interfaces\DrawableInterface;
-use RuntimeException;
 
 abstract class AbstractDrawModifier extends SpecializableModifier
 {
     /**
-     * Return the drawable object which will be rendered by the modifier
+     * Return the drawable object which will be rendered by the modifier.
      */
-    abstract public function drawable(): DrawableInterface;
+    abstract protected function drawable(): DrawableInterface;
 
     /**
-     * @throws RuntimeException
+     * Return the background color of the object rendered by the modifier.
+     *
+     * @throws StateException
+     * @throws ColorDecoderException
      */
-    public function backgroundColor(): ColorInterface
+    protected function backgroundColor(): ColorInterface
     {
-        try {
-            $color = $this->driver()->handleInput($this->drawable()->backgroundColor());
-        } catch (DecoderException) {
-            return $this->driver()->handleInput('transparent');
+        $backgroundColor = $this->drawable()->backgroundColor();
+
+        if ($backgroundColor === null) {
+            return Color::transparent();
         }
 
-        return $color;
+        return $this->driver()->decodeColor($backgroundColor);
     }
 
     /**
-     * @throws RuntimeException
+     * Return the border color of the object rendered by the modifier.
+     *
+     * @throws StateException
+     * @throws ColorDecoderException
      */
-    public function borderColor(): ColorInterface
+    protected function borderColor(): ColorInterface
     {
-        try {
-            $color = $this->driver()->handleInput($this->drawable()->borderColor());
-        } catch (DecoderException) {
-            return $this->driver()->handleInput('transparent');
+        $borderColor = $this->drawable()->borderColor();
+
+        if ($borderColor === null || $this->drawable()->hasBorder() === false) {
+            return Color::transparent();
         }
 
-        return $color;
+        return $this->driver()->decodeColor($borderColor);
+    }
+
+    /**
+     * Throw ModifierException with given message if result is false.
+     *
+     * @throws ModifierException
+     */
+    protected function abortUnless(mixed $result, string $message): void
+    {
+        if ($result === false) {
+            throw new ModifierException(
+                'Failed to apply ' . self::class . ', ' . $message,
+            );
+        }
     }
 }

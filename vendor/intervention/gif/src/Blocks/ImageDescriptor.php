@@ -5,88 +5,99 @@ declare(strict_types=1);
 namespace Intervention\Gif\Blocks;
 
 use Intervention\Gif\AbstractEntity;
+use Intervention\Gif\Exceptions\InvalidArgumentException;
 
 class ImageDescriptor extends AbstractEntity
 {
     public const SEPARATOR = "\x2C";
 
     /**
-     * Width of frame
+     * Width of frame.
      */
     protected int $width = 0;
 
     /**
-     * Height of frame
+     * Height of frame.
      */
     protected int $height = 0;
 
     /**
-     * Left position of frame
+     * Left position of frame.
      */
     protected int $left = 0;
 
     /**
-     * Top position of frame
+     * Top position of frame.
      */
     protected int $top = 0;
 
     /**
-     * Determine if frame is interlaced
+     * Determine if frame is interlaced.
      */
     protected bool $interlaced = false;
 
     /**
-     * Local color table flag
+     * Local color table flag.
      */
     protected bool $localColorTableExistance = false;
 
     /**
-     * Sort flag of local color table
+     * Sort flag of local color table.
      */
     protected bool $localColorTableSorted = false;
 
     /**
-     * Size of local color table
+     * Size of local color table.
      */
     protected int $localColorTableSize = 0;
 
     /**
-     * Get current width
+     * Get current width.
      */
-    public function getWidth(): int
+    public function width(): int
     {
-        return intval($this->width);
+        return $this->width;
     }
 
     /**
-     * Get current width
+     * Get current width.
      */
-    public function getHeight(): int
+    public function height(): int
     {
-        return intval($this->height);
+        return $this->height;
     }
 
     /**
-     * Get current Top
+     * Get current Top.
      */
-    public function getTop(): int
+    public function top(): int
     {
-        return intval($this->top);
+        return $this->top;
     }
 
     /**
-     * Get current Left
+     * Get current Left.
      */
-    public function getLeft(): int
+    public function left(): int
     {
-        return intval($this->left);
+        return $this->left;
     }
 
     /**
-     * Set size of current instance
+     * Set size of current instance.
+     *
+     * @throws InvalidArgumentException
      */
     public function setSize(int $width, int $height): self
     {
+        if ($width <= 0) {
+            throw new InvalidArgumentException('Width in ' . $this::class . ' must be larger than 0');
+        }
+
+        if ($height <= 0) {
+            throw new InvalidArgumentException('Height in ' . $this::class . ' must be larger than 0');
+        }
+
         $this->width = $width;
         $this->height = $height;
 
@@ -94,7 +105,7 @@ class ImageDescriptor extends AbstractEntity
     }
 
     /**
-     * Set position of current instance
+     * Set position of current instance.
      */
     public function setPosition(int $left, int $top): self
     {
@@ -105,7 +116,7 @@ class ImageDescriptor extends AbstractEntity
     }
 
     /**
-     * Determine if frame is interlaced
+     * Determine if frame is interlaced.
      */
     public function isInterlaced(): bool
     {
@@ -113,7 +124,7 @@ class ImageDescriptor extends AbstractEntity
     }
 
     /**
-     * Set or unset interlaced value
+     * Set or unset interlaced value.
      */
     public function setInterlaced(bool $value = true): self
     {
@@ -123,23 +134,23 @@ class ImageDescriptor extends AbstractEntity
     }
 
     /**
-     * Determine if local color table is present
+     * Determine if local color table is present.
      */
-    public function getLocalColorTableExistance(): bool
+    public function localColorTableExistance(): bool
     {
         return $this->localColorTableExistance;
     }
 
     /**
-     * Alias for getLocalColorTableExistance
+     * Alias for localColorTableExistance.
      */
     public function hasLocalColorTable(): bool
     {
-        return $this->getLocalColorTableExistance();
+        return $this->localColorTableExistance();
     }
 
     /**
-     * Set local color table flag
+     * Set local color table flag.
      */
     public function setLocalColorTableExistance(bool $existance = true): self
     {
@@ -149,15 +160,15 @@ class ImageDescriptor extends AbstractEntity
     }
 
     /**
-     * Get local color table sorted flag
+     * Get local color table sorted flag.
      */
-    public function getLocalColorTableSorted(): bool
+    public function localColorTableSorted(): bool
     {
         return $this->localColorTableSorted;
     }
 
     /**
-     * Set local color table sorted flag
+     * Set local color table sorted flag.
      */
     public function setLocalColorTableSorted(bool $sorted = true): self
     {
@@ -167,23 +178,23 @@ class ImageDescriptor extends AbstractEntity
     }
 
     /**
-     * Get size of local color table
+     * Get size of local color table.
      */
-    public function getLocalColorTableSize(): int
+    public function localColorTableSize(): int
     {
         return $this->localColorTableSize;
     }
 
     /**
-     * Get byte size of global color table
+     * Get byte size of global color table.
      */
-    public function getLocalColorTableByteSize(): int
+    public function localColorTableByteSize(): int
     {
-        return 3 * pow(2, $this->getLocalColorTableSize() + 1);
+        return 3 * pow(2, $this->localColorTableSize() + 1);
     }
 
     /**
-     * Set size of local color table
+     * Set size of local color table.
      */
     public function setLocalColorTableSize(int $size): self
     {

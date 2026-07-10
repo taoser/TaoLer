@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Intervention\Gif\Decoders;
 
-use Intervention\Gif\Exceptions\DecoderException;
 use Intervention\Gif\Blocks\Header;
+use Intervention\Gif\Exceptions\DecoderException;
 
 class HeaderDecoder extends AbstractDecoder
 {
     /**
-     * Decode current sourc
+     * Decode current source.
      *
      * @throws DecoderException
      */
@@ -23,16 +23,16 @@ class HeaderDecoder extends AbstractDecoder
     }
 
     /**
-     * Decode version string
+     * Decode version string.
      *
      * @throws DecoderException
      */
-    protected function decodeVersion(): string
+    private function decodeVersion(): string
     {
-        $parsed = (bool) preg_match("/^GIF(?P<version>[0-9]{2}[a-z])$/", $this->getNextBytesOrFail(6), $matches);
+        $parsed = (bool) preg_match("/^GIF(?P<version>[0-9]{2}[a-z])$/", $this->nextBytesOrFail(6), $matches);
 
         if ($parsed === false) {
-            throw new DecoderException('Unable to parse file header.');
+            throw new DecoderException('Failed to parse GIF file header');
         }
 
         return $matches['version'];

@@ -12,62 +12,65 @@ use Intervention\Gif\GifDataStream;
 class GifDataStreamEncoder extends AbstractEncoder
 {
     /**
-     * Create new instance
+     * Create new instance.
      */
-    public function __construct(GifDataStream $source)
+    public function __construct(GifDataStream $entity)
     {
-        $this->source = $source;
+        parent::__construct($entity);
     }
 
     /**
-     * Encode current source
+     * Encode current entity.
      *
      * @throws EncoderException
      */
     public function encode(): string
     {
         return implode('', [
-            $this->source->getHeader()->encode(),
-            $this->source->getLogicalScreenDescriptor()->encode(),
+            $this->entity->header()->encode(),
+            $this->entity->logicalScreenDescriptor()->encode(),
             $this->maybeEncodeGlobalColorTable(),
             $this->encodeFrames(),
             $this->encodeComments(),
-            $this->source->getTrailer()->encode(),
+            $this->entity->trailer()->encode(),
         ]);
     }
 
-    protected function maybeEncodeGlobalColorTable(): string
+    /**
+     * Decode global color table if present in gif data.
+     */
+    private function maybeEncodeGlobalColorTable(): string
     {
-        if (!$this->source->hasGlobalColorTable()) {
+        if (!$this->entity->hasGlobalColorTable()) {
             return '';
         }
 
-        return $this->source->getGlobalColorTable()->encode();
+        return $this->entity->globalColorTable()->encode();
     }
 
     /**
-     * Encode data blocks of source
+     * Encode data blocks of source.
      *
      * @throws EncoderException
      */
-    protected function encodeFrames(): string
+    private function encodeFrames(): string
     {
         return implode('', array_map(
             fn(FrameBlock $frame): string => $frame->encode(),
-            $this->source->getFrames(),
+            $this->entity->frames(),
         ));
     }
 
     /**
-     * Encode comment extension blocks of source
+     * Encode comment extension blocks of source.
      *
      * @throws EncoderException
      */
-    protected function encodeComments(): string
+    private function encodeComments(): string
     {
         return implode('', array_map(
             fn(CommentExtension $commentExtension): string => $commentExtension->encode(),
-            $this->source->getComments()
+            $this->entity->comments()
         ));
     }
 }

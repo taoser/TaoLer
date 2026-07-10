@@ -7,28 +7,31 @@ namespace Intervention\Gif\Encoders;
 use Intervention\Gif\Blocks\ApplicationExtension;
 use Intervention\Gif\Blocks\DataSubBlock;
 use Intervention\Gif\Blocks\NetscapeApplicationExtension;
+use Intervention\Gif\Exceptions\EncoderException;
 
 class NetscapeApplicationExtensionEncoder extends ApplicationExtensionEncoder
 {
     /**
-     * Create new decoder instance
+     * Create new decoder instance.
      */
-    public function __construct(NetscapeApplicationExtension $source)
+    public function __construct(NetscapeApplicationExtension $entity)
     {
-        $this->source = $source;
+        parent::__construct($entity);
     }
 
     /**
-     * Encode current source
+     * Encode current source.
+     *
+     * @throws EncoderException
      */
     public function encode(): string
     {
         return implode('', [
             ApplicationExtension::MARKER,
             ApplicationExtension::LABEL,
-            pack('C', $this->source->getBlockSize()),
-            $this->source->getApplication(),
-            implode('', array_map(fn(DataSubBlock $block): string => $block->encode(), $this->source->getBlocks())),
+            pack('C', $this->entity->blockSize()),
+            $this->entity->application(),
+            implode('', array_map(fn(DataSubBlock $block): string => $block->encode(), $this->entity->blocks())),
             ApplicationExtension::TERMINATOR,
         ]);
     }

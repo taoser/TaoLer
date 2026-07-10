@@ -12,36 +12,38 @@ use Intervention\Gif\Exceptions\EncoderException;
 class FrameBlockEncoder extends AbstractEncoder
 {
     /**
-     * Create new decoder instance
+     * Create new decoder instance.
      */
-    public function __construct(FrameBlock $source)
+    public function __construct(FrameBlock $entity)
     {
-        $this->source = $source;
+        parent::__construct($entity);
     }
 
     /**
+     * Encode current entity.
+     *
      * @throws EncoderException
      */
     public function encode(): string
     {
-        $graphicControlExtension = $this->source->getGraphicControlExtension();
-        $colorTable = $this->source->getColorTable();
-        $plainTextExtension = $this->source->getPlainTextExtension();
+        $graphicControlExtension = $this->entity->graphicControlExtension();
+        $colorTable = $this->entity->colorTable();
+        $plainTextExtension = $this->entity->plainTextExtension();
 
         return implode('', [
             implode('', array_map(
                 fn(ApplicationExtension $extension): string => $extension->encode(),
-                $this->source->getApplicationExtensions(),
+                $this->entity->applicationExtensions(),
             )),
             implode('', array_map(
                 fn(CommentExtension $extension): string => $extension->encode(),
-                $this->source->getCommentExtensions(),
+                $this->entity->commentExtensions(),
             )),
             $plainTextExtension ? $plainTextExtension->encode() : '',
             $graphicControlExtension ? $graphicControlExtension->encode() : '',
-            $this->source->getImageDescriptor()->encode(),
+            $this->entity->imageDescriptor()->encode(),
             $colorTable ? $colorTable->encode() : '',
-            $this->source->getImageData()->encode(),
+            $this->entity->imageData()->encode(),
         ]);
     }
 }

@@ -27,11 +27,9 @@ class Registry
     public static array $cloneable = [];
     public static array $instantiableWithoutConstructor = [];
 
-    public $classes = [];
-
-    public function __construct(array $classes)
-    {
-        $this->classes = $classes;
+    public function __construct(
+        public readonly array $classes,
+    ) {
     }
 
     public static function unserialize($objects, $serializables)
@@ -60,7 +58,7 @@ class Registry
     {
         $reflector = self::$reflectors[$class] ??= self::getClassReflector($class, true, false);
 
-        return self::$factories[$class] = [$reflector, 'newInstanceWithoutConstructor'](...);
+        return self::$factories[$class] = $reflector->newInstanceWithoutConstructor(...);
     }
 
     public static function getClassReflector($class, $instantiableWithoutConstructor = false, $cloneable = null)
@@ -121,7 +119,7 @@ class Registry
         }
 
         if (null === $cloneable) {
-            if (($proto instanceof \Reflector || $proto instanceof \ReflectionGenerator || $proto instanceof \ReflectionType || $proto instanceof \IteratorIterator || $proto instanceof \RecursiveIteratorIterator) && (!$proto instanceof \Serializable && !method_exists($proto, '__wakeup') && !method_exists($class, '__unserialize'))) {
+            if (($proto instanceof \Reflector || $proto instanceof \ReflectionGenerator || $proto instanceof \ReflectionType || $proto instanceof \IteratorIterator || $proto instanceof \RecursiveIteratorIterator) && (!$proto instanceof \Serializable && !method_exists($class, '__wakeup') && !method_exists($class, '__unserialize'))) {
                 throw new NotInstantiableTypeException($class);
             }
 

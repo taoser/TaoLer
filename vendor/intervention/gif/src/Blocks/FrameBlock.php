@@ -56,6 +56,9 @@ class FrameBlock extends AbstractEntity
         //
     }
 
+    /**
+     * Add entity to block.
+     */
     public function addEntity(AbstractEntity $entity): self
     {
         return match (true) {
@@ -73,27 +76,27 @@ class FrameBlock extends AbstractEntity
     }
 
     /**
-     * Return application extensions of current frame block
+     * Return application extensions of current frame block.
      *
      * @return array<ApplicationExtension>
      */
-    public function getApplicationExtensions(): array
+    public function applicationExtensions(): array
     {
         return $this->applicationExtensions;
     }
 
     /**
-     * Return comment extensions of current frame block
+     * Return comment extensions of current frame block.
      *
      * @return array<CommentExtension>
      */
-    public function getCommentExtensions(): array
+    public function commentExtensions(): array
     {
         return $this->commentExtensions;
     }
 
     /**
-     * Set the graphic control extension
+     * Set the graphic control extension.
      */
     public function setGraphicControlExtension(GraphicControlExtension $extension): self
     {
@@ -103,15 +106,15 @@ class FrameBlock extends AbstractEntity
     }
 
     /**
-     * Get the graphic control extension of the current frame block
+     * Get the graphic control extension of the current frame block.
      */
-    public function getGraphicControlExtension(): ?GraphicControlExtension
+    public function graphicControlExtension(): ?GraphicControlExtension
     {
         return $this->graphicControlExtension;
     }
 
     /**
-     * Set the image descriptor
+     * Set the image descriptor.
      */
     public function setImageDescriptor(ImageDescriptor $descriptor): self
     {
@@ -120,15 +123,15 @@ class FrameBlock extends AbstractEntity
     }
 
     /**
-     * Get the image descriptor of the frame block
+     * Get the image descriptor of the frame block.
      */
-    public function getImageDescriptor(): ImageDescriptor
+    public function imageDescriptor(): ImageDescriptor
     {
         return $this->imageDescriptor;
     }
 
     /**
-     * Set the color table of the current frame block
+     * Set the color table of the current frame block.
      */
     public function setColorTable(ColorTable $table): self
     {
@@ -138,15 +141,15 @@ class FrameBlock extends AbstractEntity
     }
 
     /**
-     * Get color table
+     * Get color table.
      */
-    public function getColorTable(): ?ColorTable
+    public function colorTable(): ?ColorTable
     {
         return $this->colorTable;
     }
 
     /**
-     * Determine if frame block has color table
+     * Determine if frame block has color table.
      */
     public function hasColorTable(): bool
     {
@@ -154,7 +157,7 @@ class FrameBlock extends AbstractEntity
     }
 
     /**
-     * Set image data of frame block
+     * Set image data of frame block.
      */
     public function setImageData(ImageData $data): self
     {
@@ -164,15 +167,15 @@ class FrameBlock extends AbstractEntity
     }
 
     /**
-     * Get image data of current frame block
+     * Get image data of current frame block.
      */
-    public function getImageData(): ImageData
+    public function imageData(): ImageData
     {
         return $this->imageData;
     }
 
     /**
-     * Set plain text extension
+     * Set plain text extension.
      */
     public function setPlainTextExtension(PlainTextExtension $extension): self
     {
@@ -182,15 +185,15 @@ class FrameBlock extends AbstractEntity
     }
 
     /**
-     * Get plain text extension
+     * Get plain text extension.
      */
-    public function getPlainTextExtension(): ?PlainTextExtension
+    public function plainTextExtension(): ?PlainTextExtension
     {
         return $this->plainTextExtension;
     }
 
     /**
-     * Add given application extension to the current frame block
+     * Add given application extension to the current frame block.
      */
     public function addApplicationExtension(ApplicationExtension $extension): self
     {
@@ -220,30 +223,31 @@ class FrameBlock extends AbstractEntity
     }
 
     /**
-     * Return netscape extension of the frame block if available
+     * Return netscape extension of the frame block if available.
      */
-    public function getNetscapeExtension(): ?NetscapeApplicationExtension
+    public function netscapeExtension(): ?NetscapeApplicationExtension
     {
         $extensions = array_filter(
             $this->applicationExtensions,
             fn(ApplicationExtension $extension): bool => $extension instanceof NetscapeApplicationExtension,
         );
 
-        return count($extensions) ? reset($extensions) : null;
+        return count($extensions) > 0 ? reset($extensions) : null;
     }
 
     /**
-     * Set the table based image of the current frame block
+     * Set the table based image of the current frame block.
      */
     public function setTableBasedImage(TableBasedImage $tableBasedImage): self
     {
-        $this->setImageDescriptor($tableBasedImage->getImageDescriptor());
+        $this->setImageDescriptor($tableBasedImage->imageDescriptor());
 
-        if ($colorTable = $tableBasedImage->getColorTable()) {
+        $colorTable = $tableBasedImage->colorTable();
+        if ($colorTable !== null) {
             $this->setColorTable($colorTable);
         }
 
-        $this->setImageData($tableBasedImage->getImageData());
+        $this->setImageData($tableBasedImage->imageData());
 
         return $this;
     }

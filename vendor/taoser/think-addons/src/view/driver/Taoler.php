@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2019 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2026 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -12,29 +12,16 @@ declare (strict_types = 1);
 
 namespace taoser\view\driver;
 
-use Exception;
 use think\App;
+use think\contract\TemplateHandlerInterface;
 use think\helper\Str;
 use think\Template;
 use think\template\exception\TemplateNotFoundException;
-use think\contract\TemplateHandlerInterface;
 
 class Taoler implements TemplateHandlerInterface
 {
     // 模板引擎实例
     private $template;
-    private $app;
-    /**
-     * 模板变量
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * 内容过滤
-     * @var mixed
-     */
-    protected $filter;
 
     // 模板引擎参数
     protected $config = [
@@ -52,10 +39,8 @@ class Taoler implements TemplateHandlerInterface
         'tpl_cache'     => true,
     ];
 
-    public function __construct(App $app, array $config = [])
+    public function __construct(private App $app, array $config = [])
     {
-        $this->app = $app;
-
         $this->config = array_merge($this->config, (array) $config);
 
         if (empty($this->config['cache_path'])) {
@@ -68,30 +53,15 @@ class Taoler implements TemplateHandlerInterface
             $type  = strtoupper(trim(array_shift($vars)));
             $param = implode('.', $vars);
 
-            switch ($type) {
-                case 'CONST':
-                    $parseStr = strtoupper($param);
-                    break;
-                case 'CONFIG':
-                    $parseStr = 'config(\'' . $param . '\')';
-                    break;
-                case 'LANG':
-                    $parseStr = 'lang(\'' . $param . '\')';
-                    break;
-                case 'NOW':
-                    $parseStr = "date('Y-m-d g:i a',time())";
-                    break;
-                case 'LDELIM':
-                    $parseStr = '\'' . ltrim($this->getConfig('tpl_begin'), '\\') . '\'';
-                    break;
-                case 'RDELIM':
-                    $parseStr = '\'' . ltrim($this->getConfig('tpl_end'), '\\') . '\'';
-                    break;
-                default:
-                    $parseStr = defined($type) ? $type : '\'\'';
-            }
-
-            return $parseStr;
+            return match ($type) {
+                'CONST'     =>  strtoupper($param),
+                'CONFIG'    =>  'config(\'' . $param . '\')',
+                'LANG'      =>  'lang(\'' . $param . '\')',
+                'NOW'       =>  "date('Y-m-d g:i a',time())",
+                'LDELIM'    =>  '\'' . ltrim($this->getConfig('tpl_begin'), '\\') . '\'',
+                'RDELIM'    =>  '\'' . ltrim($this->getConfig('tpl_end'), '\\') . '\'',
+                default     =>  defined($type) ? $type : '\'\'',
+            };
         });
 
         $this->template->extend('$Request', function (array $vars) {
@@ -118,12 +88,25 @@ class Taoler implements TemplateHandlerInterface
      */
     public function exists(string $template): bool
     {
+        $template = $this->getTemplateFile($template);
+
+        return is_file($template);
+    }
+
+    protected function getTemplateFile(string $template): string
+    {
         if ('' == pathinfo($template, PATHINFO_EXTENSION)) {
             // 获取模板文件名
             $template = $this->parseTemplate($template);
+        } else{
+            $path = $this->config['view_path'] ?: $this->getViewPath($this->app->http->getName());
+            if (!is_file($template)) {
+                $template = $path . $template;
+            }
+            $this->template->view_path = $path;
         }
 
-        return is_file($template);
+        return $template;
     }
 
     /**
@@ -135,24 +118,7 @@ class Taoler implements TemplateHandlerInterface
      */
     public function fetch(string $template, array $data = []): void
     {
-        if (empty($this->config['view_path'])) {
-            $view = $this->config['view_dir_name'];
-
-            if (is_dir($this->app->getAppPath() . $view)) {
-                $path = $this->app->getAppPath() . $view . DIRECTORY_SEPARATOR;
-            } else {
-                $appName = $this->app->http->getName();
-                $path    = $this->app->getRootPath() . $view . DIRECTORY_SEPARATOR . ($appName ? $appName . DIRECTORY_SEPARATOR : '');
-            }
-
-            $this->config['view_path'] = $path;
-            $this->template->view_path = $path;
-        }
-
-        if ('' == pathinfo($template, PATHINFO_EXTENSION)) {
-            // 获取模板文件名
-            $template = $this->parseTemplate($template);
-        }
+        $template = $this->getTemplateFile($template);
 
         // 模板不存在 抛出异常
         if (!is_file($template)) {
@@ -174,6 +140,25 @@ class Taoler implements TemplateHandlerInterface
         $this->template->display($template, $data);
     }
 
+    protected function getViewPath(string $app): string
+    {
+        $view  = $this->config['view_dir_name'] . DIRECTORY_SEPARATOR;
+        $app   = $app ? str_replace('.', DIRECTORY_SEPARATOR, $app) . DIRECTORY_SEPARATOR : '';
+        $paths = [
+            $this->app->getBasePath() . $app . $view,
+            $this->app->getBasePath() . $view . $app,
+            $this->app->getRootPath() . $view . $app
+        ];
+
+        foreach ($paths as $path) {
+            if (is_dir($path)) {
+                return $path;
+            }
+        }
+
+        return '';
+    }
+
     /**
      * 自动定位模板文件
      * @access private
@@ -184,69 +169,167 @@ class Taoler implements TemplateHandlerInterface
     {
         // 分析模板文件规则
         $request = $this->app['request'];
-        // 应用名
-        $appName = app('http')->getName();
-  
+        // var_dump('视图根目录\n',strpos($template, '@'));
+        // 应用目录模式 custom|default
+        $appDirMode = '';
+        // 是否是插件路径
+        $isAddonsPath = false;
+        // 控制器路径
+        $controllerPath = $request->controller();
+        // var_dump($controllerPath);
         // 获取视图根目录
         if (strpos($template, '@')) {
             // 跨模块调用
             list($app, $template) = explode('@', $template);
-        }
+            // dump('app-a：'.$app);
+        } elseif ($this->app->http->getName()) {
+            $app = $this->app->http->getName();
+            // dump('app-b：'.$app);
+        } elseif (method_exists($request, 'layer') && $request->layer()) {
 
-        if (isset($app)) {
-            $view     = $this->config['view_dir_name'];
-            $viewPath = $this->app->getBasePath() . $app . DIRECTORY_SEPARATOR . $view . DIRECTORY_SEPARATOR;
+            // dump('layer：'. $request->layer());
+            // dump('controller_path：'. $controllerPath);
 
-            if (is_dir($viewPath)) {
-                $path = $viewPath;
-            } else {
-                $path = $this->app->getRootPath() . $view . DIRECTORY_SEPARATOR . $app . DIRECTORY_SEPARATOR;
+            // 自定义模块结构 app/index/controller,app/admin/controller
+            if(str_contains($controllerPath,'/') && !str_contains($request->layer(),'.')) {
+                $appDirMode = 'custom';
+            }
+            // 默认单应用多模块 app/controller/index,app/controller/admin
+            if(!str_contains($controllerPath,'/') && !str_contains($request->layer(),'.')) {
+                $appDirMode = 'default';
             }
 
-            $this->template->view_path = $path;
+            if(str_contains($controllerPath,'/')){
+
+                if(!str_contains($request->layer(),'.')) {
+                    $app = $request->layer();
+                } else {
+                    //
+                    $path_pos = strrpos($controllerPath, '/');
+                    $name_path = substr($controllerPath, 0, $path_pos);
+                    $app = $request->layer(). DIRECTORY_SEPARATOR . $name_path;
+                }
+
+            } else {
+                $app = $request->layer();
+            }
+            
+            $app = str_replace(['/','.'], DIRECTORY_SEPARATOR, $app);
+            
+            $controller = $request->controller(false, true);
+
+            // dump('app-c：'.$app);
+            // dump('app：'.$app);
+            // dump('controller：'.$controller);
         } else {
-            $path = $this->config['view_path'];
+            // 插件addons
+            $app = $request->layer();
+            // dump('app-d：'.$app);
+            $isAddonsPath = true;
         }
+
+        // dump($app);
+        // dump('viewConfig:'. $this->config['view_dir_name']);
+        // dump('view_path:'. $this->config['view_path']);
+
+        // 是否有自定义视图路径
+        if ($this->config['view_path']) {
+           
+            $path = $this->config['view_path'] . $app . DIRECTORY_SEPARATOR;
+            // dump(1,$path);
+            
+            if($app == 'index') {
+                $path = $this->config['view_path'];
+                //  dump(2,$path);
+            }
+            
+            // 自定义结构 layer路径中view_path中，表示自定义模块结构
+            if(str_contains($this->config['view_path'], $app)){
+                $path = $this->config['view_path'];
+                // dump(3,$path);
+            }
+            // 插件
+            if(str_contains($this->config['view_path'], 'addons')){
+                $path = $this->config['view_path'];
+                // dump(4,$path);
+            }
+            // 自定义模块结构
+            if($appDirMode == 'custom'){
+                $path = $this->config['view_path'];
+                // dump(5,$path);
+            }
+            
+        } else {
+
+            $path = $this->getViewPath($app ?? $this->app->http->getName());
+            $this->template->view_path = $path;
+            // dump(6,$path);
+        }
+
+        // dump(7,$path);
 
         $depr = $this->config['view_depr'];
 
-        // 应用控制器视图解析
-        if(strpos($path, 'addons') === false){
-            if (0 !== strpos($template, '/')) {
-                $template   = str_replace(['/', ':'], $depr, $template);
-                $controller = $request->controller();
+        if (0 !== strpos($template, '/')) {
+            
+            $template   = str_replace(['/', ':'], $depr, $template);
+            $controller = $controller ?? $request->controller();
 
-                if (strpos($controller, '.')) {
-                    $pos        = strrpos($controller, '.');
-                    $controller = substr($controller, 0, $pos) . '.' . Str::snake(substr($controller, $pos + 1));
-                } else {
-                    $controller = Str::snake($controller);
-                }
-
-                if ($controller) {
-                    if ('' == $template) {
-                        // 如果模板文件名为空 按照默认模板渲染规则定位
-                        if (2 == $this->config['auto_rule']) {
-                            $template = $request->action(true);
-                        } elseif (3 == $this->config['auto_rule']) {
-                            $template = $request->action();
-                        } else {
-                            $template = Str::snake($request->action());
-                        }
-                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
-                        
-                    } elseif (false === strpos($template, $depr)) {
-                        // app多应用中解析controller
-                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
-                        
-                    }
-                }
+            if (strpos($controller, '.')) {
+                $pos        = strrpos($controller, '.');
+                $controller = substr($controller, 0, $pos) . '.' . Str::snake(substr($controller, $pos + 1));
             } else {
-                $template = str_replace(['/', ':'], $depr, substr($template, 1));          
+                $controller = Str::snake($controller);
             }
+
+            if ($controller) {
+                if ('' == $template) {
+                    // dump('xxxx'.$template.'---'.$this->config['auto_rule']);
+                    // 如果模板文件名为空 按照默认模板渲染规则定位
+                    if (2 == $this->config['auto_rule']) {
+                        $template = $request->action(true);
+                    } elseif (3 == $this->config['auto_rule']) {
+                        $template = $request->action();
+                    } else {
+                        $template = Str::snake($request->action());
+                        // 驼峰转换为下划线命名法 app/HelloWorld
+                        $controllerPath = preg_replace('/(?<=[a-z])([A-Z])/', '_$1', $controllerPath);
+                        $controllerPath = strtolower($controllerPath);
+                    }
+                    
+                    // 自定义模块定位模板
+                    if($appDirMode == 'custom'){
+                        $template = $controllerPath . $depr . $template;
+                        $template = str_replace('/', DIRECTORY_SEPARATOR, $template);
+                        // dump('custom_tpl:'.$template);
+                    } else {
+                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                    }
+
+                } elseif (false === strpos($template, $depr)) {
+                    // 自定义模块 定义了模板路径的情况下，需要拼接控制器路径
+                    if($appDirMode == 'custom'){
+                        $template = $controllerPath . $depr . $template;
+                        $template = str_replace('/', DIRECTORY_SEPARATOR, $template);
+                        // dump('custom_tpl:'.$template);
+                    } else {
+                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
+                    }
+                    // dump('template-2:'.$template);
+                }
+            }
+        } else {
+            $template = str_replace(['/', ':'], $depr, substr($template, 1));
         }
 
-        return $path . ltrim($template, '/') . '.' . ltrim($this->config['view_suffix'], '.');
+        // dump('path:'.$path);
+        // dump('tpl:'. $template);
+        
+        $p = $path . ltrim($template, '/') . '.' . ltrim($this->config['view_suffix'], '.');
+        
+        // dump('file:'.$p);
+
+        return $p;
     }
 
     /**
@@ -276,54 +359,4 @@ class Taoler implements TemplateHandlerInterface
     {
         return call_user_func_array([$this->template, $method], $params);
     }
-
-
-    /**
-     * 获取模板引擎渲染内容
-     * @param $callback
-     * @return string
-     * @throws \Exception
-     */
-    // protected function getContent($callback): string
-    // {
-    //     // 页面缓存
-    //     ob_start();
-    //     if (PHP_VERSION > 8.0) {
-    //         ob_implicit_flush(false);
-    //     } else {
-    //         ob_implicit_flush(0);
-    //     }
-
-    //     // 渲染输出
-    //     try {
-    //         $callback();
-    //     } catch (\Exception $e) {
-    //         ob_end_clean();
-    //         throw $e;
-    //     }
-
-    //     // 获取并清空缓存
-    //     $content = ob_get_clean();
-
-    //     if ($this->filter) {
-    //         $content = call_user_func_array($this->filter, [$content]);
-    //     }
-
-    //     return $content;
-    // }
-
-    /**
-     * 视图过滤
-     * @access public
-     * @param Callable $filter 过滤方法或闭包
-     * @return $this
-     */
-    // public function filter(callable $filter = null)
-    // {
-    //     $this->filter = $filter;
-    //     return $this;
-    // }
-
-
-
 }

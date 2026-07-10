@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Intervention\Gif\Blocks;
 
 use Intervention\Gif\AbstractEntity;
+use Intervention\Gif\Exceptions\InvalidArgumentException;
 
 class ColorTable extends AbstractEntity
 {
     /**
-     * Create new instance
+     * Create new instance.
      *
      * @param array<Color> $colors
-     * @return void
      */
     public function __construct(protected array $colors = [])
     {
@@ -20,17 +20,19 @@ class ColorTable extends AbstractEntity
     }
 
     /**
-     * Return array of current colors
+     * Return array of current colors.
      *
      * @return array<Color>
      */
-    public function getColors(): array
+    public function colors(): array
     {
         return array_values($this->colors);
     }
 
     /**
-     * Add color to table
+     * Add color to table.
+     *
+     * @throws InvalidArgumentException
      */
     public function addRgb(int $r, int $g, int $b): self
     {
@@ -40,7 +42,7 @@ class ColorTable extends AbstractEntity
     }
 
     /**
-     * Add color to table
+     * Add color to table.
      */
     public function addColor(Color $color): self
     {
@@ -50,7 +52,7 @@ class ColorTable extends AbstractEntity
     }
 
     /**
-     * Reset colors to array of color objects
+     * Reset colors to array of color objects.
      *
      * @param array<Color> $colors
      */
@@ -65,7 +67,7 @@ class ColorTable extends AbstractEntity
     }
 
     /**
-     * Count colors of current instance
+     * Count colors of current instance.
      */
     public function countColors(): int
     {
@@ -81,7 +83,7 @@ class ColorTable extends AbstractEntity
     }
 
     /**
-     * Empty color table
+     * Empty color table.
      */
     public function empty(): self
     {
@@ -91,9 +93,9 @@ class ColorTable extends AbstractEntity
     }
 
     /**
-     * Get size of color table in logical screen descriptor
+     * Get size of color table in logical screen descriptor.
      */
-    public function getLogicalSize(): int
+    public function logicalSize(): int
     {
         return match ($this->countColors()) {
             4 => 1,
@@ -108,14 +110,14 @@ class ColorTable extends AbstractEntity
     }
 
     /**
-     * Calculate the number of bytes contained by the current table
+     * Calculate the number of bytes contained by the current table.
      */
-    public function getByteSize(): int
+    public function byteSize(): int
     {
         if (!$this->hasColors()) {
             return 0;
         }
 
-        return 3 * pow(2, $this->getLogicalSize() + 1);
+        return 3 * pow(2, $this->logicalSize() + 1);
     }
 }

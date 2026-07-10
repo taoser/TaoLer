@@ -4,23 +4,28 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
+class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
 {
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '15ec93fa4ce4b2d53816a1a5f2c514e2' => __DIR__ . '/..' . '/topthink/think-validate/src/helper.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '7448f3465e10b5f033e4babb31eb0b06' => __DIR__ . '/..' . '/topthink/think-orm/src/helper.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '9d2b9fc6db0f153a0a149fefb182415e' => __DIR__ . '/..' . '/symfony/polyfill-php84/bootstrap.php',
+        '606a39d89246991a373564698c2d8383' => __DIR__ . '/..' . '/symfony/polyfill-php85/bootstrap.php',
+        '2c2415ec15363ede1bff13a287462ba1' => __DIR__ . '/..' . '/symfony/polyfill-php86/bootstrap.php',
         '6b998e7ad3182c0d21d23780badfa07b' => __DIR__ . '/..' . '/yansongda/supports/src/Functions.php',
+        '23f09fe3194f8c2f70923f90d6702129' => __DIR__ . '/..' . '/illuminate/collections/functions.php',
+        '60799491728b879e74601d83e38b2cad' => __DIR__ . '/..' . '/illuminate/collections/helpers.php',
+        'deecf9d6b2672fb73429f9b28fdee35f' => __DIR__ . '/..' . '/symfony/polyfill-deepclone/bootstrap.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '19e6faa27d773988183e0f384143fcad' => __DIR__ . '/..' . '/illuminate/reflection/helpers.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '988d02680beedec88d52f2787b2d2007' => __DIR__ . '/..' . '/yansongda/artful/src/Functions.php',
-        '0f675193b08f1d998bf8336679b91267' => __DIR__ . '/..' . '/jaeger/querylist/src/Collect/Support/helpers.php',
-        'ccc59ff8a4c824e248d98aed04130ff5' => __DIR__ . '/..' . '/jaeger/querylist/src/Collect/Support/alias.php',
         '223fa6f9b46fbe5d6b44c5ff847bfceb' => __DIR__ . '/..' . '/taoser/think-addons/src/helper.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         'd79a0e13e295db93891a9377e0888496' => __DIR__ . '/..' . '/topthink/think-dumper/src/helper.php',
@@ -60,18 +65,15 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         ),
         'S' =>
         array (
+            'Symfony\\Polyfill\\Php86\\' => 23,
+            'Symfony\\Polyfill\\Php85\\' => 23,
+            'Symfony\\Polyfill\\Php84\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Contracts\\Service\\' => 26,
-            'Symfony\\Contracts\\Cache\\' => 24,
+            'Symfony\\Polyfill\\DeepClone\\' => 27,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
-            'Symfony\\Component\\Cache\\' => 24,
             'Sqids\\' => 6,
-        ),
-        'Q' =>
-        array (
-            'QL\\' => 3,
         ),
         'P' =>
         array (
@@ -81,7 +83,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
-            'Psr\\Cache\\' => 10,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' =>
@@ -94,14 +95,11 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             'League\\Flysystem\\Local\\' => 23,
             'League\\Flysystem\\' => 17,
         ),
-        'J' =>
-        array (
-            'Jaeger\\' => 7,
-        ),
         'I' =>
         array (
             'Intervention\\Image\\' => 19,
             'Intervention\\Gif\\' => 17,
+            'Illuminate\\Support\\' => 19,
             'Illuminate\\Contracts\\' => 21,
             'Illuminate\\Container\\' => 21,
         ),
@@ -197,6 +195,18 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
             0 => __DIR__ . '/..' . '/workerman/workerman/src',
             1 => __DIR__ . '/..' . '/workerman/coroutine/src',
         ),
+        'Symfony\\Polyfill\\Php86\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php86',
+        ),
+        'Symfony\\Polyfill\\Php85\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php85',
+        ),
+        'Symfony\\Polyfill\\Php84\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php84',
+        ),
         'Symfony\\Polyfill\\Php80\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
@@ -205,13 +215,9 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Contracts\\Service\\' =>
+        'Symfony\\Polyfill\\DeepClone\\' =>
         array (
-            0 => __DIR__ . '/..' . '/symfony/service-contracts',
-        ),
-        'Symfony\\Contracts\\Cache\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/symfony/cache-contracts',
+            0 => __DIR__ . '/..' . '/symfony/polyfill-deepclone',
         ),
         'Symfony\\Component\\VarExporter\\' =>
         array (
@@ -221,17 +227,9 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
-        'Symfony\\Component\\Cache\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/symfony/cache',
-        ),
         'Sqids\\' =>
         array (
             0 => __DIR__ . '/..' . '/sqids/sqids/src',
-        ),
-        'QL\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/jaeger/querylist/src',
         ),
         'Psr\\SimpleCache\\' =>
         array (
@@ -258,10 +256,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Psr\\Cache\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/psr/cache/src',
-        ),
         'PHPMailer\\PHPMailer\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
@@ -282,10 +276,6 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
         ),
-        'Jaeger\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/jaeger/g-http/src',
-        ),
         'Intervention\\Image\\' =>
         array (
             0 => __DIR__ . '/..' . '/intervention/image/src',
@@ -293,6 +283,13 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
         'Intervention\\Gif\\' =>
         array (
             0 => __DIR__ . '/..' . '/intervention/gif/src',
+        ),
+        'Illuminate\\Support\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/reflection',
+            1 => __DIR__ . '/..' . '/illuminate/collections',
+            2 => __DIR__ . '/..' . '/illuminate/macroable',
+            3 => __DIR__ . '/..' . '/illuminate/conditionable',
         ),
         'Illuminate\\Contracts\\' =>
         array (
@@ -350,34 +347,36 @@ class ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca
 
     public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
-        'Callback' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackBody' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackParam' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackParameterToReference' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackReturnReference' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackReturnValue' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'DOMDocumentWrapper' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'DOMEvent' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'ICallbackNamed' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'DeepClone\\ClassNotFoundException' => __DIR__ . '/..' . '/symfony/polyfill-deepclone/Resources/stubs/ClassNotFoundException.php',
+        'DeepClone\\NotInstantiableException' => __DIR__ . '/..' . '/symfony/polyfill-deepclone/Resources/stubs/NotInstantiableException.php',
+        'DelayedTargetValidation' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/DelayedTargetValidation.php',
+        'Deprecated' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Deprecated.php',
+        'Filter\\FilterException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterException.php',
+        'Filter\\FilterFailedException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterFailedException.php',
+        'NoDiscard' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/NoDiscard.php',
+        'Pdo\\Dblib' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Dblib.php',
+        'Pdo\\Firebird' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Firebird.php',
+        'Pdo\\Mysql' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Mysql.php',
+        'Pdo\\Odbc' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Odbc.php',
+        'Pdo\\Pgsql' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Pgsql.php',
+        'Pdo\\Sqlite' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Sqlite.php',
         'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
+        'ReflectionConstant' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/ReflectionConstant.php',
+        'RoundingMode' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/RoundingMode.php',
+        'SortDirection' => __DIR__ . '/..' . '/symfony/polyfill-php86/Resources/stubs/SortDirection.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
-        'phpQuery' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryEvents' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryObject' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryPlugins' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        '©' => __DIR__ . '/..' . '/symfony/cache/Traits/ValueWrapper.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit5a3833c0cb8c913a07438a311d5d95ca::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit16315b3a90c4ab7453f06759663346b7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit16315b3a90c4ab7453f06759663346b7::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit16315b3a90c4ab7453f06759663346b7::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit16315b3a90c4ab7453f06759663346b7::$classMap;
 
         }, null, ClassLoader::class);
     }

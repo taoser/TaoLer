@@ -6,39 +6,57 @@ namespace Intervention\Gif;
 
 use ArrayIterator;
 use GdImage;
+use Intervention\Gif\Exceptions\CoreException;
+use Intervention\Gif\Exceptions\DecoderException;
 use Intervention\Gif\Exceptions\EncoderException;
+use Intervention\Gif\Exceptions\StreamException;
+use Intervention\Gif\Exceptions\InvalidArgumentException;
+use Intervention\Gif\Exceptions\SplitterException;
 use IteratorAggregate;
 use Traversable;
 
 /**
- * @implements IteratorAggregate<GifDataStream>
+ * @implements IteratorAggregate<GifDataStream|GdImage>
  */
 class Splitter implements IteratorAggregate
 {
     /**
-     * Single frames resolved to GifDataStream
+     * Single frames resolved from main GifDataStream.
      *
-     * @var array<GifDataStream>
+     * @var array<GifDataStream|GdImage>
      */
     protected array $frames = [];
 
     /**
-     * Delays of each frame
+     * Delays of each frame resolved from main GifDataStream.
      *
      * @var array<int>
      */
     protected array $delays = [];
 
     /**
-     * Create new instance
+     * Loop count of main GifDataStream.
      */
-    public function __construct(protected GifDataStream $stream)
+    protected int $loops;
+
+    /**
+     * Create new instance.
+     *
+     * @throws SplitterException
+     */
+    public function __construct(protected GifDataStream $gif)
     {
-        //
+        try {
+            $this->loops = $gif->mainApplicationExtension()?->loops() ?: 0;
+        } catch (DecoderException $e) {
+            throw new SplitterException('Failed to create instance from ' . GifDataStream::class, previous: $e);
+        }
     }
 
     /**
-     * Static constructor method
+     * Create splitter instance from gif data stream object.
+     *
+     * @throws SplitterException
      */
     public static function create(GifDataStream $stream): self
     {
@@ -46,7 +64,40 @@ class Splitter implements IteratorAggregate
     }
 
     /**
-     * Iterator
+     * Create splitter instance from raw binary gif image data.
+     *
+     * @throws SplitterException
+     * @throws InvalidArgumentException
+     * @throws StreamException
+     * @throws DecoderException
+     */
+    public static function decode(mixed $input): self
+    {
+        return new self(Decoder::decode($input));
+    }
+
+    /**
+     * Iterate over the frames and pass each frame to a closure.
+     */
+    public function each(callable $callback): self
+    {
+        array_map($callback, $this->frames, $this->delays);
+
+        return $this;
+    }
+
+    /**
+     * Set stream of instance.
+     */
+    public function setStream(GifDataStream $stream): self
+    {
+        $this->gif = $stream;
+
+        return $this;
+    }
+
+    /**
+     * Build iterator.
      */
     public function getIterator(): Traversable
     {
@@ -54,72 +105,77 @@ class Splitter implements IteratorAggregate
     }
 
     /**
-     * Get frames
+     * Get frames.
      *
-     * @return array<GifDataStream>
+     * @return array<GifDataStream|GdImage>
      */
-    public function getFrames(): array
+    public function frames(): array
     {
         return $this->frames;
     }
 
     /**
-     * Get delays
+     * Get delays.
      *
      * @return array<int>
      */
-    public function getDelays(): array
+    public function delays(): array
     {
         return $this->delays;
     }
 
     /**
-     * Set stream of instance
+     * Get loop count of currently handled gif data.
      */
-    public function setStream(GifDataStream $stream): self
+    public function loops(): int
     {
-        $this->stream = $stream;
-
-        return $this;
+        return $this->loops;
     }
 
     /**
-     * Split current stream into array of seperate streams for each frame
+     * Split current stream into array of seperate gif data stream objects for each frame.
+     *
+     * @throws SplitterException
      */
     public function split(): self
     {
         $this->frames = [];
 
-        foreach ($this->stream->getFrames() as $frame) {
+        foreach ($this->gif->frames() as $frame) {
             // create separate stream for each frame
-            $gif = Builder::canvas(
-                $this->stream->getLogicalScreenDescriptor()->getWidth(),
-                $this->stream->getLogicalScreenDescriptor()->getHeight()
-            )->getGifDataStream();
+            try {
+                $gif = Builder::canvas(
+                    $this->gif->logicalScreenDescriptor()->width(),
+                    $this->gif->logicalScreenDescriptor()->height()
+                )->gifDataStream();
+            } catch (InvalidArgumentException $e) {
+                throw new SplitterException('Failed to create separate stream resource for each frame', previous: $e);
+            }
 
             // check if working stream has global color table
-            if ($this->stream->hasGlobalColorTable()) {
-                $gif->setGlobalColorTable($this->stream->getGlobalColorTable());
-                $gif->getLogicalScreenDescriptor()->setGlobalColorTableExistance(true);
+            $table = $this->gif->globalColorTable();
+            if ($table !== null) {
+                $gif->setGlobalColorTable($table);
+                $gif->logicalScreenDescriptor()->setGlobalColorTableExistance(true);
 
-                $gif->getLogicalScreenDescriptor()->setGlobalColorTableSorted(
-                    $this->stream->getLogicalScreenDescriptor()->getGlobalColorTableSorted()
+                $gif->logicalScreenDescriptor()->setGlobalColorTableSorted(
+                    $this->gif->logicalScreenDescriptor()->globalColorTableSorted()
                 );
 
-                $gif->getLogicalScreenDescriptor()->setGlobalColorTableSize(
-                    $this->stream->getLogicalScreenDescriptor()->getGlobalColorTableSize()
+                $gif->logicalScreenDescriptor()->setGlobalColorTableSize(
+                    $this->gif->logicalScreenDescriptor()->globalColorTableSize()
                 );
 
-                $gif->getLogicalScreenDescriptor()->setBackgroundColorIndex(
-                    $this->stream->getLogicalScreenDescriptor()->getBackgroundColorIndex()
+                $gif->logicalScreenDescriptor()->setBackgroundColorIndex(
+                    $this->gif->logicalScreenDescriptor()->backgroundColorIndex()
                 );
 
-                $gif->getLogicalScreenDescriptor()->setPixelAspectRatio(
-                    $this->stream->getLogicalScreenDescriptor()->getPixelAspectRatio()
+                $gif->logicalScreenDescriptor()->setPixelAspectRatio(
+                    $this->gif->logicalScreenDescriptor()->pixelAspectRatio()
                 );
 
-                $gif->getLogicalScreenDescriptor()->setBitsPerPixel(
-                    $this->stream->getLogicalScreenDescriptor()->getBitsPerPixel()
+                $gif->logicalScreenDescriptor()->setBitsPerPixel(
+                    $this->gif->logicalScreenDescriptor()->bitsPerPixel()
                 );
             }
 
@@ -127,8 +183,8 @@ class Splitter implements IteratorAggregate
             $gif->addFrame($frame);
 
             $this->frames[] = $gif;
-            $this->delays[] = match (is_object($frame->getGraphicControlExtension())) {
-                true => $frame->getGraphicControlExtension()->getDelay(),
+            $this->delays[] = match (is_object($frame->graphicControlExtension())) {
+                true => $frame->graphicControlExtension()->delay(),
                 default => 0,
             };
         }
@@ -137,69 +193,57 @@ class Splitter implements IteratorAggregate
     }
 
     /**
-     * Return array of GD library resources for each frame
+     * Transform current frames to an a rray of transparency flattened GdImage objects for each frame.
      *
-     * @throws EncoderException
-     * @return array<GdImage>
+     * @throws SplitterException
+     * @throws CoreException
      */
-    public function toResources(): array
+    public function flatten(): self
     {
-        $resources = [];
+        $frames = $this->unprocessedFramesOrFail();
+        $gdImages = $this->extractFrames();
 
-        foreach ($this->frames as $frame) {
-            $resource = imagecreatefromstring($frame->encode());
-            if ($resource === false) {
-                throw new EncoderException('Unable to extract animation frames.');
-            }
+        // non-animated gif files don't need to be flattened
+        // just replace frames with extracted
+        if (count($frames) === 1) {
+            $this->frames = $gdImages;
 
-            imagepalettetotruecolor($resource);
-            imagesavealpha($resource, true);
-            $resources[] = $resource;
+            return $this;
         }
 
-        return $resources;
-    }
+        // get main image size
+        $width = imagesx($gdImages[0]);
+        $height = imagesy($gdImages[0]);
+        $transparent = imagecolortransparent($gdImages[0]);
 
-    /**
-     * Return array of coalesced GD library resources for each frame
-     *
-     * @throws EncoderException
-     * @return array<GdImage>
-     */
-    public function coalesceToResources(): array
-    {
-        $resources = $this->toResources();
+        foreach ($gdImages as $key => $gdImage) {
+            // get meta data of frame
+            $gif = $frames[$key];
+            $descriptor = $gif->firstFrame()?->imageDescriptor();
+            $offsetX = $descriptor?->left() ?: 0;
+            $offsetY = $descriptor?->top() ?: 0;
+            $w = $descriptor?->width() ?: 0;
+            $h = $descriptor?->height() ?: 0;
 
-        // static gif files don't need to be coalesced
-        if (count($resources) === 1) {
-            return $resources;
-        }
-
-        $width = imagesx($resources[0]);
-        $height = imagesy($resources[0]);
-        $transparent = imagecolortransparent($resources[0]);
-
-        foreach ($resources as $key => $resource) {
-            // get meta data
-            $gif = $this->frames[$key];
-            $descriptor = $gif->getFirstFrame()->getImageDescriptor();
-            $offset_x = $descriptor->getLeft();
-            $offset_y = $descriptor->getTop();
-            $w = $descriptor->getWidth();
-            $h = $descriptor->getHeight();
-
-            if (in_array($this->getDisposalMethod($gif), [DisposalMethod::NONE, DisposalMethod::PREVIOUS])) {
+            if (in_array($this->disposalMethod($gif), [DisposalMethod::NONE, DisposalMethod::PREVIOUS])) {
                 if ($key >= 1) {
                     // create normalized gd image
                     $canvas = imagecreatetruecolor($width, $height);
-                    if (imagecolortransparent($resource) != -1) {
-                        $transparent = imagecolortransparent($resource);
+
+                    if ($canvas === false) {
+                        throw new CoreException('Failed to create new image instance for animation frame #' . $key);
+                    }
+
+                    if (imagecolortransparent($gdImage) !== -1) {
+                        $transparent = imagecolortransparent($gdImage);
                     } else {
-                        $transparent = imagecolorallocatealpha($resource, 255, 0, 255, 127);
+                        $transparent = imagecolorallocatealpha($gdImage, 255, 0, 255, 127);
                     }
 
                     if (!is_int($transparent)) {
-                        throw new EncoderException('Animation frames cannot be converted into resources.');
+                        throw new CoreException(
+                            'Failed to allocate transparent color in animation frame #' . $key,
+                        );
                     }
 
                     // fill with transparent
@@ -210,7 +254,7 @@ class Splitter implements IteratorAggregate
                     // insert last as base
                     imagecopy(
                         $canvas,
-                        $resources[$key - 1],
+                        $gdImages[$key - 1],
                         0,
                         0,
                         0,
@@ -219,32 +263,36 @@ class Splitter implements IteratorAggregate
                         $height
                     );
 
-                    // insert resource
+                    // insert gd image
                     imagecopy(
                         $canvas,
-                        $resource,
-                        $offset_x,
-                        $offset_y,
+                        $gdImage,
+                        $offsetX,
+                        $offsetY,
                         0,
                         0,
                         $w,
                         $h
                     );
                 } else {
-                    imagealphablending($resource, true);
-                    $canvas = $resource;
+                    imagealphablending($gdImage, true);
+                    $canvas = $gdImage;
                 }
             } else {
                 // create normalized gd image
                 $canvas = imagecreatetruecolor($width, $height);
-                if (imagecolortransparent($resource) != -1) {
-                    $transparent = imagecolortransparent($resource);
+                if ($canvas === false) {
+                    throw new CoreException('Failed to create new image instance for animation frame #' . $key);
+                }
+
+                if (imagecolortransparent($gdImage) !== -1) {
+                    $transparent = imagecolortransparent($gdImage);
                 } else {
-                    $transparent = imagecolorallocatealpha($resource, 255, 0, 255, 127);
+                    $transparent = imagecolorallocatealpha($gdImage, 255, 0, 255, 127);
                 }
 
                 if (!is_int($transparent)) {
-                    throw new EncoderException('Animation frames cannot be converted into resources.');
+                    throw new CoreException('Animation frames cannot be converted into GdImage objects');
                 }
 
                 // fill with transparent
@@ -252,12 +300,12 @@ class Splitter implements IteratorAggregate
                 imagecolortransparent($canvas, $transparent);
                 imagealphablending($canvas, true);
 
-                // insert frame resource
+                // insert frame gd image
                 imagecopy(
                     $canvas,
-                    $resource,
-                    $offset_x,
-                    $offset_y,
+                    $gdImage,
+                    $offsetX,
+                    $offsetY,
                     0,
                     0,
                     $w,
@@ -265,17 +313,82 @@ class Splitter implements IteratorAggregate
                 );
             }
 
-            $resources[$key] = $canvas;
+            $gdImages[$key] = $canvas;
         }
 
-        return $resources;
+        $this->frames = $gdImages;
+
+        return $this;
     }
 
     /**
-     * Find and return disposal method of given gif data stream
+     * Return array of GdImage objects for each frame.
+     *
+     * @throws CoreException
+     * @throws SplitterException
+     * @return array<GdImage>
      */
-    private function getDisposalMethod(GifDataStream $gif): DisposalMethod
+    private function extractFrames(): array
     {
-        return $gif->getFirstFrame()->getGraphicControlExtension()->getDisposalMethod();
+        $gdImages = [];
+
+        foreach ($this->unprocessedFramesOrFail() as $frame) {
+            try {
+                $gdImage = imagecreatefromstring($frame->encode());
+            } catch (EncoderException) {
+                throw new CoreException('Failed to extract animation frame to GdImage object');
+            }
+
+            if ($gdImage === false) {
+                throw new CoreException('Failed to extract animation frame to GdImage object');
+            }
+
+            imagepalettetotruecolor($gdImage);
+            imagesavealpha($gdImage, true);
+
+            $gdImages[] = $gdImage;
+        }
+
+        return $gdImages;
+    }
+
+    /**
+     * Find and return disposal method of given gif data stream.
+     *
+     * @throws SplitterException
+     */
+    private function disposalMethod(GifDataStream $gif): DisposalMethod
+    {
+        $disposalMethod = $gif->firstFrame()?->graphicControlExtension()?->disposalMethod();
+
+        return $disposalMethod ?: throw new SplitterException('Failed to find disposal method in gif data stream');
+    }
+
+    /**
+     * Return array of unprocessed frames or throw exception if frames are already processed.
+     *
+     * @throws SplitterException
+     * @return array<GifDataStream>
+     */
+    private function unprocessedFramesOrFail(): array
+    {
+        if (count($this->frames) === 0) {
+            throw new SplitterException('No frames available. Run ' . $this::class . '::split() first');
+        }
+
+        // if any frame is instanceof GdImage, frame was already flattened
+        $processed = count(array_filter(
+            $this->frames,
+            fn(GdImage|GifDataStream $frame): bool => $frame instanceof GdImage,
+        )) > 0;
+
+        if ($processed) {
+            throw new SplitterException('Frames have already been flattened');
+        }
+
+        return array_filter(
+            $this->frames,
+            fn(GifDataStream|GdImage $frame): bool => $frame instanceof GifDataStream,
+        );
     }
 }

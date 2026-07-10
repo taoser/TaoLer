@@ -5,30 +5,48 @@ declare(strict_types=1);
 namespace Intervention\Image\Drivers\Imagick\Encoders;
 
 use Imagick;
+use ImagickException;
 use Intervention\Image\EncodedImage;
 use Intervention\Image\Encoders\GifEncoder as GenericGifEncoder;
+use Intervention\Image\Exceptions\EncoderException;
+use Intervention\Image\Exceptions\ImageException;
 use Intervention\Image\Interfaces\EncodedImageInterface;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Interfaces\SpecializedInterface;
+use Intervention\Image\Exceptions\StreamException;
+use Intervention\Image\Exceptions\InvalidArgumentException;
+use Intervention\Image\Exceptions\StateException;
 
 class GifEncoder extends GenericGifEncoder implements SpecializedInterface
 {
+    /**
+     * @throws InvalidArgumentException
+     * @throws StreamException
+     * @throws StateException
+     * @throws EncoderException
+     */
     public function encode(ImageInterface $image): EncodedImageInterface
     {
         $format = 'GIF';
         $compression = Imagick::COMPRESSION_LZW;
 
-        $imagick = $image->core()->native();
+        try {
+            $imagick = clone $image->core()->native();
+            $imagick->setFormat($format);
+            $imagick->setImageFormat($format);
+            $imagick->setCompression($compression);
+            $imagick->setImageCompression($compression);
 
-        $imagick->setFormat($format);
-        $imagick->setImageFormat($format);
-        $imagick->setCompression($compression);
-        $imagick->setImageCompression($compression);
+            if ($this->interlaced) {
+                $imagick->setInterlaceScheme(Imagick::INTERLACE_LINE);
+            }
 
-        if ($this->interlaced) {
-            $imagick->setInterlaceScheme(Imagick::INTERLACE_LINE);
+            $result = new EncodedImage($imagick->getImagesBlob(), 'image/gif');
+            $imagick->clear();
+
+            return $result;
+        } catch (ImagickException | ImageException $e) {
+            throw new EncoderException('Failed to encode gif format', previous: $e);
         }
-
-        return new EncodedImage($imagick->getImagesBlob(), 'image/gif');
     }
 }

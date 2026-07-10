@@ -235,7 +235,7 @@ class Auth
      * @param integer $type
      * @return array
      */
-    public function getAuthList($uid, $type)
+    protected function getAuthList($uid, $type)
     {
         static $_authList = []; //保存用户验证通过的权限列表
         $t = implode(',', (array)$type);

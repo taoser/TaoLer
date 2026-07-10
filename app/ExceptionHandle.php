@@ -51,8 +51,63 @@ class ExceptionHandle extends Handle
     public function render($request, Throwable $e): Response
     {
         // 添加自定义异常处理机制
+        // 判断是否是 API 请求（支持多种方式，按需选择）
+        if ($this->isApiRequest($request)) {
+            return $this->renderApiResponse($e);
+        }
 
         // 其他错误交给系统处理
         return parent::render($request, $e);
     }
+
+    /**
+     * 判断是否为 API 请求
+     */
+    protected function isApiRequest($request): bool
+    {
+        // 方式1：通过请求头 Accept 判断（推荐）
+         // 判断是否为API请求（关键：区分接口/网页）
+        $isApi = $request->header('Accept') && str_contains($request->header('Accept'), 'application/json')
+            || str_starts_with($request->pathinfo(), 'api/')
+            || $request->isAjax();
+
+        if ($isApi) {
+            return true;
+        }
+
+        // 方式2：通过路由名称前缀，例如定义 api 路由组时设置别名
+        // $rule = $request->rule();
+        // if ($rule && str_starts_with($rule->getName(), 'api.')) {
+        //     return true;
+        // }
+
+        // 方式3：通过域名/子目录判断，如 api.example.com 或 /api/*
+        // if (str_contains($request->host(), 'api.') || str_starts_with($request->pathinfo(), 'api/')) {
+        //     return true;
+        // }
+
+        return false;
+    }
+
+    /**
+     * 构造 JSON 格式的错误响应
+     */
+    protected function renderApiResponse(Throwable $e): Response
+    {
+        $code = $e->getCode() ?: 500;
+        $message = $e->getMessage();
+        
+        // 生产环境下可隐藏真实错误信息，只暴露统一提示
+        if (!env('app_debug')) {
+            $message = '服务器内部错误';
+        }
+
+        $data = [
+            'code' => $code,
+            'message' => $message,
+            'data' => [],
+        ];
+
+    }
+
 }

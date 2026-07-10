@@ -6,4 +6,5 @@ namespace Intervention\Gif\Decoders;
 
 class NetscapeApplicationExtensionDecoder extends ApplicationExtensionDecoder
 {
+    //
 }

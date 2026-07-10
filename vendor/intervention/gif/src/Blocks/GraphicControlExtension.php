@@ -13,22 +13,22 @@ class GraphicControlExtension extends AbstractExtension
     public const BLOCKSIZE = "\x04";
 
     /**
-     * Existance flag of transparent color
+     * Existance flag of transparent color.
      */
     protected bool $transparentColorExistance = false;
 
     /**
-     * Transparent color index
+     * Transparent color index.
      */
     protected int $transparentColorIndex = 0;
 
     /**
-     * User input flag
+     * User input flag.
      */
     protected bool $userInput = false;
 
     /**
-     * Create new instance
+     * Create new instance.
      */
     public function __construct(
         protected int $delay = 0,
@@ -38,7 +38,7 @@ class GraphicControlExtension extends AbstractExtension
     }
 
     /**
-     * Set delay time (1/100 second)
+     * Set delay time (1/100 second).
      */
     public function setDelay(int $value): self
     {
@@ -48,15 +48,15 @@ class GraphicControlExtension extends AbstractExtension
     }
 
     /**
-     * Return delay time (1/100 second)
+     * Return delay time (1/100 second).
      */
-    public function getDelay(): int
+    public function delay(): int
     {
         return $this->delay;
     }
 
     /**
-     * Set disposal method
+     * Set disposal method.
      */
     public function setDisposalMethod(DisposalMethod $method): self
     {
@@ -66,23 +66,23 @@ class GraphicControlExtension extends AbstractExtension
     }
 
     /**
-     * Get disposal method
+     * Get disposal method.
      */
-    public function getDisposalMethod(): DisposalMethod
+    public function disposalMethod(): DisposalMethod
     {
         return $this->disposalMethod;
     }
 
     /**
-     * Get transparent color index
+     * Get transparent color index.
      */
-    public function getTransparentColorIndex(): int
+    public function transparentColorIndex(): int
     {
         return $this->transparentColorIndex;
     }
 
     /**
-     * Set transparent color index
+     * Set transparent color index.
      */
     public function setTransparentColorIndex(int $index): self
     {
@@ -92,15 +92,15 @@ class GraphicControlExtension extends AbstractExtension
     }
 
     /**
-     * Get current transparent color existance
+     * Get current transparent color existance.
      */
-    public function getTransparentColorExistance(): bool
+    public function transparentColorExistance(): bool
     {
         return $this->transparentColorExistance;
     }
 
     /**
-     * Set existance flag of transparent color
+     * Set existance flag of transparent color.
      */
     public function setTransparentColorExistance(bool $existance = true): self
     {
@@ -110,15 +110,15 @@ class GraphicControlExtension extends AbstractExtension
     }
 
     /**
-     * Get user input flag
+     * Get user input flag.
      */
-    public function getUserInput(): bool
+    public function userInput(): bool
     {
         return $this->userInput;
     }
 
     /**
-     * Set user input flag
+     * Set user input flag.
      */
     public function setUserInput(bool $value = true): self
     {

@@ -9,15 +9,15 @@ use Intervention\Gif\Blocks\Trailer;
 class TrailerEncoder extends AbstractEncoder
 {
     /**
-     * Create new instance
+     * Create new instance.
      */
-    public function __construct(Trailer $source)
+    public function __construct(Trailer $entity)
     {
-        $this->source = $source;
+        parent::__construct($entity);
     }
 
     /**
-     * Encode current source
+     * Encode current entity.
      */
     public function encode(): string
     {

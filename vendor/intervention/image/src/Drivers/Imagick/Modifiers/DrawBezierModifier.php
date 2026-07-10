@@ -5,73 +5,97 @@ declare(strict_types=1);
 namespace Intervention\Image\Drivers\Imagick\Modifiers;
 
 use ImagickDraw;
-use RuntimeException;
-use Intervention\Image\Exceptions\GeometryException;
+use ImagickDrawException;
+use ImagickPixel;
+use Intervention\Image\Drivers\Imagick\Traits\CanDraw;
+use Intervention\Image\Exceptions\ColorDecoderException;
+use Intervention\Image\Exceptions\InvalidArgumentException;
+use Intervention\Image\Exceptions\ModifierException;
+use Intervention\Image\Exceptions\StateException;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Interfaces\SpecializedInterface;
 use Intervention\Image\Modifiers\DrawBezierModifier as GenericDrawBezierModifier;
 
 class DrawBezierModifier extends GenericDrawBezierModifier implements SpecializedInterface
 {
+    use CanDraw;
+
     /**
-     * @throws RuntimeException
-     * @throws GeometryException
+     * @throws InvalidArgumentException
+     * @throws ModifierException
+     * @throws StateException
+     * @throws ColorDecoderException
      */
     public function apply(ImageInterface $image): ImageInterface
     {
-        if ($this->drawable->count() !== 3 && $this->drawable->count() !== 4) {
-            throw new GeometryException('You must specify either 3 or 4 points to create a bezier curve');
+        $bezierCurve = $this->bezierCurve(
+            $this->driver()->colorProcessor($image)->export($this->backgroundColor()),
+            $this->driver()->colorProcessor($image)->export($this->borderColor()),
+        );
+
+        foreach ($image as $frame) {
+            $this->draw($frame->native(), $bezierCurve);
         }
 
-        $drawing = new ImagickDraw();
+        return $image;
+    }
 
-        if ($this->drawable->hasBackgroundColor()) {
-            $background_color = $this->driver()->colorProcessor($image->colorspace())->colorToNative(
-                $this->backgroundColor()
+    /**
+     * @throws InvalidArgumentException
+     * @throws ModifierException
+     */
+    private function bezierCurve(ImagickPixel $backgroundColor, ImagickPixel $borderColor): ImagickDraw
+    {
+        try {
+            $bezierCurve = new ImagickDraw();
+            $bezierCurve->setFillColor($backgroundColor);
+        } catch (ImagickDrawException $e) {
+            throw new ModifierException(
+                'Failed to build bezier curve',
+                previous: $e,
             );
-        } else {
-            $background_color = 'transparent';
         }
-
-        $drawing->setFillColor($background_color);
 
         if ($this->drawable->hasBorder() && $this->drawable->borderSize() > 0) {
-            $border_color = $this->driver()->colorProcessor($image->colorspace())->colorToNative(
-                $this->borderColor()
-            );
-
-            $drawing->setStrokeColor($border_color);
-            $drawing->setStrokeWidth($this->drawable->borderSize());
+            try {
+                $bezierCurve->setStrokeColor($borderColor);
+                $bezierCurve->setStrokeWidth($this->drawable->borderSize());
+            } catch (ImagickDrawException $e) {
+                throw new ModifierException(
+                    'Failed to build bezier curve',
+                    previous: $e,
+                );
+            }
         }
 
-        $drawing->pathStart();
-        $drawing->pathMoveToAbsolute(
+        $bezierCurve->pathStart();
+        $bezierCurve->pathMoveToAbsolute(
             $this->drawable->first()->x(),
-            $this->drawable->first()->y()
+            $this->drawable->first()->y(),
         );
-        if ($this->drawable->count() === 3) {
-            $drawing->pathCurveToQuadraticBezierAbsolute(
+
+        match ($this->drawable->count()) {
+            3 => $bezierCurve->pathCurveToQuadraticBezierAbsolute(
                 $this->drawable->second()->x(),
                 $this->drawable->second()->y(),
                 $this->drawable->last()->x(),
-                $this->drawable->last()->y()
-            );
-        } elseif ($this->drawable->count() === 4) {
-            $drawing->pathCurveToAbsolute(
+                $this->drawable->last()->y(),
+            ),
+            4 => $bezierCurve->pathCurveToAbsolute(
                 $this->drawable->second()->x(),
                 $this->drawable->second()->y(),
                 $this->drawable->third()->x(),
                 $this->drawable->third()->y(),
                 $this->drawable->last()->x(),
-                $this->drawable->last()->y()
-            );
-        }
-        $drawing->pathFinish();
+                $this->drawable->last()->y(),
+            ),
+            default => throw new InvalidArgumentException(
+                'You must specify either 3 or 4 points to create a bezier curve',
+            ),
+        };
 
-        foreach ($image as $frame) {
-            $frame->native()->drawImage($drawing);
-        }
+        $bezierCurve->pathFinish();
 
-        return $image;
+        return $bezierCurve;
     }
 }

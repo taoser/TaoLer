@@ -12,11 +12,17 @@ class TableBasedImage extends AbstractEntity
     protected ?ColorTable $colorTable = null;
     protected ImageData $imageData;
 
-    public function getImageDescriptor(): ImageDescriptor
+    /**
+     * Get image descriptor.
+     */
+    public function imageDescriptor(): ImageDescriptor
     {
         return $this->imageDescriptor;
     }
 
+    /**
+     * Set image descriptor for current instance.
+     */
     public function setImageDescriptor(ImageDescriptor $descriptor): self
     {
         $this->imageDescriptor = $descriptor;
@@ -24,11 +30,17 @@ class TableBasedImage extends AbstractEntity
         return $this;
     }
 
-    public function getImageData(): ImageData
+    /**
+     * Get image data.
+     */
+    public function imageData(): ImageData
     {
         return $this->imageData;
     }
 
+    /**
+     * Set image data for current instance.
+     */
     public function setImageData(ImageData $data): self
     {
         $this->imageData = $data;
@@ -36,11 +48,17 @@ class TableBasedImage extends AbstractEntity
         return $this;
     }
 
-    public function getColorTable(): ?ColorTable
+    /**
+     * Get current color table or null of table based based image has none.
+     */
+    public function colorTable(): ?ColorTable
     {
         return $this->colorTable;
     }
 
+    /**
+     * Set color table.
+     */
     public function setColorTable(ColorTable $table): self
     {
         $this->colorTable = $table;

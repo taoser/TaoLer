@@ -9,29 +9,29 @@ use Intervention\Gif\Blocks\Color;
 class ColorEncoder extends AbstractEncoder
 {
     /**
-     * Create new instance
+     * Create new instance.
      */
-    public function __construct(Color $source)
+    public function __construct(Color $entity)
     {
-        $this->source = $source;
+        parent::__construct($entity);
     }
 
     /**
-     * Encode current source
+     * Encode current entity.
      */
     public function encode(): string
     {
         return implode('', [
-            $this->encodeColorValue($this->source->getRed()),
-            $this->encodeColorValue($this->source->getGreen()),
-            $this->encodeColorValue($this->source->getBlue()),
+            $this->encodeColorValue($this->entity->red()),
+            $this->encodeColorValue($this->entity->green()),
+            $this->encodeColorValue($this->entity->blue()),
         ]);
     }
 
     /**
-     * Encode color value
+     * Encode color value.
      */
-    protected function encodeColorValue(int $value): string
+    private function encodeColorValue(int $value): string
     {
         return pack('C', $value);
     }

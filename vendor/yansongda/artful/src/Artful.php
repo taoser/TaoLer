@@ -103,8 +103,6 @@ class Artful
         try {
             $container = Artful::getContainer();
 
-            
-
             if ($container instanceof LaravelContainer) {
                 $container->singleton($name, $value instanceof Closure ? $value : static fn () => $value);
 
@@ -116,25 +114,6 @@ class Artful
 
                 return;
             }
-
-            // if (is_object($value) && !($value instanceof \Closure)) {
-            //     $container->instance($name, $value);
-
-            //     return;
-            // } else {
-            //     $container->bind($name, $value);
-
-            //     return;
-            // }
-
-            // Support ThinkPHP Container
-            // if (method_exists($container, 'instance')) {
-            //     $container->instance($name, $value instanceof Closure ? $value() : $value);
-
-            //     return;
-            // }
-
-            
         } catch (ContainerNotFoundException $e) {
             throw $e;
         } catch (Throwable $e) {

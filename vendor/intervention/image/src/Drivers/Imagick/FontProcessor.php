@@ -10,10 +10,12 @@ use ImagickDrawException;
 use ImagickException;
 use ImagickPixel;
 use Intervention\Image\Drivers\AbstractFontProcessor;
-use Intervention\Image\Exceptions\FontException;
-use Intervention\Image\Geometry\Rectangle;
+use Intervention\Image\Exceptions\DriverException;
+use Intervention\Image\Exceptions\InvalidArgumentException;
+use Intervention\Image\Exceptions\StateException;
 use Intervention\Image\Interfaces\FontInterface;
 use Intervention\Image\Interfaces\SizeInterface;
+use Intervention\Image\Size;
 
 class FontProcessor extends AbstractFontProcessor
 {
@@ -21,18 +23,26 @@ class FontProcessor extends AbstractFontProcessor
      * {@inheritdoc}
      *
      * @see FontProcessorInterface::boxSize()
+     *
+     * @throws InvalidArgumentException
+     * @throws StateException
+     * @throws DriverException
      */
     public function boxSize(string $text, FontInterface $font): SizeInterface
     {
         // no text - no box size
         if (mb_strlen($text) === 0) {
-            return new Rectangle(0, 0);
+            return new Size(0, 0);
         }
 
         $draw = $this->toImagickDraw($font);
-        $dimensions = (new Imagick())->queryFontMetrics($draw, $text);
+        try {
+            $dimensions = (new Imagick())->queryFontMetrics($draw, $text);
+        } catch (ImagickException $e) {
+            throw new DriverException('Failed query font metrics', previous: $e);
+        }
 
-        return new Rectangle(
+        return new Size(
             intval(round($dimensions['textWidth'])),
             intval(round($dimensions['ascender'] + $dimensions['descender'])),
         );
@@ -43,25 +53,28 @@ class FontProcessor extends AbstractFontProcessor
      * the font object as the base and adds an optional passed color to the new
      * ImagickDraw object.
      *
-     * @throws FontException
-     * @throws ImagickDrawException
-     * @throws ImagickException
+     * @throws StateException
+     * @throws DriverException
      */
     public function toImagickDraw(FontInterface $font, ?ImagickPixel $color = null): ImagickDraw
     {
-        if (!$font->hasFilename()) {
-            throw new FontException('No font file specified.');
+        if (!$font->hasFile()) {
+            throw new StateException('No font file specified');
         }
 
-        $draw = new ImagickDraw();
-        $draw->setStrokeAntialias(true);
-        $draw->setTextAntialias(true);
-        $draw->setFont($font->filename());
-        $draw->setFontSize($this->nativeFontSize($font));
-        $draw->setTextAlignment(Imagick::ALIGN_LEFT);
+        try {
+            $draw = new ImagickDraw();
+            $draw->setStrokeAntialias(true);
+            $draw->setTextAntialias(true);
+            $draw->setFont($font->filepath());
+            $draw->setFontSize($this->nativeFontSize($font));
+            $draw->setTextAlignment(Imagick::ALIGN_LEFT);
 
-        if ($color instanceof ImagickPixel) {
-            $draw->setFillColor($color);
+            if ($color instanceof ImagickPixel) {
+                $draw->setFillColor($color);
+            }
+        } catch (ImagickException | ImagickDrawException $e) {
+            throw new DriverException('Failed to convert font to ImagickDraw instance', previous: $e);
         }
 
         return $draw;

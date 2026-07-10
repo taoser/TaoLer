@@ -16,6 +16,8 @@ use ZipArchive;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Request;
+use think\facade\Log;
+use think\facade\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use app\common\lib\FileHelper;
@@ -71,7 +73,7 @@ class Template extends AdminBaseController
         // 已安装模板名称数组
         $tplNameArr = array_keys($localTpl);
 
-        $result = HttpHelper::withHost()->post('/v2/template/list', [
+        $result = HttpHelper::withHost()->asJson()->post('/v2/template/list', [
             'type'          => $type,
             'app_name'      => $appName,
             'installed_name'=> $tplNameArr,

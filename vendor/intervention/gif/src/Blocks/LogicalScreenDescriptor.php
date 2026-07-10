@@ -5,54 +5,65 @@ declare(strict_types=1);
 namespace Intervention\Gif\Blocks;
 
 use Intervention\Gif\AbstractEntity;
+use Intervention\Gif\Exceptions\InvalidArgumentException;
 
 class LogicalScreenDescriptor extends AbstractEntity
 {
     /**
-     * Width
+     * Width.
      */
     protected int $width;
 
     /**
-     * Height
+     * Height.
      */
     protected int $height;
 
     /**
-     * Global color table flag
+     * Global color table flag.
      */
     protected bool $globalColorTableExistance = false;
 
     /**
-     * Sort flag of global color table
+     * Sort flag of global color table.
      */
     protected bool $globalColorTableSorted = false;
 
     /**
-     * Size of global color table
+     * Size of global color table.
      */
     protected int $globalColorTableSize = 0;
 
     /**
-     * Background color index
+     * Background color index.
      */
     protected int $backgroundColorIndex = 0;
 
     /**
-     * Color resolution
+     * Color resolution.
      */
     protected int $bitsPerPixel = 8;
 
     /**
-     * Pixel aspect ration
+     * Pixel aspect ration.
      */
     protected int $pixelAspectRatio = 0;
 
     /**
-     * Set size
+     * Set size.
+     *
+     * @throws InvalidArgumentException
      */
     public function setSize(int $width, int $height): self
     {
+        if ($width <= 0) {
+            throw new InvalidArgumentException('Width in ' . $this::class . ' must be larger than 0');
+        }
+
+        if ($height <= 0) {
+            throw new InvalidArgumentException('Height in ' . $this::class . ' must be larger than 0');
+        }
+
         $this->width = $width;
         $this->height = $height;
 
@@ -60,39 +71,39 @@ class LogicalScreenDescriptor extends AbstractEntity
     }
 
     /**
-     * Get width of current instance
+     * Get width of current instance.
      */
-    public function getWidth(): int
+    public function width(): int
     {
-        return intval($this->width);
+        return $this->width;
     }
 
     /**
-     * Get height of current instance
+     * Get height of current instance.
      */
-    public function getHeight(): int
+    public function height(): int
     {
-        return intval($this->height);
+        return $this->height;
     }
 
     /**
-     * Determine if global color table is present
+     * Determine if global color table is present.
      */
-    public function getGlobalColorTableExistance(): bool
+    public function globalColorTableExistance(): bool
     {
         return $this->globalColorTableExistance;
     }
 
     /**
-     * Alias of getGlobalColorTableExistance
+     * Alias of globalColorTableExistance.
      */
     public function hasGlobalColorTable(): bool
     {
-        return $this->getGlobalColorTableExistance();
+        return $this->globalColorTableExistance();
     }
 
     /**
-     * Set global color table flag
+     * Set global color table flag.
      */
     public function setGlobalColorTableExistance(bool $existance = true): self
     {
@@ -102,15 +113,15 @@ class LogicalScreenDescriptor extends AbstractEntity
     }
 
     /**
-     * Get global color table sorted flag
+     * Get global color table sorted flag.
      */
-    public function getGlobalColorTableSorted(): bool
+    public function globalColorTableSorted(): bool
     {
         return $this->globalColorTableSorted;
     }
 
     /**
-     * Set global color table sorted flag
+     * Set global color table sorted flag.
      */
     public function setGlobalColorTableSorted(bool $sorted = true): self
     {
@@ -120,23 +131,23 @@ class LogicalScreenDescriptor extends AbstractEntity
     }
 
     /**
-     * Get size of global color table
+     * Get size of global color table.
      */
-    public function getGlobalColorTableSize(): int
+    public function globalColorTableSize(): int
     {
         return $this->globalColorTableSize;
     }
 
     /**
-     * Get byte size of global color table
+     * Get byte size of global color table.
      */
-    public function getGlobalColorTableByteSize(): int
+    public function globalColorTableByteSize(): int
     {
-        return 3 * pow(2, $this->getGlobalColorTableSize() + 1);
+        return 3 * pow(2, $this->globalColorTableSize() + 1);
     }
 
     /**
-     * Set size of global color table
+     * Set size of global color table.
      */
     public function setGlobalColorTableSize(int $size): self
     {
@@ -146,15 +157,15 @@ class LogicalScreenDescriptor extends AbstractEntity
     }
 
     /**
-     * Get background color index
+     * Get background color index.
      */
-    public function getBackgroundColorIndex(): int
+    public function backgroundColorIndex(): int
     {
         return $this->backgroundColorIndex;
     }
 
     /**
-     * Set background color index
+     * Set background color index.
      */
     public function setBackgroundColorIndex(int $index): self
     {
@@ -164,15 +175,15 @@ class LogicalScreenDescriptor extends AbstractEntity
     }
 
     /**
-     * Get current pixel aspect ration
+     * Get current pixel aspect ration.
      */
-    public function getPixelAspectRatio(): int
+    public function pixelAspectRatio(): int
     {
         return $this->pixelAspectRatio;
     }
 
     /**
-     * Set pixel aspect ratio
+     * Set pixel aspect ratio.
      */
     public function setPixelAspectRatio(int $ratio): self
     {
@@ -182,15 +193,15 @@ class LogicalScreenDescriptor extends AbstractEntity
     }
 
     /**
-     * Get color resolution
+     * Get color resolution.
      */
-    public function getBitsPerPixel(): int
+    public function bitsPerPixel(): int
     {
         return $this->bitsPerPixel;
     }
 
     /**
-     * Set color resolution
+     * Set color resolution.
      */
     public function setBitsPerPixel(int $value): self
     {

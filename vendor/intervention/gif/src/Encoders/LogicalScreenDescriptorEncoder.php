@@ -9,15 +9,15 @@ use Intervention\Gif\Blocks\LogicalScreenDescriptor;
 class LogicalScreenDescriptorEncoder extends AbstractEncoder
 {
     /**
-     * Create new instance
+     * Create new instance.
      */
-    public function __construct(LogicalScreenDescriptor $source)
+    public function __construct(LogicalScreenDescriptor $entity)
     {
-        $this->source = $source;
+        parent::__construct($entity);
     }
 
     /**
-     * Encode current source
+     * Encode current entity.
      */
     public function encode(): string
     {
@@ -31,62 +31,62 @@ class LogicalScreenDescriptorEncoder extends AbstractEncoder
     }
 
     /**
-     * Encode width of current instance
+     * Encode width of current instance.
      */
-    protected function encodeWidth(): string
+    private function encodeWidth(): string
     {
-        return pack('v*', $this->source->getWidth());
+        return pack('v*', $this->entity->width());
     }
 
     /**
-     * Encode height of current instance
+     * Encode height of current instance.
      */
-    protected function encodeHeight(): string
+    private function encodeHeight(): string
     {
-        return pack('v*', $this->source->getHeight());
+        return pack('v*', $this->entity->height());
     }
 
     /**
-     * Encode background color index of global color table
+     * Encode background color index of global color table.
      */
-    protected function encodeBackgroundColorIndex(): string
+    private function encodeBackgroundColorIndex(): string
     {
-        return pack('C', $this->source->getBackgroundColorIndex());
+        return pack('C', $this->entity->backgroundColorIndex());
     }
 
     /**
-     * Encode pixel aspect ratio
+     * Encode pixel aspect ratio.
      */
-    protected function encodePixelAspectRatio(): string
+    private function encodePixelAspectRatio(): string
     {
-        return pack('C', $this->source->getPixelAspectRatio());
+        return pack('C', $this->entity->pixelAspectRatio());
     }
 
     /**
-     * Return color resolution for encoding
+     * Return color resolution for encoding.
      */
-    protected function encodeColorResolution(): string
+    private function encodeColorResolution(): string
     {
-        return str_pad(decbin($this->source->getBitsPerPixel() - 1), 3, '0', STR_PAD_LEFT);
+        return str_pad(decbin($this->entity->bitsPerPixel() - 1), 3, '0', STR_PAD_LEFT);
     }
 
     /**
-     * Encode size of global color table
+     * Encode size of global color table.
      */
-    protected function encodeGlobalColorTableSize(): string
+    private function encodeGlobalColorTableSize(): string
     {
-        return str_pad(decbin($this->source->getGlobalColorTableSize()), 3, '0', STR_PAD_LEFT);
+        return str_pad(decbin($this->entity->globalColorTableSize()), 3, '0', STR_PAD_LEFT);
     }
 
     /**
-     * Encode packed field of current instance
+     * Encode packed field of current instance.
      */
-    protected function encodePackedField(): string
+    private function encodePackedField(): string
     {
         return pack('C', bindec(implode('', [
-            (int) $this->source->getGlobalColorTableExistance(),
+            (int) $this->entity->globalColorTableExistance(),
             $this->encodeColorResolution(),
-            (int) $this->source->getGlobalColorTableSorted(),
+            (int) $this->entity->globalColorTableSorted(),
             $this->encodeGlobalColorTableSize(),
         ])));
     }

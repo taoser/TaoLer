@@ -5,50 +5,69 @@ declare(strict_types=1);
 namespace Intervention\Image\Drivers\Imagick\Modifiers;
 
 use ImagickDraw;
+use ImagickDrawException;
+use ImagickException;
 use ImagickPixel;
-use RuntimeException;
+use Intervention\Image\Drivers\Imagick\Traits\CanDraw;
+use Intervention\Image\Exceptions\ColorDecoderException;
+use Intervention\Image\Exceptions\ModifierException;
+use Intervention\Image\Exceptions\StateException;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Interfaces\SpecializedInterface;
 use Intervention\Image\Modifiers\DrawPolygonModifier as GenericDrawPolygonModifier;
 
 class DrawPolygonModifier extends GenericDrawPolygonModifier implements SpecializedInterface
 {
+    use CanDraw;
+
     /**
-     * @throws RuntimeException
+     * @throws ModifierException
+     * @throws StateException
+     * @throws ColorDecoderException
      */
     public function apply(ImageInterface $image): ImageInterface
     {
-        $drawing = new ImagickDraw();
-        $drawing->setFillColor(new ImagickPixel('transparent')); // defaults to no backgroundColor
-
-        if ($this->drawable->hasBackgroundColor()) {
-            $background_color = $this->driver()->colorProcessor($image->colorspace())->colorToNative(
-                $this->backgroundColor()
-            );
-
-            $drawing->setFillColor($background_color);
-        }
-
-        if ($this->drawable->hasBorder()) {
-            $border_color = $this->driver()->colorProcessor($image->colorspace())->colorToNative(
-                $this->borderColor()
-            );
-
-            $drawing->setStrokeColor($border_color);
-            $drawing->setStrokeWidth($this->drawable->borderSize());
-        }
-
-        $drawing->polygon($this->points());
+        $polygon = $this->polygon(
+            $this->driver()->colorProcessor($image)->export($this->backgroundColor()),
+            $this->driver()->colorProcessor($image)->export($this->borderColor()),
+        );
 
         foreach ($image as $frame) {
-            $frame->native()->drawImage($drawing);
+            $this->draw($frame->native(), $polygon);
         }
 
         return $image;
     }
 
     /**
-     * Return points of drawable in processable form for ImagickDraw
+     * Create drawable polygon.
+     *
+     * @throws ModifierException
+     */
+    private function polygon(ImagickPixel $backgroundColor, ImagickPixel $borderColor): ImagickDraw
+    {
+        try {
+            $polygon = new ImagickDraw();
+            $polygon->setFillColor($backgroundColor);
+
+            if ($this->drawable->hasBorder()) {
+                $polygon->setStrokeColor($borderColor);
+                $polygon->setStrokeWidth($this->drawable->borderSize());
+            }
+
+            $polygon->polygon($this->points());
+
+            return $polygon;
+        } catch (ImagickException | ImagickDrawException $e) {
+            throw new ModifierException(
+                'Failed to apply ' . self::class . ', unable to build ImagickDraw object',
+                previous: $e,
+            );
+        }
+    }
+
+    /**
+     * Return points of drawable in processable form for ImagickDraw.
      *
      * @return array<array<string, int>>
      */

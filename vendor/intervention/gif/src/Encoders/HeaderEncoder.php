@@ -9,18 +9,18 @@ use Intervention\Gif\Blocks\Header;
 class HeaderEncoder extends AbstractEncoder
 {
     /**
-     * Create new instance
+     * Create new instance.
      */
-    public function __construct(Header $source)
+    public function __construct(Header $entity)
     {
-        $this->source = $source;
+        parent::__construct($entity);
     }
 
     /**
-     * Encode current source
+     * Encode current entity.
      */
     public function encode(): string
     {
-        return Header::SIGNATURE . $this->source->getVersion();
+        return Header::SIGNATURE . $this->entity->version();
     }
 }

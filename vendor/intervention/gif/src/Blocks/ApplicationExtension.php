@@ -5,34 +5,34 @@ declare(strict_types=1);
 namespace Intervention\Gif\Blocks;
 
 use Intervention\Gif\AbstractExtension;
-use Intervention\Gif\Exceptions\RuntimeException;
+use Intervention\Gif\Exceptions\StateException;
 
 class ApplicationExtension extends AbstractExtension
 {
     public const LABEL = "\xFF";
 
     /**
-     * Application Identifier & Auth Code
+     * Application Identifier & Auth Code.
      */
     protected string $application = '';
 
     /**
-     * Data Sub Blocks
+     * Data Sub Blocks.
      *
      * @var array<DataSubBlock>
      */
     protected array $blocks = [];
 
     /**
-     * Get size of block
+     * Get size of block.
      */
-    public function getBlockSize(): int
+    public function blockSize(): int
     {
         return strlen($this->application);
     }
 
     /**
-     * Set application name
+     * Set application name.
      */
     public function setApplication(string $value): self
     {
@@ -42,15 +42,15 @@ class ApplicationExtension extends AbstractExtension
     }
 
     /**
-     * Get application name
+     * Get application name.
      */
-    public function getApplication(): string
+    public function application(): string
     {
         return $this->application;
     }
 
     /**
-     * Add block to application extension
+     * Add block to application extension.
      */
     public function addBlock(DataSubBlock $block): self
     {
@@ -60,7 +60,7 @@ class ApplicationExtension extends AbstractExtension
     }
 
     /**
-     *  Set data sub blocks of instance
+     *  Set data sub blocks of instance.
      *
      * @param array<DataSubBlock> $blocks
      */
@@ -72,24 +72,24 @@ class ApplicationExtension extends AbstractExtension
     }
 
     /**
-     * Get blocks of ApplicationExtension
+     * Get blocks of ApplicationExtension.
      *
      * @return array<DataSubBlock>
      */
-    public function getBlocks(): array
+    public function blocks(): array
     {
         return $this->blocks;
     }
 
     /**
-     * Get first block of ApplicationExtension
+     * Get first block of ApplicationExtension.
      *
-     * @throws RuntimeException
+     * @throws StateException
      */
-    public function getFirstBlock(): DataSubBlock
+    public function firstBlock(): DataSubBlock
     {
         if (!array_key_exists(0, $this->blocks)) {
-            throw new RuntimeException('Unable to retrieve data sub block.');
+            throw new StateException('Failed to retrieve data sub block');
         }
 
         return $this->blocks[0];

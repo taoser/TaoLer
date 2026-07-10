@@ -7,11 +7,13 @@ namespace Intervention\Gif\Decoders;
 use Intervention\Gif\Blocks\GraphicControlExtension;
 use Intervention\Gif\DisposalMethod;
 use Intervention\Gif\Exceptions\DecoderException;
+use TypeError;
+use ValueError;
 
 class GraphicControlExtensionDecoder extends AbstractPackedBitDecoder
 {
     /**
-     * Decode given string to current instance
+     * Decode given string to current instance.
      *
      * @throws DecoderException
      */
@@ -20,24 +22,24 @@ class GraphicControlExtensionDecoder extends AbstractPackedBitDecoder
         $result = new GraphicControlExtension();
 
         // bytes 1-3
-        $this->getNextBytesOrFail(3); // skip marker, label & bytesize
+        $this->nextBytesOrFail(3); // skip marker, label & bytesize
 
         // byte #4
-        $packedField = $this->getNextByteOrFail();
+        $packedField = $this->nextByteOrFail();
         $result->setDisposalMethod($this->decodeDisposalMethod($packedField));
         $result->setUserInput($this->decodeUserInput($packedField));
         $result->setTransparentColorExistance($this->decodeTransparentColorExistance($packedField));
 
         // bytes 5-6
-        $result->setDelay($this->decodeDelay($this->getNextBytesOrFail(2)));
+        $result->setDelay($this->decodeDelay($this->nextBytesOrFail(2)));
 
         // byte #7
         $result->setTransparentColorIndex($this->decodeTransparentColorIndex(
-            $this->getNextByteOrFail()
+            $this->nextByteOrFail()
         ));
 
         // byte #8 (terminator)
-        $this->getNextByteOrFail();
+        $this->nextByteOrFail();
 
         return $result;
     }
@@ -49,56 +51,65 @@ class GraphicControlExtensionDecoder extends AbstractPackedBitDecoder
      */
     protected function decodeDisposalMethod(string $byte): DisposalMethod
     {
-        return DisposalMethod::from(
-            intval(bindec($this->getPackedBits($byte, 3, 3)))
-        );
+        try {
+            return DisposalMethod::from(
+                intval(bindec($this->packedBits($byte, 3, 3)))
+            );
+        } catch (TypeError | ValueError $e) {
+            throw new DecoderException(
+                'Failed to decode disposal method in graphic control extension',
+                previous: $e,
+            );
+        }
     }
 
     /**
-     * Decode user input flag
+     * Decode user input flag.
      *
      * @throws DecoderException
      */
-    protected function decodeUserInput(string $byte): bool
+    private function decodeUserInput(string $byte): bool
     {
         return $this->hasPackedBit($byte, 6);
     }
 
     /**
-     * Decode transparent color existance
+     * Decode transparent color existance.
      *
      * @throws DecoderException
      */
-    protected function decodeTransparentColorExistance(string $byte): bool
+    private function decodeTransparentColorExistance(string $byte): bool
     {
         return $this->hasPackedBit($byte, 7);
     }
 
     /**
-     * Decode delay value
+     * Decode delay value.
      *
      * @throws DecoderException
      */
-    protected function decodeDelay(string $bytes): int
+    private function decodeDelay(string $bytes): int
     {
         $unpacked = unpack('v*', $bytes);
+
         if ($unpacked === false || !array_key_exists(1, $unpacked)) {
-            throw new DecoderException('Unable to decode animation delay.');
+            throw new DecoderException('Failed to decode animation delay in graphic control extension');
         }
 
         return $unpacked[1];
     }
 
     /**
-     * Decode transparent color index
+     * Decode transparent color index.
      *
      * @throws DecoderException
      */
-    protected function decodeTransparentColorIndex(string $byte): int
+    private function decodeTransparentColorIndex(string $byte): int
     {
         $unpacked = unpack('C', $byte);
+
         if ($unpacked === false || !array_key_exists(1, $unpacked)) {
-            throw new DecoderException('Unable to decode transparent color index.');
+            throw new DecoderException('Failed to decode transparent color index in graphic control extension');
         }
 
         return $unpacked[1];

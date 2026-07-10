@@ -296,34 +296,24 @@ class Set extends AdminBaseController
 	public function debugSwitch(): Json
 	{
 		$status = $this->request->param('status');
-	
+	// var_dump($status);
 		try {
 			$envFile = root_path() . '.env';
-			$appConfigFile = config_path() . 'app.php';
 			
 			if(file_exists($envFile)) {
-
 				$envStr = file_get_contents($envFile);
-				$appStr = file_get_contents($appConfigFile);
-
 				$envPatk = '/APP_DEBUG[^\r?\n]*/';
-				$appPatk = '/'.'exception_tmpl'.'[^\r?\n]*/';
-
 				if($status == 'true'){
 					$envReps = 'APP_DEBUG = true';
-					$appReps = "exception_tmpl' => app()->getThinkPath() . 'tpl/think_exception.tpl',";
-					$msg = '调试开启';
+					$msg = '调试打开';
 				} else {
 					$envReps = 'APP_DEBUG = false';
-					$appReps = "exception_tmpl' => app()->getAppPath() . '404.html',";
 					$msg = '调试关闭';
 				}
 
 				$envStr = preg_replace($envPatk, $envReps, $envStr);
-				$appStr = preg_replace($appPatk, $appReps, $appStr);
 
 				file_put_contents($envFile, $envStr);
-				file_put_contents($appConfigFile, $appStr);
 				
 				return json(['code' => 0, 'msg' => $msg]);
 			}

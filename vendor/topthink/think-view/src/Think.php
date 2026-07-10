@@ -98,7 +98,6 @@ class Think implements TemplateHandlerInterface
         if ('' == pathinfo($template, PATHINFO_EXTENSION)) {
             // 获取模板文件名
             $template = $this->parseTemplate($template);
-            
         } else{
             $path = $this->config['view_path'] ?: $this->getViewPath($this->app->http->getName());
             if (!is_file($template)) {
@@ -144,21 +143,12 @@ class Think implements TemplateHandlerInterface
     protected function getViewPath(string $app): string
     {
         $view  = $this->config['view_dir_name'] . DIRECTORY_SEPARATOR;
-
         $app   = $app ? str_replace('.', DIRECTORY_SEPARATOR, $app) . DIRECTORY_SEPARATOR : '';
-
-        var_dump($app);
-
         $paths = [
-            // 多应用|自定义多模块
             $this->app->getBasePath() . $app . $view,
-            // 默认单应用多模块
             $this->app->getBasePath() . $view . $app,
-            // 自定义多模块|
             $this->app->getRootPath() . $view . $app
         ];
-
-        dump($paths);
 
         foreach ($paths as $path) {
             if (is_dir($path)) {

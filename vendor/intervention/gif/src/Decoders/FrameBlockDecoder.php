@@ -18,7 +18,7 @@ use Intervention\Gif\Exceptions\DecoderException;
 class FrameBlockDecoder extends AbstractDecoder
 {
     /**
-     * Decode FrameBlock
+     * Decode FrameBlock.
      *
      * @throws DecoderException
      */
@@ -29,18 +29,18 @@ class FrameBlockDecoder extends AbstractDecoder
         do {
             $block = match ($this->viewNextBytesOrFail(2)) {
                 AbstractExtension::MARKER . GraphicControlExtension::LABEL
-                => GraphicControlExtension::decode($this->handle),
+                => GraphicControlExtension::decode($this->stream),
                 AbstractExtension::MARKER . NetscapeApplicationExtension::LABEL
-                => NetscapeApplicationExtension::decode($this->handle),
+                => NetscapeApplicationExtension::decode($this->stream),
                 AbstractExtension::MARKER . ApplicationExtension::LABEL
-                => ApplicationExtension::decode($this->handle),
+                => ApplicationExtension::decode($this->stream),
                 AbstractExtension::MARKER . PlainTextExtension::LABEL
-                => PlainTextExtension::decode($this->handle),
+                => PlainTextExtension::decode($this->stream),
                 AbstractExtension::MARKER . CommentExtension::LABEL
-                => CommentExtension::decode($this->handle),
+                => CommentExtension::decode($this->stream),
                 default => match ($this->viewNextByteOrFail()) {
-                    ImageDescriptor::SEPARATOR => TableBasedImage::decode($this->handle),
-                    default => throw new DecoderException('Unable to decode Data Block'),
+                    ImageDescriptor::SEPARATOR => TableBasedImage::decode($this->stream),
+                    default => throw new DecoderException('Failed to decode data block'),
                 }
             };
 

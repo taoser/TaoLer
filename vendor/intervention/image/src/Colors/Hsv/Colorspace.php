@@ -4,66 +4,103 @@ declare(strict_types=1);
 
 namespace Intervention\Image\Colors\Hsv;
 
+use Intervention\Image\Colors\AbstractColorspace;
 use Intervention\Image\Colors\Cmyk\Color as CmykColor;
-use Intervention\Image\Colors\Rgb\Color as RgbColor;
 use Intervention\Image\Colors\Hsl\Color as HslColor;
+use Intervention\Image\Colors\Hsv\Color as HsvColor;
+use Intervention\Image\Colors\Oklab\Color as OklabColor;
+use Intervention\Image\Colors\Oklch\Color as OklchColor;
+use Intervention\Image\Colors\Rgb\Color as RgbColor;
 use Intervention\Image\Colors\Rgb\Colorspace as RgbColorspace;
+use Intervention\Image\Colors\Rgb\NamedColor;
 use Intervention\Image\Exceptions\ColorException;
+use Intervention\Image\Exceptions\InvalidArgumentException;
 use Intervention\Image\Interfaces\ColorChannelInterface;
 use Intervention\Image\Interfaces\ColorInterface;
-use Intervention\Image\Interfaces\ColorspaceInterface;
+use TypeError;
 
-class Colorspace implements ColorspaceInterface
+class Colorspace extends AbstractColorspace
 {
     /**
-     * Channel class names of colorspace
+     * Channel class names of colorspace.
      *
      * @var array<string>
      */
     public static array $channels = [
         Channels\Hue::class,
         Channels\Saturation::class,
-        Channels\Value::class
+        Channels\Value::class,
+        Channels\Alpha::class,
     ];
 
     /**
      * {@inheritdoc}
      *
      * @see ColorspaceInterface::colorFromNormalized()
+     *
+     * @throws InvalidArgumentException
      */
-    public function colorFromNormalized(array $normalized): ColorInterface
+    public static function colorFromNormalized(array $normalized): HsvColor
     {
+        if (!in_array(count($normalized), [3, 4])) {
+            throw new InvalidArgumentException('Number of color channels must be 3 or 4 for ' . static::class);
+        }
+
+        // add alpha value if missing
+        $normalized = count($normalized) === 3 ? array_pad($normalized, 4, 1) : $normalized;
+
         return new Color(...array_map(
-            fn(string $classname, float $value_normalized) => (new $classname(normalized: $value_normalized))->value(),
+            function (string $channel, null|float $normalized) {
+                try {
+                    return $channel::fromNormalized($normalized);
+                } catch (TypeError $e) {
+                    throw new InvalidArgumentException(
+                        'Normalized color value must be in range 0 to 1',
+                        previous: $e,
+                    );
+                }
+            },
             self::$channels,
-            $normalized
+            $normalized,
         ));
     }
 
     /**
+     * {@inheritdoc}
+     *
+     * @see ColorspaceInterface::importColor()
+     *
+     * @throws InvalidArgumentException
      * @throws ColorException
      */
-    public function importColor(ColorInterface $color): ColorInterface
+    public function importColor(ColorInterface $color): HsvColor
     {
         return match ($color::class) {
-            CmykColor::class => $this->importRgbColor($color->convertTo(RgbColorspace::class)),
+            CmykColor::class,
+            OklchColor::class,
+            NamedColor::class,
+            OklabColor::class => $this->importViaRgbColor($color),
             RgbColor::class => $this->importRgbColor($color),
             HslColor::class => $this->importHslColor($color),
-            default => $color,
+            HsvColor::class => $color,
+            default => throw new ColorException(
+                'Unable to import color ' . $color::class . ' to ' . $this::class,
+            ),
         };
     }
 
     /**
+     * Import given RGB color to HSV colorspace.
+     *
      * @throws ColorException
      */
-    protected function importRgbColor(ColorInterface $color): ColorInterface
+    private function importRgbColor(RgbColor $color): HsvColor
     {
-        if (!($color instanceof RgbColor)) {
-            throw new ColorException('Unabled to import color of type ' . $color::class . '.');
-        }
-
         // normalized values of rgb channels
-        $values = array_map(fn(ColorChannelInterface $channel): float => $channel->normalize(), $color->channels());
+        $values = array_map(
+            fn(ColorChannelInterface $channel): float => $channel->normalized(),
+            $color->channels(),
+        );
 
         // take only RGB
         $values = array_slice($values, 0, 3);
@@ -76,9 +113,16 @@ class Colorspace implements ColorspaceInterface
         // calculate value
         $v = 100 * $max;
 
-        if ($chroma == 0) {
-            // greyscale color
-            return new Color(0, 0, intval(round($v)));
+        if ($chroma === 0.0) {
+            // grayscale color
+            try {
+                return new Color(0, 0, intval(round($v)), $color->alpha()->normalized());
+            } catch (InvalidArgumentException $e) {
+                throw new ColorException(
+                    'Failed to import color ' . $color::class . ' to ' . $this::class,
+                    previous: $e,
+                );
+            }
         }
 
         // calculate saturation
@@ -87,36 +131,69 @@ class Colorspace implements ColorspaceInterface
         // calculate hue
         [$r, $g, $b] = $values;
         $h = match (true) {
-            ($r == $min) => 3 - (($g - $b) / $chroma),
-            ($b == $min) => 1 - (($r - $g) / $chroma),
+            ($r === $min) => 3 - (($g - $b) / $chroma),
+            ($b === $min) => 1 - (($r - $g) / $chroma),
             default => 5 - (($b - $r) / $chroma),
         } * 60;
 
-        return new Color(
-            intval(round($h)),
-            intval(round($s)),
-            intval(round($v))
-        );
+        try {
+            return new Color(
+                intval(round($h)),
+                intval(round($s)),
+                intval(round($v)),
+                $color->alpha()->normalized(),
+            );
+        } catch (InvalidArgumentException $e) {
+            throw new ColorException(
+                'Failed to import color ' . $color::class . ' to ' . $this::class,
+                previous: $e,
+            );
+        }
     }
 
     /**
-     * @throws ColorException
+     * Import given HSL color to HSV colorspace.
+     *
+     * @throws InvalidArgumentException
      */
-    protected function importHslColor(ColorInterface $color): ColorInterface
+    protected function importHslColor(ColorInterface $color): HsvColor
     {
-        if (!($color instanceof HslColor)) {
-            throw new ColorException('Unabled to import color of type ' . $color::class . '.');
+        if (!$color instanceof HslColor) {
+            throw new InvalidArgumentException('Color must be of type ' . HslColor::class);
         }
 
         // normalized values of hsl channels
         [$h, $s, $l] = array_map(
-            fn(ColorChannelInterface $channel): float => $channel->normalize(),
-            $color->channels()
+            fn(ColorChannelInterface $channel): float => $channel->normalized(),
+            $color->channels(),
         );
 
         $v = $l + $s * min($l, 1 - $l);
-        $s = ($v == 0) ? 0 : 2 * (1 - $l / $v);
+        $s = ($v === 0.0) ? 0 : 2 * (1 - $l / $v);
 
-        return $this->colorFromNormalized([$h, $s, $v]);
+        return $this->colorFromNormalized([$h, $s, $v, $color->alpha()->normalized()]);
+    }
+
+    /**
+     * Import given color to HSV color space by converting it to RGB first.
+     *
+     * @throws ColorException
+     */
+    private function importViaRgbColor(NamedColor|CmykColor|OklchColor|OklabColor $color): HsvColor
+    {
+        try {
+            $color = $color->toColorspace(RgbColorspace::class);
+        } catch (InvalidArgumentException $e) {
+            throw new ColorException(
+                'Failed to import color ' . $color::class . ' to ' . $this::class,
+                previous: $e,
+            );
+        }
+
+        if (!$color instanceof RgbColor) {
+            throw new ColorException('Failed to import color ' . $color::class . ' to ' . $this::class);
+        }
+
+        return $this->importRgbColor($color);
     }
 }

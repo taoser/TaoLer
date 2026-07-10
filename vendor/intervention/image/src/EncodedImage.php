@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace Intervention\Image;
 
+use Intervention\Image\Exceptions\InvalidArgumentException;
+use Intervention\Image\Exceptions\StreamException;
+use Intervention\Image\Interfaces\DataUriInterface;
 use Intervention\Image\Interfaces\EncodedImageInterface;
+use Throwable;
 
 class EncodedImage extends File implements EncodedImageInterface
 {
     /**
-     * Create new instance
+     * Create new instance.
      *
      * @param string|resource $data
+     * @throws InvalidArgumentException
+     * @throws StreamException
      */
     public function __construct(
         mixed $data,
-        protected string $mediaType = 'application/octet-stream'
+        protected string $mediaType = 'application/octet-stream',
     ) {
         parent::__construct($data);
     }
@@ -44,22 +50,45 @@ class EncodedImage extends File implements EncodedImageInterface
      * {@inheritdoc}
      *
      * @see EncodedImageInterface::toDataUri()
+     *
+     * @throws StreamException
      */
-    public function toDataUri(): string
+    public function toDataUri(): DataUriInterface
     {
-        return sprintf('data:%s;base64,%s', $this->mediaType(), base64_encode((string) $this));
+        return DataUri::create(
+            data: (string) $this,
+            mediaType: $this->mediaType(),
+        );
     }
 
     /**
-     * Show debug info for the current image
+     * {@inheritdoc}
+     *
+     * @see EncodedImageInterface::toBase64()
+     *
+     * @throws StreamException
+     */
+    public function toBase64(): string
+    {
+        return base64_encode((string) $this);
+    }
+
+    /**
+     * Show debug info for the current image.
      *
      * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {
+        try {
+            $size = $this->size();
+        } catch (Throwable) {
+            $size = 0;
+        }
+
         return [
             'mediaType' => $this->mediaType(),
-            'size' => $this->size(),
+            'size' => $size,
         ];
     }
 }
