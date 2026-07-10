@@ -1,6 +1,6 @@
 <h1 align="center">Easy SMS</h1>
 
-<p align="center">:calling: 一款满足你的多种发送需求的短信发送组件</p>
+<p align="center">:calling: 一款多渠道的短信发送组件</p>
 
 <p align="center">
 <a href="https://packagist.org/packages/overtrue/easy-sms"><img src="https://poser.pugx.org/overtrue/easy-sms/v/stable.svg" alt="Latest Stable Version"></a>
@@ -63,7 +63,7 @@
 
 ## 环境需求
 
-- PHP >= 5.6
+- PHP >= 8.4
 
 ## 安装
 
@@ -390,6 +390,33 @@ $easySms->send($phone_number, [
     'template' => 'SMS_00000001', // 模板ID
     'data' => [
         "code" => 521410,
+    ],
+]);
+```
+
+
+### [阿里云短信认证](https://help.aliyun.com/zh/pnvs/getting-started/sms-authentication-service-novice-guide)
+
+短信内容使用 `template` + `data`
+
+```php
+    'aliyundypns' => [
+        'access_key_id' => '',
+        'access_key_secret' => '',
+        'sign_name' => '', // 不可自定义，可选：速通互联验证码、云渚科技验证服务等
+    ],
+```
+
+发送示例：
+
+```php
+$easySms = new EasySms($config);
+
+$easySms->send('18888888888', [
+    'template' => '100001', // 模板ID，详见：https://dypns.console.aliyun.com/smsCertParamsConfig
+    'data' => [
+        "code" => 1234,
+        "min" => 5, // 有效时间（分钟）
     ],
 ]);
 ```

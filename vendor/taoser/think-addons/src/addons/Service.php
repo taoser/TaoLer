@@ -11,6 +11,7 @@ use think\facade\Cache;
 use think\facade\Event;
 use taoser\addons\middleware\Addons;
 use think\facade\Request;
+use app\middleware\AccessControl;
 
 /**
  * 插件服务
@@ -60,7 +61,10 @@ class Service extends \think\Service
                 }
 
                 // 注册控制器路由
-                $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+                // $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+                $route->group('addons',function()use ($route,$execute){
+                    $route->rule(":addon/[:controller]/[:action]", $execute);
+                })->middleware(AccessControl::class);
 
                 // 自定义路由
                 $routes = (array) Config::get('addons.route', []);

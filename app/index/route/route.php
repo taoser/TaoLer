@@ -10,25 +10,23 @@
  */
 use think\facade\Route;
 
-Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
-
-Route::get('/', 'index'); // 首页访问路由
-
-// 测试图片访问
-Route::get('fverify', 'staticfile/verify'); // 首页访问路由
-
-Route::rule('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
-
-// 定义主域名路由
-// Route::group('index',function(){
-// })->namespace('app\index\controller');
-
-	Route::get('index/<page>$', 'index')->name('index_page')->pattern([
+	Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
+	// 首页访问路由
+	Route::get('/', 'index/index'); 
+	// 首页加载页码路由
+	Route::get('index/<page>$', 'index/index')->name('index_page')
+	->pattern([
 		'page'   => '\d+',
-	]); // 首页页码路由
-	
+	]);
+
+	// 测试图片访问
+	Route::get('fverify', 'staticfile/verify'); // 首页访问路由
+	// 静态图片转换路由
+	Route::rule('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
+
 	Route::get('index/reply$','index/reply')->name('user_reply');
 	Route::rule('search','Search/getSearch')->name('user_search');
+	Route::rule('search/[:keywords]$', 'index/search'); // 搜索
 	Route::get('message/nums$','message/nums')->name('user_message');
 	
 	// 用户中心
@@ -54,13 +52,13 @@ Route::rule('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\stati
 	
 	// 登录注册
 	Route::group(function () {
-		Route::rule('user_login$','index')->name('user_login');
-		Route::rule('user_forget$','forget')->name('user_forget');
-		Route::rule('user_reg$','reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
+		Route::rule('user-login$','index')->name('user_login');
+		Route::rule('user-forget$','forget')->name('user_forget');
+		Route::rule('user-reg$','reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
 		Route::rule('postcode$','postcode');
 		Route::rule('sentemailcode$','sentMailCode');
 		Route::rule('respass$','respass');
-		Route::get('login_status', 'status')->name('login_status');
+		Route::get('login-status', 'status')->name('login_status');
 	})->prefix('login/');
 	
 	// comment
@@ -72,13 +70,10 @@ Route::rule('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\stati
 		Route::get('arttag$','getArticleTag')->name('get_art_tag');
 		Route::get('tag/<ename>$', 'list')->name('tag_list');
 	})->prefix('tag/');
-	
-	
-	Route::rule('search/[:keywords]', 'index/search'); // 搜索
+
 	
 	// article分类和详情路由 ！放到最后！
 	Route::group(function (){
-	
 		Route::rule('article/add/<cate?>','add')->name('add_article');
 		Route::rule('article/delete/<id>$','delete');
 		Route::rule('article/tags','tags')->allowCrossDomain();
@@ -93,7 +88,7 @@ Route::rule('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\stati
 		
 		// 分类
 		$cate_as = config('taoler.url_rewrite.cate_as'); //分类别称
-		// var_dump($cate_as);
+		
 		Route::get('<ename>$','cate')->name('cate');
 		Route::get($cate_as.'<ename>/type-<type>$', 'cate')->name('cate_type');
 		Route::get($cate_as.'<ename>/type-<type>/<page>$', 'cate')->name('cate_page');

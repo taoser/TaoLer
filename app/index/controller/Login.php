@@ -11,10 +11,16 @@ use think\facade\Config;
 use app\facade\User;
 use Exception;
 use app\index\controller\IndexBaseController;
+use think\Response;
 
 class Login extends IndexBaseController
 {
-	protected $userModel = null;
+	/**
+	 * 用户模型
+	 *
+	 * @var User
+	 */
+	protected $userModel;
 
 	//已登陆中间件检测
 	protected $middleware = [
@@ -56,7 +62,6 @@ class Login extends IndexBaseController
 			//登陆请求
 			try{
 				//邮箱正则表达式
-				// $patternEmail = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
 				// 包含英文和中文用户名邮箱
 				$patternEmail = "/^[A-Za-z0-9\x{4e00}-\x{9fa5}]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/u";
 				$patternTel = "/^1[3-9]\d{9}$/";
@@ -300,16 +305,18 @@ class Login extends IndexBaseController
 		
 	}
 
-	public function status() {
-		$user = $this->user;
-		if(empty($user)) {
-			return json(['code' => 0]);
+	public function status() : Response
+	{
+		$isLogin = $this->request->user;
+		if(!$isLogin) {
+			return json(['code' => 0, 'data' => []]);
 		}
 
+		$user = $this->request->user;
 		$data = [
-			'name' => $user['name'],
-			'avatar' => $user['user_img'],
-			'user_home' => (string) url('user_home', ['id' => $user['id']])
+			'name'		=> $user['name'],
+			'avatar'	=> $user['user_img'],
+			'user_home'	=> (string) url('user_home', ['id' => $user['id']])
 		];
 
 		return json(['code' => 1, 'msg' => 'ok', 'data' => $data]);

@@ -52,15 +52,12 @@ class IndexBaseController extends \app\BaseController
     {
 		$this->uid = session('?user_id') ? (int)session('user_id') : null;
 
-		$this->user = $this->userInfo();
+		// $this->user = $this->userInfo();
 
 		$this->adminEmail = Db::name('user')->where('id',1)->cache('adminEmail',3600)->value('email');
 
 		//系统配置
 		$this->showSystem();
-
-		//变量赋给模板
-		View::assign('user', $this->user);
 
 	}
 

@@ -357,18 +357,17 @@ class Index extends AdminBaseController
 				$appArr = "exception_tmpl' => app()->getThinkPath() . 'tpl/think_exception.tpl',";
 			} else {
 				$reps = 'APP_DEBUG = false';
-				$appArr = "exception_tmpl' => app()->getAppPath() . '404.html',";
+				$appArr = "exception_tmpl' => public_path() . '404.html',";
 			}
 			$str = preg_replace($patk, $reps, $str);
 			file_put_contents($env, $str);
 
 			$appStr = preg_replace($appPatk, $appArr, $appStr);
 			$res = file_put_contents($app, $appStr) ? true : false;
-			if($res == true){
+			if($res){
 				return json(['code'=>0,'msg'=>'设置成功']);
-			} else {
-				return json(['code'=>-1,'msg'=>'开启失败']);
 			}
+			return json(['code'=>-1,'msg'=>'开启失败']);
 		}
 		
 	}

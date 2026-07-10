@@ -19,6 +19,7 @@ use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Request;
+use think\Response;
 
 class AdminAuth
 {
@@ -102,7 +103,6 @@ class AdminAuth
             if (!in_array($path, $not_check_list)) {
                 $auth     = new UserAuth();
                 if (!$auth->check($path, $admin_id)) {
-                    //return view('public/auth');
                     return response("<script>alert('没有操作权限')</script>");
                 }
             }

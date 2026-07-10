@@ -2,11 +2,11 @@
 
 namespace app\middleware;
 use think\facade\Db;
-use think\facade\Request;
+use think\Request;
 
 class CheckRegister
 {
-    public function handle($request, \Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
 		//排除禁止注册用户名的字段
 		if($request->action(true) == 'reg'){
