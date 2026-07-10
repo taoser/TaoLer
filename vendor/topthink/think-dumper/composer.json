@@ -1,0 +1,32 @@
+{
+    "name": "topthink/think-dumper",
+    "description": "Dumper extend for thinkphp",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "yunwuxin",
+            "email": "448901948@qq.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "think\\dumper\\": "src"
+        },
+        "files": [
+            "src/helper.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "think\\tests\\dumper\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=8.0.2",
+        "topthink/framework": "^6.0|^8.0",
+        "symfony/var-dumper": ">=6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.4"
+    }
+}
