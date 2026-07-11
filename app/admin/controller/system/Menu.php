@@ -77,11 +77,6 @@ class Menu extends AdminBaseController
             }
         }
 
-        //  $cmf_arr = array_column($menu, 'sort');
-        // array_multisort($cmf_arr, SORT_ASC, $menu);
-
-        // halt($menu);
-
         $nav = $this->getTrees($menu);
 
         // halt($nav);

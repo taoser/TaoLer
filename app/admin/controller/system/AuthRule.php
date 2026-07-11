@@ -53,21 +53,20 @@ class AuthRule extends AdminBaseController
 	{
 		$authRules = Db::name('auth_rule')
 		->field('id,pid,title,name,icon,status,ismenu,sort,create_time')
+		->order('sort','asc')
 		->select()
 		->toArray();
 
 		if(empty($authRules)) {
-			return json(['code' => 1, 'msg' => '权限列表为空！']);
+			return json(['code' => 1, 'msg' => 'no data']);
 		}
 
 		foreach($authRules as $key => $value){
 			// $authRules[$key]['title'] = Lang::get($value['title']);
 			$authRules[$key]['icon'] = empty($value['icon']) ? '' : 'layui-icon ' . $value['icon'];
-			$authRules[$key]['enable'] = $value['status'];
-			$authRules[$key]['powerType'] = $value['ismenu'];
 		}
 
-		$data = $this->getRuleTree($authRules);
+		$data = build_tree($authRules);
 
 		return json(['code' => 0,'msg' => 'ok','data' => $data]);
 	}
@@ -158,7 +157,7 @@ class AuthRule extends AdminBaseController
 		$auth_rules = $this->model->getAuthRuleArray();
 		$rules = $this->model->find($id);
 
-		View::assign(['AuthRule' => $auth_rules,'rules' => $rules]);
+		View::assign(['AuthRule' => $auth_rules, 'rules' => $rules]);
 
 		return View::fetch();
 	}

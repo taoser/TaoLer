@@ -14,10 +14,17 @@ use Exception;
 
 class User extends BaseModel
 {
-    protected $pk = 'id'; //主键
-    protected $autoWriteTimestamp = true; //开启自动时间戳
-    protected $createTime = 'false';
-    protected $updateTime = 'update_time';
+    //软删除
+    use SoftDelete;
+
+    protected function getOptions(): array 
+    {
+        return [
+            'readonly' =>  ['name'],
+            'deleteTime' => 'delete_time',
+        ];
+    }
+
     protected $loggedUser;
     //protected $auto = ['password']; //定义自动处理的字段
     //自动对password进行md5加密
@@ -25,12 +32,9 @@ class User extends BaseModel
         return md5($value);
     }
 
-    //软删除
-    use SoftDelete;
-	protected $deleteTime = 'delete_time';
+    
+
 	protected $defaultSoftDelete = 0;
-    //只读字段,禁止更改
-    //protected $readonly = ['email'];
 	
 	//用户关联评论
 	public function comments()

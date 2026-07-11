@@ -58,7 +58,6 @@ class Index extends IndexBaseController
     public function index()
     {
 
-
 	// hook('signhook', ['id'=>1]);
 
 // 查看已注册的路由

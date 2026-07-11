@@ -17,9 +17,10 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
+use think\facade\Cache;
 use taoser\think\Auth;
 use think\response\Json;
-
+use taoler\com\Files;
 
 
 class Admin extends AdminBaseController
@@ -248,11 +249,18 @@ class Admin extends AdminBaseController
      */
 	public function clearCache()
     {
-        $res = $this->clearSysCache();
-        if($res){
-           return json(['code'=>0,'msg'=>'清除缓存成功']);
-        }
-		return json(['code'=>-1,'msg'=>'清除缓存失败']);
+		try{
+			//清理缓存
+			Cache::clear();
+			// 清除临时文件
+			$temp = str_replace('\\',"/", runtime_path().'temp/');
+			Files::delDirAndFile($temp);
+
+			return json(['code' => 0,'msg'=>'清除缓存成功']);
+
+		} catch (\Exception $e) {
+			return json(['code' => -1, 'msg' => $e->getMessage()]);
+		}
     }
 	
 	//退出登陆

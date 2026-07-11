@@ -36,18 +36,21 @@ use app\common\lib\facade\HttpHelper;
 
 class Upgrade extends AdminBaseController
 {
-    protected $root_dir = "../";	//站点代码的根目录
-    protected $backup_dir = "../runtime/update/backup_dir/";	//备份目录
-    protected $upload_dir = "../runtime/update/upload_dir/";	//升级包目录
-    protected $sys_version_num;	//当前系统的版本
-	protected $sys_version = '';
-    protected $pn = '';
-    protected $sys = '';
+    protected string $root_dir;	
+    protected string $backup_dir;
+    protected string $upload_dir;
+	protected string $sys_version;
+    protected string $pn;
+    protected array $sys; 
 	
 	public function initialize()
 	{
 		parent::initialize();
         // 初始化系统信息
+        //站点代码的根目录
+        $this->$root_dir = root_path();
+        $this->$backup_dir = "../runtime/update/backup_dir/";
+        $this->$upload_dir = "../runtime/update/upload_dir/";
 		$this->sys_version = Config::get('taoler.version');
 		$this->pn = Config::get('taoler.appname');
 		$this->sys = $this->getSystem();
@@ -59,10 +62,11 @@ class Upgrade extends AdminBaseController
     {	//字符隐藏
 		$key = Str::func_substr_replace($this->sys['key']);
 		$sys_base = [
-			'key' => $key,
-			'upcheck_url' => $this->sys['upcheck_url'],
-			'upgrade_url' => $this->sys['upgrade_url'],
+			'key'           => $key,
+			'upcheck_url'   => $this->sys['upcheck_url'],
+			'upgrade_url'   => $this->sys['upgrade_url'],
 		];
+        
 		View::assign('ver_num',$sys_base);
        return View::fetch(); 
     }
@@ -343,9 +347,6 @@ class Upgrade extends AdminBaseController
 		
         //执行升级
         $upres = $this->execute_update($mfile);
-
-        //更新版本
-        //Db::name('system')->update(['sys_version_num'=>$version_num,'id'=>1]);
    
         $value = [
             'version'    => $version_num

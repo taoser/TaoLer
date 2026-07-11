@@ -104,17 +104,26 @@ class Category extends BaseEntity
         return json(['code' => 0, 'msg' => 'ok']);
 	}
 
-    // 分类表
-    public function getList()
+    // 无限极分类树 2026.07.11
+    public function getList() : array
     {
-        $data = self::where('status', 1)->field('id,pid,ename,type,sort,catename,tpl,icon,status,is_hot,desc,url,image')->append(['url'])->select()->toArray();
-        if(count($data)) {
-            // 排序
-            $cmf_arr = array_column($data, 'sort');
-            array_multisort($cmf_arr, SORT_ASC, $data);
-            return json(['code'=>0,'msg'=>'ok', 'count' => count($data),'data'=>$data]);
+        $data = $this->where('status', 1)
+        ->field('id,pid,ename,type,sort,catename,tpl,icon,status,is_hot,desc,url,image')
+        ->append(['url'])
+        ->order('sort asc')
+        ->cache(true, 900)
+        ->select()
+        ->toArray();
+
+        if(empty($data)) {
+            return [];
         }
-        return json(['code'=>-1,'msg'=>'no data','data'=>'']);
+
+        foreach($data as $key => $value){
+            $data[$key]['icon'] = empty($value['icon']) ? '' : 'layui-icon ' . $value['icon'];
+        }
+
+        return $data;
     }
 
     // 如果菜单下无内容，URl不能点击
@@ -128,20 +137,21 @@ class Category extends BaseEntity
             ->toArray();
     }
 
-    // 分类导航菜单
-    public function getNav()
+    /**
+     * 无限极分类树 导航菜单
+     *
+     * @return array
+     */
+    public function getNav(): array
     {
-        
         $list = $this->where('status', 1)
-            // ->cache(3600)
+            ->order('sort asc')
             ->append(['url'])
+            ->cache(3600)
             ->select()
             ->toArray();
-        // 排序
-        $cmf_arr = array_column($list, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $list);
-        return getTree($list);
-       
+
+        return build_tree($list);;
     }
 
     /**

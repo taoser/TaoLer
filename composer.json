@@ -20,6 +20,7 @@
         "topthink/framework": "^8.1",
         "topthink/think-orm": "^4.0",
         "topthink/think-filesystem": "^3.0",
+        "topthink/think-captcha": "^3.0",
         "taoser/think-addons": "^2.2",
         "taoser/think-auth": "^2.0",
         "taoser/think-setarr": "^0.0.5",
@@ -32,7 +33,6 @@
         "intervention/image": "^4.1",
         "endroid/qr-code": "^6.1",
         "sqids/sqids": "^0.5.0",
-        "topthink/think-captcha": "^3.0",
         "overtrue/easy-sms": "^3.3",
         "yansongda/pay": "~3.7.0",
         "illuminate/container": "^13.19"

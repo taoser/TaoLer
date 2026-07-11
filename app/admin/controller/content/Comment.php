@@ -111,7 +111,7 @@ class Comment extends AdminBaseController
                         'content'   => mb_substr(strip_tags($v['content']), 0, 100, 'UTF-8'),
                         'replytime' => date('Y-m-d H:i:s', $v['create_time']),
                         'check'     => (int)$v['astatus'],
-                        'url'       => $this->getArticleUrl((int)$v['cid'], 'index', $v['ename'])
+                        'url'       => (string) url('article_detail', ['id' => $v['cid'], 'ename' => $v['ename']])
                     ];
                 }
             }

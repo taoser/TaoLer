@@ -432,9 +432,13 @@ class Article extends IndexBaseController
      */
     public function getCateTree()
     {
-        $cateList = Category::field('id,pid,catename,sort')->where(['status' => 1])->select()->toArray();
+        $cateList = Category::field('id,pid,catename,sort')
+		->order('sort','asc')
+		->where(['status' => 1])
+		->select()
+		->toArray();
 
-		$list = getArrayTree($cateList);
+		$list = build_tree($cateList);
 
         $count = count($list);
 

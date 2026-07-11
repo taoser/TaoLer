@@ -31,17 +31,17 @@
 </script>
 
 <script type="text/html" id="power-type">
-    {{#if (d.powerType == '0') { }}
+    {{#if (d.type == '0') { }}
     <span>目录</span>
-    {{# }else if(d.powerType == '1'){ }}
+    {{# }else if(d.type == '1'){ }}
     <span>菜单</span>
-    {{# }else if(d.powerType == '2'){ }}
+    {{# }else if(d.type == '2'){ }}
     <span>权限</span>
     {{# } }}
 </script>
 
-<script type="text/html" id="power-enable">
-    <input type="checkbox" name="enable" value="{{d.id}}" {{# if (d.id == 1 || d.id == 31){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="rule-enable"  {{ d.enable == 1 ? 'checked' : '' }} />
+<script type="text/html" id="power-status">
+    <input type="checkbox" name="status" value="{{d.id}}" {{# if (d.id == 1 || d.id == 31){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="rule-status"  {{ d.status == 1 ? 'checked' : '' }} />
 </script>
 
 {__block__}
@@ -74,7 +74,7 @@
             /*
             // 异步加载子节点
             async: {
-                enable: true,
+                status: true,
                 url: '/static/json/2/treeTable/demo-async.json', // 此处为静态模拟数据，实际使用时需换成真实接口
                 autoParam: ["parentId=id"]
             }
@@ -94,7 +94,7 @@
                 {field: 'title', minWidth: 200, title: '标题'},
                 {field: 'name', minWidth: 200, title: '标识'},
                 {field: 'type', width: 100, title: '类型', templet:'#power-type', align: 'center'},
-                {field: 'enable', width: 100, title: '是否可用',templet:'#power-enable', align: 'center'},
+                {field: 'status', width: 100, title: '是否可用',templet:'#power-status', align: 'center'},
                 {field: 'sort', width: 80, title: '排序', align: 'center'},
                 {title: '操作', templet: '#bar', width: 150, align: 'center'}
             ]]
@@ -121,8 +121,7 @@
             }
         });
 
-        form.on('switch(rule-enable)', function(obj) {
-            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+        form.on('switch(rule-status)', function(obj) {
             var status = obj.elem.checked ? 1 : -1;
             $.ajax({
                 type:'post',
@@ -164,7 +163,7 @@
 
                 let loading = layer.load();
                 $.ajax({
-                    url: RULES_DELETE+"?id="+obj.data['powerId'],
+                    url: RULES_DELETE+"?id="+obj.data['id'],
                     dataType:'json',
                     type:'delete',
                     success:function(res){
@@ -181,42 +180,6 @@
             });
         }
 
-        window.batchRemove = function(obj) {
-            let data = table.checkStatus(obj.config.id).data;
-            if (data.length === 0) {
-                layer.msg("未选中数据", {
-                    icon: 3,
-                    time: 1000
-                });
-                return false;
-            }
-            let ids = "";
-            for (let i = 0; i < data.length; i++) {
-                ids += data[i].powerId + ",";
-            }
-            ids = ids.substr(0, ids.length - 1);
-            layer.confirm('确定要删除这些权限', {
-                icon: 3,
-                title: '提示'
-            }, function(index) {
-                layer.close(index);
-                let loading = layer.load();
-                $.ajax({
-                    url: MODULE_PATH + "batchRemove/" + ids,
-                    dataType: 'json',
-                    type: 'delete',
-                    success: function(res) {
-                        layer.close(loading);
-                        if(res.code) {
-                            return popup.failure(res.msg);
-                        }
-                        return popup.success(res.msg, function() {
-                            table.reload('rule-table');
-                        });
-                    }
-                })
-            });
-        }
     })
 </script>
 

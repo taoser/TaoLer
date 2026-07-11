@@ -36,11 +36,11 @@ class Index
         header('Connection: keep-alive');
         header('X-Accel-Buffering: no'); // 关闭Nginx缓冲
 
-        $data = Request::param(['admin_email','admin_user','admin_pass','admin_pass2','webname','webtitle','DB_HOST','DB_USER','DB_PWD','DB_PORT','DB_NAME','DB_PREFIX','DB_TYPE' ]);
+        $data = Request::param(['admin_email','admin_user','admin_pass','admin_pass2','webname','webtitle','DB_HOST','DB_USER','DB_PASS','DB_PORT','DB_NAME','DB_PREFIX','DB_TYPE' ]);
             
         $installer = new DbInstaller($data);
 
-        if(empty($data['DB_NAME']) || empty($data['DB_USER']) || empty($data['DB_PWD'])){
+        if(empty($data['DB_NAME']) || empty($data['DB_USER']) || empty($data['DB_PASS'])){
             $installer->sendMsg('error', "数据库名、用户名、密码不能为空");
             $installer->close();
             return;
@@ -71,7 +71,7 @@ class Index
 <?php
 return [
 	// 默认使用的数据库连接配置
-    'default'         => env('database.driver', 'mysql'),
+    'default'         => env('DB_DRIVER', 'mysql'),
     // 自定义时间查询规则
     'time_query_rule' => [],
     // 自动写入时间戳字段
@@ -84,45 +84,45 @@ return [
     'datetime_field'  => '',
     // 数据库连接配置信息
     'connections'     => [
-	'mysql' => [
-		// 数据库类型
-		'type'              => env('DB_TYPE', 'mysql'),
-		// 服务器地址
-		'hostname'          => env('DB_HOST', '{$data['DB_HOST']}'),
-		// 数据库名
-		'database'          => env('DB_NAME', '{$data['DB_NAME']}'),
-		// 用户名
-		'username'          => env('DB_USER', '{$data['DB_USER']}'),
-		// 密码
-		'password'          => env('DB_PWD', '{$data['DB_PWD']}'),
-		// 端口
-		'hostport'          => env('DB_PORT', '{$data['DB_PORT']}'),
-		// 数据库连接参数
-		'params'            => [],
-		// 数据库编码默认采用utf8
-		'charset'           => 'utf8mb4',
-		// 数据库表前缀
-		'prefix'            => env('DB_PREFIX', '{$data['DB_PREFIX']}'),
-		// 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
-		'deploy'            => 0,
-		// 数据库读写是否分离 主从式有效
-		'rw_separate'       => false,
-		// 读写分离后 主服务器数量
-		'master_num'        => 1,
-		// 指定从服务器序号
-		'slave_no'          => '',
-		// 是否严格检查字段是否存在
-		'fields_strict'     => true,
-		// 是否需要断线重连
-		'break_reconnect'   => false,
-		// 监听SQL
-		'trigger_sql'       => env('APP_DEBUG', false),
-		// 开启字段缓存
-		'fields_cache'      => true,
-		// 字段缓存路径
-		//'schema_cache_path' => app()->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR,
-		],
-		// 更多的数据库配置信息
+        'mysql' => [
+            // 数据库类型
+            'type'              => env('DB_TYPE', 'mysql'),
+            // 服务器地址
+            'hostname'          => env('DB_HOST', '{$data['DB_HOST']}'),
+            // 数据库名
+            'database'          => env('DB_NAME', '{$data['DB_NAME']}'),
+            // 用户名
+            'username'          => env('DB_USER', '{$data['DB_USER']}'),
+            // 密码
+            'password'          => env('DB_PASS', '{$data['DB_PASS']}'),
+            // 端口
+            'hostport'          => env('DB_PORT', '{$data['DB_PORT']}'),
+            // 数据库连接参数
+            'params'            => [],
+            // 数据库编码默认采用utf8
+            'charset'           => env('DB_CHARSET', 'utf8mb4'),
+            // 数据库表前缀
+            'prefix'            => env('DB_PREFIX', '{$data['DB_PREFIX']}'),
+            // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
+            'deploy'            => 0,
+            // 数据库读写是否分离 主从式有效
+            'rw_separate'       => false,
+            // 读写分离后 主服务器数量
+            'master_num'        => 1,
+            // 指定从服务器序号
+            'slave_no'          => '',
+            // 是否严格检查字段是否存在
+            'fields_strict'     => true,
+            // 是否需要断线重连
+            'break_reconnect'   => false,
+            // 监听SQL
+            'trigger_sql'       => env('APP_DEBUG', false),
+            // 开启字段缓存
+            'fields_cache'      => true,
+            // 字段缓存路径
+            'schema_cache_path' => app()->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR,
+        ],
+        // 更多的数据库配置信息
     ],
 ];
 EOV;
@@ -151,7 +151,7 @@ DB_TYPE = mysql
 DB_HOST = {$data['DB_HOST']}
 DB_NAME = {$data['DB_NAME']}
 DB_USER = {$data['DB_USER']}
-DB_PASS = {$data['DB_PWD']}
+DB_PASS = {$data['DB_PASS']}
 DB_PORT = {$data['DB_PORT']}
 DB_CHARSET = utf8mb4
 

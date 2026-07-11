@@ -21,6 +21,108 @@ if(!function_exists('create_order_no'))
     }
 }
 
+if(!function_exists('build_tree')) {
+    /**
+     * 无限极菜单构建函数（高性能版 20260711）
+     *
+     * 采用引用映射方式构建树形结构，时间复杂度 O(n)
+     * 支持自定义字段名，适合处理大量分类数据
+     *
+     * @param array $data 原始数据数组，每个元素必须包含 id、pid、sort 字段
+     * @param string $sortField 排序字段名（默认'sort'，空字符串表示不排序）
+     * @param int|string $rootPid 根节点父ID（默认0，表示顶级菜单）
+     * @param string $idField 主键字段名（默认'id'）
+     * @param string $pidField 父级ID字段名（默认'pid'）
+     * @param string $childrenField 子节点存储字段名（默认'children'）
+     * @param bool $asc 是否升序排序（默认true）
+     * @return array 树形结构数组
+     */
+    function build_tree(
+            array $data,
+            string $sortField = '',
+            $rootPid = 0,
+            string $idField = 'id',
+            string $pidField = 'pid',
+            string $childrenField = 'children',
+            bool $asc = true
+        ): array 
+    {
+        // 空数据处理
+        if (empty($data)) {
+            return [];
+        }
+
+        // 使用array_column获取所有ID，确保ID存在
+
+        // $ids = array_column($items, $idField);
+        // if (in_array(null, $ids, true)) {
+        //     throw new InvalidArgumentException("Missing or invalid value in '{$idField}' field");
+        // }
+
+        // 使用array_column获取所有PID，确保PID存在
+
+        // $pids = array_column($items, $pidField);
+        // if (in_array(null, $pids, true)) {
+        //     throw new InvalidArgumentException("Missing or invalid value in '{$pidField}' field");
+        // }
+
+        // 如果指定了排序字段且数据中存在该字段才排序
+        if ($sortField !== '') {
+
+            // 检查排序字段是否存在
+
+            // $sortValues = array_column($items, $sortField);
+            // if (in_array(null, $sortValues, true)) {
+            //     throw new InvalidArgumentException("Missing or invalid value in '{$sortField}' field");
+            // }
+
+            $firstItem = reset($data);
+            if (is_array($firstItem) && array_key_exists($sortField, $firstItem)) {
+                usort($data, function($a, $b) use ($sortField, $asc) {
+                    $aVal = $a[$sortField] ?? 0;
+                    $bVal = $b[$sortField] ?? 0;
+                    return $asc ? $aVal <=> $bVal : $bVal <=> $aVal;
+                });
+            }
+        }
+
+        // 构建引用映射（核心优化）
+        $tree = [];
+        $refs = [];
+
+        // 初始化引用映射并确保children字段存在
+        foreach ($data as &$item) {
+            $id = $item[$idField];
+            $item[$childrenField] = [];
+            $refs[$id] = &$item;
+        }
+        unset($item); // 解除引用
+
+        // 构建树形结构
+        foreach ($data as $item) {
+            $id = $item[$idField];
+            $pid = $item[$pidField];
+            if ($pid === $rootPid) {
+                // 根节点直接挂载树
+                $tree[] = &$refs[$id];
+            } elseif (isset($refs[$pid])) {
+                // 子节点挂载父节点
+                $refs[$pid][$childrenField][] = &$refs[$id];
+                // 父节点设置为true，方便后续判断
+                $refs[$pid]['isParent'] = true;
+            } else {
+
+                // 处理孤儿节点：可选挂到根节点或丢弃
+                // $tree[] = &$refs[$id]; 
+            }
+            // 非父节点设置为false，方便后续判断
+            $refs[$id]['isParent'] = false;
+        }
+
+        return $tree;
+    }
+}
+
 
 //过滤文章摘要
 function getArtContent($content)
@@ -45,111 +147,12 @@ function getLimtTime($create_time)
     return $lt;
 }
 
-//菜单无限极分类
-function getTree($data, $pId = 0)
-{
-    // 递归
-    $tree = [];
-    foreach ($data as $k => $v) {
-        if ((int) $v['pid'] == $pId) {
-            $child = getTree($data, $v['id']);
-            if(!empty($child)) {
-                $v['children'] = $child;
-            }
-            $tree[] = $v;
-            //把这个节点从数组中移除,减少后续递归消耗
-            unset($data[$k]);
-        }
-    }
-    // 包含sort字段才能排序
-    // $cmf_arr = array_column($tree, 'sort');
-    // array_multisort($cmf_arr, SORT_ASC, $tree);
-    return $tree;
-}
-
-/**
- * 将一维数组转换为树形结构（无限级分类）
- * @param array $items 原始数据数组
- * @param int $rootPid 根节点ID（支持数值或字符串）
- * @param string $idField 主键字段名
- * @param string $pidField 父级ID字段名
- * @param string $childrenField 子节点存储字段名
- * @param string $sortField 排序字段名（空字符串表示不排序）
- * @param bool $asc 是否升序（仅在排序时有效）
- * @return array 树形结构数组
- */
-function getArrayTree(
-    array $items,
-    int $rootPid = 0,
-    string $idField = 'id',
-    string $pidField = 'pid',
-    string $childrenField = 'children',
-    string $sortField = 'sort',
-    bool $asc = true
-): array {
-    if (empty($items)) {
-        return [];
-    }
-
-    // 使用array_column获取所有ID，确保ID存在
-    $ids = array_column($items, $idField);
-    if (in_array(null, $ids, true)) {
-        throw new InvalidArgumentException("Missing or invalid value in '{$idField}' field");
-    }
-
-    // 使用array_column获取所有PID，确保PID存在
-    $pids = array_column($items, $pidField);
-    if (in_array(null, $pids, true)) {
-        throw new InvalidArgumentException("Missing or invalid value in '{$pidField}' field");
-    }
-
-    // 自定义排序
-    if (!empty($sortField)) {
-        // 检查排序字段是否存在
-        $sortValues = array_column($items, $sortField);
-        if (in_array(null, $sortValues, true)) {
-            throw new InvalidArgumentException("Missing or invalid value in '{$sortField}' field");
-        }
-        
-        usort($items, function ($a, $b) use ($sortField, $asc) {
-            $result = $a[$sortField] <=> $b[$sortField];
-            return $asc ? $result : -$result;
-        });
-    }
-
-    // 构建引用关系
-    $tree = [];
-    $reference = [];
-
-    // 初始化引用映射并确保children字段存在
-    foreach ($items as &$item) {
-        $id = $item[$idField];
-        $item[$childrenField] = [];
-        $reference[$id] = &$item;
-    }
-    unset($item);
-
-    // 构建树形结构
-    foreach ($items as $item) {
-        $id = $item[$idField];
-        $pid = $item[$pidField];
-        
-        if ($pid === $rootPid) {
-            $tree[] = &$reference[$id];
-        } elseif (isset($reference[$pid])) {
-            $reference[$pid][$childrenField][] = &$reference[$id];
-        }
-    }
-
-    return $tree;
-}    
-
 //按钮权限检查
 function checkRuleButton($rules_button)
 {
 	$admin_id = Session::get('admin_id');
 	$auth = new Auth();
-	$res = $auth->check($rules_button,$admin_id );
+	$res = $auth->check($rules_button, $admin_id );
 	
 	if($res || $admin_id == 1){
 		return true;

@@ -61,27 +61,13 @@ class Index extends AdminBaseController
 	{
 		// 评论、帖子状态
         $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
-        $forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->count();
+        $forum = Db::name('article')->where(['delete_time'=>0,'status'=>0])->count();
         $user = Db::name('user')->where(['delete_time'=>0,'status'=>0])->count();
-		// 回复评论
-		$comments = Comment::field('id,article_id,content,create_time,delete_time')->order('id desc')->limit(10)->select();
-		$commData = [];
-		foreach($comments as $v) {
-			if(!is_null($v->article)) {
-				$commData[] = [
-					'id'			=> $v->id,
-					'content'		=> strip_tags($v['content']),
-					'create_time'	=> $v['create_time'],
-					'url'			=> $this->getArticleUrl($v['article_id'], 'index', $v->article->cate->ename)
-				];
-			}
-		}
 
         View::assign([
             'pendComms'     => $comm,
             'pendForums'    => $forum,
-            'pendUser'      => $user,
-			'comments'		=> $commData,
+            'pendUser'      => $user
         ]);
 
         return View::fetch('console1');
@@ -102,7 +88,7 @@ class Index extends AdminBaseController
 					'id'			=> $v->id,
 					'content'		=> strip_tags($v['content']),
 					'create_time'	=> $v['create_time'],
-					'url'			=> $this->getArticleUrl($v['article_id'], 'index', $v->article->cate->ename)
+					'url'			=> (string) url('article_detail', ['id' => $v['article_id'], 'ename' => $v->article->cate->ename])
 				];
 			}
 		}
@@ -177,73 +163,6 @@ class Index extends AdminBaseController
 
         return lang('No new messages');
     }
-	
-	//本周发帖
-	public function forums()
-	{
-		$forumList = Db::name('article')
-			->alias('a')
-			->join('user u','a.user_id = u.id')
-			->join('cate c','a.cate_id = c.id')
-			->field('a.id as aid,title,name,ename,catename,pv')
-			->where('a.delete_time',0)
-			->whereWeek('a.create_time')
-			->order('a.create_time', 'desc')
-			->paginate(10);
-
-			$res = [];
-			$count = $forumList->total();
-
-			if($count){
-				$res['code'] = 0;
-				$res['msg'] = '';
-				$res['count'] = $count;
-				foreach($forumList as $k=>$v){
-				    //$url = (string) str_replace("admin","index",$this->domain.url('article/detail',['id'=>$v['aid']]));
-					$url = $this->getRouteUrl($v['aid'], $v['ename']);
-
-					$res['data'][]= [
-						'id'		=>$url,
-						'title'		=>htmlspecialchars($v['title']),
-						'name'		=>$v['name'],
-						'catename'	=>$v['catename'],
-						'pv'		=>$v['pv']];
-				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'本周还没有发帖！'];
-			}
-			return json($res);
-	}
-	
-	//本周评论
-	public function replys()
-	{
-		if(Request::isAjax()){
-		
-			$replys = Db::name('comment')
-				->alias('a')
-				->join('user u','a.user_id = u.id')
-				->join('article c','a.article_id = c.id')
-				->join('cate ca','c.cate_id = ca.id')
-				->field('a.content as content,title,c.id as cid,name,ename')
-				->where('c.delete_time',0)
-				->whereWeek('a.create_time')
-				->order('a.create_time', 'desc')
-				->paginate(10);
-			
-			$count = $replys->total();
-			$res = [];
-			if ($count) {
-				$res = ['code'=>0,'msg'=>'','count'=>$count];
-				foreach($replys as $k => $v){
-					$res['data'][] = ['content'=>htmlspecialchars($v['content']),'title'=>htmlspecialchars($v['title']),'cid'=>$this->getRouteUrl($v['cid'],$v['ename']),'name'=>$v['name']];
-				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'本周还没评论'];
-			}
-			return json($res);
-		}
-	}
 	
 	//动态信息
 	public function news()

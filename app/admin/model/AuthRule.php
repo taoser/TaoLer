@@ -36,10 +36,10 @@ class AuthRule extends Model
      */
     public function getAuthRuleTree()
     {
-        $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')->select()->toArray();
-        //数组排序
-        $cmf_arr = array_column($authRules, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $authRules);
+        $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')
+        ->order('sort','asc')
+        ->select()
+        ->toArray();
 
         if(count($authRules)) {
             return json(['code'=>0,'msg'=>'ok','data'=>$authRules]);
@@ -63,7 +63,10 @@ class AuthRule extends Model
      */
     public function getAuthRuleArray() :Response
     {
-        $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')->select()->toArray();
+        $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')
+        ->order('sort','asc')
+        ->select()
+        ->toArray();
         $ruls = [];
         foreach($authRules as $v) {
             $ruls[] = [
@@ -81,9 +84,6 @@ class AuthRule extends Model
 
             ];
         }
-        //数组排序
-        $cmf_arr = array_column($ruls, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $ruls);
 
         if(count($ruls)) {
             return json(['code' => 0, 'msg' => 'ok', 'count' => count($ruls), 'data'=>$ruls]);

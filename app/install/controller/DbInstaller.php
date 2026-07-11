@@ -41,7 +41,7 @@ class DbInstaller
     {
         $this->dbhost   = $param['DB_HOST'];
         $this->dbuser   = $param['DB_USER'];
-        $this->dbpwd    = $param['DB_PWD'];
+        $this->dbpwd    = $param['DB_PASS'];
         $this->dbport   = $param['DB_PORT'];
         $this->dbname   = $param['DB_NAME'];
         $this->prefix	= $param['DB_PREFIX'];

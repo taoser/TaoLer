@@ -50,9 +50,7 @@
 
 <script>
 
-    const CATE_TREE_URL = MODULE_NAME + '/content/cate/getCateTreeList';
-
-    const CATE = MODULE_NAME + '/content/cate/list';
+    const CATE_TREE_LIST = MODULE_NAME + '/content/cate/list';
     const DELETE = MODULE_NAME + '/content/cate/delete';
     const CHECK = MODULE_NAME + '/content/cate/check';
     const ADD_EDIT = MODULE_NAME + '/content/cate/addEdit';
@@ -66,7 +64,7 @@
                 // 渲染
         var inst = treeTable.render({
             elem: '#table',
-            url: CATE_TREE_URL, // 此处为静态模拟数据，实际使用时需换成真实接口
+            url: CATE_TREE_LIST,
             tree: {
             /*
             // 异步加载子节点

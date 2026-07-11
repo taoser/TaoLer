@@ -181,7 +181,7 @@ class Article extends AdminBaseController
 
         //删除原有缓存显示编辑后内容
         Cache::delete('article_'.$data['id']);
-        // $link = $this->getArticleUrl((int) $id, 'index', $article->cate->ename);
+        // $link = (string) url('article_detail', ['id' => $data['id'], 'ename' => $article->cate->ename]);
         // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
         // return Msgres::success('edit_success');
 
@@ -331,8 +331,14 @@ class Article extends AdminBaseController
 	public function getCategoryTree()
 	{
 		//
-		$cate = Db::name('cate')->field('id,pid,catename,ename,sort')->order(['id' => 'ASC','sort' => 'ASC'])->where(['delete_time'=>0])->select()->toArray();
-        $data = getTree($cate);
+		$cate = Db::name('cate')
+        ->field('id,pid,catename,ename,sort')
+        ->where('delete_time',0)
+        ->order(['id' => 'ASC','sort' => 'ASC'])
+        ->select()
+        ->toArray();
+
+        $data = build_tree($cate);
 		$count = count($cate);
         $tree = [];
         if($count){
@@ -350,13 +356,15 @@ class Article extends AdminBaseController
      */
     public function getCategoryList()
     {
-        $cateList = Category::field('id,pid,catename,sort')->where(['status' => 1])->select()->toArray();
-        // 排序
-        $cmf_arr = array_column($cateList, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $cateList);
+        $cateList = Category::field('id,pid,catename,sort')
+        ->where('status',1)
+        ->order('sort','asc')
+        ->select()
+        ->toArray();
 
-        $list =  getTree($cateList);
+        $list =  build_tree($cateList);
         $count = count($list);
+
         $tree = [];
         if($count){
             $tree = ['code'=>0, 'msg'=>'ok','count'=>$count];

@@ -98,7 +98,7 @@ class ExceptionHandle extends Handle
         $message = $e->getMessage();
         
         // 生产环境下可隐藏真实错误信息，只暴露统一提示
-        if (!env('app_debug')) {
+        if (!env('app_debug', false)) {
             $message = '服务器内部错误';
         }
 
@@ -108,6 +108,7 @@ class ExceptionHandle extends Handle
             'data' => [],
         ];
 
+        return json($data, $code);
     }
 
 }

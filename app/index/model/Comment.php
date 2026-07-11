@@ -76,7 +76,7 @@ class Comment extends BaseModel
                 ->toArray();
             }
 
-            return ['count' => $count, 'data' => getTree($data)];
+            return ['count' => $count, 'data' => build_tree($data)];
         }, 600);
         
         return $datas;

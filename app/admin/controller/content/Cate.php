@@ -40,29 +40,16 @@ class Cate extends AdminBaseController
 	//帖子分类
 	public function list()
 	{
-        return Category::getList();
-	}
-
-    public function getCateTreeList()
-    {
-        $cates = Db::name('cate')
-		->field('id,pid,ename,type,sort,catename,tpl,icon,status,is_hot,desc,url,image')
-		->select()
-		->toArray();
-
-		if(empty($cates)) {
+        $cateList = Category::getList();
+        if(empty($cateList)) {
 			return json(['code' => 1, 'msg' => 'no data！']);
 		}
 
-		foreach($cates as $key => $value){
-			// $authRules[$key]['title'] = Lang::get($value['title']);
-			$cates[$key]['icon'] = empty($value['icon']) ? '' : 'layui-icon ' . $value['icon'];
-		}
+        $data = build_tree($cateList);
 	
-		$data = $this->getRuleTree($cates);
-		// halt($data);
 		return json(['code' => 0,'msg' => 'ok','data' => $data]);
-    }
+
+	}
 
     //添加和编辑帖子分类 废弃
     public function addEdit()
@@ -127,13 +114,13 @@ class Cate extends AdminBaseController
      */
     public function getCateTree(): Json
     {
-        $list = Category::field('id,pid,catename,sort')->select()->toArray();
+        $list = Category::field('id,pid,catename,sort')
+        ->order('sort','asc')
+        ->select()
+        ->toArray();
 
-        $data =  getTree($list);
-        // 排序
-        $cmf_arr = array_column($data, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $data);
-
+        $data =  build_tree($list);
+       
         $count = count($data);
 
         return json([
@@ -156,12 +143,12 @@ class Cate extends AdminBaseController
      */
     public function getArticleCateTree(): Json
     {
-        $list = Category::field('id,pid,catename,sort')->select()->toArray();
+        $list = Category::field('id,pid,catename,sort')
+        ->order('sort','asc')
+        ->select()
+        ->toArray();
 
-        $data =  getTree($list);
-        // 排序
-        $cmf_arr = array_column($data, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $data);
+        $data =  build_tree($list);
 
         $count = count($data);
 
@@ -181,14 +168,12 @@ class Cate extends AdminBaseController
     public function getSingleCateTree(): Json
     {
         $list = Category::field('id,pid,catename,sort')
+        ->order('sort','asc')
         ->where('type', 2)
-        ->select();
+        ->select()
+        ->toArray();
 
-        $data =  getTree($list);
-        // 排序
-        $cmf_arr = array_column($data, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $data);
-
+        $data =  build_tree($list);
         $count = count($data);
 
         return json([
@@ -211,12 +196,11 @@ class Cate extends AdminBaseController
         $list = Category::field('id,pid,catename,sort')
         ->where('type', 2)
         ->whereNotIn('id', $pageCate)
-        ->select();
+        ->order('sort','asc')
+        ->select()
+        ->toArray();
 
-        $data =  getTree($list);
-        // 排序
-        $cmf_arr = array_column($data, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $data);
+        $data =  build_tree($list);
 
         $count = count($data);
 
@@ -227,40 +211,5 @@ class Cate extends AdminBaseController
             'data'  => $data
         ]);
     }
-
-    /**
-     * 菜单无限极分类
-     *
-     * @param array $data 包含有pid的rule权限数组
-     * @param integer $pId 父ID
-     * @return array
-     */
-    public function getRuleTree(array $data, int $pId = 0): array
-    {
-        // 递归
-        $tree = [];
-        foreach ($data as $k => $v) {
-            //第一次遍历,找到父节点为根节点的节点 也就是pid=0的节点
-            if ($v['pid'] == $pId) {
-                $child = $this->getRuleTree($data, $v['id']);
-                // 有子类
-                if(!empty($child)) {
-                    $v['children'] = $child;
-                    $v['isParent'] = true;
-                } else {
-                    $v['openType'] = '_iframe';
-                    $v['isParent'] = false;
-                }
-                
-                //把数组放到$tree中
-                $tree[] = $v;
-                //把这个节点从数组中移除,减少后续递归消耗
-                unset($data[$k]);
-            }
-        }
-       
-        return $tree;
-    }
-
 
 }

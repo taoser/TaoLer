@@ -274,14 +274,13 @@
 				<ul class="layui-tab-title">
 					<li class="layui-this">官方动态</li>
 					<li>发送反馈</li>
-					<li>今周发帖</li>
-					<li>今周评论</li>
 				</ul>
 				<div class="layui-tab-content">
 
 					<div class="layui-tab-item layui-show">
 						<table id="console-news" lay-filter="console-news"></table>
 					</div>
+
 					<div class="layui-tab-item  layui-form-text">
 						<div class="layui-form  layui-form-pane">
 							<div class="layui-row layui-col-space12 layui-form-item" >
@@ -319,12 +318,6 @@
 								<a class="pear-btn pear-btn-danger pear-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
 							</script>
 						</div>
-					</div>
-					<div class="layui-tab-item">
-						<table id="console-topSearch"></table>
-					</div>
-					<div class="layui-tab-item">
-						<table id="console-topCard"></table>
 					</div>
 
 				</div>
@@ -437,13 +430,11 @@
 {__block__}
 
 <script>
-	const indexForums = MODULE_NAME + '/index/forums';	//帖子
-	const indexReplys = MODULE_NAME + '/index/replys';		//回复
 	const NEWS = MODULE_NAME + '/index/news';	 //动态
 	const REPLY_URL = MODULE_NAME + '/index/reply';	//反馈
 	const v = layui.v;
-
-	layui.use(['layer', 'echarts',  'carousel', 'element', 'count', 'toast', 'form'], function() {
+	
+	layui.use(['layer', 'echarts',  'carousel', 'element', 'count', 'toast'], function() {
 		let $ = layui.jquery,
 		form = layui.form,
 		layer = layui.layer,
@@ -683,57 +674,13 @@
 			,skin: 'line'
 		});
 
-		//本周发贴
-		table.render({
-			elem: '#console-topSearch'
-			,url: indexForums //发贴接口
-			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
-					//curr: 5, //设定初始在第 5 页
-					groups: 1, //只显示 1 个连续页码
-					first: false, //不显示首页
-					last: false //不显示尾页
-			}
-			,cellMinWidth: 120
-			,cols: [[
-				{type: 'numbers', fixed: 'left'}
-				,{field: 'title', title: '标题', minWidth: 300, templet: '<div><a href="{{d.id}}" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
-				,{field: 'name', title: '发帖者'}
-				,{field: 'catename', title: '类别'}
-				,{field: 'pv', title: '点击率', sort: true}
-			]]
-			,skin: 'line'
-		});
-
-		//本周评论
-		table.render({
-			elem: '#console-topCard'
-			,url: indexReplys //评论接口
-			,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-					layout: ['limit', 'count', 'prev', 'page', 'next'], //自定义分页布局
-					//curr: 5, //设定初始在第 5 页
-					groups: 1, //只显示 1 个连续页码
-					first: false, //不显示首页
-					last: false //不显示尾页
-			}
-			,cellMinWidth: 120
-			,cols: [[
-				{type: 'numbers', fixed: 'left'}
-				,{field: 'content', title: '评论', minWidth: 300}
-				,{field: 'title', title: '帖子', minWidth: 200, templet: '<div><a href="{{d.cid}}" target="_blank" class="layui-table-link">{{ d.title }}</div>'}
-				,{field: 'name', title: '评论者'}
-
-			]]
-			,skin: 'line'
-		});
-
 		// 系统调试
 		form.on('switch(debug)',function(data){
 			var status = data.elem.checked;
 			var that = this;
 			// 禁用调试按钮
 			that.disabled = true;
-			$.post(MODULE_NAME + '/system/set/debugSwitch', {status}, function(res) {
+			$.post(MODULE_NAME + '/system/index/debugSwitch', {status}, function(res) {
 				that.disabled = false;
 				if (res.code) {
 					return toast.error({title:"错误消息", message: res.msg})
@@ -743,9 +690,9 @@
 			return false;
 		});
 
-		//系统检测
+		// 授权检测
 		$("#check").click(function (){
-			$.get(MODULE_NAME + '/system/set/check', function (res){
+			$.get(MODULE_NAME + '/system/index/authorizationCheck', function (res){
 				if(res.code === 0) {
 					$("#cy").html(res.data.info);
 					toast.info({title:"提示消息", message:res.msg});

@@ -16,6 +16,8 @@ use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
+use think\facade\Cache;
+use think\facade\Config;
 use app\facade\Article;
 use app\facade\Comment;
 use app\facade\User as UserModel;
@@ -263,7 +265,13 @@ class User extends AdminBaseController
 		Session::delete('user_name');
 		Session::delete('user_id');
 		Cookie::delete('auth');
-		$user_home_url = $this->getUserHome($id);
+
+		$user = Db::name('user')->field('id,name')->find($id);
+		$salt = Config::get('taoler.salt');
+		$auth = md5($user['name'].$salt).":".$user['id'];
+    	Cookie::set('auth',$auth,604800);
+
+		$user_home_url = (string) url('user_home', ['id' => $id]);
 
 		return redirect($user_home_url);
 	}
