@@ -16,7 +16,7 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use app\facade\Category;
-use taoler\com\Files;
+use app\common\helper\FileHelper;
 use think\Response\Json;
 
 class Cate extends AdminBaseController
@@ -104,7 +104,7 @@ class Cate extends AdminBaseController
     protected function getIndexTpl() :array
     {
         $sys = $this->getSystem();
-        return Files::getDirName('../view/'.$sys['template'].'/article/');
+        return FileHelper::getSubDirNames('../view/'.$sys['template'].'/article/');
     }
 
     /**

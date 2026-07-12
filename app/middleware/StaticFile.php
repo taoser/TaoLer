@@ -2,7 +2,7 @@
 
 namespace app\middleware;
 
-use app\common\lib\JwtAuth;
+use app\common\helper\JwtAuth;
 use think\facade\Session;
 
 class StaticFile

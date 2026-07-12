@@ -2,9 +2,9 @@
 
 namespace app\common\decorator;
 
-use app\common\lib\FileHelper;
+use app\common\helper\FileHelper;
 use think\facade\Request;
-use app\common\lib\HttpClient;
+use app\common\helper\HttpClient;
 
 class Image extends ArticleProcessorDecorator
 {

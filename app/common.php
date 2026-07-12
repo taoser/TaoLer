@@ -123,6 +123,36 @@ if(!function_exists('build_tree')) {
     }
 }
 
+if(!function_exists('cut_byte')) {
+    /**
+     * 按字节截取，兼容UTF8中文，不产生乱码，控制总字节不超限
+     * @param string $str 原字符串
+     * @param int $maxByte 最大字节数
+     * @param string $suffix 截断后缀
+     * @return string
+     */
+    function cut_byte(string $str, int $maxByte = 256, string $suffix = '...'): string
+    {
+        $str = trim($str);
+        $rawLen = strlen($str);
+        $suffixLen = strlen($suffix);
+
+        if ($rawLen <= $maxByte) {
+            return $str;
+        }
+
+        // 若最大字节不足以容纳后缀，直接返回空或仅后缀（根据业务决定）
+        if ($maxByte <= $suffixLen) {
+            return $suffix;
+        }
+
+        // 使用 mb_strcut 按字节截取，确保不破坏字符
+        $temp = mb_strcut($str, 0, $maxByte - $suffixLen, 'UTF-8');
+        
+        return $temp . $suffix;
+    }
+}
+
 
 //过滤文章摘要
 function getArtContent($content)

@@ -12,17 +12,13 @@ namespace app\admin\controller\soft;
 
 use app\admin\controller\AdminBaseController;
 use Exception;
-use ZipArchive;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\Log;
 use think\facade\Config;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use app\common\lib\FileHelper;
+use app\common\helper\FileHelper;
 use app\common\facade\HttpHelper;
-use taoler\com\Files;
 
 class Template extends AdminBaseController
 {
@@ -263,7 +259,7 @@ class Template extends AdminBaseController
             FileHelper::unZip($tplZip, $viewPath, true);
 
             FileHelper::copyFolder($viewPath, root_path(), "view/$name");
-            FileHelper::deleteFolder($viewPath);
+            FileHelper::deleteDir($viewPath);
             
             return json(['code'  => 0, 'msg'   => 'ok']);
 
@@ -305,8 +301,8 @@ class Template extends AdminBaseController
         $staticPath = str_replace("\\", "/", public_path().'static/tpl/'.$name);
 
         try{
-            Files::delDir($viewPath);
-            Files::delDir($staticPath);
+            FileHelper::deleteDir($viewPath);
+            FileHelper::deleteDir($staticPath);
 
             return json(['code'  => 0, 'msg'   => 'ok']);
         } catch(Exception $e) {

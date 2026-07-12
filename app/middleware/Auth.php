@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\middleware;
 
-use app\common\lib\JwtAuth;
+use app\common\helper\JwtAuth;
 use Exception;
 
 class Auth

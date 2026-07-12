@@ -8,8 +8,8 @@ use think\exception\ValidateException;
 use think\Validate;
 use think\facade\Db;
 use think\facade\Request;
-use app\common\lib\Uploads;
-use app\common\lib\IdEncode;
+use app\common\helper\Uploads;
+use app\common\helper\IdEncode;
 
 /**
  * 控制器基础类

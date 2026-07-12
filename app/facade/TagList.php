@@ -14,7 +14,7 @@ class Taglist extends Facade
 {
 	protected static function getFacadeClass()
 	{
-		return 'app\index\entity\Taglist';
+		return 'app\entity\Taglist';
 	}
 
 }

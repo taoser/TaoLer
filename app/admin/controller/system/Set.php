@@ -18,12 +18,11 @@ use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Config;
 use app\admin\model\System;
-use app\admin\model\MailServer;
-use taoler\com\Files;
+use app\common\helper\FileHelper;
 use think\facade\Session;
 use think\facade\Cookie;
 use taoser\SetArr;
-use app\common\lib\SetArr as SetArrConf;
+use app\common\helper\SetArr as SetArrConf;
 use think\response\Json;
 
 class Set extends AdminBaseController
@@ -41,7 +40,7 @@ class Set extends AdminBaseController
 	//网站设置显示
 	public function index()
     {
-		$template = Files::getDirName('../view');
+		$template = FileHelper::getSubDirNames('../view');
 		$email = Db::name('admin')->where('id',1)->value('email');
 		
         View::assign(['sysInfo'=>$this->sysInfo,'template'=>$template,'email'=>$email]);
@@ -266,7 +265,7 @@ class Set extends AdminBaseController
 	public function upload()
 	{
 		$param = Request::param('field');
-        $uploads = new \app\common\lib\Uploads();
+        $uploads = new \app\common\helper\Uploads();
         $upRes = $uploads->put('file','SYS_logo',2000,'image');
         $logoJson = $upRes->getData();
 		if($logoJson['status'] == 0){

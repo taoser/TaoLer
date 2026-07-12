@@ -43,7 +43,7 @@ class Files
      * @param $path string 目录
      * @return array
      */
-	public static function getDirFiles($path,$type)
+	public static function getDirFiles($path, $type)
 	{
 		if (is_dir($path)) {
 			$arr = array();

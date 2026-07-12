@@ -20,7 +20,7 @@ use think\facade\Cookie;
 use think\facade\Cache;
 use taoser\think\Auth;
 use think\response\Json;
-use taoler\com\Files;
+use app\common\helper\FileHelper;
 
 
 class Admin extends AdminBaseController
@@ -254,7 +254,7 @@ class Admin extends AdminBaseController
 			Cache::clear();
 			// 清除临时文件
 			$temp = str_replace('\\',"/", runtime_path().'temp/');
-			Files::delDirAndFile($temp);
+			FileHelper::emptyDir($temp);
 
 			return json(['code' => 0,'msg'=>'清除缓存成功']);
 

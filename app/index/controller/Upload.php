@@ -2,7 +2,7 @@
 namespace app\index\controller;
 
 
-use app\common\lib\v2\UploadHelper;
+use app\common\helper\UploadHelper;
 use think\facade\Request;
 use think\facade\View;
 

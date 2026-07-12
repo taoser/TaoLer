@@ -17,12 +17,12 @@ use think\facade\Request;
 use think\facade\Cache;
 use think\facade\Log;
 use think\facade\Config;
-use app\common\lib\facade\HttpHelper;
+use app\common\facade\HttpHelper;
+use app\common\PayContainer;
 use app\admin\model\Cunsult;
 use app\index\model\Comment;
 use think\response\Json;
 use Yansongda\Pay\Pay;
-use app\common\PayContainer;
 use think\Container;
 
 class Index extends AdminBaseController

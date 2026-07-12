@@ -12,7 +12,7 @@ class Section extends Facade
 {
 	protected static function getFacadeClass()
 	{
-		return 'app\common\entity\Section';
+		return 'app\entity\Section';
 	}
 
 }

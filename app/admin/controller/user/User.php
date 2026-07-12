@@ -21,7 +21,7 @@ use think\facade\Config;
 use app\facade\Article;
 use app\facade\Comment;
 use app\facade\User as UserModel;
-use app\common\lib\Uploads;
+use app\common\helper\Uploads;
 use app\common\validate\User as userValidate;
 use think\exception\ValidateException;
 use app\common\facade\HttpHelper;

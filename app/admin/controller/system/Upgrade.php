@@ -24,15 +24,14 @@ use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use taoler\com\Str;
-use taoler\com\Files;
 use think\facade\Config;
 use think\facade\Log;
-use app\common\lib\SqlFile;
-use app\common\lib\Zip;
+use app\common\helper\SqlFile;
+use app\common\helper\Zip;
+use app\common\facade\HttpHelper;
+use app\common\helper\StrHelper;
+use app\common\helper\FileHelper;
 use taoser\SetArr;
-use app\common\lib\facade\HttpHelper;
-
 
 class Upgrade extends AdminBaseController
 {
@@ -48,9 +47,9 @@ class Upgrade extends AdminBaseController
 		parent::initialize();
         // 初始化系统信息
         //站点代码的根目录
-        $this->$root_dir = root_path();
-        $this->$backup_dir = "../runtime/update/backup_dir/";
-        $this->$upload_dir = "../runtime/update/upload_dir/";
+        $this->root_dir = "../";
+        $this->backup_dir = "../runtime/update/backup_dir/";
+        $this->upload_dir = "../runtime/update/upload_dir/";
 		$this->sys_version = Config::get('taoler.version');
 		$this->pn = Config::get('taoler.appname');
 		$this->sys = $this->getSystem();
@@ -60,7 +59,7 @@ class Upgrade extends AdminBaseController
 	/** 升级界面 */
     public function index()
     {	//字符隐藏
-		$key = Str::func_substr_replace($this->sys['key']);
+		$key = StrHelper::maskString($this->sys['key'],4,4);
 		$sys_base = [
 			'key'           => $key,
 			'upcheck_url'   => $this->sys['upcheck_url'],
@@ -159,8 +158,8 @@ class Upgrade extends AdminBaseController
 		if(!isset($header[0]) && (strpos($header[0], '200') || strpos($header[0], '304'))){
 			return json(['code'=>-1,'msg'=>'获取远程文件失败']);
 		}
-        $upload_dir = Files::getDirPath($this->upload_dir); //拼接升级文件暂存路径
-        Files::mkdirs($upload_dir);
+        $upload_dir = FileHelper::getDirPath($this->upload_dir); //拼接升级文件暂存路径
+        FileHelper::mkdirs($upload_dir);
 
 		$package_file = $upload_dir.'taoler_'.$version_num.'.zip';  //本地zip文件
 		$cpfile = copy($file_url,$package_file); //把远程文件放入本地
@@ -183,8 +182,8 @@ class Upgrade extends AdminBaseController
 		}
 		
 		//清除
-		Files::delDirAndFile($this->upload_dir);
-		Files::delDirAndFile($this->backup_dir);
+		FileHelper::deleteDir($this->upload_dir);
+		FileHelper::deleteDir($this->backup_dir);
 		
 		//清除废弃目录和文件
 		$delFiles = '../runtime/remove.txt';
@@ -195,7 +194,7 @@ class Upgrade extends AdminBaseController
 			foreach($delArr as $v){
 				if(is_dir($v)){
 					//删除文件夹
-					Files::delDirAndFile($v.'/',true);
+					FileHelper::deleteDir($v.'/',true);
 				} else {
 					//删除文件
 					if(file_exists($v)){
@@ -236,8 +235,8 @@ class Upgrade extends AdminBaseController
         // 1.解压 zip文件有密码的话需要解密
         $zip = new Zip;
         $zipDir = strstr($package_file, '.zip',true);   //返回文件名后缀前的字符串
-        $zipPath = Files::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
-		$unzip_res = $zip->unzip($package_file,$zipPath);
+        $zipPath = FileHelper::getDirPath($zipDir);  //转换为带/的路径 压缩文件解压到的路径
+		$unzip_res = $zip->unzip($package_file, $zipPath);
 
         if(!$unzip_res) {
             return json(['code'=>-1,'msg'=>'解压失败']);
@@ -264,7 +263,7 @@ class Upgrade extends AdminBaseController
 		// 3.升级PHP
         if(is_dir($zipPath)) {
 			//升级前的写入文件权限检查
-			$allUpdateFiles = Files::getAllFile($zipPath);
+			$allUpdateFiles = FileHelper::getDirAllFiles($zipPath);
 			
 			if (empty($allUpdateFiles)) return json(['code' => -1, 'msg' => '无可更新文件。']);
             
@@ -282,7 +281,7 @@ class Upgrade extends AdminBaseController
 
 			if (!empty($checkString)) return json(['code' => -1, 'msg' => $checkString]);
 
-            $cpRes = Files::copyDirs($zipPath,$this->root_dir);
+            $cpRes = FileHelper::copyDir($zipPath, $this->root_dir);
 			$cpData = $cpRes->getData();
             //更新失败
             if($cpData['code'] == -1) {
@@ -294,7 +293,7 @@ class Upgrade extends AdminBaseController
                 }
 */
                 //php代码回滚 升级前备份的代码
-                Files::copydirs($this->backup_dir, $this->root_dir);
+                FileHelper::copyDir($this->backup_dir, $this->root_dir);
                 
 				return json(['code'=>-1,'msg'=>$cpData['msg']]);
             }
@@ -368,7 +367,7 @@ class Upgrade extends AdminBaseController
      */
     public function backFile(string $dir,string $backDir,array $ex)
     {
-        $backRes = Files::copydirs($dir, $backDir, $ex);
+        $backRes = FileHelper::copyDir($dir, $backDir, $ex);
         $backData = $backRes->getData();
         if($backData['code'] == -1){
             Log::channel('update')->info('update:{type} {progress} {msg}',['type'=>'error','progress'=>'25%','msg'=>'备份失败!']);

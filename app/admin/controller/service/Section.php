@@ -207,7 +207,7 @@ class Section extends AdminBaseController
      */
     public function uploadImg()
     {
-        $uploads = new \app\common\lib\Uploads();
+        $uploads = new \app\common\helper\Uploads();
         $upRes = $uploads->put('file','SYS_section',1024,'image');
         $slires = $upRes->getData();
 

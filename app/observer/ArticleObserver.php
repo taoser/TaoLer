@@ -1,7 +1,7 @@
 <?php
 namespace app\observer;
 
-use app\index\model\Article;
+use app\model\Article;
 use think\facade\Db;
 use Exception;
 

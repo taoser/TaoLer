@@ -13,13 +13,13 @@ namespace app\index\controller;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\common\lib\Msgres;
-use app\common\lib\ResponseHelper;
+use app\common\helper\Msgres;
+use app\common\helper\ResponseHelper;
 
 use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
 //use addons\pay\controller\WeixinFactory;
-use app\common\lib\facade\HttpHelper;
+use app\common\facade\HttpHelper;
 use app\facade\Article;
 use think\db\Query;
 use app\index\entity\Article as ArticleEntity;

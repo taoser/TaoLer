@@ -1139,17 +1139,17 @@
         },
         {
             "name": "intervention/image",
-            "version": "4.1.5",
-            "version_normalized": "4.1.5.0",
+            "version": "4.2.0",
+            "version_normalized": "4.2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "e5256d3e5884d97fd9c6eada513a8f7a1d1027fa"
+                "reference": "830907fc5397dfc2a51a4e90322d586989fc8364"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/e5256d3e5884d97fd9c6eada513a8f7a1d1027fa",
-                "reference": "e5256d3e5884d97fd9c6eada513a8f7a1d1027fa",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/830907fc5397dfc2a51a4e90322d586989fc8364",
+                "reference": "830907fc5397dfc2a51a4e90322d586989fc8364",
                 "shasum": ""
             },
             "require": {
@@ -1167,7 +1167,7 @@
             "suggest": {
                 "ext-exif": "Recommended to be able to read EXIF data properly."
             },
-            "time": "2026-06-23T13:22:48+00:00",
+            "time": "2026-07-09T13:07:14+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1198,7 +1198,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/4.1.5"
+                "source": "https://github.com/Intervention/image/tree/4.2.0"
             },
             "funding": [
                 {

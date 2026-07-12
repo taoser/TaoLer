@@ -18,7 +18,7 @@ use think\db\exception\ModelNotFoundException;
 use think\facade\Request;
 use think\facade\View;
 use think\facade\Db;
-use app\common\lib\IdEncode;
+use app\common\helper\IdEncode;
 
 /**
  * 控制器基础类

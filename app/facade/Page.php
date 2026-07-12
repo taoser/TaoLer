@@ -15,7 +15,7 @@ class Page extends Facade
 {
     protected static function getFacadeClass()
     {
-        return 'app\index\entity\Page';
+        return 'app\entity\Page';
     }
 
 }

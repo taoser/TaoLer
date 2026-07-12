@@ -2,6 +2,8 @@
 
 namespace app\common\entity;
 
+use app\entity\BaseEntity;
+
 class Link extends BaseEntity
 {
    public function getLink($num = 10)

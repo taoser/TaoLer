@@ -21,12 +21,11 @@ use think\facade\Config;
 use think\facade\Db;
 use app\admin\model\AuthRule;
 use think\response\Json;
-use taoler\com\Files;
-use app\common\lib\FileHelper;
 use app\common\facade\HttpHelper;
-use app\common\lib\JwtAuth;
-use app\common\lib\SqlFile;
-use app\common\lib\Zip;
+use app\common\helper\FileHelper;
+use app\common\helper\JwtAuth;
+use app\common\helper\SqlFile;
+use app\common\helper\Zip;
 
 class Plugin extends AdminBaseController
 {
@@ -205,7 +204,7 @@ class Plugin extends AdminBaseController
             // 设置插件info
             set_addons_info($data['name'], ['status' => 1, 'install' => 1]);
 
-            Files::delDirAndFile('../runtime/addons/'.$data['name'] . DS);
+            FileHelper::deleteDir('../runtime/addons/'.$data['name'] . DS);
 
             return json(['code' => 0, 'msg' => '插件安装成功！']);
 
@@ -329,12 +328,12 @@ class Plugin extends AdminBaseController
             // 插件静态资源目录
             $addon_public = public_path() . 'addons' . DS . $name . DS;
 
-            if(file_exists($addonsDir)) Files::delDir($addonsDir);
-            if(file_exists($admin_controller)) Files::delDir($admin_controller);
-            if(file_exists($admin_model)) Files::delDir($admin_model);
-            if(file_exists($admin_view)) Files::delDir($admin_view);
-            if(file_exists($admin_validate)) Files::delDir($admin_validate);
-            if(file_exists($addon_public)) Files::delDir($addon_public);
+            if(file_exists($addonsDir)) FileHelper::deleteDir($addonsDir);
+            if(file_exists($admin_controller)) FileHelper::deleteDir($admin_controller);
+            if(file_exists($admin_model)) FileHelper::deleteDir($admin_model);
+            if(file_exists($admin_view)) FileHelper::deleteDir($admin_view);
+            if(file_exists($admin_validate)) FileHelper::deleteDir($admin_validate);
+            if(file_exists($addon_public)) FileHelper::deleteDir($addon_public);
 
             return json(['code' => 0, 'msg' => '插件卸载成功']);
 
@@ -621,7 +620,7 @@ class Plugin extends AdminBaseController
     protected function getLocalPlugins() :array
     {
         // 本地插件列表
-        $localPlguin = Files::getDirName('../addons/');
+        $localPlguin = FileHelper::getSubDirNames('../addons/');
 
         // 若不存在info.ini，只有文件夹，表示没有安装成功
         foreach($localPlguin as $name) {

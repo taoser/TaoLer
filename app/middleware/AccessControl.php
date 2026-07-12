@@ -3,7 +3,7 @@ namespace app\middleware;
 
 use think\Request;
 use think\exception\HttpException;
-use app\common\lib\JwtAuth;
+use app\common\helper\JwtAuth;
 
 /**
  * @Program: table.css 2024/6/2

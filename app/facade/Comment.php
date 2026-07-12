@@ -13,7 +13,7 @@ class Comment extends Facade
 {
 	protected static function getFacadeClass()
 	{
-		return 'app\index\entity\Comment';
+		return 'app\entity\Comment';
 	}
 
 

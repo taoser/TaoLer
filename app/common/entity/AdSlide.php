@@ -2,6 +2,9 @@
 
 namespace app\common\entity;
 
+use app\entity\BaseEntity;
+
+
 class AdSlide extends BaseEntity
 {
    public function getSlide($type = 1, $num = 5)

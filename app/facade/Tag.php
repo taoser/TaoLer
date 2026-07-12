@@ -14,7 +14,7 @@ class Tag extends Facade
 {
 	protected static function getFacadeClass()
 	{
-		return 'app\index\entity\Tag';
+		return 'app\entity\Tag';
 	}
 
 }
