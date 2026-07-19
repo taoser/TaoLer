@@ -7,9 +7,9 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Db;
 use think\facade\Config;
-use app\index\model\Comment as CommentModel;
-use app\index\model\Article;
-use app\index\model\UserZan;
+use app\model\Comment as CommentModel;
+use app\model\Article;
+use app\model\UserZan;
 use taoler\com\Message;
 
 class Comment extends IndexBaseController

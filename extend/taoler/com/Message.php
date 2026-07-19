@@ -12,8 +12,8 @@
 namespace taoler\com;
 
 use think\facade\Db;
-use app\index\model\Message as MessageModel;
-use app\index\model\MessageTo;
+use app\model\Message as MessageModel;
+use app\model\MessageTo;
 
 class Message
 {

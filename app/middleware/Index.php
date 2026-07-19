@@ -8,8 +8,8 @@ use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Cache;
+use think\facade\Lang;
 use app\common\helper\FileHelper;
-use taoler\com\Files;
 
 class Index
 {
@@ -30,6 +30,13 @@ class Index
 			return redirect('/install/index');
 		}
 
+		// 加载语言包
+        Lang::load([
+            app_path() . 'index/lang/en-us.php',
+            app_path() . 'index/lang/zh-tw.php',
+			app_path() . 'index/lang/zh-cn.php',
+        ]);
+
         // 配置视图路径
         View::config([
             // 'view_path'			=> app_path() .'index' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
@@ -39,6 +46,7 @@ class Index
         ]);
 
 		$userInfo = [];
+
 
 		// 登录检测
 		if(session('?user_id')){
@@ -117,8 +125,13 @@ class Index
 					$tagsArr[] = str_replace('/','\\',strstr(strstr($a, 'addons'), '.php', true));
 				}
 			}
-			
-			return implode(',', $tagsArr);
+			if(!empty($tagsArr)){
+				$tagsArr = array_unique($tagsArr);
+				return implode(',', $tagsArr);
+			}
+
+			return '';
+	
 		});
 
 		return $taglib_pre_load;

@@ -9,6 +9,8 @@ use think\facade\Lang;
 use app\event\UserLogin;
 use app\common\helper\FileHelper;
 use app\common\helper\JwtAuth;
+use app\validate\User as UserValidate;
+use think\exception\ValidateException;
 
 class User extends BaseEntity
 {
@@ -33,13 +35,40 @@ class User extends BaseEntity
 	
 	//登陆校验
     public function login($data)
-    {	
-        //查询使用邮箱或者用户名登陆
-        $user = $this->whereOr('phone',$data['name'])->whereOr('email',$data['name'])->whereOr('name',$data['name'])->findOrEmpty();
+    {
+        //登陆请求
+		try{
+			// 英文和中文用户名邮箱正则表达式
+			$patternEmail = "/^[A-Za-z0-9\x{4e00}-\x{9fa5}]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/u";
+            // 手机号正则表达式
+			$patternTel = "/^1[3-9]\d{9}$/";
+
+			if(preg_match($patternTel, $data['name'])) {
+				//手机验证登录
+				validate(UserValidate::class)->scene('loginPhone')
+				->check(['phone' => $data['name'],'password'=>$data['password']]);
+				$user = $this->where('phone', $data['name'])->findOrEmpty();
+			} elseif (preg_match($patternEmail, $data['name'])){
+				//输入邮箱email登陆验证				
+				validate(UserValidate::class)->scene('loginEmail')
+				->check(['email' => $data['name'],'password'=>$data['password']]);
+				$user = $this->where('email', $data['name'])->findOrEmpty();
+			} else {
+				//用户名name登陆验证
+				validate(UserValidate::class)->scene('loginName')
+				->check(['name' => $data['name'],'password'=>$data['password']]);
+				$user = $this->where('name', $data['name'])->findOrEmpty();
+			}
+		} catch (ValidateException $e) {
+            throw new ValidateException($e->getError());
+		} catch(Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
         if($user->isEmpty()){
 			throw new Exception(Lang::get('username or password error'));
         }
+
         //被禁用和待审核
         if($user['status'] == -1){
             throw new Exception(Lang::get('Account disabled'));
@@ -51,9 +80,9 @@ class User extends BaseEntity
         if((time() - $user->login_error_time < 60) && is_int($user->login_error_num/3)){	
             throw new Exception(Lang::get('Please log in 10 minutes later'));
         }
-        
+    
         //对输入的密码字段进行MD5加密，再进行数据库的查询
-        $salt = substr(md5($user['create_time']),-6);
+        $salt = substr(md5($user->getData('create_time')),-6);
         $pwd = substr_replace(md5($data['password']),$salt,0,6);
         $password = md5($pwd);
         
@@ -90,7 +119,9 @@ class User extends BaseEntity
             'avatar'    => $user['user_img']
         ]);
 
-        return ['token' => $token];
+        $expireTime = JwtAuth::getExpireTime();
+
+        return ['token' => $token, 'expire_time' => $expireTime];
         
     }
 

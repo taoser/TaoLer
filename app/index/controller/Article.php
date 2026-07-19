@@ -123,7 +123,7 @@ class Article extends IndexBaseController
 			'lrDate_time' 	=> $lrDate_time,
 		]);
 
-		$html = View::fetch('article/'.$detail['cate']['tpl'].'/detail');
+		$html = View::fetch('category/'.$detail['cate']['tpl'].'/detail');
 		
 		$this->buildHtml($html);
 		
@@ -199,16 +199,12 @@ class Article extends IndexBaseController
 			$cid = '';
 		}
 
-		// 模板路径
-		$appName = $this->app->http->getName();
-		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
-		$view = 'article' . DIRECTORY_SEPARATOR . $cate['tpl'] . DIRECTORY_SEPARATOR . 'add.html';
-		$vfile = $viewRoot . $view;
+		$view = 'category' . DIRECTORY_SEPARATOR . $cate['tpl'] . DIRECTORY_SEPARATOR . 'add.html';
 
 		//子模块下存在add模板则调用，否则调用article/add.html
-		$addTpl = is_file($vfile) ? $vfile : 'add';
+		$addTpl = is_file($view) ? $view : 'category/add';
 
-		View::assign(['cid'=>$cid]);
+		View::assign(['cid' => $cid]);
 		return View::fetch($addTpl);
     }
 
@@ -253,7 +249,6 @@ class Article extends IndexBaseController
 					->addObserver(new TagObserver())
 					->addObserver(new MailObserver());
 
-			
 				$articleServer->edit($data, $article);
 
 				//删除原有缓存显示编辑后内容
@@ -275,11 +270,10 @@ class Article extends IndexBaseController
 		
 		// 编辑多模板支持
 		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('tpl');
-		$appName = $this->app->http->getName();
-		$viewRoot = root_path() . config('view.view_dir_name') . DIRECTORY_SEPARATOR . $appName .  DIRECTORY_SEPARATOR;
-		$view = 'article' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'edit.html';
-		$vfile = $viewRoot . $view;
-		$editTpl = is_file($vfile) ? $vfile : 'edit';
+		
+		$view = 'category' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'edit';
+
+		$editTpl = is_file($view) ? $view : 'category/edit';
 
 		return View::fetch($editTpl);
     }

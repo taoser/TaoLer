@@ -142,10 +142,11 @@
 {block name="script"}
 <script>
 	layui.extend({
-  ads: '{/}/static/addons/ads/js/ads'
-}).use(['util','ads'], function(){
+	ads: '{/}/static/addons/ads/js/ads'
+	}).use(['util','ads'], function(){
 		let util = layui.util;
 		let carousel = layui.carousel;
+		let $ = layui.$;
 
 		// 置顶文章
 		//tpl模板给发布时间赋值

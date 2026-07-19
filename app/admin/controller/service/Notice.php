@@ -7,7 +7,7 @@ use think\facade\View;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\Db;
-use app\index\model\Message as MessageModel;
+use app\model\Message as MessageModel;
 use taoler\com\Message;
 
 

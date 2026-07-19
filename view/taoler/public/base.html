@@ -79,10 +79,37 @@
 		fly: 'index'
 	}).use('fly');
 
+
+
+
+	// 页面初始化执行
+	$(function () {
+		const token = localStorage.getItem('token');
+		const expireTime = localStorage.getItem('expire_time');
+		const now = Math.floor(Date.now() / 1000);
+
+		// 本地校验token有效
+		if (token && Number(expireTime) > now) {
+			console.log(token, expireTime);
+			// 全局注入请求头
+			$.ajaxSetup({
+				headers: {
+					'Authorization': 'Bearer ' + token
+				}
+			});
+		} else {
+			// 失效清空存储，跳登录
+			localStorage.removeItem('token');
+			localStorage.removeItem('expire_time');
+			// location.href = '/login.html';
+		}
+	});
+
+
 	$.get("{:url('login_status')}", function(res) {
 		if(res.code === 0) {
 			var LOGHTML = `<li class="layui-nav-item"><a class="layui-icon layui-icon-username" style="font-size: 20px;" href="{:url('user_login')}"></a></li>
-				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_login')}">{:lang('login')}</a></li>
+				<li class="layui-nav-item layui-hide-xs"><a href="{:url('login_index')}">{:lang('login')}</a></li>
 				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_reg')}">{:lang('register')}</a></li>
 				<li class="layui-nav-item layui-hide-xs layui-hide">
 					<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">

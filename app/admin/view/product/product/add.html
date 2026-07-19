@@ -1,0 +1,302 @@
+{extend name="public/form" /}
+
+{block name="body"}
+
+<form class="layui-form">
+	<div class="mainBox">
+		<div class="main-container">
+
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">上级栏目*</label>
+				<div class="layui-input-block">
+					<div id="menuSelectBox" class="ew-xmselect-tree"></div>
+				</div>
+			</div> -->
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">名称*</label>
+				<div class="layui-input-block">
+					<input type="text" name="name" lay-verify="required|name" placeholder="商品名称*" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<!-- 规格类型 -->
+			<div id="fairy-is-attribute"></div>
+			<!--商品规格表-->
+			<div id="fairy-spec-table"></div>
+			<!--商品库存表-->
+			<div id="fairy-sku-table"></div>
+
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="submit">立即提交</button>
+					<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
+		</div>
+	</div>
+</form>
+
+{__block__}
+
+<script>
+
+	const ADD_URL = MODULE_NAME + '/product/productSku/add';
+	const GET_SPEC_DATA_URL = MODULE_NAME + '/product/productSpec/getSpecData';
+	const UPLOAD_URL = MODULE_NAME + '/product/productSku/upload';
+
+	layui.use(['iconPicker','imgcom','skuTable'], function(){
+		var $ = layui.jquery
+		,form = layui.form ;
+		let upload = layui.upload;
+		let imgcom = layui.imgcom;
+		let skuTable = layui.skuTable;
+
+		form.verify({
+			title: function(value, elem){
+				if(!value){
+					return '请输入';
+				}
+				if (/^\d+$/.test(value)) {
+					return '不能全为数字';
+				}
+			},
+		});
+
+$.get(GET_SPEC_DATA_URL, function(res){
+	if(res.code === 0){
+		
+		var specData = res.data;
+			
+
+		//注意！！！ 注意！！！ 注意！！！
+        //如果配置了相关接口请求的参数，请置本示例于服务器中预览，不然会有浏览器跨域问题
+        //示例中的json文件仅做格式返回参考，若多次执行添加规格后再为新增后的规格添加规格值，会发现所有新增的规格都增加了该规格值。注意！此处并非是bug，原因是因为示例中返回的新增规格值id是重复的，而在正常接口请求每次返回的新增规则id是不一样的
+        var obj = skuTable.render({
+            //规格类型 0统一规格 1多规格
+            isAttributeValue: 0,
+            //规格类型容器id
+            isAttributeElemId: 'fairy-is-attribute',
+            //规格表容器id
+            specTableElemId: 'fairy-spec-table',
+            //sku表容器id
+            skuTableElemId: 'fairy-sku-table',
+            //规格拖拽排序
+            sortable: true,
+            //sku表相同属性值是否合并行
+            rowspan: true,
+            //请求成功返回状态码值
+            requestSuccessCode: 200,
+            //上传接口地址
+            //接口要求返回格式为 {"code": 200, "data": {"url": "xxx"}, "msg": ""}
+            uploadUrl: '/static/admin/data/sku/json/upload.json',
+            //统一规格配置项
+            singleSkuTableConfig: {
+                thead: [
+                    {title: '销售价(元)', icon: 'layui-icon-cols'},
+                    {title: '市场价(元)', icon: 'layui-icon-cols'},
+                    {title: '成本价(元)', icon: 'layui-icon-cols'},
+                    {title: '库存', icon: 'layui-icon-cols'},
+                    {title: '状态', icon: ''},
+                ],
+                tbody: [
+                    {type: 'input', field: 'price', value: '', verify: 'required|number', reqtext: '销售价不能为空'},
+                    {type: 'input', field: 'market_price', value: '0', verify: 'required|number', reqtext: '市场价不能为空'},
+                    {type: 'input', field: 'cost_price', value: '0', verify: 'required|number', reqtext: '成本价不能为空'},
+                    {type: 'input', field: 'stock', value: '0', verify: 'required|number', reqtext: '库存不能为空'},
+                    {type: 'select', field: 'status', option: [{key: '启用', value: '1'}, {key: '禁用', value: '0'}], verify: 'required', reqtext: '状态不能为空'},
+                ]
+            },
+            //多规格配置项
+            multipleSkuTableConfig: {
+                thead: [
+                    {title: '图片', icon: ''},
+                    {title: '销售价(元)', icon: 'layui-icon-cols'},
+                    {title: '市场价(元)', icon: 'layui-icon-cols'},
+                    {title: '成本价(元)', icon: 'layui-icon-cols'},
+                    {title: '库存', icon: 'layui-icon-cols'},
+                    {title: '状态', icon: ''},
+                ],
+                tbody: [
+                    {type: 'image', field: 'picture', value: '', verify: '', reqtext: ''},
+                    {type: 'input', field: 'price', value: '', verify: 'required|number', reqtext: '销售价不能为空'},
+                    {type: 'input', field: 'market_price', value: '0', verify: 'required|number', reqtext: '市场价不能为空'},
+                    {type: 'input', field: 'cost_price', value: '0', verify: 'required|number', reqtext: '成本价不能为空'},
+                    {type: 'input', field: 'stock', value: '0', verify: 'required|number', reqtext: '库存不能为空'},
+                    {
+                        type: 'select',
+                        field: 'status',
+                        option: [{key: '启用', value: '1'}, {key: '禁用', value: '0'}],
+                        verify: '',
+                        reqtext: ''
+                    },
+                ]
+            },
+            //商品id 配合specDataUrl和skuDataUrl使用
+            productId: '',
+            //规格数据, 一般从后台获取
+            // specData: [
+            //     {
+            //         id: "1",
+            //         title: "颜色1",
+            //         child: [
+            //             {id: "1", title: "红", checked: true},
+            //             {id: "2", title: "黄", checked: false},
+            //             {id: "3", title: "蓝", checked: false}
+            //         ]
+            //     }, {
+            //         id: "2",
+            //         title: "尺码",
+            //         child: [
+            //             {id: "4", title: "S", checked: true},
+            //             {id: "5", title: "M", checked: true},
+            //             {id: "6", title: "L", checked: false},
+            //             {id: "7", title: "XL", checked: false}
+            //         ]
+            //     }, {
+            //         id: "3",
+            //         title: "款式",
+            //         child: [
+            //             {id: "8", title: "男款", checked: true},
+            //             {id: "9", title: "女款", checked: true}
+            //         ]
+            //     }
+            // ],
+            specData: specData,
+			//获取规格数据接口地址，如果为空或者不配置则使用 specData 参数配置
+            //接口要求返回格式参考 specData.json
+            specDataUrl: '/static/admin/data/sku/json/specData.json',
+            //sku数据
+            //新增的时候为空对象
+            //编辑的时候可以从后台接收，会自动填充sku表，可以去掉注释看效果
+            //多规格格式
+            // skuData: {
+            //     "skus[1-4-8][picture]": "https://www.baidu.com/img/flexible/logo/pc/result.png",
+            //     "skus[1-4-8][price]": "100",
+            //     "skus[1-4-8][market_price]": "200",
+            //     "skus[1-4-8][cost_price]": "50",
+            //     "skus[1-4-8][stock]": "18",
+            //     "skus[1-4-8][status]": "0",
+            //     "skus[1-4-9][picture]": "",
+            //     "skus[1-4-9][price]": "0",
+            //     "skus[1-4-9][market_price]": "0",
+            //     "skus[1-4-9][cost_price]": "0",
+            //     "skus[1-4-9][stock]": "0",
+            //     "skus[1-4-9][status]": "1",
+            //     "skus[1-5-8][picture]": "",
+            //     "skus[1-5-8][price]": "0",
+            //     "skus[1-5-8][market_price]": "0",
+            //     "skus[1-5-8][cost_price]": "0",
+            //     "skus[1-5-8][stock]": "0",
+            //     "skus[1-5-8][status]": "1",
+            //     "skus[1-5-9][picture]": "",
+            //     "skus[1-5-9][price]": "0",
+            //     "skus[1-5-9][market_price]": "0",
+            //     "skus[1-5-9][cost_price]": "0",
+            //     "skus[1-5-9][stock]": "0",
+            //     "skus[1-5-9][status]": "1"
+            // },
+            //统一规格格式
+            // skuData: {
+            //     'price': '80',
+            //     'market_price': '100',
+            //     'cost_price': '60',
+            //     'stock': '999',
+            //     'status': '0',
+            // },
+            //获取SKU数据接口地址，如果为空或者不配置则使用skuData配置
+            //接口要求返回格式参考 skuData.json
+            skuDataUrl: '/static/admin/data/sku/json/skuData.json',
+        });
+
+        form.on('submit(submit)', function (data) {
+            //获取表单数据
+            console.log(data.field);
+			const skuArr = obj.getFormSkuData();
+
+			console.log(skuArr);
+
+            if (data.field.is_attribute == 1) {
+                //获取规格数据
+                console.log(obj.getSpecData());
+
+                var state = Object.keys(data.field).some(function (item, index, array) {
+                    return item.startsWith('skus');
+                });
+                state ? layer.alert(JSON.stringify(skuArr), {title: '提交的数据'}) : layer.msg('sku表数据不能为空', {icon: 5, anim: 6});
+
+
+				
+            } else {
+                layer.alert(JSON.stringify(data.field), {title: '提交的数据'});
+            }
+
+            return false;
+        });
+    }
+})
+
+		form.on('submit(save)', function(data) {
+			$.ajax({
+				url: ADD_URL,
+				data: data.field,
+				dataType: 'json',
+				type: 'post',
+				success: function(res) {
+					if (res.code === 0) {
+						layer.msg(res.msg, {
+							icon: 1,
+							time: 1000
+						}, function() {
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+							parent.layui.table.reloadData('table');
+						});
+					} else {
+						layer.msg(res.msg, {
+							icon: 2,
+							time: 1000
+						});
+					}
+				}
+			})
+			return false;
+		});
+
+		//上传图片
+		upload.render({
+			elem: '#upload-cate-img'
+			,url: UPLOAD_URL
+			,data:{type:'image'}
+			,accept: 'images'
+			,acceptMime: 'image/*'
+			,auto: false
+			,choose: function (obj) { //选择文件后的回调
+					imgcom.uploads(obj);
+				}
+			,done: function(res){
+				$(this.item).prev("div").children("input").val(res.src)
+				if(res.code === 0){
+					layer.msg(res.msg,{icon:6,tiye:2000});
+				} else {
+					layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+				}
+			}
+		});
+
+	})
+</script>
+
+{/block}

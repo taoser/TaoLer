@@ -1,0 +1,30 @@
+{
+  "code": 200,
+  "data": {
+    "skus[1-4-8][picture]": "https://www.baidu.com/img/flexible/logo/pc/result.png",
+    "skus[1-4-8][price]": "100",
+    "skus[1-4-8][market_price]": "200",
+    "skus[1-4-8][cost_price]": "50",
+    "skus[1-4-8][stock]": "18",
+    "skus[1-4-8][status]": "0",
+    "skus[1-4-9][picture]": "",
+    "skus[1-4-9][price]": "0",
+    "skus[1-4-9][market_price]": "0",
+    "skus[1-4-9][cost_price]": "0",
+    "skus[1-4-9][stock]": "0",
+    "skus[1-4-9][status]": "1",
+    "skus[1-5-8][picture]": "",
+    "skus[1-5-8][price]": "0",
+    "skus[1-5-8][market_price]": "0",
+    "skus[1-5-8][cost_price]": "0",
+    "skus[1-5-8][stock]": "0",
+    "skus[1-5-8][status]": "1",
+    "skus[1-5-9][picture]": "",
+    "skus[1-5-9][price]": "0",
+    "skus[1-5-9][market_price]": "0",
+    "skus[1-5-9][cost_price]": "0",
+    "skus[1-5-9][stock]": "0",
+    "skus[1-5-9][status]": "1"
+  },
+  "msg": "获取sku数据成功！"
+}

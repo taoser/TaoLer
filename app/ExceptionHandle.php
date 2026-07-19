@@ -9,6 +9,7 @@ use think\exception\HttpResponseException;
 use think\exception\ValidateException;
 use think\Response;
 use Throwable;
+use think\facade\Log;
 
 /**
  * 应用异常处理类
@@ -36,6 +37,7 @@ class ExceptionHandle extends Handle
      */
     public function report(Throwable $exception): void
     {
+        Log::error($exception->getMessage().':'.$exception->getFile().':'.$exception->getLine());
         // 使用内置的方式记录异常日志
         parent::report($exception);
     }
@@ -103,9 +105,9 @@ class ExceptionHandle extends Handle
         }
 
         $data = [
-            'code' => $code,
-            'message' => $message,
-            'data' => [],
+            'code'      => $code,
+            'message'   => $message,
+            'data'      => [],
         ];
 
         return json($data, $code);

@@ -124,16 +124,16 @@ class Article extends BaseEntity
     /**
      * 置顶推荐文章
      *
-     * @param integer $num 数量
+     * @param integer $limit 数量
      * @return array
      */
-    public function getTops(int $num = 5): array
+    public function getTops(int $limit = 5): array
     {
-        return  Cache::remember('top_article', function() use($num) {
+        return  Cache::remember('top_article', function() use($limit) {
 
             $datas = [];
             // type = 1为置顶推荐文章
-            $articleIds = Db::name('article_flag')->field('article_id')->where('type', 1)->limit($num)->select();
+            $articleIds = Db::name('article_flag')->field('article_id')->where('type', 1)->limit($limit)->select();
 
             $sufsAids = [];
             foreach($articleIds as $v){
@@ -169,14 +169,14 @@ class Article extends BaseEntity
 
     /**
      * 热评
-     * @param int $num
+     * @param int $limit
      * @return array
      * @throws \Throwable
      */
-    public function getHotComments(int $num = 10): array
+    public function getHotComments(int $limit = 10): array
     {
 
-        $hots = Cache::remember('hot_comments', function() use($num){
+        $hots = Cache::remember('hot_comments', function() use($limit){
 
             $comment = Db::name('comment')
             ->alias('c')
@@ -187,7 +187,7 @@ class Article extends BaseEntity
             // ->where(['a.status' => 1, 'a.delete_time' => 0])
             ->group('c.article_id')
             ->order('count', 'desc')
-            ->limit($num)
+            ->limit($limit)
             ->select()
             ->toArray();
 
@@ -221,14 +221,14 @@ class Article extends BaseEntity
 
     /**
      * 阅读排行
-     * @param int $num
+     * @param int $limit
      * @return array
      * @throws \Throwable
      */
-    public function getHotPvs(int $num = 10): array
+    public function getHotPvs(int $limit = 10): array
     {
 
-        $hotPvs = Cache::remember('hot_pvs', function() use($num){
+        $hotPvs = Cache::remember('hot_pvs', function() use($limit){
 
             $suffixArr = self::getSubTablesSuffix();
             $suffixArr[] = '';
@@ -243,7 +243,7 @@ class Article extends BaseEntity
                 ->where('delete_time', 0)
                 ->where('status', 1)
                 ->order('pv', 'desc')
-                ->limit($num)
+                ->limit($limit)
                 ->append(['url'])
                 ->select()
                 ->toArray();
@@ -251,7 +251,7 @@ class Article extends BaseEntity
                 $datas = array_merge($datas, $data);
 
                 $total = count($datas);
-                if($total >= $num) {
+                if($total >= $limit) {
                     break;
                 }
             }
@@ -265,20 +265,20 @@ class Article extends BaseEntity
 
     /**
      * 精华文章
-     * @param int $num
+     * @param int $limit
      * @return array
      * @throws \Throwable
      */
-    public function getGoods(int $num = 10): array
+    public function getGoods(int $limit = 10): array
     {
-        $goods =  Cache::remember('goods', function() use($num){
+        $goods =  Cache::remember('goods', function() use($limit){
 
             $datas = [];
             $articleIds = Db::name('article_flag')
             ->field('article_id')
             ->where('type', 2)
             // ->whereMonth('create_time')
-            ->limit($num)
+            ->limit($limit)
             ->select();
 
             $articleArr = $articleIds->toArray();
@@ -309,22 +309,22 @@ class Article extends BaseEntity
 
     /**
      * 获取首页文章列表
-     * @param int $num
+     * @param int $limit
      * @return array
      * @throws \Throwable
      */
-    public function getIndexs(int $num = 10): array
+    public function getIndexs(int $limit = 10): array
     {
-        $indexs = Cache::remember('idx_article', function() use($num){
-            
-            $map = self::getSuffixMap(['status' => 1], Article::class);
+        $indexs = Cache::remember('idx_article', function() use($limit){
+  
+            $map = $this->getSuffixMap(['status' => 1], Article::class);
 
             $field = 'id,title,cate_id,user_id,content,description,pv,thum_img,has_image,has_video,has_audio,create_time,media,comments_num,flags';
             // 判断是否有多个表
             if($map['tableCount'] > 1) {
 
-                // 分表中$num数够
-                if($map['countArr'][0] >= $num) {
+                // 分表中$limit数够
+                if($map['countArr'][0] >= $limit) {
                     $data = $this->suffix($map['tableSuffixArr'][0])->field($field)
                         ->with([
                         'cate' => function(Query $query){
@@ -338,13 +338,14 @@ class Article extends BaseEntity
                         ->append(['enid'])
                         // ->append(['url','master_pic'])
                         ->append(['url'])
-                        ->limit($num)
+                        ->limit($limit)
                         ->select()
                         ->toArray();
 
                 } else {
-                    // 第一个分表 数量不够 取第二个分表数
-                    $data = $this->suffix($map['tableSuffixArr'][0])->field($field)
+                    // 第一个主表 数量不够，取第二个分表数
+                    $data = $this->suffix($map['tableSuffixArr'][0])
+                    ->field($field)
                         ->with([
                         'cate' => function(Query $query){
                             $query->field('id,catename,ename,tpl');
@@ -361,7 +362,7 @@ class Article extends BaseEntity
                         ->select()
                         ->toArray();
 
-                    $data1 = $this->suffix($map['tableSuffixArr'][0])
+                    $data1 = $this->suffix($map['tableSuffixArr'][1])
                         ->field($field)
                         ->with([
                         'cate' => function(Query $query){
@@ -375,7 +376,7 @@ class Article extends BaseEntity
                         ->append(['enid'])
                         // ->append(['url','master_pic'])
                         ->append(['url'])
-                        ->limit($num - $map['countArr'][0])
+                        ->limit($limit - $map['countArr'][0])
                         ->select()
                         ->toArray();
 
@@ -396,7 +397,7 @@ class Article extends BaseEntity
                     ->append(['enid'])
                     // ->append(['url','master_pic'])
                     ->append(['url'])
-                    ->limit($num)
+                    ->limit($limit)
                     ->select()
                     ->toArray();
             }
@@ -870,7 +871,7 @@ class Article extends BaseEntity
         $tableSuffixArr = self::getSubTablesSuffix('article');
         // 主表没有后缀，添加到分表数组中
         $tableSuffixArr[] = '';
-        // 表综合
+        // 总表数量
         $tableCount = count($tableSuffixArr);
 
         if($tableCount) {
@@ -882,10 +883,10 @@ class Article extends BaseEntity
         }
 
         $map = [
-            'countArr'    => $countArr,
-            'totals'    => $totals,
-            'tableSuffixArr' => $tableSuffixArr,
-            'tableCount' => $tableCount
+            'countArr'      => $countArr,
+            'totals'        => $totals,
+            'tableSuffixArr'=> $tableSuffixArr,
+            'tableCount'    => $tableCount
         ];
         // halt($map);
         // 总共页面数

@@ -20,8 +20,10 @@ class JwtAuth
     private static string $aud;
     // 加密算法   
     private static string $alg = 'HS256';
+    // 令牌有效时间（秒）
+    private static int $expire;
     // 令牌过期时间（秒）
-    private static int $expireTime = 86400 * 30;
+    private static int|null $expireTime = null;
     // 刷新令牌过期时间（秒）
     private static int $refreshExpireTime = 86400 * 60;
 
@@ -36,13 +38,14 @@ class JwtAuth
         if (self::$isInit) return;
         // 从配置文件获取JWT配置
         $jwtConfig = config('jwt');
-        
+
         // 获取配置值，如果配置不存在则使用默认值
         self::$key = $jwtConfig['key'] ?? 'adsfhgkjl1324675809abcdefghijklmnopqrstuvwxyz';
         self::$iss = $jwtConfig['iss'] ?? 'www.aieok.com';
         self::$aud = $jwtConfig['aud'] ?? 'www.aieok.com';
         self::$alg = $jwtConfig['alg'] ?? 'HS256';
-        
+        self::$expire = $jwtConfig['expire'] ?? 86400 * 30; // 30天
+
         // 验证密钥长度
         if (strlen(self::$key) < 32) {
             throw new Exception('JWT secret key must be at least 32 characters long');
@@ -59,13 +62,16 @@ class JwtAuth
     {
         self::init();
 
-        $time = time();      
+        $time = time();
+        $expireTime = $time + self::$expire;
+        self::$expireTime = $expireTime;
+
         $payload = [
             "iss"  => self::$iss,
             "aud"  => self::$aud,         
             "iat"  => $time,      
             "nbf"  => $time,        
-            "exp"  => $time + self::$expireTime,          
+            "exp"  => $expireTime,          
             "jti"  => self::generateJti(), // 使用更安全的jti生成方法
             "data" => $data,  
         ];
@@ -217,12 +223,12 @@ class JwtAuth
     }
 
     /**
-     * 设置令牌过期时间
-     * @param int $seconds 过期时间（秒）
+     * 设置令牌有效时间
+     * @param int $seconds 有效时间（秒）
      */
-    public static function setExpireTime(int $seconds): void
+    public static function setExpire(int $seconds): void
     {
-        self::$expireTime = $seconds;
+        self::$expire = $seconds;
     }
 
     /**
@@ -241,5 +247,73 @@ class JwtAuth
     public static function setAlgorithm(string $alg): void
     {
         self::$alg = $alg;
+    }
+
+        /**
+     * 获取访问令牌有效时间（秒）
+     * @return int 有效时间（秒）
+     */
+    public static function getExpire(): int
+    {
+        return self::$expire;
+    }
+
+    /**
+     * 获取token过期的时间戳
+     * @return int 过期时间戳
+     */
+    public static function getExpireTime(): int
+    {
+        return self::$expireTime;
+    }
+
+    /**
+     * 获取刷新令牌过期时间（秒）
+     * @return int 过期时间（秒）
+     */
+    public static function getRefreshExpireTime(): int
+    {
+        return self::$refreshExpireTime;
+    }
+
+
+    /**
+     * 获取刷新token过期的时间戳
+     * @return int 过期时间戳
+     */
+    public static function getRefreshTokenExpireTimestamp(): int
+    {
+        self::init();
+        return time() + self::$refreshExpireTime;
+    }
+
+    /**
+     * 生成token并返回包含过期时间的数组
+     * @param array $data 要编码的数据
+     * @return array 返回包含token和过期时间的数组
+     */
+    public static function encodeWithExpire(array $data): array
+    {
+        self::init();
+        $time = time();      
+        $expireTime = $time + self::$expire;
+        $payload = [
+            "iss"  => self::$iss,
+            "aud"  => self::$aud,         
+            "iat"  => $time,      
+            "nbf"  => $time,        
+            "exp"  => $expireTime,          
+            "jti"  => self::generateJti(),
+            "data" => $data,  
+        ];
+        
+        try {
+            return [
+                'token' => JWT::encode($payload, self::$key, self::$alg),
+                'expire_time' => $expireTime,
+            ];
+        } catch (Exception $e) {
+            throw new Exception('Failed to generate token: ' . $e->getMessage(), 500);
+        }
     }
 }

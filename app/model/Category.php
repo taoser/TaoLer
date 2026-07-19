@@ -20,6 +20,11 @@ class Category extends BaseModel
         ];
     }
 
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'pid');
+    }
+
     //关联文章
 	public function article()
     {
@@ -35,7 +40,7 @@ class Category extends BaseModel
     // 获取url
     public function getUrlAttr($value, $data)
     {
-        if($data['type'] === 3) {
+        if($data['type'] === 3) { // 自定义url
             return $data['url'];
         }
         return (string) url('cate', ['ename' => $data['ename']]);

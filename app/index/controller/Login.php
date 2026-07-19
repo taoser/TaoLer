@@ -18,7 +18,7 @@ class Login extends IndexBaseController
 
 	//已登陆中间件检测
 	protected $middleware = [
-	    'logedcheck' => ['except' 	=> ['index','status'] ]
+	    'logedcheck' => ['except' 	=> ['index','login','status'] ]
     ];
 
 	public function initialize()
@@ -32,80 +32,44 @@ class Login extends IndexBaseController
 	{
         //已登陆跳出
         if(Session::has('user_id')){
-            return redirect((string) url('user/index'));
+            return redirect((string) url('user_index'));
         }
 		
+        return View::fetch('login');
+	}
+
+	public function login()
+	{
+		// 检验登录是否开放
+        if(Config::get('taoler.config.is_login') == 0 ) {
+			return json(['code'=>-1,'msg'=> 'Sorry,Sorry, website maintenance, temporarily unable to log in!']);
+        }
+        
 		//获取登录前访问页面refer
         $refer = str_replace(Request::domain(), '', Request::server('HTTP_REFERER'));
 
-        if(Request::isAjax()) {
-			// 检验登录是否开放
-			if(config('taoler.config.is_login') == 0 ) return json(['code' => -1,'msg' => 'Sorry, website maintenance, temporarily unable to log in!']);
-            
-			$data = Request::only(['name','email','phone','password','captcha','remember']);
+		$data = Request::only(['name','email','phone','password','captcha','remember']);
 
-			//登陆前数据校验
-			if(Config::get('taoler.config.login_captcha') == 1) {				
-				//先校验验证码
-				if(!captcha_check($data['captcha'])){
-					// 验证失败
-					return json(['code'=>-1,'msg'=> '验证码失败']);
-				};
-			}
-						
-			//登陆请求
-			try{
-				//邮箱正则表达式
-				// $patternEmail = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
-				// 包含英文和中文用户名邮箱
-				$patternEmail = "/^[A-Za-z0-9\x{4e00}-\x{9fa5}]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/u";
-				$patternTel = "/^1[3-9]\d{9}$/";
+		// 校验验证码
+        if(Config::get('taoler.config.login_captcha') == 1 && !captcha_check($data['captcha'])) {				
+            return json(['code'=>-1,'msg'=> '验证码失败']);
+        }
 
-				if(preg_match($patternTel, $data['name'])) {
-					//手机验证登录
-					$data['phone'] = $data['name'];
-					unset($data['name']);
-					validate(UserValidate::class)
-					->scene('loginPhone')
-					->check($data);
-					
-					$data['name'] = $data['phone'];
-					unset($data['phone']);
-
-				} elseif (preg_match($patternEmail, $data['name'])){
-					//输入邮箱email登陆验证
-					$data['email'] = $data['name'];
-					unset($data['name']);
-					
-					validate(UserValidate::class)
-					->scene('loginEmail')
-					->check($data);
-					
-					$data['name'] = $data['email'];
-					unset($data['email']);
-				} else {
-					//用户名name登陆验证
-					validate(UserValidate::class)
-					->scene('loginName')
-					->check($data);
-				}
-
-				$res = $this->userModel::login($data);
-				
-			} catch (ValidateException $e) {
-				return json(['code'=>-1,'msg'=>$e->getError()]);
-			} catch(Exception $e) {
-				return json(['code' => -1, 'msg' => $e->getMessage()]);
-			}
+		try {
+			$res = User::login($data);
 
 			return json([
 				'code' => 0,
 				'msg' => '登录成功',
-				'data' => ['token' => $res['token'], 'url' => $refer]
+				'data' => ['token' => $res['token'], 'expire_time' => $res['expire_time'], 'url' => $refer]
 			]);
-        }
 
-        return View::fetch('login');
+		} catch (ValidateException $e) {
+			return json(['code' => -1, 'msg' => $e->getError()]);
+		} catch (\Exception $e) {
+			return json(['code' => -1, 'msg' => $e->getMessage()]);
+		}
+
 	}
 
     //注册

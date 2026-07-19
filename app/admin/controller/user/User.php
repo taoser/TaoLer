@@ -162,7 +162,7 @@ class User extends AdminBaseController
 		}
 
 		$id = Request::param('id/d');
-		$user = $this->model->find($id);
+		$user = $this->model::find($id);
 		View::assign('user',$user);
 
 		return View::fetch();
@@ -174,8 +174,7 @@ class User extends AdminBaseController
 		$id = Request::param('id');
 		$ids = explode(',', $id);
 		
-		$user = $this->model->selectIn($ids);
-		$result = $user->delete();
+		$result = $this->model::destroy($ids);
 		
 		if($result){
 			return json(['code'=>0,'msg'=>'删除成功']);

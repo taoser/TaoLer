@@ -15,7 +15,7 @@ use think\App;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\index\model\Comment as CommentModel;
+use app\facade\Comment as CommentModel;
 use think\facade\Log;
 
 class Comment extends AdminBaseController

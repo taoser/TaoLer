@@ -14,7 +14,7 @@
 {block name="column"}{/block}
 {block name="content"}
 <div class="fly-home fly-panel" >
-  <img src="{$Request.domain}/{$u.user_img}" alt="{$u.name}">
+  <img src="{$u.user_img}" alt="{$u.name}">
   {if($u.vip > 0)}<i class="iconfont icon-renzheng" title="Fly社区认证"></i>{/if}
   <h1>
     {$u.nickname ?: $u.name}

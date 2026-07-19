@@ -1,0 +1,119 @@
+{extend name="public/form" /}
+
+{block name="body"}
+
+<form class="layui-form">
+	<div class="mainBox">
+		<div class="main-container">
+
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">上级栏目*</label>
+				<div class="layui-input-block">
+					<div id="menuSelectBox" class="ew-xmselect-tree"></div>
+				</div>
+			</div> -->
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">名称*</label>
+				<div class="layui-input-block">
+					<input type="text" name="title" lay-verify="required|title" placeholder="规格名称*" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
+		</div>
+	</div>
+</form>
+
+{__block__}
+
+<script>
+
+	const ADD_URL = MODULE_NAME + '/product/productSku/add';
+	const UPLOAD_URL = MODULE_NAME + '/product/productSku/upload';
+
+	layui.use(['iconPicker','imgcom'], function(){
+		var $ = layui.jquery
+		,form = layui.form ;
+		let upload = layui.upload;
+		let imgcom = layui.imgcom;
+
+		form.verify({
+			title: function(value, elem){
+				if(!value){
+					return '请输入';
+				}
+				if (/^\d+$/.test(value)) {
+					return '不能全为数字';
+				}
+			},
+		});
+
+		form.on('submit(save)', function(data) {
+			$.ajax({
+				url: ADD_URL,
+				data: data.field,
+				dataType: 'json',
+				type: 'post',
+				success: function(res) {
+					if (res.code === 0) {
+						layer.msg(res.msg, {
+							icon: 1,
+							time: 1000
+						}, function() {
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+							parent.layui.table.reloadData('table');
+						});
+					} else {
+						layer.msg(res.msg, {
+							icon: 2,
+							time: 1000
+						});
+					}
+				}
+			})
+			return false;
+		});
+
+		//上传图片
+		upload.render({
+			elem: '#upload-cate-img'
+			,url: UPLOAD_URL
+			,data:{type:'image'}
+			,accept: 'images'
+			,acceptMime: 'image/*'
+			,auto: false
+			,choose: function (obj) { //选择文件后的回调
+					imgcom.uploads(obj);
+				}
+			,done: function(res){
+				$(this.item).prev("div").children("input").val(res.src)
+				if(res.code === 0){
+					layer.msg(res.msg,{icon:6,tiye:2000});
+				} else {
+					layer.open({title:"上传失败",content:res.msg,icon:5,anim:6});
+				}
+			}
+		});
+
+	})
+</script>
+
+{/block}

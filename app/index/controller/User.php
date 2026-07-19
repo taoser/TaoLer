@@ -11,7 +11,7 @@ use think\facade\Cache;
 use think\facade\Cookie;
 use think\facade\View;
 use app\facade\Article;
-use app\index\model\Collection;
+use app\model\Collection;
 use app\facade\User as userModel;
 use taoler\com\Message;
 use Intervention\Image\ImageManager;
@@ -26,7 +26,7 @@ class User extends IndexBaseController
 	//用户中心
 	public function index()
 	{
-        return view();
+        return view('index');
     }
 	
 	
@@ -329,8 +329,9 @@ class User extends IndexBaseController
     }
 	
 	//个人页
-    public function home($id)
+    public function home()
     {
+		$id = Session::get('user_id') ?? input('id');
 		//用户
 		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->find($id);
 	
@@ -351,7 +352,7 @@ class User extends IndexBaseController
 		->limit(10)
 		->cache(3600)->select();
 
-		View::assign(['u'=>$u,'arts'=>$arts,'reys'=>$reys,'jspage'=>'']);
+		View::assign(['u' => $u, 'arts'=>$arts,'reys'=>$reys,'jspage'=>'']);
         return View::fetch();
     }
 	

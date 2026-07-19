@@ -96,7 +96,7 @@
 </script>
 
 <script type="text/html" id="user-enable">
-	<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.status== 1 ? 'checked' : '' }} />
+	<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{= d.status == 1 ? 'checked' : '' }} />
 </script>
 
 <script type="text/html" id="buttonAuth">
@@ -131,16 +131,15 @@
 
 	const USER_LIST = MODULE_NAME + '/user/user/list';
 	const USER_SAVE = MODULE_NAME + '/user/user/save';
+	const USER_ADD = MODULE_NAME + '/user/user/add';
 	const USER_EDIT = MODULE_NAME + '/user/user/edit';
 	const USER_DELETE = MODULE_NAME + '/user/user/delete';
-	const USER_REMOVE = MODULE_NAME + '/user/user/delete';
 	const USER_CLEAR = MODULE_NAME + '/user/user/clear';
-	const USER_ENABLE = MODULE_NAME + '/user/user/enable';
+	const USER_CHECK = MODULE_NAME + '/user/user/check';
 	const USER_BATCH_REMOVE = MODULE_NAME + '/user/user/batchRemove';
 
 	const USER_EDIT_VIP_LEVEL = MODULE_NAME + '/user/editVipLevel';
-	const USER_EDIT_FIELD = MODULE_NAME + '/user/editField';
-	const USER_CHECK = MODULE_NAME + '/user/check';
+	const USER_EDIT_FIELD = MODULE_NAME + '/user/user/editField';
 
 	layui.use(['common','admin'], function() {
 		let $ = layui.jquery;
@@ -348,31 +347,31 @@
 
 		// 用户审核
 		form.on('switch(user-enable)', function(obj) {
-			layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+			var id = this.value;
 			var status = obj.elem.checked ? 1 : -1;
 			
-				$.ajax({
-					type:'post',
-					url: USER_CHECK,
-					data:{"id":this.value,"status":status},
-					dataType:'json',
-					success:function(res){
-						if(res.code == 0){
-							layer.msg(res.msg,{
-								icon:res.icon,
-								time:2000
-							});
-						} else {
-							layer.open({
-								title:'审核失败',
-								content:res.msg,
-								icon:5,
-								adim:6
-							})
-						}
+			$.ajax({
+				type:'post',
+				url: USER_CHECK,
+				data:{"id":id, "status":status},
+				dataType:'json',
+				success:function(res){
+					if(res.code == 0){
+						layer.msg(res.msg,{
+							icon:res.icon,
+							time:2000
+						});
+					} else {
+						layer.open({
+							title:'审核失败',
+							content:res.msg,
+							icon:5,
+							adim:6
+						})
 					}
-				});
-				return false;
+				}
+			});
+			return false;
 		});
 
 		//超级管理auth控制
@@ -428,7 +427,7 @@
 
 		window.remove = function(obj) {
 			
-			layer.confirm('确定要删除该用户', {
+			layer.confirm('确定要删除?', {
 				icon: 3,
 				title: '提示'
 			}, function(index) {

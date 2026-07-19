@@ -1,12 +1,12 @@
 <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="user">
 	<li class="layui-nav-item {if($Request.action=='index')}layui-this{/if}">
-		<a href="{:url('user/index')}">
+		<a href="{:url('user_index')}">
 			<i class="layui-icon layui-icon-user"></i>
 			{:lang('user center')}
 		</a>
 	</li>
 	<li class="layui-nav-item {if($Request.action=='set')}layui-this{/if}">
-		<a href="{:url('user/set')}">
+		<a href="{:url('user_set')}">
 			<i class="layui-icon layui-icon-set"></i>
 			{:lang('set info')}
 		</a>

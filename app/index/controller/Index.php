@@ -26,6 +26,7 @@ use app\index\entity\Article as ArticleEntity;
 use Exception;
 use think\facade\Cache;
 use think\Response;
+use app\common\helper\JwtAuth;
 
 
 class Index extends IndexBaseController

@@ -97,16 +97,16 @@
 				dataType: 'json',
 				contentType: 'application/json',
 				type: 'post',
-				success: function(result) {
-					if (result.code === 0) {
-						layer.msg(result.msg, {
+				success: function(res) {
+					if (res.code === 0) {
+						layer.msg(res.msg, {
 						icon: 1,
 						time: 1000
 						}, function() {
 							parent.layer.close(parent.layer.getFrameIndex(window.name));
 						});
 					} else {
-						layer.msg(result.msg, {
+						layer.msg(res.msg, {
 							icon: 2,
 							time: 1000
 						});

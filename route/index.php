@@ -6,7 +6,6 @@ Route::group('',function(){
 	// Route::get('user/blog','user\Blog/index');
 	// Route::get('user/blog','user.Blog/index');
 
-
 	// 上传路由
 	Route::get('upload/index','upload/index');
 	Route::post('upload/chunk','upload/chunk');
@@ -24,9 +23,9 @@ Route::group('',function(){
 	Route::get('index/<page>$', 'index/index')->name('index_page');
 
 	// 定义文章分类路由
-    Route::get('<ename>-list$','article/list')->name('cate');
-    Route::get('<ename>-list/type-<type>$', 'article/list')->name('cate_type');
-    Route::get('<ename>-list/type-<type>/<page>$', 'article/list')->name('cate_page');
+    Route::get('<ename>-list$','category/list')->name('cate');
+    Route::get('<ename>-list/type-<type>$', 'category/list')->name('cate_type');
+    Route::get('<ename>-list/type-<type>/<page>$', 'category/list')->name('cate_page');
 //
 	// 定义文章详情路由
 	// $detail_as = config('taoler.url_rewrite.article_as') ?: '<ename>/'; //详情页URL别称
@@ -47,7 +46,8 @@ Route::group('',function(){
 
 	// 登录注册
 	Route::group(function () {
-		Route::post('login$','login/index')->name('user_login');
+		Route::get('login$', 'login/index')->name('login_index');
+		Route::post('gologin$','login/login')->name('user_login');
 		Route::post('forget$','login/forget')->name('user_forget');
 		Route::post('reg$','login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
 		Route::post('postcode$','login/postcode');
@@ -58,9 +58,11 @@ Route::group('',function(){
 
 	// 用户中心
 	Route::group('user',function () {
-		Route::get('<id>$', 'user/home')->name('user_home'); 
+		Route::get('<id>$', 'user/home')->name('user_home')->pattern([
+	'id'   => '\d+',
+]); 
 		Route::get('index$', 'user/index')->name('user_index');
-		Route::get('set$', 'user/set');
+		Route::get('set$', 'user/set')->name('user_set');
 		Route::get('message$', 'user/message');
 		Route::get('post$', 'user/post');
 		Route::get('article$','user/myArticles');
@@ -72,7 +74,7 @@ Route::group('',function(){
 		Route::get('activate$','user/activate');
 		Route::get('active$','user/active');
 		Route::get('uploadHeadImg$','user/uploadHeadImg');
-		Route::get('logout$', 'user/logout');
+		Route::get('logout$', 'user/logout')->name('user_logout');
 	});
 
 	Route::get('index/reply$','index/reply')->name('user_reply');

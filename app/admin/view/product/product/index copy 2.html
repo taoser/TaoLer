@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>商品新增/编辑</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui-src/dist/css/layui.css">
+    <style>
+        .spec-card {margin:10px 0;padding:15px;border:1px solid #eee;border-radius:6px;}
+        .spec-value-box {margin:8px 0;padding:10px;background:#f8f8f8;}
+        .sku-table-box {margin-top:15px;display:none;}
+        .layui-form-item .layui-input-block {margin-left:110px;}
+        .layui-form-label {width:100px;}
+        .upload-demo {height:100px;line-height:100px;text-align:center;border:1px dashed #ccc;}
+    </style>
+</head>
+<body>
+<div class="layui-container" style="padding:20px;">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>商品信息</legend>
+    </fieldset>
+    <form class="layui-form" id="productForm" lay-filter="productForm">
+        <!-- 隐藏主键 编辑回显 -->
+        <input type="hidden" name="id" id="productId" value="">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商品标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" lay-verify="required" class="layui-input" placeholder="请输入商品标题">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商品分类</label>
+                    <div class="layui-input-block">
+                        <select name="category_id" lay-verify="required">
+                            <option value="">请选择分类</option>
+                            <!-- 后端渲染分类下拉 -->
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">售价</label>
+                    <div class="layui-input-block">
+                        <input type="number" step="0.01" name="price" lay-verify="required|decimal" class="layui-input" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">市场价</label>
+                    <div class="layui-input-block">
+                        <input type="number" step="0.01" name="market_price" class="layui-input" value="0.00">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">成本价</label>
+                    <div class="layui-input-block">
+                        <input type="number" step="0.01" name="cost_price" class="layui-input" value="0.00">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">库存总量</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="stock" class="layui-input" value="0">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">库存预警</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="warning_stock" class="layui-input" value="0">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">最少起购</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="min_buy" class="layui-input" value="1">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">限购数量</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="max_buy" class="layui-input" value="0" placeholder="0=不限购">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商品单位</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="unit" class="layui-input" placeholder="件/个/斤">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">排序权重</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="sort" class="layui-input" value="999">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商品简述</label>
+                    <div class="layui-input-block">
+                        <textarea name="sketch" class="layui-textarea" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">关键词</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="keywords" class="layui-input" placeholder="逗号分隔">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商品标签</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="tags" class="layui-input" placeholder="逗号分隔">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">展示视频</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="video_url" class="layui-input" placeholder="视频链接">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">供货商ID</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="supplier_id" class="layui-input" value="0">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商品状态</label>
+                    <div class="layui-input-block">
+                        <select name="status">
+                            <option value="1">正常上架</option>
+                            <option value="0">下架</option>
+                            <option value="10">违规禁售</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">审核状态</label>
+                    <div class="layui-input-block">
+                        <select name="state">
+                            <option value="0">待审核</option>
+                            <option value="1">审核通过</option>
+                            <option value="-1">审核失败</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开关配置</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="is_hot" lay-skin="primary" title="热销" value="1">
+                        <input type="checkbox" name="is_recommend" lay-skin="primary" title="推荐" value="1">
+                        <input type="checkbox" name="is_new" lay-skin="primary" title="新品" value="1">
+                        <input type="checkbox" name="is_stock_visible" lay-skin="primary" title="显示库存" value="1" checked>
+                        <input type="checkbox" name="is_open_commission" lay-skin="primary" title="开启分销" value="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品封面图</label>
+            <div class="layui-input-block">
+                <div class="upload-demo" id="coverUpload">上传封面</div>
+                <input type="hidden" name="cover" id="coverImg">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">幻灯片图集</label>
+            <div class="layui-input-block">
+                <div class="upload-demo" id="coversUpload">多图上传</div>
+                <input type="hidden" name="covers" id="coversImg">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品详情</label>
+            <div class="layui-input-block">
+                <textarea name="intro" id="introEditor" lay-verify="required"></textarea>
+            </div>
+        </div>
+
+        <!-- 规格模块 -->
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>商品规格管理 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="addSpec">新增规格组</button></legend>
+        </fieldset>
+        <div class="layui-form-item">
+            <label class="layui-form-label">启用规格</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_attribute" value="0" title="不启用" lay-filter="switchSpec" checked>
+                <input type="radio" name="is_attribute" value="1" title="启用规格" lay-filter="switchSpec">
+            </div>
+        </div>
+        <div id="specWrap" style="display:none;">
+            <!-- 动态规格容器 -->
+            <div id="specBox"></div>
+            <div style="margin:10px 0;">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="genSkuBtn">根据规格自动生成SKU</button>
+                <span class="layui-text">修改规格后需重新点击生成SKU</span>
+            </div>
+            <!-- SKU表格 -->
+            <div class="sku-table-box" id="skuBox">
+                <table class="layui-table" id="skuTable" lay-filter="skuTable"></table>
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="margin-top:30px;">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitProduct">提交保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/layui-src/dist/layui.js"></script>
+<script>
+layui.use(['form','upload','table','layedit'],function(){
+    const form = layui.form;
+    const upload = layui.upload;
+    const table = layui.table;
+    const layedit = layui.layedit;
+    const $ = layui.jquery;
+
+    // 全局存储
+    window.GLOBAL_DATA = {
+        specList: [], // 规格数组 [{id:0,title:'颜色',valueList:[{id:0,title:'红'}]}]
+        skuList: [],  // 生成后的sku组合
+        editProductId: 0
+    }
+
+    // 富文本编辑器
+    const editIndex = layedit.build('introEditor',{
+        height:280
+    })
+
+    // 封面上传
+    upload.render({
+        elem:'#coverUpload',
+        url:'/upload/image', // 后端上传接口
+        done:function(res){
+            if(res.code == 0){
+                $('#coverImg').val(res.data.url);
+                layer.msg('上传成功');
+            }else{
+                layer.msg(res.msg);
+            }
+        }
+    })
+    // 多图上传
+    upload.render({
+        elem:'#coversUpload',
+        url:'/upload/image',
+        multiple:true,
+        done:function(res){
+            if(res.code == 0){
+                let old = $('#coversImg').val();
+                let arr = old ? old.split(',') : [];
+                arr.push(res.data.url);
+                $('#coversImg').val(arr.join(','));
+                layer.msg('上传成功');
+            }
+        }
+    })
+
+    // 切换是否启用规格
+    form.on('radio(switchSpec)',function(data){
+        if(data.value == '1'){
+            $('#specWrap').show();
+        }else{
+            $('#specWrap').hide();
+            $('#skuBox').hide();
+            GLOBAL_DATA.specList = [];
+            GLOBAL_DATA.skuList = [];
+            $('#specBox').html('');
+        }
+    })
+
+    // 新增规格组
+    $('#addSpec').click(function(){
+        let specId = Date.now(); // 临时唯一ID
+        let html = `
+            <div class="spec-card" data-spec-id="${specId}">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <input type="text" class="layui-input spec-name" style="width:200px;" placeholder="规格名称 如：颜色">
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-primary addSpecVal">添加规格值</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger delSpec">删除规格</button>
+                </div>
+                <div class="spec-value-list" style="margin-top:10px;"></div>
+            </div>
+        `;
+        $('#specBox').append(html);
+        form.render();
+    })
+
+    // 删除规格、添加规格值 事件委托
+    $(document).on('click','.delSpec',function(){
+        $(this).closest('.spec-card').remove();
+    })
+    $(document).on('click','.addSpecVal',function(){
+        let parent = $(this).closest('.spec-card').find('.spec-value-list');
+        let valId = Date.now() + Math.random();
+        let valHtml = `
+            <div class="spec-value-box" data-val-id="${valId}">
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <input type="text" class="layui-input spec-val-name" style="width:180px;" placeholder="规格值 如：红色">
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger delSpecVal">删除</button>
+                </div>
+            </div>
+        `;
+        parent.append(valHtml);
+        form.render();
+    })
+    $(document).on('click','.delSpecVal',function(){
+        $(this).closest('.spec-value-box').remove();
+    })
+
+    // 收集页面上所有规格数据
+    function collectSpecData(){
+        let specArr = [];
+        $('.spec-card').each(function(){
+            let specId = $(this).data('spec-id');
+            let specTitle = $(this).find('.spec-name').val().trim();
+            if(!specTitle) return true;
+            let valList = [];
+            $(this).find('.spec-value-box').each(function(){
+                let valId = $(this).data('val-id');
+                let valTitle = $(this).find('.spec-val-name').val().trim();
+                if(valTitle){
+                    valList.push({
+                        temp_id: valId,
+                        title: valTitle
+                    })
+                }
+            })
+            if(valList.length > 0){
+                specArr.push({
+                    temp_id: specId,
+                    title: specTitle,
+                    valueList: valList
+                })
+            }
+        })
+        GLOBAL_DATA.specList = specArr;
+        return specArr;
+    }
+
+    // 笛卡尔积生成SKU组合核心算法
+    function cartesianProduct(arrList){
+        return arrList.reduce((a,b)=>{
+            let res = [];
+            a.forEach(itemA=>{
+                b.forEach(itemB=>{
+                    res.push([...itemA, itemB])
+                })
+            })
+            return res;
+        },[[]])
+    }
+
+    // 生成SKU按钮
+    $('#genSkuBtn').click(function(){
+        let specData = collectSpecData();
+        if(specData.length == 0){
+            layer.msg('请先添加规格和规格值');
+            return;
+        }
+        // 提取每一组规格值数组
+        let valGroup = [];
+        specData.forEach(spec=>{
+            let titles = spec.valueList.map(v=>v.title);
+            valGroup.push(titles);
+        })
+        // 笛卡尔积组合
+        let combineList = cartesianProduct(valGroup);
+        let skuArr = [];
+        combineList.forEach(combine=>{
+            let skuName = combine.join('-');
+            let dataStr = combine.map((v,i)=>{
+                let specItem = specData[i];
+                let valItem = specItem.valueList.find(x=>x.title == v);
+                return valItem.temp_id;
+            }).join('-');
+            skuArr.push({
+                id:0,
+                name: skuName,
+                picture: '',
+                price: parseFloat($('input[name="price"]').val()) || 0,
+                market_price: parseFloat($('input[name="market_price"]').val()) || 0,
+                cost_price: parseFloat($('input[name="cost_price"]').val()) || 0,
+                wholesale_price: 0,
+                stock: 0,
+                code: '',
+                barcode: '',
+                product_weight:0,
+                product_volume:0,
+                sort:1999,
+                data: dataStr,
+                status:1
+            })
+        })
+        GLOBAL_DATA.skuList = skuArr;
+        renderSkuTable(skuArr);
+        $('#skuBox').show();
+    })
+
+    // 渲染SKU表格
+    function renderSkuTable(skuData){
+        table.render({
+            elem:'#skuTable',
+            data: skuData,
+            cols:[[
+                {field:'name',title:'SKU规格名称',width:160},
+                {field:'price',title:'售价',edit:'text',width:100},
+                {field:'market_price',title:'市场价',edit:'text',width:100},
+                {field:'cost_price',title:'成本',edit:'text',width:100},
+                {field:'stock',title:'库存',edit:'text',width:80},
+                {field:'code',title:'商品编码',edit:'text',width:130},
+                {field:'barcode',title:'条形码',edit:'text',width:130},
+                {field:'data',title:'规格串',width:200},
+                {title:'操作',width:100,templet:`<button class="layui-btn layui-btn-xs layui-btn-danger delSku">删除</button>`}
+            ]],
+            page:false,
+            limit:999
+        })
+    }
+    // SKU单元格编辑
+    table.on('edit(skuTable)',function(obj){
+        let val = obj.value;
+        let field = obj.field;
+        let row = obj.data;
+        let index = GLOBAL_DATA.skuList.findIndex(item=>item.data == row.data);
+        if(index > -1){
+            if(['price','market_price','cost_price','stock','wholesale_price'].includes(field)){
+                GLOBAL_DATA.skuList[index][field] = parseFloat(val) || 0;
+            }else{
+                GLOBAL_DATA.skuList[index][field] = val;
+            }
+        }
+    })
+    // 删除单行SKU
+    $(document).on('click','.delSku',function(){
+        let tr = $(this).closest('tr');
+        let tableData = table.cache.skuTable;
+        let rowIndex = tr.data('index');
+        let delRow = tableData[rowIndex];
+        GLOBAL_DATA.skuList = GLOBAL_DATA.skuList.filter(item=>item.data != delRow.data);
+        renderSkuTable(GLOBAL_DATA.skuList);
+    })
+
+    // 表单提交
+    form.on('submit(submitProduct)',function(data){
+        let field = data.field;
+        field.intro = layedit.getContent(editIndex);
+        // 组装提交完整参数
+        let submitData = {
+            product: field,
+            spec: GLOBAL_DATA.specList,
+            sku: GLOBAL_DATA.skuList
+        }
+
+        console.log(submitData);
+        return false;
+        // ajax提交 新增/编辑共用接口
+        $.ajax({
+            url:'/product/save',
+            type:'POST',
+            data: JSON.stringify(submitData),
+            contentType:'application/json',
+            success:function(res){
+                if(res.code == 0){
+                    layer.msg('保存成功',{time:1200},()=>{
+                        // 关闭弹窗/刷新列表
+                        layer.closeAll();
+                        parent.layui.table.reload('productTable');
+                    })
+                }else{
+                    layer.msg(res.msg);
+                }
+            }
+        })
+        return false;
+    })
+
+    // ========== 编辑回显函数（后端传入商品数据后调用）==========
+    window.editLoadData = function(productInfo, specList, skuList){
+        GLOBAL_DATA.editProductId = productInfo.id;
+        $('#productId').val(productInfo.id);
+        // 商品基础表单赋值
+        form.val('productForm',productInfo);
+        // 图片赋值
+        $('#coverImg').val(productInfo.cover);
+        $('#coversImg').val(productInfo.covers);
+        layedit.setContent(editIndex, productInfo.intro);
+        // 规格回显
+        if(productInfo.is_attribute == 1 && specList.length > 0){
+            $('input[name="is_attribute"][value="1"]').prop('checked',true);
+            form.render('radio');
+            $('#specWrap').show();
+            let specBoxHtml = '';
+            specList.forEach(spec=>{
+                let specId = spec.id;
+                specBoxHtml += `<div class="spec-card" data-spec-id="${specId}">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <input type="text" class="layui-input spec-name" style="width:200px;" value="${spec.title}" placeholder="规格名称">
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary addSpecVal">添加规格值</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger delSpec">删除规格</button>
+                    </div>
+                    <div class="spec-value-list" style="margin-top:10px;">`;
+                spec.valueList.forEach(val=>{
+                    specBoxHtml += `<div class="spec-value-box" data-val-id="${val.id}">
+                        <div style="display:flex;gap:10px;align-items:center;">
+                            <input type="text" class="layui-input spec-val-name" style="width:180px;" value="${val.title}" placeholder="规格值">
+                            <button type="button" class="layui-btn layui-btn-sm layui-btn-danger delSpecVal">删除</button>
+                        </div>
+                    </div>`;
+                })
+                specBoxHtml += `</div></div>`;
+            })
+            $('#specBox').html(specBoxHtml);
+            form.render();
+            // SKU回显
+            GLOBAL_DATA.specList = specList;
+            GLOBAL_DATA.skuList = skuList;
+            renderSkuTable(skuList);
+            $('#skuBox').show();
+        }
+    }
+})
+</script>
+</body>
+</html>

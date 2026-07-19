@@ -1,0 +1,481 @@
+{extend name="public/base" /}
+
+{block name="title"}商品管理{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="spec-table" lay-filter="spec-table"></table>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="sku-table" lay-filter="sku-table"></table>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="table" lay-filter="table"></table>
+    </div>
+</div>
+<script type="text/html" id="toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="expandAll">
+        <i class="layui-icon layui-icon-spread-left"></i>
+        展开
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="foldAll">
+        <i class="layui-icon layui-icon-shrink-right"></i>
+        折叠
+    </button>
+</script>
+<script type="text/html" id="bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+
+<script type="text/html" id="spec" >
+
+    {{#  layui.each(d.child, function(i, v){ }}
+        <input type="checkbox" name="{{v.title}}" title="{{v.title}}" value="{{v.id}}" lay-filter="spec">
+        <span class="delete-spec-value" data-index="{{d.LAY_INDEX}}" data-title="{{v.title}}" style="margin-right: 10px; cursor: pointer;"><i class="layui-icon layui-icon-delete"></i></span>
+    {{#  }); }}
+
+    <span class="add-spec-value" data-index="{{d.LAY_INDEX}}">
+        <i class="layui-icon layui-icon-add-1">规格</i>
+    </span>
+
+</script>
+
+{__block__}
+
+<script>
+    const LIST_URL = MODULE_NAME + '/product/product/list';
+    const ADD_URL = MODULE_NAME + '/product/product/add';
+    const EDIT_URL = MODULE_NAME + '/product/product/edit';
+    const DELETE_URL = MODULE_NAME + '/product/product/delete';
+    const CHECK_URL = MODULE_NAME + '/product/product/check';
+    const SPEC_URL = MODULE_NAME + '/product/productSpec/getSpecData';
+
+    layui.use(['form','util','inputTag'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var $ = layui.$;
+        var util = layui.util;
+
+        // var skuTable = layui.skuTable;
+
+        // 笛卡尔积算法
+        function cartesian(list){
+            if(list.length === 0){
+                return [];
+            }
+            return list.reduce((prev,curr)=>{
+                let res = [];
+                prev.forEach(p=>curr.forEach(c=>res.push([...p,c])));
+                return res;
+            },[[]])
+        }
+
+        $.get(SPEC_URL, function(res) {
+            // 规格数组
+            var data = res.data;
+            var specData = [];
+            var skuData = [];
+            
+            var cols = [
+                {field: 'price', title: '销售价'},
+                {field: 'market_price', title: '市场价'},
+                {field: 'cost_price', title: '成本价'},
+                {field: 'stock', title: '库存'},
+                {field: 'create_time', title: '创建时间'},
+                {field: 'update_time', title: '更新时间'},
+                {title: '操作', templet: '#bar', width: 150, align: 'center'}
+            ];
+
+            let field = [];
+
+            // console.log(data);
+
+            // 规格表
+            var specTable = table.render({
+                elem: '#spec-table',
+                data: data,
+                // url: SPEC_URL,
+                // method: 'get',
+                page: false,
+                cols: [[
+                    {field: 'title', title: '规格名',width: 150},
+                    {field: 'child', title: '规格值', templet: '#spec'},
+                ]],
+                done: function (res, curr, count,field) {
+                    
+                    var options = this;
+
+                    // 监听添加规格值
+                    $('body').off('click', '.add-spec-value').on('click', '.add-spec-value', function() {
+                        console.log('添加规格值');
+                        // data 索引，用于添加规格值时，将规格值添加到对应的规格名下
+                        let index = $(this).attr('data-index');
+                        let html = 
+                            '<input type="checkbox" name="title" title="" value="" lay-filter="spec">'+
+                            '<input type="text" class="add-spec-value-input" data-index="'+ index +'" name="title" title="" lay-filter="spec" style="width:50px";>';
+                        // 插入html到当前元素之前
+                        $(this).before(html);
+                        // input 获得焦点
+                        $("input[data-index='"+index+"']").focus();
+                    })
+
+                    // 监听删除规格值
+                    $('body').off('click', '.delete-spec-value').on('click', '.delete-spec-value', function() {
+                        console.log('删除规格值');
+
+                        $(this).prev('div.layui-unselect.layui-form-checkbox').remove();
+                        $(this).prev('input').remove();
+                        $(this).remove();
+                        $('.add-spec-value').css("pointer-events", "auto");
+                        
+                        // data 索引，用于添加规格值时，将规格值添加到对应的规格名下
+                        let index = $(this).attr('data-index');
+                        // 转换为数字类型
+                        var idx = Number(index);
+                        // title
+                        let title = $(this).attr('data-title');
+                        let ename = data[idx]['ename'];
+
+                        // 删除规格值
+                        // data[i]['child'] = data[i]['child'].filter(item => item['title'] !== title);
+                        for (let i = 0; i < data[idx]['child'].length; i++) {
+                            if (data[idx]['child'][i].title === title) {
+                                data[idx]['child'].splice(i, 1);
+                                i--; // 删除后索引回退
+                            }
+                        }
+
+                        // console.log(specData);
+                        if(data[idx]['child'].length === 0){
+                            // 规格值下没有了，删除规格名
+                            data.splice(idx, 1);
+                        }
+
+                        if(specData[ename]){
+                            // 规格值存在，删除
+                            specData[ename] = specData[ename].filter(item => item[ename] !== title);
+
+                            if(specData[ename].length === 0){
+                                // 规格值下没有了，删除规格名
+                                delete specData[ename];
+                            }
+                        }
+
+                        skuData = skuData.filter(item => item[ename] !== title);
+
+                        // 保存当前选中的checkbox状态
+                        let checkedStates = [];
+                        $('input[lay-filter="spec"]:checked').each(function() {
+                            checkedStates.push({
+                                index: $(this).closest('tr').data('index'),
+                                name: $(this).attr('name')
+                            });
+                        });
+
+                        // 刷新渲染表格
+                        specTable.reload({
+                            data: data,
+                            done: function() {
+                                // 恢复选中状态
+                                checkedStates.forEach(function(state) {
+                                    let row = $('tr[data-index="' + state.index + '"]');
+                                    row.find('input[lay-filter="spec"][name="' + state.name + '"]').prop('checked', true);
+                                });
+                                // form.render('checkbox'); // 重新渲染checkbox样式
+                                // 点击删除规格值后，重新添加点击事件
+                                $('.add-spec-value').css("pointer-events", "auto");
+                            }
+                        });
+
+                        sku_table.reload({
+                            data: skuData,
+                        });
+
+                        return;
+                        
+                    })
+
+                    // form.on('submit(add-spec-value)', function(data) {
+                    //     console.log(data);
+                    // })
+
+                    // 规格值input失去焦点时的逻辑
+                    $(".layui-card-body").off('blur', 'input.add-spec-value-input').on('blur', 'input.add-spec-value-input', function(event) {
+                        
+                        console.log('规格值input失去焦点时的逻辑');
+
+                        let title = event.target.value;
+
+                        if(title == ''){
+                            // 规格值不能为空 ，点击添加规格值后，移除点击事件
+                            $('.add-spec-value').css("pointer-events", "none");
+                            layer.msg('请输入规格值');
+                            return;
+                        }
+                        // 规格的索引
+                        let index = $(this).attr('data-index');
+                        // 转换为数字类型
+                        var i = Number(index);
+                        // 添加规格值到对应的规格名下
+                        data[i]['child'].push({
+                            // id: 123,
+                            title: event.target.value,
+                            checked: false,
+                        });
+                        // 给动态添加的input标签，设置title属性
+                        $(this).prev('input').prop('name', event.target.value);
+                        $(this).prev('input').prop('title', event.target.value);
+                        $(this).before(
+                            '<span class="delete-spec-value" data-index="'+ index +'" data-title="'+ title +'"  style="margin-right: 10px; cursor: pointer;"><i class="layui-icon layui-icon-delete" style="font-size: 16px;"></i></span>');
+                        $(this).remove();
+
+                        // 刷新渲染复选框
+                        form.render('checkbox');
+                        // 点击添加规格值后，重新添加点击事件
+                        $('.add-spec-value').css("pointer-events", "auto");
+                    });
+
+                }
+            });
+            
+            // sku 表
+            var sku_table = table.render({
+                elem: '#sku-table',
+                data: skuData,
+                cols: [cols],
+                done: function (res, curr, count) {
+
+                    if(count > 0){
+                        /* 需要合并栏目的数组信息 */
+
+                        let key = Object.keys(res.data[0]);
+
+                        var tableCloumn = [
+                            {
+                                field: key[0],
+                                index: 0 /* 需要合并栏目的索引 */
+                            }
+                        ];
+
+                        var start_tr_index = 1;
+                        var tr_s = $(".layui-table-box table").find("tr");
+                        for (var item of tableCloumn) {
+                            var field = item.field;
+                            var index = item.index;
+                            var merge_num = 0;
+                            var merge_tds = [];
+                            for (var i = start_tr_index; i < tr_s.length; i++) {
+                                var cur_td = tr_s.eq(i).find("td").eq(index);
+                                var next_td = tr_s.eq(i + 1).find("td").eq(index);
+                                var cur_text = $(cur_td).text();
+                                var next_text = $(next_td).text();
+                                if (cur_text == next_text) {
+                                    merge_tds.push(cur_td);
+                                    merge_num++;
+                                } else {
+                                    if (merge_num != 0) {
+                                        $(merge_tds[0]).attr("rowspan", merge_num + 1);
+                                        for (var d = 1; d < merge_tds.length; d++) {
+                                            $(merge_tds[d]).addClass("layui-hide");
+                                        }
+                                        $(cur_td).addClass("layui-hide");
+                                    }
+                                    merge_num = 0;
+                                    merge_tds = [];
+                                }
+                            }
+                        }
+
+                    }
+
+
+                }
+            });
+
+            // 监听规格值复选框变化
+            form.on('checkbox(spec)', function (obj) {
+
+                console.log('监听规格值变化');
+
+                let checked = obj.elem.checked;
+                let index = $(obj.elem).closest('tr').data('index');
+                let id = obj.value; // 获取选中项 value
+                let name = obj.elem.name;
+
+                let ename = data[index]['ename'];
+                let title = data[index]['title'];
+                
+                // console.log(index, id, name, checked, ename);
+                // 选中规格值时
+                if(checked){
+                    // 数组不存在时，创建数组，再添加到数组中
+                    if(!specData[ename]){
+                        specData[ename] = [];
+                    }
+
+                    specData[ename].push({
+                        [ename]: name
+                    });
+
+                    // 规格值选中时，添加到 field 数组中, 过滤重复
+                    if(!field.includes(ename)){
+                        field.push(ename);
+                        // field 字段
+                        cols.unshift({sort: index, field: ename, title: title});
+                        // 排序
+                        if(cols.length > 0){
+                            cols.sort((a, b) => a.sort - b.sort);
+                        }
+                    }
+
+                } else {
+                    // 规格值未选中时，从数组中移除
+                    specData[ename] = specData[ename].filter(item => item[ename] !== name);
+
+                    if(specData[ename].length === 0){
+                        // 删除数组中的空数组
+                        delete specData[ename];
+                        // 删除 field 数组中的空字符串
+                        field = field.filter(item => item !== ename);
+                        // 删除 cols 数组中的空对象
+                        cols = cols.filter(item => item.field !== ename);
+                    }
+                }
+
+                let arr = [];
+
+                for(let key in specData){
+                    arr.push(specData[key]);
+                }
+
+                // 计算笛卡尔积
+                let cartesianProduct = cartesian(arr);
+
+                // 清空 sku 表数据
+                sku = [];
+                // 渲染 渲染到 到 sku 表数据
+                cartesianProduct.forEach(item => {
+
+                    // console.log(item);
+                    // item = [{color: 'red'}, {size: 'S'}]
+                
+                    let newObj = {};
+
+                    // 解构赋值，合并对象属性
+                    for(let key in item){
+                        newObj = {...newObj, ...item[key]};
+                    }
+
+                    let baseObj = {
+                        price: 0,
+                        market_price: 0,
+                        cost_price: 0,
+                        stock: 0,
+                        is_on_sale: 0,
+                        is_default: 0
+                    }
+
+                    newObj = {...newObj, ...baseObj};
+
+                    sku.push(newObj);
+
+                });
+
+                skuData = [];
+                skuData.push(...sku);
+
+                sku_table.reload({
+                    data: skuData,
+                    cols: [cols]
+                });
+                
+            });
+
+
+        })
+
+        
+        //----------------------------------------
+        
+        table.render({
+            elem: '#table',
+            url: LIST_URL,
+            method: 'get',
+            toolbar: '#toolbar',
+            page: true,
+            limit: 10,
+            cols: [[
+                {field: 'id', title: 'ID'},
+                {field: 'title', title: '名称'},
+                {field: 'sort', title: '排序'},
+                {field: 'create_time', title: '创建时间'},
+                {field: 'update_time', title: '更新时间'},
+                {title: '操作', templet: '#bar', width: 150, align: 'center'}
+            ]],
+        });
+
+        table.on('toolbar(table)', function (obj) {
+            if (obj.event === 'add') {
+                add(obj);
+            }
+        });
+
+        table.on('tool(table)', function (obj) {
+            if (obj.event === 'edit') {
+                edit(obj);
+            } else if (obj.event === 'delete') {
+                remove(obj);
+            }
+        });
+
+        function add(obj) {
+            layer.open({
+                type: 2,
+                title: '添加商品',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: ADD_URL,
+            });
+        }
+
+        function edit(obj) {
+            layer.open({
+                type: 2,
+                type: 2,
+                title: '编辑商品',
+                area: ['100%', '100%'],
+                content: EDIT_URL + '?id=' + obj.data.id,
+            });
+        }
+
+        function remove(obj) {
+            layer.confirm('确认删除吗？', function (index) {
+                $.post(DELETE_URL, {id: obj.data.id}, function (res) {
+                    if (res.code === 200) {
+                        layer.msg(index, '删除成功');
+                        table.reload('table');
+                    } else {
+                        layer.msg(index, res.msg);
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+    });
+</script>
+
+{/block}

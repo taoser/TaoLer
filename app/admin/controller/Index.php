@@ -20,7 +20,7 @@ use think\facade\Config;
 use app\common\facade\HttpHelper;
 use app\common\PayContainer;
 use app\admin\model\Cunsult;
-use app\index\model\Comment;
+use app\model\Comment;
 use think\response\Json;
 use Yansongda\Pay\Pay;
 use think\Container;

@@ -7,12 +7,10 @@ class IdEncode
 {
     private static $instance;
 
-    private function __construct() {}
-
     // 单例
     public static function getInstance()
     {
-        if (!isset(self::$instance)) {
+        if (!self::$instance) {
             self::$instance = new Sqids(config('taoler.id_alphabet'), config('taoler.id_minlength'));
         }
         return self::$instance;
@@ -36,7 +34,6 @@ class IdEncode
         if(config('taoler.config.id_status') === 1) {
             return self::getInstance()->decode($idStr)[0];
         }
-
         return (int)$idStr;
     }
 }

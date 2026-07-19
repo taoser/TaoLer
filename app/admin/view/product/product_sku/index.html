@@ -1,0 +1,110 @@
+{extend name="public/base" /}
+
+{block name="title"}商品管理{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="table" lay-filter="table"></table>
+    </div>
+</div>
+<script type="text/html" id="toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="expandAll">
+        <i class="layui-icon layui-icon-spread-left"></i>
+        展开
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="foldAll">
+        <i class="layui-icon layui-icon-shrink-right"></i>
+        折叠
+    </button>
+</script>
+<script type="text/html" id="bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+
+{__block__}
+
+<script>
+    const LIST_URL = MODULE_NAME + '/product/productSku/list';
+    const ADD_URL = MODULE_NAME + '/product/productSku/add';
+    const EDIT_URL = MODULE_NAME + '/product/productSku/edit';
+    const DELETE_URL = MODULE_NAME + '/product/productSku/delete';
+    const CHECK_URL = MODULE_NAME + '/product/productSku/check';
+
+    layui.use(['form'], function () {
+        var form = layui.form;
+        var table = layui.table;
+
+        table.render({
+            elem: '#table',
+            url: LIST_URL,
+            method: 'get',
+            toolbar: '#toolbar',
+            page: true,
+            limit: 10,
+            cols: [[
+                {field: 'id', title: 'ID'},
+                {field: 'title', title: '名称'},
+                {field: 'sort', title: '排序'},
+                {title: '操作', templet: '#bar', width: 150, align: 'center'}
+            ]],
+        });
+
+        table.on('toolbar(table)', function (obj) {
+            if (obj.event === 'add') {
+                add(obj);
+            }
+        });
+
+        table.on('tool(table)', function (obj) {
+            if (obj.event === 'edit') {
+                edit(obj);
+            } else if (obj.event === 'delete') {
+                remove(obj);
+            }
+        });
+
+        function add(obj) {
+            layer.open({
+                type: 2,
+                title: '添加规格',
+                shade: 0.1,
+                area: ['350px', '250px'],
+                content: ADD_URL,
+            });
+        }
+
+        function edit(obj) {
+            layer.open({
+                type: 2,
+                type: 2,
+                title: '编辑规格',
+                area: ['350px', '250px'],
+                content: EDIT_URL + '?id=' + obj.data.id,
+            });
+        }
+
+        function remove(obj) {
+            layer.confirm('确认删除吗？', function (index) {
+                $.post(DELETE_URL, {id: obj.data.id}, function (res) {
+                    if (res.code === 200) {
+                        layer.msg(index, '删除成功');
+                        table.reload('table');
+                    } else {
+                        layer.msg(index, res.msg);
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+    });
+</script>
+
+{/block}

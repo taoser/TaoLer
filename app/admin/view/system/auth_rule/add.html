@@ -68,11 +68,12 @@
 	const RULE_ADD = MODULE_NAME + '/system/authrule/add';
 	const RULE_TREE = MODULE_NAME + '/system/authrule/ruleTree';
 
-	layui.use(['xmSelect', 'iconPicker'], function(){
+	layui.use(['xmSelect', 'iconPicker','popup'], function(){
 		let $ = layui.jquery;
 		let form = layui.form;
 		let xmSelect = layui.xmSelect;
 		let iconPicker = layui.iconPicker;
+		let popup = layui.popup;
 		
 		//初始化图标选择
 		iconPicker.render({

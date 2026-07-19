@@ -9,7 +9,7 @@ use think\facade\Db;
 use think\facade\Cache;
 use app\common\helper\IdEncode;
 use think\facade\Route;
-use app\index\model\Category as ModelCategory;
+use app\model\Category as ModelCategory;
 use Exception;
 use think\model\type\Json as TypeJson;
 use think\response\Json;

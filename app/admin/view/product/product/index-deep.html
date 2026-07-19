@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品添加/编辑 - 规格SKU管理</title>
+    <!-- Layui 2.9.x CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.9.8/dist/css/layui.css">
+    <style>
+        :root {
+            --layui-primary: #16b777;
+            --layui-primary-hover: #13a065;
+        }
+
+        body {
+            background: #f5f6fa;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 卡片容器 */
+        .card-panel {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-header i {
+            font-size: 18px;
+            color: #16b777;
+        }
+        .card-header .layui-badge {
+            margin-left: 6px;
+        }
+        .card-body {
+            padding: 20px 24px;
+        }
+
+        /* 规格值标签 */
+        .spec-value-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            min-height: 32px;
+        }
+        .spec-value-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: #f0f7f4;
+            border: 1px solid #c8e6d4;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .spec-value-tag:hover {
+            border-color: #16b777;
+            background: #e8f5ee;
+        }
+        .spec-value-tag.unchecked {
+            background: #fafafa;
+            border-color: #e0e0e0;
+            color: #aaa;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        .spec-value-tag .tag-close {
+            font-size: 12px;
+            color: #999;
+            cursor: pointer;
+            margin-left: 2px;
+            line-height: 1;
+        }
+        .spec-value-tag .tag-close:hover {
+            color: #ff4d4f;
+        }
+        .spec-value-add-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border: 1px dashed #ccc;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .spec-value-add-btn:hover {
+            border-color: #16b777;
+            color: #16b777;
+            background: #f9fdfb;
+        }
+
+        /* SKU表格中input样式 */
+        .sku-table-input {
+            width: 90px;
+            height: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 0 8px;
+            font-size: 13px;
+            text-align: center;
+            transition: border-color 0.2s;
+            background: #fafafa;
+        }
+        .sku-table-input:focus {
+            border-color: #16b777;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 2px rgba(22, 183, 119, 0.1);
+        }
+        .sku-table-input.wide {
+            width: 130px;
+        }
+
+        /* 批量操作工具栏 */
+        .batch-toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 8px;
+        }
+        .batch-toolbar .layui-btn-sm {
+            border-radius: 4px;
+        }
+        .batch-toolbar .tip-text {
+            color: #999;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        /* 隐藏区域 */
+        .spec-area-hidden {
+            display: none;
+        }
+        .spec-area-visible {
+            display: block;
+        }
+
+        /* 基础价格库存区域 */
+        .base-price-stock {
+            background: #fafdfb;
+            border: 1px solid #e8f5ee;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin-top: 8px;
+        }
+        .base-price-stock .layui-form-label {
+            width: 90px;
+        }
+        .base-price-stock .layui-input-block {
+            margin-left: 120px;
+        }
+
+        /* 表格优化 */
+        .layui-table-cell {
+            padding: 6px 8px;
+        }
+        .spec-table .layui-table-cell {
+            padding: 8px 12px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 12px;
+            }
+            .layui-form-label {
+                width: 80px !important;
+            }
+            .layui-input-block {
+                margin-left: 110px !important;
+            }
+            .batch-toolbar {
+                gap: 6px;
+            }
+            .sku-table-input {
+                width: 70px;
+                font-size: 12px;
+            }
+            .sku-table-input.wide {
+                width: 100px;
+            }
+        }
+
+        /* 加载动画 */
+        .sku-generating-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        /* 空状态 */
+        .empty-spec-hint {
+            text-align: center;
+            padding: 30px;
+            color: #bbb;
+        }
+        .empty-spec-hint i {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- ==================== 商品基本信息 ==================== -->
+        <form class="layui-form" lay-filter="productForm" id="productForm">
+            <div class="card-panel">
+                <div class="card-header">
+                    <i class="layui-icon layui-icon-about"></i> 商品基本信息
+                </div>
+                <div class="card-body">
+                    <!-- 商品标题 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label required">商品标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="name" lay-verify="required" placeholder="请输入商品标题"
+                            autocomplete="off" class="layui-input" maxlength="255">
+                        </div>
+                    </div>
+                    <!-- 分类 + 单位 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商品分类</label>
+                        <div class="layui-input-inline" style="width:200px;">
+                            <select name="category_id" lay-verify="required" lay-search>
+                                <option value="">请选择分类</option>
+                                <option value="1">服装</option>
+                                <option value="2">电子数码</option>
+                                <option value="3">食品饮料</option>
+                                <option value="4">家居用品</option>
+                                <option value="5">美妆护肤</option>
+                            </select>
+                        </div>
+                        <label class="layui-form-label" style="width:60px;">单位</label>
+                        <div class="layui-input-inline" style="width:120px;">
+                            <input type="text" name="unit" placeholder="如：件/个/箱" class="layui-input" maxlength="20">
+                        </div>
+                        <label class="layui-form-label" style="width:60px;">排序</label>
+                        <div class="layui-input-inline" style="width:100px;">
+                            <input type="number" name="sort" value="999" class="layui-input">
+                        </div>
+                    </div>
+                    <!-- 简述 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商品简述</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="sketch" placeholder="简短描述" class="layui-input" maxlength="200">
+                        </div>
+                    </div>
+                    <!-- 关键字 + 标签 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">关键字</label>
+                        <div class="layui-input-inline" style="width:280px;">
+                            <input type="text" name="keywords" placeholder="逗号分隔" class="layui-input" maxlength="200">
+                        </div>
+                        <label class="layui-form-label" style="width:60px;">标签</label>
+                        <div class="layui-input-inline" style="width:280px;">
+                            <input type="text" name="tags" placeholder="逗号分隔" class="layui-input" maxlength="200">
+                        </div>
+                    </div>
+                    <!-- 规格模式选择 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label required">规格模式</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="is_attribute" value="0" title="单一规格" checked>
+                            <input type="radio" name="is_attribute" value="1" title="多规格（启用商品规格）">
+                            <span class="tip-text" style="margin-left:10px;color:#999;">
+                                <i class="layui-icon layui-icon-tips"></i>
+                                单一规格：商品本身即为一个SKU；多规格：需配置规格组合
+                            </span>
+                        </div>
+                    </div>
+                    <!-- 单一规格时的价格库存 -->
+                    <div id="singleSkuArea" class="base-price-stock">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商品价格</label>
+                            <div class="layui-input-inline" style="width:140px;">
+                                <input type="number" name="price" step="0.01" min="0" value="0.00" class="layui-input">
+                            </div>
+                            <label class="layui-form-label" style="width:70px;">市场价</label>
+                            <div class="layui-input-inline" style="width:140px;">
+                                <input type="number" name="market_price" step="0.01" min="0" value="0.00" class="layui-input">
+                            </div>
+                            <label class="layui-form-label" style="width:70px;">成本价</label>
+                            <div class="layui-input-inline" style="width:140px;">
+                                <input type="number" name="cost_price" step="0.01" min="0" value="0.00" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">库存</label>
+                            <div class="layui-input-inline" style="width:140px;">
+                                <input type="number" name="stock" min="0" value="0" class="layui-input">
+                            </div>
+                            <label class="layui-form-label" style="width:70px;">预警库存</label>
+                            <div class="layui-input-inline" style="width:140px;">
+                                <input type="number" name="warning_stock" min="0" value="0" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 购买限制 -->
+                    <div class="layui-form-item" style="margin-top:12px;">
+                        <label class="layui-form-label">最少购买</label>
+                        <div class="layui-input-inline" style="width:120px;">
+                            <input type="number" name="min_buy" min="1" value="1" class="layui-input">
+                        </div>
+                        <label class="layui-form-label" style="width:80px;">限购(0不限)</label>
+                        <div class="layui-input-inline" style="width:120px;">
+                            <input type="number" name="max_buy" min="0" value="0" class="layui-input">
+                        </div>
+                    </div>
+                    <!-- 状态设置 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商品状态</label>
+                        <div class="layui-input-inline" style="width:140px;">
+                            <select name="status">
+                                <option value="1">正常</option>
+                                <option value="0">下架</option>
+                                <option value="10">违规(禁售)</option>
+                            </select>
+                        </div>
+                        <label class="layui-form-label" style="width:80px;">审核状态</label>
+                        <div class="layui-input-inline" style="width:140px;">
+                            <select name="state">
+                                <option value="0">未审核</option>
+                                <option value="1">审核成功</option>
+                                <option value="-1">审核失败</option>
+                            </select>
+                        </div>
+                        <div style="display:inline-block;margin-left:10px;">
+                            <input type="checkbox" name="is_hot" value="1" title="热销" lay-skin="primary">
+                            <input type="checkbox" name="is_recommend" value="1" title="推荐" lay-skin="primary">
+                            <input type="checkbox" name="is_new" value="1" title="新品" lay-skin="primary">
+                            <input type="checkbox" name="is_stock_visible" value="1" title="显示库存" lay-skin="primary"
+                            checked>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 多规格配置区域 ==================== -->
+            <div id="multiSpecArea" class="card-panel spec-area-hidden">
+                <div class="card-header">
+                    <i class="layui-icon layui-icon-component"></i> 商品规格配置
+                    <span class="layui-badge layui-bg-green" id="specCountBadge">0个规格</span>
+                </div>
+                <div class="card-body">
+                    <!-- 添加规格按钮 -->
+                    <div style="margin-bottom:12px;">
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="btnAddSpec">
+                            <i class="layui-icon layui-icon-add-1"></i> 添加规格
+                        </button>
+                        <span class="tip-text">如：颜色、尺码、款式等</span>
+                    </div>
+                    <!-- 规格表格 -->
+                    <table id="specTable" lay-filter="specTable" class="spec-table"></table>
+                    <div id="specEmptyHint" class="empty-spec-hint">
+                        <i class="layui-icon layui-icon-note"></i>
+                        <p>暂无规格，请点击"添加规格"按钮</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== SKU列表区域 ==================== -->
+            <div id="skuArea" class="card-panel spec-area-hidden">
+                <div class="card-header">
+                    <i class="layui-icon layui-icon-list"></i> SKU列表
+                    <span class="layui-badge layui-bg-blue" id="skuCountBadge">0个SKU</span>
+                </div>
+                <div class="card-body" style="position:relative;">
+                    <!-- 批量操作工具栏 -->
+                    <div class="batch-toolbar" id="skuBatchToolbar">
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="btnBatchPrice">
+                            <i class="layui-icon layui-icon-rmb"></i> 批量设置价格
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="btnBatchMarketPrice">
+                            批量市场价
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="btnBatchCostPrice">
+                            批量成本价
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-sm" id="btnBatchStock">
+                            <i class="layui-icon layui-icon-template-1"></i> 批量库存
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-sm" id="btnBatchCode">
+                            批量编码
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="btnBatchWeight">
+                            批量重量
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="btnBatchVolume">
+                            批量体积
+                        </button>
+                        <span class="tip-text">
+                            <i class="layui-icon layui-icon-tips"></i> 勾选SKU后点击批量按钮
+                        </span>
+                    </div>
+                    <!-- SKU表格 -->
+                    <table id="skuTable" lay-filter="skuTable"></table>
+                    <div id="skuEmptyHint" class="empty-spec-hint">
+                        <i class="layui-icon layui-icon-face-surprised"></i>
+                        <p>请先配置规格及规格值，系统将自动生成SKU组合</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 提交按钮 ==================== -->
+            <div class="card-panel" style="text-align:center;padding:20px;">
+                <input type="hidden" name="id" value="">
+                <input type="hidden" name="specs_json" id="specsJsonInput" value="">
+                <input type="hidden" name="skus_json" id="skusJsonInput" value="">
+                <input type="hidden" name="deleted_spec_ids" id="deletedSpecIdsInput" value="">
+                <input type="hidden" name="deleted_spec_value_ids" id="deletedSpecValueIdsInput" value="">
+                <input type="hidden" name="deleted_sku_ids" id="deletedSkuIdsInput" value="">
+                <button type="button" class="layui-btn layui-btn-lg" lay-submit lay-filter="submitProduct"
+                id="btnSubmit">
+                <i class="layui-icon layui-icon-ok"></i> 保存商品
+            </button>
+            <button type="button" class="layui-btn layui-btn-lg layui-btn-primary" id="btnReset">
+                <i class="layui-icon layui-icon-refresh"></i> 重置
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- ==================== 模板：规格值标签列 ==================== -->
+<script type="text/html" id="specValueTpl">
+    <div class="spec-value-tags">
+        {{# layui.each(d.values, function(i, v){ }}
+        <span class="spec-value-tag {{ v.is_checked == 0 ? 'unchecked' : '' }}"
+        data-spec-index="{{ d.specIndex }}"
+        data-value-index="{{ i }}"
+        title="{{ v.is_checked == 0 ? '已禁用（点击启用）' : '已启用（点击禁用）' }}">
+        {{ v.title }}
+        <i class="layui-icon layui-icon-close tag-close" data-action="remove-value"
+        data-spec-index="{{ d.specIndex }}"
+        data-value-index="{{ i }}"
+        title="删除此规格值"></i>
+    </span>
+    {{# }); }}
+    <span class="spec-value-add-btn" data-action="add-value" data-spec-index="{{ d.specIndex }}">
+        <i class="layui-icon layui-icon-add-1"></i> 添加值
+    </span>
+    {{# if(d.values && d.values.length === 0){ }}
+    <span style="color:#ccc;font-size:12px;">暂无规格值</span>
+    {{# } }}
+</div>
+</script>
+
+<!-- ==================== 模板：SKU表格中的input ==================== -->
+<script type="text/html" id="skuPriceTpl">
+    <input type="number" step="0.01" min="0" class="sku-table-input"
+    value="{{ d.price || '0.00' }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="price"
+    onchange="window._skuInputChange(this)">
+</script>
+<script type="text/html" id="skuMarketPriceTpl">
+    <input type="number" step="0.01" min="0" class="sku-table-input"
+    value="{{ d.market_price || '0.00' }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="market_price"
+    onchange="window._skuInputChange(this)">
+</script>
+<script type="text/html" id="skuCostPriceTpl">
+    <input type="number" step="0.01" min="0" class="sku-table-input"
+    value="{{ d.cost_price || '0.00' }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="cost_price"
+    onchange="window._skuInputChange(this)">
+</script>
+<script type="text/html" id="skuStockTpl">
+    <input type="number" min="0" class="sku-table-input"
+    value="{{ d.stock || 0 }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="stock"
+    onchange="window._skuInputChange(this)">
+</script>
+<script type="text/html" id="skuCodeTpl">
+    <input type="text" class="sku-table-input wide"
+    value="{{ d.code || '' }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="code"
+    onchange="window._skuInputChange(this)">
+</script>
+<script type="text/html" id="skuBarcodeTpl">
+    <input type="text" class="sku-table-input wide"
+    value="{{ d.barcode || '' }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="barcode"
+    onchange="window._skuInputChange(this)">
+</script>
+<script type="text/html" id="skuWeightTpl">
+    <input type="number" step="0.01" min="0" class="sku-table-input"
+    value="{{ d.product_weight || '0.00' }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="product_weight"
+    onchange="window._skuInputChange(this)">
+</script>
+<script type="text/html" id="skuVolumeTpl">
+    <input type="number" step="0.01" min="0" class="sku-table-input"
+    value="{{ d.product_volume || '0.00' }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="product_volume"
+    onchange="window._skuInputChange(this)">
+</script>
+<script type="text/html" id="skuSortTpl">
+    <input type="number" min="0" class="sku-table-input"
+    value="{{ d.sort || 1999 }}"
+    data-sku-index="{{ d.skuIndex }}"
+    data-field="sort"
+    onchange="window._skuInputChange(this)">
+</script>
+
+<!-- Layui JS -->
+<script src="https://cdn.jsdelivr.net/npm/layui@2.9.8/dist/layui.js">
+</script>
+
+<script>
+    /**
+     * 商品规格SKU管理模块
+     * 基于Layui框架构建
+     */
+    (function() {
+        // 全局SKU input变更回调
+        window._skuInputChange = function(el) {
+            const skuIndex = parseInt(el.getAttribute('data-sku-index'));
+            const field = el.getAttribute('data-field');
+            const value = el.value;
+            if (isNaN(skuIndex) || !field) return;
+            // 通过全局模块引用更新
+            if (window._skuManager) {
+                window._skuManager.updateSkuField(skuIndex, field, value);
+            }
+        };
+
+        // 全局批量input变更回调
+        window._batchInputChange = function(el) {
+            const field = el.getAttribute('data-field');
+            const value = el.value;
+            if (!field || !window._skuManager) return;
+            window._skuManager.batchUpdateFromInput(field, value);
+        };
+    })();
+
+    layui.use(['form', 'table', 'layer', 'util', 'jquery'], function() {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var util = layui.util;
+        var $ = layui.$;
+
+        // ==================== 数据状态管理 ====================
+        var SkuManager = function() {
+            // 规格列表：[{ id, product_id, title, values: [{ id, spec_id, title, is_checked }], specIndex }]
+            this.specs = [];
+            // SKU列表：[{ id, product_id, spec_name, spec_id, price, market_price, cost_price, stock, code, barcode,
+            // product_weight, product_volume, sort, data, status, skuIndex, _isNew }]
+            this.skus = [];
+            // 已删除的ID记录
+            this.deletedSpecIds = [];
+            this.deletedSpecValueIds = [];
+            this.deletedSkuIds = [];
+            // 计数器
+            this.specIdCounter = -1; // 新增规格临时ID（负数）
+            this.specValueIdCounter = -1; // 新增规格值临时ID（负数）
+            this.skuIdCounter = -1; // 新增SKU临时ID（负数）
+            // 是否编辑模式
+            this.isEdit = false;
+            this.productId = null;
+        };
+
+        SkuManager.prototype.init = function(editData) {
+            this.specs = [];
+            this.skus = [];
+            this.deletedSpecIds = [];
+            this.deletedSpecValueIds = [];
+            this.deletedSkuIds = [];
+            this.specIdCounter = -1;
+            this.specValueIdCounter = -1;
+            this.skuIdCounter = -1;
+            this.isEdit = false;
+            this.productId = null;
+
+            if (editData && editData.product) {
+                this.isEdit = true;
+                this.productId = editData.product.id || null;
+                // 加载规格
+                if (editData.specs && Array.isArray(editData.specs)) {
+                    var self = this;
+                    editData.specs.forEach(function(spec, idx) {
+                        var s = {
+                            id: spec.id || (--self.specIdCounter),
+                            product_id: spec.product_id || self.productId || 0,
+                            title: spec.title || '',
+                            values: [],
+                            specIndex: idx
+                        };
+                        if (spec.values && Array.isArray(spec.values)) {
+                            spec.values.forEach(function(v, vi) {
+                                s.values.push({
+                                    id: v.id || (--self.specValueIdCounter),
+                                    spec_id: s.id,
+                                    title: v.title || '',
+                                    is_checked: v.is_checked !== undefined ? v
+                                        .is_checked : 1,
+                                    valueIndex: vi
+                                });
+                            });
+                        }
+                        self.specs.push(s);
+                    });
+                }
+                // 加载SKU
+                if (editData.skus && Array.isArray(editData.skus)) {
+                    var self = this;
+                    editData.skus.forEach(function(sku, idx) {
+                        self.skus.push({
+                            id: sku.id || (--self.skuIdCounter),
+                            product_id: sku.product_id || self.productId || 0,
+                            spec_name: sku.spec_name || '',
+                            spec_id: sku.spec_id || '',
+                            price: parseFloat(sku.price) || 0,
+                            market_price: parseFloat(sku.market_price) || 0,
+                            cost_price: parseFloat(sku.cost_price) || 0,
+                            wholesale_price: parseFloat(sku.wholesale_price) || 0,
+                            stock: parseInt(sku.stock) || 0,
+                            code: sku.code || '',
+                            barcode: sku.barcode || '',
+                            product_weight: parseFloat(sku.product_weight) || 0,
+                            product_volume: parseFloat(sku.product_volume) || 0,
+                            sort: parseInt(sku.sort) || 1999,
+                            data: sku.data || sku.spec_id || '',
+                            status: sku.status !== undefined ? sku.status : 1,
+                            skuIndex: idx,
+                            _isNew: false
+                        });
+                    });
+                }
+            }
+            this._reindexSpecs();
+            this._reindexSkus();
+        };
+
+        /** 重新索引规格 */
+        SkuManager.prototype._reindexSpecs = function() {
+            for (var i = 0; i < this.specs.length; i++) {
+                this.specs[i].specIndex = i;
+                if (this.specs[i].values) {
+                    for (var j = 0; j < this.specs[i].values.length; j++) {
+                        this.specs[i].values[j].valueIndex = j;
+                    }
+                }
+            }
+        };
+
+        /** 重新索引SKU */
+        SkuManager.prototype._reindexSkus = function() {
+            for (var i = 0; i < this.skus.length; i++) {
+                this.skus[i].skuIndex = i;
+            }
+        };
+
+        /** 添加规格 */
+        SkuManager.prototype.addSpec = function(title) {
+            var newId = --this.specIdCounter;
+            this.specs.push({
+                id: newId,
+                product_id: this.productId || 0,
+                title: title,
+                values: [],
+                specIndex: this.specs.length
+            });
+            this._reindexSpecs();
+            return this.specs[this.specs.length - 1];
+        };
+
+        /** 删除规格 */
+        SkuManager.prototype.removeSpec = function(specIndex) {
+            if (specIndex < 0 || specIndex >= this.specs.length) return;
+            var spec = this.specs[specIndex];
+            // 记录删除的ID
+            if (spec.id > 0) {
+                this.deletedSpecIds.push(spec.id);
+            }
+            // 记录规格值的删除ID
+            if (spec.values) {
+                var self = this;
+                spec.values.forEach(function(v) {
+                    if (v.id > 0) {
+                        self.deletedSpecValueIds.push(v.id);
+                    }
+                });
+            }
+            this.specs.splice(specIndex, 1);
+            this._reindexSpecs();
+        };
+
+        /** 添加规格值 */
+        SkuManager.prototype.addSpecValue = function(specIndex, title) {
+            if (specIndex < 0 || specIndex >= this.specs.length) return null;
+            var spec = this.specs[specIndex];
+            var newId = --this.specValueIdCounter;
+            var newValue = {
+                id: newId,
+                spec_id: spec.id,
+                title: title,
+                is_checked: 1,
+                valueIndex: spec.values.length
+            };
+            spec.values.push(newValue);
+            this._reindexSpecs();
+            return newValue;
+        };
+
+        /** 删除规格值 */
+        SkuManager.prototype.removeSpecValue = function(specIndex, valueIndex) {
+            if (specIndex < 0 || specIndex >= this.specs.length) return;
+            var spec = this.specs[specIndex];
+            if (valueIndex < 0 || valueIndex >= spec.values.length) return;
+            var value = spec.values[valueIndex];
+            if (value.id > 0) {
+                this.deletedSpecValueIds.push(value.id);
+            }
+            spec.values.splice(valueIndex, 1);
+            this._reindexSpecs();
+        };
+
+        /** 切换规格值选中状态 */
+        SkuManager.prototype.toggleSpecValueChecked = function(specIndex, valueIndex) {
+            if (specIndex < 0 || specIndex >= this.specs.length) return;
+            var spec = this.specs[specIndex];
+            if (valueIndex < 0 || valueIndex >= spec.values.length) return;
+            spec.values[valueIndex].is_checked = spec.values[valueIndex].is_checked == 1 ? 0 : 1;
+        };
+
+        /** 生成SKU组合（笛卡尔积） */
+        SkuManager.prototype.generateSkus = function() {
+            // 收集每个规格下已选中的规格值
+            var checkedValueGroups = [];
+            var specInfoArr = [];
+            var self = this;
+            this.specs.forEach(function(spec) {
+                var checked = [];
+                spec.values.forEach(function(v) {
+                    if (v.is_checked == 1) {
+                        checked.push({ id: v.id, title: v.title });
+                    }
+                });
+                if (checked.length > 0) {
+                    checkedValueGroups.push(checked);
+                    specInfoArr.push({ specId: spec.id, specTitle: spec.title });
+                }
+            });
+
+            // 如果没有已选中的规格值，清空SKU
+            if (checkedValueGroups.length === 0) {
+                // 标记旧SKU为删除
+                var oldSkus = this.skus;
+                oldSkus.forEach(function(sku) {
+                    if (sku.id > 0) {
+                        self.deletedSkuIds.push(sku.id);
+                    }
+                });
+                this.skus = [];
+                this._reindexSkus();
+                return [];
+            }
+
+            // 计算笛卡尔积
+            var combinations = this._cartesianProduct(checkedValueGroups);
+
+            // 生成新的SKU数据
+            var newSkus = [];
+            var oldSkusMap = {};
+            // 建立旧SKU映射（使用spec_id组合作为key）
+            this.skus.forEach(function(sku) {
+                var key = sku.data || sku.spec_id || '';
+                if (key) {
+                    oldSkusMap[key] = sku;
+                }
+            });
+
+            // 收集新SKU的spec_id组合
+            var newCombinationKeys = {};
+
+            combinations.forEach(function(combo) {
+                var specIds = combo.map(function(c) { return c.id; }).join('-');
+                var specNames = combo.map(function(c) { return c.title; }).join('-');
+                var specData = combo.map(function(c) { return c.id; }).join('-');
+                newCombinationKeys[specData] = true;
+
+                if (oldSkusMap[specData]) {
+                    // 复用旧SKU数据
+                    var oldSku = oldSkusMap[specData];
+                    newSkus.push({
+                        id: oldSku.id,
+                        product_id: oldSku.product_id || self.productId || 0,
+                        spec_name: specNames,
+                        spec_id: specIds,
+                        price: parseFloat(oldSku.price) || 0,
+                        market_price: parseFloat(oldSku.market_price) || 0,
+                        cost_price: parseFloat(oldSku.cost_price) || 0,
+                        wholesale_price: parseFloat(oldSku.wholesale_price) || 0,
+                        stock: parseInt(oldSku.stock) || 0,
+                        code: oldSku.code || '',
+                        barcode: oldSku.barcode || '',
+                        product_weight: parseFloat(oldSku.product_weight) || 0,
+                        product_volume: parseFloat(oldSku.product_volume) || 0,
+                        sort: parseInt(oldSku.sort) || 1999,
+                        data: specData,
+                        status: oldSku.status !== undefined ? oldSku.status : 1,
+                        skuIndex: 0,
+                        _isNew: false
+                    });
+                } else {
+                    // 新SKU
+                    newSkus.push({
+                        id: --self.skuIdCounter,
+                        product_id: self.productId || 0,
+                        spec_name: specNames,
+                        spec_id: specIds,
+                        price: 0,
+                        market_price: 0,
+                        cost_price: 0,
+                        wholesale_price: 0,
+                        stock: 0,
+                        code: '',
+                        barcode: '',
+                        product_weight: 0,
+                        product_volume: 0,
+                        sort: 1999,
+                        data: specData,
+                        status: 1,
+                        skuIndex: 0,
+                        _isNew: true
+                    });
+                }
+            });
+
+            // 标记不再存在的旧SKU为删除
+            this.skus.forEach(function(sku) {
+                var key = sku.data || sku.spec_id || '';
+                if (key && !newCombinationKeys[key] && sku.id > 0) {
+                    self.deletedSkuIds.push(sku.id);
+                }
+            });
+
+            this.skus = newSkus;
+            this._reindexSkus();
+            return this.skus;
+        };
+
+        /** 笛卡尔积计算 */
+        SkuManager.prototype._cartesianProduct = function(arrays) {
+            if (arrays.length === 0) return [];
+            return arrays.reduce(function(acc, curr) {
+                var result = [];
+                acc.forEach(function(a) {
+                    curr.forEach(function(b) {
+                        result.push(a.concat([b]));
+                    });
+                });
+                return result;
+            }, [
+                []
+            ]);
+        };
+
+        /** 更新单个SKU字段 */
+        SkuManager.prototype.updateSkuField = function(skuIndex, field, value) {
+            if (skuIndex < 0 || skuIndex >= this.skus.length) return;
+            var sku = this.skus[skuIndex];
+            var numFields = ['price', 'market_price', 'cost_price', 'wholesale_price', 'stock', 'product_weight',
+                'product_volume', 'sort'
+            ];
+            var strFields = ['code', 'barcode', 'spec_name', 'spec_id', 'data'];
+
+            if (numFields.indexOf(field) !== -1) {
+                sku[field] = field === 'stock' || field === 'sort' ? (parseInt(value) || 0) : (parseFloat(value) || 0);
+            } else if (strFields.indexOf(field) !== -1) {
+                sku[field] = value;
+            }
+            if (field === 'status') {
+                sku[field] = parseInt(value) || 1;
+            }
+        };
+
+        /** 批量更新SKU字段 */
+        SkuManager.prototype.batchUpdateSkuField = function(skuIndices, field, value) {
+            var self = this;
+            skuIndices.forEach(function(idx) {
+                self.updateSkuField(idx, field, value);
+            });
+        };
+
+        /** 批量更新（从input触发） */
+        SkuManager.prototype.batchUpdateFromInput = function(field, value) {
+            var checkedIndices = this.getCheckedSkuIndices();
+            if (checkedIndices.length === 0) {
+                layer.msg('请先在SKU表格中勾选需要批量更新的行', { icon: 2, time: 2000 });
+                return;
+            }
+            this.batchUpdateSkuField(checkedIndices, field, value);
+        };
+
+        /** 获取勾选的SKU索引 */
+        SkuManager.prototype.getCheckedSkuIndices = function() {
+            var checkStatus = table.checkStatus ? table.checkStatus('skuTable') : { data: [] };
+            var indices = [];
+            if (checkStatus.data) {
+                checkStatus.data.forEach(function(row) {
+                    if (row.skuIndex !== undefined && row.skuIndex >= 0) {
+                        indices.push(row.skuIndex);
+                    }
+                });
+            }
+            return indices;
+        };
+
+        /** 获取提交数据 */
+        SkuManager.prototype.getSubmitData = function() {
+            return {
+                specs: this.specs.map(function(s) {
+                    return {
+                        id: s.id,
+                        product_id: s.product_id,
+                        title: s.title,
+                        values: (s.values || []).map(function(v) {
+                            return {
+                                id: v.id,
+                                spec_id: v.spec_id,
+                                title: v.title,
+                                is_checked: v.is_checked
+                            };
+                        })
+                    };
+                }),
+                skus: this.skus.map(function(sku) {
+                    return {
+                        id: sku.id,
+                        product_id: sku.product_id,
+                        spec_name: sku.spec_name,
+                        spec_id: sku.spec_id,
+                        price: sku.price,
+                        market_price: sku.market_price,
+                        cost_price: sku.cost_price,
+                        wholesale_price: sku.wholesale_price,
+                        stock: sku.stock,
+                        code: sku.code,
+                        barcode: sku.barcode,
+                        product_weight: sku.product_weight,
+                        product_volume: sku.product_volume,
+                        sort: sku.sort,
+                        data: sku.data,
+                        status: sku.status,
+                        _isNew: sku._isNew || false
+                    };
+                }),
+                deleted_spec_ids: this.deletedSpecIds.slice(),
+                deleted_spec_value_ids: this.deletedSpecValueIds.slice(),
+                deleted_sku_ids: this.deletedSkuIds.slice()
+            };
+        };
+
+        // ==================== 创建全局管理器实例 ====================
+        var skuManager = new SkuManager();
+        window._skuManager = skuManager;
+
+        // ==================== 渲染规格表格 ====================
+        function renderSpecTable() {
+            var tableData = skuManager.specs.map(function(spec) {
+                return {
+                    specIndex: spec.specIndex,
+                    title: spec.title,
+                    values: spec.values,
+                    valueCount: spec.values ? spec.values.length : 0,
+                    id: spec.id
+                };
+            });
+
+            if (tableData.length === 0) {
+                $('#specEmptyHint').show();
+                // 使用reload可能报错，改用render
+                table.render({
+                    elem: '#specTable',
+                    data: [],
+                    cols: [
+                        []
+                    ],
+                    skin: 'line',
+                    even: true,
+                    size: 'lg'
+                });
+                // 清空表格
+                $('#specTable').find('.layui-table-body table').html('');
+                updateSpecCountBadge();
+                return;
+            }
+            $('#specEmptyHint').hide();
+
+            table.render({
+                elem: '#specTable',
+                data: tableData,
+                cols: [
+                    [
+                        { type: 'numbers', title: '#', width: 50, align: 'center' },
+                        { field: 'title', title: '规格名称', width: 160, align: 'center',
+                            style: 'font-weight:600;' },
+                        { field: 'values', title: '规格值', templet: '#specValueTpl', align: 'left' },
+                        { field: 'valueCount', title: '值数量', width: 80, align: 'center', templet: function(
+                                d) {
+                                return '<span class="layui-badge layui-bg-cyan">' + (d.valueCount || 0) +
+                                    '</span>';
+                            } },
+                        { title: '操作', width: 100, align: 'center', templet: function(d) {
+                                return '<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" ' +
+                                    'data-action="delete-spec" data-spec-index="' + d.specIndex +
+                                    '">' +
+                                    '<i class="layui-icon layui-icon-delete"></i> 删除</button>';
+                            } }
+                    ]
+                ],
+                skin: 'line',
+                even: true,
+                size: 'lg',
+                page: false,
+                limit: 50,
+                done: function() {
+                    bindSpecTableEvents();
+                    updateSpecCountBadge();
+                }
+            });
+        }
+
+        /** 渲染SKU表格 */
+        function renderSkuTable() {
+            var tableData = skuManager.skus.map(function(sku) {
+                return {
+                    skuIndex: sku.skuIndex,
+                    spec_name: sku.spec_name,
+                    spec_id: sku.spec_id,
+                    price: sku.price,
+                    market_price: sku.market_price,
+                    cost_price: sku.cost_price,
+                    stock: sku.stock,
+                    code: sku.code,
+                    barcode: sku.barcode,
+                    product_weight: sku.product_weight,
+                    product_volume: sku.product_volume,
+                    sort: sku.sort,
+                    data: sku.data,
+                    status: sku.status,
+                    id: sku.id,
+                    _isNew: sku._isNew
+                };
+            });
+
+            if (tableData.length === 0) {
+                $('#skuEmptyHint').show();
+                $('#skuBatchToolbar').hide();
+                table.render({
+                    elem: '#skuTable',
+                    data: [],
+                    cols: [
+                        []
+                    ],
+                    skin: 'line',
+                    even: true,
+                    size: 'lg'
+                });
+                $('#skuTable').find('.layui-table-body table').html('');
+                updateSkuCountBadge();
+                return;
+            }
+            $('#skuEmptyHint').hide();
+            $('#skuBatchToolbar').show();
+
+            table.render({
+                elem: '#skuTable',
+                data: tableData,
+                cols: [
+                    [
+                        { type: 'checkbox', width: 40, fixed: 'left' },
+                        { type: 'numbers', title: '#', width: 45, align: 'center', fixed: 'left' },
+                        { field: 'spec_name', title: '规格组合', width: 180, align: 'center', style: 'font-weight:500;',
+                            fixed: 'left' },
+                        { field: 'price', title: '价格(元)', width: 110, align: 'center',
+                            templet: '#skuPriceTpl' },
+                        { field: 'market_price', title: '市场价(元)', width: 110, align: 'center',
+                            templet: '#skuMarketPriceTpl' },
+                        { field: 'cost_price', title: '成本价(元)', width: 110, align: 'center',
+                            templet: '#skuCostPriceTpl' },
+                        { field: 'stock', title: '库存', width: 90, align: 'center', templet: '#skuStockTpl' },
+                        { field: 'code', title: '编码', width: 130, align: 'center', templet: '#skuCodeTpl' },
+                        { field: 'barcode', title: '条形码', width: 130, align: 'center',
+                            templet: '#skuBarcodeTpl' },
+                        { field: 'product_weight', title: '重量(kg)', width: 100, align: 'center',
+                            templet: '#skuWeightTpl' },
+                        { field: 'product_volume', title: '体积(m³)', width: 100, align: 'center',
+                            templet: '#skuVolumeTpl' },
+                        { field: 'sort', title: '排序', width: 80, align: 'center', templet: '#skuSortTpl' },
+                        { field: 'status', title: '状态', width: 80, align: 'center', templet: function(d) {
+                                var statusMap = { '-1': '删除', '0': '禁用', '1': '启用' };
+                                var colorMap = { '-1': 'layui-bg-red', '0': 'layui-bg-orange',
+                                    '1': 'layui-bg-green' };
+                                return '<span class="layui-badge ' + (colorMap[d.status] || 'layui-bg-gray') +
+                                    '">' + (statusMap[d.status] || d.status) + '</span>';
+                            } },
+                        { title: '操作', width: 70, align: 'center', fixed: 'right', templet: function(d) {
+                                return '<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" ' +
+                                    'data-action="delete-sku" data-sku-index="' + d.skuIndex +
+                                    '">' +
+                                    '<i class="layui-icon layui-icon-delete"></i></button>';
+                            } }
+                    ]
+                ],
+                skin: 'line',
+                even: true,
+                size: 'lg',
+                page: false,
+                limit: 200,
+                height: 'auto',
+                done: function() {
+                    bindSkuTableEvents();
+                    updateSkuCountBadge();
+                }
+            });
+        }
+
+        /** 绑定规格表格事件 */
+        function bindSpecTableEvents() {
+            // 使用事件委托
+            $('#specTable').off('click').on('click', '[data-action]', function(e) {
+                e.stopPropagation();
+                var action = $(this).data('action');
+                var specIndex = $(this).data('spec-index');
+                var valueIndex = $(this).data('value-index');
+
+                if (action === 'delete-spec') {
+                    deleteSpec(specIndex);
+                } else if (action === 'add-value') {
+                    addSpecValue(specIndex);
+                } else if (action === 'remove-value') {
+                    removeSpecValue(specIndex, valueIndex);
+                }
+            });
+
+            // 规格值标签点击（切换选中状态）
+            $('#specTable').off('click', '.spec-value-tag').on('click', '.spec-value-tag', function(e) {
+                if ($(e.target).hasClass('tag-close') || $(e.target).closest('.tag-close').length > 0) {
+                    return; // 点击关闭按钮不触发切换
+                }
+                var specIndex = $(this).data('spec-index');
+                var valueIndex = $(this).data('value-index');
+                if (specIndex !== undefined && valueIndex !== undefined) {
+                    skuManager.toggleSpecValueChecked(specIndex, valueIndex);
+                    skuManager.generateSkus();
+                    refreshAllTables();
+                    layer.msg('规格值状态已更新，SKU已重新生成', { icon: 1, time: 1500 });
+                }
+            });
+        }
+
+        /** 绑定SKU表格事件 */
+        function bindSkuTableEvents() {
+            $('#skuTable').off('click', '[data-action]').on('click', '[data-action]', function(e) {
+                e.stopPropagation();
+                var action = $(this).data('action');
+                var skuIndex = $(this).data('sku-index');
+                if (action === 'delete-sku' && skuIndex !== undefined) {
+                    deleteSku(skuIndex);
+                }
+            });
+        }
+
+        /** 删除规格 */
+        function deleteSpec(specIndex) {
+            layer.confirm('删除该规格将同时移除关联的规格值及SKU数据，确定删除吗？', {
+                title: '确认删除',
+                icon: 3,
+                btn: ['确定', '取消']
+            }, function(index) {
+                skuManager.removeSpec(specIndex);
+                skuManager.generateSkus();
+                refreshAllTables();
+                layer.close(index);
+                layer.msg('规格已删除', { icon: 1, time: 1500 });
+                updateSpecAreaVisibility();
+            });
+        }
+
+        /** 添加规格值 */
+        function addSpecValue(specIndex) {
+            layer.prompt({
+                title: '添加规格值',
+                placeholder: '请输入规格值名称（如：红色、XL）',
+                area: ['350px', '180px'],
+                btn: ['确定', '取消']
+            }, function(value, promptIndex) {
+                if (!value || !value.trim()) {
+                    layer.msg('规格值名称不能为空', { icon: 2, time: 1500 });
+                    return;
+                }
+                var trimmed = value.trim();
+                // 检查重复
+                var spec = skuManager.specs[specIndex];
+                if (spec && spec.values) {
+                    var exists = spec.values.some(function(v) { return v.title === trimmed; });
+                    if (exists) {
+                        layer.msg('规格值"' + trimmed + '"已存在', { icon: 2, time: 1500 });
+                        return;
+                    }
+                }
+                skuManager.addSpecValue(specIndex, trimmed);
+                skuManager.generateSkus();
+                refreshAllTables();
+                layer.close(promptIndex);
+                layer.msg('规格值添加成功，SKU已重新生成', { icon: 1, time: 1500 });
+            });
+        }
+
+        /** 删除规格值 */
+        function removeSpecValue(specIndex, valueIndex) {
+            if (specIndex === undefined || valueIndex === undefined) return;
+            var spec = skuManager.specs[specIndex];
+            if (!spec || !spec.values || valueIndex >= spec.values.length) return;
+            var valueTitle = spec.values[valueIndex].title || '该规格值';
+            layer.confirm('删除规格值"' + valueTitle + '"将重新生成SKU，确定删除吗？', {
+                title: '确认删除',
+                icon: 3,
+                btn: ['确定', '取消']
+            }, function(index) {
+                skuManager.removeSpecValue(specIndex, valueIndex);
+                skuManager.generateSkus();
+                refreshAllTables();
+                layer.close(index);
+                layer.msg('规格值已删除，SKU已重新生成', { icon: 1, time: 1500 });
+                updateSpecAreaVisibility();
+            });
+        }
+
+        /** 删除单个SKU */
+        function deleteSku(skuIndex) {
+            if (skuIndex === undefined || skuIndex < 0 || skuIndex >= skuManager.skus.length) return;
+            var sku = skuManager.skus[skuIndex];
+            layer.confirm('删除SKU "' + (sku.spec_name || '未命名') + '" ？', {
+                title: '确认删除',
+                icon: 3,
+                btn: ['确定', '取消']
+            }, function(index) {
+                if (sku.id > 0) {
+                    skuManager.deletedSkuIds.push(sku.id);
+                }
+                skuManager.skus.splice(skuIndex, 1);
+                skuManager._reindexSkus();
+                refreshSkuTable();
+                layer.close(index);
+                layer.msg('SKU已删除', { icon: 1, time: 1500 });
+            });
+        }
+
+        /** 刷新所有表格 */
+        function refreshAllTables() {
+            renderSpecTable();
+            renderSkuTable();
+            updateSpecAreaVisibility();
+        }
+
+        /** 仅刷新SKU表格 */
+        function refreshSkuTable() {
+            renderSkuTable();
+            updateSpecAreaVisibility();
+        }
+
+        /** 更新规格区域可见性 */
+        function updateSpecAreaVisibility() {
+            if (skuManager.specs.length === 0 && skuManager.skus.length === 0) {
+                $('#specEmptyHint').show();
+                $('#skuEmptyHint').show();
+                $('#skuBatchToolbar').hide();
+            }
+            updateSpecCountBadge();
+            updateSkuCountBadge();
+        }
+
+        /** 更新规格计数徽标 */
+        function updateSpecCountBadge() {
+            $('#specCountBadge').text(skuManager.specs.length + '个规格');
+        }
+
+        /** 更新SKU计数徽标 */
+        function updateSkuCountBadge() {
+            $('#skuCountBadge').text(skuManager.skus.length + '个SKU');
+        }
+
+        // ==================== 表单事件 ====================
+        // 监听规格模式切换
+        form.on('radio(is_attribute)', function(data) {
+            var isMulti = data.value === '1';
+            if (isMulti) {
+                $('#multiSpecArea').removeClass('spec-area-hidden').addClass('spec-area-visible');
+                $('#skuArea').removeClass('spec-area-hidden').addClass('spec-area-visible');
+                $('#singleSkuArea').slideUp(200);
+                // 如果规格为空，初始化提示
+                updateSpecAreaVisibility();
+            } else {
+                $('#multiSpecArea').removeClass('spec-area-visible').addClass('spec-area-hidden');
+                $('#skuArea').removeClass('spec-area-visible').addClass('spec-area-hidden');
+                $('#singleSkuArea').slideDown(200);
+            }
+        });
+
+        // ==================== 按钮事件 ====================
+        // 添加规格
+        $('#btnAddSpec').on('click', function() {
+            layer.prompt({
+                title: '添加规格',
+                placeholder: '请输入规格名称（如：颜色、尺码、款式）',
+                area: ['380px', '180px'],
+                btn: ['确定', '取消']
+            }, function(value, index) {
+                if (!value || !value.trim()) {
+                    layer.msg('规格名称不能为空', { icon: 2, time: 1500 });
+                    return;
+                }
+                var trimmed = value.trim();
+                // 检查重复
+                var exists = skuManager.specs.some(function(s) { return s.title === trimmed; });
+                if (exists) {
+                    layer.msg('规格"' + trimmed + '"已存在', { icon: 2, time: 1500 });
+                    return;
+                }
+                skuManager.addSpec(trimmed);
+                skuManager.generateSkus();
+                refreshAllTables();
+                layer.close(index);
+                layer.msg('规格添加成功', { icon: 1, time: 1500 });
+                // 确保多规格区域可见
+                if ($('#multiSpecArea').hasClass('spec-area-hidden')) {
+                    $('input[name="is_attribute"][value="1"]').prop('checked', true);
+                    form.render('radio');
+                    $('#multiSpecArea').removeClass('spec-area-hidden').addClass('spec-area-visible');
+                    $('#skuArea').removeClass('spec-area-hidden').addClass('spec-area-visible');
+                    $('#singleSkuArea').slideUp(200);
+                }
+            });
+        });
+
+        // 批量设置价格
+        $('#btnBatchPrice').on('click', function() {
+            batchSetField('price', '批量设置价格', '请输入价格（元）', 'number');
+        });
+        $('#btnBatchMarketPrice').on('click', function() {
+            batchSetField('market_price', '批量设置市场价', '请输入市场价（元）', 'number');
+        });
+        $('#btnBatchCostPrice').on('click', function() {
+            batchSetField('cost_price', '批量设置成本价', '请输入成本价（元）', 'number');
+        });
+        $('#btnBatchStock').on('click', function() {
+            batchSetField('stock', '批量设置库存', '请输入库存数量', 'number');
+        });
+        $('#btnBatchCode').on('click', function() {
+            batchSetField('code', '批量设置编码', '请输入编码前缀（将自动追加序号）', 'text');
+        });
+        $('#btnBatchWeight').on('click', function() {
+            batchSetField('product_weight', '批量设置重量', '请输入重量（kg）', 'number');
+        });
+        $('#btnBatchVolume').on('click', function() {
+            batchSetField('product_volume', '批量设置体积', '请输入体积（m³）', 'number');
+        });
+
+        /** 批量设置字段 */
+        function batchSetField(field, title, placeholder, inputType) {
+            var checkedIndices = skuManager.getCheckedSkuIndices();
+            if (checkedIndices.length === 0) {
+                layer.msg('请先在SKU表格中勾选需要批量更新的行', { icon: 2, time: 2000 });
+                return;
+            }
+            layer.prompt({
+                title: title + '（已选中' + checkedIndices.length + '个SKU）',
+                placeholder: placeholder,
+                area: ['400px', '190px'],
+                btn: ['确定', '取消'],
+                inputType: inputType === 'number' ? 1 : 0
+            }, function(value, index) {
+                if (value === '' || value === null || value === undefined) {
+                    layer.msg('请输入有效值', { icon: 2, time: 1500 });
+                    return;
+                }
+                var finalValue = value;
+                if (field === 'code' && inputType === 'text') {
+                    // 编码：如果输入的是前缀，自动追加序号
+                    skuManager.batchUpdateSkuField(checkedIndices, field, value);
+                    // 为每个选中的SKU设置带序号的编码
+                    checkedIndices.forEach(function(skuIdx, i) {
+                        var codeValue = value + '-' + (i + 1).toString().padStart(3, '0');
+                        skuManager.updateSkuField(skuIdx, field, codeValue);
+                    });
+                } else {
+                    skuManager.batchUpdateSkuField(checkedIndices, field, value);
+                }
+                refreshSkuTable();
+                layer.close(index);
+                layer.msg('已批量更新' + checkedIndices.length + '个SKU的' + title, { icon: 1, time: 1800 });
+                // 重新勾选
+                setTimeout(function() {
+                    table.reload('skuTable', {
+                        data: skuManager.skus.map(function(sku) {
+                            return {
+                                skuIndex: sku.skuIndex,
+                                spec_name: sku.spec_name,
+                                spec_id: sku.spec_id,
+                                price: sku.price,
+                                market_price: sku.market_price,
+                                cost_price: sku.cost_price,
+                                stock: sku.stock,
+                                code: sku.code,
+                                barcode: sku.barcode,
+                                product_weight: sku.product_weight,
+                                product_volume: sku.product_volume,
+                                sort: sku.sort,
+                                data: sku.data,
+                                status: sku.status,
+                                id: sku.id,
+                                _isNew: sku._isNew
+                            };
+                        })
+                    });
+                }, 100);
+            });
+        }
+
+        // ==================== 表单提交 ====================
+        form.on('submit(submitProduct)', function(data) {
+            var formData = data.field;
+            var isMultiSpec = formData.is_attribute === '1';
+
+            // 收集提交数据
+            var submitPayload = {
+                product: {
+                    id: formData.id || null,
+                    name: formData.name || '',
+                    category_id: formData.category_id || 0,
+                    sketch: formData.sketch || '',
+                    keywords: formData.keywords || '',
+                    tags: formData.tags || '',
+                    unit: formData.unit || '',
+                    sort: parseInt(formData.sort) || 999,
+                    status: parseInt(formData.status) || 1,
+                    state: parseInt(formData.state) || 0,
+                    is_attribute: isMultiSpec ? '1' : '0',
+                    min_buy: parseInt(formData.min_buy) || 1,
+                    max_buy: parseInt(formData.max_buy) || 0,
+                    is_hot: formData.is_hot == '1' ? 1 : 0,
+                    is_recommend: formData.is_recommend == '1' ? 1 : 0,
+                    is_new: formData.is_new == '1' ? 1 : 0,
+                    is_stock_visible: formData.is_stock_visible == '1' ? 1 : 0,
+                }
+            };
+
+            if (!isMultiSpec) {
+                // 单一规格：使用表单中的价格库存
+                submitPayload.product.price = parseFloat(formData.price) || 0;
+                submitPayload.product.market_price = parseFloat(formData.market_price) || 0;
+                submitPayload.product.cost_price = parseFloat(formData.cost_price) || 0;
+                submitPayload.product.stock = parseInt(formData.stock) || 0;
+                submitPayload.product.warning_stock = parseInt(formData.warning_stock) || 0;
+                submitPayload.specs = [];
+                submitPayload.skus = [];
+                submitPayload.deleted_spec_ids = [];
+                submitPayload.deleted_spec_value_ids = [];
+                submitPayload.deleted_sku_ids = [];
+            } else {
+                // 多规格：使用SKU数据
+                var specSkuData = skuManager.getSubmitData();
+                submitPayload.specs = specSkuData.specs;
+                submitPayload.skus = specSkuData.skus;
+                submitPayload.deleted_spec_ids = specSkuData.deleted_spec_ids;
+                submitPayload.deleted_spec_value_ids = specSkuData.deleted_spec_value_ids;
+                submitPayload.deleted_sku_ids = specSkuData.deleted_sku_ids;
+                // 汇总价格库存（取SKU最低价和总库存）
+                if (specSkuData.skus.length > 0) {
+                    var prices = specSkuData.skus.map(function(s) { return parseFloat(s.price) || 0; }).filter(function(p) {
+                        return p > 0; });
+                    var totalStock = specSkuData.skus.reduce(function(sum, s) { return sum + (parseInt(s.stock) || 0); },
+                        0);
+                    submitPayload.product.price = prices.length > 0 ? Math.min.apply(null, prices) : 0;
+                    submitPayload.product.stock = totalStock;
+                    submitPayload.product.market_price = specSkuData.skus[0].market_price || 0;
+                    submitPayload.product.cost_price = specSkuData.skus[0].cost_price || 0;
+                }
+            }
+
+            // 验证
+            if (!submitPayload.product.name || !submitPayload.product.name.trim()) {
+                layer.msg('请输入商品标题', { icon: 2, time: 2000 });
+                return false;
+            }
+            if (!submitPayload.product.category_id || submitPayload.product.category_id == '0') {
+                layer.msg('请选择商品分类', { icon: 2, time: 2000 });
+                return false;
+            }
+            if (isMultiSpec && submitPayload.skus.length === 0) {
+                layer.msg('多规格模式下请至少配置一个规格及规格值以生成SKU', { icon: 2, time: 2500 });
+                return false;
+            }
+
+            // 序列化到隐藏字段
+            $('#specsJsonInput').val(JSON.stringify(submitPayload.specs));
+            $('#skusJsonInput').val(JSON.stringify(submitPayload.skus));
+            $('#deletedSpecIdsInput').val(JSON.stringify(submitPayload.deleted_spec_ids));
+            $('#deletedSpecValueIdsInput').val(JSON.stringify(submitPayload.deleted_spec_value_ids));
+            $('#deletedSkuIdsInput').val(JSON.stringify(submitPayload.deleted_sku_ids));
+
+            // 输出到控制台（实际使用时替换为AJAX提交）
+            console.log('========== 提交数据 ==========');
+            console.log(JSON.stringify(submitPayload, null, 2));
+            console.log('==============================');
+
+            // 模拟提交
+            layer.confirm(
+                '提交数据已打印到控制台。<br><br>' +
+                '<b>商品：</b>' + submitPayload.product.name + '<br>' +
+                '<b>规格模式：</b>' + (isMultiSpec ? '多规格' : '单一规格') + '<br>' +
+                '<b>规格数：</b>' + submitPayload.specs.length + '<br>' +
+                '<b>SKU数：</b>' + submitPayload.skus.length + '<br><br>' +
+                '确认提交？（演示模式将输出到控制台）',
+                {
+                    title: '确认提交',
+                    area: ['450px', '320px'],
+                    icon: 3,
+                    btn: ['确认提交', '取消']
+                },
+                function(index) {
+                    layer.close(index);
+                    // 实际AJAX提交
+                    /*
+                    $.ajax({
+                        url: '/api/product/save',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(submitPayload),
+                        success: function(res) {
+                            if (res.code === 0) {
+                                layer.msg('保存成功！', { icon: 1, time: 2000 });
+                                setTimeout(function() { window.location.href = '/product/list'; }, 1500);
+                            } else {
+                                layer.msg('保存失败：' + (res.msg || '未知错误'), { icon: 2, time: 3000 });
+                            }
+                        },
+                        error: function() {
+                            layer.msg('网络错误，请重试', { icon: 2, time: 2000 });
+                        }
+                    });
+                    */
+                    layer.msg('演示模式：数据已输出到浏览器控制台（F12查看）', { icon: 1, time: 3000 });
+                }
+            );
+
+            return false; // 阻止默认提交
+        });
+
+        // 重置按钮
+        $('#btnReset').on('click', function() {
+            layer.confirm('确定要重置所有数据吗？此操作不可恢复。', {
+                title: '确认重置',
+                icon: 3,
+                btn: ['确定', '取消']
+            }, function(index) {
+                layer.close(index);
+                skuManager.init(null);
+                $('#productForm')[0].reset();
+                form.render(null, 'productForm');
+                $('#multiSpecArea').removeClass('spec-area-visible').addClass('spec-area-hidden');
+                $('#skuArea').removeClass('spec-area-visible').addClass('spec-area-hidden');
+                $('#singleSkuArea').show();
+                $('input[name="is_attribute"][value="0"]').prop('checked', true);
+                form.render('radio');
+                refreshAllTables();
+                $('#specEmptyHint').show();
+                $('#skuEmptyHint').show();
+                $('#skuBatchToolbar').hide();
+                layer.msg('表单已重置', { icon: 1, time: 1500 });
+            });
+        });
+
+        // ==================== 页面初始化 ====================
+        function initPage() {
+            // 检查是否有编辑数据（从全局变量或数据属性获取）
+            var editData = null;
+            // 方式1：从window全局变量获取
+            if (window.__productEditData) {
+                editData = window.__productEditData;
+            }
+            // 方式2：从页面隐藏元素获取（后端渲染）
+            var editDataEl = document.getElementById('productEditData');
+            if (editDataEl && editDataEl.value) {
+                try {
+                    editData = JSON.parse(editDataEl.value);
+                } catch (e) {
+                    console.warn('解析编辑数据失败:', e);
+                }
+            }
+
+            if (editData) {
+                // 编辑模式
+                skuManager.init(editData);
+                fillFormWithData(editData);
+                if (editData.product && editData.product.is_attribute === '1') {
+                    $('#multiSpecArea').removeClass('spec-area-hidden').addClass('spec-area-visible');
+                    $('#skuArea').removeClass('spec-area-hidden').addClass('spec-area-visible');
+                    $('#singleSkuArea').hide();
+                    $('input[name="is_attribute"][value="1"]').prop('checked', true);
+                } else {
+                    $('#singleSkuArea').show();
+                    $('input[name="is_attribute"][value="0"]').prop('checked', true);
+                }
+                form.render(null, 'productForm');
+                refreshAllTables();
+                console.log('编辑模式：已加载商品数据', editData);
+            } else {
+                // 添加模式
+                skuManager.init(null);
+                $('#singleSkuArea').show();
+                refreshAllTables();
+                console.log('添加模式：空白表单');
+            }
+            form.render('radio');
+        }
+
+        /** 填充表单数据（编辑模式） */
+        function fillFormWithData(editData) {
+            if (!editData || !editData.product) return;
+            var p = editData.product;
+            // 使用form.val批量填充
+            var formValues = {
+                'name': p.name || '',
+                'category_id': p.category_id || '',
+                'sketch': p.sketch || '',
+                'keywords': p.keywords || '',
+                'tags': p.tags || '',
+                'unit': p.unit || '',
+                'sort': p.sort || 999,
+                'status': p.status !== undefined ? p.status : 1,
+                'state': p.state !== undefined ? p.state : 0,
+                'is_attribute': p.is_attribute || '0',
+                'min_buy': p.min_buy || 1,
+                'max_buy': p.max_buy || 0,
+                'price': p.price || 0,
+                'market_price': p.market_price || 0,
+                'cost_price': p.cost_price || 0,
+                'stock': p.stock || 0,
+                'warning_stock': p.warning_stock || 0,
+                'is_hot': p.is_hot == 1 ? '1' : '',
+                'is_recommend': p.is_recommend == 1 ? '1' : '',
+                'is_new': p.is_new == 1 ? '1' : '',
+                'is_stock_visible': p.is_stock_visible == 1 ? '1' : '',
+                'id': p.id || ''
+            };
+            form.val('productForm', formValues);
+            // 处理checkbox
+            if (p.is_hot == 1) $('input[name="is_hot"]').prop('checked', true);
+            if (p.is_recommend == 1) $('input[name="is_recommend"]').prop('checked', true);
+            if (p.is_new == 1) $('input[name="is_new"]').prop('checked', true);
+            if (p.is_stock_visible == 1) $('input[name="is_stock_visible"]').prop('checked', true);
+            if (p.is_stock_visible === 0 || p.is_stock_visible === '0') $('input[name="is_stock_visible"]').prop('checked',
+                false);
+        }
+
+        // 启动
+        initPage();
+
+        // ==================== 暴露API到全局 ====================
+        window.productSkuPage = {
+            skuManager: skuManager,
+            refreshAll: refreshAllTables,
+            refreshSku: refreshSkuTable,
+            getSubmitData: function() { return skuManager.getSubmitData(); },
+            loadEditData: function(data) {
+                skuManager.init(data);
+                fillFormWithData(data);
+                if (data.product && data.product.is_attribute === '1') {
+                    $('#multiSpecArea').removeClass('spec-area-hidden').addClass('spec-area-visible');
+                    $('#skuArea').removeClass('spec-area-hidden').addClass('spec-area-visible');
+                    $('#singleSkuArea').hide();
+                    $('input[name="is_attribute"][value="1"]').prop('checked', true);
+                }
+                form.render(null, 'productForm');
+                refreshAllTables();
+            }
+        };
+
+        console.log('✅ 商品规格SKU管理页面已初始化');
+        console.log('💡 可通过 window.productSkuPage 访问页面API');
+        console.log('💡 编辑模式示例：');
+        console.log('   window.productSkuPage.loadEditData({product:{...}, specs:[...], skus:[...]})');
+        console.log('💡 获取提交数据：window.productSkuPage.getSubmitData()');
+    });
+</script>
+
+<!-- ==================== 编辑数据容器（隐藏） ==================== -->
+<!-- 后端可将编辑数据渲染到此元素中 -->
+<textarea id="productEditData" style="display:none;"></textarea>
+
+<!-- ==================== 编辑模式数据注入示例 ==================== -->
+<script>
+    // 取消注释以下代码可模拟编辑模式
+    window.__productEditData = {
+        product: {
+            id: 1,
+            name: '夏季纯棉T恤',
+            category_id: 1,
+            sketch: '舒适透气夏季T恤',
+            keywords: 'T恤,纯棉,夏季',
+            tags: '爆款,新品',
+            unit: '件',
+            sort: 100,
+            status: 1,
+            state: 1,
+            is_attribute: '1',
+            min_buy: 1,
+            max_buy: 5,
+            is_hot: 1,
+            is_recommend: 1,
+            is_new: 0,
+            is_stock_visible: 1,
+            price: 59.00,
+            market_price: 99.00,
+            cost_price: 35.00,
+            stock: 500,
+            warning_stock: 50
+        },
+        specs: [
+            {
+                id: 1,
+                product_id: 1,
+                title: '颜色',
+                values: [
+                    { id: 1, spec_id: 1, title: '白色', is_checked: 1 },
+                    { id: 2, spec_id: 1, title: '黑色', is_checked: 1 },
+                    { id: 3, spec_id: 1, title: '灰色', is_checked: 1 }
+                ]
+            },
+            {
+                id: 2,
+                product_id: 1,
+                title: '尺码',
+                values: [
+                    { id: 4, spec_id: 2, title: 'M', is_checked: 1 },
+                    { id: 5, spec_id: 2, title: 'L', is_checked: 1 },
+                    { id: 6, spec_id: 2, title: 'XL', is_checked: 1 }
+                ]
+            }
+        ],
+        skus: [
+            { id: 1, spec_name: '白色-M', spec_id: '1-4', price: 59.00, market_price: 99.00, cost_price: 35.00, stock: 80, code: 'T001-WH-M', barcode: '', product_weight: 0.20, product_volume: 0.01, sort: 1, data: '1-4', status: 1 },
+            { id: 2, spec_name: '白色-L', spec_id: '1-5', price: 59.00, market_price: 99.00, cost_price: 35.00, stock: 60, code: 'T001-WH-L', barcode: '', product_weight: 0.22, product_volume: 0.01, sort: 2, data: '1-5', status: 1 },
+            { id: 3, spec_name: '白色-XL', spec_id: '1-6', price: 65.00, market_price: 109.00, cost_price: 38.00, stock: 40, code: 'T001-WH-XL', barcode: '', product_weight: 0.25, product_volume: 0.01, sort: 3, data: '1-6', status: 1 },
+            { id: 4, spec_name: '黑色-M', spec_id: '2-4', price: 59.00, market_price: 99.00, cost_price: 35.00, stock: 70, code: 'T001-BK-M', barcode: '', product_weight: 0.20, product_volume: 0.01, sort: 4, data: '2-4', status: 1 },
+            { id: 5, spec_name: '黑色-L', spec_id: '2-5', price: 59.00, market_price: 99.00, cost_price: 35.00, stock: 55, code: 'T001-BK-L', barcode: '', product_weight: 0.22, product_volume: 0.01, sort: 5, data: '2-5', status: 1 },
+            { id: 6, spec_name: '黑色-XL', spec_id: '2-6', price: 65.00, market_price: 109.00, cost_price: 38.00, stock: 35, code: 'T001-BK-XL', barcode: '', product_weight: 0.25, product_volume: 0.01, sort: 6, data: '2-6', status: 1 },
+            { id: 7, spec_name: '灰色-M', spec_id: '3-4', price: 55.00, market_price: 89.00, cost_price: 32.00, stock: 50, code: 'T001-GY-M', barcode: '', product_weight: 0.20, product_volume: 0.01, sort: 7, data: '3-4', status: 1 },
+            { id: 8, spec_name: '灰色-L', spec_id: '3-5', price: 55.00, market_price: 89.00, cost_price: 32.00, stock: 45, code: 'T001-GY-L', barcode: '', product_weight: 0.22, product_volume: 0.01, sort: 8, data: '3-5', status: 1 },
+            { id: 9, spec_name: '灰色-XL', spec_id: '3-6', price: 60.00, market_price: 99.00, cost_price: 35.00, stock: 30, code: 'T001-GY-XL', barcode: '', product_weight: 0.25, product_volume: 0.01, sort: 9, data: '3-6', status: 1 }
+        ]
+    };
+</script>
+</body>
+</html>

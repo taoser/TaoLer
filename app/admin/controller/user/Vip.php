@@ -14,7 +14,7 @@ use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
-use app\index\model\UserViprule;
+use app\model\UserViprule;
 
 class Vip extends AdminBaseController
 {

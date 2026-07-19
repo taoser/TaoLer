@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>添加商品（匹配截图UI修复版）</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui-src/dist/css/layui.css">
+    <style>
+        .layui-form-item {margin-bottom: 18px;}
+        .layui-form-label {width: 110px;}
+        .layui-input-block {margin-left: 130px;}
+        /* 规格行容器 */
+        .spec-row {display: flex;align-items: flex-start;margin:12px 0;border-bottom:1px solid #eee;padding-bottom:10px;}
+        .spec-name-box {width:120px;padding-top:6px;}
+        .spec-value-wrap {flex:1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+        /* 规格值标签样式（复选框+删除） */
+        .spec-tag {display:flex;align-items:center;border:1px solid #ccc;padding:4px 8px;border-radius:3px;gap:6px;white-space: nowrap;}
+        .spec-tag .layui-icon-close {color:#ff4d4f;cursor:pointer;font-size:16px;}
+        .add-val-btn {margin-left:10px;}
+        /* SKU表格 */
+        #skuTable .layui-table-cell {vertical-align: middle; padding: 5px 2px;}
+        .sku-img-upload {width:40px;height:40px;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;color:#999;cursor:pointer;}
+        .sku-input {width:80px !important;padding:0 4px;height:30px;line-height:30px;}
+        .sku-select {width:90px !important;height:30px;}
+        /* 批量弹窗 */
+        #batchFillTpl {padding:20px;}
+    </style>
+</head>
+<body>
+<div style="padding:25px;width:95%;margin:0 auto;">
+    <h3 style="margin-bottom:20px;">添加商品</h3>
+    <form class="layui-form" id="productForm" lay-filter="productForm">
+        <!-- 1. 规格类型单选 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">规格类型</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_attribute" value="0" title="统一规格" lay-filter="switchSpecType">
+                <input type="radio" name="is_attribute" value="1" title="多规格" checked lay-filter="switchSpecType">
+            </div>
+        </div>
+
+        <!-- 多规格容器 -->
+        <div id="multiSpecWrap">
+            <fieldset class="layui-elem-field">
+                <legend>商品规格</legend>
+                <div class="layui-field-box">
+                    <div id="specBox"></div>
+                    <!-- 底部操作栏 -->
+                    <div style="margin-top:10px;display:flex;align-items:center;gap:15px;">
+                        <input type="checkbox" id="switchDelBtn" lay-skin="primary" title="开启删除" checked lay-filter="switchDelBtn">
+                        <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" id="addSpecBtn">+规格</button>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- SKU区域 -->
+            <fieldset class="layui-elem-field" style="margin-top:20px;">
+                <legend>SKU
+                    <button type="button" class="layui-btn layui-btn-xs layui-btn-warm" id="batchFillSku">批量填充价格/库存</button>
+                </legend>
+                <div class="layui-field-box">
+                    <table class="layui-table" id="skuTable" lay-filter="skuTable"></table>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- 底部提交按钮 -->
+        <div class="layui-form-item" style="margin-top:30px;">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="submitProduct">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- SKU批量填充弹窗 -->
+<div id="batchFillTpl" style="display:none;">
+    <form class="layui-form" lay-filter="batchFillForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">统一售价</label>
+            <div class="layui-input-block">
+                <input type="number" step="0.01" name="batch_price" class="layui-input" placeholder="留空不修改">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">统一市场价</label>
+            <div class="layui-input-block">
+                <input type="number" step="0.01" name="batch_market_price" class="layui-input" placeholder="留空不修改">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">统一成本价</label>
+            <div class="layui-input-block">
+                <input type="number" step="0.01" name="batch_cost_price" class="layui-input" placeholder="留空不修改">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">统一库存</label>
+            <div class="layui-input-block">
+                <input type="number" name="batch_stock" class="layui-input" placeholder="留空不修改">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-primary" lay-submit lay-filter="doBatch">确认填充</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/layui-src/dist/layui.js"></script>
+<script>
+layui.use(['form','table','upload','layer','jquery'],function(){
+    const form = layui.form;
+    const table = layui.table;
+    const upload = layui.upload;
+    const layer = layui.layer;
+    const $ = layui.jquery;
+
+    // 全局数据缓存
+    const DATA = {
+        specList: [
+            {
+                tempId: 'spec_1',
+                name: '颜色',
+                valueList: [
+                    {tempId:'val_11',title:'黄色',checked:true},
+                    {tempId:'val_12',title:'红色',checked:true},
+                    {tempId:'val_13',title:'蓝色',checked:false}
+                ]
+            },
+            {
+                tempId: 'spec_2',
+                name: '尺码',
+                valueList: [
+                    {tempId:'val_21',title:'S',checked:true},
+                    {tempId:'val_22',title:'M',checked:true},
+                    {tempId:'val_23',title:'L',checked:true},
+                    {tempId:'val_24',title:'XL',checked:false}
+                ]
+            }
+        ],
+        skuList: [],
+        delBtnOpen: true
+    }
+
+    // 切换统一规格/多规格
+    form.on('radio(switchSpecType)',function(data){
+        if(data.value == '1'){
+            $('#multiSpecWrap').show();
+            renderSpecHtml();
+            refreshSku();
+        }else{
+            $('#multiSpecWrap').hide();
+            DATA.specList = [];
+            DATA.skuList = [];
+            $('#specBox').empty();
+            table.reload('skuTable', {data: []});
+        }
+    })
+
+    // 开启/关闭删除按钮
+    form.on('checkbox(switchDelBtn)',function(data){
+        DATA.delBtnOpen = data.elem.checked;
+        renderSpecHtml();
+    })
+
+    // 渲染规格标签HTML
+    function renderSpecHtml(){
+        let html = '';
+        DATA.specList.forEach(spec=>{
+            html += `<div class="spec-row" data-spec-id="${spec.tempId}">
+                <div class="spec-name-box">
+                    <input type="text" class="layui-input spec-name-input" value="${spec.name}" placeholder="规格名">
+                </div>
+                <div class="spec-value-wrap">`;
+            spec.valueList.forEach(val=>{
+                html += `<div class="spec-tag" data-val-id="${val.tempId}" data-spec-id="${spec.tempId}">
+                    <input type="checkbox" lay-filter="specValCheck" ${val.checked?'checked':''}>
+                    <span>${val.title}</span>
+                    ${DATA.delBtnOpen ? '<i class="layui-icon layui-icon-close del-val"></i>' : ''}
+                </div>`;
+            })
+            html += `<button class="layui-btn layui-btn-xs layui-btn-primary add-val-btn" data-specid="${spec.tempId}">+规格值</button>
+                </div>
+            </div>`;
+        })
+        $('#specBox').html(html);
+        form.render('checkbox');
+    }
+
+    // 新增规格组
+    $('#addSpecBtn').click(function(){
+        const newSpecId = 'spec_' + Date.now();
+        DATA.specList.push({
+            tempId: newSpecId,
+            name: '新规格',
+            valueList: []
+        })
+        renderSpecHtml();
+        refreshSku();
+    })
+
+    // 事件委托
+    $(document)
+    // 添加规格值
+    .on('click','.add-val-btn',function(){
+        const specId = $(this).data('specid');
+        const spec = DATA.specList.find(s=>s.tempId === specId);
+        layer.prompt({title:'输入规格值名称'},function(title,idx){
+            const valId = 'val_' + Date.now();
+            spec.valueList.push({
+                tempId: valId,
+                title: title.trim(),
+                checked: true
+            })
+            layer.close(idx);
+            renderSpecHtml();
+            refreshSku();
+        })
+    })
+    // 删除规格值
+    .on('click','.del-val',function(){
+        const $tag = $(this).closest('.spec-tag');
+        const specId = $tag.data('spec-id');
+        const valId = $tag.data('val-id');
+        const spec = DATA.specList.find(s=>s.tempId === specId);
+        spec.valueList = spec.valueList.filter(v=>v.tempId !== valId);
+        renderSpecHtml();
+        refreshSku();
+    })
+    // 修改规格名称
+    .on('input','.spec-name-input',function(){
+        const specId = $(this).closest('.spec-row').data('spec-id');
+        const spec = DATA.specList.find(s=>s.tempId === specId);
+        spec.name = $(this).val().trim();
+        refreshSku();
+    })
+    // 勾选规格值切换
+    .on('change','input[lay-filter="specValCheck"]',function(){
+        const $tag = $(this).closest('.spec-tag');
+        const specId = $tag.data('spec-id');
+        const valId = $tag.data('val-id');
+        const spec = DATA.specList.find(s=>s.tempId === specId);
+        const val = spec.valueList.find(v=>v.tempId === valId);
+        val.checked = this.checked;
+        refreshSku();
+    })
+
+    // 笛卡尔积算法
+    function cartesian(list){
+        return list.reduce((prev,curr)=>{
+            let res = [];
+            prev.forEach(p=>curr.forEach(c=>res.push([...p,c])));
+            return res;
+        },[[]])
+    }
+
+    // 生成SKU数据
+    function refreshSku(){
+        // 过滤有勾选值的规格
+        const validSpec = DATA.specList.filter(s=>s.valueList.some(v=>v.checked));
+        if(validSpec.length === 0){
+            DATA.skuList = [];
+            table.reload('skuTable', {data: []});
+            return;
+        }
+        // 提取勾选规格值
+        const valGroups = validSpec.map(s=>{
+            return s.valueList.filter(v=>v.checked).map(v=>({title:v.title,tempId:v.tempId}))
+        })
+        const combineArr = cartesian(valGroups);
+        // 组装SKU
+        let skuData = [];
+        combineArr.forEach(row=>{
+            const nameArr = row.map(item=>item.title);
+            const dataStr = row.map(item=>item.tempId).join('-');
+            skuData.push({
+                data: dataStr,
+                specText: nameArr,
+                img: '',
+                price: 0,
+                market_price:0,
+                cost_price:0,
+                stock:0,
+                status:1
+            })
+        })
+        DATA.skuList = skuData;
+        renderSkuTable(skuData, validSpec);
+    }
+
+    // 渲染SKU表格（修复动态表头、合并单元格）
+    function renderSkuTable(data, validSpec){
+        // 固定列模板
+        const cols = [
+            {field:'col0', title:'规格1', width:100, templet:function(d){return d.specText[0] || ''}},
+            {field:'col1', title:'规格2', width:80, templet:function(d){return d.specText[1] || ''}},
+            {title:'图片',width:70,templet:function(d){
+                return `<div class="sku-img-upload" data-sku-key="${d.data}"><i class="layui-icon layui-icon-upload-drag"></i></div>`
+            }},
+            {title:'销售价(元)',width:110,templet:function(d){
+                return `<input type="number" step="0.01" class="layui-input sku-input sku-price" data-key="${d.data}" value="${d.price}">`
+            }},
+            {title:'市场价(元)',width:110,templet:function(d){
+                return `<input type="number" step="0.01" class="layui-input sku-input sku-market" data-key="${d.data}" value="${d.market_price}">`
+            }},
+            {title:'成本价(元)',width:110,templet:function(d){
+                return `<input type="number" step="0.01" class="layui-input sku-input sku-cost" data-key="${d.data}" value="${d.cost_price}">`
+            }},
+            {title:'库存',width:90,templet:function(d){
+                return `<input type="number" class="layui-input sku-input sku-stock" data-key="${d.data}" value="${d.stock}">`
+            }},
+            {title:'状态',width:100,templet:function(d){
+                return `<select class="layui-input sku-select sku-status" data-key="${d.data}">
+                    <option value="1" ${d.status===1?'selected':''}>启用</option>
+                    <option value="0" ${d.status===0?'selected':''}>禁用</option>
+                </select>`
+            }}
+        ];
+
+        table.render({
+            id: 'skuTable',
+            elem:'#skuTable',
+            data: data,
+            page:false,
+            limit:999,
+            cols: [cols],
+            done:function(res){
+                // 动态修改表头文字为规格名称
+                const $header = $('#skuTable').next('.layui-table-view').find('.layui-table-header thead tr th');
+                $header.eq(0).text(validSpec[0].name);
+                if(validSpec[1]) $header.eq(1).text(validSpec[1].name);
+
+                // 合并第一列相同单元格（截图核心效果）
+                const $tbody = $('#skuTable').next('.layui-table-view').find('table tbody');
+                const rows = $tbody.find('tr');
+                if(rows.length === 0) return;
+
+                let currentText = $(rows[0]).find('td:first').text().trim();
+                let mergeStartIdx = 0;
+
+                rows.each(function(index){
+                    const text = $(this).find('td:first').text().trim();
+                    if(text !== currentText){
+                        // 上一组合并
+                        rows.eq(mergeStartIdx).find('td:first').attr('rowspan', index - mergeStartIdx);
+                        // 隐藏当前单元格
+                        $(this).find('td:first').hide();
+                        currentText = text;
+                        mergeStartIdx = index;
+                    }else{
+                        $(this).find('td:first').hide();
+                    }
+                    // 最后一组处理
+                    if(index === rows.length - 1){
+                        rows.eq(mergeStartIdx).find('td:first').attr('rowspan', index - mergeStartIdx + 1);
+                    }
+                })
+
+                // 初始化上传、输入框绑定
+                initSkuUpload();
+                bindSkuInput();
+            }
+        })
+    }
+
+    // SKU图片上传
+    function initSkuUpload(){
+        $('.sku-img-upload').each(function(){
+            const key = $(this).data('sku-key');
+            upload.render({
+                elem: this,
+                url: '/upload/image',
+                done:function(res){
+                    if(res.code === 0){
+                        const sku = DATA.skuList.find(s=>s.data === key);
+                        sku.img = res.data.url;
+                        $(this).html(`<img src="${res.data.url}" style="width:100%;height:100%;object-fit:cover;">`)
+                    }else layer.msg(res.msg);
+                }
+            })
+        })
+    }
+
+    // SKU输入框同步数据
+    function bindSkuInput(){
+        $(document)
+        .off('input','.sku-price').on('input','.sku-price',function(){
+            const key = $(this).data('key');
+            const sku = DATA.skuList.find(s=>s.data === key);
+            sku.price = Number($(this).val()) || 0;
+        })
+        .off('input','.sku-market').on('input','.sku-market',function(){
+            const key = $(this).data('key');
+            const sku = DATA.skuList.find(s=>s.data === key);
+            sku.market_price = Number($(this).val()) || 0;
+        })
+        .off('input','.sku-cost').on('input','.sku-cost',function(){
+            const key = $(this).data('key');
+            const sku = DATA.skuList.find(s=>s.data === key);
+            sku.cost_price = Number($(this).val()) || 0;
+        })
+        .off('input','.sku-stock').on('input','.sku-stock',function(){
+            const key = $(this).data('key');
+            const sku = DATA.skuList.find(s=>s.data === key);
+            sku.stock = Number($(this).val()) || 0;
+        })
+        .off('change','.sku-status').on('change','.sku-status',function(){
+            const key = $(this).data('key');
+            const sku = DATA.skuList.find(s=>s.data === key);
+            sku.status = Number($(this).val());
+        })
+    }
+
+    // ========== SKU批量填充 ==========
+    let batchLayerIndex;
+    $('#batchFillSku').click(function(){
+        if(DATA.skuList.length === 0) return layer.msg('暂无SKU，请勾选规格值');
+        batchLayerIndex = layer.open({
+            type:1,
+            title:'批量填充SKU参数',
+            area:['420px','330px'],
+            content:$('#batchFillTpl'),
+            success:function(){
+                form.val('batchFillForm',{batch_price:'',batch_market_price:'',batch_cost_price:'',batch_stock:''})
+            }
+        })
+    })
+    form.on('submit(doBatch)',function(data){
+        const f = data.field;
+        const p = parseFloat(f.batch_price);
+        const mp = parseFloat(f.batch_market_price);
+        const cp = parseFloat(f.batch_cost_price);
+        const st = parseInt(f.batch_stock);
+        DATA.skuList.forEach(item=>{
+            if(!isNaN(p)) item.price = p;
+            if(!isNaN(mp)) item.market_price = mp;
+            if(!isNaN(cp)) item.cost_price = cp;
+            if(!isNaN(st)) item.stock = st;
+        })
+        refreshSku();
+        layer.close(batchLayerIndex);
+        layer.msg('批量填充完成');
+        return false;
+    })
+
+    // 表单提交
+    form.on('submit(submitProduct)',function(data){
+        const submitData = {
+            product: data.field,
+            spec: DATA.specList,
+            sku: DATA.skuList
+        }
+        console.log('提交数据', submitData);
+        
+    })
+
+    // 页面初始化渲染默认规格
+    renderSpecHtml();
+    refreshSku();
+})
+</script>
+</body>
+</html>

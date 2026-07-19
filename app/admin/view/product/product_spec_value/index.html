@@ -1,0 +1,159 @@
+{extend name="public/base" /}
+
+{block name="title"}商品管理{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="table" lay-filter="table"></table>
+    </div>
+</div>
+<script type="text/html" id="toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="expandAll">
+        <i class="layui-icon layui-icon-spread-left"></i>
+        展开
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="foldAll">
+        <i class="layui-icon layui-icon-shrink-right"></i>
+        折叠
+    </button>
+</script>
+<script type="text/html" id="bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+<script type="text/html" id="spec-title">
+<div>
+    {{ d.spec.title }}
+</div>
+</script>
+
+{__block__}
+
+<script>
+    const LIST_URL = MODULE_NAME + '/product/productSpecValue/list';
+    const ADD_URL = MODULE_NAME + '/product/productSpecValue/add';
+    const EDIT_URL = MODULE_NAME + '/product/productSpecValue/edit';
+    const DELETE_URL = MODULE_NAME + '/product/productSpecValue/delete';
+    const CHECK_URL = MODULE_NAME + '/product/productSpecValue/check';
+
+    layui.use(['form'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var $ = layui.jquery;
+
+        table.render({
+            elem: '#table',
+            url: LIST_URL,
+            method: 'get',
+            toolbar: '#toolbar',
+            page: true,
+            limit: 10,
+            cols: [[
+                {field: 'id', title: 'ID', width: 80, align: 'center'},
+                {field:'spec_title', title: '规格', width: 120, align: 'center'},
+                {field: 'title', title: '名称', minWidth: 120, align: 'center'},
+                {field: 'sort', title: '排序'},
+                {field: 'create_time', title: '创建时间'},
+                {field: 'update_time', title: '更新时间'},
+                {title: '操作', templet: '#bar', width: 150, align: 'center'}
+            ]],
+            done: function (res, curr, count) {
+                /* 需要合并栏目的数组信息 */
+                var tableCloumn = [
+                    {
+                        field: "spec_title",
+                        index: 1 /* 需要合并栏目的索引 */
+                    }
+                ];
+
+                var start_tr_index = 1;
+                var tr_s = $(".layui-table-box table").find("tr");
+                for (var item of tableCloumn) {
+                    var field = item.field;
+                    var index = item.index;
+                    var merge_num = 0;
+                    var merge_tds = [];
+                    for (var i = start_tr_index; i < tr_s.length; i++) {
+                        var cur_td = tr_s.eq(i).find("td").eq(index);
+                        var next_td = tr_s.eq(i + 1).find("td").eq(index);
+                        var cur_text = $(cur_td).text();
+                        var next_text = $(next_td).text();
+                        if (cur_text == next_text) {
+                            merge_tds.push(cur_td);
+                            merge_num++;
+                        } else {
+                            if (merge_num != 0) {
+                                $(merge_tds[0]).attr("rowspan", merge_num + 1);
+                                for (var d = 1; d < merge_tds.length; d++) {
+                                    $(merge_tds[d]).addClass("layui-hide");
+                                }
+                                $(cur_td).addClass("layui-hide");
+                            }
+                            merge_num = 0;
+                            merge_tds = [];
+                        }
+                    }
+                }
+
+            }
+    
+        });
+
+        table.on('toolbar(table)', function (obj) {
+            if (obj.event === 'add') {
+                add(obj);
+            }
+        });
+
+        table.on('tool(table)', function (obj) {
+            if (obj.event === 'edit') {
+                edit(obj);
+            } else if (obj.event === 'delete') {
+                remove(obj);
+            }
+        });
+
+        function add(obj) {
+            layer.open({
+                type: 2,
+                title: '添加规格值',
+                shade: 0.1,
+                area: ['400px', '300px'],
+                content: ADD_URL,
+            });
+        }
+
+        function edit(obj) {
+            layer.open({
+                type: 2,
+                type: 2,
+                title: '编辑规格值',
+                area: ['400px', '300px'],
+                content: EDIT_URL + '?id=' + obj.data.id,
+            });
+        }
+
+        function remove(obj) {
+            layer.confirm('确认删除吗？', function (index) {
+                $.post(DELETE_URL, {id: obj.data.id}, function (res) {
+                    if (res.code === 200) {
+                        layer.msg(index, '删除成功');
+                        table.reload('table');
+                    } else {
+                        layer.msg(index, res.msg);
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+    });
+</script>
+
+{/block}
