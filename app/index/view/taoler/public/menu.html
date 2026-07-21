@@ -38,7 +38,7 @@
 					<div class="layui-menu-body-title">
 						<a href="{nav:link /}">
 							<i class="layui-icon {nav:icon /}"></i>{nav:title}
-							{if condition="$nav.is_hot eq 1"}<span class="layui-badge-dot"></span>{/if}
+							{eq name="nav.is_hot" value="1"}<span class="layui-badge-dot"></span>{/eq}
 						</a>
 					</div>
 					{notempty name="nav.children"}

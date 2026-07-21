@@ -3,14 +3,13 @@ declare (strict_types = 1);
 
 namespace app\entity;
 
+use Exception;
 use think\db\exception\DbException;
 use think\db\Query;
 use think\facade\Db;
 use think\facade\Cache;
-use app\common\helper\IdEncode;
 use think\facade\Route;
-use app\model\Category as ModelCategory;
-use Exception;
+use app\common\helper\IdEncode;
 use think\model\type\Json as TypeJson;
 use think\response\Json;
 
@@ -47,7 +46,7 @@ class Category extends BaseEntity
 
         // 抛出 HTTP 异常
         if(is_null($cate) && $ename != 'all') {
-			throw new \think\exception\HttpException(404, '没有可访问的数据！');
+			throw new Exception('没有可访问的数据！');
 		}
 
         return $cate;
@@ -129,7 +128,6 @@ class Category extends BaseEntity
     // 如果菜单下无内容，URl不能点击
     public function menu()
     {
-        
         return $this->where('status', 1)
             ->cache(3600)
             ->append(['url'])

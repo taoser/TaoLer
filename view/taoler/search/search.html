@@ -33,7 +33,7 @@
                 <i class="iconfont icon-pinglun1" title="回答"></i>{$art.comments_count}
               </span> 
             </div>
-            {if ($art.is_hot == 1)}
+            {if ($art.flags.is_good == 1)}
             <div class="fly-list-badge"><span class="layui-badge layui-bg-red">精帖</span></div>
             {/if}
           </li>

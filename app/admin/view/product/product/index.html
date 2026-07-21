@@ -52,6 +52,9 @@
     </span>
 
 </script>
+<script type="text/html" id="status">
+    <input type="checkbox" name="status" value="{{d.status}}" lay-skin="switch" lay-filter="status" {{# if(d.status === 1){ }}checked{{# } }}>
+</script>
 
 {__block__}
 
@@ -90,12 +93,11 @@
             var skuData = [];
             
             var cols = [
-                {field: 'price', title: '销售价'},
-                {field: 'market_price', title: '市场价'},
-                {field: 'cost_price', title: '成本价'},
-                {field: 'stock', title: '库存'},
-                {field: 'create_time', title: '创建时间'},
-                {field: 'update_time', title: '更新时间'},
+                {field: 'price', title: '销售价',edit: true},
+                {field: 'market_price', title: '市场价',edit: true},
+                {field: 'cost_price', title: '成本价',edit: true},
+                {field: 'stock', title: '库存',edit: true},
+                {field: 'status', title: '状态',templet: '#status'},
                 {title: '操作', templet: '#bar', width: 150, align: 'center'}
             ];
 

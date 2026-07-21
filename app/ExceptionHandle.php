@@ -39,7 +39,7 @@ class ExceptionHandle extends Handle
     {
         Log::error($exception->getMessage().':'.$exception->getFile().':'.$exception->getLine());
         // 使用内置的方式记录异常日志
-        parent::report($exception);
+        // parent::report($exception);
     }
 
     /**

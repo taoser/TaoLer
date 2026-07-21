@@ -34,7 +34,7 @@
               <a href="{article:user name='link'}" link><cite>{$article.user.name}</cite></a>
               <span>{$article.create_time|date='Y-m-d'}</span>
             </div>
-            {if ($article.is_hot == 1)}
+            {if ($article.is_good == 1)}
             <div class="fly-list-badge"><span class="layui-badge layui-bg-red">精帖</span></div>
             {/if}
           </li>

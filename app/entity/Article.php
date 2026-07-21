@@ -10,7 +10,6 @@ use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Session;
 use app\common\helper\IdEncode;
-use think\facade\Route;
 
 class Article extends BaseEntity
 {
@@ -655,7 +654,7 @@ class Article extends BaseEntity
     // 获取用户发帖列表
     public function getUserArtList(int $id) {
         $userArtList = Cache::remember('user_recently_post_'.$id, function() use($id) {
-            return $this::field('id,cate_id,title,create_time,pv')
+            return $this::field('id,cate_id,title,flags,create_time,pv')
             ->with([
                 'cate' => function($query){
                     $query->where(['status'=>1])->field('id,ename');

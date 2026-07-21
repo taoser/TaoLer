@@ -26,7 +26,7 @@
             <a href="{article:user name='link'}" class="fly-avatar">
               <img src="{article:author_avatar /}" alt="{article:author /}"><i class="iconfont icon-renzheng" title="认证信息"></i>  
             </a>
-            <h2><a href="{$article.url}"  title="{$article.title}">{$article.title}</a></h2>
+            <h2><a href="{$article.url}"  title="{$article.title}">{article:title /}</a></h2>
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
               <a class="layui-badge" href="{article:cate name='link' /}">{article:cate_name /}</a>
@@ -34,9 +34,9 @@
               <a href="{article:user name='link'}" link><cite>{$article.user.name}</cite></a>
               <span>{$article.create_time|date='Y-m-d'}</span>
             </div>
-            {if ($article.is_hot == 1)}
+            {eq name="article.is_good" value="1"}
             <div class="fly-list-badge"><span class="layui-badge layui-bg-red">精帖</span></div>
-            {/if}
+            {/eq}
           </li>
         {/tag:list}
         </ul>
