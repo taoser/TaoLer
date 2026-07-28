@@ -11,8 +11,8 @@ class Category extends IndexBaseController
     {
         global $page;
 		//动态参数
-		$ename = $this->request->param('ename');
-		$type = $this->request->param('type', 'all');
+		$ename = $this->request->param('ename', '');
+		$flag = $this->request->param('flag', 'all');
 		$page = $this->request->param('page/d', 1);
 
 		// 分类信息
@@ -22,13 +22,14 @@ class Category extends IndexBaseController
 		// type 1列表2单页3链接
 		if(!is_null($cateInfo) && $cateInfo->type == 2) {
 			$singleArticle = Db::name('page')->where('cate_id', $cateInfo->id)->find();
+
 			View::assign('article', $singleArticle);
 
 			return View::fetch('category/' . $cateInfo->tpl . '/single');
 		}
 
 		// 当前页url
-		$url = (string) url('cate_page', ['ename' => $ename, 'type' => $type, 'page' => $page]);
+		$url = (string) url('cate_page', ['ename' => $ename, 'flag' => $flag, 'page' => $page]);
 		// 返回最后/前面的字符串
 		$path = substr($url, 0, strrpos($url, "/"));
 		// 下一页url
@@ -44,9 +45,8 @@ class Category extends IndexBaseController
 
 		View::assign($assignArr);
 
-		// $cateView = is_null($cateInfo) ? 'article/cate' : $path = $cateInfo->type == 2 ? 'article/' . $cateInfo->tpl . '/single' : 'article/' . $cateInfo->tpl . '/cate';
-
 		$cateView = is_null($cateInfo) ? 'category/list' : 'category/' . $cateInfo->tpl . '/list';
+
         return View::fetch($cateView);
     }
 }

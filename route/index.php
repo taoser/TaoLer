@@ -2,7 +2,7 @@
 
 use think\facade\Route;
 
-Route::group('',function(){
+Route::group('',function() {
 	// Route::get('user/blog','user\Blog/index');
 	// Route::get('user/blog','user.Blog/index');
 
@@ -24,11 +24,10 @@ Route::group('',function(){
 
 	// 定义文章分类路由
     Route::get('<ename>-list$','category/list')->name('cate');
-    Route::get('<ename>-list/type-<type>$', 'category/list')->name('cate_type');
-    Route::get('<ename>-list/type-<type>/<page>$', 'category/list')->name('cate_page');
-//
+    Route::get('<ename>-list/flag-<flag>$', 'category/list')->name('cate_flag');
+    Route::get('<ename>-list/flag-<flag>/<page>$', 'category/list')->name('cate_page');
+
 	// 定义文章详情路由
-	// $detail_as = config('taoler.url_rewrite.article_as') ?: '<ename>/'; //详情页URL别称
 	Route::get('<ename>-list/<id>$', 'article/detail')->name('article_detail');
 	Route::get('<ename>-list/<id>/<page>$', 'article/detail')->name('article_comment');
 	
@@ -94,11 +93,6 @@ Route::group('',function(){
 	Route::get('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
 
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
-
-	// Route::miss(function() {
-	// 	return '404 Not Found!';
-	// });
-
 })
 ->pattern([
 	'ename' => '[\w|\-]+',
@@ -112,8 +106,7 @@ Route::group('',function(){
 ])
 ->namespace('app\index\controller');
 
-// 开启多模块URL自动解析 `8.1+`版本开始支持
-// Route::auto();
+
 
 
 

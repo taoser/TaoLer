@@ -34,14 +34,8 @@ Route::group($moduleName, function () {
 
     Route::rule(':controller/:action$',':controller/:action');
     Route::rule(':dirname/:controller/:action$',':dirname.:controller/:action');
-
-    Route::miss(function() {
-        return '404 Not Found!';
-    });
     
 })->middleware([
     \app\middleware\AdminAuth::class
 ])
 ->namespace('app\admin\controller');
-
-// Route::auto();

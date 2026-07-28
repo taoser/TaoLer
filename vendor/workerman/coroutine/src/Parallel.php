@@ -82,13 +82,21 @@ class Parallel
         $barrier = Barrier::create();
         foreach ($this->callbacks as $key => $callback) {
             $this->channel?->push(true);
-            Coroutine::create(function () use ($callback, $key, $barrier) {
+            // A completed Fiber may retain its closure until the caller frame returns.
+            // Use a mutable holder so the barrier reference can be released explicitly.
+            $barrierRef = new \stdClass();
+            $barrierRef->value = $barrier;
+            Coroutine::create(function () use ($callback, $key, $barrierRef) {
                 try {
                     $this->results[$key] = $callback();
                 } catch (Throwable $throwable) {
                     $this->exceptions[$key] = $throwable;
                 } finally {
-                    $this->channel?->pop();
+                    try {
+                        $this->channel?->pop();
+                    } finally {
+                        $barrierRef->value = null;
+                    }
                 }
             });
         }

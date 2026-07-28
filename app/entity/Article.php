@@ -3,7 +3,6 @@ declare (strict_types = 1);
 
 namespace app\entity;
 
-
 use Exception;
 use think\db\Query;
 use think\facade\Db;
@@ -23,11 +22,11 @@ class Article extends BaseEntity
     const USER_RELATION_FIELDS = ['id', 'name', 'nickname', 'user_img', 'vip'];
 
     // 新的数量, 数据介于两表之间分量时使用
-    protected static $newLimit;
+    protected static int $newLimit = 100000;
     // 当前分页数据偏移量
-    protected static $offset;
+    protected static int $offset = 0;
     // 当前用到的数据总和
-    protected static $currentTotalNum = 0;
+    protected static int $currentTotalNum = 0;
 
     /**
      * 添加
@@ -415,30 +414,24 @@ class Article extends BaseEntity
      */
     public function getDetail(int $id)
     {
-        $detail = Cache::remember('article_'.$id, function() use($id){
-            $this->setSuffix(self::byIdGetSuffix($id));
-            //查询文章
-            try{
-                return $this->field('id,title,content,status,cate_id,user_id,is_comment,pv,keywords,description,create_time,update_time,comments_num,flags')
-                ->where('id', $id)
-                ->where('status', '1')
-                ->with([
-                    'cate' => function(Query $query){
-                        $query->field('id,catename,ename,tpl');
-                    },
-                    'user' => function(Query $query){
-                        $query->field('id,name,nickname,user_img,area_id,vip,city');
-                    }
-                ])
-                ->append(['url'])
-                ->findOrFail();
-            } catch(Exception $e) {
-                throw new Exception($e->getMessage());
-            }
-            
-        }, 600);
+        $this->setSuffix(self::byIdGetSuffix($id));
 
-        return $detail;
+        return Cache::remember('article_'.$id, function() use($id){
+            
+            return $this->field('id,title,content,status,cate_id,user_id,is_comment,pv,keywords,description,create_time,update_time,comments_num,flags')
+            ->where('id', $id)
+            ->where('status', 1)
+            ->with([
+                'cate' => function(Query $query){
+                    $query->field('id,catename,ename,tpl');
+                },
+                'user' => function(Query $query){
+                    $query->field('id,name,nickname,user_img,area_id,vip,city');
+                }
+            ])
+            ->append(['url'])
+            ->findOrFail();
+        }, 600);
     }
 
     /**

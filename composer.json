@@ -21,6 +21,7 @@
         "topthink/think-orm": "^4.0",
         "topthink/think-filesystem": "^3.0",
         "topthink/think-captcha": "^3.0",
+        "topthink/think-throttle": "^3.0",
         "taoser/think-addons": "^2.2",
         "taoser/think-auth": "^2.0",
         "taoser/think-setarr": "^0.0.5",

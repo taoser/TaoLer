@@ -77,11 +77,11 @@
 				data: data.field,
 				dataType: 'json',
 				type: 'post',
-				success: function(result) {
-					if (result.code) {
-						return popup.failure(result.msg);
+				success: function(res) {
+					if (res.code) {
+						return popup.failure(res.msg);
 					}
-					return popup.success(result.msg, function() {
+					return popup.success(res.msg, function() {
 						parent.layui.table.reload("user-table");
 						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
 					});
@@ -100,10 +100,10 @@
 			,acceptMime: 'image/*'
 			,done: function(res){
 				$(this.item).prev("div").children("input").val(res.src);
-				if (result.code) {
-					return popup.failure(result.msg);
+				if (res.code) {
+					return popup.failure(res.msg);
 				}
-				return popup.success(result.msg);
+				return popup.success(res.msg);
 			}
 		});
 	})

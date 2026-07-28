@@ -10,9 +10,9 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '15ec93fa4ce4b2d53816a1a5f2c514e2' => __DIR__ . '/..' . '/topthink/think-validate/src/helper.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '7448f3465e10b5f033e4babb31eb0b06' => __DIR__ . '/..' . '/topthink/think-orm/src/helper.php',
         '35fab96057f1bf5e7aba31a8a6d5fdde' => __DIR__ . '/..' . '/topthink/think-orm/stubs/load_stubs.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '9d2b9fc6db0f153a0a149fefb182415e' => __DIR__ . '/..' . '/symfony/polyfill-php84/bootstrap.php',
@@ -38,6 +38,7 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         array (
             'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
+            'think\\middleware\\' => 17,
             'think\\dumper\\' => 13,
             'think\\captcha\\' => 14,
             'think\\' => 6,
@@ -139,6 +140,10 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         array (
             0 => __DIR__ . '/..' . '/topthink/think-trace/src',
         ),
+        'think\\middleware\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-throttle/src',
+        ),
         'think\\dumper\\' =>
         array (
             0 => __DIR__ . '/..' . '/topthink/think-dumper/src',
@@ -192,8 +197,8 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         ),
         'Workerman\\' =>
         array (
-            0 => __DIR__ . '/..' . '/workerman/workerman/src',
-            1 => __DIR__ . '/..' . '/workerman/coroutine/src',
+            0 => __DIR__ . '/..' . '/workerman/coroutine/src',
+            1 => __DIR__ . '/..' . '/workerman/workerman/src',
         ),
         'Symfony\\Polyfill\\Php86\\' =>
         array (

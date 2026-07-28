@@ -66,7 +66,7 @@ class ProductSpec extends AdminBaseController
         $res = ProductSpecModel::with(['child' => function($query){
             $query->withField(['product_spec_id','id','title'])->order('id','asc');
         }])
-        ->field('id,title,ename')
+        ->field('id,title,ename,type')
         ->select();
 
         return json(['code'=>0,'msg'=>'success','data'=>$res]);

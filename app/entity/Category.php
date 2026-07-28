@@ -215,7 +215,7 @@ class Category extends BaseEntity
      * @param integer $limit 每页数
      * @return array
      */
-    public function getArticlesByCategoryEname(string $ename = 'all', int $page = 1, string $type = 'all', int $limit = 15): array
+    public function getArticlesByCategoryEname(string $ename = 'all', int $page = 1, string $flag = 'all', int $limit = 15): array
     {
         // 查询条件
         $where = [];
@@ -228,7 +228,7 @@ class Category extends BaseEntity
             $where[] = ['cate_id' ,'=', $cate['id']];
         }
 
-        switch ($type) {
+        switch ($flag) {
             case 'hot':
                 $where[] = ['flags->is_good','=', '1'];
                 break;
@@ -249,7 +249,7 @@ class Category extends BaseEntity
         // halt($m);
 
         // 文章表数据
-        $map = Cache::remember("cate_count_{$ename}_{$type}", function() use($where){
+        $map = Cache::remember("cate_count_{$ename}_{$flag}", function() use($where){
 
             return self::getSuffixMap($where, Article::class);
 
@@ -278,7 +278,7 @@ class Category extends BaseEntity
                 ];
             }
 
-            $data = Cache::remember("cateroty_{$ename}_{$type}_{$page}", function() use($where, $page, $limit, $map, $cate) {
+            $data = Cache::remember("cateroty_{$ename}_{$flag}_{$page}", function() use($where, $page, $limit, $map, $cate) {
 
                 $datas = [];
                 // 最大偏移量
@@ -418,7 +418,7 @@ class Category extends BaseEntity
     }
 
     // 根据条件高效分页关联查询
-    protected function selectSuffix($where, $suffix)
+    protected function selectSuffix(array $where, string $suffix): array
     {
         // 3. 构建主键分页子查询（核心：仅查ID，利用主键索引快速定位）
         $subQuery = Article::suffix($suffix)

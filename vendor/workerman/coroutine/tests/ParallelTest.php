@@ -64,6 +64,33 @@ class ParallelTest extends TestCase
     }
 
     /**
+     * Test that a synchronous task cannot make wait return before asynchronous tasks complete.
+     */
+    public function testSynchronousAndAsynchronousTasksCompleteBeforeWaitReturns()
+    {
+        $parallel = new Parallel();
+        $completed = false;
+
+        $parallel->add(function () {
+            throw new \RuntimeException('immediate failure');
+        }, 'immediate');
+
+        $parallel->add(function () use (&$completed) {
+            Timer::sleep(0.01);
+            $completed = true;
+            return 'delayed result';
+        }, 'delayed');
+
+        $results = $parallel->wait();
+        $exceptions = $parallel->getExceptions();
+
+        $this->assertTrue($completed);
+        $this->assertSame(['delayed' => 'delayed result'], $results);
+        $this->assertArrayHasKey('immediate', $exceptions);
+        $this->assertInstanceOf(\RuntimeException::class, $exceptions['immediate']);
+    }
+
+    /**
      * Test concurrency control by limiting the number of concurrent tasks.
      */
     public function testConcurrencyLimit()

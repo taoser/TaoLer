@@ -12,7 +12,6 @@ use app\model\PushJscode;
 use app\common\helper\Msgres;
 use app\common\helper\IdEncode;
 use think\Response\Json;
-use app\index\validate\Article as ArticleValidate;
 use think\exception\HttpException;
 use app\common\service\ArticleService;
 use app\common\strategy\ArticleValidation;
@@ -42,57 +41,13 @@ class Article extends IndexBaseController
         $this->model = new \app\facade\Article();
     }
 
-    // 列表
-    public function list()
-	{
-		global $page;
-		//动态参数
-		$ename = $this->request->param('ename');
-		$type = $this->request->param('type', 'all');
-		$page = $this->request->param('page/d', 1);
-
-		// 分类信息
-		$cateInfo = Category::getCateInfoByEname($ename);
-
-		// 单页分类
-		// type 1列表2单页3链接
-		if(!is_null($cateInfo) && $cateInfo->type == 2) {
-			$singleArticle = Db::name('page')->where('cate_id', $cateInfo->id)->find();
-			View::assign('article', $singleArticle);
-
-			return View::fetch('article/' . $cateInfo->tpl . '/single');
-		}
-
-		// 当前页url
-		$url = (string) url('cate_page', ['ename' => $ename, 'type' => $type, 'page' => $page]);
-		// 返回最后/前面的字符串
-		$path = substr($url, 0, strrpos($url, "/"));
-		// 下一页url
-		$next = $path . '/' . ++$page . '.html';
-
-		$assignArr = [
-			'cateinfo'	=> $cateInfo,
-			'cate'	=> $cateInfo,
-			'path'	=> $path,
-			'page'	=> ++$page,
-			'next'  => $next
-		];
-
-		View::assign($assignArr);
-
-		// $cateView = is_null($cateInfo) ? 'article/cate' : $path = $cateInfo->type == 2 ? 'article/' . $cateInfo->tpl . '/single' : 'article/' . $cateInfo->tpl . '/cate';
-
-		$cateView = is_null($cateInfo) ? 'article/list' : 'article/' . $cateInfo->tpl . '/list';
-		
-		return View::fetch($cateView);
-    }
 
 	//文章详情页
     public function detail()
     {
 		$ID = $this->request->param('id');
 
-		$commentPage = $this->request->param('page',1);
+		$commentPage = $this->request->param('page', 1);
 
 		try{
 			// 解密ID，得到int型
@@ -125,6 +80,7 @@ class Article extends IndexBaseController
 
 		$html = View::fetch('category/'.$detail['cate']['tpl'].'/detail');
 		
+		// 生成静态html
 		$this->buildHtml($html);
 		
 		return $html;

@@ -4,6 +4,11 @@
 
 {block name="body"}
 
+<form class="layui-form" method="post" lay-filter="form-demo-submit">
+   <input type="text" name="title" placeholder="请输入商品名称" lay-verify="required" value="">
+   <input type="text" name="price" placeholder="请输入商品价格" lay-verify="required" value="">
+</form>
+
 <div class="layui-card">
     <div class="layui-card-body">
         <table id="spec-table" lay-filter="spec-table"></table>
@@ -15,6 +20,10 @@
         <table id="sku-table" lay-filter="sku-table"></table>
     </div>
 </div>
+<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" id="submit-btn">
+    <i class="layui-icon layui-icon-add-1"></i>
+    提交
+</button>
 
 <div class="layui-card">
     <div class="layui-card-body">
@@ -35,25 +44,44 @@
         折叠
     </button>
 </script>
-<script type="text/html" id="bar">
-    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
-</script>
 
 <script type="text/html" id="spec" >
-
     {{#  layui.each(d.child, function(i, v){ }}
         <input type="checkbox" name="{{v.title}}" title="{{v.title}}" value="{{v.id}}" lay-filter="spec">
+        {{#  if(d.type === 'image'){ }}
+        <input type="text" name="image" value="" class="layui-hide">
+        <span style="margin-right: 10px; cursor: pointer;" data-index="{{d.LAY_INDEX}}" data-title="{{v.title}}"><i class="layui-icon layui-icon-picture upload-image"></i></span>
+        {{#  } }}
         <span class="delete-spec-value" data-index="{{d.LAY_INDEX}}" data-title="{{v.title}}" style="margin-right: 10px; cursor: pointer;"><i class="layui-icon layui-icon-delete"></i></span>
     {{#  }); }}
-
     <span class="add-spec-value" data-index="{{d.LAY_INDEX}}">
         <i class="layui-icon layui-icon-add-1">规格</i>
     </span>
-
 </script>
+
+<script type="text/html" id="price">
+    <input type="text" name="price" lay-verify="required" lay-filter="price" class="layui-input" value="{{d.price}}">
+</script>
+
+<script type="text/html" id="market-price">
+    <input type="text" name="market_price" lay-verify="required" lay-filter="market-price" class="layui-input" value="{{d.market_price}}">
+</script>
+
+<script type="text/html" id="cost-price">
+    <input type="text" name="cost_price" lay-verify="required" lay-filter="cost-price" class="layui-input" value="{{d.cost_price}}">
+</script>   
+
+<script type="text/html" id="stock">
+    <input type="text" name="stock" lay-verify="required" lay-filter="stock" class="layui-input" value="{{d.stock}}">
+</script>
+
 <script type="text/html" id="status">
     <input type="checkbox" name="status" value="{{d.status}}" lay-skin="switch" lay-filter="status" {{# if(d.status === 1){ }}checked{{# } }}>
+</script>
+
+<script type="text/html" id="bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
 
 {__block__}
@@ -65,12 +93,14 @@
     const DELETE_URL = MODULE_NAME + '/product/product/delete';
     const CHECK_URL = MODULE_NAME + '/product/product/check';
     const SPEC_URL = MODULE_NAME + '/product/productSpec/getSpecData';
+    const UPLOAD_IMG_URL = MODULE_NAME + '/user/user/uploadImg';
 
-    layui.use(['form','util','inputTag'], function () {
+    layui.use(['form','util','upload'], function () {
         var form = layui.form;
         var table = layui.table;
         var $ = layui.$;
         var util = layui.util;
+        var upload = layui.upload;
 
         // var skuTable = layui.skuTable;
 
@@ -86,20 +116,20 @@
             },[[]])
         }
 
+        var cols = [
+            {field: 'price', title: '销售价 <i class="layui-icon layui-icon-cols" lay-event="set-price"></i>', edit: true, templet: '#price'},
+            {field: 'market_price', title: '市场价 <i class="layui-icon layui-icon-cols" lay-event="set-market-price"></i>',edit: true, templet: '#market-price'},
+            {field: 'cost_price', title: '成本价 <i class="layui-icon layui-icon-cols" lay-event="set-cost-price"></i>',edit: true, templet: '#cost-price'},
+            {field: 'stock', title: '库存 <i class="layui-icon layui-icon-cols" lay-event="set-stock"></i>',edit: true, templet: '#stock'},
+            {field: 'status', title: '状态 <i class="layui-icon layui-icon-cols" lay-event="set-status"></i>',templet: '#status'},
+            {title: '操作', templet: '#bar', width: 150, align: 'center'}
+        ];
+
         $.get(SPEC_URL, function(res) {
             // 规格数组
             var data = res.data;
             var specData = [];
             var skuData = [];
-            
-            var cols = [
-                {field: 'price', title: '销售价',edit: true},
-                {field: 'market_price', title: '市场价',edit: true},
-                {field: 'cost_price', title: '成本价',edit: true},
-                {field: 'stock', title: '库存',edit: true},
-                {field: 'status', title: '状态',templet: '#status'},
-                {title: '操作', templet: '#bar', width: 150, align: 'center'}
-            ];
 
             let field = [];
 
@@ -210,9 +240,69 @@
                         
                     })
 
-                    // form.on('submit(add-spec-value)', function(data) {
-                    //     console.log(data);
-                    // })
+                    // 上传图片
+                    upload.render({
+                        elem: '.upload-image',
+                        url: UPLOAD_IMG_URL,
+                        data: {type:'image'},
+                        accept: 'images',
+                        acceptMime: 'image/*',
+                        done: function(res, index){
+                            
+                            if(res.code == 0) {
+                                // 上传成功，将图片路径赋值给对应的input标签
+                                $(this.item).prev('input').attr('value', res.src);
+                                // 上传成功，将图片路径赋值给对应的img标签
+                                $(this.item).before('<img src="' + res.src + '" alt="" style="width: 30px; height: 30px; border-radius: 5px;">');
+                                $(this.item).remove();
+                    
+                                // 上传成功，将图片路径赋值给对应的span标签
+
+                                let idx = $(this.item).attr('data-index');
+                                // 转换为数字类型
+                                var i = Number(idx);
+                                // 规格的索引
+                                let ename = data[i]['ename'];
+
+                                let title = $(this.item).attr('data-title');
+
+                                data.forEach(item => {
+                                    if(item.ename == ename){
+                                        item['child'].forEach(child => {
+                                            if(child.title == title){
+                                                child.image = res.src;
+                                            }
+                                        })
+                                    }
+                                });
+
+                                // 保存当前选中的checkbox状态
+                                let checkedStates = [];
+                                $('input[lay-filter="spec"]:checked').each(function() {
+                                    checkedStates.push({
+                                        index: $(this).closest('tr').data('index'),
+                                        name: $(this).attr('name')
+                                    });
+                                });
+
+                                console.log(data)
+
+                                specTable.reload({
+                                    data: data,
+                                    done: function() {
+                                        // 恢复选中状态
+                                        checkedStates.forEach(function(state) {
+                                            let row = $('tr[data-index="' + state.index + '"]');
+                                            row.find('input[lay-filter="spec"][name="' + state.name + '"]').prop('checked', true);
+                                        });
+                                        
+                                    }
+                                });
+
+                            }
+                            
+                        }
+                    });
 
                     // 规格值input失去焦点时的逻辑
                     $(".layui-card-body").off('blur', 'input.add-spec-value-input').on('blur', 'input.add-spec-value-input', function(event) {
@@ -256,10 +346,19 @@
             // sku 表
             var sku_table = table.render({
                 elem: '#sku-table',
+                css: [ // 设置单元格样式
+                    // 取消默认的溢出隐藏，并设置适当高度
+                    '.layui-table-cell{height: 50px; line-height: 40px;}',
+                    '.layui-table-cell .layui-colorpicker{width: 38px; height: 38px;}',
+                    '.layui-table-cell select{height: 36px; padding: 0 5px;}'
+                ].join(''),
                 data: skuData,
                 cols: [cols],
                 done: function (res, curr, count) {
 
+                    var options = this;
+
+                    // 合并相同值的行
                     if(count > 0){
                         /* 需要合并栏目的数组信息 */
 
@@ -304,7 +403,89 @@
                     }
 
 
+                    // 获取当前行数据 - 自定义方法
+                    table.getRowData = function(tableId, elem){
+                        var index = $(elem).closest('tr').data('index');
+                        return table.cache[tableId][index] || {};
+                    };
+                    // 展示数据 - 仅用于演示
+                    var showData = function(data) {
+                        return layer.msg('当前行最新数据：<br>'+ util.escape(JSON.stringify(data)), {
+                        offset: '16px',
+                        anim: 'slideDown'
+                        });
+                    };
+      
+
+                    // 单元格普通编辑事件
+                    table.on('edit(sku-table)', function(obj){
+                        var value = obj.value // 得到修改后的值
+                        var data = obj.data // 得到所在行所有键值
+                        var field = obj.field; // 得到字段
+                        
+                        // 更新数据中对应的字段
+                        var update = {};
+                        update[field] = value;
+                        obj.update(update);
+                        
+                        // 编辑后续操作，如提交更新请求，以完成真实的数据更新
+                        // …
+                        
+                        // 显示当前行最新数据 - 仅用于示例展示
+                        showData(data);
+                    });
+
+                    // layui form select 事件
+                    form.on('select(select-demo)', function(obj){
+                        var value = obj.value; // 获取选中项 value
+                        // 获取当前行数据(如 id 等字段，以作为数据修改的索引)
+                        var data = table.getRowData(options.id, obj.elem);
+                        // 更新数据中对应的字段
+                        data.city = value;
+                        // 显示当前行最新数据 - 仅用于示例展示
+                        showData(data);
+                    });
+
                 }
+            });
+
+             // 表头自定义元素工具事件 --- 2.8.8+
+            table.on('colTool(sku-table)', function(obj){
+                var event = obj.event;
+                console.log(obj);
+                layer.prompt({title: '请输入文本'}, function(value, index, elem){
+                    if(value === '') return elem.focus();
+                    // layer.msg('获得：'+ util.escape(value)); // 显示 value
+                    if(event === 'set-price'){
+   
+                        skuData.forEach(function(item){
+                            item.price = value; // 修改指定列的值
+                        });
+
+                    } else if(event === 'set-market-price'){
+                        skuData.forEach(function(item){
+                            item.market_price = value; // 修改指定列的值
+                        });
+                    } else if(event === 'set-cost-price'){
+                        skuData.forEach(function(item){
+                            item.cost_price = value; // 修改指定列的值
+                        });
+                    } else if(event === 'set-stock'){
+                        skuData.forEach(function(item){
+                            item.stock = value; // 修改指定列的值
+                        });
+                    }
+
+                    table.reloadData('sku-table', {data: skuData}); // 更新表格数据
+                    // 关闭 prompt
+                    layer.close(index);
+
+                    //layer.alert(layui.util.escape(JSON.stringify(obj.col)), {
+                    //   title: '当前列属性选项'
+                    //});
+                });
+
+                
             });
 
             // 监听规格值复选框变化
@@ -406,7 +587,38 @@
                 
             });
 
+            // 监听提交按钮点击事件
+            $('#submit-btn').on('click', function () {
 
+                let spec = table.getData('spec-table');
+                let sku = table.getData('sku-table');
+
+                form.submit('form-demo-submit', function(data){
+                    var field = data.field; // 获取表单全部字段值
+                    var obj = {
+                        field: field,
+                        spec: spec,
+                        sku: sku,
+                    }
+
+
+                // 执行提交
+                    layer.confirm('确定提交吗？', function(index){
+                        layer.close(index); // 关闭确认提示框
+                        // 显示填写结果，仅作演示用
+                        layer.alert(JSON.stringify(obj), {
+                            title: '当前填写的字段值'
+                        });
+                        // 此处可执行 Ajax 等操作
+                        // …
+                    });
+                });
+
+                return false;
+                
+
+                layer.alert(layui.util.escape(JSON.stringify(sku)));
+            });
         })
 
         
