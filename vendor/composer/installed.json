@@ -2636,17 +2636,17 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v8.1.1",
-            "version_normalized": "8.1.1.0",
+            "version": "v8.1.2",
+            "version_normalized": "8.1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "40096a2515a979f3125c5c928603995b8664c62a"
+                "reference": "865103cf742a039f34645b971fc3ace308d6c167"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/40096a2515a979f3125c5c928603995b8664c62a",
-                "reference": "40096a2515a979f3125c5c928603995b8664c62a",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/865103cf742a039f34645b971fc3ace308d6c167",
+                "reference": "865103cf742a039f34645b971fc3ace308d6c167",
                 "shasum": ""
             },
             "require": {
@@ -2662,9 +2662,9 @@
                 "symfony/http-kernel": "^7.4|^8.0",
                 "symfony/process": "^7.4|^8.0",
                 "symfony/uid": "^7.4|^8.0",
-                "twig/twig": "^3.12"
+                "twig/twig": "^3.12|^4.0"
             },
-            "time": "2026-06-09T10:54:51+00:00",
+            "time": "2026-07-22T15:42:13+00:00",
             "bin": [
                 "Resources/bin/var-dump-server"
             ],
@@ -2702,7 +2702,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v8.1.1"
+                "source": "https://github.com/symfony/var-dumper/tree/v8.1.2"
             },
             "funding": [
                 {
@@ -2726,17 +2726,17 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v8.1.1",
-            "version_normalized": "8.1.1.0",
+            "version": "v8.1.3",
+            "version_normalized": "8.1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "75b74315b4e4be40e5534cf9c5cc30dd0907ed71"
+                "reference": "766dac532a04d8980b4d83183fd3d1ea284bac11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/75b74315b4e4be40e5534cf9c5cc30dd0907ed71",
-                "reference": "75b74315b4e4be40e5534cf9c5cc30dd0907ed71",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/766dac532a04d8980b4d83183fd3d1ea284bac11",
+                "reference": "766dac532a04d8980b4d83183fd3d1ea284bac11",
                 "shasum": ""
             },
             "require": {
@@ -2749,7 +2749,7 @@
                 "symfony/serializer": "^7.4|^8.0",
                 "symfony/var-dumper": "^7.4|^8.0"
             },
-            "time": "2026-06-27T09:05:56+00:00",
+            "time": "2026-07-29T16:43:23+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2788,7 +2788,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v8.1.1"
+                "source": "https://github.com/symfony/var-exporter/tree/v8.1.3"
             },
             "funding": [
                 {

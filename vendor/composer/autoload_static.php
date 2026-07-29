@@ -197,8 +197,8 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         ),
         'Workerman\\' =>
         array (
-            0 => __DIR__ . '/..' . '/workerman/coroutine/src',
-            1 => __DIR__ . '/..' . '/workerman/workerman/src',
+            0 => __DIR__ . '/..' . '/workerman/workerman/src',
+            1 => __DIR__ . '/..' . '/workerman/coroutine/src',
         ),
         'Symfony\\Polyfill\\Php86\\' =>
         array (

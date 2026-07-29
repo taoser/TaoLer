@@ -20,7 +20,7 @@ return array(
     'Yansongda\\Pay\\' => array($vendorDir . '/yansongda/pay/src'),
     'Yansongda\\Artful\\' => array($vendorDir . '/yansongda/artful/src'),
     'Workerman\\Coroutine\\' => array($vendorDir . '/workerman/coroutine/src'),
-    'Workerman\\' => array($vendorDir . '/workerman/coroutine/src', $vendorDir . '/workerman/workerman/src'),
+    'Workerman\\' => array($vendorDir . '/workerman/workerman/src', $vendorDir . '/workerman/coroutine/src'),
     'Symfony\\Polyfill\\Php86\\' => array($vendorDir . '/symfony/polyfill-php86'),
     'Symfony\\Polyfill\\Php85\\' => array($vendorDir . '/symfony/polyfill-php85'),
     'Symfony\\Polyfill\\Php84\\' => array($vendorDir . '/symfony/polyfill-php84'),
