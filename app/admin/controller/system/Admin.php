@@ -10,7 +10,8 @@ namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
 use app\admin\validate\Admin as AdminValidate;
-use app\admin\model\Admin as AdminModel;
+use app\model\Admin as AdminModel;
+use app\entity\Admin as AdminEntity;
 use think\App;
 use think\facade\View;
 use think\facade\Request;
@@ -36,7 +37,7 @@ class Admin extends AdminBaseController
     {
         parent::initialize();
 
-        $this->model = new AdminModel();
+        $this->model = new AdminEntity();
     }
 
     /**
@@ -59,29 +60,15 @@ class Admin extends AdminBaseController
 	{
 		$data = Request::only(['id','username','mobile','email']);
 		$map = array_filter($data);
-		$admins = Db::name('admin')
-		->field('id,avatar,username,mobile,email,last_login_ip,status,last_login_time')
-		->where('delete_time',0)
+
+		$admins = $this->model
+		->field('id,avatar,username,mobile,email,remarks,status,last_login_ip,last_login_time,create_time')
 		->where($map)
 		->select();
 
 		$count = $admins->count();
 		if($count){
-			$data = [];
-			foreach($admins as $k => $v){
-				$data[] = [
-					'id'        => $v['id'],
-					'avatar'    => $v['avatar'],
-					'username'  => $v['username'],
-					'phone'     => $v['mobile'],
-					'email'     => $v['email'],
-					'ip'        => $v['last_login_ip'],
-					'check'     => $v['status'],
-					'logintime' => date("Y-m-d", $v['last_login_time'])
-				];
-			}
-
-			return json(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data]);
+			return json(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $admins]);
 		}
 
 		return json(['code' => 1,'msg' => 'no data']); 
@@ -113,13 +100,12 @@ class Admin extends AdminBaseController
 	public function add()
 	{
 		if(Request::isAjax()){
-			$data = Request::only(['username','email','password','mobile','sex']);
+			$data = Request::only(['username','email','password','mobile']);
 			$roleId = request()->get('roleId');
-			$data['create_time'] = time();
-
+	
 			$data['password'] = PasswordHash::make($data['password']);
 			
-			$admin = Db::name('admin')->save($data);
+			$admin = $this->model->save($data);
 			//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
 			if($admin){
 				return json(['code'=>0,'msg'=>'添加成功']);
@@ -139,25 +125,13 @@ class Admin extends AdminBaseController
 		$admin = AdminModel::find($id);
 		
 		if(Request::isAjax()){
-			$data = Request::only(['id','username','email','password','mobile','sex','roleId']);
-			if(empty($data['password'])){
-				unset($data['password']);
-			} else {
-				// $t =  $admin->create_time;
-				// $salt = substr(md5($t),-6);
-				// $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
-				$data['password'] = PasswordHash::make($data['password']);
-			}
-			$data['update_time'] = time();
-
-            $result = Db::name('admin')->update($data);
+			$data = Request::only(['id','email','password','mobile','roleId']);
+			$result = AdminEntity::edit($data);
 			//Db::name('auth_group_access')->where('uid',$data['id'])->update(['group_id'=>$data['auth_group_id']]);
 			if($result){
-				$res = ['code'=>0,'msg'=>'编辑成功'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'编辑失败'];
+				return json(['code'=>0,'msg'=>'编辑成功']);
 			}
-			return json($res);
+			return json(['code'=>-1,'msg'=>'编辑失败']);
 		}
 		//$auth_group = Db::name('auth_group')->select();,'auth_group'=>$auth_group
 		View::assign(['admin'=>$admin]);
@@ -165,18 +139,17 @@ class Admin extends AdminBaseController
 	}
 	
 	//删除管理员
-	public function delete($id)
+	public function delete()
 	{
-		$ids = explode(',',$id);
-		if(Request::isAjax()){
-			$user = $this->model->select($ids);
-			$result = $user->delete();
-				if($result){
-					return json(['code'=>0,'msg'=>'删除成功']);
-				}else{
-					return json(['code'=>-1,'msg'=>'删除失败']);
-				}
-			}
+		$id = Request::param('id/d');
+		
+		$user = $this->model->find($id);
+		$result = $user->delete();
+		if($result){
+			return json(['code'=>0,'msg'=>'删除成功']);
+		}
+
+		return json(['code'=>-1,'msg'=>'删除失败']);
 	}
 
 	//基本资料浏览

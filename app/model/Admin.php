@@ -22,7 +22,7 @@ class Admin extends Model
 	{
 		return [
 			'deleteTime'            => 'delete_time',
-            'defaultSoftDelete'     => 0,
+            'defaultSoftDelete'     => null,
 		];
 	}
 

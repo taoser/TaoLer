@@ -8,37 +8,31 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">账号</label>
 				<div class="layui-input-block">
-					<input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+					<input type="text" name="username" lay-verify="required" autocomplete="off" placeholder="请输入账号" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">邮箱</label>
 				<div class="layui-input-block">
-					<input type="text" name="email" lay-verify="email" autocomplete="off" placeholder="请输入邮箱"
+					<input type="text" name="email" lay-verify="required|email" autocomplete="off" placeholder="请输入邮箱"
 						class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">密码</label>
 				<div class="layui-input-block">
-					<input type="text" name="password" lay-verify="password" autocomplete="off" placeholder="请输入密码"
+					<input type="text" name="password" lay-verify="required|password" autocomplete="off" placeholder="请输入密码"
 						class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">手机</label>
 				<div class="layui-input-block">
-					<input type="text" name="mobile" lay-verify="title" autocomplete="off" placeholder="请输入手机号"
+					<input type="text" name="mobile" lay-verify="required|phone" autocomplete="off" placeholder="请输入手机号"
 						class="layui-input">
 				</div>
 			</div>
-			<div class="layui-form-item">
-				<label class="layui-form-label">性别</label>
-				<div class="layui-input-block">
-					<input type="radio" name="sex" value="0" title="男">
-					<input type="radio" name="sex" value="1" title="女" checked>
-				</div>
-			</div>
+			
 			<!-- <div class="layui-form-item">
 				<label class="layui-form-label">角色</label>
 				<div class="layui-input-block">
@@ -106,7 +100,7 @@
 						}, function() {
 							parent.layer.close(parent.layer.getFrameIndex(window
 								.name)); //关闭当前页
-							parent.layui.table.reload("user-table");
+							parent.layui.table.reload("table");
 						});
 					} else {
 						layer.msg(result.msg, {

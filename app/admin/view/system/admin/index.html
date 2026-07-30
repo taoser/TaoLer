@@ -40,9 +40,10 @@
 		</form>
 	</div>
 </div>
+
 <div class="layui-card">
 	<div class="layui-card-body">
-		<table id="user-table" lay-filter="user-table"></table>
+		<table id="table" lay-filter="table"></table>
 	</div>
 </div>
 
@@ -50,10 +51,6 @@
 	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="system.admin.add">
 		<i class="layui-icon layui-icon-add-1"></i>
 		新增
-	</button>
-	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="system.admin.delete">
-		<i class="layui-icon layui-icon-delete"></i>
-		删除
 	</button>
 </script>
 <script type="text/html" id="imgTpl"> 
@@ -66,7 +63,7 @@
 
 <script type="text/html" id="user-enable">
 	<div permission="system.admin.check">
-		<input type="checkbox" name="enable" value="{{d.id}}" permission="system.admin.enable" {{#if (d.id == 1){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.check == 1 ? 'checked' : '' }} />
+		<input type="checkbox" name="enable" value="{{d.id}}" permission="system.admin.enable" {{#if (d.id == 1){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.status == 1 ? 'checked' : '' }} />
 	</div>
 </script>
 
@@ -88,18 +85,6 @@
 	{{#  } }}
 </script>
 
-<script type="text/html" id="user-login">
-	{{#if (d.login == 0) { }}
-	<span>在线</span>
-	{{# }else if(d.sex == 1){ }}
-	<span>离线</span>
-	{{# } }}
-</script>
-
-<script type="text/html" id="user-createTime">
-	{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd')}}
-</script>
-
 {__block__}
 
 <script>
@@ -117,11 +102,9 @@
 		let popup = layui.popup;
 
 		let cols = [
-			[{
-					type: 'checkbox'
-				},
+			[
 				{
-					title: 'id',
+					title: 'ID',
 					field: 'id',
 					align: 'center',
 					width: 60
@@ -151,32 +134,30 @@
 				},
 				{
 					title: 'IP',
-					field: 'ip',
+					field: 'last_login_ip',
 					align: 'center'
 				},
 				{
 					title: '登录时间',
-					field: 'logintime',
+					field: 'last_login_time',
 					align: 'center'
 				},
 				{
-					title: '启用',
+					title: '备注',
+					field: 'remarks',
+					align: 'center'
+				},
+				{
+					title: '注册',
+					field: 'create_time',
+					align: 'center'
+				},
+				{
+					title: '状态',
 					field: 'check',
 					align: 'center',
 					width: 95,
 					templet: '#user-enable'
-				},
-				{
-					title: '登录',
-					field: 'login',
-					align: 'center',
-					templet: '#user-login'
-				},
-				{
-					title: '注册',
-					field: 'jointime',
-					align: 'center',
-					templet: '#user-createTime'
 				},
 				{
 					title: '操作',
@@ -188,7 +169,7 @@
 		]
 
 		table.render({
-			elem: '#user-table',
+			elem: '#table',
 			url: ADMIN_LIST,
 			page: true,
 			cols: cols,
@@ -208,7 +189,7 @@
 			},
 		});
 
-		table.on('tool(user-table)', function(obj) {
+		table.on('tool(table)', function(obj) {
 			if (obj.event === 'remove') {
 				window.remove(obj);
 			} else if (obj.event === 'edit') {
@@ -216,18 +197,16 @@
 			}
 		});
 
-		table.on('toolbar(user-table)', function(obj) {
+		table.on('toolbar(table)', function(obj) {
 			if (obj.event === 'add') {
 				add();
 			} else if (obj.event === 'refresh') {
 				window.refresh();
-			} else if (obj.event === 'batchRemove') {
-				window.batchRemove(obj);
 			}
 		});
 
 		form.on('submit(user-query)', function(data) {
-			table.reload('user-table', {
+			table.reload('table', {
 				where: data.field
 			})
 			return false;
@@ -246,7 +225,7 @@
 						return popup.failure(res.msg);
 					}
 					return popup.success(res.msg,function(){
-						table.reload('user-table')
+						table.reload('table')
 					});
 				}
 			});
@@ -258,7 +237,7 @@
 				type: 2,
 				title: '新增',
 				shade: 0.1,
-				area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'450px'],
+				area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'400px'],
 				content: ADMIN_ADD
 			});
 		}
@@ -268,7 +247,7 @@
 				type: 2,
 				title: '修改',
 				shade: 0.1,
-				area: ['500px', '450px'],
+				area: ['500px', '400px'],
 				content: ADMIN_EDIT + '?id=' + obj.data.id
 			});
 		}
@@ -290,7 +269,7 @@
 						if (res.code === 0) {
 							return popup.success(res.msg,function(){
 								obj.del();
-								table.reload('user-table')
+								table.reload('table')
 							});
 						}
 						return popup.failure(res.msg);
@@ -300,41 +279,8 @@
 			});
 		}
 
-		window.batchRemove = function(obj) {
-			
-			var checkIds = common.checkField(obj,'id');
-
-			if (checkIds === "") {
-				return layui.popup.warning('未选中任何数据');
-			}
-			
-			layer.confirm('确定要删除这些用户', {
-				icon: 3,
-				title: '提示'
-			}, function(index) {
-				layer.close(index);
-				let loading = layer.load();
-				$.ajax({
-					url: ADMIN_DELETE,
-					dataType: 'json',
-					type: 'delete',
-					data:{"id":checkIds}, 
-					success: function(res) {
-						layer.close(loading);
-						if (res.code) {
-							return popup.failure(res.msg);
-						}
-						return popup.success(res.msg,function() {
-							table.reload('user-table');
-						});
-					}
-				})
-				return false;
-			});
-		}
-
 		window.refresh = function(param) {
-			table.reload('user-table');
+			table.reload('table');
 		}
 
 		window.onload = function(){

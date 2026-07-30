@@ -27,7 +27,6 @@ use Exception;
 use think\facade\Cache;
 use think\Response;
 use app\common\helper\JwtAuth;
-use app\common\helper\PasswordHash;
 
 
 class Index extends IndexBaseController
@@ -59,12 +58,6 @@ class Index extends IndexBaseController
      */
     public function index()
     {
-
-	// $password = '123456';
-	// $hash = PasswordHash::make($password);
-	// // halt($hash);
-	// $check = PasswordHash::verify($password, $hash);
-	// halt($check);
 
 	// hook('signhook', ['id'=>1]);
 

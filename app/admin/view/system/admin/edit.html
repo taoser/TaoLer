@@ -2,20 +2,20 @@
 
 {block name="body"}
 
-<form class="layui-form" action="">
+<form class="layui-form">
 	<div class="mainBox">
 		<div class="main-container">
 
 			<div class="layui-form-item">
 				<label class="layui-form-label">账号</label>
 				<div class="layui-input-block">
-					<input type="text" name="name" value="{$admin.username}" readonly lay-verify="required" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+					<input type="text" name="username" value="{$admin.username}" readonly lay-verify="required|username" autocomplete="off" placeholder="请输入用户名" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">邮箱</label>
 				<div class="layui-input-block">
-					<input type="text" name="email" value="{$admin.email}" lay-verify="email" autocomplete="off" class="layui-input">
+					<input type="text" name="email" value="{$admin.email}" lay-verify="required|email" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -27,14 +27,7 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">电话</label>
 				<div class="layui-input-block">
-					<input type="text" name="mobile" value="{$admin.mobile}" lay-verify="phone" autocomplete="off" placeholder="请输入电话" class="layui-input">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label class="layui-form-label">性别</label>
-				<div class="layui-input-block">
-					<input type="radio" name="sex" value="0" title="男" {if condition="$admin['sex'] eq 0"} checked {/if}>
-					<input type="radio" name="sex" value="1" title="女" {if condition="$admin['sex'] eq 1"} checked {/if}>
+					<input type="text" name="mobile" value="{$admin.mobile}" lay-verify="required|phone" autocomplete="off" placeholder="请输入电话" class="layui-input">
 				</div>
 			</div>
 		</div>
@@ -69,9 +62,8 @@
 			data.field.id = layui.url().search.id;
 			$.ajax({
 				url: EDIT_URL,
-				data: JSON.stringify(data.field),
+				data: data.field,
 				dataType: 'json',
-				contentType: 'application/json',
 				type: 'post',
 				success: function(result) {
 					if (result.code === 0) {
@@ -79,9 +71,8 @@
 							icon: 1,
 							time: 1000
 						}, function() {
-							parent.layer.close(parent.layer.getFrameIndex(window
-								.name)); //关闭当前页
-							parent.layui.table.reload("user-table");
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+							parent.layui.table.reload("table");
 						});
 					} else {
 						layer.msg(result.msg, {

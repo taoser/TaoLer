@@ -12,9 +12,7 @@ namespace app\entity;
 
 use Exception;
 use think\Model;
-use think\facade\Db;
 use think\facade\Session;
-use app\oil\model\Station;
 use think\facade\Cookie;
 use think\facade\Config;
 use app\common\helper\PasswordHash;
@@ -67,6 +65,17 @@ class Admin extends BaseEntity
 		return false;
 	
     }
+
+	public function edit(array $data)
+	{
+		if(empty($data['password'])){
+			unset($data['password']);
+		} else {
+			$data['password'] = PasswordHash::make($data['password']);
+		}
+
+		return $this->update($data);
+	}
 	
 	//修改密码
 	public function setpass($data)
