@@ -1,0 +1,55 @@
+{
+    "name": "topthink/think-worker",
+    "description": "workerman extend for thinkphp",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "liu21st",
+            "email": "liu21st@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "workerman/workerman": "^5.0",
+        "topthink/framework": "^8.0",
+        "revolt/event-loop": "^1.0",
+        "workerman/redis": "^2.0",
+        "symfony/finder": ">=4.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "think\\worker\\": "src"
+        }
+    },
+    "extra": {
+        "think": {
+            "services": [
+                "think\\worker\\Service"
+            ],
+            "config": {
+                "worker": "src/config/worker.php"
+            }
+        }
+    },
+    "require-dev": {
+        "pestphp/pest": "^3.7",
+        "guzzlehttp/guzzle": "^7.0",
+        "topthink/think-queue": "^3.0",
+        "phpstan/phpstan": "^2.0",
+        "ratchet/pawl": "^0.4.1"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "app\\": "tests/stub/app"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "analyze": "phpstan --memory-limit=1G",
+        "test": "pest --colors=always"
+    }
+}

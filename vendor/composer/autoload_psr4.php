@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'think\\worker\\' => array($vendorDir . '/topthink/think-worker/src'),
     'think\\view\\driver\\' => array($vendorDir . '/topthink/think-view/src'),
     'think\\trace\\' => array($vendorDir . '/topthink/think-trace/src'),
     'think\\middleware\\' => array($vendorDir . '/topthink/think-throttle/src'),
@@ -19,6 +20,7 @@ return array(
     'Yansongda\\Supports\\' => array($vendorDir . '/yansongda/supports/src'),
     'Yansongda\\Pay\\' => array($vendorDir . '/yansongda/pay/src'),
     'Yansongda\\Artful\\' => array($vendorDir . '/yansongda/artful/src'),
+    'Workerman\\Redis\\' => array($vendorDir . '/workerman/redis/src'),
     'Workerman\\Coroutine\\' => array($vendorDir . '/workerman/coroutine/src'),
     'Workerman\\' => array($vendorDir . '/workerman/workerman/src', $vendorDir . '/workerman/coroutine/src'),
     'Symfony\\Polyfill\\Php86\\' => array($vendorDir . '/symfony/polyfill-php86'),
@@ -29,7 +31,9 @@ return array(
     'Symfony\\Polyfill\\DeepClone\\' => array($vendorDir . '/symfony/polyfill-deepclone'),
     'Symfony\\Component\\VarExporter\\' => array($vendorDir . '/symfony/var-exporter'),
     'Symfony\\Component\\VarDumper\\' => array($vendorDir . '/symfony/var-dumper'),
+    'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
     'Sqids\\' => array($vendorDir . '/sqids/sqids/src'),
+    'Revolt\\' => array($vendorDir . '/revolt/event-loop/src'),
     'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),

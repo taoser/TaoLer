@@ -23,21 +23,26 @@ class Login extends AdminBaseController
 	{	
 		if(Request::isAjax()){
 			$data = Request::param(['username','password','captcha','remember']);
-
+			
 			try{
 				validate(Admin::class)
 				->scene('Login')
-				->check($data);	
-			} catch(ValidateException $e){
-				return json(['code'=>-1,'msg'=>$e->getError()]);
-			}
+				->check($data);
 
-			$user = new \app\admin\model\Admin();
-			$result = $user->login($data);
-			if($result){
-				return json(['code' => 0, 'msg' => '登陆成功', 'url' => (string) url('admin-index')]);
+				$admin = new \app\entity\Admin();
+				$result = $admin->login($data);
+				if($result){
+					return json(['code' => 0, 'msg' => '登陆成功', 'url' => (string) url('admin-index')]);
+				}
+
+				return json(['code' => -1, 'msg' => '用户名或密码错误!']);
+
+			} catch(ValidateException $e){
+				return json(['code' => -1, 'msg' => $e->getError()]);
+			} catch(\Exception $e){
+				return json(['code' => -1, 'msg' => $e->getMessage()]);
 			}
-			return json(['code' => -1, 'msg' => '用户名或密码错误']);
+			
 		}
 		
 		return View::fetch('login');

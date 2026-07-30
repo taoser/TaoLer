@@ -10,7 +10,6 @@
 
  * 官网：https://www.aieok.com
  * 文档：http://wiki.aieok.com
- * 演示后台：https://www.aieok.com/adminff
 
 #### 项目地址
 

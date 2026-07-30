@@ -1989,6 +1989,81 @@
             "install-path": "../ralouphie/getallheaders"
         },
         {
+            "name": "revolt/event-loop",
+            "version": "v1.0.9",
+            "version_normalized": "1.0.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/revoltphp/event-loop.git",
+                "reference": "44061cf513e53c6200372fc935ac42271566295d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/revoltphp/event-loop/zipball/44061cf513e53c6200372fc935ac42271566295d",
+                "reference": "44061cf513e53c6200372fc935ac42271566295d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "jetbrains/phpstorm-stubs": "^2019.3",
+                "phpunit/phpunit": "^9",
+                "psalm/phar": "6.16.*"
+            },
+            "time": "2026-05-16T17:55:38+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Revolt\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                },
+                {
+                    "name": "Cees-Jan Kiewiet",
+                    "email": "ceesjank@gmail.com"
+                },
+                {
+                    "name": "Christian Lück",
+                    "email": "christian@clue.engineering"
+                },
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                }
+            ],
+            "description": "Rock-solid event loop for concurrent PHP applications.",
+            "keywords": [
+                "async",
+                "asynchronous",
+                "concurrency",
+                "event",
+                "event-loop",
+                "non-blocking",
+                "scheduler"
+            ],
+            "support": {
+                "issues": "https://github.com/revoltphp/event-loop/issues",
+                "source": "https://github.com/revoltphp/event-loop/tree/v1.0.9"
+            },
+            "install-path": "../revolt/event-loop"
+        },
+        {
             "name": "sqids/sqids",
             "version": "0.5.0",
             "version_normalized": "0.5.0.0",
@@ -2119,6 +2194,77 @@
                 }
             ],
             "install-path": "../symfony/deprecation-contracts"
+        },
+        {
+            "name": "symfony/finder",
+            "version": "v8.1.1",
+            "version_normalized": "8.1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/finder.git",
+                "reference": "e2989e762c70f9490fa3a00a0ac0fae5aa97a531"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/e2989e762c70f9490fa3a00a0ac0fae5aa97a531",
+                "reference": "e2989e762c70f9490fa3a00a0ac0fae5aa97a531",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4.1"
+            },
+            "require-dev": {
+                "symfony/filesystem": "^7.4|^8.0"
+            },
+            "time": "2026-06-27T09:05:56+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Finder\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Finds files and directories via an intuitive fluent interface",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/finder/tree/v8.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "../symfony/finder"
         },
         {
             "name": "symfony/polyfill-deepclone",
@@ -3605,6 +3751,71 @@
             "install-path": "../topthink/think-view"
         },
         {
+            "name": "topthink/think-worker",
+            "version": "v5.0.1",
+            "version_normalized": "5.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/top-think/think-worker.git",
+                "reference": "944f515e64c7863559086e74d90e8fa81e8043f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/top-think/think-worker/zipball/944f515e64c7863559086e74d90e8fa81e8043f2",
+                "reference": "944f515e64c7863559086e74d90e8fa81e8043f2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "revolt/event-loop": "^1.0",
+                "symfony/finder": ">=4.3",
+                "topthink/framework": "^8.0",
+                "workerman/redis": "^2.0",
+                "workerman/workerman": "^5.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^7.0",
+                "pestphp/pest": "^3.7",
+                "phpstan/phpstan": "^2.0",
+                "ratchet/pawl": "^0.4.1",
+                "topthink/think-queue": "^3.0"
+            },
+            "time": "2025-01-19T13:14:47+00:00",
+            "type": "library",
+            "extra": {
+                "think": {
+                    "config": {
+                        "worker": "src/config/worker.php"
+                    },
+                    "services": [
+                        "think\\worker\\Service"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "think\\worker\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "liu21st",
+                    "email": "liu21st@gmail.com"
+                }
+            ],
+            "description": "workerman extend for thinkphp",
+            "support": {
+                "issues": "https://github.com/top-think/think-worker/issues",
+                "source": "https://github.com/top-think/think-worker/tree/v5.0.1"
+            },
+            "install-path": "../topthink/think-worker"
+        },
+        {
             "name": "workerman/coroutine",
             "version": "v1.1.6",
             "version_normalized": "1.1.6.0",
@@ -3737,6 +3948,44 @@
                 "source": "https://github.com/walkor/GatewayClient/tree/v3.1.1"
             },
             "install-path": "../workerman/gatewayclient"
+        },
+        {
+            "name": "workerman/redis",
+            "version": "v2.0.6",
+            "version_normalized": "2.0.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/workerman-php/redis.git",
+                "reference": "d8800cba4c9b65e128897932f741ec89ecfbc339"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/workerman-php/redis/zipball/d8800cba4c9b65e128897932f741ec89ecfbc339",
+                "reference": "d8800cba4c9b65e128897932f741ec89ecfbc339",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7",
+                "workerman/workerman": "^4.1.0||^5.0.0"
+            },
+            "time": "2026-06-02T07:34:24+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Workerman\\Redis\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "homepage": "http://www.workerman.net",
+            "support": {
+                "issues": "https://github.com/workerman-php/redis/issues",
+                "source": "https://github.com/workerman-php/redis/tree/v2.0.6"
+            },
+            "install-path": "../workerman/redis"
         },
         {
             "name": "workerman/workerman",

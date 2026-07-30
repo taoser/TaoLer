@@ -36,7 +36,8 @@
         "sqids/sqids": "^0.5.0",
         "overtrue/easy-sms": "^3.3",
         "yansongda/pay": "~3.7.0",
-        "illuminate/container": "^13.19"
+        "illuminate/container": "^13.19",
+        "topthink/think-worker": "^5.0"
     },
     "require-dev": {
         "topthink/think-dumper": "^1.0",

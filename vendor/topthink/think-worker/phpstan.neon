@@ -1,0 +1,16 @@
+parameters:
+	level: 5
+	paths:
+		- src
+		- tests
+	universalObjectCratesClasses:
+		- PHPUnit\Framework\TestCase
+	ignoreErrors:
+		- '#Function root_path not found.#'
+		- '#Function env not found.#'
+		- '#Function app_path not found.#'
+		- '#Function config_path not found.#'
+		- '#Function public_path not found.#'
+		- '#Function json not found.#'
+		- '#Function runtime_path not found.#'
+		- '#Constant STUB_DIR not found.#'

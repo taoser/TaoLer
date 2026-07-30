@@ -21,6 +21,7 @@ use think\facade\Cache;
 use taoser\think\Auth;
 use think\response\Json;
 use app\common\helper\FileHelper;
+use app\common\helper\PasswordHash;
 
 
 class Admin extends AdminBaseController
@@ -115,10 +116,9 @@ class Admin extends AdminBaseController
 			$data = Request::only(['username','email','password','mobile','sex']);
 			$roleId = request()->get('roleId');
 			$data['create_time'] = time();
-			$salt = substr(md5($data['create_time']),-6);
-			$data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
-			$data['status'] = 1;
-			//$adminId = Db::name('admin')->insertGetId($data);
+
+			$data['password'] = PasswordHash::make($data['password']);
+			
 			$admin = Db::name('admin')->save($data);
 			//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
 			if($admin){
@@ -143,9 +143,10 @@ class Admin extends AdminBaseController
 			if(empty($data['password'])){
 				unset($data['password']);
 			} else {
-				$t =  $admin->create_time;
-				$salt = substr(md5($t),-6);
-				$data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
+				// $t =  $admin->create_time;
+				// $salt = substr(md5($t),-6);
+				// $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
+				$data['password'] = PasswordHash::make($data['password']);
 			}
 			$data['update_time'] = time();
 

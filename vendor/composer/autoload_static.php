@@ -36,6 +36,7 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
     public static $prefixLengthsPsr4 = array (
         't' =>
         array (
+            'think\\worker\\' => 13,
             'think\\view\\driver\\' => 18,
             'think\\trace\\' => 12,
             'think\\middleware\\' => 17,
@@ -61,6 +62,7 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         ),
         'W' =>
         array (
+            'Workerman\\Redis\\' => 16,
             'Workerman\\Coroutine\\' => 20,
             'Workerman\\' => 10,
         ),
@@ -74,7 +76,12 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
             'Symfony\\Polyfill\\DeepClone\\' => 27,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\VarDumper\\' => 28,
+            'Symfony\\Component\\Finder\\' => 25,
             'Sqids\\' => 6,
+        ),
+        'R' =>
+        array (
+            'Revolt\\' => 7,
         ),
         'P' =>
         array (
@@ -132,6 +139,10 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
     );
 
     public static $prefixDirsPsr4 = array (
+        'think\\worker\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-worker/src',
+        ),
         'think\\view\\driver\\' =>
         array (
             0 => __DIR__ . '/..' . '/topthink/think-view/src',
@@ -191,6 +202,10 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         array (
             0 => __DIR__ . '/..' . '/yansongda/artful/src',
         ),
+        'Workerman\\Redis\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/workerman/redis/src',
+        ),
         'Workerman\\Coroutine\\' =>
         array (
             0 => __DIR__ . '/..' . '/workerman/coroutine/src',
@@ -232,9 +247,17 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
+        'Symfony\\Component\\Finder\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
         'Sqids\\' =>
         array (
             0 => __DIR__ . '/..' . '/sqids/sqids/src',
+        ),
+        'Revolt\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/revolt/event-loop/src',
         ),
         'Psr\\SimpleCache\\' =>
         array (
