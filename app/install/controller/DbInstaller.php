@@ -14,6 +14,7 @@ use PDO;
 use PDOException;
 use Exception;
 use think\facade\Request;
+use app\common\helper\PasswordHash;
 
 class DbInstaller
 {
@@ -32,7 +33,6 @@ class DbInstaller
     private $webname;
     private $webtitle;
     private $web;
-    private $salt;
     private $pass;
     private $create_time;
     
@@ -54,8 +54,7 @@ class DbInstaller
         $this->webtitle     = $param['webtitle'];
 
         $this->create_time = time();
-        $this->salt = substr(md5($this->create_time),-6);
-        $this->pass = md5(substr_replace(md5($this->admin_pass),$this->salt,0,6));
+        $this->pass = PasswordHash::make($this->dbpwd);
         
         $this->web = Request::host();
     }
@@ -232,7 +231,9 @@ class DbInstaller
         $table_user = $this->prefix . "user";
         $table_system = $this->prefix . "system";
 
-        $sql_a = "UPDATE $table_admin SET username='{$this->admin_user}',email='{$this->admin_email}',password='{$this->pass}',status=1,auth_group_id=1,create_time='{$this->create_time}' WHERE id = 1";
+        $createTime = date('Y-m-d H:i:s');
+
+        $sql_a = "UPDATE $table_admin SET username='{$this->admin_user}',email='{$this->admin_email}',password='{$this->pass}',status=1,auth_group_id=1,create_time='{$createTime}' WHERE id = 1";
         $sql_u = "UPDATE $table_user SET name='{$this->admin_user}',email='{$this->admin_email}',password='{$this->pass}',auth=1,status=1,create_time='{$this->create_time}' WHERE id = 1";
         $sql_s = "UPDATE $table_system SET webname='{$this->webname}',webtitle='{$this->webtitle}',domain='{$this->web}',create_time='{$this->create_time}' WHERE id = 1";
         

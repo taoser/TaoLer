@@ -40,28 +40,26 @@ DROP TABLE IF EXISTS `tao_admin`;
 CREATE TABLE `tao_admin`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
   `username` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '管理员账户',
-  `nickname` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
   `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '密码',
   `email` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮箱',
   `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '手机号',
-  `sex` tinyint(1) UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT '0女1男',
   `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'static/admin/images/avatar.jpg' COMMENT '头像',
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1启用0待审-1禁用',
   `auth_group_id` smallint NOT NULL DEFAULT 0 COMMENT '1超级管理员0是普通管理员',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '备注',
   `last_login_ip` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '最后登录IP',
-  `last_login_time` int NOT NULL DEFAULT 0 COMMENT '最后登录时间',
-  `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '软删除',
+  `last_login_time` datetime NULL DEFAULT NULL COMMENT '登陆',
+  `create_time` datetime NOT NULL COMMENT '创建',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tao_admin
 -- ----------------------------
-INSERT INTO `tao_admin` VALUES (1, 'admin', '管理员', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'taoler@qq.com', '13812345678', 1, 'static/admin/images/avatar.jpg', 1, 1, '2021 TaoLer！', '127.0.0.1', 1678677599, 1579053025, 1578986600, 0);
-INSERT INTO `tao_admin` VALUES (2, 'test', '测试账号', '95d6f8d0d0c3b45e5dbe4057da1b149e', 'test1@qq.com', '13012345678', 0, 'static/admin/images/avatar.jpg', 1, 0, '', '127.0.0.1', 1678428810, 1579053025, 1678418924, 0);
+INSERT INTO `tao_admin` VALUES (1, 'admin', '$argon2id$v=19$m=65536,t=3,p=2$VmwxYS9HaFNEZ1NycXJRcw$9eVLgdWyYzSxkPqKbkTDKIDB34+4FvcAc8zqjvX36OY', 'taoler@qq.com', '13812345678', 'static/admin/images/avatar.jpg', 1, 1, '2021 TaoLer！', '127.0.0.1', NULL, '2026-07-30 20:30:38', NULL, NULL);
+INSERT INTO `tao_admin` VALUES (2, 'test', '2ff6cb678a4d563f83bd64e55a993d7a', 'test1@qq.com', '13012345678', 'static/admin/images/avatar.jpg', 1, 0, '', '127.0.0.1', NULL, '2026-07-16 22:30:49', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for tao_area
@@ -2763,7 +2761,7 @@ DROP TABLE IF EXISTS `tao_user`;
 CREATE TABLE `tao_user`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名',
-  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '手机',
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮箱',
   `active` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1激活账户0未激活',
