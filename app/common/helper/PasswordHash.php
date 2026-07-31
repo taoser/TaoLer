@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\common\helper;
 
-// 使用示例
+// // 使用示例
 // $pwd = 'Test@123456';
 // $hash = PasswordHash::make($pwd);
 

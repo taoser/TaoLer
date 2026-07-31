@@ -93,8 +93,7 @@ Route::group('',function() {
 	Route::get('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
 
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
-})
-->pattern([
+})->pattern([
 	'ename' => '[\w|\-]+',
 	'id'   => '\w+',
 	'type' => '\w+',
@@ -105,8 +104,6 @@ Route::group('',function() {
 	\app\middleware\Message::class,
 ])
 ->namespace('app\index\controller');
-
-
 
 
 

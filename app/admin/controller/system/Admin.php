@@ -9,18 +9,14 @@
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
-use app\admin\validate\Admin as AdminValidate;
-use app\model\Admin as AdminModel;
 use app\entity\Admin as AdminEntity;
-use think\App;
+use think\Response;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Cache;
-use taoser\think\Auth;
-use think\response\Json;
 use app\common\helper\FileHelper;
 use app\common\helper\PasswordHash;
 
@@ -29,7 +25,7 @@ class Admin extends AdminBaseController
 {
 	/**
      * 管理员模型
-     * @var AdminModel
+     * @var AdminEntity
      */
     protected $model = null;
 
@@ -50,13 +46,11 @@ class Admin extends AdminBaseController
 	}
 
     /**
-     * 管理员列表
-     * @return \think\response\Json|void
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-	public function list()
+	 * 管理员列表
+	 *
+	 * @return Response
+	 */
+	public function list():Response
 	{
 		$data = Request::only(['id','username','mobile','email']);
 		$map = array_filter($data);
@@ -76,7 +70,7 @@ class Admin extends AdminBaseController
 
 	
 	//管理员审核
-	public function check()
+	public function check():Response
 	{
 		$data = Request::only(['id', 'status']);
 
@@ -85,12 +79,12 @@ class Admin extends AdminBaseController
         }
 
 		//获取状态
-		$res = Db::name('admin')->where('id', $data['id'])->save(['status' => $data['status']]);
+		$res = $this->model->where('id', $data['id'])->save(['status' => $data['status']]);
 		if($res){
 			if($data['status']){
-				return json(['code' => 0, 'msg' => '设置管理员通过', 'icon' => 6]);
+				return json(['code' => 0, 'msg' => '审核通过', 'icon' => 6]);
 			}
-			return json(['code' => 0, 'msg' => '管理员已取消', 'icon' => 5]);
+			return json(['code' => 0, 'msg' => '审核取消', 'icon' => 5]);
 		}
 
 		return json(['code' => -1, 'msg' => '审核出错']);
@@ -122,7 +116,7 @@ class Admin extends AdminBaseController
 	public function edit()
 	{
 		$id = Request::param('id/d');
-		$admin = AdminModel::find($id);
+		$admin = $this->model->find($id);
 		
 		if(Request::isAjax()){
 			$data = Request::only(['id','email','password','mobile','roleId']);
@@ -170,7 +164,7 @@ class Admin extends AdminBaseController
 	//修改基本资料显示
 	public function infoEdit()
     {
-		$admin = AdminModel::find($this->aid);
+		$admin = $this->model->find($this->aid);
 		$auths = $admin->adminGroup;
 		$authName = [];
 		foreach($auths as $v){
@@ -185,17 +179,14 @@ class Admin extends AdminBaseController
 	//管理员资料更新
 	public function infoSet()
     {
-		$admin = AdminModel::find($this->aid);
-        if(Request::isAjax()){
-			$data = Request::only(['nickname','sex','mobile','email','remarks']);
-			$result = $admin->save($data);
-			if($result){
-				$res = ['code'=>0,'msg'=>'更新成功'];
-			} else {
-				$res = ['code'=>-1,'msg'=>'更新失败'];
-			}
-		return json($res);
-		}	
+		$admin = $this->model->find($this->aid);
+        
+		$data = Request::only(['nickname','mobile','email','remarks']);
+		$result = $admin->save($data);
+		if($result){
+			return json(['code'=>0,'msg'=>'更新成功']);
+		}
+		return json(['code'=>-1,'msg'=>'更新失败']);
     }
 
     //浏览改密码页面
@@ -207,13 +198,18 @@ class Admin extends AdminBaseController
     //修改密码
 	public function repassSet() 
 	{
-		if(Request::isAjax()){
-			$data = Request::only(['oldPassword','password','repassword']);
-			$data['admin_id'] = $this->aid;
-			
-			$admin = new AdminModel;
-			return $admin->setpass($data);
-			 
+		
+		$data = Request::only(['oldPassword','password','repassword']);
+		$data['admin_id'] = $this->aid;
+		
+		try{
+			$result = $this->model->setpass($data);
+			if($result){
+				return json(['code'=>0,'msg'=>'修改密码成功']);
+			}
+			return json(['code'=>-1,'msg'=>'修改密码失败']);
+		} catch (\Exception $e) {
+			return json(['code' => -1, 'msg' => $e->getMessage()]);
 		}
 	}
 
@@ -250,9 +246,9 @@ class Admin extends AdminBaseController
 	/**
 	 * 获取管理员权限规则
 	 *
-	 * @return \think\response\Json
+	 * @return Response
 	 */
-	public function getRules() :Json
+	public function getRules() :Response
 	{
 		$codes = [];
 		$ruleArr = [];

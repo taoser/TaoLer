@@ -25,23 +25,22 @@ class Admin extends BaseEntity
 	 * @param array $data
 	 * @return bool
 	 */
-    public function login(array $data)
+    public function login(array $data): bool
     {
         //查询用户
-        $admin = $this->where('username', $data['username'])->where('delete_time', 0)->find();
+        $admin = $this->where('username', $data['username'])->whereNull('delete_time')->find();
 
 		if(is_null($admin)){
 			throw new Exception('用户名或密码错误');
 		}
 
-		if($admin['status'] !=1){
-			// return json(['code' => -1,'msg'=> '用户被禁用或未审核,请联系管理员']);
+		if($admin['status'] != 1){
 			throw new Exception('用户被禁用或未审核,请联系管理员');
 		}
 
 		$result = PasswordHash::verify($data['password'], $admin['password']);
 
-		if($result['ok']){
+		if($result['ok']) {
 			
 			//将用户数据写入Session
 			Session::set('admin_id',$admin['id']);
@@ -54,12 +53,9 @@ class Admin extends BaseEntity
 				Cookie::set('adminAuth', $auth,604800);
 			}
 
-			$this->where('id', $admin['id'])->update([
-				'last_login_time'	=> time(),
-				'last_login_ip'		=> request()->ip(),
-			]);
-
-			return true;
+			$admin->last_login_time = date('Y-m-d H:i:s');
+			$admin->last_login_ip = request()->ip();
+			return $admin->save();
         }
 
 		return false;
@@ -81,34 +77,20 @@ class Admin extends BaseEntity
 	public function setpass($data)
 	{
 		$admin = $this->find($data['admin_id']);
-		$salt = substr(md5($admin['create_time']),-6);
-		$oldPassword = $this->pass($salt,$data['oldPassword']);
-		if($oldPassword != $admin['password']){
-			return json(['code'=>-1,'msg'=>'当前密码错误']);
+
+		if(!password_verify($data['oldPassword'], $admin['password'])){
+			throw new Exception('当前密码错误');
 		}
 		
 		if($data['password'] != $data['repassword']){
-			return json(['code'=>-1,'msg'=>'两次密码不一致']);
+			throw new Exception('两次密码不一致');
 		}
 
-		$data['password'] = substr_replace(md5($data['password']),$salt,0,6); 
+		$data['password'] = PasswordHash::make($data['password']);
 		$admin->password = $data['password'];
-		$result = $admin->save();
-		
-		if($result){
-			$res = ['code'=>0,'msg'=>'修改密码成功'];
-		} else {
-			$res = ['code'=>-1,'msg'=>'修改密码失败'];
-		}
-		
-		return json($res);
-	}
+
+		return $admin->save();
 	
-	//加密规则 加密字符串，原始秘密
-	protected function pass($salt, $pass)
-	{
-		$pwd = substr_replace(md5($pass),$salt,0,6);
-		return md5($pwd);
 	}
 	
 }

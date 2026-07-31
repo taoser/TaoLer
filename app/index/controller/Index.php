@@ -32,23 +32,7 @@ use app\common\helper\JwtAuth;
 class Index extends IndexBaseController
 {
 
-	public function showImg(string $filename) {
-		// 3. 构建图片的完整物理路径
-        $filePath = root_path() . 'data/' . $filename; // 或者 Filesystem::disk('local')->path($filename)
-
-        // 4. 检查文件是否存在
-        if (!file_exists($filePath)) {
-            return json(['code' => 404, 'msg' => 'Image not found.'], 404);
-        }
-
-		$filePath = '../data/storage/kefu.jpg';
-		// 5. 读取文件内容并输出
-        $fileContent = file_get_contents($filePath);
-        $mimeType = mime_content_type($filePath); // 获取正确的MIME类型
-
-		return Response::create($fileContent)->contentType($mimeType);
-	}
-
+	
     /**
      * 首页
      * @return string
@@ -62,7 +46,7 @@ class Index extends IndexBaseController
 	// hook('signhook', ['id'=>1]);
 
 // 查看已注册的路由
-// dump(app('route')->getRuleList());
+dump(app('route')->getRuleList());
 
 
 	// return json(['code' => 200, 'msg' => 'success']);
@@ -227,5 +211,23 @@ class Index extends IndexBaseController
 		
 		return Msgres::error('illegal_request');
 	}
+
+	public function showImg(string $filename) {
+		// 3. 构建图片的完整物理路径
+        $filePath = root_path() . 'data/' . $filename; // 或者 Filesystem::disk('local')->path($filename)
+
+        // 4. 检查文件是否存在
+        if (!file_exists($filePath)) {
+            return json(['code' => 404, 'msg' => 'Image not found.'], 404);
+        }
+
+		$filePath = '../data/storage/kefu.jpg';
+		// 5. 读取文件内容并输出
+        $fileContent = file_get_contents($filePath);
+        $mimeType = mime_content_type($filePath); // 获取正确的MIME类型
+
+		return Response::create($fileContent)->contentType($mimeType);
+	}
+
 
 }
