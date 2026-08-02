@@ -66,8 +66,10 @@ class Callback extends Dispatch
                     $class     = trim($namespace, '\\') . '\\' . Str::studly($class);
                 }
             } else {
-                $vars = $this->getActionBindVars();
-                return $this->app->invoke($route, $vars);
+                // $vars = $this->getActionBindVars();
+                // return $this->app->invoke($route, $vars);
+                $this->dispatch = $route;
+                return;
             }
         }
 

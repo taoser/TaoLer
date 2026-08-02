@@ -28,13 +28,7 @@
 					<input type="text" name="nickname" value="{$admin.nickname}" lay-verify="nickname" autocomplete="off" placeholder="请输入昵称" class="layui-input">
 				</div>
 			</div>
-			<div class="layui-form-item">
-				<label class="layui-form-label">性别</label>
-				<div class="layui-input-block">
-					<input type="radio" name="sex" value="0" {if condition="$admin['sex'] eq 0"} checked {/if} title="男">
-					<input type="radio" name="sex" value="1" {if condition="$admin['sex'] eq 1"} checked {/if} title="女">
-				</div>
-			</div>
+			
         <!--div class="layui-form-item">
           <label class="layui-form-label">头像</label>
           <div class="layui-input-inline">
@@ -93,9 +87,8 @@
 		form.on('submit(userinfo-save)', function(data) {
 			$.ajax({
 				url: INFO_URL,
-				data: JSON.stringify(data.field),
+				data: data.field,
 				dataType: 'json',
-				contentType: 'application/json',
 				type: 'post',
 				success: function(res) {
 					if (res.code === 0) {

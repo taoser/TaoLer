@@ -37,6 +37,11 @@ class ExceptionHandle extends Handle
      */
     public function report(Throwable $exception): void
     {
+        // 控制器不存在、路由不存在异常 不写入日志
+        // if ($exception instanceof ControllerNotFoundException) {
+        //     return;
+        // }
+
         Log::error($exception->getMessage().':'.$exception->getFile().':'.$exception->getLine());
         // 使用内置的方式记录异常日志
         // parent::report($exception);

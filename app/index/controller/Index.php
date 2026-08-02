@@ -46,7 +46,7 @@ class Index extends IndexBaseController
 	// hook('signhook', ['id'=>1]);
 
 // 查看已注册的路由
-dump(app('route')->getRuleList());
+// dump(app('route')->getRuleList());
 
 
 	// return json(['code' => 200, 'msg' => 'success']);
@@ -227,6 +227,11 @@ dump(app('route')->getRuleList());
         $mimeType = mime_content_type($filePath); // 获取正确的MIME类型
 
 		return Response::create($fileContent)->contentType($mimeType);
+	}
+
+	public function miss()
+	{
+		return response('404 Not Found!', 404);
 	}
 
 

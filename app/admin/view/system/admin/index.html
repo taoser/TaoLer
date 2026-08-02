@@ -6,7 +6,7 @@
 
 <div class="layui-card">
 	<div class="layui-card-body">
-		<form class="layui-form" action="">
+		<form class="layui-form">
 			<div class="layui-row layui-col-space15">
 				<div class="layui-col-md2">
 					<label class="layui-form-label">用户名</label>
@@ -53,9 +53,11 @@
 		新增
 	</button>
 </script>
+
 <script type="text/html" id="imgTpl"> 
 	<img src= "/{{d.avatar}}" style="width: 30px; height: 30px;" />
 </script>
+
 <script type="text/html" id="user-bar-template">
 	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit" permission="system.admin.edit"><i class="layui-icon layui-icon-edit"></i></button>
 	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove" {{#if (d.id == 1){ }} disabled {{# } }} permission="system.admin.delete"><i class="layui-icon layui-icon-delete"></i></button>
@@ -119,7 +121,6 @@
 				{
 					title: '账号',
 					field: 'username',
-					align: 'center',
 					width: 100
 				},
 				{
@@ -129,8 +130,7 @@
 				},
 				{
 					title: '邮箱',
-					field: 'email',
-					align: 'center'
+					field: 'email'
 				},
 				{
 					title: 'IP',
@@ -218,7 +218,7 @@
 			$.ajax({
 				type: 'post',
 				url: ADMIN_CHECK,
-				data:{"id": this.value, "status":status},
+				data: {"id": this.value, "status":status},
 				dataType:'json',
 				success:function(res){
 					if(res.code){
@@ -282,14 +282,7 @@
 		window.refresh = function(param) {
 			table.reload('table');
 		}
-
-		window.onload = function(){
-	
-	
-		}
 	})
-
-	
 
 </script>
 

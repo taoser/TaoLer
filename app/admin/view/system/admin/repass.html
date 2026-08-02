@@ -54,9 +54,8 @@
 		form.on('submit(userpass-save)', function(data) {
 			$.ajax({
 				url: REPASS_URL,
-				data: JSON.stringify(data.field),
+				data: data.field,
 				dataType: 'json',
-				contentType: 'application/json',
 				type: 'post',
 				success: function(result) {
 					if (result.code === 0) {

@@ -1,6 +1,7 @@
 <?php
 
 use think\facade\Route;
+use think\Response;
 
 Route::group('',function() {
 	// Route::get('user/blog','user\Blog/index');
@@ -90,7 +91,14 @@ Route::group('',function() {
 
 	// 测试图片访问
 	Route::get('fverify', 'staticfile/verify');
-	Route::get('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
+	// Route::get('storage/[:id]/licence_pic/:name$', '\\app\\index\\controller\\staticfile@showImg');
+
+	// 之后（字符串路由形式，能被正确解析）
+	// Route::miss('index/miss');
+
+	Route::miss(function() {
+		return Response::create('404 Not Found!')->contentType('text/plain')->code(404);
+	});
 
 	// 动态路径路由会影响下面的路由，所以动态路由放下面
 })->pattern([
@@ -104,9 +112,6 @@ Route::group('',function() {
 	\app\middleware\Message::class,
 ])
 ->namespace('app\index\controller');
-
-
-
 
 
 

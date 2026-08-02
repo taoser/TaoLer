@@ -11,6 +11,3 @@ Route::group('install', function () {
 })
 ->namespace('app\install\controller')
 ->middleware(\app\install\middleware\InstallCheck::class);
-
-
-
