@@ -121,7 +121,7 @@ class Article extends IndexBaseController
 
 				$result = $articleServer->add($data);
 
-				// 获取分类ename,appname
+				// 获取分类ename, appname
 				$cateName = Db::name('cate')->field('ename')->find($data['cate_id']);
 				$link = $this->getRouteUrl((int) $result['article_id'], $cateName['ename']);
 				$status = Db::name('article')->where('id', $result['article_id'])->value('status');

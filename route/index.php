@@ -47,47 +47,46 @@ Route::group('',function() {
 	// 登录注册
 	Route::group(function () {
 		Route::get('login$', 'login/index')->name('login_index');
-		Route::post('gologin$','login/login')->name('user_login');
-		Route::post('forget$','login/forget')->name('user_forget');
-		Route::post('reg$','login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
-		Route::post('postcode$','login/postcode');
-		Route::post('sentemailcode$','login/sentMailCode');
-		Route::post('respass$','login/respass');
+		Route::post('gologin$', 'login/login')->name('user_login');
+		Route::post('forget$', 'login/forget')->name('user_forget');
+		Route::post('reg$', 'login/reg')->name('user_reg')->middleware(\app\middleware\CheckRegister::class);
+		Route::post('postcode$', 'login/postcode');
+		Route::post('sentemailcode$', 'login/sentMailCode');
+		Route::post('respass$', 'login/respass');
 		Route::get('login-status', 'login/status')->name('login_status');
 	});
 
 	// 用户中心
 	Route::group('user',function () {
 		Route::get('<id>$', 'user/home')->name('user_home')->pattern([
-	'id'   => '\d+',
-]); 
+		'id'   => '\d+',
+	]);
 		Route::get('index$', 'user/index')->name('user_index');
 		Route::get('set$', 'user/set')->name('user_set');
 		Route::get('message$', 'user/message');
 		Route::get('post$', 'user/post');
-		Route::get('article$','user/myArticles');
-		Route::post('editpv$','user/editPv');
-		Route::post('updatetime$','user/updateTime');
-		Route::get('mycoll$','user/myCollect');
-		Route::get('colldel$','user/collDel');
-		Route::get('setpass$','user/setPass');
-		Route::get('activate$','user/activate');
-		Route::get('active$','user/active');
-		Route::get('uploadHeadImg$','user/uploadHeadImg');
+		Route::get('article$', 'user/myArticles');
+		Route::post('editpv$', 'user/editPv');
+		Route::post('updatetime$', 'user/updateTime');
+		Route::get('mycoll$', 'user/myCollect');
+		Route::get('colldel$', 'user/collDel');
+		Route::get('setpass$', 'user/setPass');
+		Route::get('activate$', 'user/activate');
+		Route::get('active$', 'user/active');
+		Route::get('uploadHeadImg$', 'user/uploadHeadImg');
 		Route::get('logout$', 'user/logout')->name('user_logout');
 	});
 
-	Route::get('index/reply$','index/reply')->name('user_reply');
-	Route::rule('search','Search/getSearch')->name('user_search');
-	Route::get('message/nums$','message/nums')->name('user_message');
+	Route::get('index/reply$', 'index/reply')->name('user_reply');
+	Route::rule('search', 'Search/getSearch')->name('user_search');
+	Route::get('message/nums$', 'message/nums')->name('user_message');
 	
 	//tag
 	Route::group(function (){
-		Route::get('tag$','tag/getAllTag')->name('get_all_tag');
-		Route::get('arttag$','tag/getArticleTag')->name('get_art_tag');
+		Route::get('tag$', 'tag/getAllTag')->name('get_all_tag');
+		Route::get('arttag$', 'tag/getArticleTag')->name('get_art_tag');
 		Route::get('tag/<ename>$', 'tag/list')->name('tag_list');
 	});
-
 
 	// 测试图片访问
 	Route::get('fverify', 'staticfile/verify');
