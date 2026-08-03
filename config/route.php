@@ -13,7 +13,7 @@ return [
     // 是否区分大小写
     'url_case_sensitive'    => false,
     // 自动扫描子目录分组
-    'route_auto_group'      => false,
+    'route_auto_group'      => true,
     // 合并路由规则
     'route_rule_merge'      => false,
     // 路由是否完全匹配
