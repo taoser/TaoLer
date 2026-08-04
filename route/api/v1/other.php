@@ -11,7 +11,6 @@
 
 use think\console\output\descriptor\Console;
 use think\facade\Route;
-Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
 
 Route::namespace('app\api\controller\v1')
     ->pattern(['id' => '\d+']);

@@ -3,8 +3,12 @@
 
 use think\facade\Route;
 
-Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
+// 验证码路由
+Route::group('captcha',function(){
+    Route::get('[:id]', 'CaptchaController/index');
+})->namespace('think\captcha');
 
+// 安装路由
 Route::group('install', function () {
     Route::get('/', 'index/index');
     Route::post('index/start$', 'index/start');
@@ -12,5 +16,8 @@ Route::group('install', function () {
 ->namespace('app\install\controller')
 ->middleware(\app\install\middleware\InstallCheck::class);
 
-Route::group('api')
-    ->namespace('app\api\controller');
+// api路由
+Route::group('api')->namespace('app\api\controller');
+
+
+

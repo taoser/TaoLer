@@ -12,18 +12,19 @@
 use think\console\output\descriptor\Console;
 use think\facade\Route;
 
-Route::namespace('app\api\controller\v1')
-    ->pattern(['id' => '\d+']);
+// Route::namespace('app\api\controller\v1')
+//     ->pattern(['id' => '\d+']);
 
 // 用户
 Route::group('user',function(){
-    Route::get('index','User/index'); // 测试路由
+    Route::get('index','user/index'); // 测试路由
 	Route::post('login','User/login');
 	Route::post('login_api','User/loginApi');
 	Route::post('getinfo', 'User/getUserInfo')->middleware(\app\middleware\Auth::class);
 	Route::put('setinfo', 'User/setUserInfo')->middleware(\app\middleware\Auth::class);
 	Route::post('upavatar', 'User/uploadAvatar')->middleware(\app\middleware\Auth::class);
 });
+
 
 
 

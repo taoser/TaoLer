@@ -3,7 +3,14 @@
 use think\facade\Route;
 use think\Response;
 
-Route::group('',function() {
+Route::group('',function () {
+
+	// 定义首页路由
+	Route::get('/', 'index/index');
+	
+	// 定义首页滑动页码路由
+	Route::get('index/<page>$', 'index/index')->name('index_page');
+
 	// Route::get('user/blog','user\Blog/index');
 	// Route::get('user/blog','user.Blog/index');
 
@@ -17,11 +24,7 @@ Route::group('',function() {
 	// 定义首页路由
 	Route::get('user.blog/index','user.blog/index');
 	Route::get('user/blog','user.blog/index');
-	// 定义首页路由
-	Route::get('/', 'index/index');
 	
-	// 定义首页滑动页码路由
-	Route::get('index/<page>$', 'index/index')->name('index_page');
 
 	// 定义文章分类路由
     Route::get('<ename>-list$','category/list')->name('cate');
@@ -96,30 +99,20 @@ Route::group('',function() {
 	// Route::miss('index/miss');
 
 	Route::miss(function() {
-		return Response::create('404 Not Found!')->contentType('text/plain')->code(404);
+		return response('404 Not Found!', 404);
 	});
 
-	// 动态路径路由会影响下面的路由，所以动态路由放下面
-})->pattern([
+})->namespace('app\index\controller')
+->middleware([
+	\app\middleware\Index::class,
+	\app\middleware\Browse::class,
+	\app\middleware\Message::class,
+])->pattern([
 	'ename' => '[\w|\-]+',
 	'id'   => '\w+',
 	'type' => '\w+',
 	'page'   => '\d+',
-])->middleware([
-	\app\middleware\Index::class,
-	\app\middleware\Browse::class,
-	\app\middleware\Message::class,
-])
-->namespace('app\index\controller');
+]);
 
-
-
-
-
-
-	
-	
-	
-	
 
 	
