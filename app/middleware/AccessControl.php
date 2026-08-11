@@ -2,6 +2,7 @@
 namespace app\middleware;
 
 use think\Request;
+use think\facade\Route;
 use think\exception\HttpException;
 use app\common\helper\JwtAuth;
 
@@ -36,32 +37,65 @@ class AccessControl
 //            return json(['code' => -1, 'msg' => 'no auth']);
 //        }
 
-        $path = $request->pathinfo();
+        // try{
 
-        if(str_starts_with($path, 'app/')) {
+            $path = $request->pathinfo();
 
-            // $pathArr = explode("/", str_replace('.html','', str_replace('\\','/',$path)));
-            // $addon = $pathArr[1];
-            // $controller = $pathArr[2];
-            // $action = $pathArr[3];
-
-            // 处理路由参数 有2种模式，一种是通过路由参数，一种是通过layer参数
-            $layer = $request->layer();
-            if(empty($layer)) {
-                $addon = $request->route('addon');
-                $controller = $request->route('controller');
-                $action = $request->route('action');
-            } else {
-                $addon = basename($layer);
-                $controller = $request->controller();
-                $action = $request->action();
+            $prefix = config('route.url_html_suffix');
+            if(!empty($prefix)) {
+                $path = str_replace('.'.$prefix, '', $path);
             }
 
-            if (empty($addon) || empty($controller) || empty($action)) {
-                throw new HttpException(500, lang('路由地址错误'));
+            // 自定义路由适配
+            $rule = Route::getRule($path);
+
+            var_dump($rule);
+
+            if(!empty($rule)) {
+                $keys = array_keys($rule);
+                $str = $keys[0];
+                $str = str_replace('\\', '/', $str);
+                $str = str_replace('/addons/', '', $str);
+                $str = str_replace('controller/', '', $str);
+                var_dump($str);
+                if(str_contains($str, '@')) {
+                    [$addon, $s] = explode('/', $str);
+                    [$controller, $action] = explode('@', $s);
+                } else {
+                    $parts = explode('/', $str);
+                    $count = count($parts);
+                    if($count == 3) {
+                        $addon = $parts[0];
+                        $controller = $parts[1];
+                        $action = $parts[2];
+                    }
+                    if($count == 2) {
+                        $controller = $parts[0];
+                        $action = $parts[1];
+                        $addon = 'sign';
+                    }
+                }
+
+            } elseif (str_starts_with($path, 'app/')) { // 插件默认路由适配
+
+                // 处理路由参数 有2种模式，一种是通过路由参数，一种是通过layer参数
+                $layer = $request->layer();
+                if(empty($layer)) {
+                    $addon = $request->route('addon');
+                    $controller = $request->route('controller');
+                    $action = $request->route('action');
+                } else {
+                    $addon = basename($layer);
+                    $controller = $request->controller();
+                    $action = $request->action();
+                }
+
+                if (empty($addon) || empty($controller) || empty($action)) {
+                    throw new HttpException(500, lang('路由地址错误'));
+                }
             }
 
-            // var_dump($addon,$controller, $action);
+            var_dump($addon, $controller, $action);
 
             // -------------反射
             $className = ucwords($controller);
@@ -93,9 +127,24 @@ class AccessControl
             }
             
             $request->uid = (int) session('user_id');
-        }
+        
+        // } catch(\Exception $e) {
+        //     return json(['code' => -1, 'msg' => $e->getMessage()]);
+        // }
 
         return $next($request);
+    }
+
+    protected function getAddonsName(string $str)
+    {
+        $routeList = app('route')->getRuleList();
+
+        foreach($routeList as $key => $item) {
+            if($item[$key] == $str) {
+                $prefix  = $item['options']['prefix'] ?? '';
+            }
+        }
+        return 'sign';
     }
 
 }

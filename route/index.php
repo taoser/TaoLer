@@ -28,12 +28,13 @@ Route::group('',function () {
 
 	// 定义文章分类路由
     Route::get('<ename>-list$','category/list')->name('cate');
+	Route::get('<ename>-list/p-<page>$','category/list')->name('cate_page');
     Route::get('<ename>-list/flag-<flag>$', 'category/list')->name('cate_flag');
-    Route::get('<ename>-list/flag-<flag>/<page>$', 'category/list')->name('cate_page');
+    Route::get('<ename>-list/flag-<flag>/p-<page>$', 'category/list')->name('cate_flag_page');
 
 	// 定义文章详情路由
 	Route::get('<ename>-list/<id>$', 'article/detail')->name('article_detail');
-	Route::get('<ename>-list/<id>/<page>$', 'article/detail')->name('article_comment');
+	Route::get('<ename>-list/<id>/p-<page>$', 'article/detail')->name('article_comment');
 	
 
 	// 定义文章添加路由

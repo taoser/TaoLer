@@ -7,7 +7,6 @@ class Error extends IndexBaseController
 {
     public function __call($method, $args)
     {
-		View::assign('jspage','');
-		return View::fetch('../../404');
+		return response('404 Not Found', 404);
     }
 }

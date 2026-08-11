@@ -27,6 +27,7 @@ use Exception;
 use think\facade\Cache;
 use think\Response;
 use app\common\helper\JwtAuth;
+use think\facade\Route;
 
 
 class Index extends IndexBaseController
@@ -35,15 +36,23 @@ class Index extends IndexBaseController
 	
     /**
      * 首页
-     * @return string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function index()
     {
 
 	// hook('signhook', ['id'=>1]);
+
+	// var_dump(get_addons_list());
+
+	// dump(config('addons.hooks'));
+	
+	// dump(cache('hooks'));
+
+	// dump(cache('addons_list'));
+
+	// dump(cache('addons_config'));
+
+	// dump(config('addons'));
 
 // 查看已注册的路由
 dump(app('route')->getRuleList());

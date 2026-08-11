@@ -230,17 +230,22 @@ class Category extends BaseEntity
 
         switch ($flag) {
             case 'hot':
-                $where[] = ['flags->is_good','=', '1'];
+                $where[] = ['flags->is_good', '=', '1'];
                 break;
             case 'top':
-                $where[] = ['flags->is_top' ,'=', '1'];
+                $where[] = ['flags->is_top', '=', '1'];
                 break;
             case 'wait':
-                $where[] = ['flags->is_wait','=', '0'];
+                $where[] = ['flags->is_wait', '=', '1'];
+                break;
+            case 'end':
+                $where[] = ['flags->is_wait', '=', '0'];
                 break;
             default: 
             break;
         }
+
+    // dump($where);
 
         // $limit = 5;
         // $page = 3;

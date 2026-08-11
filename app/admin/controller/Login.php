@@ -48,7 +48,7 @@ class Login extends AdminBaseController
 		return View::fetch('login');
 	}
 	
-	//注册
+	// 注册
 	public function register()
 	{
 		if(Session::has('admin_id')){

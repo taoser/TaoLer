@@ -12,7 +12,7 @@ class Category extends IndexBaseController
         global $page;
 		//动态参数
 		$ename = $this->request->param('ename', '');
-		$flag = $this->request->param('flag', 'all');
+		$flag = $this->request->param('flag');
 		$page = $this->request->param('page/d', 1);
 
 		// 分类信息
@@ -28,8 +28,13 @@ class Category extends IndexBaseController
 			return View::fetch('category/' . $cateInfo->tpl . '/single');
 		}
 
+		if(empty($flag)) {
+			$url = (string) url('cate_page', ['ename' => $ename, 'page' => $page]);
+		} else {
+			$url = (string) url('cate_flag_page', ['ename' => $ename, 'flag' => $flag, 'page' => $page]);
+		}
 		// 当前页url
-		$url = (string) url('cate_page', ['ename' => $ename, 'flag' => $flag, 'page' => $page]);
+		
 		// 返回最后/前面的字符串
 		$path = substr($url, 0, strrpos($url, "/"));
 		// 下一页url

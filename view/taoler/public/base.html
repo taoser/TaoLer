@@ -41,8 +41,10 @@
 	{block name="link"}{/block}
 	<script src="/static/share/plusShare.js" type="text/javascript" charset="utf-8"></script>
 	{$sysInfo.showlist|raw}
+	{:hook('tpl_head')}
 </head>
 <body>
+	{:hook('tpl_body')}
 <script>
 	const scriptUrl = '/static/layui/layui.js';
 	const existingScripts = document.querySelectorAll(`script[src="${scriptUrl}"]`);
@@ -142,6 +144,8 @@
 </script>
 {block name="script"}{/block}
 {:hook('addon_hooks')}
+
+{:hook('tpl_footer')}
 </body>
 </html>
 

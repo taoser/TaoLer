@@ -49,7 +49,6 @@ class Doc extends IndexBaseController
 			'ad_comm'	=>	$ad_comm,
 			'fastlinks' =>	$fast_links,
 			'flinks'	=>	$friend_links,
-			'jspage'	=>	'',
 		];
 		View::assign($assgin);
 

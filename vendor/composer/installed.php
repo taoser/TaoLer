@@ -3,7 +3,7 @@
         'name' => 'taoser/taoler',
         'pretty_version' => '4.0.x-dev',
         'version' => '4.0.9999999.9999999-dev',
-        'reference' => 'a164148717a920068664d2cc72a33f65b5dba304',
+        'reference' => '3eb95e7af43b6103657b308b3c4940c9ede6d402',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -47,9 +47,9 @@
             'dev_requirement' => false,
         ),
         'giggsey/libphonenumber-for-php' => array(
-            'pretty_version' => '9.0.35',
-            'version' => '9.0.35.0',
-            'reference' => '4e7e15a26477b65090fdc59cd56d35ca747cb126',
+            'pretty_version' => '9.0.36',
+            'version' => '9.0.36.0',
+            'reference' => '66434ecf051386a54a54c18c7853aeb85dfb7a1e',
             'type' => 'library',
             'install_path' => __DIR__ . '/../giggsey/libphonenumber-for-php',
             'aliases' => array(),
@@ -58,7 +58,7 @@
         'giggsey/libphonenumber-for-php-lite' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '9.0.35',
+                0 => '9.0.36',
             ),
         ),
         'giggsey/locale' => array(
@@ -421,7 +421,7 @@
         'taoser/taoler' => array(
             'pretty_version' => '4.0.x-dev',
             'version' => '4.0.9999999.9999999-dev',
-            'reference' => 'a164148717a920068664d2cc72a33f65b5dba304',
+            'reference' => '3eb95e7af43b6103657b308b3c4940c9ede6d402',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

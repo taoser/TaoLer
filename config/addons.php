@@ -22,4 +22,14 @@ return [
 //       '/taocai/savedata' => 'taocai/Api/saveData', // 键为请求中的路由地址，值为插件/控制器/方法
     ],
     'service' => [],
+
+    // 延迟加载配置
+    'lazy_load' => [
+        'enabled' => true,              // 启用延迟加载
+        'preload_hooks' => [            // 预加载的钩子
+            'AddonsInit',
+            'app_init',
+        ],
+        'high_frequency_threshold' => 10, // 高频阈值
+    ],
 ];

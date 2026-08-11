@@ -49,9 +49,25 @@ spl_autoload_register(function ($class) {
     return false;
 });
 
+// if (!function_exists('hook')) {
+//     /**
+//      * 处理插件钩子
+//      * @param string $event 钩子名称
+//      * @param array|null $params 传入参数
+//      * @param bool $once 是否只返回一个结果
+//      * @return mixed
+//      */
+//     function hook($event, $params = null, bool $once = false)
+//     {
+//         $result = Event::trigger($event, $params, $once);
+
+//         return join('', $result);
+//     }
+// }
+
 if (!function_exists('hook')) {
     /**
-     * 处理插件钩子
+     * 处理插件钩子（支持延迟加载）
      * @param string $event 钩子名称
      * @param array|null $params 传入参数
      * @param bool $once 是否只返回一个结果
@@ -59,9 +75,35 @@ if (!function_exists('hook')) {
      */
     function hook($event, $params = null, bool $once = false)
     {
-        $result = Event::trigger($event, $params, $once);
+        $loader = \taoser\addons\HookLazyLoader::getInstance();
+        
+        if (!$loader->isInitialized()) {
+            $hooks = app()->isDebug() ? [] : Cache::get('hooks', []);
+            if (empty($hooks)) {
+                $hooks = (array) Config::get('addons.hooks', []);
+                foreach ($hooks as $key => $values) {
+                    if (is_string($values)) {
+                        $values = explode(',', $values);
+                    } else {
+                        $values = (array) $values;
+                    }
+                    $hooks[$key] = array_filter(array_map(function ($v) use ($key) {
+                        return [get_addons_class($v), $key];
+                    }, $values));
+                }
+                Cache::set('hooks', $hooks);
+            }
 
-        return join('', $result);
+            $loader->initialize($hooks);
+        }
+
+        $result = $loader->executeHook($event, $params);
+
+        if ($once && is_array($result)) {
+            return $result[0] ?? null;
+        }
+
+        return is_array($result) ? join('', $result) : $result;
     }
 }
 
@@ -301,8 +343,8 @@ if (!function_exists('get_addons_list')) {
      */
     function get_addons_list()
     {
-        $list = Cache::get('addonslist');
-        if (empty($list)) {
+        // $list = Cache::get('addonslist');
+        // if (empty($list)) {
             $addonsPath = app()->getRootPath().'addons'.DS; // 插件列表
             $results = scandir($addonsPath);
             $list = [];
@@ -322,8 +364,8 @@ if (!function_exists('get_addons_list')) {
                 //$info['url'] =isset($info['url']) && $info['url'] ?(string)addons_url($info['url']):'';
                 $list[$name] = $info;
             }
-            Cache::set('addonslist', $list);
-        }
+            // Cache::set('addonslist', $list);
+        // }
         return $list;
     }
 
@@ -351,5 +393,17 @@ if (!function_exists('getAddonsConfig')) {
             unset($temp_arr);
         }
         return $config;
+    }
+}
+
+if (!function_exists('addons_path')) {
+    /**
+     * 获取插件目录路径
+     *
+     * @param string $path 插件路径
+     * @return string
+     */
+    function addons_path(string $path = '') {
+        return app()->getRootPath() .  'addons' . DIRECTORY_SEPARATOR . ($path ? $path . DIRECTORY_SEPARATOR : $path);
     }
 }

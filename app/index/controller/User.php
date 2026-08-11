@@ -352,7 +352,7 @@ class User extends IndexBaseController
 		->limit(10)
 		->cache(3600)->select();
 
-		View::assign(['u' => $u, 'arts'=>$arts,'reys'=>$reys,'jspage'=>'']);
+		View::assign(['u' => $u, 'arts'=>$arts,'reys'=>$reys]);
         return View::fetch();
     }
 	

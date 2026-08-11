@@ -303,8 +303,8 @@ class Article extends TagLib
             "index"     => '<?php $__INDEXS__ = \app\facade\Article::getIndexs('.$num.'); ?> {volist name="__INDEXS__" id="article"}' .$content. '{/volist}',
             default     => '{assign name="ename" value="$Request.param.ename ?? \'all\'" /}
                             {assign name="page" value="$Request.param.page ?? 1" /}
-                            {assign name="type" value="$Request.param.type ?? \'all\'" /}
-                            <?php $__LISTS__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $type,'.$num.'); ?> 
+                            {assign name="flag" value="$Request.param.flag ?? \'all\'" /}
+                            <?php $__LISTS__ = \app\facade\Category::getArticlesByCategoryEname($ename, $page, $flag, '.$num.'); ?> 
                             {volist name="__LISTS__[\'data\']" id="article"}' . $content . '{/volist}'
         };
         

@@ -158,7 +158,7 @@ class Comment extends IndexBaseController
             return json(['code' => 0, 'msg' => '编辑失败']);
         }
         $comms = CommentModel::find(input('id'));
-        View::assign(['comment' => $comms, 'jspage' => '']);
+        View::assign(['comment' => $comms]);
         return View::fetch();
 
     }
