@@ -30,6 +30,13 @@ class Service extends \think\Service
 
     public function boot()
     {
+
+
+        $addonsSystem = new AddonsSystem();
+
+        $addonsSystem->autoload();
+        // $addonsSystem->loadEvent();
+
         // 立即注册路由
         $route = $this->app->route;
         $execute = '\\taoser\\addons\\Route::execute';
@@ -51,12 +58,14 @@ class Service extends \think\Service
         //     // 路由脚本
         //     $execute = '\\taoser\\addons\\Route::execute';
 
+        //     $middlewareArr = [Addons::class];
         //     // 注册插件公共中间件
         //     if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
-        //         // $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
+        //         $middlewareArr = array_merge($middlewareArr, include $this->app->addons->getAddonsPath() . 'middleware.php');
         //     }
 
-       
+        //     // 注册插件控制器路由
+        //     $route->rule("app/:addon/[:controller]/[:action]", $execute)->middleware($middlewareArr);
 
         //     // 自定义路由
         //     // $routes = (array) Config::get('addons.route', []);
@@ -103,11 +112,6 @@ class Service extends \think\Service
 
         // });
 
-
-        $addonsSystem = new AddonsSystem();
-
-        $addonsSystem->autoload();
-        $addonsSystem->loadEvent();
 
     }
 
@@ -160,32 +164,6 @@ class Service extends \think\Service
         }
     }
 
-
-    /**
-     * 加载插件命令
-     */
-    private function loadCommand()
-    {
-        $results = scandir($this->addons_path);
-        foreach ($results as $name) {
-            if ($name === '.' or $name === '..') {
-                continue;
-            }
-            if (is_file($this->addons_path . $name)) {
-                continue;
-            }
-            $addonDir = $this->addons_path . $name . DIRECTORY_SEPARATOR;
-            if (!is_dir($addonDir)) {
-                continue;
-            }
-            $command_file = $addonDir . 'command.php';
-            if (is_file($command_file)) {
-                $commands = include_once $command_file;
-                if (is_array($commands))
-                    $this->commands($commands);
-            }
-        }
-    }
 
     /**
      * 获取 addons 路径

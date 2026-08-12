@@ -22,7 +22,6 @@ class AddonsSystem extends \think\Service
          
     }
 
-
     /**
      * 自动载入插件
      * @return bool
@@ -115,7 +114,7 @@ class AddonsSystem extends \think\Service
                 foreach ($routeFiles as $routeFile) {
                     if (file_exists($routeFile)) {
                         // $this->loadRoutesFrom($routeFile);
-                        $middleware = include_once $routeFile;
+                        include $routeFile;
                     }
                 }
             }
@@ -181,7 +180,8 @@ class AddonsSystem extends \think\Service
             Cache::set('hooks', $hooks);
         }
 
-// dump($hooks);
+        // dump($hooks);
+
         //如果在插件中有定义 AddonsInit，则直接执行
         if (isset($hooks['AddonsInit'])) {
             foreach ($hooks['AddonsInit'] as $k => $v) {
@@ -189,7 +189,7 @@ class AddonsSystem extends \think\Service
             }
         }
 
-        Event::listenEvents($hooks); // 111
+        Event::listenEvents($hooks);
     }
 
     /**

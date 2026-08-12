@@ -12,6 +12,13 @@ use think\facade\View;
 
 class Controller
 {
+
+    /**
+     * 中间件
+     * @var array
+     */
+    protected $middleware = [];
+
     /**
      * @var Model
      */
@@ -36,7 +43,7 @@ class Controller
     // 当前插件标识
     protected $name;
     // 插件路径
-    protected $addon_path;
+    protected $addonPath;
     // 视图模型
     protected $view;
     // 插件配置
@@ -55,14 +62,16 @@ class Controller
         $this->app = $app;
         $this->request = $app->request;
         $this->name = $this->getName();
-        $this->addon_path = $app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
+        $this->addonPath = $app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
         $this->addon_config = "addon_{$this->name}_config";
         $this->addon_info = "addon_{$this->name}_info";
         $this->view = clone View::engine('Think');
         $this->view->config([
             'strip_space' => true, // 去除空格和换行
-            'view_path' => $this->addon_path . 'view' . DIRECTORY_SEPARATOR
+            'view_path' => $this->addonPath . 'view' . DIRECTORY_SEPARATOR
         ]);
+        // 加载插件全局中间件
+        $this->middleware = is_file(addons_path() . 'middleware.php') ? include addons_path() . 'middleware.php' : [];
 
         // 控制器初始化
         $this->initialize();

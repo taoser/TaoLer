@@ -21,7 +21,7 @@ abstract class Addons
     // 当前插件标识
     protected $name;
     // 插件路径
-    protected $addon_path;
+    protected $addonPath;
     // 视图模型
     protected $view;
     // 插件配置
@@ -41,7 +41,7 @@ abstract class Addons
         $this->app = $app;
         $this->request = $app->request;
         $this->name = $this->getName();
-        $this->addon_path = $this->app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
+        $this->addonPath = $this->app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
         $this->addon_config = "addon_{$this->name}_config";
         $this->addon_info = "addon_{$this->name}_info";
         // $this->taglib_pre_load = $this->getTagLib();
@@ -49,8 +49,8 @@ abstract class Addons
         $this->view = clone View::engine('Think');
         $this->view->config([
             'strip_space'   => true, // 去除空格和换行
-            // 'view_path'     => $this->addon_path . 'view' . DIRECTORY_SEPARATOR . 'plugin' . DIRECTORY_SEPARATOR,
-            'view_path'     => $this->addon_path . 'view' . DIRECTORY_SEPARATOR,
+            // 'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR . 'plugin' . DIRECTORY_SEPARATOR,
+            'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR,
             'view_dir_name' => 'view',
             // 'taglib_pre_load'   => $this->taglib_pre_load
         ]);
@@ -167,7 +167,7 @@ abstract class Addons
         // 文件属性
         $info = $this->info ?? [];
         // 文件配置
-        $info_file = $this->addon_path . 'info.ini';
+        $info_file = $this->addonPath . 'info.ini';
         if (is_file($info_file)) {
             $_info = parse_ini_file($info_file, true, INI_SCANNER_RAW) ?: [];
             $_info['url'] = addons_url();
@@ -189,7 +189,7 @@ abstract class Addons
         if ($config) {
             return $config;
         }
-        $config_file = $this->addon_path . 'config.php';
+        $config_file = $this->addonPath . 'config.php';
         if (is_file($config_file)) {
             $temp_arr = (array)include $config_file;
             if ($type) {
