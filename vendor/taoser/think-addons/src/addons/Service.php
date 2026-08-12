@@ -31,7 +31,6 @@ class Service extends \think\Service
     public function boot()
     {
 
-
         $addonsSystem = new AddonsSystem();
 
         $addonsSystem->autoload();
@@ -50,68 +49,68 @@ class Service extends \think\Service
         // 注册插件控制器路由
         $route->rule("app/:addon/[:controller]/[:action]", $execute)->middleware($middlewareArr);
         
-
+        /**** 监听注册路由
         // 监听注册路由
-
-        // $this->registerRoutes(function (Route $route) {
+        $this->registerRoutes(function (Route $route) {
             
-        //     // 路由脚本
-        //     $execute = '\\taoser\\addons\\Route::execute';
+            // 路由脚本
+            $execute = '\\taoser\\addons\\Route::execute';
 
-        //     $middlewareArr = [Addons::class];
-        //     // 注册插件公共中间件
-        //     if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
-        //         $middlewareArr = array_merge($middlewareArr, include $this->app->addons->getAddonsPath() . 'middleware.php');
-        //     }
+            $middlewareArr = [Addons::class];
+            // 注册插件公共中间件
+            if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
+                $middlewareArr = array_merge($middlewareArr, include $this->app->addons->getAddonsPath() . 'middleware.php');
+            }
 
-        //     // 注册插件控制器路由
-        //     $route->rule("app/:addon/[:controller]/[:action]", $execute)->middleware($middlewareArr);
+            // 注册插件控制器路由
+            $route->rule("app/:addon/[:controller]/[:action]", $execute)->middleware($middlewareArr);
 
-        //     // 自定义路由
-        //     // $routes = (array) Config::get('addons.route', []);
+            // 自定义路由
+            $routes = (array) Config::get('addons.route', []);
 
-        //     // if(!empty($routes)) {
-        //     //     foreach ($routes as $key => $val) {
-        //     //         if (!$val) {
-        //     //             continue;
-        //     //         }
-        //     //         if (is_array($val)) {
-        //     //             $domain = $val['domain'];
-        //     //             $rules = [];
-        //     //             foreach ($val['rule'] as $k => $rule) {
-        //     //                 [$addon, $controller, $action] = explode('/', $rule);
-        //     //                 $rules[$k] = [
-        //     //                     'addon'        => $addon,
-        //     //                     'controller'    => $controller,
-        //     //                     'action'        => $action,
-        //     //                     'indomain'      => 1,
-        //     //                 ];
-        //     //             }
-        //     //             $route->domain($domain, function () use ($rules, $route, $execute) {
-        //     //                 // 动态注册域名的路由规则
-        //     //                 foreach ($rules as $k => $rule) {
-        //     //                     $route->rule($k, $execute)
-        //     //                         ->name($k)
-        //     //                         ->completeMatch(true)
-        //     //                         ->append($rule);
-        //     //                 }
-        //     //             });
-        //     //         } else {
-        //     //             list($addon, $controller, $action) = explode('/', $val);
-        //     //             $route->rule($key, $execute)
-        //     //                 ->name($key)
-        //     //                 ->completeMatch(true)
-        //     //                 ->append([
-        //     //                     'addon' => $addon,
-        //     //                     'controller' => $controller,
-        //     //                     'action' => $action
-        //     //                 ]);
-        //     //         }
-        //     //     }
-        //     // }
+            if(!empty($routes)) {
+                foreach ($routes as $key => $val) {
+                    if (!$val) {
+                        continue;
+                    }
+                    if (is_array($val)) {
+                        $domain = $val['domain'];
+                        $rules = [];
+                        foreach ($val['rule'] as $k => $rule) {
+                            [$addon, $controller, $action] = explode('/', $rule);
+                            $rules[$k] = [
+                                'addon'        => $addon,
+                                'controller'    => $controller,
+                                'action'        => $action,
+                                'indomain'      => 1,
+                            ];
+                        }
+                        $route->domain($domain, function () use ($rules, $route, $execute) {
+                            // 动态注册域名的路由规则
+                            foreach ($rules as $k => $rule) {
+                                $route->rule($k, $execute)
+                                    ->name($k)
+                                    ->completeMatch(true)
+                                    ->append($rule);
+                            }
+                        });
+                    } else {
+                        list($addon, $controller, $action) = explode('/', $val);
+                        $route->rule($key, $execute)
+                            ->name($key)
+                            ->completeMatch(true)
+                            ->append([
+                                'addon' => $addon,
+                                'controller' => $controller,
+                                'action' => $action
+                            ]);
+                    }
+                }
+            }
 
-        // });
+        });
 
+        ****/
 
     }
 

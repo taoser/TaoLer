@@ -797,13 +797,13 @@ class Container implements ArrayAccess, ContainerContract
             $pushedToBuildStack = true;
         }
 
-        $result = BoundMethod::call($this, $callback, $parameters, $defaultMethod);
-
-        if ($pushedToBuildStack) {
-            array_pop($this->buildStack);
+        try {
+            return BoundMethod::call($this, $callback, $parameters, $defaultMethod);
+        } finally {
+            if ($pushedToBuildStack) {
+                array_pop($this->buildStack);
+            }
         }
-
-        return $result;
     }
 
     /**
@@ -1008,7 +1008,8 @@ class Container implements ArrayAccess, ContainerContract
         $concrete = $this->resolveConcreteFromAttributes($reflected);
 
         if ($concrete === null) {
-            if ($this->environmentResolver === null && $reflected->getAttributes(Bind::class) !== []) {
+            if ($reflected->getAttributes(BindWhen::class) !== [] ||
+                ($this->environmentResolver === null && $reflected->getAttributes(Bind::class) !== [])) {
                 unset($this->checkedForAttributeBindings[$abstract]);
             }
 
@@ -1668,12 +1669,24 @@ class Container implements ArrayAccess, ContainerContract
      *
      * @param  string  $abstract
      * @return string
+     *
+     * @throws \LogicException
      */
     public function getAlias($abstract)
     {
-        return isset($this->aliases[$abstract])
-            ? $this->getAlias($this->aliases[$abstract])
-            : $abstract;
+        $seen = [];
+
+        while (isset($this->aliases[$abstract])) {
+            if (isset($seen[$abstract])) {
+                throw new LogicException("Circular alias reference for [{$abstract}].");
+            }
+
+            $seen[$abstract] = true;
+
+            $abstract = $this->aliases[$abstract];
+        }
+
+        return $abstract;
     }
 
     /**

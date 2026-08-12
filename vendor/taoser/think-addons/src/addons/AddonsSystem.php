@@ -55,6 +55,7 @@ class AddonsSystem extends \think\Service
 
         // 读取插件目录中的php文件
         foreach ($addonsDir as $name) {
+            
             if ($name === '.' || $name === '..') {
                 continue;
             }

@@ -131,7 +131,7 @@ if (!function_exists('get_addons_instance')) {
      * @param string $name 插件名
      * @return mixed|null
      */
-    function get_addons_instance($name)
+    function get_addons_instance(string $name)
     {
         static $_addons = [];
         if (isset($_addons[$name])) {
@@ -142,9 +142,8 @@ if (!function_exists('get_addons_instance')) {
             $_addons[$name] = new $class(app());
 
             return $_addons[$name];
-        } else {
-            return null;
         }
+        return null;
     }
 }
 
@@ -152,11 +151,11 @@ if (!function_exists('get_addons_class')) {
     /**
      * 获取插件类的类名
      * @param string $name 插件名
-     * @param string $type 返回命名空间类型
-     * @param string $class 当前类名
+     * @param string $type 'controller' | 'hook' 返回命名空间类型
+     * @param string|null $class 当前类名
      * @return string
      */
-    function get_addons_class($name, $type = 'hook', $class = null)
+    function get_addons_class(string $name, string $type = 'hook', string|null $class = null)
     {
         $name = trim($name);
         // 处理多级控制器情况

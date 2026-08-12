@@ -54,8 +54,8 @@ class Index extends IndexBaseController
 
 	// dump(config('addons'));
 
-// 查看已注册的路由
-dump(app('route')->getRuleList());
+	// 查看已注册的路由
+	// dump(app('route')->getRuleList());
 
 
 	// return json(['code' => 200, 'msg' => 'success']);

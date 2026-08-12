@@ -25,9 +25,9 @@ abstract class Addons
     // 视图模型
     protected $view;
     // 插件配置
-    protected $addon_config;
+    protected $addonConfig;
     // 插件信息
-    protected $addon_info;
+    protected $addonInfo;
     // 预先加载的标签库
     protected $taglib_pre_load = '';
 
@@ -42,8 +42,8 @@ abstract class Addons
         $this->request = $app->request;
         $this->name = $this->getName();
         $this->addonPath = $this->app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
-        $this->addon_config = "addon_{$this->name}_config";
-        $this->addon_info = "addon_{$this->name}_info";
+        $this->addonConfig = "addon_{$this->name}_config";
+        $this->addonInfo = "addon_{$this->name}_info";
         // $this->taglib_pre_load = $this->getTagLib();
         // $this->view = clone View::engine('Taoler');
         $this->view = clone View::engine('Think');
@@ -159,7 +159,7 @@ abstract class Addons
      */
     final public function getInfo()
     {
-        $info = Config::get($this->addon_info, []);
+        $info = Config::get($this->addonInfo, []);
         if ($info) {
             return $info;
         }
@@ -173,7 +173,7 @@ abstract class Addons
             $_info['url'] = addons_url();
             $info = array_merge($_info, $info);
         }
-        Config::set($info, $this->addon_info);
+        Config::set($info, $this->addonInfo);
 
         return isset($info) ? $info : [];
     }
@@ -185,16 +185,17 @@ abstract class Addons
      */
     final public function getConfig($type = false)
     {
-        $config = Config::get($this->addon_config, []);
+        $config = Config::get($this->addonConfig, []);
         if ($config) {
             return $config;
         }
         $config_file = $this->addonPath . 'config.php';
         if (is_file($config_file)) {
-            $temp_arr = (array)include $config_file;
+            $temp_arr = (array) include $config_file;
             if ($type) {
                 return $temp_arr;
             }
+
             foreach ($temp_arr as $key => $value) {
                 if(isset($value['value'])) {
                     $config[$key] = $value['value'];
@@ -203,9 +204,11 @@ abstract class Addons
                 }
                 
             }
+
             unset($temp_arr);
         }
-        Config::set($config, $this->addon_config);
+
+        Config::set($config, $this->addonConfig);
 
         return $config;
     }
