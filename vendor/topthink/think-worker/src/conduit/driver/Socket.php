@@ -31,9 +31,17 @@ class Socket extends Driver
 
     public function __construct(protected Manager $manager)
     {
-        $filename = runtime_path() . 'conduit.sock';
-        @unlink($filename);
-        $this->domain = "unix://{$filename}";
+        // Windows 兼容处理：使用 TCP socket 替代 Unix socket
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $host = config('worker.host');
+            $port = config('worker.port');
+            $this->domain = "tcp://{$host}:{$port}";
+        } else {
+            $filename = runtime_path() . 'conduit.sock';
+            @unlink($filename);
+            $this->domain = "unix://{$filename}";
+        }
+        
     }
 
     public function prepare()

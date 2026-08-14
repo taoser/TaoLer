@@ -3,10 +3,27 @@
 use think\facade\Route;
 use think\Response;
 
+Route::get('static/:path', function (string $path) {
+		$filename = public_path() . 'static/' . ltrim($path, '/');
+		if (!is_file($filename)) {
+			return response('404 Not Found!', 404);
+		}
+		return new \think\worker\response\File($filename);
+	})->pattern(['path' => '.*\.\w+$']);
+
+	// Route::get('install.lock', function () {
+	// 	$filename = public_path() . 'install.lock';
+	// 	return new \think\worker\response\File($filename);
+	// });
+
 Route::group('',function () {
 
 	// 定义首页路由
 	Route::get('/', 'index/index');
+
+	// Route::get('/', function () {
+	// 	return Response::create('hello world');
+	// });
 	
 	// 定义首页滑动页码路由
 	Route::get('index/<page>$', 'index/index')->name('index_page');

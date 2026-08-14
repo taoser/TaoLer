@@ -40,6 +40,22 @@ class Index extends IndexBaseController
     public function index()
     {
 
+	// dump(__DIR__);
+	// dump(__DIR__.'/../../');
+	// dump(realpath(__DIR__.'/../../'));
+
+	// dump(root_path());
+
+	// $P = pathinfo(__FILE__);
+
+	// $namespace = str_replace(root_path(), '', $P['dirname']);
+	// $namespace = str_replace('\\', '/', $namespace);
+	// dump($namespace . DS . $P['filename'] . DS);
+		
+	// dump($P['dirname']);
+	// dump($P);
+
+
 	// hook('signhook', ['id'=>1]);
 
 	// var_dump(get_addons_list());

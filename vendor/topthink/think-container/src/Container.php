@@ -327,7 +327,10 @@ class Container implements ContainerInterface, ArrayAccess, IteratorAggregate, C
 
         $args = $this->bindParams($reflect, $vars);
 
-        if ($accessible) {
+        // PHP 8.1+ deprecated setAccessible() as it has no effect, and PHP 8.5 raises
+        // a deprecation notice. The reflectivity works without it for normal method
+        // invocation, so skip the call on modern PHP versions.
+        if ($accessible && method_exists($reflect, 'setAccessible') && PHP_VERSION_ID < 80100) {
             $reflect->setAccessible($accessible);
         }
 

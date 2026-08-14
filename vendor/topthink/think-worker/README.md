@@ -34,7 +34,7 @@ http://localhost:8080
 
 ```php
 Route::get('static/:path', function (string $path) {
-    $filename = public_path() . $path;
+    $filename = public_path() . 'static/' . $path;
     return new \think\worker\response\File($filename);
 })->pattern(['path' => '.*\.\w+$']);
 ```
@@ -92,15 +92,14 @@ Route::get('path2','controller/action2');
 #### 控制器
 
 ```php
-use \think\swoole\Websocket;
-use \think\swoole\websocket\Event;
-use \Swoole\WebSocket\Frame;
+use \think\worker\websocket\Event;
+use \worker\WebSocket\Frame;
 
 class Controller {
 
     public function action1(){
     
-        return \think\swoole\helper\websocket()
+        return (new \think\worker\response\Websocket())
             ->onOpen(...)
             ->onMessage(function(Websocket $websocket, Frame $frame){ 
                 ...
@@ -110,7 +109,7 @@ class Controller {
     
     public function action2(){
     
-        return \think\swoole\helper\websocket()
+        return (new \think\worker\response\Websocket())
             ->onOpen(...)
             ->onMessage(function(Websocket $websocket, Frame $frame){
                ...

@@ -31,9 +31,10 @@ trait InteractsWithServer
             $this->clearCache();
             $this->prepareApplication();
 
-            $this->conduit->connect();
-
-            $this->workerId = $this->ipc->listenMessage();
+            if (DIRECTORY_SEPARATOR !== '\\') {
+                $this->conduit->connect();
+                $this->workerId = $this->ipc->listenMessage();
+            }
 
             $this->triggerEvent('workerStart', $worker);
 
@@ -66,8 +67,8 @@ trait InteractsWithServer
         $this->prepareIpc();
         $this->triggerEvent('init');
 
-        //热更新
-        if ($this->getConfig('hot_update.enable', false)) {
+        // 热更新依赖 Unix 信号，Windows 下只能保留单个 worker，跳过额外热更新 worker
+        if (DIRECTORY_SEPARATOR !== '\\' && $this->getConfig('hot_update.enable', false)) {
             $this->addHotUpdateWorker();
         }
 
@@ -89,6 +90,10 @@ trait InteractsWithServer
      */
     protected function addHotUpdateWorker()
     {
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return;
+        }
+
         $worker = new Worker();
 
         $worker->name       = 'hot update';
@@ -97,7 +102,15 @@ trait InteractsWithServer
         $worker->onWorkerStart = function () {
             $watcher = $this->container->make(Watcher::class);
             $watcher->watch(function () {
-                posix_kill(posix_getppid(), SIGUSR1);
+                // Windows 兼容处理
+                if (DIRECTORY_SEPARATOR === '\\') {
+                    // Windows 下使用 Worker::reloadWorkers() 方法
+                    if (method_exists('\Workerman\Worker', 'reloadWorkers')) {
+                        \Workerman\Worker::reloadWorkers();
+                    }
+                } else {
+                    posix_kill(posix_getppid(), SIGUSR1);
+                }
             });
         };
     }

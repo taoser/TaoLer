@@ -43,9 +43,54 @@ trait InteractsWithHttp
                 $this->prepareWebsocket();
             }
 
+            if (DIRECTORY_SEPARATOR === '\\') {
+                $this->prepareSingleWindowsHttpServer();
+                return;
+            }
+
             $workerNum = $this->getConfig('http.worker_num', 4);
             $this->addWorker([$this, 'createHttpServer'], 'http server', $workerNum);
         }
+    }
+
+    protected function prepareSingleWindowsHttpServer()
+    {
+        $this->prepareApplication();
+
+        $host    = $this->getConfig('http.host');
+        $port    = $this->getConfig('http.port');
+        $options = $this->getConfig('http.options', []);
+
+        $server = new Worker("http://{$host}:{$port}", $options);
+        $server->name = 'http server';
+        $server->count = 1;
+        $server->protocol = \think\worker\protocols\FlexHttp::class;
+        $server->reusePort = false;
+
+        $server->onWorkerStart = function () {
+            $this->prepareApplication();
+            $this->preloadHttp();
+        };
+
+        $server->onMessage = function (TcpConnection $connection, $data) {
+            if ($data instanceof WorkerRequest) {
+                if ($this->wsEnable && $this->isWebsocketRequest($data)) {
+                    $this->onHandShake($connection, $data);
+                } else {
+                    $this->onRequest($connection, $data);
+                }
+            } elseif ($data instanceof Frame) {
+                $this->onMessage($connection, $data);
+            }
+        };
+
+        $server->onClose = function (TcpConnection $connection) {
+            if ($this->wsEnable) {
+                $this->onClose($connection);
+            }
+        };
+
+        $server->listen();
     }
 
     public function createHttpServer()
@@ -56,8 +101,9 @@ trait InteractsWithHttp
         $port    = $this->getConfig('http.port');
         $options = $this->getConfig('http.options', []);
 
-        $server = new Worker("\\think\\worker\\protocols\\FlexHttp://{$host}:{$port}", $options);
-
+        $server = new Worker("http://{$host}:{$port}", $options);
+        $server->name = 'http server';
+        $server->protocol = \think\worker\protocols\FlexHttp::class;
         $server->reusePort = true;
 
         $server->onMessage = function (TcpConnection $connection, $data) {

@@ -26,23 +26,20 @@ class Index
     {
         // 检查是否安装
         $app = $request->pathinfo();
-		if(!file_exists('./install.lock') && !str_starts_with($app, 'install/')){
+		if(!file_exists(public_path().'install.lock') && !str_starts_with($app, 'install/')){
 			return redirect('/install/index');
 		}
 
+		$langArr = glob(root_path().'app/index/lang/*.php');
 		// 加载语言包
-        Lang::load([
-            app_path() . 'index/lang/en-us.php',
-            app_path() . 'index/lang/zh-tw.php',
-			app_path() . 'index/lang/zh-cn.php',
-        ]);
+        Lang::load($langArr);
 
         // 配置视图路径
         View::config([
             // 'view_path'			=> app_path() .'index' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
 			'view_path'			=> root_path()  . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
 			'view_dir_name'		=> 'view' . DIRECTORY_SEPARATOR . $this->getTemplate(),
-			'taglib_pre_load'	=> $this->getTaglibPreLoad(),
+			'taglib_pre_load'	=> $this->setTaglibPreLoad(),
         ]);
 
 		$userInfo = [];
@@ -103,37 +100,55 @@ class Index
 	 * 获取标签库预加载
 	 * @return string
 	 */
-	protected function getTaglibPreLoad() : string
+	protected function setTaglibPreLoad() : string
 	{
 		$taglib_pre_load = Cache::remember('taglib', function() {
+			$rootPath = root_path();
 			$tagsArr = [];
 			//获取应用公共标签app/common/taglib
-			$common_taglib = FileHelper::getDirFilePaths(root_path().'app/common/taglib');
-
-			foreach ($common_taglib as $t) {
-				$tagsArr[] = str_replace('/','\\',strstr(strstr($t, 'app/'), '.php', true));
+			// $commonTaglibs = FileHelper::getDirFilePaths(root_path().'app/common/taglib');
+			$commonTaglibs = glob($rootPath . 'app/common/taglib/*.php');
+			foreach ($commonTaglibs as $t) {
+				$tagsArr[] = str_replace('/','\\', strstr(strstr($t, 'app/'), '.php', true));
 			}
 
 			//获取插件下标签 addons/taglib文件
-			$localAddons = FileHelper::getSubDirNames('../addons/');
+			$addonsDir = $rootPath . 'addons' . DIRECTORY_SEPARATOR;
+			// $localAddons = FileHelper::getSubDirNames($addonsDir);
+			$localAddons = array_filter(scandir($addonsDir), function($dir) use ($addonsDir) {
+				return $dir !== '.' && $dir !== '..' && is_dir($addonsDir . $dir);
+			});
 			
 			foreach($localAddons as $name) {
-				$addonDir = root_path() . 'addons'. DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR .'taglib' . DIRECTORY_SEPARATOR;
+				$addonDir = $addonsDir . $name . DIRECTORY_SEPARATOR .'taglib' . DIRECTORY_SEPARATOR;
 				if(!file_exists($addonDir)) continue;
-				$taglibs = FileHelper::getDirFilePaths($addonDir);
+
+				// $taglibs = FileHelper::getDirFilePaths($addonDir);
+				$taglibs = glob($addonDir . '*.php');
 				foreach ($taglibs as $a) {
-					$tagsArr[] = str_replace('/','\\',strstr(strstr($a, 'addons'), '.php', true));
+					$tagsArr[] = str_replace('/','\\', strstr(strstr($a, 'addons'), '.php', true));
 				}
 			}
-			if(!empty($tagsArr)){
-				$tagsArr = array_unique($tagsArr);
-				return implode(',', $tagsArr);
-			}
 
-			return '';
+			return empty($tagsArr) ? '' : implode(',', array_unique($tagsArr));
 	
-		});
+		}, 1800);
 
 		return $taglib_pre_load;
 	}
+
+	/**
+	 * 获取文件命名空间类路径 
+	 * @param string $filepath 完整文件路径 E:\github\TaoLer\app\common\taglib\Index.php
+	 * @return string app\common\taglib\Index
+	 */
+	protected function getFileClassPath(string $filepath): string
+	{
+		$rootPath = root_path();
+		$info = pathinfo($filepath);
+		$str = $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'];
+		return str_replace([$rootPath, DIRECTORY_SEPARATOR], ['','\\'], $str);
+	}
+
+
 }

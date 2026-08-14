@@ -59,7 +59,7 @@ class Handler implements HandlerInterface
 
         $this->push(EnginePacket::open($payload));
 
-        $this->event->trigger('swoole.websocket.Open', $request);
+        $this->event->trigger('worker.websocket.Open', $request);
 
         if ($this->eio < 4) {
             $this->resetPingTimeout($this->pingInterval + $this->pingTimeout);

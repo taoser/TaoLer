@@ -49,8 +49,8 @@ abstract class Addons
         $this->view = clone View::engine('Think');
         $this->view->config([
             'strip_space'   => true, // 去除空格和换行
-            // 'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR . 'plugin' . DIRECTORY_SEPARATOR,
-            'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR,
+            'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR . 'plugin' . DIRECTORY_SEPARATOR,
+            // 'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR,
             'view_dir_name' => 'view',
             // 'taglib_pre_load'   => $this->taglib_pre_load
         ]);

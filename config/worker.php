@@ -16,7 +16,7 @@ return [
         'enable'     => true,
         'host'       => '0.0.0.0',
         'port'       => 8080,
-        'worker_num' => 4,
+        'worker_num' => 1,
         'options'    => [],
     ],
     'websocket'  => [
@@ -31,7 +31,8 @@ return [
         'workers' => [],
     ],
     'hot_update' => [
-        'enable'  => env('APP_DEBUG', false),
+        'enable'  => false,
+        'type'    => 'scan', // 添加此行，指定使用 scan 驱动（Windows 兼容）
         'name'    => ['*.php'],
         'include' => [app_path(), config_path(), root_path('route')],
         'exclude' => [],

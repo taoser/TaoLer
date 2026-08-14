@@ -7,7 +7,7 @@ class InstallCheck
 {
     public function handle(Request $request, \Closure $next)
     {
-        if(file_exists('./install.lock')){
+        if(file_exists(public_path().'install.lock')){
             $html = '
             <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
             <style>
