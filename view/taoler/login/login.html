@@ -79,13 +79,12 @@
         let toast = layui.toast;
 
         form.on('submit(user-login)',function(data){
-          var field = data.field;
           var loadIndex = layer.load(2);
 
           $.ajax({
               type:"post",
               url:"{:url('user_login')}",
-              data:field,
+              data: data.field,
               daType:"json",
               success:function (res) {
                 layer.close(loadIndex);

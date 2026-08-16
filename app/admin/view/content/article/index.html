@@ -238,7 +238,7 @@
 	form.on('switch(isTop)', function(obj){
 		$.post(SET_FLAG_URL,{id: this.id, name: obj.elem.name, value: obj.elem.checked ? 1 : 0},function(res){
 			if(res.code) {
-				return popup.failtrue(res.msg)
+				return popup.failure(res.msg)
 			}
 			return popup.success(res.msg)
 		});
@@ -249,7 +249,7 @@
 	form.on('switch(isGood)', function(obj){
 		$.post(SET_FLAG_URL, {id:this.id, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
 			if(res.code) {
-				return popup.failtrue(res.msg)
+				return popup.failure(res.msg)
 			}
 			return popup.success(res.msg)
 		});
@@ -260,7 +260,7 @@
 	form.on('switch(isComment)', function(obj){
 		$.post(CHECK_URL, {id:this.id, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
 			if(res.code) {
-				return popup.failtrue(res.msg)
+				return popup.failure(res.msg)
 			}
 			return popup.success(res.msg)
 		});
@@ -271,7 +271,7 @@
 	form.on('switch(artStatus)', function(obj){
 		$.post(CHECK_URL, {id:this.id, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
 			if(res.code) {
-				return popup.failtrue(res.msg)
+				return popup.failure(res.msg)
 			}
 			return popup.success(res.msg)
 		});

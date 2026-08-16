@@ -212,7 +212,7 @@ class Index extends IndexBaseController
 
 		$html = View::fetch('index');
 
-		$this->buildHtml($html);
+		// $this->buildHtml($html);
 
 		return $html;
     }

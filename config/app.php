@@ -33,5 +33,7 @@ return [
         404 =>  public_path() . '404.html',
         // 服务器内部错误
         500 =>  public_path() . '500.html',
-    ]
+    ],
+    // 信任nginx代理IP
+    'proxy_server_ip' => ['127.0.0.1'],
 ];

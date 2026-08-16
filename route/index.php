@@ -3,18 +3,13 @@
 use think\facade\Route;
 use think\Response;
 
-Route::get('static/:path', function (string $path) {
-		$filename = public_path() . 'static/' . ltrim($path, '/');
-		if (!is_file($filename)) {
-			return response('404 Not Found!', 404);
-		}
-		return new \think\worker\response\File($filename);
-	})->pattern(['path' => '.*\.\w+$']);
-
-	// Route::get('install.lock', function () {
-	// 	$filename = public_path() . 'install.lock';
-	// 	return new \think\worker\response\File($filename);
-	// });
+// Route::get('static/:path', function (string $path) {
+// 		$filename = public_path() . 'static/' . ltrim($path, '/');
+// 		if (!is_file($filename)) {
+// 			return response('404 Not Found!!', 404);
+// 		}
+// 		return new \think\worker\response\File($filename);
+// 	})->pattern(['path' => '.*\.\w+$']);
 
 Route::group('',function () {
 
@@ -79,10 +74,8 @@ Route::group('',function () {
 
 	// 用户中心
 	Route::group('user',function () {
-		Route::get('<id>$', 'user/home')->name('user_home')->pattern([
-		'id'   => '\d+',
-	]);
-		Route::get('index$', 'user/index')->name('user_index');
+		Route::get('<id>$', 'user/home')->name('user_home')->pattern(['id'   => '\d+',]);
+		Route::get('idx$', 'user/index')->name('user_index');
 		Route::get('set$', 'user/set')->name('user_set');
 		Route::get('message$', 'user/message');
 		Route::get('post$', 'user/post');

@@ -10,14 +10,13 @@
  */
 namespace app\index\controller;
 
-use app\common\controller\BaseController;
 use think\facade\Request;
 use think\facade\Db;
-use app\common\model\Message as MessageModel;
-use app\common\model\MessageTo;
+use app\model\Message as MessageModel;
+use app\model\MessageTo;
 use taoler\com\Message as MessageApi;
 
-class Message extends BaseController
+class Message extends IndexBaseController
 {
 	//消息数目
 	public function nums()

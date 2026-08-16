@@ -48,7 +48,7 @@ class Login extends IndexBaseController
 		//获取登录前访问页面refer
         $refer = str_replace(Request::domain(), '', Request::server('HTTP_REFERER'));
 
-		$data = Request::only(['name','email','phone','password','captcha','remember']);
+		$data = Request::post(['name','email','phone','password','captcha','remember']);
 
 		// 校验验证码
         if(Config::get('taoler.config.login_captcha') == 1 && !captcha_check($data['captcha'])) {				

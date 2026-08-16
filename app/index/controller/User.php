@@ -26,7 +26,8 @@ class User extends IndexBaseController
 	//用户中心
 	public function index()
 	{
-        return view('index');
+		
+        return View::fetch();
     }
 	
 	

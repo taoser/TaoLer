@@ -86,7 +86,7 @@ class Plugin extends AdminBaseController
                 // 数据
                 $installedPlugins = [];
                 foreach ($arrAddon as $k => $v) {
-                    $info_file = '../addons/' . $v . '/info.ini';
+                    $info_file = root_path() . 'addons/' . $v . '/info.ini';
                     $info = parse_ini_file($info_file);
                     $info['install'] = $info['install'] ? '√' : '×';
                     $installedPlugins[] = $info;
@@ -204,7 +204,7 @@ class Plugin extends AdminBaseController
             // 设置插件info
             set_addons_info($data['name'], ['status' => 1, 'install' => 1]);
 
-            FileHelper::deleteDir('../runtime/addons/'.$data['name'] . DS);
+            FileHelper::deleteDir(runtime_path() . 'addons' . DIRECTORY_SEPARATOR . $data['name'] . DIRECTORY_SEPARATOR);
 
             return json(['code' => 0, 'msg' => '插件安装成功！']);
 
@@ -620,7 +620,7 @@ class Plugin extends AdminBaseController
     protected function getLocalPlugins() :array
     {
         // 本地插件列表
-        $localPlguin = FileHelper::getSubDirNames('../addons/');
+        $localPlguin = FileHelper::getSubDirNames(root_path() . 'addons' . DIRECTORY_SEPARATOR);
 
         // 若不存在info.ini，只有文件夹，表示没有安装成功
         foreach($localPlguin as $name) {

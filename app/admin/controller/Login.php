@@ -11,7 +11,7 @@
 namespace app\admin\controller;
 
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Session;
 use app\admin\validate\Admin;
 use think\exception\ValidateException;
@@ -19,33 +19,34 @@ use think\exception\ValidateException;
 class Login extends AdminBaseController
 {
 	// 登录
-	public function index()
-	{	
-		if(Request::isAjax()){
-			$data = Request::param(['username','password','captcha','remember']);
-			
-			try{
-				validate(Admin::class)
-				->scene('Login')
-				->check($data);
-
-				$admin = new \app\entity\Admin();
-				$result = $admin->login($data);
-				if($result){
-					return json(['code' => 0, 'msg' => '登陆成功', 'url' => (string) url('admin-index')]);
-				}
-
-				return json(['code' => -1, 'msg' => '用户名或密码错误!']);
-
-			} catch(ValidateException $e){
-				return json(['code' => -1, 'msg' => $e->getError()]);
-			} catch(\Exception $e){
-				return json(['code' => -1, 'msg' => $e->getMessage()]);
-			}
-			
+	public function index(Request $request)
+	{
+		if (!$request->isPost()) {
+			return View::fetch('login');
 		}
-		
-		return View::fetch('login');
+
+		$data = $request->post(['username', 'password', 'captcha', 'remember']);
+		if (empty($data)) {
+			$data = $request->param(['username', 'password', 'captcha', 'remember']);
+		}
+
+		try {
+			validate(Admin::class)
+			->scene('Login')
+			->check($data);
+
+			$admin = new \app\entity\Admin();
+			$result = $admin->login($data);
+			if ($result) {
+				return json(['code' => 0, 'msg' => '登陆成功', 'url' => (string) url('admin-index')]);
+			}
+
+			return json(['code' => -1, 'msg' => '用户名或密码错误!']);
+		} catch (ValidateException $e) {
+			return json(['code' => -1, 'msg' => $e->getError()]);
+		} catch (\Exception $e) {
+			return json(['code' => -1, 'msg' => $e->getMessage()]);
+		}
 	}
 	
 	// 注册

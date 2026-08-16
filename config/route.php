@@ -23,7 +23,7 @@ return [
     // 默认的路由变量规则
     'default_route_pattern' => '[\w\.]+',
     // URL伪静态后缀
-    'url_html_suffix'       => 'html',
+    'url_html_suffix'       => false,
     // 访问控制器层名称
     'controller_layer'      => 'controller',
     // 空控制器名

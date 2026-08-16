@@ -41,9 +41,7 @@
 										<div class="layui-input-prefix">
 											<i class="layui-icon layui-icon-password"></i>
 										</div>
-										<input type="password" name="password" value=""
-											lay-verify="required|confirmPassword" placeholder="密码" autocomplete="off"
-											class="layui-input" lay-affix="eye">
+										<input type="password" name="password" value="" lay-verify="required|confirmPassword" placeholder="密码" autocomplete="off" class="layui-input" lay-affix="eye">
 									</div>
 								</div>
 								<div class="tab-log-verification">
@@ -102,36 +100,35 @@
 			// 登 录 提 交
 			form.on('submit(login)', function (data) {
 				$("#login-submit").addClass('layui-btn-disabled').attr('disabled', true);
-				/// 验证
 
-				/// 登录
 				$.ajax({
-					type: "post"
-					,url: "{:url('admin-login')}"
-					,data: data.field
-					,success: function(res) {
-						if(res.code === 0){
-							//动画
+					type: 'POST',
+					url: "{:url('admin-login')}",
+					data: data.field,
+					dataType: 'json',
+					success: function (res) {
+						if (res.code === 0) {
 							button.load({
 								elem: '.login',
 								time: 1500,
 								done: function () {
 									popup.success("登录成功", function () {
-										//登入成功的提示与跳转
 										location.href = "{:url('admin-index')}"
 									});
 								}
-							})
-
+							});
 						} else {
 							$("#login-submit").removeClass('layui-btn-disabled').attr('disabled', false);
-							layer.open({title:'登陆失败', content:res.msg, icon:5, anim:6});
+							layer.open({ title: '登陆失败', content: res.msg, icon: 5, anim: 6 });
 							layui.jquery('#captcha').attr('src', '{:captcha_src()}?' + Math.random());
 						}
-						
+					},
+					error: function () {
+						$("#login-submit").removeClass('layui-btn-disabled').attr('disabled', false);
+						layer.open({ title: '请求失败', content: '网络异常或服务器返回错误', icon: 5, anim: 6 });
 					}
 				});
-				
+
 				return false;
 			});
 

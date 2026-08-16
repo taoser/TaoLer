@@ -6,7 +6,7 @@
 
 <div class="layui-card">
 	<div class="layui-card-body">
-		<form class="layui-form" action="">
+		<form class="layui-form">
 			<div class="layui-row layui-col-space15">
 				<div class="layui-col-md2">
 					<label class="layui-form-label">ID</label>
@@ -138,7 +138,7 @@
 	const USER_CHECK = MODULE_NAME + '/user/user/check';
 	const USER_BATCH_REMOVE = MODULE_NAME + '/user/user/batchRemove';
 
-	const USER_EDIT_VIP_LEVEL = MODULE_NAME + '/user/editVipLevel';
+	const USER_EDIT_VIP_LEVEL = MODULE_NAME + '/user/user/editVipLevel';
 	const USER_EDIT_FIELD = MODULE_NAME + '/user/user/editField';
 
 	layui.use(['common','admin'], function() {
@@ -339,7 +339,7 @@
 
 		// 动态查询
 		form.on('submit(user-query)', function(data) {
-			table.reload('table', {
+			table.reloadData('table', {
 				where: data.field
 			})
 			return false;
