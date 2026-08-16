@@ -13,9 +13,9 @@ namespace app\admin\controller\soft;
 use app\admin\controller\AdminBaseController;
 
 use think\Exception;
+use think\Request;
 use think\RuntimeException;
 use think\facade\View;
-use think\facade\Request;
 use think\facade\Log;
 use think\facade\Config;
 use think\facade\Db;
@@ -50,12 +50,12 @@ class Plugin extends AdminBaseController
      * @param $data
      * @return Json
      */
-    public function list()
+    public function list(Request $request)
     {
-        $page = $this->request->param('page/d', 1);
-        $limit = $this->request->param('limit/d', 10);
-        $type = $this->request->param('type/s', 'all');
-        $appName = $this->request->param('app_name/s', '');
+        $page = $request->get('page/d', 1);
+        $limit = $request->get('limit/d', 10);
+        $type = $request->get('type/s', 'all');
+        $appName = $request->get('app_name/s', '');
         
         // 本地插件列表
         $localPlguin = $this->getLocalPlugins();
@@ -152,7 +152,7 @@ class Plugin extends AdminBaseController
     public function install(?array $data = [])
     {
         if(empty($data)) {
-            $data = Request::post(['name', 'token', 'version']);
+            $data = $this->request->post(['name', 'token', 'version']);
         }
         $data['type'] = 'install';
         
@@ -219,9 +219,9 @@ class Plugin extends AdminBaseController
      * @return Json
      * @throws Exception
      */
-    public function upgrade()
+    public function upgrade(Request $request)
     {
-        $data = Request::post(['name','token']);
+        $data = $request->post(['name','token']);
         $info = get_addons_info($data['name']);
         $data['version'] = $info['version'];
         $data['type'] = 'upgrade';
@@ -297,7 +297,7 @@ class Plugin extends AdminBaseController
     public function uninstall(?string $name = null)
     {
         if($name === null) {
-            $name = $this->request->param('name');
+            $name = $this->request->post('name');
         }
         
         try {
@@ -348,9 +348,9 @@ class Plugin extends AdminBaseController
      * @return Json
      * @throws Exception
      */
-    public function check()
+    public function check(Request $request)
     {
-        $name = $this->request->param('name');
+        $name = $request->post('name');
         
         try{
             $info = get_addons_info($name);
@@ -378,9 +378,9 @@ class Plugin extends AdminBaseController
      * @return string|Json
      * @throws Exception
      */
-    public function config()
+    public function config(Request $request)
     {
-        $name = Request::param('name');
+        $name = $request->post('name');
         try{
             $config = $this->getConfigArray($name);
         } catch (Exception $e) {
@@ -403,10 +403,10 @@ class Plugin extends AdminBaseController
      * @return Json
      * @throws Exception | \think\Response
      */
-    public function configSet()
+    public function configSet(Request $request)
     {
-        $name = Request::param('name');
-        $params = Request::param('params/a',[],'trim');
+        $name = $request->post('name');
+        $params = $request->post('params/a',[],'trim');
 
         if (empty($params)) {
             return json(['code' => -1,'msg' => 'no params！']);
@@ -452,9 +452,9 @@ class Plugin extends AdminBaseController
      * 订单
      * @return string|Json
      */
-    public function pay()
+    public function pay(Request $request)
     {
-        $data = Request::post(['id/d','name','token']);
+        $data = $request->post(['id/d','name','token']);
         $result = HttpHelper::withHost()->post('/v2/plugin/pay', $data);
         if(!HttpHelper::ok()) {
             return json(['code'=>-1,'msg'=>$result->getLastError()]);
@@ -478,9 +478,9 @@ class Plugin extends AdminBaseController
      * 支付查询
      * @return Json
      */
-    public function isPay()
+    public function isPay(Request $request)
     {
-        $params = Request::post(['out_order_no','token']);
+        $params = $request->post(['out_order_no','token']);
 
         $result = HttpHelper::withHost()->post('/v2/plugin/ispay', $params);
         
@@ -503,30 +503,29 @@ class Plugin extends AdminBaseController
      *
      * @return \think\Response
      */
-    public function add()
+    public function add(Request $request)
     {
         //添加版本
-        if(Request::isAjax()){
-            $data = Request::param();
-            $result = AddonsModel::create($data);
-            if($result){
-                $res = ['code'=>0,'msg'=>'添加成功'];
-            }else{
-                $res = ['code'=>-1,'msg'=>'添加失败'];
-            }
-            return json($res);
+        if($request->isPost()){
+            return View::fetch();
         }
-        return View::fetch();
+        
+        $data = $request->post();
+        $result = AddonsModel::create($data);
+        if($result){
+            return json(['code'=>0,'msg'=>'添加成功']);
+        }
+        return json(['code'=>-1,'msg'=>'添加失败']);
     }
 
     /**
      * 上传插件文件zip
      * @return Json
      */
-    public function uploadZip()
+    public function uploadZip(Request $request)
     {
-        $id = Request::param();
-        $file = request()->file('file');
+        $id = $request->param();
+        $file = $request->file('file');
         try {
             validate(['file'=>'filesize:2048|fileExt:zip,rar,7z'])
                 ->check(array($file));
@@ -550,9 +549,9 @@ class Plugin extends AdminBaseController
      *
      * @return void
      */
-    public function uploads()
+    public function uploads(Request $request)
     {
-        $type = Request::param('type');
+        $type = $request->post('type');
         return $this->uploadFiles($type);
     }
 

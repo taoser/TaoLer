@@ -79,7 +79,7 @@ class Login extends IndexBaseController
 			// 检验注册是否开放
 			if(config('taoler.config.is_regist') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，注册暂时未开放']);
 
-			$data = $request->only(['name','email','email_code','password','repassword','captcha']);
+			$data = $request->post(['name','email','email_code','password','repassword','captcha']);
 
 			// 验证码
 			if(Config::get('taoler.config.regist_type') == 1) {				

@@ -4,10 +4,10 @@ namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
 use Exception;
+use think\Request;
 use think\facade\View;
 use think\response\Json;
 use think\facade\Db;
-use think\Request;
 
 class Feedback extends AdminBaseController
 {
@@ -21,11 +21,11 @@ class Feedback extends AdminBaseController
         return View::fetch();
     }
 
-    public function list() : Json {
+    public function list(Request $request) : Json {
 
-        $status = Request::param('status/d', 0);
-        $page = Request::param('page/d', 1);
-        $limit = Request::param('limit/d', 10);
+        $status = $request->get('status/d', 0);
+        $page = $request->get('page/d', 1);
+        $limit = $request->get('limit/d', 10);
 
         $feed = Db::name('feedback')
         ->field('f.id,name,title,content,f.status,f.create_time')
@@ -48,9 +48,9 @@ class Feedback extends AdminBaseController
         ]);
     }
 
-    public function reply()
+    public function reply(Request $request)
     {
-        $id = Request::param('id/d');
+        $id = $request->get('id/d');
         $feed = Db::name('feedback')->where('id', $id)->find();
         if(!is_null($feed) && !empty($feed['reply'])) {
             $feed['reply'] = json_decode($feed['reply'], true);

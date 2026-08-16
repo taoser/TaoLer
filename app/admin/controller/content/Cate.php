@@ -57,7 +57,7 @@ class Cate extends AdminBaseController
         $addOrEdit = !is_null(input('id'));//true是编辑false新增
         $msg = $addOrEdit ? lang('edit') : lang('add');
         if($request->isAjax()) {
-            $data = $request->param(['id/d','pid/d','catename','ename','type','icon','image','tpl','desc','sort', 'url']);
+            $data = $request->post(['id/d','pid/d','catename','ename','type','icon','image','tpl','desc','sort', 'url']);
 
             if(isset($data['id']) && $data['pid'] == $data['id']) return json(['code'=>-1,'msg'=> $msg.'不能作为自己的子类']);
 
@@ -82,9 +82,9 @@ class Cate extends AdminBaseController
     }
 	
 	//删除栏目及栏目内容
-	public function delete()
+	public function delete(Request $request)
 	{
-        $id = $this->app->request->param('id/d');
+        $id = $request->post('id/d');
 
         return Category::delete($id);
 	}
@@ -92,7 +92,7 @@ class Cate extends AdminBaseController
 	// 动态审核
 	public function check(Request $request)
 	{
-        $param = $request->only(['id','name','value']);
+        $param = $request->post(['id','name','value']);
         $data = ['id' => $param['id'], $param['name'] => $param['value']];
         return Category::check($data);
 	}

@@ -12,9 +12,9 @@ namespace app\admin\controller\soft;
 
 use app\admin\controller\AdminBaseController;
 use Exception;
+use think\Request;
 use think\facade\View;
 use think\facade\Db;
-use think\facade\Request;
 use think\facade\Log;
 use think\facade\Config;
 use app\common\helper\FileHelper;
@@ -54,12 +54,12 @@ class Template extends AdminBaseController
         return View::fetch();
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $page = $this->request->param('page/d', 1);
-        $limit = $this->request->param('limit/d', 8);
-        $type = $this->request->param('type/s', 'all');
-        $appName = $this->request->param('app_name/s', '');
+        $page = $request->get('page/d', 1);
+        $limit = $request->get('limit/d', 8);
+        $type = $request->get('type/s', 'all');
+        $appName = $request->get('app_name/s', '');
 
         // 当前模板
         $currentTplName = $this->getSystem()['template'];
@@ -185,9 +185,9 @@ class Template extends AdminBaseController
     }
 
     // 安装，只能安装最新版
-    public function install() {
+    public function install(Request $request) {
 
-        $params = Request::param(['name', 'token', 'version']);
+        $params = $request->post(['name', 'token', 'version']);
         $params['type'] = 'install';
         $params['framework'] = config('taoler.version');
         $name = $params['name'];
@@ -227,9 +227,9 @@ class Template extends AdminBaseController
     }
 
     // 升级
-    public function upgrade()
+    public function upgrade(Request $request)
     {
-        $params = Request::param(['name', 'version', 'token']);
+        $params = $request->post(['name', 'version', 'token']);
         $params['type'] = 'upgrade';
         $params['framework'] = config('taoler.version');
     
@@ -270,8 +270,8 @@ class Template extends AdminBaseController
     }
 
     // 启用
-    public function enable() {
-        $name = Request::param('name');
+    public function enable(Request $request) {
+        $name = $request->get('name');
 
         try{
             Db::name('system')
@@ -289,8 +289,8 @@ class Template extends AdminBaseController
     }
 
     // 删除
-    public function uninstall() {
-        $name = Request::param('name');
+    public function uninstall(Request $request) {
+        $name = $request->get('name');
 
         $infoArr = $this->getViewInfos();
         if(count($infoArr) == 1) {
@@ -315,9 +315,9 @@ class Template extends AdminBaseController
      * 订单
      * @return string|Json
      */
-    public function pay()
+    public function pay(Request $request)
     {
-        $data = Request::post(['name','token']);
+        $data = $request->post(['name','token']);
         $response = HttpHelper::withHost()->post('/v2/template/pay', $data);
         if(!$response->ok()) {
             return json(['code' => -1, 'msg' => $response->getLastError()]);
@@ -334,9 +334,9 @@ class Template extends AdminBaseController
      * 支付查询
      * @return Json
      */
-    public function isPay()
+    public function isPay(Request $request)
     {
-        $param = Request::post(['out_order_no','token']);
+        $param = $request->post(['out_order_no','token']);
         $response = HttpHelper::withHost()->post('/v2/template/ispay', $param);
             
         if(!HttpHelper::ok()) {

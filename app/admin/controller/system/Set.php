@@ -12,8 +12,9 @@
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
-use think\facade\View;
 use think\Request;
+use think\Response;
+use think\facade\View;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Config;
@@ -23,7 +24,6 @@ use think\facade\Session;
 use think\facade\Cookie;
 use taoser\SetArr;
 use app\common\helper\SetArr as SetArrConf;
-use think\response\Json;
 
 class Set extends AdminBaseController
 {
@@ -40,7 +40,7 @@ class Set extends AdminBaseController
 	//网站设置显示
 	public function index()
     {
-		$template = FileHelper::getSubDirNames('../view');
+		$template = FileHelper::getSubDirNames(root_path().'view');
 		$email = Db::name('admin')->where('id',1)->value('email');
 		
         View::assign(['sysInfo'=>$this->sysInfo,'template'=>$template,'email'=>$email]);
@@ -49,18 +49,15 @@ class Set extends AdminBaseController
     }
 	
     //网站设置
-    public function website()
+    public function website(Request $request) : Response
     {
-		if(Request::isPost()){
-			$data = Request::post(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','state','icp','showlist','copyright']);
-			$system = new System();
-			$result = $system->sets($data,$this->sysInfo['clevel']);
-			if($result == 1){
-				return json(['code'=>0,'msg'=>'更新成功']);
-			} else {
-				return json(['code'=>-1,'msg'=>$result]);
-			}
+		$data = $request->post(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','state','icp','showlist','copyright']);
+		$system = new System();
+		$result = $system->sets($data,$this->sysInfo['clevel']);
+		if($result == 1){
+			return json(['code'=>0,'msg'=>'更新成功']);
 		}
+		return json(['code'=>-1,'msg'=>$result]);
     }
 	
 	//综合设置
@@ -72,104 +69,99 @@ class Set extends AdminBaseController
 	/**基础服务配置
      * parem $id
      */
-    public function config()
+    public function config(Request $request) : Response
     {
 		$conf = Config::get('taoler.config');
-		if(Request::isPost()){
-			$data = Request::param();
-			// halt($data);
-			if(!isset($data['regist_check'])) $data['regist_check'] =1;
-			if(!isset($data['posts_check'])) $data['posts_check'] =1;
-			if(!isset($data['commnets_check'])) $data['commnets_check'] =1;
-			
-			foreach($conf as $c=>$f){
-				if(array_key_exists($c,$data)){
-					$conf[$c] = (int) $data[$c];
-				}else{
-					$conf[$c] = 0;
-				}
+		
+		$data = $request->post();
+		// halt($data);
+		if(!isset($data['regist_check'])) $data['regist_check'] =1;
+		if(!isset($data['posts_check'])) $data['posts_check'] =1;
+		if(!isset($data['commnets_check'])) $data['commnets_check'] =1;
+		
+		foreach($conf as $c=>$f){
+			if(array_key_exists($c,$data)){
+				$conf[$c] = (int) $data[$c];
+			}else{
+				$conf[$c] = 0;
 			}
-
-			$value = [
-				'config'=>$conf
-			];
-
-			$result = SetArr::name('taoler')->edit($value);
-			if($result){
-				$res = ['code'=>0,'msg'=>'配置成功'];
-			} else {
-				$res = ['code'=>-1,'msg'=>'配置出错！'];
-			}
-			return json($res);
 		}
+
+		$value = [
+			'config'=>$conf
+		];
+
+		$result = SetArr::name('taoler')->edit($value);
+		if($result){
+			return json(['code'=>0,'msg'=>'配置成功']);
+		}
+		return json(['code'=>-1,'msg'=>'配置出错！']);	
     }
 
 	// 域名绑定
-	public function setDomain()
+	public function setDomain(Request $request) : Response
 	{
 		$str = file_get_contents(str_replace('\\', '/', app()->getConfigPath() . 'app.php'));
-		if(Request::isPost()){
-			$data = Request::post(['index','admin','domain_check']);
-			//$data = Request::param();
+		
+			$data = $request->post(['index','admin','domain_check']);
+			//$data = $request->param();
 			//dump($data);
 			if($data['domain_check'] == 'on') {
 				
 				// 过滤空项目
-				$domain_bind = [];
-				if(!empty($data['index'])){
-					$domain_bind[$data['index']] ='index';
-					if(config('app.default_app') == $domain_bind[$data['index']]) {
-						if(empty($data['admin'])) {
-							return json(['code'=>-1, 'msg'=>'默认应用和Index一致时必须绑定Admin域名,否则无法进入后台']);
-						}
+			$domain_bind = [];
+			if(!empty($data['index'])){
+				$domain_bind[$data['index']] ='index';
+				if(config('app.default_app') == $domain_bind[$data['index']]) {
+					if(empty($data['admin'])) {
+						return json(['code'=>-1, 'msg'=>'默认应用和Index一致时必须绑定Admin域名,否则无法进入后台']);
 					}
 				}
-				if(!empty($data['admin'])){
-					$domain_bind[$data['admin']] ='admin';
-				}
-
-
-				// 匹配整个domain_map数组
-				$pats_domain_bind = '/\'(domain_bind)\'[^\]]*\],/';
-				// 	空数组
-				$rep_domain_null = "'domain_bind'\t=> [\n\t],";
-				$str = preg_replace($pats_domain_bind, $rep_domain_null, $str);
-
-				// 匹配'domain_bind' => [
-				$pats = '/\'(domain_bind)\'\s*=>\s*\[\r?\n/';
-				preg_match($pats,$str,$arr);
-
-				// 拼接数组内字符串
-				$domainArr = '';
-				foreach($domain_bind as $k => $v){
-					$domainArr .= "\t\t'". $k. "'   => '" . $v . "',\n";
-				}
-
-				// 追加组成新数组写入文件
-				$reps = $arr[0].$domainArr;
-				$str = preg_replace($pats, $reps, $str);
-
-				$res = file_put_contents(app()->getConfigPath() . 'app.php', $str);
-
-				// 如果编辑了后台 ，需要清理退出缓存
-				if(!empty($domain_bind[$data['admin']])) {
-					//清空缓存
-					Cookie::delete('adminAuth');
-					Session::clear();
-				}
-			} else {
-				$res = SetArr::name('app')->delete([
-					'domain_bind'=> config('app.domain_bind'),
-				]);		
 			}
-			
-			if($res == true){
-				return json(['code'=>0,'msg'=>'成功']);
-			} else{
-				return json(['code'=>-1,'msg'=>'失败']);
+			if(!empty($data['admin'])){
+				$domain_bind[$data['admin']] ='admin';
 			}
+
+
+			// 匹配整个domain_map数组
+			$pats_domain_bind = '/\'(domain_bind)\'[^\]]*\],/';
+			// 	空数组
+			$rep_domain_null = "'domain_bind'\t=> [\n\t],";
+			$str = preg_replace($pats_domain_bind, $rep_domain_null, $str);
+
+			// 匹配'domain_bind' => [
+			$pats = '/\'(domain_bind)\'\s*=>\s*\[\r?\n/';
+			preg_match($pats,$str,$arr);
+
+			// 拼接数组内字符串
+			$domainArr = '';
+			foreach($domain_bind as $k => $v){
+				$domainArr .= "\t\t'". $k. "'   => '" . $v . "',\n";
+			}
+
+			// 追加组成新数组写入文件
+			$reps = $arr[0].$domainArr;
+			$str = preg_replace($pats, $reps, $str);
+
+			$res = file_put_contents(app()->getConfigPath() . 'app.php', $str);
+
+			// 如果编辑了后台 ，需要清理退出缓存
+			if(!empty($domain_bind[$data['admin']])) {
+				//清空缓存
+				Cookie::delete('adminAuth');
+				Session::clear();
+			}
+		} else {
+			$res = SetArr::name('app')->delete([
+				'domain_bind'=> config('app.domain_bind'),
+			]);		
 		}
-		
+			
+		if($res){
+			return json(['code'=>0,'msg'=>'成功']);
+		}
+		return json(['code'=>-1,'msg'=>'失败']);
+
 	}
 
 	/**

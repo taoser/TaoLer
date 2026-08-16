@@ -12,6 +12,8 @@ namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
 use Override;
+use think\Request;
+use think\Response;
 use think\facade\Db;
 use taoser\think\Auth;
 use think\facade\Lang;
@@ -232,12 +234,9 @@ class Menu extends AdminBaseController
      */
     public function hasChildren($pid)
     {
-        $data = Db::name('auth_rule')->field('pid')->where(['delete_time'=> 0,'status'=> 1,'ismenu'=>1,'pid'=>$pid])->select()->toArray();
-        if(count($data)) {
-            return true;
-        } else {
-            return false;
-        }
+        $count = Db::name('auth_rule')->where(['pid' => $pid, 'status' => 1, 'ismenu' => 1, 'delete_time' => 0])->count();
+
+        return $count ? true : false;
 
     }
 

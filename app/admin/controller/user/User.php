@@ -11,9 +11,9 @@
 namespace app\admin\controller\user;
 
 use app\admin\controller\AdminBaseController;
-use think\facade\View;
-use think\Request as Req;
 use think\Request;
+use think\Response;
+use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
@@ -57,11 +57,11 @@ class User extends AdminBaseController
 	}
 	
 	//用户表
-	public function list(): Json
+	public function list(Request $request): Response
 	{
-		$page = $this->request->get('page/d', 1);
-		$limit = $this->request->get('limit/d', 10);
-		$param = $this->request->get(['id/d','name','email','sex','status']);
+		$page = $request->get('page/d', 1);
+		$limit = $request->get('limit/d', 10);
+		$param = $request->get(['id/d','name','email','sex','status']);
 
 		$query = Db::name('user')
 		->alias('u')
@@ -110,48 +110,43 @@ class User extends AdminBaseController
 	}
 	
 	//添加用户
-	public function add()
+	public function add(Request $request): Response | string
 	{
-		if($this->request->isPost()){
-			$data = $this->request->post(['name','email','user_img','password','phone','sex']);
-            try{
-                validate(userValidate::class)
-                    ->scene('userReg')
-                    ->check($data);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return json(['code'=>-1,'msg'=>$e->getError()]);
-            }
-
-            $data['create_time'] = time();
-            $salt = substr(md5($data['create_time']),-6);
-            // 密码
-            $data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
-
-            try {
-                Db::name('user')->save($data);
-                $res = ['code'=>0,'msg'=>'添加成功'];
-            } catch (\Exception $e) {
-                $res = ['code'=>-1, 'msg'=>$e->getMessage()];
-            }
-
-			return json($res);
+		if($request->isPost()){
+			return View::fetch();
 		}
-		
-		return View::fetch();
+
+		$data = $request->post(['name','email','user_img','password','phone','sex']);
+		try{
+			validate(userValidate::class)->scene('userReg')->check($data);
+
+			$data['create_time'] = time();
+			$salt = substr(md5($data['create_time']),-6);
+			// 密码
+			$data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
+
+			Db::name('user')->save($data);
+			return json(['code'=>0,'msg'=>'添加成功']);
+
+		} catch (ValidateException $e) {
+			return json(['code'=>-1,'msg'=>$e->getError()]);
+		} catch (\Exception $e) {
+			return json(['code'=>-1, 'msg'=>$e->getMessage()]);
+		}
+
 	}
 	
 	//编辑用户
-	public function edit()
+	public function edit(Request $request): Response | string
 	{
-		if(!$this->request->isPost()){
-			$id = $this->request->get('id/d');
+		if(!$request->isPost()){
+			$id = $request->get('id/d');
 			$user = $this->model::find($id);
 			View::assign('user',$user);
 			return View::fetch();
 		}
 		
-		$data = $this->request->post(['id/d','name','email','user_img','password','phone','sex']);
+		$data = $request->post(['id/d','name','email','user_img','password','phone','sex']);
 
 		if(empty($data['password'])) {
 			unset($data['password']);
@@ -171,9 +166,9 @@ class User extends AdminBaseController
 	}
 	
 	//删除用户
-	public function delete()
+	public function delete(Request $request): Response
 	{
-		$id = $this->app->get('id');
+		$id = $request->get('id');
 		$ids = explode(',', $id);
 		
 		$result = $this->model::destroy($ids);
@@ -185,9 +180,9 @@ class User extends AdminBaseController
 	}
 
 	//清除用户资源
-	public function clear()
+	public function clear(Request $request): Response
 	{
-		$id = $this->app->get('id');
+		$id = $request->get('id');
 		try{
 
 			$articleCount = Article::where('user_id', $id)->count();
@@ -204,12 +199,10 @@ class User extends AdminBaseController
 					$query->where('user_id','=', $id);
 				});
 			}
-			
+			return json(['code'=>0,'msg'=>'清空资源成功']);
 		} catch(Exception $e) {
 			return json(['code'=>-1,'msg'=>'清空资源失败']);
 		}
-			
-		return json(['code'=>0,'msg'=>'清空资源成功']);
 	}
 	
 	//上传头像
@@ -228,9 +221,9 @@ class User extends AdminBaseController
 	
 	
 	//审核用户
-	public function check()
+	public function check(Request $request): Response
 	{
-		$data = $this->request->post(['id','status']);
+		$data = $request->post(['id','status']);
 		//获取状态
 		$res = Db::name('user')->save(['status' => $data['status'], 'id' => $data['id']]);
 		if($res){
@@ -241,9 +234,9 @@ class User extends AdminBaseController
 	}
 	
 	//超级管理员
-	public function auth()
+	public function auth(Request $request): Response
 	{
-		$data = $this->request->post(['id/d', 'auth']);
+		$data = $request->post(['id/d', 'auth']);
 
 		$user = Db::name('user')->save($data);
 		if($user){
@@ -257,8 +250,9 @@ class User extends AdminBaseController
 	}
 
 	//登录用户中心
-	public function goUserHome() {
-		$id = (int)input('id');
+	public function goUserHome(Request $request): Response
+	 {
+		$id = $request->get('id/d');
 		Session::delete('user_name');
 		Session::delete('user_id');
 		Cookie::delete('auth');
@@ -274,9 +268,9 @@ class User extends AdminBaseController
 	}
 
 	// 编辑用户积分
-	public function editField()
+	public function editField(Request $request): Response
 	{
-		$param = $this->request->post(['id/d','field','point/d','note']);
+		$param = $request->post(['id/d','field','point/d','note']);
 		if($param['field'] == 'point') {
 			$data = ['point' => $param['point']];
 		} else {
@@ -292,9 +286,9 @@ class User extends AdminBaseController
 	}
 	
 	// 编辑用户会员等级
-	public function editVipLevel()
+	public function editVipLevel(Request $request): Response
 	{
-		$param = $this->request->post(['id/d','vip/d']);
+		$param = $request->post(['id/d','vip/d']);
 		$res = Db::name('user')
 		->where('id', $param['id'])
 		->update(['vip' => $param['vip']]);
@@ -310,9 +304,9 @@ class User extends AdminBaseController
      * 用户登录
      * @return mixed|Json
      */
-    public function userLogin()
+    public function userLogin(Request $request): Response
     {
-        $param = $this->request->post(['name','password']);
+        $param = $request->post(['name','password']);
 
         $result = HttpHelper::withHost()->post('/v1/user/login_api', $param);
 

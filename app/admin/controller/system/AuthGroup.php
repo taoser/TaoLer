@@ -11,8 +11,8 @@
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
-use think\facade\View;
 use think\Request;
+use think\facade\View;
 use think\facade\Db;
 use think\exception\ValidateException;
 use app\admin\model\AuthGroup as AuthGroupModel;
@@ -51,10 +51,10 @@ class AuthGroup extends AdminBaseController
 	}
 	
 	//角色
-	public function list()
+	public function list(Request $request): Response
 	{
 
-		$id = Request::param('id/d');
+		$id = $request->get('id/d');
 		$query = $this->model->field('id,title,limits,descr,status');
 		if(!empty($id)){
 			$query->where('id', $id);
@@ -79,83 +79,75 @@ class AuthGroup extends AdminBaseController
 	}
 	
 	//角色添加
-	public function add()
+	public function add(Request $request): Response | string
 	{
-		if(Request::isPost()){
-			$data = Request::param();
-			$result = AuthGroupModel::create($data);
-			if($result) {
-				$res = ['code'=>0,'msg'=>'添加成功'];
-			} else {
-				$res = ['code'=>-1,'msg'=>'添加失败'];
-			}
-			return json($res);
+		if(!$request->isPost()){
+			$menus = $this->getRoleMenu(1);
+			View::assign('menus',$menus);
+			
+			return View::fetch();
 		}
 		
-		$menus = $this->getRoleMenu(1);
-		View::assign('menus',$menus);
-		
-		return View::fetch();
+		$data = $request->post();
+		$result = AuthGroupModel::create($data);
+		if($result) {
+			return json(['code'=>0,'msg'=>'添加成功']);
+		}
+		return json(['code'=>-1,'msg'=>'添加失败']);
 	}
 	
 	//角色编辑
-	public function edit()
+	public function edit(Request $request): Response | string
 	{
 		
-		if(Request::isPost()){
-			$data = Request::param();
-
-/*			
-			if(!strpos($data['rules'],'1,2,3,4,5'))
-			{
-				$data['rules'] = substr_replace($data['rules'],"1,2,3,4,5,",0,0);
-			}
-*/			
-			$rule = AuthGroupModel::update($data);
-			if($rule){
-				$res = ['code'=>0,'msg'=>'保存成功'];
-			} else {
-				$res = ['code'=>-1,'msg'=>'保存失败'];
-			}
-			return json($res);
+		if(!$request->isPost()){
+			$id = $request->get('id/d');
+			$menus = $this->getRoleMenu(1);
+			$role = AuthGroupModel::find($id);
+			$rus = explode(',',$role->rules);
+				
+			View::assign(['role'=>$role,'rus'=>$rus,'menus'=>$menus]);
+			return View::fetch();
 		}
-		$menus = $this->getRoleMenu(1);
-		$role = AuthGroupModel::find(input('id'));
-		$rus = explode(',',$role->rules);
-			
-		View::assign(['role'=>$role,'rus'=>$rus,'menus'=>$menus]);
-		return View::fetch();
+
+		$data = $request->post();
+/*			
+		if(!strpos($data['rules'],'1,2,3,4,5'))
+		{
+			$data['rules'] = substr_replace($data['rules'],"1,2,3,4,5,",0,0);
+		}
+*/			
+		$rule = AuthGroupModel::update($data);
+		if($rule){
+			return json(['code'=>0,'msg'=>'保存成功']);
+		}
+		return json(['code'=>-1,'msg'=>'保存失败']);
 	}
 
 	//角色删除
-	public function delete()
+	public function delete(Request $request): Response
 	{
-		$id = Request::param('id');
+		$id = $request->get('id');
 		$ids = explode(',',$id);
-		if(Request::isPost()){
-			$role =AuthGroupModel::select($ids);
-			$result = $role->delete();
-				if($result){
-					$res = ['code'=>0,'msg'=>'删除成功'];
-				}else{
-					$res = ['code'=>-1,'msg'=>'删除失败'];
-				}
-				return json($res);
-			}
+		
+		$role =AuthGroupModel::select($ids);
+		$result = $role->delete();
+		if($result){
+			return json(['code'=>0,'msg'=>'删除成功']);
+		}
+		return json(['code'=>-1,'msg'=>'删除失败']);
+		
 	}
 	
 	//角色审核
-	public function check()
+	public function check(Request $request): Response
 	{
-		$data = Request::param(['id','status']);
+		$data = $request->post(['id','status']);
 
 		//获取状态
 		$res = Db::name('auth_group')->where('id',$data['id'])->save(['status' => $data['status']]);
 		if($res){
-			if($data['status'] == 1){
-				return json(['code'=>0,'msg'=>'角色审核通过','icon'=>6]);
-			}
-			return json(['code'=>0,'msg'=>'禁用此角色','icon'=>5]);
+			return json(['code'=>0,'msg'=> $data['status'] == 1?'角色审核通过' : '禁用此角色', 'icon'=>6]); 
 		}
 		return json(['code'=>-1,'msg'=>'审核出错']);
 	}
@@ -165,46 +157,46 @@ class AuthGroup extends AdminBaseController
 	 *
 	 * @return void
 	 */
-	public function auth()
+	public function auth(Request $request): Response | string
 	{
-		$roleId = request()->get('id');
-		//
-		if(Request::isPost()) {
-			$data = Request::post(['group_id', 'uid']);
-			$uidArray = Db::name('auth_group_access')->where('group_id', (int) $data['group_id'])->column('uid');
-			
-			$newUids = explode(',', $data['uid']);
-			try {
-				// 1.循环原有的UID跟现在提交过来的UID比较,没有在新uid的，被删除
-				foreach($uidArray as $oldUid) {
-					if(!in_array($oldUid, $newUids)){
-						Db::name('auth_group_access')->where('uid', $oldUid)->delete();
-					}
-				}
-				
-				// 2.循环现有的UID再次跟已存在的UID比较，没有的，新增加
-				$uids = Db::name('auth_group_access')->where('group_id', (int) $data['group_id'])->column('uid');			
-				foreach($newUids as $newUid){
-					if(!in_array($newUid, $uids)) {
-						Db::name('auth_group_access')->save(['uid' => $newUid, 'group_id' => (int) $data['group_id']]);
-					}
-				}
-				
-				return json(['code' => 0, 'msg' => 'ok']);
-			} catch (\Exception $e) {
-				return json(['code' => -1, 'msg' => $e->getMessage()]);
-			}
-		
-			// $groupAccess = new AuthGroupAccess();
-			// $groupAccess->saveAll($array);
+
+		if(!$request->isPost()) {
+			$roleId = $request->get('id');
+			$admin = Db::name('admin')->field('id, username')->select();
+			$role = Db::name('auth_group')->field('id,title')->where('id', (int) $roleId)->find();
+			$uidAccess = Db::name('auth_group_access')->where('group_id', (int) $roleId)->column('uid');
+
+			View::assign(['role'=>$role, 'admin' => $admin, 'uidAccess' => $uidAccess]);
+			return View::fetch();
 		}
 
-		$admin = Db::name('admin')->field('id, username')->select();
-		$role = Db::name('auth_group')->field('id,title')->where('id', (int) $roleId)->find();
-		$uidAccess = Db::name('auth_group_access')->where('group_id', (int) $roleId)->column('uid');
-
-		View::assign(['role'=>$role, 'admin' => $admin, 'uidAccess' => $uidAccess]);
-		return View::fetch();
+		$data = $request->post(['id/d','group_id/d', 'uid/d']);
+		$uidArray = Db::name('auth_group_access')->where('group_id', $data['group_id'])->column('uid');
+		
+		$newUids = explode(',', $data['uid']);
+		try {
+			// 1.循环原有的UID跟现在提交过来的UID比较,没有在新uid的，被删除
+			foreach($uidArray as $oldUid) {
+				if(!in_array($oldUid, $newUids)){
+					Db::name('auth_group_access')->where('uid', $oldUid)->delete();
+				}
+			}
+			
+			// 2.循环现有的UID再次跟已存在的UID比较，没有的，新增加
+			$uids = Db::name('auth_group_access')->where('group_id', (int) $data['group_id'])->column('uid');			
+			foreach($newUids as $newUid){
+				if(!in_array($newUid, $uids)) {
+					Db::name('auth_group_access')->save(['uid' => $newUid, 'group_id' => (int) $data['group_id']]);
+				}
+			}
+			
+			return json(['code' => 0, 'msg' => 'ok']);
+		} catch (\Exception $e) {
+			return json(['code' => -1, 'msg' => $e->getMessage()]);
+		}
+	
+		// $groupAccess = new AuthGroupAccess();
+		// $groupAccess->saveAll($array);
 	}
 
 	

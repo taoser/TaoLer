@@ -10,8 +10,9 @@
 
 namespace app\admin\controller;
 
-use think\facade\View;
 use think\Request;
+use think\Response;
+use think\facade\View;
 use think\facade\Session;
 use app\admin\validate\Admin;
 use think\exception\ValidateException;
@@ -26,10 +27,7 @@ class Login extends AdminBaseController
 		}
 
 		$data = $request->post(['username', 'password', 'captcha', 'remember']);
-		if (empty($data)) {
-			$data = $request->param(['username', 'password', 'captcha', 'remember']);
-		}
-
+		
 		try {
 			validate(Admin::class)
 			->scene('Login')

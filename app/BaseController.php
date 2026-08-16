@@ -156,7 +156,7 @@ abstract class BaseController
 	{
 		//域名转换为无http协议
         $www = stripos($url,'://') ? substr(stristr($url,'://'),3) : $url;
-		$htpw = Request::scheme().'://'. $www;
+		$htpw = $this->request->scheme().'://'. $www;
 		return  $htpw;
 	}
 

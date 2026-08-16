@@ -1,6 +1,8 @@
 <?php
 namespace app\admin\controller\system;
 
+use think\Request;
+use think\Response;
 use app\admin\controller\AdminBaseController;
 use app\common\helper\HttpHelper;
 use think\response\Json;
@@ -26,11 +28,11 @@ class Index extends AdminBaseController
     /**
 	 * 系统调试
 	 * @param string $status 调试状态
-	 * @return \think\response\Json
+	 * @return Response
 	 */
-	public function debugSwitch(): Json
+	public function debugSwitch(Request $request): Response
 	{
-		$status = $this->request->param('status');
+		$status = $request->post('status');
 
 		try {
 			$envFile = root_path() . '.env';

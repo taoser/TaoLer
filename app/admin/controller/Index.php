@@ -10,10 +10,11 @@
 
 namespace app\admin\controller;
 
+use think\Request;
+use think\Response;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
-use think\Request;
 use think\facade\Cache;
 use think\facade\Log;
 use think\facade\Config;
@@ -165,9 +166,9 @@ class Index extends AdminBaseController
     }
 	
 	//动态信息
-	public function news()
+	public function news(Request $request)
 	{
-		$data = Request::post(['page/d', 'limit/d']);
+		$data = $request->post(['page/d', 'limit/d']);
 		
 		$news = Cache::get('news'.$data['page'].'_'.$data['limit']);
 		if(empty($news)){
@@ -181,63 +182,57 @@ class Index extends AdminBaseController
 	}
 	
 	//提交反馈
-	public function cunsult()
+	public function cunsult(Request $request)
 	{
-		if(Request::isPost()){
-			$data = Request::post(['type','title','content','post','uid']);
+		$data = $request->post(['type','title','content','post','uid']);
 
-			$response = HttpHelper::withHost()->post('/v1/reply', $data);
-			$data['poster'] = Session::get('admin_id');
-			unset($data['post']);
+		$response = HttpHelper::withHost()->post('/v1/reply', $data);
+		$data['poster'] = Session::get('admin_id');
+		unset($data['post']);
 
-			if($response->ok()){
-				$result = $response->toJson();
-				$res = Cunsult::create($data);
-				return json(['code'=>0,'msg' => $result->msg]);
-			}
-
-			return json(['code'=>-1,'msg'=>'失败，请稍后再试提交...']);
+		if($response->ok()){
+			$result = $response->toJson();
+			$res = Cunsult::create($data);
+			return json(['code'=>0,'msg' => $result->msg]);
 		}
-		
+
+		return json(['code'=>-1,'msg'=>'失败，请稍后再试提交...']);
 	}
 	
 	//问题和反馈
 	public function reply()
 	{
-		if(Request::isPost()) {
+		$replys = Db::name('cunsult')
+			->whereWeek('create_time')
+			->order('create_time', 'desc')
+			->paginate(10);
 		
-			$replys = Db::name('cunsult')
-				->whereWeek('create_time')
-				->order('create_time', 'desc')
-				->paginate(10);
-			
-			$count = $replys->total();
-			$res = [];
-			if ($count) {
-				$res = ['code'=>0,'msg'=>'','count'=>$count];
-				foreach($replys as $k => $v){
-					$res['data'][] = ['id'=>$v['id'],'content'=>$v['content'],'title'=>$v['title'],'time'=>Date('Y-m-d',$v['create_time'])];
-				}
-			} else {
-				$res = ['code'=>-1,'msg'=>'本周还没问题'];
+		$count = $replys->total();
+		$res = [];
+		if ($count) {
+			$res = ['code'=>0,'msg'=>'','count'=>$count];
+			foreach($replys as $k => $v){
+				$res['data'][] = ['id'=>$v['id'],'content'=>$v['content'],'title'=>$v['title'],'time'=>Date('Y-m-d',$v['create_time'])];
 			}
-			return json($res);
-			}
+		} else {
+			$res = ['code'=>-1,'msg'=>'本周还没问题'];
+		}
+		return json($res);	
 	}
 	
 	//删除反馈
-	public function delReply()
+	public function delReply(Request $request)
 	{
-		if(Request::isPost()){
-			$res = Db::name('cunsult')->delete(input('id'));
-			 
-			if($res){
-				$res = ['code'=>0,'msg'=>'删除成功！'];
-			}else{
-				$res = ['code'=>-1,'msg'=>'删除失败！'];
-			}
-			return json($res);
+		$id = $request->get('id');		
+		$res = Db::name('cunsult')->delete($id);
+			
+		if($res){
+			$res = ['code'=>0,'msg'=>'删除成功！'];
+		}else{
+			$res = ['code'=>-1,'msg'=>'删除失败！'];
 		}
+		return json($res);
+		
 	}
 	
 	

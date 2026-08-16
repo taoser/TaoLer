@@ -12,8 +12,8 @@ namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
 use think\App;
-use think\facade\View;
 use think\Request;
+use think\facade\View;
 use think\facade\Db;
 use app\facade\Comment as CommentModel;
 use think\facade\Log;
@@ -52,15 +52,15 @@ class Comment extends AdminBaseController
 	 * 
 	 * @return \think\Response\Json 返回评论列表数据
 	 */
-	public function list()
+	public function list(Request $request)
 	{
         try {
             // 获取请求参数并进行安全过滤
             $page = max(1, (int)input('page', 1));
             $limit = min(100, (int)input('limit', 10));
-            $name = trim(Request::param('name', ''));
-            $content = trim(Request::param('content', ''));
-            $status = Request::param('status', '');
+            $name = trim($request->get('name', ''));
+            $content = trim($request->get('content', ''));
+            $status = $request->get('status', '');
             
             // 构建查询条件
             $where = [];
@@ -144,11 +144,11 @@ class Comment extends AdminBaseController
 	 * 
 	 * @return Json 返回删除结果
 	 */
-	public function delete()
+	public function delete(Request $request)
 	{
 		
         try {
-            $id = Request::param('id');
+            $id = $request->get('id');
             // 验证参数
             if (empty($id)) {
                 return json(['code' => -1, 'msg' => '参数错误']);
@@ -188,17 +188,17 @@ class Comment extends AdminBaseController
 	 * 
 	 * @return Json 返回审核结果
 	 */
-	public function check()
+	public function check(Request $request)
 	{
 		try {
             // 验证请求类型
-            if (!Request::isPost()) {
+            if (!$request->isPost()) {
                 return json(['code' => -1, 'msg' => '非法请求']);
             }
             
             // 获取并验证参数
-            $id = Request::param('id/d');
-            $status = (int)Request::param('status', 0);
+            $id = $request->get('id/d');
+            $status = $request->get('status/d', 0);
             
             if ($id <= 0) {
                 return json(['code' => -1, 'msg' => '参数错误']);
@@ -239,16 +239,16 @@ class Comment extends AdminBaseController
 	 *
 	 * @return Json 返回审核结果
 	 */
-	public function checkSelect()
+	public function checkSelect(Request $request)
 	{
         try {
             // 验证请求类型
-            if (!Request::isPost()) {
+            if (!$request->isPost()) {
                 return json(['code' => -1, 'msg' => '非法请求', 'icon' => 5]);
             }
             
             // 获取并验证参数
-            $param = Request::param('data');
+            $param = $request->post('data');
             
             if (empty($param) || !is_array($param)) {
                 return json(['code' => -1, 'msg' => '参数错误', 'icon' => 5]);

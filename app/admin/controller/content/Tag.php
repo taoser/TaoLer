@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
-use think\facade\View;
 use think\Request;
+use think\facade\View;
 use app\facade\TagList;
 use app\facade\Tag as TagModel;
 use think\response\Json;
@@ -36,10 +36,10 @@ class Tag extends AdminBaseController
      *
      * @return void
      */
-    public function list(): Json
+    public function list(Request $request): Json
     {
-        $page = $this->request->param('page/d', 1);
-        $limit = $this->request->param('limit/d', 10);
+        $page = $request->get('page/d', 1);
+        $limit = $request->get('limit/d', 10);
     
         $tags = TagModel::getTagList($page, $limit);
 
@@ -55,52 +55,51 @@ class Tag extends AdminBaseController
         return json([ 'code'=>-1, 'msg'=>'no data']);
     }
 
-    public function add()
+    public function add(Request $request)
     {
-        if(Request::isPost()) {
-            $data = Request::post(['name','ename','keywords','description','title']);
-            // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-
-            $res = TagModel::save($data);
-            if($res == true){
-                return json(['code'=>0,'msg'=>'设置成功']);
-            }
+        if(!$request->isPost()) {
+            return View::fetch();
         }
-        return view();
+        $data = $request->post(['name','ename','keywords','description','title']);
+        // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+        $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+
+        $res = TagModel::save($data);
+        if($res == true){
+            return json(['code'=>0,'msg'=>'设置成功']);
+        }
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
 
-        if(Request::isPost()) {
-            $data = Request::post(['name','ename','id/d','keywords','description','title']);
-
-            // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-            try{
-                TagModel::update($data);
-                return json(['code'=>0,'msg'=>'设置成功']);
-            } catch(\Exception $e) {
-                return json(['code'=>-1,'msg'=>$e->getMessage()]);
-            }
+        if(!$request->isPost()) {
+            $id = $request->get('id/d');
+            $tag = TagModel::find($id);
+            View::assign('tag',$tag);
+            return View::fetch();
         }
 
-        $id = $this->request->param('id/d');
-        $tag = TagModel::find($id);
+        $data = $request->post(['name','ename','id/d','keywords','description','title']);
 
-        View::assign('tag',$tag);
-
-        return View::fetch();
+        // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
+        $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
+        try{
+            TagModel::update($data);
+            return json(['code'=>0,'msg'=>'设置成功']);
+        } catch(\Exception $e) {
+            return json(['code'=>-1,'msg'=>$e->getMessage()]);
+        }
     }
 
     /**
      * 删除
      * @return \think\response\Json
      */
-    public function delete()
+    public function delete(Request $request)
     {
-        $res = TagModel::del((int)input('id'));
+        $id = $request->get('id/d');
+        $res = TagModel::del($id);
         if($res){
             return json(['code'=>0,'msg'=>'删除成功']);
         }
@@ -112,11 +111,11 @@ class Tag extends AdminBaseController
      *
      * @return void
      */
-    public function getAllTag()
+    public function getAllTag(Request $request)
     {
         $data = [];
-        $page = $this->request->param('page/d', 1);
-        $limit = $this->request->param('limit/d', 10);
+        $page = $request->get('page/d', 1);
+        $limit = $request->get('limit/d', 10);
     
         $tags = TagModel::getTagList($page, $limit);
         if($tags['total'] > 0) {
@@ -129,8 +128,9 @@ class Tag extends AdminBaseController
     }
 
     // 文章的tag
-    public function getArticleTag($id)
+    public function getArticleTag(Request $request)
     {
+        $id = $request->get('id/d');
         $data = [];
         $artTags = TagList::where('article_id', $id)->select();
 

@@ -22,37 +22,38 @@ class Product extends AdminBaseController
         return json(['code'=>0,'msg'=>'success','data'=>$res]);
     }
 
-    public function add()
+    public function add(Request $request)
     {
-        if(Request::isPost()){
-            $data = $this->request->param(['cover','covers','name','price','market_price','sketch','intro','is_recommend','is_new','sort','is_attribute']);
-            $res = ProductModel::addOrEdit($data);
-            if($res) {
-                return json(['code'=>1,'msg'=>'error']);
-            }
-            return json(['code'=>0,'msg'=>'success']);
-            
+        if(!$request->isPost()){
+            return View::fetch();
         }
-        return View::fetch();
+        
+        $data = $request->post(['cover','covers','name','price','market_price','sketch','intro','is_recommend','is_new','sort','is_attribute']);
+        $res = ProductModel::addOrEdit($data);
+        if($res) {
+            return json(['code'=>1,'msg'=>'error']);
+        }
+        return json(['code'=>0,'msg'=>'success']);
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
-        if(Request::isPost()){
-            $data = $this->request->param(['id','title','sort']);
-            $res = ProductModel::update($data);
-            if(!$res){
-                return json(['code'=>1,'msg'=>'error']);
-            }
-            return json(['code'=>0,'msg'=>'success']);
+        if(!$request->isPost()) {
+            return View::fetch();
         }
 
-        return View::fetch();
+        $data = $request->post(['id','title','sort']);
+        $res = ProductModel::update($data);
+        if(!$res){
+            return json(['code'=>1,'msg'=>'error']);
+        }
+        return json(['code'=>0,'msg'=>'success']);
+        
     }
 
-    public function info()
+    public function info(Request $request)
     {
-        $id = $this->request->param('id');
+        $id = $request->get('id/d');
         
         $product = ProductModel::find($id);
         if(!$product){

@@ -9,10 +9,10 @@
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
-use app\entity\Admin as AdminEntity;
-use think\Response;
-use think\facade\View;
 use think\Request;
+use think\Response;
+use app\entity\Admin as AdminEntity;
+use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
@@ -50,9 +50,9 @@ class Admin extends AdminBaseController
 	 *
 	 * @return Response
 	 */
-	public function list():Response
+	public function list(Request $request):Response
 	{
-		$data = Request::post(['id','username','mobile','email']);
+		$data = $request->post(['id','username','mobile','email']);
 		$map = array_filter($data);
 
 		$admins = $this->model
@@ -70,9 +70,9 @@ class Admin extends AdminBaseController
 
 	
 	//管理员审核
-	public function check():Response
+	public function check(Request $request):Response
 	{
-		$data = Request::post(['id', 'status']);
+		$data = $request->post(['id', 'status']);
 
         if($data['id'] == 1 && $data['status'] == -1) {
             return json(['code' => -1, 'msg' => '无法禁用超级管理员']);
@@ -91,51 +91,53 @@ class Admin extends AdminBaseController
 	}
 	
 	//添加管理员
-	public function add()
+	public function add(Request $request):Response
 	{
-		if(Request::isPost()){
-			$data = Request::post(['username','email','password','mobile']);
-			$roleId = request()->get('roleId');
-	
-			$data['password'] = PasswordHash::make($data['password']);
-			
-			$admin = $this->model->save($data);
-			//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
-			if($admin){
-				return json(['code'=>0,'msg'=>'添加成功']);
-			}
-
-			return json(['code'=>-1,'msg'=>'添加失败']);
+		if(!$request->isPost()){
+			//$auth_group = Db::name('auth_group')->select();
+			//View::assign(['auth_group'=>$auth_group]);
+			return View::fetch();
 		}
-		//$auth_group = Db::name('auth_group')->select();
-		//View::assign(['auth_group'=>$auth_group]);
-		return View::fetch();
+
+		$data = $request->post(['username','email','password','mobile']);
+		$roleId = $request->get('roleId');
+
+		$data['password'] = PasswordHash::make($data['password']);
+		
+		$admin = $this->model->save($data);
+		//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
+		if($admin){
+			return json(['code'=>0,'msg'=>'添加成功']);
+		}
+
+		return json(['code'=>-1,'msg'=>'添加失败']);
 	}
 	
 	//管理员编辑
-	public function edit()
+	public function edit(Request $request): Response | string
 	{
-		$id = Request::param('id/d');
-		$admin = $this->model->find($id);
 		
-		if(Request::isPost()){
-			$data = Request::post(['id','email','password','mobile','roleId']);
-			$result = AdminEntity::edit($data);
-			//Db::name('auth_group_access')->where('uid',$data['id'])->update(['group_id'=>$data['auth_group_id']]);
-			if($result){
-				return json(['code'=>0,'msg'=>'编辑成功']);
-			}
-			return json(['code'=>-1,'msg'=>'编辑失败']);
+		if(!$request->isPost()){
+			$id = $request->get('id');
+			$admin = $this->model->find($id);
+			//$auth_group = Db::name('auth_group')->select();,'auth_group'=>$auth_group
+			View::assign(['admin' => $admin]);
+			return View::fetch();
 		}
-		//$auth_group = Db::name('auth_group')->select();,'auth_group'=>$auth_group
-		View::assign(['admin'=>$admin]);
-		return View::fetch();
+
+		$data = $request->post(['id/d','email','password','mobile','roleId']);
+		$result = $this->model->edit($data);
+		//Db::name('auth_group_access')->where('uid',$data['id'])->update(['group_id'=>$data['auth_group_id']]);
+		if($result){
+			return json(['code'=>0,'msg'=>'编辑成功']);
+		}
+		return json(['code'=>-1,'msg'=>'编辑失败']);
 	}
 	
 	//删除管理员
-	public function delete()
+	public function delete(Request $request):Response
 	{
-		$id = Request::param('id/d');
+		$id = $request->get('id');
 		
 		$user = $this->model->find($id);
 		$result = $user->delete();
@@ -147,9 +149,10 @@ class Admin extends AdminBaseController
 	}
 
 	//基本资料浏览
-	public function info()
-    {
-		$admin = $this->model->find($this->aid);
+	public function info(Request $request)
+	{
+		$id = $request->aid;
+		$admin = $this->model->find($id);
 		$auths = $admin->adminGroup;
 		$authName = [];
 		foreach($auths as $v){
@@ -161,10 +164,11 @@ class Admin extends AdminBaseController
 		return View::fetch();
     }
 
-	//修改基本资料显示
-	public function infoEdit()
+	//修改基本资料
+	public function infoEdit(Request $request): Response | string
     {
-		$admin = $this->model->find($this->aid);
+		$id = $request->aid;
+		$admin = $this->model->find($id);
 		$auths = $admin->adminGroup;
 		$authName = [];
 		foreach($auths as $v){
@@ -177,11 +181,12 @@ class Admin extends AdminBaseController
     }
 
 	//管理员资料更新
-	public function infoSet()
+	public function infoSet(Request $request): Response
     {
-		$admin = $this->model->find($this->aid);
+		$id = $request->aid;
+		$admin = $this->model->find($id);
         
-		$data = Request::post(['nickname','mobile','email','remarks']);
+		$data = $request->post(['nickname','mobile','email','remarks']);
 		$result = $admin->save($data);
 		if($result){
 			return json(['code'=>0,'msg'=>'更新成功']);
@@ -196,18 +201,18 @@ class Admin extends AdminBaseController
     }
 	
     //修改密码
-	public function repassSet() 
+	public function repassSet(Request $request): Response
 	{
 		
-		$data = Request::post(['oldPassword','password','repassword']);
-		$data['admin_id'] = $this->aid;
+		$data = $request->post(['oldPassword','password','repassword']);
+		$data['admin_id'] = $request->aid;
 		
 		try{
 			$result = $this->model->setpass($data);
 			if($result){
-				return json(['code'=>0,'msg'=>'修改密码成功']);
+				return json(['code'=>0,'msg'=>'修改成功']);
 			}
-			return json(['code'=>-1,'msg'=>'修改密码失败']);
+			return json(['code'=>-1,'msg'=>'修改失败']);
 		} catch (\Exception $e) {
 			return json(['code' => -1, 'msg' => $e->getMessage()]);
 		}
@@ -217,7 +222,7 @@ class Admin extends AdminBaseController
      * 清除缓存Cache
      * @return \think\response\Json
      */
-	public function clearCache()
+	public function clearCache(Request $request): Response
     {
 		try{
 			//清理缓存
@@ -234,7 +239,7 @@ class Admin extends AdminBaseController
     }
 	
 	//退出登陆
-	public function logout()
+	public function logout(Request $request): Response
 	{
 		//清空缓存
 		Cookie::delete('adminAuth');

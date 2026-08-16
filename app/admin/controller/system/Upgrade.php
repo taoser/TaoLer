@@ -21,8 +21,9 @@
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
-use think\facade\View;
 use think\Request;
+use think\Response;
+use think\facade\View;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Log;
@@ -47,9 +48,9 @@ class Upgrade extends AdminBaseController
 		parent::initialize();
         // 初始化系统信息
         //站点代码的根目录
-        $this->root_dir = "../";
-        $this->backup_dir = "../runtime/update/backup_dir/";
-        $this->upload_dir = "../runtime/update/upload_dir/";
+        $this->root_dir = root_path();
+        $this->backup_dir = runtime_path()."update/backup_dir/";
+        $this->upload_dir = runtime_path()."update/upload_dir/";
 		$this->sys_version = Config::get('taoler.version');
 		$this->pn = Config::get('taoler.appname');
 		$this->sys = $this->getSystem();
@@ -308,9 +309,9 @@ class Upgrade extends AdminBaseController
 	/**
      * 手动处理升级包上传
      */
-    public function uploadZip()
+    public function uploadZip(Request $request) : Response
     {
-		$files = request()->file('file');
+		$files = $request->file('file');
 		$mime = $files->getMime();
 		if($mime !== 'application/zip'){
             return json(['code'=>-1,'msg'=>'文件类型不对']);

@@ -12,11 +12,12 @@ namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
 use think\Request;
+use think\Response;
 use think\facade\Db;
 use think\facade\View;
-use app\admin\model\AuthRule as AuthRuleModel;
 use think\facade\Lang;
-use think\Response\Json;
+
+use app\admin\model\AuthRule as AuthRuleModel;
 
 class AuthRule extends AdminBaseController
 {
@@ -73,10 +74,10 @@ class AuthRule extends AdminBaseController
 
     /**
      * 无限极权限树
-     * @return \think\response\Json
+     * @return response
      */
-	public function ruleTree()
-	{
+	public function ruleTree(Request $request): Response
+		{
 		$data = $this->getRoleMenu(1);
 
 		$count = count($data);
@@ -92,109 +93,104 @@ class AuthRule extends AdminBaseController
 	}
 	
 	//添加权限
-	public function add()
-	{
-		if(Request::isPost()){
-			$data = Request::param();
-
-			$count = Db::name('auth_rule')->where('name', $data['name'])->count();
-			if($count) return json(['code' => 1, 'msg' => '权限地址已存在！']);
-
-            //层级level
-            $rule = Db::name('auth_rule')->field('level')->find($data['pid']);
-
-			if(!is_null($rule)){
-
-				$data['level'] = $rule['level'] + 1;
-			} else {
-				$data['level'] = 0;
-			}
-
-            $res = $this->model->saveRule($data);
-			if($res){
-				return json(['code' => 0,'msg' => 'ok']);
-			}
-			return json(['code' => -1,'msg' => 'error']);
+	public function add(Request $request): Response | string
+		{
+		if(!$request->isPost()){
+			$auth_rules = $this->model->getAuthRuleArray();
+			View::assign('AuthRule',$auth_rules);
+			return View::fetch();
 		}
 
-		$auth_rules = $this->model->getAuthRuleArray();
-		View::assign('AuthRule',$auth_rules);
-		return View::fetch();
+		$data = $request->post(['pid/d','title','name','icon','sort/d','ismenu/d']);
+
+		$count = Db::name('auth_rule')->where('name', $data['name'])->count();
+		if($count) return json(['code' => 1, 'msg' => '权限地址已存在！']);
+
+		//层级level
+		$rule = Db::name('auth_rule')->field('level')->find($data['pid']);
+
+		if(!is_null($rule)){
+			$data['level'] = $rule['level'] + 1;
+		} else {
+			$data['level'] = 0;
+		}
+
+		$res = $this->model->saveRule($data);
+		if($res){
+			return json(['code' => 0,'msg' => 'ok']);
+		}
+		return json(['code' => -1,'msg' => 'error']);
 	}
 	
 	//权限编辑
-	public function edit()
+	public function edit(Request $request): Response | string
 	{
-		$id = $this->request->param('id/d');
-		$rule = new AuthRuleModel();
-		
-		if(Request::isPost()){
-			$data = Request::param(['id/d','pid/d','title','name','icon','sort/d','ismenu/d']);
-	
-			//层级level
-            $ruId = $rule->find($data['pid']); //查询出上级ID
-			if($ruId){
-				$plevel = $ruId->level; //上级level等级
-				$data['level'] = $plevel+1;	
-			} else {
-				$data['level'] = 0;
-			}
 
-			$son = $this->model->where('pid', $data['id'])->select();//查询出下级
-            if(!empty($son)){
-                $son->update(['level' => $data['level'] + 1]);
-            }
+		if(!$request->isPost()){
+			$id = $this->request->param('id/d');
+			$rule = new AuthRuleModel();
+			$auth_rules = $this->model->getAuthRuleArray();
+			$rules = $this->model->find($id);
 
-			$rule = $this->model->find($data['id']);
+			View::assign(['AuthRule' => $auth_rules, 'rules' => $rules]);
 
-            $res = $rule->saveRule($data);
-			if($res){
-				return json(['code' => 0,'msg' => 'ok']);
-			}
-			return json(['code' => -1,'msg' => 'error']);
+			return View::fetch();
 		}
-		
-		$auth_rules = $this->model->getAuthRuleArray();
-		$rules = $this->model->find($id);
 
-		View::assign(['AuthRule' => $auth_rules, 'rules' => $rules]);
+		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','ismenu/d']);
+	
+		//层级level
+		$ruId = $rule->find($data['pid']); //查询出上级ID
+		if($ruId){
+			$plevel = $ruId->level; //上级level等级
+			$data['level'] = $plevel+1;	
+		} else {
+			$data['level'] = 0;
+		}
 
-		return View::fetch();
+		$son = $this->model->where('pid', $data['id'])->select();//查询出下级
+		if(!empty($son)){
+			$son->update(['level' => $data['level'] + 1]);
+		}
+		$rule = $this->model->find($data['id']);
+
+		$res = $rule->saveRule($data);
+		if($res){
+			return json(['code' => 0,'msg' => 'ok']);
+		}
+		return json(['code' => -1,'msg' => 'error']);
 	}
 
 	
 	/**
 	 * 删除权限
-	 *
-	 * @param [type] $id
-	 * @return void
+	 * 
+	 * @return Response
 	 */
-	public function delete($id)
+	public function delete(Request $request): Response
 	{	
-		$pids = AuthRuleModel::where('pid',$id)->select();
-		if($pids)
-		{
+		$id = $request->get('id/d');
+		$pids = AuthRuleModel::where('pid', $id)->select();
+		if($pids){
 			$result = $pids->delete();
 		}
 		
 		$rule = AuthRuleModel::find($id);
 		$result = $rule->delete();
 		if($result){
-			$res = ['code'=>0,'msg'=>'删除成功'];
-		} else {
-			$res = ['code'=>-1,'msg'=>'删除失败'];
+			return json(['code'=>0,'msg'=>'删除成功']);
 		}
-	return json($res);	
+		return json(['code'=>-1,'msg'=>'删除失败']);
 	}
 
 
     /**
      * 权限开关
-     * @return Json
+     * @return Response
      */
-	public function check() : Json
+	public function check(Request $request) : Response
 	{
-		$data = Request::post(['id/d','status/d']);
+		$data = $request->post(['id/d','status/d']);
 		if($data['id'] == 1 || $data['id'] == 31) {
 			return json(['code' => -1, 'msg' => '不能关闭重要权限！']);
 		}
@@ -202,26 +198,20 @@ class AuthRule extends AdminBaseController
 		//获取状态
 		$res = Db::name('auth_rule')->save($data);
 		if($res){
-			if($data['status'] == 1){
-				return json(['code'=>0,'msg'=>'权限开启']);
-			}
-			return json(['code'=>0,'msg'=>'权限禁用']);
+			return json(['code'=>0,'msg'=> $data['status'] == 1 ? '权限开启':'权限禁用']);
 		}
 		return json(['code'=>-1,'msg'=>'审核出错']);
 	}
 	
 	//排序
-	public function sort()
+	public function sort(Request $request) : Response
 	{
-		$data = Request::param();
+		$data = $request->post();
 		$rules = Db::name('auth_rule')->save($data);
 		if($rules){
-			$res = ['code'=>0,'msg'=>'排序成功'];
-		}else{
-			$res = ['code'=>-1,'msg'=>'排序失败'];
-		} 
-		return json($res);
+			return json(['code'=>0,'msg'=>'排序成功']);
+		}
+		return json(['code'=>-1,'msg'=>'排序失败']);
 	}
-	
 	
 }

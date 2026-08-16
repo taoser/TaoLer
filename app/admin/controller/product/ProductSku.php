@@ -22,37 +22,37 @@ class ProductSku extends AdminBaseController
         return json(['code'=>0,'msg'=>'success','data'=>$res]);
     }
 
-    public function add()
+    public function add(Request $request)
     {
-        if(Request::isPost()){
-            $data = $this->request->param(['title','sort']);
-            $res = ProductSkuModel::create($data);
-            if(!$res->id){
-                return json(['code'=>1,'msg'=>'error']);
-            }
-            return json(['code'=>0,'msg'=>'success']);
-            
+        if(!$request->isPost()){
+            return View::fetch();
         }
-        return View::fetch();
+        
+        $data = $request->post(['title','sort']);
+        $res = ProductSkuModel::create($data);
+        if(!$res->id){
+            return json(['code'=>1,'msg'=>'error']);
+        }
+        return json(['code'=>0,'msg'=>'success']);
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
-        if(Request::isPost()){
-            $data = $this->request->param(['id','title','sort']);
-            $res = ProductSkuModel::update($data);
-            if(!$res){
-                return json(['code'=>1,'msg'=>'error']);
-            }
-            return json(['code'=>0,'msg'=>'success']);
+        if(!$request->isPost()){
+            return View::fetch();
         }
 
-        return View::fetch();
+        $data = $request->post(['id','title','sort']);
+        $res = ProductSkuModel::update($data);
+        if(!$res){
+            return json(['code'=>1,'msg'=>'error']);
+        }
+        return json(['code'=>0,'msg'=>'success']);
     }
 
-    public function info()
+    public function info(Request $request)
     {
-        $id = $this->request->param('id');
+        $id = $request->get('id');
         
         $sku = ProductSkuModel::find($id);
         if(!$sku){

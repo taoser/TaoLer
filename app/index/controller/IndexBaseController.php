@@ -87,14 +87,14 @@ class IndexBaseController extends \app\BaseController
 
 	
 	//显示网站设置
-    protected function showSystem()
+    protected function showSystem(Request $request)
     {
         //1.查询分类表获取所有分类
 		$sysInfo = $this->getSystem();
 
 		$assign = [
 			'sysInfo'	=> $sysInfo,
-			'host'		=> Request::domain() . '/'
+			'host'		=> $request->domain() . '/'
 		];
 		
         View::assign($assign);
