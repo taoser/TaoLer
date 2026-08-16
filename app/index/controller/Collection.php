@@ -4,7 +4,7 @@ namespace app\index\controller;
 use think\facade\Session;
 use app\model\Collection as CollectionModel;
 use app\facade\Article;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 
 class Collection extends IndexBaseController

@@ -22,7 +22,7 @@ namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Log;
@@ -73,7 +73,7 @@ class Upgrade extends AdminBaseController
 	//设置key
 	public function key()
 	{
-		$data = Request::only(['key']);
+		$data = Request::post(['key']);
 		if(empty($data['key'])){
 			return json(['code'=>0,'msg'=>'请填写正确的key']);
 		}
@@ -91,8 +91,8 @@ class Upgrade extends AdminBaseController
 	{
 		$key = Db::name('system')->field('key,upcheck_url,upgrade_url')->find(1);
 		
-		if(Request::isAjax()){
-			$data = Request::only(['key','upcheck_url','upgrade_url']);
+		if(Request::isPost()){
+			$data = Request::post(['key','upcheck_url','upgrade_url']);
 			if(empty($data['key'])){
 				return json(['code'=>-1,'msg'=>'请正确填写申请到的key']);
 			}

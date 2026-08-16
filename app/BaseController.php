@@ -7,7 +7,7 @@ use think\App;
 use think\exception\ValidateException;
 use think\Validate;
 use think\facade\Db;
-use think\facade\Request;
+use think\Request;
 use app\common\helper\Uploads;
 use app\common\helper\IdEncode;
 

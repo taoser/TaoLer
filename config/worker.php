@@ -31,7 +31,7 @@ return [
         'workers' => [],
     ],
     'hot_update' => [
-        'enable'  => false,
+        'enable'  => true,
         'type'    => 'scan', // 添加此行，指定使用 scan 驱动（Windows 兼容）
         'name'    => ['*.php'],
         'include' => [app_path(), config_path(), root_path('route')],

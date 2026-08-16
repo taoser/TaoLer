@@ -3,7 +3,7 @@ namespace app\index\controller;
 
 use think\facade\Db;
 use think\facade\Cache;
-use think\facade\Request;
+use think\Request;
 use think\facade\View;
 
 

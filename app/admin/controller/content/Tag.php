@@ -14,7 +14,7 @@ namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use app\facade\TagList;
 use app\facade\Tag as TagModel;
 use think\response\Json;
@@ -57,8 +57,8 @@ class Tag extends AdminBaseController
 
     public function add()
     {
-        if(Request::isAjax()) {
-            $data = Request::only(['name','ename','keywords','description','title']);
+        if(Request::isPost()) {
+            $data = Request::post(['name','ename','keywords','description','title']);
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
 
@@ -73,8 +73,8 @@ class Tag extends AdminBaseController
     public function edit()
     {
 
-        if(Request::isAjax()) {
-            $data = Request::only(['name','ename','id/d','keywords','description','title']);
+        if(Request::isPost()) {
+            $data = Request::post(['name','ename','id/d','keywords','description','title']);
 
             // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
 			$data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));

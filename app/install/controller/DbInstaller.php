@@ -13,7 +13,7 @@ header('Access-Control-Allow-Origin: *');
 use PDO;
 use PDOException;
 use Exception;
-use think\facade\Request;
+use think\Request;
 use app\common\helper\PasswordHash;
 
 class DbInstaller

@@ -3,7 +3,7 @@ namespace app\common\helper;
 
 use Exception;
 use think\facade\Filesystem;
-use think\facade\Request;
+use think\Request;
 
 
 class Uploader

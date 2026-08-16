@@ -4,7 +4,7 @@ namespace app\admin\controller\product;
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Db;
-use think\facade\Request;
+use think\Request;
 
 use app\model\ProductSpecValue as ProductSpecValueModel;
 
@@ -29,7 +29,7 @@ class ProductSpecValue extends AdminBaseController
 
     public function add()
     {
-        if(Request::isAjax()){
+        if(Request::isPost()){
             $data = $this->request->param(['product_spec_id','title','sort']);
             $res = ProductSpecValueModel::create($data);
             if(!$res->id){
@@ -47,7 +47,7 @@ class ProductSpecValue extends AdminBaseController
 
     public function edit()
     {
-        if(Request::isAjax()){
+        if(Request::isPost()){
             $data = $this->request->param(['id','product_spec_id','title','sort']);
             $res = ProductSpecValueModel::update($data);
             if(!$res){

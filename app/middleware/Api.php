@@ -1,7 +1,7 @@
 <?php
 namespace app\middleware;
 
-use think\facade\Request;
+use think\Request;
 use think\facade\Route;
 use think\exception\ClassNotFoundException;
 use think\exception\MethodNotFoundException;

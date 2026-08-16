@@ -12,7 +12,7 @@ namespace app\admin\controller\user;
 
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use app\model\UserViprule;
 
@@ -56,7 +56,7 @@ class Vip extends AdminBaseController
 	//添加VIP积分规则
 	public function add()
 	{
-		$data = Request::only(['score','vip','nick','postnum','refreshnum']);
+		$data = Request::post(['score','vip','nick','postnum','refreshnum']);
 		$vip = UserViprule::where('vip',$data['vip'])->find();
 		if(!is_null($vip)){
 			return json(['code'=>-1,'msg'=>'vip等级不能重复设置']);
@@ -72,7 +72,7 @@ class Vip extends AdminBaseController
 	public function edit()
 	{
 		$id = $this->request->param('id/d');
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$data = Request::param();
 			$result = UserViprule::update($data);
 			if($result){
@@ -89,7 +89,7 @@ class Vip extends AdminBaseController
 	//删除VIP积分规则
 	public function delete($id)
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$user =UserViprule::find($id);
 			$result = $user->delete();
 			if($result){

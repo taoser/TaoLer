@@ -3,7 +3,7 @@
 namespace app\common\decorator;
 
 use app\common\helper\FileHelper;
-use think\facade\Request;
+use think\Request;
 use app\common\helper\HttpClient;
 
 class Image extends ArticleProcessorDecorator

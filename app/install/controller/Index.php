@@ -10,7 +10,7 @@ header('Access-Control-Allow-Origin: *');
 // ob_end_flush();
 
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Session;
 use think\facade\Config;
 

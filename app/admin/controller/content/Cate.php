@@ -13,7 +13,7 @@ namespace app\admin\controller\content;
 use app\admin\controller\AdminBaseController;
 use Exception;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use app\facade\Category;
 use app\common\helper\FileHelper;
@@ -52,12 +52,12 @@ class Cate extends AdminBaseController
 	}
 
     //添加和编辑帖子分类 废弃
-    public function addEdit()
+    public function addEdit(Request $request)
     {
         $addOrEdit = !is_null(input('id'));//true是编辑false新增
         $msg = $addOrEdit ? lang('edit') : lang('add');
-        if(Request::isAjax()) {
-            $data = Request::param(['id/d','pid/d','catename','ename','type','icon','image','tpl','desc','sort', 'url']);
+        if($request->isAjax()) {
+            $data = $request->param(['id/d','pid/d','catename','ename','type','icon','image','tpl','desc','sort', 'url']);
 
             if(isset($data['id']) && $data['pid'] == $data['id']) return json(['code'=>-1,'msg'=> $msg.'不能作为自己的子类']);
 
@@ -90,9 +90,9 @@ class Cate extends AdminBaseController
 	}
 
 	// 动态审核
-	public function check()
+	public function check(Request $request)
 	{
-        $param = Request::only(['id','name','value']);
+        $param = $request->only(['id','name','value']);
         $data = ['id' => $param['id'], $param['name'] => $param['value']];
         return Category::check($data);
 	}

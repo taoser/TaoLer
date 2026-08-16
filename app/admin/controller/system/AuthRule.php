@@ -11,7 +11,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use think\facade\View;
 use app\admin\model\AuthRule as AuthRuleModel;
@@ -94,7 +94,7 @@ class AuthRule extends AdminBaseController
 	//添加权限
 	public function add()
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$data = Request::param();
 
 			$count = Db::name('auth_rule')->where('name', $data['name'])->count();
@@ -128,7 +128,7 @@ class AuthRule extends AdminBaseController
 		$id = $this->request->param('id/d');
 		$rule = new AuthRuleModel();
 		
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$data = Request::param(['id/d','pid/d','title','name','icon','sort/d','ismenu/d']);
 	
 			//层级level
@@ -194,7 +194,7 @@ class AuthRule extends AdminBaseController
      */
 	public function check() : Json
 	{
-		$data = Request::only(['id/d','status/d']);
+		$data = Request::post(['id/d','status/d']);
 		if($data['id'] == 1 || $data['id'] == 31) {
 			return json(['code' => -1, 'msg' => '不能关闭重要权限！']);
 		}

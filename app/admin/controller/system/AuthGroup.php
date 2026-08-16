@@ -12,7 +12,7 @@ namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use think\exception\ValidateException;
 use app\admin\model\AuthGroup as AuthGroupModel;
@@ -81,7 +81,7 @@ class AuthGroup extends AdminBaseController
 	//角色添加
 	public function add()
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$data = Request::param();
 			$result = AuthGroupModel::create($data);
 			if($result) {
@@ -102,7 +102,7 @@ class AuthGroup extends AdminBaseController
 	public function edit()
 	{
 		
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$data = Request::param();
 
 /*			
@@ -132,7 +132,7 @@ class AuthGroup extends AdminBaseController
 	{
 		$id = Request::param('id');
 		$ids = explode(',',$id);
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$role =AuthGroupModel::select($ids);
 			$result = $role->delete();
 				if($result){
@@ -169,8 +169,8 @@ class AuthGroup extends AdminBaseController
 	{
 		$roleId = request()->get('id');
 		//
-		if(Request::isAjax()) {
-			$data = Request::only(['group_id', 'uid']);
+		if(Request::isPost()) {
+			$data = Request::post(['group_id', 'uid']);
 			$uidArray = Db::name('auth_group_access')->where('group_id', (int) $data['group_id'])->column('uid');
 			
 			$newUids = explode(',', $data['uid']);

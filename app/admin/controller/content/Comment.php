@@ -13,7 +13,7 @@ namespace app\admin\controller\content;
 use app\admin\controller\AdminBaseController;
 use think\App;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use app\facade\Comment as CommentModel;
 use think\facade\Log;
@@ -192,7 +192,7 @@ class Comment extends AdminBaseController
 	{
 		try {
             // 验证请求类型
-            if (!Request::isAjax()) {
+            if (!Request::isPost()) {
                 return json(['code' => -1, 'msg' => '非法请求']);
             }
             
@@ -243,7 +243,7 @@ class Comment extends AdminBaseController
 	{
         try {
             // 验证请求类型
-            if (!Request::isAjax()) {
+            if (!Request::isPost()) {
                 return json(['code' => -1, 'msg' => '非法请求', 'icon' => 5]);
             }
             

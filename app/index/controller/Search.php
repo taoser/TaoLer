@@ -12,7 +12,7 @@
 namespace app\index\controller;
 
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use app\facade\Article;
 
 class Search extends IndexBaseController

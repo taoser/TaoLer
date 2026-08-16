@@ -12,7 +12,7 @@ use app\admin\controller\AdminBaseController;
 use app\entity\Admin as AdminEntity;
 use think\Response;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
@@ -52,7 +52,7 @@ class Admin extends AdminBaseController
 	 */
 	public function list():Response
 	{
-		$data = Request::only(['id','username','mobile','email']);
+		$data = Request::post(['id','username','mobile','email']);
 		$map = array_filter($data);
 
 		$admins = $this->model
@@ -72,7 +72,7 @@ class Admin extends AdminBaseController
 	//管理员审核
 	public function check():Response
 	{
-		$data = Request::only(['id', 'status']);
+		$data = Request::post(['id', 'status']);
 
         if($data['id'] == 1 && $data['status'] == -1) {
             return json(['code' => -1, 'msg' => '无法禁用超级管理员']);
@@ -93,8 +93,8 @@ class Admin extends AdminBaseController
 	//添加管理员
 	public function add()
 	{
-		if(Request::isAjax()){
-			$data = Request::only(['username','email','password','mobile']);
+		if(Request::isPost()){
+			$data = Request::post(['username','email','password','mobile']);
 			$roleId = request()->get('roleId');
 	
 			$data['password'] = PasswordHash::make($data['password']);
@@ -118,8 +118,8 @@ class Admin extends AdminBaseController
 		$id = Request::param('id/d');
 		$admin = $this->model->find($id);
 		
-		if(Request::isAjax()){
-			$data = Request::only(['id','email','password','mobile','roleId']);
+		if(Request::isPost()){
+			$data = Request::post(['id','email','password','mobile','roleId']);
 			$result = AdminEntity::edit($data);
 			//Db::name('auth_group_access')->where('uid',$data['id'])->update(['group_id'=>$data['auth_group_id']]);
 			if($result){
@@ -181,7 +181,7 @@ class Admin extends AdminBaseController
     {
 		$admin = $this->model->find($this->aid);
         
-		$data = Request::only(['nickname','mobile','email','remarks']);
+		$data = Request::post(['nickname','mobile','email','remarks']);
 		$result = $admin->save($data);
 		if($result){
 			return json(['code'=>0,'msg'=>'更新成功']);
@@ -199,7 +199,7 @@ class Admin extends AdminBaseController
 	public function repassSet() 
 	{
 		
-		$data = Request::only(['oldPassword','password','repassword']);
+		$data = Request::post(['oldPassword','password','repassword']);
 		$data['admin_id'] = $this->aid;
 		
 		try{

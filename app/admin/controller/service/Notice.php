@@ -4,7 +4,7 @@ namespace app\admin\controller\service;
 
 use app\common\controller\AdminController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Session;
 use think\facade\Db;
 use app\model\Message as MessageModel;
@@ -42,7 +42,7 @@ class Notice extends AdminController
 	{
 		$sendId = Session::get('admin_id');
 
-		$data = Request::only(['type','title','receve_id','content']);
+		$data = Request::post(['type','title','receve_id','content']);
 
 		if($data['type'] == 1){
 			$receveId = $data['receve_id']; //个人通知
@@ -65,8 +65,8 @@ class Notice extends AdminController
 	public function edit()
 	{
 		$id = input('id');
-		if(Request::isAjax()){
-			$data = Request::only(['id','title','type','content']);
+		if(Request::isPost()){
+			$data = Request::post(['id','title','type','content']);
 			$result = MessageModel::update($data);
 			if($result){
 				$res = ['code'=>0,'msg'=>'编辑成功'];
@@ -85,7 +85,7 @@ class Notice extends AdminController
 	//删除消息
 	public function delete($id)
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$msg = MessageModel::with('messageto')->find($id);
 			$result = $msg->together(['messageto'])->delete();
 			

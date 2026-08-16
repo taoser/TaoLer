@@ -2,7 +2,7 @@
 namespace app\index\controller;
 
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Db;
@@ -22,9 +22,9 @@ class Comment extends IndexBaseController
 		// 检验发帖是否开放
 		if(config('taoler.config.is_reply') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止评论！']);
 
-		if (Request::isAjax()){
+		if (Request::isPost()){
 			//获取评论
-			$data = Request::only(['content','article_id','pid','to_user_id']);
+			$data = Request::post(['content','article_id','pid','to_user_id']);
             $data['user_id'] = $this->uid;
 			$sendId = $data['user_id'];
 
@@ -148,7 +148,7 @@ class Comment extends IndexBaseController
     public function edit()
     {
         if(!session('?user_id')) return json(['code'=>-1,'msg'=>'未登录']);
-        if(Request::isAjax()) {
+        if(Request::isPost()) {
             $param = Request::param();
 //            halt($param);
             $result = CommentModel::update($param);

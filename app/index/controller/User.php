@@ -5,7 +5,7 @@ use Exception;
 use app\common\controller\BaseController;
 use app\common\validate\User as userValidate;
 use think\facade\Db;
-use think\facade\Request;
+use think\Request;
 use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Cookie;
@@ -122,7 +122,7 @@ class User extends IndexBaseController
 	// 编辑pv
 	public function edtiPv()
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$param = Request::param(['id','pv']);
 			$res = Db::name('article')->save(['id' => $param['id'], 'pv' => $param['pv']]);
 			if($res) {
@@ -135,7 +135,7 @@ class User extends IndexBaseController
 	// 刷新
 	public function updateTime()
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$param = Request::param(['data']);
 			if(count($param) == 0) return json(['code' => -1, 'msg' => '未选中任何数据！']);
 			$idArr = [];
@@ -198,7 +198,7 @@ class User extends IndexBaseController
 	//取消文章收藏
 	public function colltDel()
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$collt = Collection::where('user_id',$this->uid)->find(input('id'));
 			$result = $collt->delete();
 			if($result){
@@ -213,8 +213,8 @@ class User extends IndexBaseController
 	//用户设置-我的资料
 	public function set()
 	{
-		if(Request::isAjax()){
-			$data = Request::only(['email','phone','nickname','sex','city','area_id','sign']);
+		if(Request::isPost()){
+			$data = Request::post(['email','phone','nickname','sex','city','area_id','sign']);
             $data['user_id'] = $this->uid;
 			// 过滤
 			$sign = strtolower($data['sign']);
@@ -392,7 +392,7 @@ class User extends IndexBaseController
 	//修改密码
 	public function setPass()
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$data = Request::param();
 			$validate = new userValidate;
 			$res = $validate->scene('setPass')->check($data);

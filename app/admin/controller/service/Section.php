@@ -4,7 +4,7 @@ namespace app\admin\controller\service;
 
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use app\facade\Section as SectionEntity;
 use app\facade\SectionAccess;
 use Exception;
@@ -56,8 +56,8 @@ class Section extends AdminBaseController
     public function add()
     {
         //添加模块
-        if(Request::isAjax()){
-            $data = Request::only(['type','title','subtitle','alias']);
+        if(Request::isPost()){
+            $data = Request::post(['type','title','subtitle','alias']);
             $data['create_time'] = date('Y-m-d H:i:s', time());
 
             try{
@@ -80,8 +80,8 @@ class Section extends AdminBaseController
     {
         $id = (int)input('id');
 
-        if(Request::isAjax()){
-            $data = Request::only(['id/d','type','title','subtitle','alias','status/d']);
+        if(Request::isPost()){
+            $data = Request::post(['id/d','type','title','subtitle','alias','status/d']);
             $data['update_time'] = date('Y-m-d H:i:s', time());
 
             try{
@@ -121,8 +121,8 @@ class Section extends AdminBaseController
      */
     public function addSub()
     {
-        if(Request::isAjax()){
-            $data = Request::only(['section_id','name','icon','image','url','description','sort']);
+        if(Request::isPost()){
+            $data = Request::post(['section_id','name','icon','image','url','description','sort']);
             $data['create_time'] = date('Y-m-d H:i:s', time());
 
             try{
@@ -148,8 +148,8 @@ class Section extends AdminBaseController
     {
       $id = (int)input('id');
 
-        if(Request::isAjax()){
-            $data = Request::only(['id/d','name','alias','icon','image','description','sort']);
+        if(Request::isPost()){
+            $data = Request::post(['id/d','name','alias','icon','image','description','sort']);
             $data['update_time'] = date('Y-m-d H:i:s', time());
             // halt($data);
             try{
@@ -188,7 +188,7 @@ class Section extends AdminBaseController
     //审核用户
     public function check()
     {
-        $data = Request::only(['id/d','status/d']);
+        $data = Request::post(['id/d','status/d']);
 
         //获取状态
         $res = SectionAccess::where('id', $data['id'])->update(['status' => $data['status']]);

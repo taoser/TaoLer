@@ -7,7 +7,7 @@ use think\facade\Filesystem;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\Session;
-use think\facade\Request;
+use think\Request;
 
 class Uploads 
 {

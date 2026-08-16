@@ -13,7 +13,7 @@ namespace app\admin\controller\user;
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\Request as Req;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;

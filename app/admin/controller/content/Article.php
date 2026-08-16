@@ -12,10 +12,10 @@ namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
 use Exception;
+use think\Request;
 use app\facade\Article as ArticleModel;
 use app\facade\Category;
 use think\facade\View;
-use think\facade\Request;
 use think\facade\Db;
 use think\facade\Cache;
 use think\response\Json;
@@ -55,11 +55,11 @@ class Article extends AdminBaseController
 		return View::fetch();
 	}
 
-    public function list()
+    public function list(Request $request)
     {
-        $data = Request::only(['id/d','name','title','sec','cate_id/d']);
-        $page = Request::param('page/d', 1);
-        $limit = Request::param('limit/d', 10);
+        $data = $request->param(['title','sec','cate_id/d']);
+        $page = $request->param('page/d', 1);
+        $limit = $request->param('limit/d', 10);
         
         $list = $this->model::getFilterList($data, $page, $limit);
         
@@ -79,11 +79,11 @@ class Article extends AdminBaseController
      * 添加帖子文章
      * @return string|\think\Response|\think\response\Json|void
      */
-    public function add()
+    public function add(Request $request)
     {
-        if (Request::isAjax()) {
+        if ($request->isPost()) {
 
-            $data = Request::only(['cate_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'tagid']);
+            $data = $request->param(['cate_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'tagid']);
             $data['user_id'] = 1; //管理员ID
             $data['status'] = 1; //正常
 
@@ -130,9 +130,10 @@ class Article extends AdminBaseController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function edit()
+    public function edit(Request $request)
     {
-        $id = $this->request->param('id/d');
+        $id = $request->get('id');
+
 		// $id = IdEncode::decode($id);
 
 		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
@@ -144,7 +145,7 @@ class Article extends AdminBaseController
 
     public function editData()
     {
-        $data = Request::only(['id/d','cate_id','title','content','keywords','description','tagid']);
+        $data = Request::post(['id/d','cate_id','title','content','keywords','description','tagid']);
 		// $id = IdEncode::decode($data['id']);
 
 		$article = $this->model::suffix($this->byIdGetSuffix($data['id']))->find($data['id']);
@@ -191,9 +192,9 @@ class Article extends AdminBaseController
 
 
     //删除帖子 多选和单独
-	public function delete()
+	public function delete(Request $request)
 	{
-		$id = $this->request->param('id');
+		$id = $request->get('id');
         try {
             $arr = explode(",",$id);
             foreach($arr as $v){
@@ -212,9 +213,9 @@ class Article extends AdminBaseController
 	 *
 	 * @return Json
 	 */
-	public function setFlag()
+	public function setFlag(Request $request)
 	{
-		$param = Request::only(['id/d', 'name', 'value/d']);
+		$param = $request->post(['id/d', 'name', 'value/d']);
 
         $data["flags->{$param['name']}"] = $param['value'];
 
@@ -267,9 +268,9 @@ class Article extends AdminBaseController
 	 *
 	 * @return Json
 	 */
-	public function check()
+	public function check(Request $request)
 	{
-		$param = Request::only(['id/d', 'name', 'value/d']);
+		$param = $request->post(['id/d', 'name', 'value/d']);
 
         try{
             //获取状态
@@ -292,9 +293,9 @@ class Article extends AdminBaseController
 	 *
 	 * @return Json
 	 */
-	public function checkSelect()
+	public function checkSelect(Request $request)
 	{
-        $param = Request::param('data');
+        $param = $request->post('data');
         $data = [];
         foreach($param as $v) {
             $data[] = ['id' => (int)$v['id'], 'status' => $v['check'] == '1' ? '-1' : '1'];
@@ -315,9 +316,9 @@ class Article extends AdminBaseController
      *
      * @return void
      */
-    public function uploads()
+    public function uploads(Request $request)
     {
-        $type = Request::param('type');
+        $type = $request->post('type');
         return $this->uploadFiles($type);
     }
 

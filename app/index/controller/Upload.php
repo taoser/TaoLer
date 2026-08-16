@@ -3,7 +3,7 @@ namespace app\index\controller;
 
 
 use app\common\helper\UploadHelper;
-use think\facade\Request;
+use think\Request;
 use think\facade\View;
 
 class Upload extends IndexBaseController

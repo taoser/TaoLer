@@ -11,7 +11,7 @@
 namespace app\index\controller;
 
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use app\common\helper\Msgres;
 use app\common\helper\ResponseHelper;

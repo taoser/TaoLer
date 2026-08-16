@@ -12,7 +12,7 @@ namespace app\index\controller;
 
 use app\common\controller\BaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use app\facade\Article;
 

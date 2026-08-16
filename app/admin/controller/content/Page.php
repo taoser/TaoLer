@@ -4,7 +4,7 @@ namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use app\facade\Category;
 use app\facade\Page as PageEntity;
 use Exception;

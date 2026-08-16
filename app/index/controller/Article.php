@@ -4,7 +4,7 @@ namespace app\index\controller;
 
 use Exception;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use think\facade\Cache;
 use app\facade\Category;
@@ -92,9 +92,9 @@ class Article extends IndexBaseController
      */
     public function add()
     {
-        if (Request::isAjax()) {
+        if (Request::isPost()) {
 
-			$data = Request::only(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha','tagid']);
+			$data = Request::post(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha','tagid']);
 			$data['user_id'] = $this->uid;
 
 			try{
@@ -181,8 +181,8 @@ class Article extends IndexBaseController
 
 		$this->removeDetailHtml($article);
 		
-		if(Request::isAjax()){
-			$data = Request::only(['id/d','cate_id/d','title','content','keywords','description','captcha', 'tagid']);
+		if(Request::isPost()){
+			$data = Request::post(['id/d','cate_id/d','title','content','keywords','description','captcha', 'tagid']);
 
 			try {
 
@@ -273,7 +273,7 @@ class Article extends IndexBaseController
 	 */
 	public function jieset(): Json
 	{
-		$param = Request::only(['id/d','field','rank/d']);
+		$param = Request::post(['id/d','field','rank/d']);
 		
 		$article = $this->model::suffix($this->byIdGetSuffix($param['id']))
 		->field('id,is_top,is_hot,is_reply')

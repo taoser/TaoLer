@@ -5,7 +5,7 @@ namespace app\common\helper;
 use taoser\SetArr;
 use think\facade\Db;
 use think\facade\Lang;
-use think\facade\Request;
+use think\Request;
 use think\response\Json;
 
 class Arts

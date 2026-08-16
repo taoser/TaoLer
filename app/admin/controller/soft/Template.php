@@ -317,7 +317,7 @@ class Template extends AdminBaseController
      */
     public function pay()
     {
-        $data = Request::only(['name','token']);
+        $data = Request::post(['name','token']);
         $response = HttpHelper::withHost()->post('/v2/template/pay', $data);
         if(!$response->ok()) {
             return json(['code' => -1, 'msg' => $response->getLastError()]);
@@ -336,7 +336,7 @@ class Template extends AdminBaseController
      */
     public function isPay()
     {
-        $param = Request::only(['out_order_no','token']);
+        $param = Request::post(['out_order_no','token']);
         $response = HttpHelper::withHost()->post('/v2/template/ispay', $param);
             
         if(!HttpHelper::ok()) {

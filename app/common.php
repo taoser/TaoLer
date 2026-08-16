@@ -1,7 +1,7 @@
 <?php
 
 use taoser\SetArr;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use think\facade\Session;
 use taoser\think\Auth;

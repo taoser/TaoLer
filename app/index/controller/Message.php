@@ -10,7 +10,7 @@
  */
 namespace app\index\controller;
 
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use app\model\Message as MessageModel;
 use app\model\MessageTo;
@@ -75,7 +75,7 @@ class Message extends IndexBaseController
 	{
 		$uid = $this->uid;
 		
-		$id = Request::only(['id']);
+		$id = Request::post(['id']);
 
 		if($id['id'] == 'true'){
 			// id为'true' 删除所有此用户消息

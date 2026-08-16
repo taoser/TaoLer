@@ -15,7 +15,7 @@ namespace app\index\controller;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
-use think\facade\Request;
+use think\Request;
 use think\facade\View;
 use think\facade\Db;
 use app\common\helper\IdEncode;

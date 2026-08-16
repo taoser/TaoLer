@@ -18,7 +18,7 @@ use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Config;
-use think\facade\Request;
+use think\Request;
 use think\Response;
 use taoser\think\Auth as UserAuth;
 

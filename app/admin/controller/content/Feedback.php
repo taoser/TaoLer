@@ -7,7 +7,7 @@ use Exception;
 use think\facade\View;
 use think\response\Json;
 use think\facade\Db;
-use think\facade\Request;
+use think\Request;
 
 class Feedback extends AdminBaseController
 {
@@ -56,7 +56,7 @@ class Feedback extends AdminBaseController
             $feed['reply'] = json_decode($feed['reply'], true);
         }
 
-        if(Request::isAjax()){
+        if(Request::isPost()){
             $recontent = Request::param('recontent');
             $id = Request::param('id/d');
             

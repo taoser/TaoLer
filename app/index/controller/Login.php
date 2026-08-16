@@ -3,7 +3,7 @@ namespace app\index\Controller;
 
 use app\index\validate\User as UserValidate;
 use think\exception\ValidateException;
-use think\facade\Request;
+use think\Request;
 use think\facade\Session;
 use think\facade\Cache;
 use think\facade\View;
@@ -38,7 +38,7 @@ class Login extends IndexBaseController
         return View::fetch('login');
 	}
 
-	public function login()
+	public function login(Request $request)
 	{
 		// 检验登录是否开放
         if(Config::get('taoler.config.is_login') == 0 ) {
@@ -46,9 +46,9 @@ class Login extends IndexBaseController
         }
         
 		//获取登录前访问页面refer
-        $refer = str_replace(Request::domain(), '', Request::server('HTTP_REFERER'));
+        $refer = str_replace($request->domain(), '', $request->server('HTTP_REFERER'));
 
-		$data = Request::post(['name','email','phone','password','captcha','remember']);
+		$data = $request->post(['name','email','phone','password','captcha','remember']);
 
 		// 校验验证码
         if(Config::get('taoler.config.login_captcha') == 1 && !captcha_check($data['captcha'])) {				
@@ -73,13 +73,13 @@ class Login extends IndexBaseController
 	}
 
     //注册
-    public function reg()
+    public function reg(Request $request)
     {
-        if(Request::isAjax()){
+        if($request->isAjax()){
 			// 检验注册是否开放
 			if(config('taoler.config.is_regist') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，注册暂时未开放']);
 
-			$data = Request::only(['name','email','email_code','password','repassword','captcha']);
+			$data = $request->only(['name','email','email_code','password','repassword','captcha']);
 
 			// 验证码
 			if(Config::get('taoler.config.regist_type') == 1) {				
@@ -138,10 +138,10 @@ class Login extends IndexBaseController
     }
 	
 	//找回密码
-	public function forget()
+	public function forget(Request $request)
 	{
-		if(Request::isAjax()){
-			$data = Request::param();
+		if($request->isAjax()){
+			$data = $request->param();
 			
 			try{
 				validate(UserValidate::class)
@@ -178,13 +178,13 @@ class Login extends IndexBaseController
 	}
 	
 	//接收验证码
-	public function postcode()
+	public function postcode(Request $request)
 	{
         if(Cache::get('repass') !== 'postcode'){
 			return redirect((string) url('login/forget'));
         }
 
-        if(Request::isAjax()){
+        if($request->isAjax()){
 			$code = input('code');
 			try{
 				validate(UserValidate::class)
@@ -208,13 +208,13 @@ class Login extends IndexBaseController
 	}
 	
 	//忘记密码找回重置
-	public function respass()
+	public function respass(Request $request)
 	{
         if(Cache::get('repass') !== 'resetpass'){
             return redirect((string) url('login/forget'));
         }
-        if(Request::isAjax()){
-            $data = Request::param();
+        if($request->isAjax()){
+            $data = $request->param();
 			try{
 				validate(UserValidate::class)
 							->scene('Repass')
@@ -237,9 +237,9 @@ class Login extends IndexBaseController
 	}
 
 	// 邮箱注册验证
-	public function sentMailCode()
+	public function sentMailCode(Request $request)
 	{
-		if(Request::isAjax()) {
+		if($request->isAjax()) {
 			// 用户邮箱
 			$email = input('email');
 			//dump($email);

@@ -236,7 +236,7 @@
 
 	// 监听置顶
 	form.on('switch(isTop)', function(obj){
-		$.post(SET_FLAG_URL,{id: this.id, name: obj.elem.name, value: obj.elem.checked ? 1 : 0},function(res){
+		$.post(SET_FLAG_URL, {id: this.id, name: obj.elem.name, value: obj.elem.checked ? 1 : 0},function(res){
 			if(res.code) {
 				return popup.failure(res.msg)
 			}
@@ -290,9 +290,9 @@
 	}
 	// 编辑
 	window.edit = function(obj) {
-		$.post(EDIT_URL, {id: obj.data.id}, function(res){
+		$.get(EDIT_URL+'?id=' + obj.data.id, function(res){
 			if(res.code === -1) {
-				toast.error({title:"错误消息",message:res.msg})
+				toast.error({title:"错误消息", message:res.msg})
 				return false
 			}
 

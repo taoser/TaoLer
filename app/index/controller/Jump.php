@@ -2,7 +2,7 @@
 namespace app\index\controller;
 
 use app\common\controller\BaseController;
-use think\facade\Request;
+use think\Request;
 use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Db;

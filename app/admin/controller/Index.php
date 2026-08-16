@@ -13,7 +13,7 @@ namespace app\admin\controller;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
-use think\facade\Request;
+use think\Request;
 use think\facade\Cache;
 use think\facade\Log;
 use think\facade\Config;
@@ -167,7 +167,7 @@ class Index extends AdminBaseController
 	//动态信息
 	public function news()
 	{
-		$data = Request::only(['page/d', 'limit/d']);
+		$data = Request::post(['page/d', 'limit/d']);
 		
 		$news = Cache::get('news'.$data['page'].'_'.$data['limit']);
 		if(empty($news)){
@@ -183,8 +183,8 @@ class Index extends AdminBaseController
 	//提交反馈
 	public function cunsult()
 	{
-		if(Request::isAjax()){
-			$data = Request::only(['type','title','content','post','uid']);
+		if(Request::isPost()){
+			$data = Request::post(['type','title','content','post','uid']);
 
 			$response = HttpHelper::withHost()->post('/v1/reply', $data);
 			$data['poster'] = Session::get('admin_id');
@@ -204,7 +204,7 @@ class Index extends AdminBaseController
 	//问题和反馈
 	public function reply()
 	{
-		if(Request::isAjax()) {
+		if(Request::isPost()) {
 		
 			$replys = Db::name('cunsult')
 				->whereWeek('create_time')
@@ -228,7 +228,7 @@ class Index extends AdminBaseController
 	//删除反馈
 	public function delReply()
 	{
-		if(Request::isAjax()){
+		if(Request::isPost()){
 			$res = Db::name('cunsult')->delete(input('id'));
 			 
 			if($res){

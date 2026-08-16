@@ -152,7 +152,7 @@ class Plugin extends AdminBaseController
     public function install(?array $data = [])
     {
         if(empty($data)) {
-            $data = Request::only(['name', 'token', 'version']);
+            $data = Request::post(['name', 'token', 'version']);
         }
         $data['type'] = 'install';
         
@@ -221,7 +221,7 @@ class Plugin extends AdminBaseController
      */
     public function upgrade()
     {
-        $data = Request::only(['name','token']);
+        $data = Request::post(['name','token']);
         $info = get_addons_info($data['name']);
         $data['version'] = $info['version'];
         $data['type'] = 'upgrade';
@@ -454,7 +454,7 @@ class Plugin extends AdminBaseController
      */
     public function pay()
     {
-        $data = Request::only(['id/d','name','token']);
+        $data = Request::post(['id/d','name','token']);
         $result = HttpHelper::withHost()->post('/v2/plugin/pay', $data);
         if(!HttpHelper::ok()) {
             return json(['code'=>-1,'msg'=>$result->getLastError()]);
@@ -480,7 +480,7 @@ class Plugin extends AdminBaseController
      */
     public function isPay()
     {
-        $params = Request::only(['out_order_no','token']);
+        $params = Request::post(['out_order_no','token']);
 
         $result = HttpHelper::withHost()->post('/v2/plugin/ispay', $params);
         

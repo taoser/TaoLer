@@ -4,7 +4,7 @@ namespace app\admin\controller\product;
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Db;
-use think\facade\Request;
+use think\Request;
 
 use app\model\product\ProductSku as ProductSkuModel;
 
@@ -24,7 +24,7 @@ class ProductSku extends AdminBaseController
 
     public function add()
     {
-        if(Request::isAjax()){
+        if(Request::isPost()){
             $data = $this->request->param(['title','sort']);
             $res = ProductSkuModel::create($data);
             if(!$res->id){
@@ -38,7 +38,7 @@ class ProductSku extends AdminBaseController
 
     public function edit()
     {
-        if(Request::isAjax()){
+        if(Request::isPost()){
             $data = $this->request->param(['id','title','sort']);
             $res = ProductSkuModel::update($data);
             if(!$res){

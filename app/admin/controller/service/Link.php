@@ -4,7 +4,7 @@ namespace app\admin\controller\service;
 
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use app\facade\Link as LinkEntity;
 use Exception;
 
@@ -60,8 +60,8 @@ class Link extends AdminBaseController
     public function add()
     {
         //添加幻灯
-        if(Request::isAjax()){
-            $data = Request::only(['title','logo','url','start_time','end_time']);
+        if(Request::isPost()){
+            $data = Request::post(['title','logo','url','start_time','end_time']);
 
             if(!empty($data['start_time']) && !empty($data['end_time'])) {
                 $stime = strtotime($data['start_time']);
@@ -93,8 +93,8 @@ class Link extends AdminBaseController
       $id = (int)input('id');
       
 
-        if(Request::isAjax()){
-            $data = Request::only(['id','title','logo','url','start_time','end_time']);
+        if(Request::isPost()){
+            $data = Request::post(['id','title','logo','url','start_time','end_time']);
 
             if(!empty($data['start_time']) && !empty($data['end_time'])) {
                 $stime = strtotime($data['start_time']);
@@ -147,7 +147,7 @@ class Link extends AdminBaseController
     //审核用户
     public function check()
     {
-        $data = Request::only(['id','status']);
+        $data = Request::post(['id','status']);
 
         //获取状态
         $res = LinkEntity::where('id', $data['id'])->update(['status' => $data['status']]);

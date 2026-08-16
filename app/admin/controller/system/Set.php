@@ -13,7 +13,7 @@ namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
-use think\facade\Request;
+use think\Request;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Config;
@@ -52,7 +52,7 @@ class Set extends AdminBaseController
     public function website()
     {
 		if(Request::isPost()){
-			$data = Request::only(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','state','icp','showlist','copyright']);
+			$data = Request::post(['webname','domain','template','cache','upsize','uptype','blackname','webtitle','keywords','descript','state','icp','showlist','copyright']);
 			$system = new System();
 			$result = $system->sets($data,$this->sysInfo['clevel']);
 			if($result == 1){
@@ -109,7 +109,7 @@ class Set extends AdminBaseController
 	{
 		$str = file_get_contents(str_replace('\\', '/', app()->getConfigPath() . 'app.php'));
 		if(Request::isPost()){
-			$data = Request::only(['index','admin','domain_check']);
+			$data = Request::post(['index','admin','domain_check']);
 			//$data = Request::param();
 			//dump($data);
 			if($data['domain_check'] == 'on') {
@@ -179,7 +179,7 @@ class Set extends AdminBaseController
 	 */
 	public function bindMap()
 	{
-		$data = Request::only(['index_map','admin_map']);
+		$data = Request::post(['index_map','admin_map']);
 		$str = file_get_contents(str_replace('\\', '/', app()->getConfigPath() . 'app.php'));
 
 		// 过滤空项目
@@ -236,7 +236,7 @@ class Set extends AdminBaseController
      */
 	public function setUrl()
 	{
-		$data = Request::only(['article_as','cate_as']);
+		$data = Request::post(['article_as','cate_as']);
 		$arr = [];
 		foreach($data as $k => $v) {
 			if(!empty($v)) {

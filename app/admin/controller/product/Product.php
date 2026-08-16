@@ -4,7 +4,7 @@ namespace app\admin\controller\product;
 use app\admin\controller\AdminBaseController;
 use think\facade\View;
 use think\facade\Db;
-use think\facade\Request;
+use think\Request;
 
 use app\model\Product as ProductModel;
 
@@ -24,7 +24,7 @@ class Product extends AdminBaseController
 
     public function add()
     {
-        if(Request::isAjax()){
+        if(Request::isPost()){
             $data = $this->request->param(['cover','covers','name','price','market_price','sketch','intro','is_recommend','is_new','sort','is_attribute']);
             $res = ProductModel::addOrEdit($data);
             if($res) {
@@ -38,7 +38,7 @@ class Product extends AdminBaseController
 
     public function edit()
     {
-        if(Request::isAjax()){
+        if(Request::isPost()){
             $data = $this->request->param(['id','title','sort']);
             $res = ProductModel::update($data);
             if(!$res){

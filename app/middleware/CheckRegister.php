@@ -2,7 +2,7 @@
 
 namespace app\middleware;
 use think\facade\Db;
-use think\facade\Request;
+use think\Request;
 
 class CheckRegister
 {
