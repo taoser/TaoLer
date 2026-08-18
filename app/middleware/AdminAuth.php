@@ -45,8 +45,6 @@ class AdminAuth
         // var_dump($action);
         $path = strtolower($controller) . '/' . strtolower($action);
 
-        // var_dump($path);
-
         // 加载语言包
         Lang::load([
             app_path() . 'admin/lang/zh-cn.php',
@@ -62,21 +60,25 @@ class AdminAuth
            
         //登陆前获取加密的Cookie
         $cooAuth = Cookie::get('adminAuth');
-
+        // 没有登录
         if(!Session::has('admin_id')) {
             if(empty($cooAuth)){
+
                 //没有登录 当前非登录页重定向登录页
                 if(!in_array($path, ['login/index','login/register','admin/login', $adminModuleName, $adminModuleName.'/index'])) {
                     return redirect((string) url('admin-login'));
                     return false;
+                    // $adminModuleName, $adminModuleName.'/index'
                 }
 
             } else {
                 
                 $resArr = explode(':', $cooAuth);
                 $userId = end($resArr);
+      
                 //检验用户
-                $user = Db::name('admin')->where('id',$userId)->find();
+                $user = Db::name('admin')->where('id', $userId)->find();
+
                 if(!is_null($user)){
                     //验证cookie
                     $salt = Config::get('taoler.salt');
@@ -90,7 +92,8 @@ class AdminAuth
 
         }
         
-        //登陆后无法访问登录页、忘记密码页、注册页
+        // 已登陆
+        // 登陆后无法访问登录页、忘记密码页、注册页
         if(Session::has('admin_id')){
             if(in_array($path, ['login/index','login/register','register/index'])){
                 return redirect((string) url('admin-index'));

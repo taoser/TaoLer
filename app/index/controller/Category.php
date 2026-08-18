@@ -1,19 +1,21 @@
 <?php
 namespace app\index\controller;
 
+use think\Request;
+use think\Response;
 use think\facade\View;
 use think\facade\Db;
 use app\facade\Category as CategoryEntity;
 
 class Category extends IndexBaseController
 {
-    public function list()
+    public function list(Request $request): string
     {
         global $page;
 		//动态参数
-		$ename = $this->request->param('ename', '');
-		$flag = $this->request->param('flag');
-		$page = $this->request->param('page/d', 1);
+		$ename = $request->param('ename', '');
+		$flag = $request->param('flag');
+		$page = $request->param('page/d', 1);
 
 		// 分类信息
 		$cateInfo = CategoryEntity::getCateInfoByEname($ename);

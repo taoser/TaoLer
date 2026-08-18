@@ -16,7 +16,6 @@ use think\Response;
 use think\facade\Db;
 use think\facade\View;
 use think\facade\Lang;
-
 use app\admin\model\AuthRule as AuthRuleModel;
 
 class AuthRule extends AdminBaseController
@@ -127,13 +126,12 @@ class AuthRule extends AdminBaseController
 	{
 
 		if(!$request->isPost()){
-			$id = $this->request->param('id/d');
+			$id = $this->request->get('id/d');
 			$rule = new AuthRuleModel();
 			$auth_rules = $this->model->getAuthRuleArray();
 			$rules = $this->model->find($id);
 
 			View::assign(['AuthRule' => $auth_rules, 'rules' => $rules]);
-
 			return View::fetch();
 		}
 

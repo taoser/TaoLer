@@ -17,15 +17,15 @@ class Comment extends IndexBaseController
 	protected $middleware = ['logincheck'];
 
 	//文章评论
-	public function add()
+	public function add(Request $request): Response
 	{
 		// 检验发帖是否开放
 		if(config('taoler.config.is_reply') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，系统维护中，暂时禁止评论！']);
 
-		if (Request::isPost()){
+		if ($request->isPost()){
 			//获取评论
-			$data = Request::post(['content','article_id','pid','to_user_id']);
-            $data['user_id'] = $this->uid;
+			$data = $request->post(['content','article_id','pid','to_user_id']);
+            $data['user_id'] = $request->uid;
 			$sendId = $data['user_id'];
 
 			$table = $this->getTableName($data['article_id']);
@@ -79,9 +79,9 @@ class Comment extends IndexBaseController
 	}
 
 	//采纳评论
-    public function jiedaCai()
+    public function jiedaCai(Request $request): Response
     {
-		$id = input('id');
+		$id = $request->get('id');
         $comms = CommentModel::find($id);
 		$result = $comms->save(['cai' =>1]);
 		$res = [];
@@ -105,11 +105,9 @@ class Comment extends IndexBaseController
         $comms = CommentModel::find($id);
 		$result = $comms->delete();
         if($result){
-            $res = ['status' => 0,'msg' => '删除成功'];
-        } else {
-            $res = ['status' => -1,'msg' => '删除失败'];
+            return json(['code'=>0,'status' => 0,'msg' => '删除成功']);
         }
-	 return json($res);
+        return json(['code'=>-1,'status' => -1,'msg' => '删除失败']);
     }
 
 	//编辑评论
@@ -145,11 +143,11 @@ class Comment extends IndexBaseController
 	}
 
     //更新评论
-    public function edit()
+    public function edit(Request $request): Response
     {
         if(!session('?user_id')) return json(['code'=>-1,'msg'=>'未登录']);
-        if(Request::isPost()) {
-            $param = Request::param();
+        if($request->isPost()) {
+            $param = $request->post();
 //            halt($param);
             $result = CommentModel::update($param);
             if($result) {

@@ -81,32 +81,26 @@
 		fly: 'index'
 	}).use('fly');
 
-
-
-
 	// 页面初始化执行
-	$(function () {
-		const token = localStorage.getItem('token');
-		const expireTime = localStorage.getItem('expire_time');
-		const now = Math.floor(Date.now() / 1000);
+	const token = localStorage.getItem('token');
+	const expireTime = localStorage.getItem('expire_time');
+	const now = Math.floor(Date.now() / 1000);
 
-		// 本地校验token有效
-		if (token && Number(expireTime) > now) {
-			console.log(token, expireTime);
-			// 全局注入请求头
-			$.ajaxSetup({
-				headers: {
-					'Authorization': 'Bearer ' + token
-				}
-			});
-		} else {
-			// 失效清空存储，跳登录
-			localStorage.removeItem('token');
-			localStorage.removeItem('expire_time');
-			// location.href = '/login.html';
-		}
-	});
-
+	// 本地校验token有效
+	if (token && Number(expireTime) > now) {
+		console.log(token, expireTime);
+		// 全局注入请求头
+		$.ajaxSetup({
+			headers: {
+				'Authorization': 'Bearer ' + token
+			}
+		});
+	} else {
+		// 失效清空存储，跳登录
+		localStorage.removeItem('token');
+		localStorage.removeItem('expire_time');
+		// location.href = '/login.html';
+	}
 
 	$.get("{:url('login_status')}", function(res) {
 		if(res.code === 0) {
@@ -127,8 +121,8 @@
 			<li class="layui-nav-item" lay-unselect>
 				<a class="fly-nav-avatar" href="{:url('user/index')}"><cite class="layui-hide-xs">${res.data.name}</cite><img src="${res.data.avatar}"></a>
 				<dl class="layui-nav-child">
-					<dd><a href="{:url('user/index')}"><i class="layui-icon layui-icon-username"></i>{:lang('user center')}</a></dd>
-					<dd><a href="{:url('user/set')}"><i class="layui-icon layui-icon-set"></i>{:lang('set info')}</a></dd>
+					<dd><a href="{:url('user_index')}"><i class="layui-icon layui-icon-username"></i>{:lang('user center')}</a></dd>
+					<dd><a href="{:url('user_set')}"><i class="layui-icon layui-icon-set"></i>{:lang('set info')}</a></dd>
 					<dd><a href="{:url('user/message')}"><i class="iconfont icon-tongzhi"></i>{:lang('my message')}</a></dd>
 					<dd><a href="${res.data.user_home}"><i class="layui-icon layui-icon-home"></i>{:lang('my page')}</a></dd>
 					<dd><a data-url="{:url('user/logout')}" href="javascript:void(0)" id="logout" style="text-align: center;">{:lang('logout')}</a></dd>
@@ -139,7 +133,7 @@
 		$('.fly-nav-user').append(LOGHTML);
 		// 渲染导航组件
 		element.render('nav', 'header-filter-nav');
-	  })
+	})
 
 </script>
 {block name="script"}{/block}

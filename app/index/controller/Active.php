@@ -1,26 +1,25 @@
 <?php
 namespace app\index\controller;
 
+use think\Request;
+use think\Response;
 use think\facade\Db;
 use think\facade\Cache;
-use think\Request;
 use think\facade\View;
-
 
 class Active extends IndexBaseController
 {	
 
-	
 	public function index()
 	{
 		return View::fetch('index');
     }
 
 	
-	public function email()
+	public function email(Request $request): Response
 	{
-		if(Request::isPost()){
-			$url = Request::param('url');
+		if($request->isPost()){
+			$url = $request->param('url');
 			$atime = substr($url,0,10);
 			$mde = substr($url,10,32);
 			$uid = substr($url,42);

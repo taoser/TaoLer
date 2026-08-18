@@ -2,17 +2,18 @@
 namespace app\index\controller;
 
 use Exception;
-use app\common\controller\BaseController;
-use app\common\validate\User as userValidate;
-use think\facade\Db;
 use think\Request;
+use think\Response;
+use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Cookie;
 use think\facade\View;
 use app\facade\Article;
-use app\model\Collection;
 use app\facade\User as userModel;
+use app\model\Collection;
+use app\common\controller\BaseController;
+use app\common\validate\User as userValidate;
 use taoler\com\Message;
 use Intervention\Image\ImageManager;
 use think\response\Json;
@@ -32,10 +33,10 @@ class User extends IndexBaseController
 	
 	
 	// 我的发帖list
-	public function myArticles()
+	public function myArticles(Request $request)
 	{
-		$page = Request::param('page/d', 1);
-		$limit = Request::param('limit/d', 20);
+		$page = $request->get('page/d', 1);
+		$limit = $request->get('limit/d', 20);
 		$myArticle = Article::field('id,cate_id,title,status,pv,create_time,update_time')
             ->withCount(['comments'])
             ->where(['user_id' => $this->uid])
@@ -120,10 +121,10 @@ class User extends IndexBaseController
     }
 
 	// 编辑pv
-	public function edtiPv()
+	public function edtiPv(Request $request)
 	{
-		if(Request::isPost()){
-			$param = Request::param(['id','pv']);
+		if($request->isPost()){
+			$param = $request->post(['id','pv']);
 			$res = Db::name('article')->save(['id' => $param['id'], 'pv' => $param['pv']]);
 			if($res) {
 				return json(['code' => 0, 'msg' => '修改成功！']);
@@ -133,10 +134,10 @@ class User extends IndexBaseController
 	}
 
 	// 刷新
-	public function updateTime()
+	public function updateTime(Request $request)
 	{
-		if(Request::isPost()){
-			$param = Request::param(['data']);
+		if($request->isPost()){
+			$param = $request->post(['data']);
 			if(count($param) == 0) return json(['code' => -1, 'msg' => '未选中任何数据！']);
 			$idArr = [];
 			foreach($param['data'] as $v) {
@@ -196,10 +197,10 @@ class User extends IndexBaseController
 	}
 	
 	//取消文章收藏
-	public function colltDel()
+	public function colltDel(Request $request)
 	{
-		if(Request::isPost()){
-			$collt = Collection::where('user_id',$this->uid)->find(input('id'));
+		if($request->isPost()){
+			$collt = Collection::where('user_id',$this->uid)->find($request->get('id'));
 			$result = $collt->delete();
 			if($result){
 				$res = ['code'=>0,'msg'=>'取消成功'];
@@ -211,10 +212,10 @@ class User extends IndexBaseController
 	}
 
 	//用户设置-我的资料
-	public function set()
+	public function set(Request $request)
 	{
-		if(Request::isPost()){
-			$data = Request::post(['email','phone','nickname','sex','city','area_id','sign']);
+		if($request->isPost()){
+			$data = $request->post(['email','phone','nickname','sex','city','area_id','sign']);
             $data['user_id'] = $this->uid;
 			// 过滤
 			$sign = strtolower($data['sign']);
@@ -260,11 +261,11 @@ class User extends IndexBaseController
 	 *
 	 * @return Json
 	 */
-	public function uploadHeadImg(): Json
+	public function uploadHeadImg(Request $request): Json
     {
 		
 		try{
-			$file = request()->file('file');
+			$file = $request->file('file');
 
 			$relative_path = 'storage/' . $this->uid . '/head_img/';
             $dir = public_path() . $relative_path;
@@ -330,9 +331,9 @@ class User extends IndexBaseController
     }
 	
 	//个人页
-    public function home()
+    public function home(Request $request)
     {
-		$id = Session::get('user_id') ?? input('id');
+		$id = Session::get('user_id') ?? $request->get('id');
 		//用户
 		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->find($id);
 	
@@ -373,11 +374,11 @@ class User extends IndexBaseController
 	}
 	
 	//邮箱激活
-	public function active()
+	public function active(Request $request)
 	{
 
-		if(Request::isPost()){
-			$email = Request::param('email');
+		if($request->isPost()){
+			$email = $request->get('email');
 			$url = Request::domain().Request::root().'/active/index?url='.time().md5($email).$this->uid;
 			$content = "Hi亲爱的{$this->showUser($this->uid)['name']}:</br>您正在进行邮箱激活，请在10分钟内完成激活。 <a href='{$url}' target='_blank' >请点击进行激活</a> </br>若无法跳转请复制链接激活：{$url}";
 			$res = hook('mailtohook',[$email,'邮箱激活',$content]);
@@ -390,10 +391,10 @@ class User extends IndexBaseController
 	}
 	
 	//修改密码
-	public function setPass()
+	public function setPass(Request $request)
 	{
-		if(Request::isPost()){
-			$data = Request::param();
+		if($request->isPost()){
+			$data = $request->post();
 			$validate = new userValidate;
 			$res = $validate->scene('setPass')->check($data);
 			if(!$res){

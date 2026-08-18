@@ -1,17 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2019-10-15
- * Time: 15:40
- */
-
 namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
 use think\Request;
 use think\Response;
-use app\entity\Admin as AdminEntity;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
@@ -19,6 +11,7 @@ use think\facade\Cookie;
 use think\facade\Cache;
 use app\common\helper\FileHelper;
 use app\common\helper\PasswordHash;
+use app\entity\Admin as AdminEntity;
 
 
 class Admin extends AdminBaseController
@@ -69,7 +62,12 @@ class Admin extends AdminBaseController
 	}
 
 	
-	//管理员审核
+	/**
+	 * 审核管理员
+	 *
+	 * @param Request $request
+	 * @return Response
+	 */
 	public function check(Request $request):Response
 	{
 		$data = $request->post(['id', 'status']);
@@ -90,8 +88,13 @@ class Admin extends AdminBaseController
 		return json(['code' => -1, 'msg' => '审核出错']);
 	}
 	
-	//添加管理员
-	public function add(Request $request):Response
+	/**
+	 * 添加管理员
+	 *
+	 * @param Request $request
+	 * @return Response | string
+	 */
+	public function add(Request $request):Response | string
 	{
 		if(!$request->isPost()){
 			//$auth_group = Db::name('auth_group')->select();
@@ -113,10 +116,14 @@ class Admin extends AdminBaseController
 		return json(['code'=>-1,'msg'=>'添加失败']);
 	}
 	
-	//管理员编辑
+	/**
+	 * 编辑管理员
+	 *
+	 * @param Request $request
+	 * @return Response | string
+	 */
 	public function edit(Request $request): Response | string
 	{
-		
 		if(!$request->isPost()){
 			$id = $request->get('id');
 			$admin = $this->model->find($id);
@@ -135,7 +142,7 @@ class Admin extends AdminBaseController
 	}
 	
 	//删除管理员
-	public function delete(Request $request):Response
+	public function delete(Request $request): Response
 	{
 		$id = $request->get('id');
 		
@@ -203,7 +210,6 @@ class Admin extends AdminBaseController
     //修改密码
 	public function repassSet(Request $request): Response
 	{
-		
 		$data = $request->post(['oldPassword','password','repassword']);
 		$data['admin_id'] = $request->aid;
 		
@@ -245,7 +251,7 @@ class Admin extends AdminBaseController
 		Cookie::delete('adminAuth');
 		Session::clear();
 		
-		return json(['code'=>0,'msg'=>'退出成功' ]);
+		return json(['code' => 0, 'msg'=>'退出成功' ]);
 	}
 
 	/**

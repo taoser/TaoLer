@@ -33,9 +33,24 @@ class User extends BaseEntity
         }
     }
 	
-	//登陆校验
-    public function login($data)
+	/**
+     * 登录校验
+     *
+     * @param array $data 登录数据（用户名/手机号/邮箱、密码）
+     * @return array 登录成功后的用户信息
+     */
+    public function login(array $data): array
     {
+        // 检验登录是否开放
+        if(Config::get('taoler.config.is_login') == 0 ) {
+			throw new Exception("Sorry,Sorry, website maintenance, temporarily unable to log in!", -1);
+        }
+
+        // 校验验证码
+        if(Config::get('taoler.config.login_captcha') == 1 && !captcha_check($data['captcha'])) {				
+			throw new Exception("验证码失败", -1);
+        }
+
         //登陆请求
 		try{
 			// 英文和中文用户名邮箱正则表达式
@@ -60,25 +75,25 @@ class User extends BaseEntity
 				$user = $this->where('name', $data['name'])->findOrEmpty();
 			}
 		} catch (ValidateException $e) {
-            throw new ValidateException($e->getError());
+            throw new Exception($e->getError(), -1);
 		} catch(Exception $e) {
-			throw new Exception($e->getMessage());
+			throw new Exception($e->getMessage(), -1);
 		}
 
         if($user->isEmpty()){
-			throw new Exception(Lang::get('username or password error'));
+			throw new Exception(Lang::get('username or password error'), -1);
         }
 
         //被禁用和待审核
         if($user['status'] == -1){
-            throw new Exception(Lang::get('Account disabled'));
+            throw new Exception(Lang::get('Account disabled'), -1);
         }
         if($user['status'] == 0){
-            throw new Exception(Lang::get('Pending approval'));
+            throw new Exception(Lang::get('Pending approval'), -1);
         }
         //错误登陆连续3次且小于10分钟
         if((time() - $user->login_error_time < 60) && is_int($user->login_error_num/3)){	
-            throw new Exception(Lang::get('Please log in 10 minutes later'));
+            throw new Exception(Lang::get('Please log in 10 minutes later'), -1);
         }
     
         //对输入的密码字段进行MD5加密，再进行数据库的查询
@@ -92,10 +107,10 @@ class User extends BaseEntity
       
              //连续3次错误
              if(is_int(($user->login_error_num+1)/3) && $user->login_error_num >0 ){
-                 throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'));
+                 throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'), 1);
              }
 
-             throw new Exception(Lang::get('The user name or password is incorrect'));
+             throw new Exception(Lang::get('The user name or password is incorrect'), -1);
         }
         //将用户数据写入Session
         Session::set('user_id',$user['id']);
@@ -119,6 +134,7 @@ class User extends BaseEntity
             'avatar'    => $user['user_img']
         ]);
 
+        // 过期时间
         $expireTime = JwtAuth::getExpireTime();
 
         return ['token' => $token, 'expire_time' => $expireTime];

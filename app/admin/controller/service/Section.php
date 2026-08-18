@@ -24,9 +24,9 @@ class Section extends AdminBaseController
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
      */
-    public function list()
+    public function list(Request $request): Response
     {
-        $id = Request::param('id/d');
+        $id = $request->get('id/d');
 
         $map = [];
         if(!empty($id)) {
@@ -53,57 +53,57 @@ class Section extends AdminBaseController
      *
      * @return void
      */
-    public function add()
+    public function add(Request $request): Response | string
     {
         //添加模块
-        if(Request::isPost()){
-            $data = Request::post(['type','title','subtitle','alias']);
-            $data['create_time'] = date('Y-m-d H:i:s', time());
-
-            try{
-                SectionEntity::save($data);
-                return json( ['code'=>0,'msg'=>'添加成功']);
-            } catch (Exception $e) {
-                return json(['code'=>-1,'msg'=>'添加失败']);
-            }
+        if(!$request->isPost()) {
+            return View::fetch();
         }
+
+        $data = $request->post(['type','title','subtitle','alias']);
+        $data['create_time'] = date('Y-m-d H:i:s', time());
+
+        try{
+            SectionEntity::save($data);
+            return json( ['code'=>0,'msg'=>'添加成功']);
+        } catch (Exception $e) {
+            return json(['code'=>-1,'msg'=>'添加失败']);
+        }
+    }	
 		
-		return View::fetch();
-    }
 
     /**
      * 编辑
      *
      * @return void
      */
-    public function edit()
+    public function edit(Request $request): Response | string
     {
-        $id = (int)input('id');
-
-        if(Request::isPost()){
-            $data = Request::post(['id/d','type','title','subtitle','alias','status/d']);
-            $data['update_time'] = date('Y-m-d H:i:s', time());
-
-            try{
-                SectionEntity::update($data);
-                return json(['code'=>0,'msg'=>'编辑成功']);
-            } catch (Exception $e) {
-                return json(['code'=>-1,'msg'=>'编辑失败']);
-            }
+        if(!$request->isPost()){
+            $id = $request->get('id/d');
+            $section = SectionEntity::find($id);
+            View::assign('section', $section);
+            
+            return View::fetch();
 		}
 
-        $section = SectionEntity::find($id);
-		View::assign('section', $section);
-		
-		return View::fetch();
+        $data = Request::post(['id/d','type','title','subtitle','alias','status/d']);
+        $data['update_time'] = date('Y-m-d H:i:s');
+
+        try{
+            SectionEntity::update($data);
+            return json(['code'=>0,'msg'=>'编辑成功']);
+        } catch (Exception $e) {
+            return json(['code'=>-1,'msg'=>'编辑失败']);
+        }
     }
 
     /** 
      * 
     */
-    public function delete()
+    public function delete(Request $request): Response
     {
-        $id = Request::param('id/d');
+        $id = $request->get('id/d');
         $section = SectionEntity::with('sectionAccess')->find($id);
 
         $res = $section->together(['sectionAccess'])->delete();
@@ -119,24 +119,23 @@ class Section extends AdminBaseController
      *
      * @return void
      */
-    public function addSub()
+    public function addSub(Request $request): Response
     {
-        if(Request::isPost()){
-            $data = Request::post(['section_id','name','icon','image','url','description','sort']);
-            $data['create_time'] = date('Y-m-d H:i:s', time());
-
-            try{
-                SectionAccess::save($data);
-                return json( ['code'=>0,'msg'=>'添加成功']);
-            } catch (Exception $e) {
-                return json(['code'=>-1,'msg'=>'添加失败']);
-            }
+        if(!$request->isPost()) {
+            $section = SectionEntity::select();
+            View::assign('section', $section);
+            return View::fetch();
         }
         
-		$section = SectionEntity::select();
+        $data = $request->post(['section_id','name','icon','image','url','description','sort']);
+        $data['create_time'] = date('Y-m-d H:i:s');
 
-        View::assign('section', $section);
-		return View::fetch();
+        try{
+            SectionAccess::save($data);
+            return json( ['code'=>0,'msg'=>'添加成功']);
+        } catch (Exception $e) {
+            return json(['code'=>-1,'msg'=>'添加失败']);
+        }
     }
 
     /**
@@ -144,37 +143,36 @@ class Section extends AdminBaseController
      *
      * @return void
      */
-    public function editSub()
+    public function editSub(Request $request): Response | string
     {
-      $id = (int)input('id');
+        if(!$request->isPost()){
+            $id = $request->get('id/d');
+            $section = SectionEntity::select();
+            View::assign('section', $section);
 
-        if(Request::isPost()){
-            $data = Request::post(['id/d','name','alias','icon','image','description','sort']);
-            $data['update_time'] = date('Y-m-d H:i:s', time());
-            // halt($data);
-            try{
-                SectionAccess::update($data);
-                return json( ['code'=>0,'msg'=>'编辑成功']);
-            } catch (Exception $e) {
-                return json(['code'=>-1,'msg'=>'编辑失败']);
-            }
+            $sectionSub = SectionAccess::find($id);
+            View::assign('sectionSub', $sectionSub);
+            
+            return View::fetch();
 		}
 
-        $section = SectionEntity::select();
-		View::assign('section', $section);
-
-        $sectionSub = SectionAccess::find($id);
-		View::assign('sectionSub', $sectionSub);
-		
-		return View::fetch();
+        $data = $request->post(['id/d','name','alias','icon','image','description','sort']);
+        $data['update_time'] = date('Y-m-d H:i:s');
+        // halt($data);
+        try{
+            SectionAccess::update($data);
+            return json( ['code'=>0,'msg'=>'编辑成功']);
+        } catch (Exception $e) {
+            return json(['code'=>-1,'msg'=>'编辑失败']);
+        }
     }
 
     /** 
      * 
     */
-    public function deleteSub()
+    public function deleteSub(Request $request): Response
     {
-        $id = Request::param('id/d');
+        $id = $request->get('id/d');
         $section = SectionAccess::find($id);
 
         $res = $section->delete();
@@ -186,9 +184,9 @@ class Section extends AdminBaseController
     }
 
     //审核用户
-    public function check()
+    public function check(Request $request): Response
     {
-        $data = Request::post(['id/d','status/d']);
+        $data = $request->post(['id/d','status/d']);
 
         //获取状态
         $res = SectionAccess::where('id', $data['id'])->update(['status' => $data['status']]);

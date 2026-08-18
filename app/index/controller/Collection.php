@@ -1,19 +1,24 @@
 <?php
 namespace app\index\controller;
 
-use think\facade\Session;
-use app\model\Collection as CollectionModel;
-use app\facade\Article;
 use think\Request;
+use think\Response;
+use think\facade\Session;
 use think\facade\Db;
+use app\facade\Article;
+use app\model\Collection as CollectionModel;
 
 class Collection extends IndexBaseController
 {
 	//文章收藏
-	public function add(){
+	public function add(Request $request): Response
+	{
 		//$data = Request::param();
-		$data['article_id'] = intval(input('cid'));
-		$data['user_id'] = $this->uid;
+		$cid = $request->get('cid');
+		$uid = $request->uid;
+
+		$data['article_id'] = intval($cid);
+		$data['user_id'] = $uid;
 		$arts = Article::with(['user'])->field('id,title,user_id')->find($data['article_id']);
 		$data['collect_title'] = $arts['title'];
 		$data['auther'] = $arts->user->name;
@@ -26,9 +31,10 @@ class Collection extends IndexBaseController
 	}
 
     //取消收藏
-    public function remove(){
+    public function remove(Request $request): Response
+	{
 		
-		$cid = input('cid');
+		$cid = $request->get('cid');
         $aid = intval($cid);
         //$result = CollectionModel::where('cid',$arid)->select();
         $result =  Db::name('collection')->where(['article_id' => $aid,'user_id' => $this->uid])->delete();

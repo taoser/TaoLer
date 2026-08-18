@@ -29,11 +29,11 @@ use think\Container;
 class Index extends AdminBaseController
 {
 
-	protected $sys_version;
-    protected $pn;
-    protected $sys;
-    protected $domain;
-    protected $api;
+	protected string $sys_version;
+    protected string $pn;
+    protected array $sys;
+    protected string $domain;
+    protected string $api;
 
 	public function initialize()
 	{
@@ -168,13 +168,14 @@ class Index extends AdminBaseController
 	//动态信息
 	public function news(Request $request)
 	{
-		$data = $request->post(['page/d', 'limit/d']);
+		$page = $request->get('page/d', 1);
+		$limit = $request->get('limit/d', 10);
 		
-		$news = Cache::get('news'.$data['page'].'_'.$data['limit']);
+		$news = Cache::get('news'.$page.'_'.$limit);
 		if(empty($news)){
-			$news = HttpHelper::withHost()->get('/v1/news', $data)->toJson();
+			$news = HttpHelper::withHost()->get('/v1/news', ['page'=>$page,'limit'=>$limit])->toJson();
 			if($news->code == 0){
-				Cache::set('news'.$data['page'].'_'.$data['limit'],$news, 600);
+				Cache::set('news'.$page.'_'.$limit, $news, 600);
 			}
 		}
 

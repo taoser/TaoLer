@@ -3,8 +3,9 @@
 namespace app\index\controller;
 
 use Exception;
-use think\facade\View;
 use think\Request;
+use think\Response;
+use think\facade\View;
 use think\facade\Db;
 use think\facade\Cache;
 use app\facade\Category;
@@ -43,11 +44,11 @@ class Article extends IndexBaseController
 
 
 	//文章详情页
-    public function detail()
+    public function detail(Request $request): Response | string
     {
-		$ID = $this->request->param('id');
+		$ID = $request->param('id');
 
-		$commentPage = $this->request->param('page', 1);
+		$commentPage = $request->get('page', 1);
 
 		try{
 			// 解密ID，得到int型
@@ -90,78 +91,78 @@ class Article extends IndexBaseController
      * 添加帖子文章
      * @return string|\think\Response|\think\response\Json|void
      */
-    public function add()
+    public function add(Request $request): Response | string
     {
-        if (Request::isPost()) {
-
-			$data = Request::post(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha','tagid']);
-			$data['user_id'] = $this->uid;
-
-			try{
-
-				$articleServer = new ArticleService();
-			
-				// 校验策略
-				$articleServer->setValidation(new ArticleValidation())
-					->addValidation(new DataValidationStrategy())
-					->addValidation(new AuthValidationStrategy())
-					->addValidation(new \app\common\strategy\PostValidationStrategy());
-
-				// 装饰
-				$articleServer->setDecorator(new MainArticleProcessorDecorator())
-					->addProcessor(new SensitiveWordFilter()) //违禁词过滤
-					->addProcessor(new WordsDesc()) //关键词描述
-					->addProcessor(new Media()) // 媒体处理
-					->addProcessor(new \app\common\decorator\Image()); // 图片处理
-
-				// 观察者策略
-				$articleServer->setObserverManager(new ObserverManager())
-					->addObserver(new LogObserver())
-					->addObserver(new MailObserver());
-
-				$result = $articleServer->add($data);
-
-				// 获取分类ename, appname
-				$cateName = Db::name('cate')->field('ename')->find($data['cate_id']);
-				$link = $this->getRouteUrl((int) $result['article_id'], $cateName['ename']);
-				$status = Db::name('article')->where('id', $result['article_id'])->value('status');
-				$url = $status ? $link : (string) url('index/');
-
-				// 清除文章tag缓存
-				Cache::tag('tagArtDetail')->clear();
-
-				// 发提醒邮件
-				// hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
-				// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-				// hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
-
-				// 清理首页静态文件
-				$this->removeIndexHtml();
-
-				return Msgres::success('add_success', $url);
-
-			} catch(Exception $e) {
-				return ResHelper::error($e->getMessage());
+        if (!$request->isPost()) {
+			$ename = $request->get('cate');
+			// 子模块自定义自适应add.html模板
+			$cate = Db::name('cate')->field('id,tpl')->where('ename', $ename)->find();
+			// 子模块下有add.html模板
+			if(!empty($cate)) {
+				$cid = $cate['id'];
+			} else {
+				$cate['tpl'] = '';
+				$cid = '';
 			}
+
+			$view = 'category' . DIRECTORY_SEPARATOR . $cate['tpl'] . DIRECTORY_SEPARATOR . 'add.html';
+
+			//子模块下存在add模板则调用，否则调用article/add.html
+			$addTpl = is_file($view) ? $view : 'category/add';
+
+			View::assign(['cid' => $cid]);
+			return View::fetch($addTpl);
         }
 
-		// 子模块自定义自适应add.html模板
-		$cate = Db::name('cate')->field('id,tpl')->where('ename', input('cate'))->find();
-		// 子模块下有add.html模板
-		if(!empty($cate)) {
-			$cid = $cate['id'];
-		} else {
-			$cate['tpl'] = '';
-			$cid = '';
+		$data = $request->post(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha','tagid']);
+		$data['user_id'] = $this->uid;
+
+		try{
+
+			$articleServer = new ArticleService();
+		
+			// 校验策略
+			$articleServer->setValidation(new ArticleValidation())
+				->addValidation(new DataValidationStrategy())
+				->addValidation(new AuthValidationStrategy())
+				->addValidation(new \app\common\strategy\PostValidationStrategy());
+
+			// 装饰
+			$articleServer->setDecorator(new MainArticleProcessorDecorator())
+				->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+				->addProcessor(new WordsDesc()) //关键词描述
+				->addProcessor(new Media()) // 媒体处理
+				->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+			// 观察者策略
+			$articleServer->setObserverManager(new ObserverManager())
+				->addObserver(new LogObserver())
+				->addObserver(new MailObserver());
+
+			$result = $articleServer->add($data);
+
+			// 获取分类ename, appname
+			$cateName = Db::name('cate')->field('ename')->find($data['cate_id']);
+			$link = $this->getRouteUrl((int) $result['article_id'], $cateName['ename']);
+			$status = Db::name('article')->where('id', $result['article_id'])->value('status');
+			$url = $status ? $link : (string) url('index/');
+
+			// 清除文章tag缓存
+			Cache::tag('tagArtDetail')->clear();
+
+			// 发提醒邮件
+			// hook('mailtohook',[$this->adminEmail,'发帖审核通知','Hi亲爱的管理员:</br>用户'.$this->user['name'].'刚刚发表了 <b>'.$data['title'].'</b> 新的帖子，请尽快处理。']);
+			// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
+			// hook('callme_add', ['article_id' => (int) $aid]); // 添加文章的联系方式
+
+			// 清理首页静态文件
+			$this->removeIndexHtml();
+
+			return Msgres::success('add_success', $url);
+
+		} catch(Exception $e) {
+			return ResHelper::error($e->getMessage());
 		}
-
-		$view = 'category' . DIRECTORY_SEPARATOR . $cate['tpl'] . DIRECTORY_SEPARATOR . 'add.html';
-
-		//子模块下存在add模板则调用，否则调用article/add.html
-		$addTpl = is_file($view) ? $view : 'category/add';
-
-		View::assign(['cid' => $cid]);
-		return View::fetch($addTpl);
     }
 
     /**
@@ -172,7 +173,7 @@ class Article extends IndexBaseController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function edit()
+    public function edit(Request $request): Response | string
     {
 		$id = $this->request->param('id/d');
 		// $id = IdEncode::decode($id);
@@ -181,8 +182,8 @@ class Article extends IndexBaseController
 
 		$this->removeDetailHtml($article);
 		
-		if(Request::isPost()){
-			$data = Request::post(['id/d','cate_id/d','title','content','keywords','description','captcha', 'tagid']);
+		if($request->isPost()){
+			$data = $request->post(['id/d','cate_id/d','title','content','keywords','description','captcha', 'tagid']);
 
 			try {
 
@@ -239,7 +240,7 @@ class Article extends IndexBaseController
 	 *
 	 * @return Json
 	 */
-    public function delete(): Json
+    public function delete(Request $request): Json
 	{
 		$id = $this->request->param('id');
 
@@ -271,9 +272,9 @@ class Article extends IndexBaseController
 	 *
 	 * @return Json
 	 */
-	public function jieset(): Json
+	public function jieset(Request $request): Json
 	{
-		$param = Request::post(['id/d','field','rank/d']);
+		$param = $request->post(['id/d','field','rank/d']);
 		
 		$article = $this->model::suffix($this->byIdGetSuffix($param['id']))
 		->field('id,is_top,is_hot,is_reply')

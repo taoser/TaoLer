@@ -12,6 +12,7 @@ namespace app\admin\controller\system;
 
 use app\admin\controller\AdminBaseController;
 use think\Request;
+use think\Response;
 use think\facade\View;
 use think\facade\Db;
 use think\exception\ValidateException;
@@ -99,7 +100,6 @@ class AuthGroup extends AdminBaseController
 	//角色编辑
 	public function edit(Request $request): Response | string
 	{
-		
 		if(!$request->isPost()){
 			$id = $request->get('id/d');
 			$menus = $this->getRoleMenu(1);

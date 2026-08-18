@@ -1,15 +1,17 @@
 <?php
 namespace app;
 
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
+use Throwable;
+use think\Request;
+use think\Response;
+use think\facade\Log;
+
 use think\exception\Handle;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
 use think\exception\ValidateException;
-use think\Response;
-use Throwable;
-use think\facade\Log;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 
 /**
  * 应用异常处理类
@@ -70,12 +72,17 @@ class ExceptionHandle extends Handle
     /**
      * 判断是否为 API 请求
      */
-    protected function isApiRequest($request): bool
+    protected function isApiRequest(Request $request): bool
     {
         // 方式1：通过请求头 Accept 判断（推荐）
          // 判断是否为API请求（关键：区分接口/网页）
-        $isApi = $request->header('Accept') && str_contains($request->header('Accept'), 'application/json')
+        $isApi = $request->header('Accept')
+            && str_contains($request->header('Accept'), 'application/json')
             || str_starts_with($request->pathinfo(), 'api/')
+            || $request->isPost()
+            || $request->isPut()
+            || $request->isDelete()
+            || $request->isOptions()
             || $request->isAjax();
 
         if ($isApi) {
@@ -111,7 +118,7 @@ class ExceptionHandle extends Handle
 
         $data = [
             'code'      => $code,
-            'message'   => $message,
+            'msg'       => $message,
             'data'      => [],
         ];
 

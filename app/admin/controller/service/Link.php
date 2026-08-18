@@ -3,10 +3,11 @@
 namespace app\admin\controller\service;
 
 use app\admin\controller\AdminBaseController;
-use think\facade\View;
-use think\Request;
-use app\facade\Link as LinkEntity;
 use Exception;
+use think\Request;
+use think\Response;
+use think\facade\View;
+use app\facade\Link as LinkEntity;
 
 class Link extends AdminBaseController
 {
@@ -20,12 +21,12 @@ class Link extends AdminBaseController
      * @return \think\response\Json
      * @throws \think\db\exception\DbException
      */
-    public function list()
+    public function list(Request $request): Response
     {
         $map = [];
 
-        $limit = Request::param('limit/d', 15);
-        $page = Request::param('page/d', 1);
+        $limit = $request->get('limit/d', 15);
+        $page = $request->get('page/d', 1);
 
         $count = LinkEntity::where($map)->count();
         $list = LinkEntity::where($map)->page($page)->limit($limit)->select()->toArray();
@@ -57,106 +58,97 @@ class Link extends AdminBaseController
      *
      * @return void
      */
-    public function add()
+    public function add(Request $request): Response
     {
         //添加幻灯
-        if(Request::isPost()){
-            $data = Request::post(['title','logo','url','start_time','end_time']);
+        if(!$request->isPost()){
+            return View::fetch();
+        }
 
-            if(!empty($data['start_time']) && !empty($data['end_time'])) {
-                $stime = strtotime($data['start_time']);
-                $etime = strtotime($data['end_time']);
-                if($etime <= $stime) {
-                    return json(['code' => -1, 'msg' => '结束时间不能小于开始时间']);
-                }
-            }
+        $data = Request::post(['title','logo','url','start_time','end_time']);
 
-            try{
-                LinkEntity::save($data);
-                return json( ['code'=>0,'msg'=>'添加成功']);
-            } catch (Exception $e) {
-                return json(['code'=>-1,'msg'=>'添加失败']);
+        if(!empty($data['start_time']) && !empty($data['end_time'])) {
+            $stime = strtotime($data['start_time']);
+            $etime = strtotime($data['end_time']);
+            if($etime <= $stime) {
+                return json(['code' => -1, 'msg' => '结束时间不能小于开始时间']);
             }
         }
-		
-		return View::fetch();
+
+        try{
+            LinkEntity::save($data);
+            return json( ['code'=>0,'msg'=>'添加成功']);
+        } catch (Exception $e) {
+            return json(['code'=>-1,'msg'=>'添加失败']);
+        }
     }
 
 
     /**
      * 编辑
      *
-     * @return void
+     * @return Response
      */
-    public function edit()
+    public function edit(Request $request): Response
     {
-      $id = (int)input('id');
-      
-
-        if(Request::isPost()){
-            $data = Request::post(['id','title','logo','url','start_time','end_time']);
-
-            if(!empty($data['start_time']) && !empty($data['end_time'])) {
-                $stime = strtotime($data['start_time']);
-                $etime = strtotime($data['end_time']);
-                if($etime <= $stime) {
-                    return json(['code' => -1, 'msg' => '结束时间不能小于开始时间']);
-                }
-            }
-
-            if(empty($data['start_time'])) {
-                $data['start_time'] = null;
-            }
-
-            if(empty($data['end_time'])) {
-                $data['end_time'] = null;
-            }
-
-            try{
-                LinkEntity::update($data);
-                return json( ['code'=>0,'msg'=>'编辑成功']);
-            } catch (Exception $e) {
-                return json(['code'=>-1,'msg'=>'编辑失败']);
-            }
+        if(!$request->isPost()){
+            $id = $request->get('id/d');
+            $link = LinkEntity::find($id);
+            View::assign('link', $link);
+            return View::fetch();
 		}
 
-        $link = LinkEntity::find($id);
-		View::assign('link', $link);
-		
-		return View::fetch();
+        $data = $request->post(['id/d','title','logo','url','start_time','end_time']);
+
+        if(!empty($data['start_time']) && !empty($data['end_time'])) {
+            $stime = strtotime($data['start_time']);
+            $etime = strtotime($data['end_time']);
+            if($etime <= $stime) {
+                return json(['code' => -1, 'msg' => '结束时间不能小于开始时间']);
+            }
+        }
+
+        if(empty($data['start_time'])) {
+            $data['start_time'] = null;
+        }
+
+        if(empty($data['end_time'])) {
+            $data['end_time'] = null;
+        }
+
+        try{
+            LinkEntity::update($data);
+            return json( ['code'=>0,'msg'=>'编辑成功']);
+        } catch (Exception $e) {
+            return json(['code'=>-1,'msg'=>'编辑失败']);
+        }
     }
 
     /**
-     * @param $id
-     * @return \think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 删除
+     *
+     * @return Response
      */
-    public function delete($id)
+    public function delete(Request $request): Response
     {
-      $link = LinkEntity::find($id);
-      $res = $link->delete();
-      if($res){
-        return json(['code'=>0,'msg'=>'删除成功']);
-      } else {
+        $id = $request->get('id/d');
+        $link = LinkEntity::find($id);
+        $res = $link->delete();
+        if($res){
+            return json(['code'=>0,'msg'=>'删除成功']);
+        }
         return json(['code'=>-1,'msg'=>'删除失败']);
-      }
     }
 
     //审核用户
-    public function check()
+    public function check(Request $request): Response
     {
-        $data = Request::post(['id','status']);
+        $data = $request->post(['id','status']);
 
         //获取状态
         $res = LinkEntity::where('id', $data['id'])->update(['status' => $data['status']]);
         if($res){
-            if($data['status'] == 1){
-                return json(['code'=>0,'msg'=>'启用成功','icon'=>6]);
-            } else {
-                return json(['code'=>0,'msg'=>'已被禁用','icon'=>5]);
-            }
+            return json(['code'=>0,'msg'=> $data['status'] == 1 ? '已启用' : '已禁用','icon'=>6]); 
         }
         return json(['code'=>-1,'msg'=>'审核出错']);
     }

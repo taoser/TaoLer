@@ -10,9 +10,12 @@
  */
 namespace app\index\controller;
 
-use think\facade\View;
+use Exception;
 use think\Request;
+use think\Response;
+use think\facade\View;
 use think\facade\Db;
+use think\facade\Route;
 use app\common\helper\Msgres;
 use app\common\helper\ResponseHelper;
 
@@ -23,12 +26,9 @@ use app\common\facade\HttpHelper;
 use app\facade\Article;
 use think\db\Query;
 use app\index\entity\Article as ArticleEntity;
-use Exception;
-use think\facade\Cache;
-use think\Response;
 use app\common\helper\JwtAuth;
-use think\facade\Route;
 
+use think\facade\Cache;
 
 class Index extends IndexBaseController
 {
@@ -37,7 +37,7 @@ class Index extends IndexBaseController
     /**
      * 首页
      */
-    public function index()
+    public function index(Request $request)
     {
 
 	// dump(__DIR__);
@@ -205,7 +205,7 @@ class Index extends IndexBaseController
 		// halt($res);
 
 		// 滚屏自动加载页码路由
-		$page = Request::param('page/d', 1);
+		$page = $request->get('page/d', 1);
 		$next = (string) url('index_page', ['page' => ++$page]);
 
 		View::assign('next', $next);

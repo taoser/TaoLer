@@ -1,20 +1,22 @@
 <?php
 namespace app\index\Controller;
 
-use app\index\validate\User as UserValidate;
-use think\exception\ValidateException;
+use Exception;
 use think\Request;
+use think\Response;
+use think\exception\ValidateException;
+use think\facade\Validate;
 use think\facade\Session;
 use think\facade\Cache;
 use think\facade\View;
 use think\facade\Config;
 use app\facade\User;
-use Exception;
+use app\index\validate\User as UserValidate;
 use app\index\controller\IndexBaseController;
 
 class Login extends IndexBaseController
 {
-	protected $userModel = null;
+	protected $userModel;
 
 	//已登陆中间件检测
 	protected $middleware = [
@@ -40,36 +42,19 @@ class Login extends IndexBaseController
 
 	public function login(Request $request)
 	{
-		// 检验登录是否开放
-        if(Config::get('taoler.config.is_login') == 0 ) {
-			return json(['code'=>-1,'msg'=> 'Sorry,Sorry, website maintenance, temporarily unable to log in!']);
-        }
-        
-		//获取登录前访问页面refer
-        $refer = str_replace($request->domain(), '', $request->server('HTTP_REFERER'));
-
 		$data = $request->post(['name','email','phone','password','captcha','remember']);
+	
+		$res = User::login($data);
 
-		// 校验验证码
-        if(Config::get('taoler.config.login_captcha') == 1 && !captcha_check($data['captcha'])) {				
-            return json(['code'=>-1,'msg'=> '验证码失败']);
-        }
-
-		try {
-			$res = User::login($data);
-
-			return json([
-				'code' => 0,
-				'msg' => '登录成功',
-				'data' => ['token' => $res['token'], 'expire_time' => $res['expire_time'], 'url' => $refer]
-			]);
-
-		} catch (ValidateException $e) {
-			return json(['code' => -1, 'msg' => $e->getError()]);
-		} catch (\Exception $e) {
-			return json(['code' => -1, 'msg' => $e->getMessage()]);
-		}
-
+		return json([
+			'code' => 0,
+			'msg' => '登录成功',
+			'data' => [
+				'token'			=> $res['token'],
+				'expire_time'	=> $res['expire_time'],
+				'url'			=> (string) url('user_index')
+			]
+		]);
 	}
 
     //注册
@@ -141,7 +126,7 @@ class Login extends IndexBaseController
 	public function forget(Request $request)
 	{
 		if($request->isAjax()){
-			$data = $request->param();
+			$data = $request->post();
 			
 			try{
 				validate(UserValidate::class)
@@ -185,7 +170,7 @@ class Login extends IndexBaseController
         }
 
         if($request->isAjax()){
-			$code = input('code');
+			$code = $request->get('code');
 			try{
 				validate(UserValidate::class)
 					->scene('Code')
@@ -214,7 +199,7 @@ class Login extends IndexBaseController
             return redirect((string) url('login/forget'));
         }
         if($request->isAjax()){
-            $data = $request->param();
+            $data = $request->post();
 			try{
 				validate(UserValidate::class)
 							->scene('Repass')
@@ -239,9 +224,9 @@ class Login extends IndexBaseController
 	// 邮箱注册验证
 	public function sentMailCode(Request $request)
 	{
-		if($request->isAjax()) {
+		if($request->isPost()) {
 			// 用户邮箱
-			$email = input('email');
+			$email = $request->get('email');
 			//dump($email);
 			if(empty($email)) return json(['code'=>-1,'msg'=>'邮箱不能为空']);
 

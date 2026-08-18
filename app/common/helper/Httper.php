@@ -88,7 +88,7 @@ class Httper
     /**
      * 设置基础URL
      */
-    public function withHost(string $url = 'https://www.aieok.com/api'): self
+    public function withHost(?string $url = 'https://www.aieok.com/api'): self
     {
         $this->host = rtrim($url, '/');
         return $this;

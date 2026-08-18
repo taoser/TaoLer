@@ -146,7 +146,6 @@ class Comment extends AdminBaseController
 	 */
 	public function delete(Request $request)
 	{
-		
         try {
             $id = $request->get('id');
             // 验证参数

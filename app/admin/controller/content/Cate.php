@@ -12,8 +12,9 @@ namespace app\admin\controller\content;
 
 use app\admin\controller\AdminBaseController;
 use Exception;
-use think\facade\View;
 use think\Request;
+use think\Response;
+use think\facade\View;
 use think\facade\Db;
 use app\facade\Category;
 use app\common\helper\FileHelper;
@@ -52,33 +53,40 @@ class Cate extends AdminBaseController
 	}
 
     //添加和编辑帖子分类 废弃
-    public function addEdit(Request $request)
+    public function addEdit(Request $request): Response | string
     {
-        $addOrEdit = !is_null(input('id'));//true是编辑false新增
-        $msg = $addOrEdit ? lang('edit') : lang('add');
-        if($request->isAjax()) {
-            $data = $request->post(['id/d','pid/d','catename','ename','type','icon','image','tpl','desc','sort', 'url']);
+        $id = $request->get('id/d');
+        $addOrEdit = !is_null($id);//true是编辑false新增
+        
+        if($request->isPost()) {
+            
+            //详情模板
+            $template = $this->getIndexTpl();
+            // 如果是新增，pid=0, tpl默认第一个子模块，如果是编辑，查询出cate
+            $cate = $addOrEdit ? Category::getCateInfoById($id) : '';
+            $view = $addOrEdit ? 'edit' : 'add';
 
-            if(isset($data['id']) && $data['pid'] == $data['id']) return json(['code'=>-1,'msg'=> $msg.'不能作为自己的子类']);
-
-            try{
-                Category::cache('catename')->save($data);
-            } catch(Exception $e) {
-                return json(['code' => 1, 'msg' => $msg.'失败'.$e->getMessage()]);
-            }
-            return json(['code'=>0,'msg'=> $msg.'成功']);
+            View::assign([
+                'template'  => $template,
+                'cate'      => $cate
+            ]);
+            return View::fetch($view);
         }
-        //详情模板
-        $template = $this->getIndexTpl();
-        // 如果是新增，pid=0, tpl默认第一个子模块，如果是编辑，查询出cate
-        $cate = $addOrEdit ? Category::getCateInfoById((int) input('id')) : '';
-        $view = $addOrEdit ? 'edit' : 'add';
+        
+        $msg = $addOrEdit ? lang('edit') : lang('add');
+        $data = $request->post(['id/d','pid/d','catename','ename','type','icon','image','tpl','desc','sort', 'url']);
 
-        View::assign([
-            'template'  => $template,
-            'cate'      => $cate
-        ]);
-        return View::fetch($view);
+        if(isset($data['id']) && $data['pid'] == $data['id']) {
+            return json(['code'=>-1,'msg'=> $msg.'不能作为自己的子类']);
+        } 
+
+        try{
+            Category::cache('catename')->save($data);
+            return json(['code' => 0, 'msg'=> $msg.'成功']);
+        } catch(Exception $e) {
+            return json(['code' => 1, 'msg' => $msg.'失败'.$e->getMessage()]);
+        }
+            
     }
 	
 	//删除栏目及栏目内容
@@ -110,9 +118,9 @@ class Cate extends AdminBaseController
     /**
      * 有顶级菜单的分类数
      *
-     * @return Json
+     * @return Response
      */
-    public function getCateTree(): Json
+    public function getCateTree(): Response
     {
         $list = Category::field('id,pid,catename,sort')
         ->order('sort','asc')
@@ -163,9 +171,9 @@ class Cate extends AdminBaseController
     /**
      * 单页分类菜单
      *
-     * @return Json
+     * @return Response
      */
-    public function getSingleCateTree(): Json
+    public function getSingleCateTree(): Response
     {
         $list = Category::field('id,pid,catename,sort')
         ->order('sort','asc')
@@ -187,9 +195,9 @@ class Cate extends AdminBaseController
     /**
      * 单页分类菜单
      *
-     * @return Json
+     * @return Response
      */
-    public function getSingleArticleCateTree(): Json
+    public function getSingleArticleCateTree(): Response
     {
         $pageCate = Db::name('page')->field('cate_id')->group('cate_id')->select()->column('cate_id');
    
