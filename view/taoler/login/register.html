@@ -7,7 +7,7 @@
 	<div class="fly-panel fly-panel-user" pad20>
 	<div class="layui-tab layui-tab-brief" lay-filter="user">
 		<ul class="layui-tab-title">
-		<li><a href="{$Request.domain}{:url('user_login')}">{:lang('login')}</a></li>
+		<li><a href="{$Request.domain}{:url('login_index')}">{:lang('login')}</a></li>
 		<li class="layui-this">{:lang('sign up')}</li>
 		</ul>
 		<div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;" lay-filter="register">
@@ -98,19 +98,24 @@ layui.use(['form','layer'],function(){
             });
 		$.ajax({
 			type:'post',
-			url:"{:url('Login/reg')}",
+			url:"{:url('user_register')}",
 			data:field,
 			dataType:"json",
-			success:function(res){
-			layer.close(loading);
+			success: function(res) {
+				layer.close(loading);
 				if(res.code === 0){
 					toast.success({title:"成功消息",message: res.msg});
-					// location.href = res.url;
+					location.href = res.url;
 				} else {
 					layer.open({title:"注册失败",content:res.msg,icon:5,anim:6});
 					$('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
-				}}
-			});
+				}
+			},
+			error: function(){
+				layer.close(loading);
+				toast.error({title:"注册失败", message: "网络错误"});
+			}
+		});
 		return false;
 	});
 
@@ -119,7 +124,7 @@ layui.use(['form','layer'],function(){
 		var loadIndex = layer.load(2);
 		var data = form.val('register');
 		//alert(JSON.stringify(data));
-		$.post("{:url('Login/sentMailCode')}",{"email": data.email},  function(res){
+		$.post("{:url('Login/sentMailCode')}", {"email": data.email},  function(res){
 			layer.close(loadIndex);
 			if(res.code === 0){
 				toast.success({title:"成功消息",message: res.msg});

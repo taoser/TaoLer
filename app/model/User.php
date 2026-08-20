@@ -21,16 +21,11 @@ class User extends BaseModel
         return [
             'readonly' =>  ['name'],
             'deleteTime' => 'delete_time',
-            'defaultSoftDelete' => 0,
+            'defaultSoftDelete' => null,
         ];
     }
 
     protected $loggedUser;
-    //protected $auto = ['password']; //定义自动处理的字段
-    //自动对password进行md5加密
-    protected function setPasswordAttr($value){
-        return md5($value);
-    }
 	
 	//用户关联评论
 	public function comments()

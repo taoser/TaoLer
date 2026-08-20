@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace app\middleware;
 
-use app\common\helper\JwtAuth;
 use Exception;
+use think\Request;
+use app\common\helper\JwtAuth;
+
 
 class Auth
 {
-	public function handle($request, \Closure $next)
+	public function handle(Request $request, \Closure $next)
 	{
 		$header = $request->header();
 

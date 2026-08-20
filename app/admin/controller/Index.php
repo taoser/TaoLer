@@ -63,7 +63,7 @@ class Index extends AdminBaseController
 		// 评论、帖子状态
         $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
         $forum = Db::name('article')->where(['delete_time'=>0,'status'=>0])->count();
-        $user = Db::name('user')->where(['delete_time'=>0,'status'=>0])->count();
+        $user = Db::name('user')->where('status', 0)->whereNull('delete_time')->count();
 
         View::assign([
             'pendComms'     => $comm,
@@ -79,7 +79,7 @@ class Index extends AdminBaseController
         // 评论、帖子状态
         $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
         $forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->count();
-        $user = Db::name('user')->where(['delete_time'=>0,'status'=>0])->count();
+        $user = Db::name('user')->where('status', 0)->whereNull('delete_time')->count();
 		// 回复评论
 		$comments = Comment::field('id,article_id,content,create_time,delete_time')->order('id desc')->limit(10)->select();
 		$commData = [];
@@ -125,7 +125,7 @@ class Index extends AdminBaseController
 		// 用户注册数据
 		$monthTime = Cache::get('monthTime');
 		if(!$monthTime){
-			$time = Db::name('user')->where('delete_time',0)->whereMonth('create_time')->order('create_time','asc')->column('create_time');
+			$time = Db::name('user')->whereMonth('create_time')->whereNull('delete_time')->order('id','asc')->column('create_time');
 			$monthTime = [];//当月有注册的日期
 			foreach($time as $v){//
 				$data = date('m-d',$v);

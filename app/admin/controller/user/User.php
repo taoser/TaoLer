@@ -11,23 +11,23 @@
 namespace app\admin\controller\user;
 
 use app\admin\controller\AdminBaseController;
+use Exception;
+use think\exception\ValidateException;
 use think\Request;
 use think\Response;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
-use think\facade\Cache;
 use think\facade\Config;
 use app\facade\Article;
 use app\facade\Comment;
 use app\facade\User as UserModel;
 use app\common\helper\Uploads;
 use app\common\validate\User as userValidate;
-use think\exception\ValidateException;
-use app\common\facade\HttpHelper;
 
-use Exception;
+use app\common\facade\HttpHelper;
+use app\common\helper\PasswordHash;
 use think\response\Json;
 
 class User extends AdminBaseController
@@ -85,7 +85,7 @@ class User extends AdminBaseController
 		}
 
 		$user = $query
-		->where('u.delete_time', 0)
+		->whereNull('u.delete_time')
 		->order('u.id desc');
 
 		$count = $user->count();
@@ -97,11 +97,6 @@ class User extends AdminBaseController
 		if(!$count){
 			return json(['code' => -1, 'msg'=>'no data']);
 		}
-		
-		foreach($user as &$v){
-			$v['create_time']	=	date("Y-m-d H:i", $v['create_time']);
-		}
-		unset($v);
 
 		$vipList = Db::name('user_viprule')->field('id,vip,nick as title')->select();
 
@@ -112,7 +107,7 @@ class User extends AdminBaseController
 	//添加用户
 	public function add(Request $request): Response | string
 	{
-		if($request->isPost()){
+		if(!$request->isPost()){
 			return View::fetch();
 		}
 
@@ -120,12 +115,11 @@ class User extends AdminBaseController
 		try{
 			validate(userValidate::class)->scene('userReg')->check($data);
 
-			$data['create_time'] = time();
-			$salt = substr(md5($data['create_time']),-6);
 			// 密码
-			$data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6));
+			$data['password'] = PasswordHash::make($data['password']);
 
-			Db::name('user')->save($data);
+			$this->model::save($data);
+
 			return json(['code'=>0,'msg'=>'添加成功']);
 
 		} catch (ValidateException $e) {
@@ -151,9 +145,7 @@ class User extends AdminBaseController
 		if(empty($data['password'])) {
 			unset($data['password']);
 		} else {
-			$user = Db::name('user')->field('create_time')->find($data['id']);
-			$salt = substr(md5($user['create_time']),-6);
-			$data['password'] = md5(substr_replace(md5($data['password']),$salt,0,6)); // 密码
+			$data['password'] = PasswordHash::make($data['password']);
 		}
 
 		try{

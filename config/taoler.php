@@ -45,9 +45,9 @@ return [
 		// 评论审核
 		'commnets_check'   => 0,
 		// 注册验证类型 1验证码2邮箱3手机短信
-		'regist_type'   => 2,
+		'regist_type'   => 1,
 		// 登录验证码
-		'login_captcha'   => 1,
+		'login_captcha'   => 0,
 		// 发帖验证码
 		'post_captcha'   => 1,
 		// 显示分类

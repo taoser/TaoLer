@@ -16,4 +16,14 @@ return [
     'expire'         => 1440,
     // 前缀
     'prefix'         => '',
+
+    // --------file驱动--------
+    // 路径
+    //'path'           => '',
+    // 数据压缩
+    //'data_compress'  => false,
+    // 垃圾回收概率
+    //'gc_probability' => 1,
+    // 垃圾回收除数
+    //'gc_divisor'     => 100,
 ];

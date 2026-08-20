@@ -40,6 +40,7 @@ class PasswordHash
      */
     public static function verify(string $input, string $dbHash): array
     {
+        // 密码校验失败
         if (!password_verify($input, $dbHash)) {
             return ['ok' => false, 'update' => false, 'new_hash' => null];
         }
@@ -47,9 +48,9 @@ class PasswordHash
         // 检测：bcrypt旧哈希 / argon参数修改 都会触发重生成
         if (password_needs_rehash($dbHash, self::ALGORITHM, self::ARGON_OPTS)) {
             return [
-                'ok' => true,
-                'update' => true,
-                'new_hash' => self::make($input)
+                'ok'        => true,
+                'update'    => true,
+                'new_hash'  => self::make($input)
             ];
         }
         return ['ok' => true, 'update' => false, 'new_hash' => null];

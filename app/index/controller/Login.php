@@ -20,7 +20,7 @@ class Login extends IndexBaseController
 
 	//已登陆中间件检测
 	protected $middleware = [
-	    'logedcheck' => ['except' 	=> ['index','login','status'] ]
+	    'logedcheck' => ['except' 	=> ['index', 'login', 'status']]
     ];
 
 	public function initialize()
@@ -58,68 +58,29 @@ class Login extends IndexBaseController
 	}
 
     //注册
-    public function reg(Request $request)
+    public function register(Request $request)
     {
-        if($request->isAjax()){
-			// 检验注册是否开放
-			if(config('taoler.config.is_regist') == 0 ) return json(['code'=>-1,'msg'=>'抱歉，注册暂时未开放']);
+        if (!$request->isPost()) {
+			return View::fetch();
+		}
 
-			$data = $request->post(['name','email','email_code','password','repassword','captcha']);
-
-			// 验证码
-			if(Config::get('taoler.config.regist_type') == 1) {				
-				//先校验验证码
-				if(!captcha_check($data['captcha'])){
-					// 验证失败
-					return json(['code'=>-1,'msg'=> '验证码失败']);
-				};
-			}
-
-			// 邮箱
-			if(Config::get('taoler.config.regist_type') == 2) {
-				$emailCode = Cache::get($data['email']);
-				if($emailCode) {
-					if($data['email_code'] != $emailCode) {
-						// 验证失败
-				 		return json(['code' => -1,'msg' => '验证码不正确']);
-					}
-				}
-
-				return json(['code' => -1,'msg' => '验证码过期，请重试']);
-			}
+		$data = $request->post(['name','email','password','repassword','email_code','captcha']);
 		
-			//校验场景中reg的方法数据
-			try{
-				validate(UserValidate::class)
-					->scene('Reg')
-					->check($data);
-			} catch (ValidateException $e) {
-				return json(['code'=>-1,'msg'=>$e->getError()]);
-			}
+		$this->userModel::add($data);
 
-			try{
-				$this->userModel::reg($data);
+		if (Config::get('taoler.config.email_notice')) {
+			// hook('mailtohook',[
+			// 	$this->$adminEmail,
+			// 	'新用户注册通知',
+			// 	"Hi亲爱的管理员:</br>新用户 <b>{$data['name']}</b> 刚刚注册了新的账号，请尽快处理。"
+			// ]);
+		}
 
-				return json([
-					'code' => 0,
-					'msg'=> '注册成功',
-					'url'=>(string) url('login/index')
-				]);
-
-				if(Config::get('taoler.config.email_notice')){
-					hook('mailtohook',[
-						$this->$adminEmail,
-						'新用户注册通知',
-						"Hi亲爱的管理员:</br>新用户 <b>{$data['name']}</b> 刚刚注册了新的账号，请尽快处理。"
-					]);
-				}
-			   
-			} catch(\Exception $e){
-				return json(['code'=>-1,'msg'=>'注册失败！']);
-			}
-        }
-
-        return View::fetch();
+		return json([
+			'code'	=> 0,
+			'msg'	=> '注册成功',
+			'url'	=> (string) url('login_index')
+		]);
     }
 	
 	//找回密码

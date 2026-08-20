@@ -2,15 +2,19 @@
 namespace app\entity;
 
 use Exception;
+use think\exception\ValidateException;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Config;
 use think\facade\Lang;
+use think\facade\Cache;
 use app\event\UserLogin;
 use app\common\helper\FileHelper;
 use app\common\helper\JwtAuth;
+use app\common\helper\PasswordHash;
 use app\validate\User as UserValidate;
-use think\exception\ValidateException;
+
+
 
 class User extends BaseEntity
 {
@@ -36,8 +40,8 @@ class User extends BaseEntity
 	/**
      * 登录校验
      *
-     * @param array $data 登录数据（用户名/手机号/邮箱、密码）
-     * @return array 登录成功后的用户信息
+     * @param array $data 登录数据（用户名/手机号/邮箱、密码、验证码（可选）（仅在登录配置中开启验证码时必填））
+     * @return array 登录成功后的用户信息  ['token','expire_time']
      */
     public function login(array $data): array
     {
@@ -51,8 +55,8 @@ class User extends BaseEntity
 			throw new Exception("验证码失败", -1);
         }
 
-        //登陆请求
-		try{
+        // 登陆请求
+		try {
 			// 英文和中文用户名邮箱正则表达式
 			$patternEmail = "/^[A-Za-z0-9\x{4e00}-\x{9fa5}]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/u";
             // 手机号正则表达式
@@ -63,11 +67,13 @@ class User extends BaseEntity
 				validate(UserValidate::class)->scene('loginPhone')
 				->check(['phone' => $data['name'],'password'=>$data['password']]);
 				$user = $this->where('phone', $data['name'])->findOrEmpty();
-			} elseif (preg_match($patternEmail, $data['name'])){
+
+			} elseif (preg_match($patternEmail, $data['name'])) {
 				//输入邮箱email登陆验证				
 				validate(UserValidate::class)->scene('loginEmail')
 				->check(['email' => $data['name'],'password'=>$data['password']]);
 				$user = $this->where('email', $data['name'])->findOrEmpty();
+
 			} else {
 				//用户名name登陆验证
 				validate(UserValidate::class)->scene('loginName')
@@ -80,43 +86,44 @@ class User extends BaseEntity
 			throw new Exception($e->getMessage(), -1);
 		}
 
-        if($user->isEmpty()){
+        if($user->isEmpty()) {
 			throw new Exception(Lang::get('username or password error'), -1);
         }
 
         //被禁用和待审核
-        if($user['status'] == -1){
+        if($user['status'] == -1) {
             throw new Exception(Lang::get('Account disabled'), -1);
         }
-        if($user['status'] == 0){
+
+        if($user['status'] == 0) {
             throw new Exception(Lang::get('Pending approval'), -1);
         }
+
         //错误登陆连续3次且小于10分钟
-        if((time() - $user->login_error_time < 60) && is_int($user->login_error_num/3)){	
+        if((time() - $user->login_error_time < 60) && is_int($user->login_error_num/3)) {	
             throw new Exception(Lang::get('Please log in 10 minutes later'), -1);
         }
-    
-        //对输入的密码字段进行MD5加密，再进行数据库的查询
-        $salt = substr(md5($user->getData('create_time')),-6);
-        $pwd = substr_replace(md5($data['password']),$salt,0,6);
-        $password = md5($pwd);
+
+        $result = PasswordHash::verify($data['password'], $user['password']);
         
-        if($user['password'] !== $password){
+        if(!$result['ok']) {
              //密码错误登陆错误次数加1
              event(new UserLogin(['type'=>'logError','id'=>$user->id]));
       
              //连续3次错误
-             if(is_int(($user->login_error_num+1)/3) && $user->login_error_num >0 ){
-                 throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'), 1);
+             if(is_int(($user->login_error_num+1)/3) && $user->login_error_num >0 ) {
+                 throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'), -1);
              }
 
              throw new Exception(Lang::get('The user name or password is incorrect'), -1);
         }
+
         //将用户数据写入Session
-        Session::set('user_id',$user['id']);
-        Session::set('user_name',$user['name']);
+        Session::set('user_id', $user['id']);
+        Session::set('user_name', $user['name']);
+
         //记住密码
-        if(isset($data['remember'])){
+        if(isset($data['remember'])) {
             $salt = Config::get('taoler.salt');
             //加密auth存入cookie
             $auth = md5($user['name'].$salt).":".$user['id'];
@@ -141,51 +148,84 @@ class User extends BaseEntity
         
     }
 
-    //更新数据
-    public function updata($data)
+    /**
+     * 添加用户
+     * @param array $data ['name','email','phone','password','nickname','city','sex','auth','note']
+     * @return bool
+     */
+    public function add(array $data): bool
     {
-        //dump($data);
-    }
-	
-    //注册校验
-    public function reg($data)
-    {
-        // public/static/res/images/avatar的所有图片
-		$images = FileHelper::getDirFilePaths('static/res/images/avatar');
+        // 检验注册是否开放
+		if(config('taoler.config.is_regist') == 0 ) {
+            throw new Exception('抱歉，注册暂时未开放', -1);
+		}
+
+        $registType = Config::get('taoler.config.regist_type');
+
+		// 验证码
+		if($registType == 1) {				
+			//先校验验证码 // 验证失败
+			if(!captcha_check($data['captcha'])){
+                throw new Exception("验证码失败", -1);
+			};
+		}
+
+        // 邮箱
+		if($registType == 2) {
+			$emailCode = Cache::get($data['email']);
+			if(!$emailCode) {
+                throw new Exception("验证码过期，请重试", -1);
+			}
+
+			if($data['email_code'] !== $emailCode) {
+                throw new Exception("验证码不正确", -1);
+			}
+		}
+
+        //校验场景中reg的方法数据
+        try{
+            validate(UserValidate::class)
+                ->scene('Reg')
+                ->check($data);
+        } catch (ValidateException $e) {
+            throw new Exception($e->getError(), -1);
+        }
+
+        $data['password'] = PasswordHash::make($data['password']);
+        $data['status'] = Config::get('taoler.config.regist_check');
+        $data['nickname'] = $data['name'];
+
+        // public/static/avatar的所有图片
+		$images = FileHelper::getDirFilePaths(public_path().'static/avatar');
 		//随机图片
 		$i = array_rand($images);
 		$img = $images[$i];
         $data['user_img'] = '/'.str_replace('\\','/',$img);
         //随机存入默认头像
         // $code = mt_rand('1','11');
-        // $data['user_img'] = "/static/res/images/avatar/$code.jpg";
-        $data['create_time'] = time();
-        $salt = substr(md5($data['create_time']),-6);
-        $data['password'] = substr_replace(md5($data['password']),$salt,0,6);
-        $data['status'] = Config::get('taoler.config.regist_check');
-        $data['nickname'] = $data['name'];
-        $msg = $data['status'] ? '注册成功请登录' : '注册成功，请等待审核';
-        try{
-            $this->save($data);
-        } catch(\Exception $e){
-            throw new Exception("保存失败");
-        }
+        // $data['user_img'] = "/static/res/images/avatar/$code.jpg";        
         
-        return true;
+        return $this->save($data);
+
+    }
+
+    //更新数据
+    public function updata($data)
+    {
+        //dump($data);
     }
 	
-	//重置密码
-    public function respass($data)
-    {	//halt($data);
-		$user = $this->where('id', $data['uid'])->find();
-		$salt = substr(md5($user['create_time']),-6);
-		$data['password'] = substr_replace(md5($data['password']),$salt,0,6);
-		$result = $user->save($data);
-           if ($result) {
-               return 1;
-			} else{
-               return '更改失败';
-			}
+	/**
+     * 重置密码
+     * @param array $data ['uid','password']
+     * @return bool
+    */
+    public function reSetPassword(array $data): bool
+    {
+        $this->id = $data['uid'];
+		$this->password = PasswordHash::make($data['password']);
+        
+		return $this->save();
     }
 	
     //更新设置

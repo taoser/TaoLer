@@ -106,7 +106,7 @@
 		if(res.code === 0) {
 			var LOGHTML = `<li class="layui-nav-item"><a class="layui-icon layui-icon-username" style="font-size: 20px;" href="{:url('user_login')}"></a></li>
 				<li class="layui-nav-item layui-hide-xs"><a href="{:url('login_index')}">{:lang('login')}</a></li>
-				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_reg')}">{:lang('register')}</a></li>
+				<li class="layui-nav-item layui-hide-xs"><a href="{:url('user_register')}">{:lang('register')}</a></li>
 				<li class="layui-nav-item layui-hide-xs layui-hide">
 					<select name="language" style="width:50px;" lay-filter="language" lay-verify="" id="language">
 						<option value="cn" {if cookie('think_lang') == 'zh-cn'} selected {/if} >{:lang('chinese')}</option>
@@ -119,7 +119,7 @@
 			<li class="layui-nav-item"><a href="/">{:lang('home page')}</a></li>
 			{/if}
 			<li class="layui-nav-item" lay-unselect>
-				<a class="fly-nav-avatar" href="{:url('user/index')}"><cite class="layui-hide-xs">${res.data.name}</cite><img src="${res.data.avatar}"></a>
+				<a class="fly-nav-avatar" href="{:url('user_idx')}"><cite class="layui-hide-xs">${res.data.name}</cite><img src="${res.data.avatar}"></a>
 				<dl class="layui-nav-child">
 					<dd><a href="{:url('user_index')}"><i class="layui-icon layui-icon-username"></i>{:lang('user center')}</a></dd>
 					<dd><a href="{:url('user_set')}"><i class="layui-icon layui-icon-set"></i>{:lang('set info')}</a></dd>

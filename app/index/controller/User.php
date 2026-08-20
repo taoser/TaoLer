@@ -9,14 +9,20 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Cookie;
 use think\facade\View;
+use think\response\Json;
 use app\facade\Article;
 use app\facade\User as userModel;
 use app\model\Collection;
 use app\common\controller\BaseController;
 use app\common\validate\User as userValidate;
 use taoler\com\Message;
+
 use Intervention\Image\ImageManager;
-use think\response\Json;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+use Intervention\Image\Alignment;
+use Intervention\Image\Color;
+use Intervention\Image\Format;
+
 
 class User extends IndexBaseController
 {	
@@ -280,19 +286,19 @@ class User extends IndexBaseController
             $src = '/'.$relative_path.$name;
 
 			// create new image manager with gd driver
-			$manager = ImageManager::gd();
+			$manager = ImageManager::usingDriver(new GdDriver());
 
 			// open an image file
-			$image = $manager->read($realPath);
+			$image = $manager->decodePath($realPath);
 
 			// resize image instance
-			$image->cover(120,120);
+			$image->scale(height: 300);
 
 			// insert a watermark
 			// $image->place('images/watermark.png');
 
 			// encode edited image
-			$encoded = $image->toPng();
+			$encoded = $image->encodeUsingFormat(Format::JPEG, quality: 65);
 
 			// save encoded image
 			$encoded->save($realPath);
@@ -302,7 +308,7 @@ class User extends IndexBaseController
 
 			if(file_exists('.'.$imgPath)){
 				$dirPath    = dirname('.'.$imgPath);
-				if($dirPath !== './static/res/images/avatar'){ //防止删除默认头像
+				if($dirPath !== './static/images/avatar'){ //防止删除默认头像
 					unlink('.'.$imgPath);
 				}
 			}
@@ -379,7 +385,7 @@ class User extends IndexBaseController
 
 		if($request->isPost()){
 			$email = $request->get('email');
-			$url = Request::domain().Request::root().'/active/index?url='.time().md5($email).$this->uid;
+			$url = $request->domain().$request->root().'/active/index?url='.time().md5($email).$this->uid;
 			$content = "Hi亲爱的{$this->showUser($this->uid)['name']}:</br>您正在进行邮箱激活，请在10分钟内完成激活。 <a href='{$url}' target='_blank' >请点击进行激活</a> </br>若无法跳转请复制链接激活：{$url}";
 			$res = hook('mailtohook',[$email,'邮箱激活',$content]);
 			if($res){
