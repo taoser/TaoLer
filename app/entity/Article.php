@@ -200,7 +200,7 @@ class Article extends BaseEntity
                     $data = $this->field('id,cate_id,title,create_time,comments_num')
                     ->suffix($suffix)
                     ->whereIn('id', $id)
-                    ->where('delete_time', 0)
+                    ->whereNull('delete_time')
                     ->where('status', 1)
                     ->order('comments_num','desc')
                     ->append(['url'])
@@ -238,7 +238,7 @@ class Article extends BaseEntity
                 // 评论数
                 $data = $this->field('id,cate_id,title,pv,create_time,comments_num')
                 ->suffix($suffixArr[$i])
-                ->where('delete_time', 0)
+                ->whereNull('delete_time')
                 ->where('status', 1)
                 ->order('pv', 'desc')
                 ->limit($limit)
@@ -632,7 +632,7 @@ class Article extends BaseEntity
                         'auther'    => $v['user']['name'],
                         'cate_name' => $v['cate']['catename'],
                         'pv'        => $v['pv'],
-                        'time'      => date('Y-m-d',strtotime($v['create_time'])),
+                        'time'      => date('Y-m-d', $v['create_time']),
                         'url'       => $v['url']
                     ];
                 }

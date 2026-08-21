@@ -2,12 +2,9 @@
 
 {block name="body"}
 
-<form class="layui-form">
+<form class="layui-form" lay-filter="form-val-filter">
 	<div class="mainBox">
 		<div class="main-container">
-			<div class="layui-form-item layui-hide">
-				<input type="text" name="id" class="layui-input" value="{$rules.id}">
-			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">上级菜单</label>
 				<div class="layui-input-block">
@@ -17,33 +14,33 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">标题</label>
 				<div class="layui-input-inline">
-					<input type="text" name="title" lay-verify="required" placeholder="标题即权限名称" autocomplete="off" class="layui-input" value="{$rules.title}">
+					<input type="text" name="title" lay-verify="required" placeholder="标题即权限名称" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">标识</label>
 				<div class="layui-input-inline">
-					<input type="text" name="name" lay-verify="required" placeholder="controller/action" autocomplete="off" class="layui-input" value="{$rules.name}">
+					<input type="text" name="name" lay-verify="required" placeholder="controller/action" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">图标</label>
 				<div class="layui-input-inline">
-				<input type="text" name="icon" id="iconPicker" lay-filter="iconPicker" value="{$rules.icon}" style="display:none;">
+					<input type="text" name="icon" id="iconPicker" lay-filter="iconPicker" style="display:none;">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">排序</label>
 				<div class="layui-input-inline">
-					<input type="text" name="sort" lay-verify="required" placeholder="排序序号" autocomplete="off" class="layui-input" value="{$rules.sort}">
+					<input type="text" name="sort" lay-verify="required" placeholder="排序序号" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">类型</label>
 				<div class="layui-input-block">
-					<input type="radio" name="ismenu" lay-skin="primary" title="目录" value="0" {if condition="$rules.ismenu == 0"} checked {/if}>
-					<input type="radio" name="ismenu" lay-skin="primary" title="菜单" value="1" {if condition="$rules.ismenu == 1"} checked {/if}>
-					<input type="radio" name="ismenu" lay-skin="primary" title="权限" value="2" {if condition="$rules.ismenu == 2"} checked {/if}>
+					<input type="radio" name="ismenu" lay-skin="primary" title="目录" value="0" checked>
+					<input type="radio" name="ismenu" lay-skin="primary" title="菜单" value="1" checked>
+					<input type="radio" name="ismenu" lay-skin="primary" title="权限" value="2" checked>
 				</div>
 			</div>
 		</div>
@@ -67,15 +64,23 @@
 <script>
 	const RULE_EDIT = MODULE_NAME + '/system/authrule/edit';
 	const RULE_TREE = MODULE_NAME + '/system/authrule/ruleTree';
-	const INIT_PID = "{$rules['pid']}";
+	const INFO_URL = MODULE_NAME + '/system/authrule/getInfo' + location.search;
+	const INIT_PID = "";
 
-	layui.use(['form', 'jquery', 'xmSelect', 'iconPicker','dtree','popup','treeTable'], function(){
+	layui.use(['xmSelect', 'iconPicker','dtree','popup','treeTable'], function(){
 		let $ = layui.jquery;
 		let form = layui.form ;
 		let xmSelect = layui.xmSelect;
 		let iconPicker = layui.iconPicker;
 		let dtree = layui.dtree;
 		let popup = layui.popup;
+
+		// 表单赋值
+		$.get(INFO_URL, function(res){
+			if(res.code === 0) {
+				form.val('form-val-filter', res.data);
+			}
+		});
 
 		// dtree.render({
 		// 	elem: "#Tree2",

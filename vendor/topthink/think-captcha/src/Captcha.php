@@ -247,7 +247,7 @@ class Captcha
             ];
         }
         // 输出验证码图片
-        return response($content, 200, ['Content-Length' => strlen($content)])->contentType('image/png');
+        return response($content, 200)->contentType('image/png');
     }
 
     /**

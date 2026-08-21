@@ -10,28 +10,28 @@
 
 namespace app\admin\controller\system;
 
-use app\admin\controller\AdminBaseController;
 use think\Request;
 use think\Response;
 use think\facade\Db;
 use think\facade\View;
 use think\facade\Lang;
-use app\admin\model\AuthRule as AuthRuleModel;
+use app\entity\AuthRule as AuthRuleEntity;
+use app\admin\controller\AdminBaseController;
 
 class AuthRule extends AdminBaseController
 {
 	/**
 	 * 权限模型
-	 * @var AuthRuleModel
+	 * @var AuthRuleEntity
 	 */
-	protected $model = null;
+	protected $model;
 
     //
     public function initialize()
     {
 		parent::initialize();
 
-        $this->model = new AuthRuleModel();
+        $this->model = new AuthRuleEntity();
     }
 
     /**
@@ -46,6 +46,37 @@ class AuthRule extends AdminBaseController
 	public function list()
 	{
 		return $this->model->getAuthRuleArray();
+	}
+
+	//添加权限
+	public function add(Request $request): Response | string
+	{
+		if(!$request->isPost()){
+			return View::fetch();
+		}
+		$data = $request->post(['pid/d','title','name','icon','sort/d','ismenu/d']);
+
+		$res = $this->model->add($data);
+		if($res){
+			return json(['code' => 0,'msg' => 'ok']);
+		}
+
+	}
+	
+	//权限编辑
+	public function edit(Request $request): Response | string
+	{
+		if(!$request->isPost()){
+			return View::fetch();
+		}
+
+		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','ismenu/d']);
+	
+		$res = $this->model->edit($data);
+		if($res){
+			return json(['code' => 0,'msg' => 'ok']);
+		}
+
 	}
 
 	// 权限树列表 + 2026.6.23
@@ -90,74 +121,6 @@ class AuthRule extends AdminBaseController
 
 		return json($tree);
 	}
-	
-	//添加权限
-	public function add(Request $request): Response | string
-		{
-		if(!$request->isPost()){
-			$auth_rules = $this->model->getAuthRuleArray();
-			View::assign('AuthRule',$auth_rules);
-			return View::fetch();
-		}
-
-		$data = $request->post(['pid/d','title','name','icon','sort/d','ismenu/d']);
-
-		$count = Db::name('auth_rule')->where('name', $data['name'])->count();
-		if($count) return json(['code' => 1, 'msg' => '权限地址已存在！']);
-
-		//层级level
-		$rule = Db::name('auth_rule')->field('level')->find($data['pid']);
-
-		if(!is_null($rule)){
-			$data['level'] = $rule['level'] + 1;
-		} else {
-			$data['level'] = 0;
-		}
-
-		$res = $this->model->saveRule($data);
-		if($res){
-			return json(['code' => 0,'msg' => 'ok']);
-		}
-		return json(['code' => -1,'msg' => 'error']);
-	}
-	
-	//权限编辑
-	public function edit(Request $request): Response | string
-	{
-
-		if(!$request->isPost()){
-			$id = $this->request->get('id/d');
-			$rule = new AuthRuleModel();
-			$auth_rules = $this->model->getAuthRuleArray();
-			$rules = $this->model->find($id);
-
-			View::assign(['AuthRule' => $auth_rules, 'rules' => $rules]);
-			return View::fetch();
-		}
-
-		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','ismenu/d']);
-	
-		//层级level
-		$ruId = $rule->find($data['pid']); //查询出上级ID
-		if($ruId){
-			$plevel = $ruId->level; //上级level等级
-			$data['level'] = $plevel+1;	
-		} else {
-			$data['level'] = 0;
-		}
-
-		$son = $this->model->where('pid', $data['id'])->select();//查询出下级
-		if(!empty($son)){
-			$son->update(['level' => $data['level'] + 1]);
-		}
-		$rule = $this->model->find($data['id']);
-
-		$res = $rule->saveRule($data);
-		if($res){
-			return json(['code' => 0,'msg' => 'ok']);
-		}
-		return json(['code' => -1,'msg' => 'error']);
-	}
 
 	
 	/**
@@ -168,17 +131,18 @@ class AuthRule extends AdminBaseController
 	public function delete(Request $request): Response
 	{	
 		$id = $request->get('id/d');
-		$pids = AuthRuleModel::where('pid', $id)->select();
-		if($pids){
-			$result = $pids->delete();
-		}
+		$result = $this->model->delete($id);
 		
-		$rule = AuthRuleModel::find($id);
-		$result = $rule->delete();
-		if($result){
+		if($result) {
 			return json(['code'=>0,'msg'=>'删除成功']);
 		}
-		return json(['code'=>-1,'msg'=>'删除失败']);
+	}
+
+	public function getInfo(Request $request): Response
+	{
+		$id = $request->get('id/d');
+		$rules = $this->model->find($id);
+		return json(['code'=>0,'msg'=>'ok','data'=>$rules]);
 	}
 
 

@@ -8,9 +8,17 @@ use think\model\concern\SoftDelete;
 class AuthGroupAccess extends BaseModel
 {
     //软删除
-    use SoftDelete;
-    protected $deleteTime = 'delete_time';
-    protected $defaultSoftDelete = 0;
+	use SoftDelete;
+    
+    protected function getOptions(): array 
+    {
+        return [
+            'autoWriteTimestamp'    => true,
+            'deleteTime'            => 'delete_time',
+            'defaultSoftDelete'     => null,
+        ];
+    }
+
 
     //角色分配表关联管理员
     public function admin()

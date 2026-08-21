@@ -25,8 +25,8 @@ CREATE TABLE `tao_ad_slide`  (
   `sort` int UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序',
   `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
   `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
-  `create_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `status` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '状态0关闭1开启',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`id` ASC) USING BTREE COMMENT 'id',
@@ -40,7 +40,7 @@ DROP TABLE IF EXISTS `tao_admin`;
 CREATE TABLE `tao_admin`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
   `username` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '管理员账户',
-  `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '密码',
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '密码',
   `email` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮箱',
   `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '手机号',
   `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'static/admin/images/avatar.jpg' COMMENT '头像',
@@ -49,8 +49,8 @@ CREATE TABLE `tao_admin`  (
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '备注',
   `last_login_ip` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '最后登录IP',
   `last_login_time` datetime NULL DEFAULT NULL COMMENT '登陆',
-  `create_time` datetime NOT NULL COMMENT '创建',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员' ROW_FORMAT = Dynamic;
@@ -58,8 +58,8 @@ CREATE TABLE `tao_admin`  (
 -- ----------------------------
 -- Records of tao_admin
 -- ----------------------------
-INSERT INTO `tao_admin` VALUES (1, 'admin', '$argon2id$v=19$m=65536,t=3,p=2$VmwxYS9HaFNEZ1NycXJRcw$9eVLgdWyYzSxkPqKbkTDKIDB34+4FvcAc8zqjvX36OY', 'taoler@qq.com', '13812345678', 'static/admin/images/avatar.jpg', 1, 1, '2021 TaoLer！', '127.0.0.1', NULL, '2026-07-30 20:30:38', NULL, NULL);
-INSERT INTO `tao_admin` VALUES (2, 'test', '2ff6cb678a4d563f83bd64e55a993d7a', 'test1@qq.com', '13012345678', 'static/admin/images/avatar.jpg', 1, 0, '', '127.0.0.1', NULL, '2026-07-16 22:30:49', NULL, NULL);
+INSERT INTO `tao_admin` VALUES (1, 'admin', '$argon2id$v=19$m=65536,t=3,p=2$VmwxYS9HaFNEZ1NycXJRcw$9eVLgdWyYzSxkPqKbkTDKIDB34+4FvcAc8zqjvX36OY', 'taoler@qq.com', '13812345678', 'static/admin/images/avatar.jpg', 1, 1, '2021 TaoLer！', '127.0.0.1', NULL, '2026-07-30 20:30:38', '2026-07-30 20:30:38', NULL);
+INSERT INTO `tao_admin` VALUES (2, 'test', '2ff6cb678a4d563f83bd64e55a993d7a', 'test1@qq.com', '13012345678', 'static/admin/images/avatar.jpg', 1, 0, '', '127.0.0.1', NULL, '2026-07-16 22:30:49', '2026-07-30 20:30:38', NULL);
 
 -- ----------------------------
 -- Table structure for tao_area
@@ -2230,7 +2230,7 @@ CREATE TABLE `tao_article_flag`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '属性id',
   `type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '1置顶is_top,2精华is_good,3待解is_wait,4热评hot_comment,5hot_pv阅读排行',
   `article_id` int UNSIGNED NOT NULL COMMENT '文章id',
-  `create_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '时间',
   PRIMARY KEY (`id` DESC) USING BTREE,
   INDEX `idx_type_article_id`(`type` ASC, `article_id` ASC) USING BTREE COMMENT '类型文章id'
 ) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
@@ -2246,19 +2246,12 @@ CREATE TABLE `tao_auth_group`  (
   `limits` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '权限范围',
   `descr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '权限描述',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '角色状态1可用0禁止',
-  `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `delete_time` datetime DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户组权限表' ROW_FORMAT = Dynamic;
 
--- ----------------------------
--- Records of tao_auth_group
--- ----------------------------
-INSERT INTO `tao_auth_group` VALUES (1, '超级管理员', '5,15,21,22,62,63,23,17,27,28,64,16,24,26,25,4,20,32,33,34,14,29,30,31,1,65,6,35,36,37,38,7,39,40,41,42,8,43,44,45,66,9,47,48,49,50,46,67,2,10,51,11,18,52,54,55,19,56,57,58,59,60,53,3,12,13', '管理所有的管理员', '所有权限', 1, 0, 1578984825, 0);
-INSERT INTO `tao_auth_group` VALUES (2, '管理员', '1,11,17,20,23,24,31,32,39,41,53,59,2,60,62,3,73,74,4,100,101,117,118', '所有列表的管理', '普通管理员', 1, 0, 1678372607, 0);
-INSERT INTO `tao_auth_group` VALUES (3, '帖子管理', '5,15,21,22,62,63,23,17,27,28,64,16,24,26,25', '负责帖子的审核', '文章专员', 1, 0, 1578980219, 0);
-INSERT INTO `tao_auth_group` VALUES (4, '网站维护', '2,10,51,11,18,52,54,55,19,56,57,58,59,60,53,3,12,13', '对数据进行统计', '网站维护', 1, 0, 1578980364, 0);
 
 -- ----------------------------
 -- Table structure for tao_auth_group_access
@@ -2278,11 +2271,7 @@ CREATE TABLE `tao_auth_group_access`  (
   INDEX `uid_group_id`(`uid`, `group_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户组明细表' ROW_FORMAT = Dynamic;
 
--- ----------------------------
--- Records of tao_auth_group_access
--- ----------------------------
-INSERT INTO `tao_auth_group_access` VALUES (1, 1, 1, 1, 0, 0, 0);
-INSERT INTO `tao_auth_group_access` VALUES (2, 2, 2, 1, 0, 0, 0);
+
 
 -- ----------------------------
 -- Table structure for tao_auth_rule

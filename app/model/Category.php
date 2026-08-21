@@ -7,16 +7,24 @@ use think\db\exception\DbException;
 use think\db\Query;
 use think\facade\Db;
 use think\facade\Cache;
-use app\common\helper\IdEncode;
 use think\facade\Route;
+use app\common\helper\IdEncode;
+
+use think\model\concern\SoftDelete;
 
 class Category extends BaseModel
 {
-    
+    //软删除
+	use SoftDelete;
+
     protected function getOptions(): array 
     {
         return [
-            'name' => 'cate' // 表名
+            // 表名
+            'name' => 'cate',
+            'autoWriteTimestamp'    => true,
+            'deleteTime'            => 'delete_time',
+            'defaultSoftDelete'     => null,
         ];
     }
 

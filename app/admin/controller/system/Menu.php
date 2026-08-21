@@ -61,7 +61,8 @@ class Menu extends AdminBaseController
 
         $auth_rule_list = Db::name($rule)
         ->field('id,pid,title,icon,name,sort,ismenu')
-        ->where(['delete_time'=> 0, 'status'=> 1])
+        ->where('status', 1)
+        ->whereNull('delete_time')
         ->order('sort', 'asc')
         ->select();
         

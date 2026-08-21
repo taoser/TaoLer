@@ -57,9 +57,9 @@ class Article extends AdminBaseController
 
     public function list(Request $request)
     {
-        $data = $request->param(['title','sec','cate_id/d']);
-        $page = $request->param('page/d', 1);
-        $limit = $request->param('limit/d', 10);
+        $data = $request->get(['title','sec','cate_id/d']);
+        $page = $request->get('page/d', 1);
+        $limit = $request->get('limit/d', 10);
         
         $list = $this->model::getFilterList($data, $page, $limit);
         
@@ -236,7 +236,7 @@ class Article extends AdminBaseController
                 Db::name('article_flag')->save([
                     'type' => $this->getTypeValue($param['name']),
                     'article_id' => $param['id'],
-                    'create_time'   => date('Y-m-d H:i:s', time())
+                    'create_time'   => date('Y-m-d H:i:s')
                 ]);
             }
             // 删除
@@ -334,7 +334,7 @@ class Article extends AdminBaseController
 		//
 		$cate = Db::name('cate')
         ->field('id,pid,catename,ename,sort')
-        ->where('delete_time',0)
+        ->whereNull('delete_time')
         ->order(['id' => 'ASC','sort' => 'ASC'])
         ->select()
         ->toArray();

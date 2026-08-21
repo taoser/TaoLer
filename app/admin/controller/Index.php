@@ -62,7 +62,7 @@ class Index extends AdminBaseController
 	{
 		// 评论、帖子状态
         $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
-        $forum = Db::name('article')->where(['delete_time'=>0,'status'=>0])->count();
+        $forum = Db::name('article')->where('status', 0)->whereNull('delete_time')->count();
         $user = Db::name('user')->where('status', 0)->whereNull('delete_time')->count();
 
         View::assign([
@@ -78,7 +78,7 @@ class Index extends AdminBaseController
 	{
         // 评论、帖子状态
         $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
-        $forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->count();
+        $forum = Db::name('article')->field('id')->whereNull('delete_time')->count();
         $user = Db::name('user')->where('status', 0)->whereNull('delete_time')->count();
 		// 回复评论
 		$comments = Comment::field('id,article_id,content,create_time,delete_time')->order('id desc')->limit(10)->select();
@@ -118,7 +118,7 @@ class Index extends AdminBaseController
 	{
 		// 评论、帖子状态
 		$comm = Db::name('comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
-		$forum = Db::name('article')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+		$forum = Db::name('article')->field('id')->where('status', 0)->whereNull('delete_time')->select();
 		$comms = count($comm);
 		$forums = count($forum);
 		

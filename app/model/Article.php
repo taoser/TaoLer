@@ -19,7 +19,7 @@ class Article extends BaseModel
         return [
             'autoWriteTimestamp'    => true,
             'deleteTime'            => 'delete_time',
-            'defaultSoftDelete'     => 0,
+            'defaultSoftDelete'     => null,
             'eventObserver'         => ArticleObserver::class,
             'jsonAssoc'             => true,
             'lazyFields'            => 'pv' // 延迟写入pv

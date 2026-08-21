@@ -45,7 +45,7 @@ class Page extends AdminBaseController
         }
 
         $data = $request->post(['title','cate_id/d','content','description','keywords']);
-        $data['create_time'] = date('Y-m-d H:i:s', time());
+        $data['create_time'] = date('Y-m-d H:i:s');
 
         try{
             PageEntity::save($data);

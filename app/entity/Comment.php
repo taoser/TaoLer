@@ -108,7 +108,7 @@ class Comment extends BaseEntity
     public function getUserCommentList1(int $id) {
         $userCommList = $this::field('id,user_id,create_time,article_id,content')
         ->with(['article' => function($query){
-            $query->withField('id,title,create_time')->where(['delete_time'=>0,'status' => 1]);
+            $query->withField('id,title,create_time')->where('status',1)->whereNull('delete_time');
         }])
         ->where(['user_id' => $id,'status' => 1])
         ->append(['url'])
@@ -127,9 +127,9 @@ class Comment extends BaseEntity
      * @return void
      */
     public function getUserCommentList(int $id) {
-        $userCommList = Article::field('Article.id,title,Article.create_time')->hasWhere('comments',['status'=>1,'delete_time'=>0])
+        $userCommList = Article::field('Article.id,title,Article.create_time')->hasWhere('comments',['status'=>1])
         ->with(['comments' => function($query) use($id){
-            $query->withField('id,content')->where(['user_id'=>$id,'delete_time'=>0,'status' => 1]);
+            $query->withField('id,content')->where(['user_id'=>$id,'status' => 1]);
         }])
         ->append(['url'])
         ->order(['create_time' => 'desc'])
@@ -198,7 +198,7 @@ class Comment extends BaseEntity
      */
     public function getContentAttr($value,$data)
     {
-        if($data['delete_time'] == 0) {
+        if($data['delete_time'] == null) {
             return $value;
         } else {
             if($this::getByPid($data['id'])) {

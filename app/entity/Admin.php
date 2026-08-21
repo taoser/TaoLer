@@ -32,24 +32,24 @@ class Admin extends BaseEntity
 			->scene('Login')
 			->check($data);
 		} catch (ValidateException $e) {
-			throw new Exception($e->getError(), -1);
+			throw new Exception($e->getError(), 1);
 		}
 
         //查询用户
-        $admin = $this->where('username', $data['username'])->whereNull('delete_time')->find();
+        $admin = $this->where('username', $data['username'])->find();
 
 		if(is_null($admin)){
-			throw new Exception('用户名或密码错误');
+			throw new Exception('用户名或密码错误', -1);
 		}
 
 		if($admin['status'] != 1){
-			throw new Exception('用户被禁用或未审核,请联系管理员');
+			throw new Exception('用户被禁用或未审核,请联系管理员', 1);
 		}
 
 		['ok'=>$ok,'update'=>$update,'new_hash'=>$new_hash] = PasswordHash::verify($data['password'], $admin['password']);
 
 		if(!$ok) {
-			throw new Exception('用户名或密码错误');
+			throw new Exception('密码错误', -1);
         }
 
 		//将用户数据写入Session

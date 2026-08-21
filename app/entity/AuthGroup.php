@@ -1,10 +1,8 @@
 <?php
 
-namespace app\model;
+namespace app\entity;
 
-use think\model\concern\SoftDelete;
-
-class AuthGroup extends BaseModel
+class AuthGroup extends BaseEntity
 {
 	//软删除
 	use SoftDelete;

@@ -121,7 +121,8 @@ class AdminBaseController extends \app\BaseController
     {
         $authRuleList = Db::name('auth_rule')
         ->field('id,pid,title,sort,level')
-        ->where(['type'=> $type, 'status'=> 1, 'delete_time' => 0])
+        ->where(['type'=> $type, 'status'=> 1])
+        ->whereNull('delete_time')
         ->order('sort','asc')
         ->select()
         ->toArray();

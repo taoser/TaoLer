@@ -107,6 +107,7 @@
 					data: data.field,
 					dataType: 'json',
 					success: function (res) {
+
 						if (res.code === 0) {
 							button.load({
 								elem: '.login',
@@ -123,6 +124,7 @@
 							layui.jquery('#captcha').attr('src', '{:captcha_src()}?' + Math.random());
 						}
 					},
+
 					error: function () {
 						$("#login-submit").removeClass('layui-btn-disabled').attr('disabled', false);
 						layer.open({ title: '请求失败', content: '网络异常或服务器返回错误', icon: 5, anim: 6 });
@@ -134,7 +136,7 @@
 
 			//更换图形验证码
 			$body.on('click', '#captcha', function(){
-				this.src = '/captcha.html?t='+ new Date().getTime()
+				this.src = '{:captcha_src()}?t='+ new Date().getTime()
 			});
 
 		})

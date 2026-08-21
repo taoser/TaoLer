@@ -19,8 +19,15 @@ class Comment extends BaseModel
 {	
 	//软删除
 	use SoftDelete;
-	protected $deleteTime = 'delete_time';
-	protected $defaultSoftDelete = 0;
+    
+    protected function getOptions(): array 
+    {
+        return [
+            'autoWriteTimestamp'    => true,
+            'deleteTime'            => 'delete_time',
+            'defaultSoftDelete'     => null,
+        ];
+    }
 	
     //评论关联文章
 	public function article()

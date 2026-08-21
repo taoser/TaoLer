@@ -174,7 +174,8 @@ class Category extends BaseEntity
 
 				$subCate = Db::name('cate')
 				->field('id,ename,catename,is_hot,pid')
-				->where(['pid'=>$parentId,'status'=>1,'delete_time'=>0])
+				->where(['pid'=>$parentId,'status'=>1])
+                ->whereNull('delete_time')
 				->select()
 				->toArray();
 					
@@ -190,7 +191,8 @@ class Category extends BaseEntity
 						//子菜单下如果无子菜单，则显示全部兄弟分类
 						$parament = Db::name('cate')
 						->field('id,ename,catename,is_hot,pid')
-						->where(['pid'=>$pCate['pid'],'status'=>1,'delete_time'=>0])
+						->where(['pid'=>$pCate['pid'],'status'=>1])
+                        ->whereNull('delete_time')
 						->order(['sort' => 'asc'])
 						->select()
 						->toArray();

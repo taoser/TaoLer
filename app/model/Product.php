@@ -4,6 +4,7 @@ namespace app\model;
 
 use app\common\helper\Toolkit;
 use think\facade\Db;
+use think\model\concern\SoftDelete;
 
 class Product extends BaseModel
 {

@@ -16,9 +16,17 @@ use think\model\concern\SoftDelete;
 
 class MessageTo extends BaseModel
 {
-	use SoftDelete;	
-	protected $deleteTime = 'delete_time';
-	protected $defaultSoftDelete = 0;
+	//软删除
+	use SoftDelete;
+    
+    protected function getOptions(): array 
+    {
+        return [
+            'autoWriteTimestamp'    => true,
+            'deleteTime'            => 'delete_time',
+            'defaultSoftDelete'     => null,
+        ];
+    }
 	//用户关联评论
 	public function user()
 	{
