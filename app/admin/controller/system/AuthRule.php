@@ -56,11 +56,10 @@ class AuthRule extends AdminBaseController
 		}
 		$data = $request->post(['pid/d','title','name','icon','sort/d','ismenu/d']);
 
-		$res = $this->model->add($data);
-		if($res){
-			return json(['code' => 0,'msg' => 'ok']);
-		}
-
+		$this->model->add($data);
+		
+		return json(['code' => 0,'msg' => 'ok']);
+		
 	}
 	
 	//权限编辑
@@ -72,11 +71,10 @@ class AuthRule extends AdminBaseController
 
 		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','ismenu/d']);
 	
-		$res = $this->model->edit($data);
-		if($res){
-			return json(['code' => 0,'msg' => 'ok']);
-		}
-
+		$this->model->edit($data);
+		
+		return json(['code' => 0,'msg' => 'ok']);
+		
 	}
 
 	// 权限树列表 + 2026.6.23
@@ -131,17 +129,16 @@ class AuthRule extends AdminBaseController
 	public function delete(Request $request): Response
 	{	
 		$id = $request->get('id/d');
-		$result = $this->model->delete($id);
+		$this->model->delete($id);
 		
-		if($result) {
-			return json(['code'=>0,'msg'=>'删除成功']);
-		}
+		return json(['code'=>0,'msg'=>'删除成功']);
 	}
 
 	public function getInfo(Request $request): Response
 	{
 		$id = $request->get('id/d');
 		$rules = $this->model->find($id);
+		
 		return json(['code'=>0,'msg'=>'ok','data'=>$rules]);
 	}
 

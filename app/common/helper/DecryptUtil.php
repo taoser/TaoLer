@@ -48,7 +48,8 @@ class DecryptUtil {
      * @param string $data 需要解码的数据
      * @return string 解码后的数据
      */
-    private function pkcs7Decode(string $data): string {
+    private function pkcs7Decode(string $data): string
+    {
         $length = strlen($data);
         if ($length === 0) {
             return $data;

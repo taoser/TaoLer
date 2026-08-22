@@ -40,7 +40,8 @@ class QrCoder
      * @param string $logoPath
      * @return string 返回图片src
      */
-    public function create(string $data, string $labText = '', string $logoPath = ''): string {
+    public function create(string $data, string $labText = '', string $logoPath = ''): string
+    {
         $builder = new Builder(
             writer: new PngWriter(),
             writerOptions: [],

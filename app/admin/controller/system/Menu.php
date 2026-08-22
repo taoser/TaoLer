@@ -72,7 +72,7 @@ class Menu extends AdminBaseController
                     'id'        => $v['id'],
                     'title'     => Lang::get($v['title']),
                     'icon'      => 'layui-icon ' . $v['icon'],
-                    'href'      => (string) url($moduleName.'/'.str_replace('.','/', $v['name'])),
+                    'href'      => (string) url($moduleName.'/'.str_replace('.', '/', $v['name'])),
                     'pid'       => $v['pid'],
                     'sort'      => $v['sort'],
                     'ismenu'    => $v['ismenu']

@@ -12,7 +12,7 @@ namespace app\model;
 
 use think\model\concern\SoftDelete;
 
-class Admin extends Model
+class Admin extends BaseModel
 {
     //软删除
     use SoftDelete;

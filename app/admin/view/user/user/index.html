@@ -348,7 +348,7 @@
 		// 用户审核
 		form.on('switch(user-enable)', function(obj) {
 			var id = this.value;
-			var status = obj.elem.checked ? 1 : -1;
+			var status = obj.elem.checked ? 1 : 2;
 			
 			$.ajax({
 				type:'post',

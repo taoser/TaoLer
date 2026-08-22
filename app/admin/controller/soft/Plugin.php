@@ -352,22 +352,16 @@ class Plugin extends AdminBaseController
     {
         $name = $request->post('name');
         
-        try{
             $info = get_addons_info($name);
-            $arr = ['status' => $info['status'] ? 0 :1];
+            $arr = ['status' => $info['status'] ? 0 : 1];
+    
             set_addons_info($name, $arr);
-            $class = get_addons_instance($name);
 
             if($arr['status']) {
                 $res = ['code'=>0,'msg'=>'启用成功'];
             } else {
                 $res = ['code'=>0,'msg'=>'已被禁用'];
             }
-
-            $info['status'] == 1 ? $class->enabled() : $class->disabled();
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
 
         return json($res);
     }

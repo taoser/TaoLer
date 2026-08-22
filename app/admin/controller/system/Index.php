@@ -4,7 +4,7 @@ namespace app\admin\controller\system;
 use think\Request;
 use think\Response;
 use app\admin\controller\AdminBaseController;
-use app\common\helper\HttpHelper;
+use app\common\facade\HttpHelper;
 use think\response\Json;
 
 class Index extends AdminBaseController
@@ -27,39 +27,39 @@ class Index extends AdminBaseController
 
     /**
 	 * 系统调试
-	 * @param string $status 调试状态
+	 *
+	 * @param Request $request
 	 * @return Response
 	 */
 	public function debugSwitch(Request $request): Response
 	{
 		$status = $request->post('status');
 
-		try {
-			$envFile = root_path() . '.env';
-			
-			if(file_exists($envFile)) {
-				$envStr = file_get_contents($envFile);
-				$envPatk = '/APP_DEBUG[^\r?\n]*/';
-				if($status == 'true'){
-					$envReps = 'APP_DEBUG = true';
-					$msg = '调试打开';
-				} else {
-					$envReps = 'APP_DEBUG = false';
-					$msg = '调试关闭';
-				}
-
-				$envStr = preg_replace($envPatk, $envReps, $envStr);
-
-				file_put_contents($envFile, $envStr);
-				
-				return json(['code' => 0, 'msg' => $msg]);
+		$envFile = root_path() . '.env';
+		
+		if(file_exists($envFile)) {
+			$envStr = file_get_contents($envFile);
+			$envPatk = '/APP_DEBUG[^\r?\n]*/';
+			if($status == 'true'){
+				$envReps = 'APP_DEBUG = true';
+				$msg = '调试打开';
+			} else {
+				$envReps = 'APP_DEBUG = false';
+				$msg = '调试关闭';
 			}
 
-		} catch (\Exception $e) {
-			return json(['code'=>-1,'msg'=>$e->getMessage()]);
+			$envStr = preg_replace($envPatk, $envReps, $envStr);
+
+			file_put_contents($envFile, $envStr);
+
+			$bool = filter_var($status, FILTER_VALIDATE_BOOLEAN);
+
+			cache('APP_DEBUG', $bool);
+			
+			return json(['code' => 0, 'msg' => $msg]);
 		}
 
-		return json(['code' => 0, 'msg' => '调试模式无法切换']);
+		return json(['code' => -1, 'msg' => '调试模式无法切换']);
 		
 	}
 

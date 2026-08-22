@@ -334,7 +334,7 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">系统调试：</label>
 						<div class="layui-input-inline" style="width: 60px;">
-							<input type="checkbox" name="debug" lay-skin="switch" lay-text="开启|关闭" lay-filter="debug" {if env('APP_DEBUG')} checked {/if}>
+							<input type="checkbox" name="debug" lay-skin="switch" lay-text="开启|关闭" lay-filter="debug" {if cache('APP_DEBUG')} checked {/if}>
 						</div>
 					</div>
 				</div>
@@ -679,7 +679,7 @@
 			var status = data.elem.checked;
 			var that = this;
 			// 禁用调试按钮
-			that.disabled = true;
+			//that.disabled = true;
 			$.post(MODULE_NAME + '/system/index/debugSwitch', {status}, function(res) {
 				that.disabled = false;
 				if (res.code) {

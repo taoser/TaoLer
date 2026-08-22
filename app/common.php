@@ -102,22 +102,26 @@ if(!function_exists('build_tree')) {
         foreach ($data as $item) {
             $id = $item[$idField];
             $pid = $item[$pidField];
+
             if ($pid === $rootPid) {
                 // 根节点直接挂载树
                 $tree[] = &$refs[$id];
             } elseif (isset($refs[$pid])) {
                 // 子节点挂载父节点
                 $refs[$pid][$childrenField][] = &$refs[$id];
-                // 父节点设置为true，方便后续判断
-                $refs[$pid]['isParent'] = true;
-            } else {
+            } 
+            // 孤儿节点：默认丢弃，如需挂到根节点可取消下方注释
+            // else {
+            //     // $tree[] = &$refs[$id]; 
+            // }
 
-                // 处理孤儿节点：可选挂到根节点或丢弃
-                // $tree[] = &$refs[$id]; 
-            }
-            // 非父节点设置为false，方便后续判断
-            $refs[$id]['isParent'] = false;
         }
+
+        // 统一设置 isParent：children 不为空则 true，否则 false
+        foreach ($refs as &$ref) {
+            $ref['isParent'] = !empty($ref[$childrenField]);
+        }
+        unset($ref);
 
         return $tree;
     }
