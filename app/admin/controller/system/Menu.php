@@ -233,7 +233,7 @@ class Menu extends AdminBaseController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function hasChildren($pid)
+    public function hasChildren(int | string $pid)
     {
         $count = Db::name('auth_rule')->where(['pid' => $pid, 'status' => 1, 'ismenu' => 1, 'delete_time' => 0])->count();
 

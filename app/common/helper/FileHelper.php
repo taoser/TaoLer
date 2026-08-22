@@ -562,6 +562,90 @@ class FileHelper
     }
 
     // ====================== 原有方法无修改分割线 ======================
+
+    /**
+     * 复制文件夹及所有子文件，支持排除指定目录 比copyDirToDir()快很多倍
+     * @param string $source 源目录
+     * @param string $dest   目标目录
+     * @param array  $exdir  需要排除的目录名数组
+     * @param bool   $delete 是否复制后删除源文件（移动模式）
+     * @return bool
+     * @throws Exception
+     */
+    public static function copyDir(
+        string $source,
+        string $dest,
+        array $exdir = ['app'],
+        bool $delete = false
+    ): bool {
+        $source = self::getDirPath($source);
+        $dest   = self::getDirPath($dest);
+
+        if (!is_dir($source)) {
+            throw new Exception("源目录不存在：{$source}");
+        }
+
+        self::mkdirs($dest);
+
+        // 排除目录名转哈希表，查找从 O(n) 降为 O(1)
+        $exdirLookup = array_flip($exdir);
+
+        $dirIterator = new RecursiveDirectoryIterator(
+            $source,
+            RecursiveDirectoryIterator::SKIP_DOTS
+        );
+
+        // 在迭代层过滤：命中排除的目录整体跳过（不产出、不递归）
+        $filterIterator = new \RecursiveCallbackFilterIterator(
+            $dirIterator,
+            static function ($current) use ($exdirLookup): bool {
+                return !($current->isDir()
+                    && isset($exdirLookup[$current->getFilename()]));
+            }
+        );
+
+        $iterator = new RecursiveIteratorIterator(
+            $filterIterator,
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $item) {
+            /** @var \SplFileInfo $item */
+            // $subPathName = self::normalizePath($iterator->getSubPathName());
+
+            // 用路径截取替代 getSubPathName()，避免 IDE 报未定义方法
+            $relativePath = self::normalizePath(
+                ltrim(substr($item->getPathname(), strlen($source)), '/\\')
+            );
+
+            $targetPath = self::normalizePath($dest . $relativePath);
+
+            // —— 目录：仅在不存在时创建，创建失败立即抛异常 ——
+            if ($item->isDir()) {
+                if (!is_dir($targetPath)) {
+                    self::mkdirs($targetPath);
+                    is_dir($targetPath)
+                        || throw new Exception("创建目标目录失败：{$targetPath}");
+                }
+                continue;
+            }
+
+            // —— 文件：复制 + 可选删除，均做返回值校验 ——
+            $sourcePath = self::normalizePath($item->getPathname());
+
+            copy($sourcePath, $targetPath)
+                || throw new Exception("复制文件失败：{$sourcePath} → {$targetPath}");
+
+            if ($delete) {
+                unlink($sourcePath)
+                    || throw new Exception("删除源文件失败：{$sourcePath}");
+            }
+        }
+
+        return true;
+    }
+
+
     /**
      * 复制文件夹及所有子文件，支持排除指定目录
      * @param string $source 源目录
@@ -571,7 +655,7 @@ class FileHelper
      * @return bool
      * @throws Exception
      */
-    public static function copyDir(string $source, string $dest, array $exdir = ['app'], bool $delete = false): bool
+    public static function copyDirToDir(string $source, string $dest, array $exdir = ['app'], bool $delete = false): bool
     {
         $source = self::getDirPath($source);
         $dest = self::getDirPath($dest);

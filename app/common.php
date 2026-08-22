@@ -159,7 +159,7 @@ if(!function_exists('cut_byte')) {
 
 
 //过滤文章摘要
-function getArtContent($content)
+function getArtContent(string $content)
 {
     //过滤html标签
     // $content = strip_tags($content);
@@ -173,7 +173,7 @@ function getArtContent($content)
 }
 
 //根据评论时间查询是否已过修改期
-function getLimtTime($create_time)
+function getLimtTime(string $create_time)
 {
     $nt = time();
     $lt = intval(($nt - strtotime($create_time))/86400);
@@ -182,7 +182,7 @@ function getLimtTime($create_time)
 }
 
 //按钮权限检查
-function checkRuleButton($rules_button)
+function checkRuleButton(string $rules_button)
 {
 	$admin_id = Session::get('admin_id');
 	$auth = new Auth();
@@ -196,7 +196,7 @@ function checkRuleButton($rules_button)
 }
 
 //提取内容第一张图片
-function getOnepic($str)
+function getOnepic(string $str)
 {
     //匹配格式为 <img src="http://img.com" />
     $pattern = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/";
@@ -221,10 +221,10 @@ function getOnepic($str)
 if (!function_exists('get_all_img')) {
     /**
      * 提取字符串中所有图片
-     * @param $str
+     * @param string $text
      * @return array
      */
-    function get_all_img($text)
+    function get_all_img(string $text)
     {
         // 定义正则表达式来匹配图片链接，支持更多图片格式
         $pattern = '/<img[^>]+src=["\']([^"\']+\.(jpg|jpeg|png|gif|svg))["\']/i';
@@ -240,10 +240,10 @@ if (!function_exists('get_all_img')) {
 if (!function_exists('get_one_video')) {
     /**
      * 提取字符串中所有视频
-     * @param $str
+     * @param string $str
      * @return array
      */
-    function get_one_video($str)
+    function get_one_video(string $str)
     {
         //$pattern_video = "/(src)=( \\\?)([\"|' ]?)([^ \"'>]+\.(swf|flv|mp4|rmvb|avi|mpeg|ra|ram|mov|wmv)((\?[^ \"'>]+)?))\\2\\3/i";
         // $pattern_music = "/(src)=( \\\?)([\"|' ]?)([^ \"'>]+\.(mp3|wav|wma|ogg|ape|acc))\\2\\3/i";
@@ -265,7 +265,7 @@ if (!function_exists('get_all_video')) {
      * @param $str
      * @return array
      */
-    function get_all_video($str)
+    function get_all_video(string $str)
     {
         //匹配格式为 <video src="http://img.com" > </video> 的视频
         $pattern = "/<[video|VIDEO][\s\S]*src=[\'|\"](.*?(?:[\.mp4|\.mkv|\.flv|\.avi]))[\'|\"].*?[<\/video]>/";
@@ -279,7 +279,7 @@ if (!function_exists('get_all_video')) {
 
 //判断蜘蛛函数
 function find_spider(){
-    $useragent = strtolower(Request::header('user-agent'));
+    $useragent = strtolower(request()->header('user-agent'));
     if(empty($useragent)) return false;
     
     $spider_arr = [
@@ -321,7 +321,7 @@ if (!function_exists('__')) {
     }
 }
 
-function advanced_compress_html_js($code) {
+function advanced_compress_html_js(string $code) {
     // 去除html注释
     $code = preg_replace('~<!--.*?-->~s', '', $code);
     // // 去除单行注释 不包括网址中的//
@@ -344,7 +344,7 @@ function advanced_compress_html_js($code) {
 }
 
 // 文件压缩
-function compressHtmlJs($html) {
+function compressHtmlJs(string $html) {
     // 移除 HTML 注释
     $html = preg_replace('/<!--(?!\[if|\<\!\[endif\])(.*?)-->/is', '', $html);
 

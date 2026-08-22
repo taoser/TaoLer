@@ -14,16 +14,13 @@ use app\admin\controller\AdminBaseController;
 
 use think\Exception;
 use think\Request;
-use think\RuntimeException;
+use RuntimeException;
 use think\facade\View;
-use think\facade\Log;
 use think\facade\Config;
-use think\facade\Db;
 use app\admin\model\AuthRule;
 use think\response\Json;
 use app\common\facade\HttpHelper;
 use app\common\helper\FileHelper;
-use app\common\helper\JwtAuth;
 use app\common\helper\SqlFile;
 use app\common\helper\Zip;
 
@@ -47,7 +44,7 @@ class Plugin extends AdminBaseController
 
     /**
      * 插件动态列表
-     * @param $data
+     * @param Request $request
      * @return Json
      */
     public function list(Request $request)
@@ -368,7 +365,7 @@ class Plugin extends AdminBaseController
 
     /**
      * 配置插件
-     * @param $name
+     * @param Request $request
      * @return string|Json
      * @throws Exception
      */
@@ -505,7 +502,7 @@ class Plugin extends AdminBaseController
         }
         
         $data = $request->post();
-        $result = AddonsModel::create($data);
+        $result = Plugin::create($data);
         if($result){
             return json(['code'=>0,'msg'=>'添加成功']);
         }
@@ -566,7 +563,7 @@ class Plugin extends AdminBaseController
     }
 
     // 插件文件升级检查
-    protected function addonsFileCheckInstall($name, $url) {
+    protected function addonsFileCheckInstall(string $name, string $url) {
 
         //拼接路径
         $addons_dir = str_replace('\\','/', root_path() . 'runtime' . DS . 'addons' . DS . $name . DS);
@@ -585,12 +582,12 @@ class Plugin extends AdminBaseController
         // 复制
         FileHelper::copyFolder($addons_dir, root_path(), $reserve);
         // 删除
-        FileHelper::deleteFolder($addons_dir);
+        FileHelper::deleteDir($addons_dir);
 
         return true;
     }
 
-    protected function getConfigArray($name)
+    protected function getConfigArray(string $name)
     {
         // !!!获取插件配置 只能引用文件解析，不能使用get_addons_config()，否则会加载视图文件
         $configFile =  root_path() . 'addons' . DS . $name . DS . 'config.php';
