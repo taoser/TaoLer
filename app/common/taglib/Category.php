@@ -12,7 +12,7 @@ namespace app\common\taglib;
 
 use think\template\TagLib;
 
-class Cate extends TagLib
+class Category extends TagLib
 {
     protected $tags = [
         'catename'      => ['attr' => '', 'close' => 0],
@@ -43,7 +43,7 @@ class Cate extends TagLib
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
         $parse .= '{php}$__parentCate__ = \app\facade\Category::getSubCate($ename);{/php}';
-        $parse .= '{notempty name="__parentCate__"} {volist name="__parentCate__" id="cate"}';
+        $parse .= '{notempty name="__parentCate__"} {volist name="__parentCate__" id="category"}';
         $parse .= $content;
         $parse .= '{/volist} {/notempty}';
         return $parse;
@@ -54,7 +54,7 @@ class Cate extends TagLib
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
         $parse .= '{php}$__brotherCate__ = \app\facade\Category::getBrotherCate($ename);{/php}';
-        $parse .= '{notempty name="__brotherCate__"} {volist name="__brotherCate__" id="cate"}';
+        $parse .= '{notempty name="__brotherCate__"} {volist name="__brotherCate__" id="category"}';
         $parse .= $content;
         $parse .= '{/volist} {/notempty}';
         return $parse;
@@ -65,7 +65,7 @@ class Cate extends TagLib
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
         $parse .= '{php}$__childCate__ = \app\facade\Category::getSubCate($ename);{/php}';
-        $parse .= '{notempty name="__childCate__"} {volist name="__childCate__" id="cate"}';
+        $parse .= '{notempty name="__childCate__"} {volist name="__childCate__" id="category"}';
         $parse .= $content;
         $parse .= '{/volist} {/notempty}';
         return $parse;
@@ -74,20 +74,20 @@ class Cate extends TagLib
 
     public function tagCatename($tag): string
     {
-        return '{$cate.catename}';
+        return '{$category.catename}';
     }
     public function tagEname($tag): string
     {
-        return '{$cate.ename}';
+        return '{$category.ename}';
     }
     public function tagDesc($tag): string
     {
-        return '{$cate.desc}';
+        return '{$category.desc}';
     }
 
     public function tagUrl($tag): string
     {
-        return '{$cate.url}';
+        return '{$category.url}';
     }
 
     public function tagBro_name($tag): string

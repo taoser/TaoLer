@@ -11,6 +11,7 @@ use think\helper\{
     Str, Arr
 };
 use Symfony\Component\VarExporter\VarExporter;
+use think\exception\InvalidArgumentException;
 
 define('DS', DIRECTORY_SEPARATOR);
 
@@ -402,44 +403,103 @@ if (!function_exists('_ini_value_escape')) {
 
 if (!function_exists('get_addons_config')) {
     /**
-     * 获取插件的配置
+     * 获取插件配置，优先插件实例getConfig，实例不存在直接读取config.php磁盘文件降级
      * @param string $name 插件名
-     * @return mixed|null
+     * @return array
      */
-    function get_addons_config($name)
+    function get_addons_config(string $name, bool $type = false): array
     {
-        $addon = get_addons_instance($name);
-        if (!$addon) {
+        $name = trim($name);
+        if ($name === '') {
             return [];
         }
 
-        return $addon->getConfig($name);
+        $addon = get_addons_instance($name);
+        if ($addon && method_exists($addon, 'getConfig')) {
+            return $addon->getConfig($type);
+        }
+
+       // 插件实例获取失败，降级直接读取磁盘 config.php
+        $addonsPath = app()->getAddonsPath();
+        $configFile = $addonsPath . $name . DIRECTORY_SEPARATOR . 'config.php';
+        if (!is_file($configFile)) {
+            return [];
+        }
+        // 清除本进程opcache，拿到最新文件内容
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($configFile, true);
+        }
+        
+        $config = include $configFile;
+        return is_array($config) ? $config : [];
     }
 }
 
 if (!function_exists('set_addons_config')) {
     /**
-     * 设置插件配置文件
-     * @param string $name
-     * @param array $array
+     * 设置插件config.php配置文件
+     * @param string $name 插件名
+     * @param array $array 配置数组
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
-    function set_addons_config(string $name, array $array)
+    function set_addons_config(string $name, array $array): bool
     {
-        $service = new Service(App::instance()); // 获取service 服务
-        $addons_path = $service->getAddonsPath();
-        // 插件列表
-        $file = $addons_path . $name . DIRECTORY_SEPARATOR . 'config.php';
-        if (!is_writable($file)) {
-            throw new \Exception(lang("addons.php File does not have write permission"));
+        $name = trim($name);
+        if ($name === '') {
+            throw new InvalidArgumentException('插件名称不能为空');
         }
-        if ($handle = fopen($file, 'w')) {
-            fwrite($handle, "<?php\n\n" . "return " . VarExporter::export($array) . ";\n");
-            fclose($handle);
+        
+        // 简单防护，防止路径穿越
+        if (strpbrk($name, DIRECTORY_SEPARATOR . '/\\')) {
+            throw new \Exception('插件名称非法');
+        }
+
+        $addonsPath = app()->getAddonsPath();
+        $pluginDir  = $addonsPath . $name . DIRECTORY_SEPARATOR;
+        $file       = $pluginDir . 'config.php';
+
+        // 插件目录不存在则创建
+        if (!is_dir($pluginDir)) {
+            if (!mkdir($pluginDir, 0755, true)) {
+                throw new \Exception("插件目录创建失败，无权限：{$pluginDir}");
+            }
+        }
+
+        // 检查目录可写，文件不存在则判断目录权限
+        if (is_file($file)) {
+            if (!is_writable($file)) {
+                throw new \Exception('config.php 文件无写入权限');
+            }
         } else {
-            throw new Exception(lang("File does not have write permission"));
+            if (!is_writable($pluginDir)) {
+                throw new \Exception('config.php File does not have write permission');
+            }
         }
+
+        if (!class_exists(\Symfony\Component\VarExporter\VarExporter::class)) {
+            throw new \Exception('VarExporter 类不存在，请安装 symfony/var-exporter');
+        }
+        
+        $handle = fopen($file, 'w');
+        if (!$handle) {
+            throw new \Exception('File does not have write permission：' . $file);
+        }
+
+        // $exportContent = "<?php\n\nreturn " . \Symfony\Component\VarExporter\VarExporter::export($array) . ";\n";
+        fwrite($handle, "<?php\n\n" . "return " . VarExporter::export($array) . ";\n");
+        fclose($handle);
+
+        // 清除当前进程opcache，立刻刷新本进程的php配置缓存
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($file, true);
+        }
+
+        // 清理插件单例缓存，下次获取实例重新加载配置
+        if (function_exists('clear_addons_instance_cache')) {
+            clear_addons_instance_cache($name);
+        }
+        
         return true;
     }
 }
@@ -447,12 +507,12 @@ if (!function_exists('set_addons_config')) {
 if (!function_exists('get_addons_menu')) {
     /**
      * 获取插件菜单
-     * @param $name
-     * @return array|mixed
+     * @param string $name 插件名
+     * @return array
      */
-    function get_addons_menu($name)
+    function get_addons_menu(string $name): array
     {
-        $menu = app()->getRootPath() . 'addons' . DS . $name . DS . 'menu.php';
+        $menu = addons_path() . $name . DIRECTORY_SEPARATOR . 'menu.php';
         if(file_exists($menu)){
             return include_once $menu;
         }
@@ -467,8 +527,8 @@ if (!function_exists('get_addons_list')) {
      */
     function get_addons_list()
     {
-        // $list = Cache::get('addonslist');
-        // if (empty($list)) {
+        $list = Cache::get('addonslist');
+        if (empty($list)) {
             $addonsPath = app()->getRootPath().'addons'.DS; // 插件列表
             $results = scandir($addonsPath);
             $list = [];
@@ -488,36 +548,11 @@ if (!function_exists('get_addons_list')) {
                 //$info['url'] =isset($info['url']) && $info['url'] ?(string)addons_url($info['url']):'';
                 $list[$name] = $info;
             }
-            // Cache::set('addonslist', $list);
-        // }
+            Cache::set('addonslist', $list);
+        }
         return $list;
     }
 
-}
-
-if (!function_exists('getAddonsConfig')) {
-    /**
-     * 获取插件配置
-     *
-     * @param string $name 插件名
-     * @param boolean $type 是否获取原始数据
-     * @return void
-     */
-    function getAddonsConfig(string $name, bool $type = false) {
-        $config = [];
-        $config_file = root_path() . 'addons' .  DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR .  'config.php';
-        if (is_file($config_file)) {
-            $temp_arr = (array)include $config_file;
-            if ($type) {
-                return $temp_arr;
-            }
-            foreach ($temp_arr as $key => $value) {
-                $config[$key] = $value['value'];
-            }
-            unset($temp_arr);
-        }
-        return $config;
-    }
 }
 
 if (!function_exists('addons_path')) {

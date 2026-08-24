@@ -19,6 +19,8 @@ Route::group('',function () {
 	// Route::get('/', function () {
 	// 	return Response::create('hello world');
 	// });
+
+	
 	
 	// 定义首页滑动页码路由
 	Route::get('index/<page>$', 'index/index')->name('index_page');
@@ -109,9 +111,31 @@ Route::group('',function () {
 	// 之后（字符串路由形式，能被正确解析）
 	// Route::miss('index/miss');
 
+	// Route::get('/sse/time', function () {
+	// 	$generator = function () {
+	// 		while (true) {
+	// 			yield 'data: ' . json_encode([
+	// 				'time' => date('Y-m-d H:i:s'),
+	// 				'memory' => memory_get_usage()
+	// 			]) . "\n\n";
+				
+	// 			sleep(1); // 每秒推送一次
+	// 		}
+	// 	};
+
+	// 	return (new \think\worker\response\Iterator($generator()))
+	// 		->header([
+	// 			'Content-Type' => 'text/event-stream',
+	// 			'Cache-Control' => 'no-cache',
+	// 	]);
+
+	// });
+
 	Route::miss(function() {
 		return response('404 Not Found!', 404);
 	});
+
+
 
 })->namespace('app\index\controller')
 ->middleware([

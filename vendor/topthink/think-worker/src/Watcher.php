@@ -28,10 +28,6 @@ class Watcher extends \think\Manager
 
     public function getDefaultDriver()
     {
-        // Windows 下默认使用 scan 驱动
-        if (DIRECTORY_SEPARATOR === '\\') {
-            return 'scan';
-        }
         return $this->getConfig('type', 'scan');
     }
 }

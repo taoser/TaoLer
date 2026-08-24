@@ -16,27 +16,31 @@ use think\response\Json;
 class Category extends BaseEntity
 {
 
-
     /**
      * 新的数量, 数据介于两表之间分量时使用
      * @var int
      */
-    protected static $newLimit;
+    protected static int $newLimit = 10;
     /**
      * 当前分页数据偏移量
      *
      * @var int
      */
-    protected static $offset;
+    protected static int $offset = 0;
     /**
      * 当前用到的数据总和
      *
      * @var int
      */
-    protected static $currentTotalNum = 0;
+    protected static int $currentTotalNum = 0;
 
-	// 查询类别信息
-	public function getCateInfoByEname(string $ename)
+	/**
+     * 查询类别信息
+     *
+     * @param string $ename 类别名称
+     * @return mixed 类别信息
+     */
+	public function getCateInfoByEname(string $ename): mixed
 	{
 		$cate = $this->field('id,ename,type,catename,tpl,desc,image')
         ->where('ename', $ename)
@@ -44,18 +48,285 @@ class Category extends BaseEntity
         ->cache('cate_'.$ename, 3500)
         ->find();
 
-        // 抛出 HTTP 异常
-        if(is_null($cate) && $ename != 'all') {
-			throw new Exception('没有可访问的数据！');
-		}
-
         return $cate;
 	}
 
-    // ID查询类别信息
-    public function getCateInfoById(int $id)
+    /**
+     * 查询类别信息
+     *
+     * @param int $id 类别id
+     * @return mixed 类别信息
+     */
+    public function getCateInfoById(int $id): mixed
     {
         return $this->field('id,pid,ename,type,catename,tpl,icon,sort,desc,url,image')->find($id);
+    }
+
+    /**
+     * 分类文章，支持分表分页
+     *
+     * @param string $ename 英文别名
+     * @param integer $page 页码
+     * @param string $type 筛选类型
+     * @param integer $limit 每页数
+     * @return array
+     */
+    public function getArticlesByCategoryEname(string $ename = 'all', int $page = 1, string $flag = 'all', int $limit = 15): array
+    {
+        // 查询条件
+        $where = [];
+        // 数据
+        $data = [];
+        
+        $cate = $this->getCateInfoByEname($ename);
+
+        if(!empty($cate['id'])){
+            $where[] = ['cate_id' ,'=', $cate['id']];
+        }
+
+        switch ($flag) {
+            case 'hot':
+                $where[] = ['flags->is_good', '=', '1'];
+                break;
+            case 'top':
+                $where[] = ['flags->is_top', '=', '1'];
+                break;
+            case 'wait':
+                $where[] = ['flags->is_wait', '=', '1'];
+                break;
+            case 'end':
+                $where[] = ['flags->is_wait', '=', '0'];
+                break;
+            default:
+                break;
+        }
+
+        // 文章表数据
+        $map = Cache::remember("cate_count_{$ename}_{$flag}", function() use($where){
+
+            return self::getSuffixMap($where, Article::class);
+
+            // return [
+            //     'countArr'       => $countArr,
+            //     'totals'         => $totals,
+            //     'tableSuffixArr' => $tableSuffixArr,
+            //     'tableCount'     => $tableCount
+            // ];
+
+        }, 900);
+
+
+        // 总共页面数
+        $lastPage = (int) ceil($map['totals'] / $limit); // 向上取整
+ 
+        if($map['totals']) {
+
+            if($page > $lastPage) {
+                return [
+                    'total'         => $map['totals'],
+                    'per_page'      => $limit,
+                    'current_page'  => $page,
+                    'last_page'     => $lastPage,
+                    'data'          => $data
+                ];
+            }
+
+            $data = Cache::remember("cateroty_{$ename}_{$flag}_{$page}", function() use($where, $page, $limit, $map, $cate) {
+
+                $datas = [];
+                // 最大偏移量
+                $maxNum = $page * $limit;
+                // 开始时的偏移量
+                self::$offset = ($page - 1) * $limit;
+                // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
+                self::$newLimit = $limit;
+
+                // 循环 取每个表中的数据
+                for($i = 0; $i < $map['tableCount']; $i++) {
+                    // 当前表 取到的数据总数
+                    self::$currentTotalNum += $map['countArr'][$i];
+
+                    // 1.可以完全取到 在第一组分表中就可以完全查询到
+                    if((self::$currentTotalNum - $maxNum) >= 0) {
+                        // echo 123;
+                    
+                        // $articles = Article::suffix($map['tableSuffixArr'][$i])
+                        // ->field('id')
+                        // ->where($where)
+                        // ->order('id', 'desc')
+                        // ->limit(self::$offset, self::$newLimit)
+                        // ->select();
+
+                        // $ids = $articles->toArray();
+                        // $idArr = array_column($ids, 'id');
+
+                        // $list =  Article::suffix($map['tableSuffixArr'][$i])
+                        // ->field($field)
+                        // ->whereIn('id', $idArr)
+                        // ->with([
+                        //     'cate' => function (Query $query) {
+                        //         $query->field('id,catename,ename');
+                        //     },
+                        //     'user' => function(Query $query){
+                        //         $query->field('id,name,nickname,user_img,vip');
+                        //     }
+                        // ])
+                        // ->order('id', 'desc')
+                        // ->select()
+                        // ->toArray();
+
+                        $list = $this->selectSuffix($where, $map['tableSuffixArr'][$i]);
+                        
+                        $datas = array_merge($datas, $list);
+
+                        break;
+                    } 
+
+                    // 2.数据介于2表之间 第一组和第二组各取部分数据
+                    if((self::$currentTotalNum - $maxNum) < 0 && ($maxNum - self::$currentTotalNum - $limit) < 0 ) {
+                        // echo 234;
+
+                        $list = $this->selectSuffix($where, $map['tableSuffixArr'][$i]);
+
+                        $datas = array_merge($datas, $list);
+                        
+                        // 介于2表之间 第二张表数据分量从0开始
+                        self::$offset = 0;
+                        // 第二张表分量数据
+                        self::$newLimit = $page * $limit - self::$currentTotalNum;
+
+                    }
+
+                    // 3.第一组完全取不到 数据没有在第一组，刚好从第二组开头取, 只能从后面一组从0开始继续找 ，需要跳过当次循环
+                    if($maxNum - self::$currentTotalNum - $limit == 0) {
+                        // echo 345;
+
+                        self::$offset = 0;
+                    }
+
+                    // 4.第一组完全取不到 且不是从第二组开头找，需要跳过当次循环
+                    if((self::$currentTotalNum - $maxNum < 0) && ($maxNum - self::$currentTotalNum - $limit > 0) ) {
+                        // echo 456;
+
+                        // 第一组可分页面数
+                        $p = (int) floor(self::$currentTotalNum  / self::$newLimit);
+                        // 第一组余量数
+                        $n = self::$currentTotalNum  % self::$newLimit;
+
+                        // 第二组的偏移量
+                        self::$offset = ($page - 1 - $p) * self::$newLimit - $n;
+                    }
+                }
+
+                // 往datas数组中追加cate和url 减少查询
+                foreach($datas as &$da) {
+                    // $da['cate'] = ['catename' => $cate['catename'], 'ename' => $cate['ename']];
+
+                    $id = IdEncode::encode($da['id']);
+                    
+                    $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id, 'ename' => $da['cate']['ename']])->domain(true);
+                    // $da['url'] = (string) Route::buildUrl("{$cate['ename']}/{$id}")->domain(true);
+                    
+                    // $da['master_pic'] = $da['has_image'] > 0 ? $da['media']['images'][0] : '';
+                }
+                
+                unset($da);
+
+                return $datas;
+
+            }, 600);
+        }
+
+        return [
+            'total'         => $map['totals'],
+            'per_page'      => $limit,
+            'current_page'  => $page,
+            'last_page'     => $lastPage,
+            'data'          => $data
+        ];
+
+    }
+
+    /**
+     * 根据条件高效分页关联查询
+     *
+     * @param array $where 查询条件
+     * @param string $suffix 表后缀
+     * @return array
+     */
+    protected function selectSuffix(array $where, string $suffix): array
+    {
+        // 3. 构建主键分页子查询（核心：仅查ID，利用主键索引快速定位）
+        $subQuery = Article::suffix($suffix)
+            ->with(['cate' => function($query) {
+                $query->where('status', 1);  // 只关联状态正常的
+            }])
+            ->has('cate')  // 关键：只返回有关联user的记录
+            ->field('id')
+            ->where($where)
+            ->where('status', 1)
+            ->order('id', 'desc')
+            ->limit(self::$offset, self::$newLimit) // 深分页用limit(offset, limit)更直观
+            ->buildSql(); // 生成带括号的子查询SQL
+
+            // halt($subQuery);
+
+        // 4. 主查询：JOIN子查询+关联查询+追加字段（一次查询搞定）
+        $list = Article::suffix($suffix)
+            ->alias('a')
+            // JOIN子查询（仅匹配分页后的ID，避免全表扫描）
+            ->join([$subQuery => 'b'], 'a.id = b.id')
+            // 关联分类/用户（保留原逻辑，简化闭包）
+            ->with([
+                'cate' => fn(Query $query) => $query->field('id,catename,ename'),
+                'user' => fn(Query $query) => $query->field('id,name,nickname,user_img,vip')
+            ])
+            // 字段筛选（主表加别名，避免字段冲突）
+            ->field([
+                'a.id',
+                'a.cate_id',
+                'a.user_id',
+                'a.title',
+                'a.content',
+                'a.description',
+                'a.create_time',
+                'a.pv',
+                'a.thum_img',
+                'a.has_image',
+                'a.has_video',
+                'a.has_audio',
+                'a.media',
+                'a.comments_num',
+                'a.flags'
+            ])
+            // 保持排序一致性
+            ->order('a.id', 'desc')
+            // 追加URL字段（模型访问器）
+            ->append(['url'])
+            // 执行查询并处理结果（空值防护）
+            ->select()
+            // ->map(function ($item) {
+            //     // 可选：单条数据格式化（如时间戳转字符串）
+            //     // $item->create_time = date('Y-m-d H:i:s', $item->create_time);
+            //     // return $item;
+            // })
+            ->toArray();
+
+        // 空值兜底：若无数据直接返回空数组
+        return $list ?: [];
+
+         
+    }
+
+    /**
+     * 查询单页分类
+     *
+     * @param int $categoryId 分类id
+     * @return mixed 单页分类信息
+     */
+    public function getSinglePage(int $categoryId): mixed
+    {
+        return Page::where('id', $categoryId)->find();
     }
 
     // 查询父分类
@@ -81,26 +352,23 @@ class Category extends BaseEntity
     }
 
     /**
-     * 删除栏目及栏目内容
+     * 删除栏目及栏目关联内容
      *
-     * @param integer $id
-     * @return Json
+     * @param int $id
+     * @return bool
      */
-	public function delete(int $id): Json
+	public function delete(int $id): bool
 	{
-        try{
-            $cate = $this->field('id,pid')->with('article')->find($id);
-            $subCate = $this->where('pid', $cate['id'])->count();
-            if($subCate > 0) {
-                return json(['code' => 1, 'msg' => '存在子栏目,无法直接删除']);
-            }
-
-            $cate->together(['article'])->delete();
-        } catch(Exception $e){
-            return json(['code' => 1, 'msg' => 'error']);
+        $subCate = $this->where('pid', $id)->count();
+        if($subCate > 0) {
+            throw new Exception('存在子栏目,无法直接删除', -1);
         }
+
+        $cate = $this::with('article')->find($id);
+
+        $cate->together(['article'])->delete();
 		
-        return json(['code' => 0, 'msg' => 'ok']);
+        return true;
 	}
 
     // 无限极分类树 2026.07.11
@@ -209,206 +477,6 @@ class Category extends BaseEntity
     }
 
     /**
-     * 分类文章，支持分表分页
-     *
-     * @param string $ename 英文别名
-     * @param integer $page 页码
-     * @param string $type 筛选类型
-     * @param integer $limit 每页数
-     * @return array
-     */
-    public function getArticlesByCategoryEname(string $ename = 'all', int $page = 1, string $flag = 'all', int $limit = 15): array
-    {
-        // 查询条件
-        $where = [];
-        // 数据
-        $data = [];
-        
-        $cate = $this->getCateInfoByEname($ename);
-
-        if(!empty($cate['id'])){
-            $where[] = ['cate_id' ,'=', $cate['id']];
-        }
-
-        switch ($flag) {
-            case 'hot':
-                $where[] = ['flags->is_good', '=', '1'];
-                break;
-            case 'top':
-                $where[] = ['flags->is_top', '=', '1'];
-                break;
-            case 'wait':
-                $where[] = ['flags->is_wait', '=', '1'];
-                break;
-            case 'end':
-                $where[] = ['flags->is_wait', '=', '0'];
-                break;
-            default: 
-            break;
-        }
-
-    // dump($where);
-
-        // $limit = 5;
-        // $page = 3;
-
-        // $m = self::getSuffixMap(['status' => 1]);
-        // halt($m);
-
-        // 文章表数据
-        $map = Cache::remember("cate_count_{$ename}_{$flag}", function() use($where){
-
-            return self::getSuffixMap($where, Article::class);
-
-            // return [
-            //     'countArr'       => $countArr,
-            //     'totals'         => $totals,
-            //     'tableSuffixArr' => $tableSuffixArr,
-            //     'tableCount'     => $tableCount
-            // ];
-
-        }, 900);
-
-
-        // 总共页面数
-        $lastPage = (int) ceil($map['totals'] / $limit); // 向上取整
- 
-        if($map['totals']) {
-
-            if($page > $lastPage) {
-                return [
-                    'total'         => $map['totals'],
-                    'per_page'      => $limit,
-                    'current_page'  => $page,
-                    'last_page'     => $lastPage,
-                    'data'          => $data
-                ];
-            }
-
-            $data = Cache::remember("cateroty_{$ename}_{$flag}_{$page}", function() use($where, $page, $limit, $map, $cate) {
-
-                $datas = [];
-                // 最大偏移量
-                $maxNum = $page * $limit;
-                // 开始时的偏移量
-                self::$offset = ($page - 1) * $limit;
-                // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
-                self::$newLimit = $limit;
-
-                // 循环 取每个表中的数据
-                for($i = 0; $i < $map['tableCount']; $i++) {
-                    // 当前表 取到的数据总数
-                    self::$currentTotalNum += $map['countArr'][$i];
-
-                    // 1.可以完全取到 在第一组分表中就可以完全查询到
-                    if((self::$currentTotalNum - $maxNum) >= 0) {
-                        // echo 123;
-                    
-                        // $articles = Article::suffix($map['tableSuffixArr'][$i])
-                        // ->field('id')
-                        // ->where($where)
-                        // ->order('id', 'desc')
-                        // ->limit(self::$offset, self::$newLimit)
-                        // ->select();
-
-                        // $ids = $articles->toArray();
-                        // $idArr = array_column($ids, 'id');
-
-                        // $list =  Article::suffix($map['tableSuffixArr'][$i])
-                        // ->field($field)
-                        // ->whereIn('id', $idArr)
-                        // ->with([
-                        //     'cate' => function (Query $query) {
-                        //         $query->field('id,catename,ename');
-                        //     },
-                        //     'user' => function(Query $query){
-                        //         $query->field('id,name,nickname,user_img,vip');
-                        //     }
-                        // ])
-                        // ->order('id', 'desc')
-                        // ->select()
-                        // ->toArray();
-
-                        $list = $this->selectSuffix($where, $map['tableSuffixArr'][$i]);
-                        
-                        $datas = array_merge($datas, $list);
-
-                        break;
-                    } 
-
-                    // 2.数据介于2表之间 第一组和第二组各取部分数据
-                    if((self::$currentTotalNum - $maxNum) < 0 && ($maxNum - self::$currentTotalNum - $limit) < 0 ) {
-                        // echo 234;
-
-                        $list = $this->selectSuffix($where, $map['tableSuffixArr'][$i]);
-
-                        $datas = array_merge($datas, $list);
-                        
-                        // 介于2表之间 第二张表分量从0开始
-                        self::$offset = 0;
-                        // 第二张表分量数
-                        self::$newLimit = $page * $limit - self::$currentTotalNum;
-
-                    }
-
-                    // 3.第一组完全取不到 数据没有在第一组，刚好从第二组开头取, 只能从后面一组从0开始继续找 ，需要跳过当次循环
-                    if($maxNum - self::$currentTotalNum - $limit == 0) {
-                        // echo 345;
-
-                        self::$offset = 0;
-                    }
-
-                    // 4.第一组完全取不到 且不是从第二组开头找，需要跳过当次循环
-                    if((self::$currentTotalNum - $maxNum < 0) && ($maxNum - self::$currentTotalNum - $limit > 0) ) {
-                        // echo 456;
-
-                        // 第一组可分页面数
-                        $p = (int) floor(self::$currentTotalNum  / self::$newLimit);
-                        // 第一组余量数
-                        $n = self::$currentTotalNum  % self::$newLimit;
-
-                        // 第二组的偏移量
-                        self::$offset = ($page - 1 - $p) * self::$newLimit - $n;
-                    }
-                }
-                
-                // 路由设置模式
-                $routeRewrite = config('taoler.url_rewrite.article_as');
-
-                // 往datas数组中追加cate和url 减少查询
-                foreach($datas as &$da) {
-                    // $da['cate'] = ['catename' => $cate['catename'], 'ename' => $cate['ename']];
-
-                    $id = IdEncode::encode($da['id']);
-                    
-                    if(empty($routeRewrite)) {
-                        
-                        $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id, 'ename' => $da['cate']['ename']])->domain(true);
-                        // $da['url'] = (string) Route::buildUrl("{$cate['ename']}/{$id}")->domain(true);
-                    } else {
-                        $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id])->domain(true);
-                    }
-                    // $da['master_pic'] = $da['has_image'] > 0 ? $da['media']['images'][0] : '';
-                }
-                
-                unset($da);
-
-                return $datas;
-
-            }, 600);
-        }
-
-        return [
-            'total'         => $map['totals'],
-            'per_page'      => $limit,
-            'current_page'  => $page,
-            'last_page'     => $lastPage,
-            'data'          => $data
-        ];
-
-    }
-
-    /**
      * 审核
      *
      * @param array $data
@@ -417,60 +485,11 @@ class Category extends BaseEntity
     public function check(array $data): Json
     {
         try{
-            self::update($data);
+            $this->update($data);
         } catch(Exception $e) {
             return json(['code' => 1,'msg' => 'error']);
         }
         return json(['code'=>0,'msg'=>'设置成功','icon'=>6]);
-    }
-
-    // 根据条件高效分页关联查询
-    protected function selectSuffix(array $where, string $suffix): array
-    {
-        // 3. 构建主键分页子查询（核心：仅查ID，利用主键索引快速定位）
-        $subQuery = Article::suffix($suffix)
-            ->with(['cate' => function($query) {
-                $query->where('status', 1);  // 只关联状态正常的用户
-            }])
-            ->has('cate')  // 关键：只返回有关联user的记录
-            ->field('id')
-            ->where($where)
-            ->where('status', 1)
-            ->order('id', 'desc')
-            ->limit(self::$offset, self::$newLimit) // 深分页用limit(offset, limit)更直观
-            ->buildSql(); // 生成带括号的子查询SQL
-
-            // halt($subQuery);
-
-        // 4. 主查询：JOIN子查询+关联查询+追加字段（一次查询搞定）
-        $list = Article::suffix($suffix)
-            ->alias('a')
-            // JOIN子查询（仅匹配分页后的ID，避免全表扫描）
-            ->join([$subQuery => 'b'], 'a.id = b.id')
-            // 关联分类/用户（保留原逻辑，简化闭包）
-            ->with([
-                'cate' => fn(Query $query) => $query->field('id,catename,ename'),
-                'user' => fn(Query $query) => $query->field('id,name,nickname,user_img,vip')
-            ])
-            // 字段筛选（主表加别名，避免字段冲突）
-            ->field(['a.id', 'a.cate_id', 'a.user_id', 'a.title', 'a.content', 'a.description','a.create_time', 'a.pv', 'a.thum_img', 'a.has_image', 'a.has_video', 'a.has_audio', 'a.media', 'a.comments_num', 'a.flags'])
-            // 保持排序一致性
-            ->order('a.id', 'desc')
-            // 追加URL字段（模型访问器）
-            ->append(['url'])
-            // 执行查询并处理结果（空值防护）
-            ->select()
-            // ->map(function ($item) {
-            //     // 可选：单条数据格式化（如时间戳转字符串）
-            //     // $item->create_time = date('Y-m-d H:i:s', $item->create_time);
-            //     // return $item;
-            // })
-            ->toArray();
-
-        // 空值兜底：若无数据直接返回空数组
-        $list = $list ?: [];
-
-        return $list;
     }
 
 }

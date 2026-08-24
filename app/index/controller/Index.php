@@ -39,8 +39,10 @@ class Index extends IndexBaseController
      */
     public function index(Request $request)
     {
+		// var_dump(get_addons_config('ads',true));
+	// var_dump(__DIR__);
+	// echo 111;
 
-	// dump(__DIR__);
 	// dump(__DIR__.'/../../');
 	// dump(realpath(__DIR__.'/../../'));
 

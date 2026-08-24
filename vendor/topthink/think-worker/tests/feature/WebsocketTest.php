@@ -1,5 +1,6 @@
 <?php
 
+use GuzzleHttp\Client;
 use React\EventLoop\Loop;
 use Symfony\Component\Process\Process;
 use function Ratchet\Client\connect;
@@ -26,6 +27,24 @@ beforeAll(function () use (&$process) {
 afterAll(function () use (&$process) {
     echo $process->getOutput();
     $process->stop();
+});
+
+beforeEach(function () {
+    $this->httpClient = new Client([
+        'base_uri'    => 'http://127.0.0.1:8080',
+        'cookies'     => true,
+        'http_errors' => false,
+        'timeout'     => 1,
+    ]);
+});
+
+it('http', function () {
+    $response = $this->httpClient->get('/');
+
+    expect($response->getStatusCode())
+        ->toBe(200)
+        ->and($response->getBody()->getContents())
+        ->toBe('hello world');
 });
 
 it('websocket', function () {

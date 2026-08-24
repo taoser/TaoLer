@@ -91,7 +91,7 @@
 			$.ajax({
 				type: "get",
 				url: RULE_TREE, 
-				success: function(res){
+				success: function(res) {
 					xmSelect.render({
 						el: '#menuSelectBox',
 						name: 'pid',
@@ -127,12 +127,11 @@
 			return false;
 		})();
 
+		// 提交表单
 		form.on('submit(rule-save)', function(data) {
 			$.ajax({
 				url: RULE_ADD,
-				data: JSON.stringify(data.field),
 				dataType: 'json',
-				contentType: 'application/json',
 				type: 'post',
 				success: function(res) {
 					if(res.code) {

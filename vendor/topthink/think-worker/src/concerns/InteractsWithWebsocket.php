@@ -40,7 +40,7 @@ trait InteractsWithWebsocket
     public function onHandShake(TcpConnection $connection, WorkerRequest $wkRequest)
     {
         $this->runInSandbox(function (App $app, Http $http, Event $event) use ($connection, $wkRequest) {
-            $request = $this->prepareRequest($wkRequest);
+            $request = $this->prepareRequest($wkRequest, $connection);
 
             $response = $http->run($request);
             if (!$response instanceof \think\worker\response\Websocket) {
@@ -87,20 +87,23 @@ trait InteractsWithWebsocket
 
     public function onClose(TcpConnection $connection)
     {
-        $this->runInSandbox(function (App $app, Websocket $websocket) use ($connection) {
-            $handler = $app->make(HandlerInterface::class);
-            try {
-                $handler->onClose();
-            } catch (Throwable $e) {
-                $this->logServerError($e);
+        $this->runInSandbox(function (App $app) use ($connection) {
+            if ($app->exists(Websocket::class)) {
+                $websocket = $app->make(Websocket::class);
+                $handler   = $app->make(HandlerInterface::class);
+                try {
+                    $handler->onClose();
+                } catch (Throwable $e) {
+                    $this->logServerError($e);
+                }
+
+                // leave all rooms
+                $websocket->leave();
+
+                unset($this->messageSender[$connection->id]);
+
+                $websocket->setConnected(false);
             }
-
-            // leave all rooms
-            $websocket->leave();
-
-            unset($this->messageSender[$connection->id]);
-
-            $websocket->setConnected(false);
         }, $connection);
     }
 

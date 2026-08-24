@@ -19,14 +19,18 @@ class Category extends IndexBaseController
 
 		// 分类信息
 		$cateInfo = CategoryEntity::getCateInfoByEname($ename);
+		if(!$cateInfo && $ename !== 'all') {
+			throw new \think\exception\HTTPException('404', '分类不存在');
+		}
 
 		// 单页分类
 		// type 1列表2单页3链接
-		if(!is_null($cateInfo) && $cateInfo->type == 2) {
-			$singleArticle = Db::name('page')->where('cate_id', $cateInfo->id)->find();
-
-			View::assign('article', $singleArticle);
-
+		if($ename !== 'all' && $cateInfo->type == 2) {
+			$single = CategoryEntity::getSinglePage($cateInfo->id);
+			if(!$single) {
+				throw new \think\exception\HTTPException('404', '页面不存在');
+			}
+			View::assign('article', $single);
 			return View::fetch('category/' . $cateInfo->tpl . '/single');
 		}
 
@@ -43,8 +47,7 @@ class Category extends IndexBaseController
 		$next = $path . '/' . ++$page . '.html';
 
 		$assignArr = [
-			'cateinfo'	=> $cateInfo,
-			'cate'	=> $cateInfo,
+			'category'	=> $cateInfo,
 			'path'	=> $path,
 			'page'	=> ++$page,
 			'next'  => $next

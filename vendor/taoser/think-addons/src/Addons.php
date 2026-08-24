@@ -224,37 +224,49 @@ abstract class Addons
     /**
      * 获取配置信息
      * @param bool $type 是否获取完整配置
-     * @return array|mixed
+     * @return array
      */
-    final public function getConfig($type = false)
+    final public function getConfig(bool $type = false): array
     {
         $config = Config::get($this->addonConfig, []);
-        if ($config) {
+        if (!empty($config)) {
             return $config;
         }
 
-        $config_file = $this->addonPath . 'config.php';
-        if (is_file($config_file)) {
-            $temp_arr = (array) include $config_file;
-            if ($type) {
-                return $temp_arr;
-            }
-
-            foreach ($temp_arr as $key => $value) {
-                if(isset($value['value'])) {
-                    $config[$key] = $value['value'];
-                } else {
-                    $config[$key] = $value;
-                }
-                
-            }
-
-            unset($temp_arr);
+        $configFile = $this->addonPath . 'config.php';
+        if (!is_file($configFile)) {
+            return [];
         }
 
-        Config::set($config, $this->addonConfig);
+        try {
+            $tempArr = (array)(include $configFile);
+        } catch (\Throwable $e) {
+            // config.php语法错误直接返回空数组
+            return [];
+        }
 
-        return $config;
+        // 清除opcache，防止读取php缓存
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($configFile, true);
+        }
+
+        if ($type) {
+            $result = $tempArr;
+        } else {
+            $result = [];
+            foreach ($tempArr as $key => $item) {
+                if (is_array($item) && isset($item['value'])) {
+                    $result[$key] = $item['value'];
+                } else {
+                    $result[$key] = $item;
+                }
+            }
+        }
+
+        // 写入进程内存缓存
+        Config::set($result, $this->addonConfig);
+
+        return $result;
     }
 
     //必须实现安装

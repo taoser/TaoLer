@@ -81,6 +81,12 @@
 		fly: 'index'
 	}).use('fly');
 
+	const eventSource = new EventSource('/sse/time');
+	eventSource.onmessage = function(event) {
+		const data = JSON.parse(event.data);
+		console.log('服务器时间：', data.time);
+	};
+
 	// 页面初始化执行
 	const token = localStorage.getItem('token');
 	const expireTime = localStorage.getItem('expire_time');

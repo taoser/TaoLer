@@ -30,9 +30,11 @@ class Index
 			return redirect('/install/index');
 		}
 
-		$langArr = glob(root_path().'app/index/lang/*.php');
+		$lang = Config::get('lang.default_lang');
+		// $langArr = glob(root_path().'app/index/lang/*.php');
+		$file = root_path().'app/index/lang/'.$lang.'.php';
 		// 加载语言包
-        Lang::load($langArr);
+        Lang::load($file);
 
         // 配置视图路径
         View::config([

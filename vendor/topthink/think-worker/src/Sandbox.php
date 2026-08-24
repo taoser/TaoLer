@@ -186,13 +186,6 @@ class Sandbox
             return $snapshot;
         }
 
-        // 在异常上报、日志写入等非请求沙箱场景下，仍然需要可用的根应用对象。
-        // 这能避免 Workerman/Windows 单 worker 模式下 Facade 在错误处理流程中由于
-        // snapshot 未初始化而抛出 InvalidArgumentException。
-        if ($this->app instanceof App) {
-            return $this->app;
-        }
-
         throw new InvalidArgumentException('The app object has not been initialized');
     }
 

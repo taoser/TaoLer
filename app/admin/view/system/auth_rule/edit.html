@@ -65,7 +65,6 @@
 	const RULE_EDIT = MODULE_NAME + '/system/authrule/edit';
 	const RULE_TREE = MODULE_NAME + '/system/authrule/ruleTree';
 	const INFO_URL = MODULE_NAME + '/system/authrule/getInfo' + location.search;
-	const INIT_PID = "";
 
 	layui.use(['xmSelect', 'iconPicker','dtree','popup','treeTable'], function(){
 		let $ = layui.jquery;
@@ -75,10 +74,13 @@
 		let dtree = layui.dtree;
 		let popup = layui.popup;
 
+		let INIT_PID = 0;
+
 		// 表单赋值
 		$.get(INFO_URL, function(res){
 			if(res.code === 0) {
 				form.val('form-val-filter', res.data);
+				INIT_PID = res.data.pid;
 			}
 		});
 
@@ -103,47 +105,47 @@
 		});
 			
 		//权限菜单结构
-		(function(){
-			$.ajax({
-				type: "get",
-				url: RULE_TREE, 
-				success: function(res) {
-					var data = res.data;
-				
-					// 渲染下拉树
-					xmSelect.render({
-						el: '#menuSelectBox',
-						name: 'pid',
-						height: '250px',
-						layVerify: 'required',
-						layVerType: 'tips',
-						data: data,
-						initValue:  [INIT_PID],
-						model: {label: {type: 'text'}},
-						prop: {
-							name: 'title',
-							value: 'id'
-						},
-						// radio: true,
-						clickClose: true,
-						tree: {
-							show: true,
-							indent: 15,
-							strict: false,
-							expandedKeys: [ 0 ], // 默认展开节点，true展开false不展开 数组展开在节点
-						},
-						on: function(data){ // 单选on模式
-							if(data.isAdd){
-								return data.change.slice(0, 1)
-							}
-						},
-						tips: '请选择上级菜单'
-					});
-				}
-				
-			});
+		$.ajax({
+			type: "get",
+			url: RULE_TREE, 
+			success: function(res) {
+				var data = res.data;
 			
-		})()
+				// 渲染下拉树
+				xmSelect.render({
+					el: '#menuSelectBox',
+					name: 'pid',
+					height: '250px',
+					layVerify: 'required',
+					layVerType: 'tips',
+					data: data,
+					initValue:  [INIT_PID],
+					model: {label: {type: 'text'}},
+					prop: {
+						name: 'title',
+						value: 'id'
+					},
+					// radio: true,
+					clickClose: true,
+					tree: {
+						show: true,
+						indent: 15,
+						strict: false,
+						expandedKeys: [INIT_PID], // 默认展开的节点数组, 为true时展开所有节点,array/boolean，[0]数组展开在节点
+					},
+					on: function(data){ // 单选on模式
+						if(data.isAdd){
+							return data.change.slice(0, 1)
+						}
+					},
+					tips: '请选择上级菜单'
+				});
+				
+				form.render();
+			}
+			
+		});
+		
 
 		// 提交表单
 		form.on('submit(save)', function(data) {

@@ -371,7 +371,7 @@ class Plugin extends AdminBaseController
      */
     public function config(Request $request)
     {
-        $name = $request->post('name');
+        $name = $request->get('name');
         try{
             $config = $this->getConfigArray($name);
         } catch (Exception $e) {
