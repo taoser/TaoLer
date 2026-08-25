@@ -12,7 +12,6 @@ return [
     'default_app'      => 'index',
     // 默认时区
     'default_timezone' => 'Asia/Shanghai',
-    
     // 应用映射（自动多应用模式有效）
     'app_map'          => [],
     // 域名绑定（自动多应用模式有效）
@@ -34,6 +33,4 @@ return [
         // 服务器内部错误
         500 =>  public_path() . '500.html',
     ],
-    // 信任nginx代理IP
-    'proxy_server_ip' => ['127.0.0.1'],
 ];
