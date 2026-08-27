@@ -96,16 +96,16 @@ class Article extends IndexBaseController
         if (!$request->isPost()) {
 			$ename = $request->get('category');
 			// 子模块自定义自适应add.html模板
-			$cate = Db::name('category')->field('id,tpl')->where('ename', $ename)->find();
+			$category = Db::name('category')->field('id,tpl')->where('ename', $ename)->find();
 			// 子模块下有add.html模板
-			if(!empty($cate)) {
-				$cid = $cate['id'];
+			if(!empty($category)) {
+				$cid = $category['id'];
 			} else {
-				$cate['tpl'] = '';
+				$category['tpl'] = '';
 				$cid = '';
 			}
 
-			$view = 'category' . DIRECTORY_SEPARATOR . $cate['tpl'] . DIRECTORY_SEPARATOR . 'add.html';
+			$view = 'category' . DIRECTORY_SEPARATOR . $category['tpl'] . DIRECTORY_SEPARATOR . 'add.html';
 
 			//子模块下存在add模板则调用，否则调用article/add.html
 			$addTpl = is_file($view) ? $view : 'category/add';
@@ -383,13 +383,13 @@ class Article extends IndexBaseController
      */
     public function getCateTree()
     {
-        $cateList = Category::field('id,pid,name,sort')
+        $categoryList = Category::field('id,pid,name,sort')
 		->order('sort','asc')
 		->where(['status' => 1])
 		->select()
 		->toArray();
 
-		$list = build_tree($cateList);
+		$list = build_tree($categoryList);
 
         $count = count($list);
 

@@ -56,8 +56,8 @@ class Comment extends AdminBaseController
 	{
         try {
             // 获取请求参数并进行安全过滤
-            $page = max(1, (int)input('page', 1));
-            $limit = min(100, (int)input('limit', 10));
+            $page = max(1, $request->get('page/d', 1));
+            $limit = min(100, $request->get('limit/d', 10));
             $name = trim($request->get('name', ''));
             $content = trim($request->get('content', ''));
             $status = $request->get('status', '');
@@ -85,10 +85,10 @@ class Comment extends AdminBaseController
                 ->alias('a')
                 ->join('user u', 'a.user_id = u.id')
                 ->join('article c', 'a.article_id = c.id')
-                ->join('cate ca', 'c.category_id = ca.id')
-                ->field('a.id as aid, u.name, ca.ename, c.title, u.user_img, a.content, a.create_time, a.status as astatus, c.id as cid')
-                ->whereNull('a.delete_time')
+                ->join('category cate', 'c.category_id = cate.id')
+                ->field('a.id as aid, u.name, cate.ename, c.title, u.user_img, a.content, a.create_time, a.status as astatus, c.id as cid')
                 ->where($where)
+                ->whereNull('a.delete_time')
                 ->order('a.create_time', 'desc');
             
             // 执行分页查询

@@ -41,12 +41,12 @@ class Cate extends AdminBaseController
 	//帖子分类
 	public function list()
 	{
-        $cateList = Category::getList();
-        if(empty($cateList)) {
+        $categoryList = Category::getList();
+        if(empty($categoryList)) {
 			return json(['code' => 1, 'msg' => 'no data！']);
 		}
 
-        $data = build_tree($cateList);
+        $data = build_tree($categoryList);
 	
 		return json(['code' => 0,'msg' => 'ok','data' => $data]);
 
@@ -63,12 +63,12 @@ class Cate extends AdminBaseController
             //详情模板
             $template = $this->getIndexTpl();
             // 如果是新增，pid=0, tpl默认第一个子模块，如果是编辑，查询出cate
-            $cate = $addOrEdit ? Category::getCateInfoById($id) : '';
+            $category = $addOrEdit ? Category::getCateInfoById($id) : '';
             $view = $addOrEdit ? 'edit' : 'add';
 
             View::assign([
                 'template'  => $template,
-                'category'      => $cate
+                'category'      => $category
             ]);
             return View::fetch($view);
         }

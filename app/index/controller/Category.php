@@ -18,20 +18,20 @@ class Category extends IndexBaseController
 		$page = $request->param('page/d', 1);
 
 		// 分类信息
-		$cateInfo = CategoryEntity::getCateInfoByEname($ename);
-		if(!$cateInfo && $ename !== 'all') {
+		$categoryInfo = CategoryEntity::getCateInfoByEname($ename);
+		if(!$categoryInfo && $ename !== 'all') {
 			throw new \think\exception\HTTPException('404', '分类不存在');
 		}
 
 		// 单页分类
 		// type 1列表2单页3链接
-		if($ename !== 'all' && $cateInfo->type == 2) {
-			$single = CategoryEntity::getSinglePage($cateInfo->id);
+		if($ename !== 'all' && $categoryInfo->type == 2) {
+			$single = CategoryEntity::getSinglePage($categoryInfo->id);
 			if(!$single) {
 				throw new \think\exception\HTTPException('404', '页面不存在');
 			}
 			View::assign('article', $single);
-			return View::fetch('category/' . $cateInfo->tpl . '/single');
+			return View::fetch('category/' . $categoryInfo->tpl . '/single');
 		}
 
 		if(empty($flag)) {
@@ -47,7 +47,7 @@ class Category extends IndexBaseController
 		$next = $path . '/' . ++$page . '.html';
 
 		$assignArr = [
-			'category'	=> $cateInfo,
+			'category'	=> $categoryInfo,
 			'path'	=> $path,
 			'page'	=> ++$page,
 			'next'  => $next
@@ -55,8 +55,8 @@ class Category extends IndexBaseController
 
 		View::assign($assignArr);
 
-		$cateView = is_null($cateInfo) ? 'category/list' : 'category/' . $cateInfo->tpl . '/list';
+		$categoryView = is_null($categoryInfo) ? 'category/list' : 'category/' . $categoryInfo->tpl . '/list';
 
-        return View::fetch($cateView);
+        return View::fetch($categoryView);
     }
 }

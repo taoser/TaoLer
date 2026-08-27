@@ -31,8 +31,8 @@ class Category extends TagLib
     public function tagBrother1($tag, $content): string
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
-        $parse .= '{php}$__brotherCate__ = \app\facade\Category::getBrotherCate($ename);{/php}';
-        $parse .= '{volist name="__brotherCate__" id="brother"}';
+        $parse .= '{php}$__brotherCategory__ = \app\facade\Category::getBrotherCate($ename);{/php}';
+        $parse .= '{volist name="__brotherCategory__" id="brother"}';
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;
@@ -42,8 +42,8 @@ class Category extends TagLib
     public function tagParent($tag, $content): string
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
-        $parse .= '{php}$__parentCate__ = \app\facade\Category::getSubCate($ename);{/php}';
-        $parse .= '{notempty name="__parentCate__"} {volist name="__parentCate__" id="category"}';
+        $parse .= '{php}$__parentCategory__ = \app\facade\Category::getSubCate($ename);{/php}';
+        $parse .= '{notempty name="__parentCategory__"} {volist name="__parentCategory__" id="category"}';
         $parse .= $content;
         $parse .= '{/volist} {/notempty}';
         return $parse;
@@ -53,8 +53,8 @@ class Category extends TagLib
     public function tagBrother($tag, $content): string
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
-        $parse .= '{php}$__brotherCate__ = \app\facade\Category::getBrotherCate($ename);{/php}';
-        $parse .= '{notempty name="__brotherCate__"} {volist name="__brotherCate__" id="category"}';
+        $parse .= '{php}$__brotherCategory__ = \app\facade\Category::getBrotherCate($ename);{/php}';
+        $parse .= '{notempty name="__brotherCategory__"} {volist name="__brotherCategory__" id="category"}';
         $parse .= $content;
         $parse .= '{/volist} {/notempty}';
         return $parse;
@@ -64,8 +64,8 @@ class Category extends TagLib
     public function tagChildren($tag, $content): string
     {
         $parse = '{assign name="ename" value="$Request.param.ename" /}';
-        $parse .= '{php}$__childCate__ = \app\facade\Category::getSubCate($ename);{/php}';
-        $parse .= '{notempty name="__childCate__"} {volist name="__childCate__" id="category"}';
+        $parse .= '{php}$__childCategory__ = \app\facade\Category::getSubCate($ename);{/php}';
+        $parse .= '{notempty name="__childCategory__"} {volist name="__childCategory__" id="category"}';
         $parse .= $content;
         $parse .= '{/volist} {/notempty}';
         return $parse;

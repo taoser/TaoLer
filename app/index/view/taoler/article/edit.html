@@ -24,8 +24,8 @@
 								{if ($user.auth == 1)}
 								<div id="CateId" class="xm-select-demo"></div>
 								{else /}
-								<input type="text" name="category_id"  class="layui-input layui-hide" disabled value="{article:category_id /}">
-								<input type="text" class="layui-input" disabled value="{article:cate_name}">
+								<input type="text" name="category_id"  class="layui-input layui-hide" disabled value="{article:categorygory_id /}">
+								<input type="text" class="layui-input" disabled value="{article:category_name}">
 								{/if}
 							</div>
 							</div>
@@ -94,7 +94,7 @@
     ,form = layui.form
     ,upload = layui.upload;
 
-    var cateId = "{article:category_id /}";
+    var cateId = "{article:categorygory_id /}";
     var artId = "{article:id /}";
 
     // 分类选择

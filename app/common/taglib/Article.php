@@ -41,13 +41,13 @@ class Article extends TagLib
         'master_pic'    => ['attr' => '', 'close' => 0],
         'thum_img'      => ['attr' => '', 'close' => 0],
 
-        'cate_name'     => ['attr' => '', 'close' => 0],
-        'cate_ename'    => ['attr' => '', 'close' => 0],
-        'category_id'       => ['attr' => '', 'close' => 0],
+        'category'      => ['attr' => 'name', 'close' => 0],
+        'category_name' => ['attr' => '', 'close' => 0],
+        'category_ename'=> ['attr' => '', 'close' => 0],
+        'category_id'   => ['attr' => '', 'close' => 0],
 
         'field'         => ['attr' => 'name', 'close' => 0],
-
-        'category'          => ['attr' => 'name', 'close' => 0],
+        
         'user'          => ['attr' => 'name', 'close' => 0],
 
         'list'          => ['attr' => ''],
@@ -129,7 +129,7 @@ class Article extends TagLib
 
     // public function tagLink(array $tag, string $content): string
     // {
-    //     return '{:url(\'detail\', [\'ename\' => $article.cate.ename,\'id\' => $article.id])->domain(true)}';
+    //     return '{:url(\'detail\', [\'ename\' => $article.category.ename,\'id\' => $article.id])->domain(true)}';
     // }
 
     public function tagLink(array $tag, string $content): string
@@ -192,19 +192,19 @@ class Article extends TagLib
         return '{$article.master_pic}';
     }
 
-    public function tagCate_name(array $tag, string $content): string
+    public function tagCategory_name(array $tag, string $content): string
     {
-        return '{$article.cate.name}';
+        return '{$article.category.name}';
     }
 
-    public function tagCate_ename(array $tag, string $content): string
+    public function tagCategory_ename(array $tag, string $content): string
     {
-        return '{$article.cate.ename}';
+        return '{$article.category.ename}';
     }
 
-    public function tagcategory_id(array $tag, string $content): string
+    public function tagCategory_id(array $tag, string $content): string
     {
-        return '{$article.cate.id}';
+        return '{$article.category.id}';
     }
 
 
@@ -215,18 +215,18 @@ class Article extends TagLib
     }
 
     // category info of detail page
-    public function tagCate(array $tag, string $content): string
+    public function tagCategory(array $tag, string $content): string
     {
         $result = match($tag['name']) {
             "id" => '{$article.category_id}',
-            "name" => '{$article.cate.name}',
-            "ename" => '{$article.cate.ename}',
-            "link" => '{:url(\'cate\',[\'ename\'=>$article.cate.ename])->domain(true)}',
+            "name" => '{$article.category.name}',
+            "ename" => '{$article.category.ename}',
+            "link" => '{:url(\'category\',[\'ename\'=>$article.category.ename])->domain(true)}',
             default => ''
         };
 
         return $result;
-    }
+    }   
 
     // user info of detail page
     public function tagUser(array $tag, string $content): string

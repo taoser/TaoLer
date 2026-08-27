@@ -41,7 +41,7 @@ Route::group('',function () {
 	
 
 	// 定义文章分类路由
-    Route::get('<ename>-list$','category/list')->name('cate');
+    Route::get('<ename>-list$','category/list')->name('category');
 	Route::get('<ename>-list/p-<page>$','category/list')->name('cate_page');
     Route::get('<ename>-list/flag-<flag>$', 'category/list')->name('cate_flag');
     Route::get('<ename>-list/flag-<flag>/p-<page>$', 'category/list')->name('cate_flag_page');

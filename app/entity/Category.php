@@ -78,10 +78,10 @@ class Category extends BaseEntity
         // 数据
         $data = [];
         
-        $cate = $this->getCateInfoByEname($ename);
+        $category = $this->getCateInfoByEname($ename);
 
-        if(!empty($cate['id'])){
-            $where[] = ['category_id' ,'=', $cate['id']];
+        if(!empty($category['id'])){
+            $where[] = ['category_id' ,'=', $category['id']];
         }
 
         switch ($flag) {
@@ -131,7 +131,7 @@ class Category extends BaseEntity
                 ];
             }
 
-            $data = Cache::remember("cateroty_{$ename}_{$flag}_{$page}", function() use($where, $page, $limit, $map, $cate) {
+            $data = Cache::remember("cateroty_{$ename}_{$flag}_{$page}", function() use($where, $page, $limit, $map, $category) {
 
                 $datas = [];
                 // 最大偏移量
@@ -220,12 +220,12 @@ class Category extends BaseEntity
 
                 // 往datas数组中追加cate和url 减少查询
                 foreach($datas as &$da) {
-                    // $da['category'] = ['name' => $cate['name'], 'ename' => $cate['ename']];
+                    // $da['category'] = ['name' => $category['name'], 'ename' => $category['ename']];
 
                     $id = IdEncode::encode($da['id']);
                     
                     $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id, 'ename' => $da['category']['ename']])->domain(true);
-                    // $da['url'] = (string) Route::buildUrl("{$cate['ename']}/{$id}")->domain(true);
+                    // $da['url'] = (string) Route::buildUrl("{$category['ename']}/{$id}")->domain(true);
                     
                     // $da['master_pic'] = $da['has_image'] > 0 ? $da['media']['images'][0] : '';
                 }
@@ -348,7 +348,7 @@ class Category extends BaseEntity
     // 查询子分类
     public function getSubCate(string $ename)
     {
-        return $this->field('id,ename,type,name,desc,image')->where('pid', $this->where('ename', $ename)->value('id'))->append(['url'])->select();
+        return $this->field('id,ename,type,name,description,image')->where('pid', $this->where('ename', $ename)->value('id'))->append(['url'])->select();
     }
 
     /**
@@ -363,10 +363,10 @@ class Category extends BaseEntity
         if($subCate > 0) {
             throw new Exception('存在子栏目,无法直接删除', -1);
         }
+        
+        $category = $this::with('article')->find($id);
 
-        $cate = $this::with('article')->find($id);
-
-        $cate->together(['article'])->delete();
+        $category->together(['article'])->delete();
 		
         return true;
 	}
@@ -375,7 +375,7 @@ class Category extends BaseEntity
     public function getList() : array
     {
         $data = $this->where('status', 1)
-        ->field('id,pid,ename,type,sort,name,tpl,icon,status,is_hot,desc,url,image')
+        ->field('id,pid,ename,type,sort,name,tpl,icon,status,is_hot,description,url,image')
         ->append(['url'])
         ->order('sort asc')
         ->cache(true, 900)

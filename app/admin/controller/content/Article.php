@@ -332,15 +332,15 @@ class Article extends AdminBaseController
 	public function getCategoryTree()
 	{
 		//
-		$cate = Db::name('category')
+		$category = Db::name('category')
         ->field('id,pid,name,ename,sort')
         ->whereNull('delete_time')
         ->order(['id' => 'ASC','sort' => 'ASC'])
         ->select()
         ->toArray();
 
-        $data = build_tree($cate);
-		$count = count($cate);
+        $data = build_tree($category);
+		$count = count($category);
         $tree = [];
         if($count){
             $tree = ['code'=>0,'msg'=>'','count'=>$count];
@@ -357,13 +357,13 @@ class Article extends AdminBaseController
      */
     public function getCategoryList()
     {
-        $cateList = Category::field('id,pid,name,sort')
+        $categoryList = Category::field('id,pid,name,sort')
         ->where('status',1)
         ->order('sort','asc')
         ->select()
         ->toArray();
 
-        $list =  build_tree($cateList);
+        $list =  build_tree($categoryList);
         $count = count($list);
 
         $tree = [];

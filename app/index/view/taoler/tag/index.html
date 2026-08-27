@@ -29,7 +29,7 @@
             <h2><a href="{$article.url}"  title="{$article.title}">{$article.title}</a></h2>
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
-              <a class="layui-badge" href="{article:cate name='link' /}">{article:cate_name /}</a>
+              <a class="layui-badge" href="{article:category name='link' /}">{article:category_name /}</a>
               {/if}
               <a href="{article:user name='link'}" link><cite>{$article.user.name}</cite></a>
               <span>{$article.create_time|date='Y-m-d'}</span>

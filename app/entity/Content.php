@@ -555,7 +555,7 @@ class Content extends BaseEntity
                     if(!is_null($article)) {
                         $article['hasImg'] = $article['has_image'] > 0 ? true : false;
                         $article['time'] = $article['create_time'];
-                        $article['cate_name']   = $article['category']['name'];
+                        $article['category_name']   = $article['category']['name'];
                         $article['desc']    = $article['description'];
 
                         $data[] = $article;
@@ -637,7 +637,7 @@ class Content extends BaseEntity
                         'title'     => $v['title'],
                         'desc'      => $v['description'],
                         'auther'    => $v['user']['name'],
-                        'cate_name' => $v['category']['name'],
+                        'category_name' => $v['category']['name'],
                         'pv'        => $v['pv'],
                         'time'      => date('Y-m-d',strtotime($v['create_time'])),
                         'url'       => $v['url']
