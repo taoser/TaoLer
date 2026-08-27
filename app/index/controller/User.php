@@ -43,7 +43,7 @@ class User extends IndexBaseController
 	{
 		$page = $request->get('page/d', 1);
 		$limit = $request->get('limit/d', 20);
-		$myArticle = Article::field('id,cate_id,title,status,pv,create_time,update_time')
+		$myArticle = Article::field('id,category_id,title,status,pv,create_time,update_time')
             ->withCount(['comments'])
             ->where(['user_id' => $this->uid])
             ->order('update_time','desc')
@@ -352,7 +352,7 @@ class User extends IndexBaseController
         $reys = Db::name('comment')
 		->alias('c')
 		->join('article a', 'c.article_id = a.id')
-		->join('cate t', 'a.cate_id = t.id')
+		->join('cate t', 'a.category_id = t.id')
 		->field('a.id,a.title,t.ename,c.content,c.create_time,c.delete_time,c.status')
 		->where(['a.delete_time' => 0, 'c.delete_time' => 0, 'c.status' => 1])
 		->where('c.user_id', $id)

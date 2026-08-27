@@ -14,7 +14,7 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">名称*</label>
 				<div class="layui-input-block">
-					<input type="text" name="catename" lay-verify="required|catename" placeholder="栏目名称*" autocomplete="off" class="layui-input">
+					<input type="text" name="name" lay-verify="required|name" placeholder="栏目名称*" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -130,7 +130,7 @@
 				}
 			},
 			// 验证用户名，且为必填项
-			catename: function(value, elem){
+			name: function(value, elem){
 				if (!new RegExp("^[a-zA-Z0-9\u4e00-\u9fa5\\s·]+$").test(value)) {
 					return '不能有特殊字符';
 				}
@@ -183,7 +183,7 @@
 				data: res.data,
 				model: {label: {type: 'text'}},
 				prop: {
-					name: 'catename',
+					name: 'name',
 					value: 'id'
 				},
 				clickClose: true,

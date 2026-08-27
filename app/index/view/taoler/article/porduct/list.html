@@ -1,7 +1,7 @@
 {extend name="public:base" /}
 
-{block name="title"}{$cateinfo.catename} - {$sysInfo.webname}{/block}
-{block name="keywords"}{$cateinfo.catename},{$sysInfo.webname}{/block}
+{block name="title"}{$cateinfo.name} - {$sysInfo.webname}{/block}
+{block name="keywords"}{$cateinfo.name},{$sysInfo.webname}{/block}
 {block name="description"}{$cateinfo.desc}{/block}
 
 {block name="content"}
@@ -9,7 +9,7 @@
    <!-- 广告模块 -->
     <div class="banner">
         <div class="layui-container">
-            <span class="banner-title">{$cateinfo.catename}</span>
+            <span class="banner-title">{$cateinfo.name}</span>
         </div>
     </div>
     <!-- channel内容区 -->

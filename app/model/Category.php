@@ -20,8 +20,6 @@ class Category extends BaseModel
     protected function getOptions(): array 
     {
         return [
-            // 表名
-            'name' => 'cate',
             'autoWriteTimestamp'    => true,
             'deleteTime'            => 'delete_time',
             'defaultSoftDelete'     => null,
@@ -51,7 +49,7 @@ class Category extends BaseModel
         if($data['type'] === 3) { // 自定义url
             return $data['url'];
         }
-        return (string) url('cate', ['ename' => $data['ename']]);
+        return (string) url('category', ['ename' => $data['ename']]);
     }
 
 }

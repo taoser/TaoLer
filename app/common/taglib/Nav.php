@@ -56,7 +56,7 @@ class Nav extends TagLib
 
     public function tagName($tag): string
     {
-         return '{$nav.catename}';
+         return '{$nav.name}';
     }
 
     public function tagEname(): string
@@ -66,7 +66,7 @@ class Nav extends TagLib
 
     public function tagTitle(): string
     {
-        return '{$nav.catename}';
+        return '{$nav.name}';
     }
 
     public function tagTpl(): string

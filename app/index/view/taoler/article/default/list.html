@@ -1,8 +1,8 @@
 {extend name="public/base" /}
-{block name="title"}{category:catename /} - {$sysInfo.webname}{/block}
-{block name="keywords"}{category:catename},{$sysInfo.webname}{/block}
+{block name="title"}{category:name /} - {$sysInfo.webname}{/block}
+{block name="keywords"}{category:name},{$sysInfo.webname}{/block}
 {block name="description"}{category:desc}{/block}
-{block name="ogtitle"}<meta property="og:title" content="{category:catename} - {$sysInfo.webname}">{/block}
+{block name="ogtitle"}<meta property="og:title" content="{category:name} - {$sysInfo.webname}">{/block}
 {block name="ogdescription"}<meta property="og:description" content="{category:desc /}" />{/block}
 {block name="meta"}
 	<!-- SEO优化 -->
@@ -30,7 +30,7 @@
 						
 						<div class="fly-list-info">
 							{if config('taoler.config.cate_show') == 1}
-							<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? article.cate.ename : article.cate.catename}</a>
+							<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? article.cate.ename : article.cate.name}</a>
 							{/if}
 							<a href="{article:author_link /}" link>
 								<cite>{article:author /}</cite>

@@ -57,7 +57,7 @@ class Article extends AdminBaseController
 
     public function list(Request $request)
     {
-        $data = $request->get(['title','sec','cate_id/d']);
+        $data = $request->get(['title','sec','category_id/d']);
         $page = $request->get('page/d', 1);
         $limit = $request->get('limit/d', 10);
         
@@ -83,7 +83,7 @@ class Article extends AdminBaseController
     {
         if ($request->isPost()) {
 
-            $data = $request->param(['cate_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'tagid']);
+            $data = $request->param(['category_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'tagid']);
             $data['user_id'] = 1; //管理员ID
             $data['status'] = 1; //正常
 
@@ -145,7 +145,7 @@ class Article extends AdminBaseController
 
     public function editData()
     {
-        $data = Request::post(['id/d','cate_id','title','content','keywords','description','tagid']);
+        $data = Request::post(['id/d','category_id','title','content','keywords','description','tagid']);
 		// $id = IdEncode::decode($data['id']);
 
 		$article = $this->model::suffix($this->byIdGetSuffix($data['id']))->find($data['id']);
@@ -332,8 +332,8 @@ class Article extends AdminBaseController
 	public function getCategoryTree()
 	{
 		//
-		$cate = Db::name('cate')
-        ->field('id,pid,catename,ename,sort')
+		$cate = Db::name('category')
+        ->field('id,pid,name,ename,sort')
         ->whereNull('delete_time')
         ->order(['id' => 'ASC','sort' => 'ASC'])
         ->select()
@@ -346,7 +346,7 @@ class Article extends AdminBaseController
             $tree = ['code'=>0,'msg'=>'','count'=>$count];
 
             //构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
-            $tree['data'][] = ['id'=>0,'catename'=>'顶级','pid'=>0,'children'=>$data];
+            $tree['data'][] = ['id'=>0,'name'=>'顶级','pid'=>0,'children'=>$data];
         }
 		return json($tree);
 	}
@@ -357,7 +357,7 @@ class Article extends AdminBaseController
      */
     public function getCategoryList()
     {
-        $cateList = Category::field('id,pid,catename,sort')
+        $cateList = Category::field('id,pid,name,sort')
         ->where('status',1)
         ->order('sort','asc')
         ->select()

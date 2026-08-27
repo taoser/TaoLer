@@ -279,7 +279,7 @@ class Template extends AdminBaseController
             ->where('id', 1)
             ->update(['template' => $name]);
 
-            Db::name('cate')->where('status', 1)->update(['tpl' => 'default']);
+            Db::name('category')->where('status', 1)->update(['tpl' => 'default']);
 
             return json(['code'  => 0,'msg'   => 'ok']);
         } catch(Exception $e) {

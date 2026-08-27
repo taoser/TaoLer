@@ -16,7 +16,7 @@
             </h1>
             {//图标}
             <div class="fly-detail-info">
-                <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.cate.ename : $article.cate.catename}</span>
+                <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.cate.ename : $article.cate.name}</span>
                 {if ($article.jie == 0)}
                 <span class="layui-badge" style="background-color: #999;">{:lang('no finished')}</span>
                 {else /}

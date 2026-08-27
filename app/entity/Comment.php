@@ -167,8 +167,8 @@ class Comment extends BaseEntity
         // dump($data);
         if(config('taoler.url_rewrite.article_as') == '<ename>/') {
             
-            $article = Article::field('id,cate_id')
-            ->with(['cate' => function($query){
+            $article = Article::field('id,category_id')
+            ->with(['category' => function($query){
                 $query->withField('id,ename')->where(['status' => 1]);
             }])
             ->find($data['article_id']);

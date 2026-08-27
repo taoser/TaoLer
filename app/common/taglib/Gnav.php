@@ -56,7 +56,7 @@ class Gnav extends TagLib
 
     public function tagName($tag): string
     {
-        return '{$gnav.catename}';
+        return '{$gnav.name}';
     }
 
     public function tagEname(): string
@@ -66,7 +66,7 @@ class Gnav extends TagLib
 
     public function tagTitle(): string
     {
-        return '{:cookie(\'think_lang\') == \'en-us\' ? $gnav.ename : $gnav.catename}';
+        return '{:cookie(\'think_lang\') == \'en-us\' ? $gnav.ename : $gnav.name}';
     }
 
     public function tagTpl(): string

@@ -43,11 +43,11 @@ class Article extends TagLib
 
         'cate_name'     => ['attr' => '', 'close' => 0],
         'cate_ename'    => ['attr' => '', 'close' => 0],
-        'cate_id'       => ['attr' => '', 'close' => 0],
+        'category_id'       => ['attr' => '', 'close' => 0],
 
         'field'         => ['attr' => 'name', 'close' => 0],
 
-        'cate'          => ['attr' => 'name', 'close' => 0],
+        'category'          => ['attr' => 'name', 'close' => 0],
         'user'          => ['attr' => 'name', 'close' => 0],
 
         'list'          => ['attr' => ''],
@@ -194,7 +194,7 @@ class Article extends TagLib
 
     public function tagCate_name(array $tag, string $content): string
     {
-        return '{$article.cate.catename}';
+        return '{$article.cate.name}';
     }
 
     public function tagCate_ename(array $tag, string $content): string
@@ -202,7 +202,7 @@ class Article extends TagLib
         return '{$article.cate.ename}';
     }
 
-    public function tagCate_id(array $tag, string $content): string
+    public function tagcategory_id(array $tag, string $content): string
     {
         return '{$article.cate.id}';
     }
@@ -218,8 +218,8 @@ class Article extends TagLib
     public function tagCate(array $tag, string $content): string
     {
         $result = match($tag['name']) {
-            "id" => '{$article.cate_id}',
-            "name" => '{$article.cate.catename}',
+            "id" => '{$article.category_id}',
+            "name" => '{$article.cate.name}',
             "ename" => '{$article.cate.ename}',
             "link" => '{:url(\'cate\',[\'ename\'=>$article.cate.ename])->domain(true)}',
             default => ''
@@ -314,7 +314,7 @@ class Article extends TagLib
     // 前一篇
     public function tagPrev(array $tag, string $content): string
     {
-        $parse = '<?php $__PREV__ = \app\facade\Article::getPrev($article[\'id\'], $article[\'cate_id\']); ?>';
+        $parse = '<?php $__PREV__ = \app\facade\Article::getPrev($article[\'id\'], $article[\'category_id\']); ?>';
         $parse .= '{volist name="__PREV__" id="prev"}' . $content . '{/volist}';
             
         return $parse;
@@ -323,7 +323,7 @@ class Article extends TagLib
     // 后一篇
     public function tagNext(array $tag, string $content): string
     {
-        $parse = '<?php $__NEXT__ = \app\facade\Article::getNext($article[\'id\'], $article[\'cate_id\']); ?>';
+        $parse = '<?php $__NEXT__ = \app\facade\Article::getNext($article[\'id\'], $article[\'category_id\']); ?>';
         $parse .= '{volist name="__NEXT__" id="next"}' . $content . '{/volist}';
             
         return $parse;

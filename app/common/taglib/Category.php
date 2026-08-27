@@ -15,7 +15,7 @@ use think\template\TagLib;
 class Category extends TagLib
 {
     protected $tags = [
-        'catename'      => ['attr' => '', 'close' => 0],
+        'name'          => ['attr' => '', 'close' => 0],
         'ename'         => ['attr' => '', 'close' => 0],
         'desc'          => ['attr' => '', 'close' => 0],
         'url'           => ['attr' => '', 'close' => 0],
@@ -72,9 +72,9 @@ class Category extends TagLib
 
     }
 
-    public function tagCatename($tag): string
+    public function tagname($tag): string
     {
-        return '{$category.catename}';
+        return '{$category.name}';
     }
     public function tagEname($tag): string
     {
@@ -92,7 +92,7 @@ class Category extends TagLib
 
     public function tagBro_name($tag): string
     {
-        return '{$brother.catename}';
+        return '{$brother.name}';
     }
 
     public function tagBro_ename($tag): string

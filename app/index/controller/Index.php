@@ -80,10 +80,10 @@ class Index extends IndexBaseController
 		// $a = Db::name('addon_lawyer_clue')->where('status',1)->whereDay('create_time')->count();
 		// halt($a);
 		// $subQuery = Article::suffix(1)
-        //     ->with(['cate' => function($query) {
+        //     ->with(['category' => function($query) {
         //         $query->where('status', 1);  // 只关联状态正常的用户
         //     }])
-        //     ->has('cate')  // 关键：只返回有关联user的记录
+        //     ->has('category')  // 关键：只返回有关联user的记录
         //     ->field('id')
         //     // ->where($where)
         //     ->where('status', 1)
@@ -105,7 +105,7 @@ class Index extends IndexBaseController
 		// ->field('a.id,a.title,a.content,a.create_time')
 		// ->select();
 
-		// $subQuery = ArticleEntity::where('cate_id', 1)
+		// $subQuery = ArticleEntity::where('category_id', 1)
 		// ->where('status',1)
 		// ->page(2)
 		// ->limit(10)

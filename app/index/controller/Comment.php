@@ -53,11 +53,11 @@ class Comment extends IndexBaseController
 				->update();
 
 				//站内信
-				$article = Db::table($table)->field('id,title,user_id,cate_id')->where('id',$data['article_id'])->find();
+				$article = Db::table($table)->field('id,title,user_id,category_id')->where('id',$data['article_id'])->find();
                 // 获取分类ename,appname
-                $cateName = Db::name('cate')->field('ename,appname')->find($article['cate_id']);
+                $category = Db::name('category')->field('ename,appname')->find($article['category_id']);
 				//$link = (string) url('article_detail',['id'=>$data['article_id']]);
-                $link = $this->getRouteUrl($data['article_id'], $cateName['ename'], $cateName['appname']);
+                $link = $this->getRouteUrl($data['article_id'], $category['ename'], $category['appname']);
 
 				//评论中回复@user comment
 				$preg = "/@([^@\s]*)\s/";

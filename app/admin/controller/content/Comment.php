@@ -85,7 +85,7 @@ class Comment extends AdminBaseController
                 ->alias('a')
                 ->join('user u', 'a.user_id = u.id')
                 ->join('article c', 'a.article_id = c.id')
-                ->join('cate ca', 'c.cate_id = ca.id')
+                ->join('cate ca', 'c.category_id = ca.id')
                 ->field('a.id as aid, u.name, ca.ename, c.title, u.user_img, a.content, a.create_time, a.status as astatus, c.id as cid')
                 ->whereNull('a.delete_time')
                 ->where($where)

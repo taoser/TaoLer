@@ -339,7 +339,7 @@
 		jump: function (obj, first) {
 		var page = obj.curr;
 		var limit = obj.limit;
-		var  url = "{:url('article_detail',['id' => $article.id ,'ename' =>$article['cate']['ename']])}";
+		var  url = "{:url('article_detail',['id' => $article.id ,'ename' =>$article['category']['ename']])}";
 		//首次不执行
 		if (!first) {
 			$.post("{:url('article/detail')}", { id: AID, page: page }, function () {

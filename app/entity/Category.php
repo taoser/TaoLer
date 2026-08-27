@@ -42,13 +42,13 @@ class Category extends BaseEntity
      */
 	public function getCateInfoByEname(string $ename): mixed
 	{
-		$cate = $this->field('id,ename,type,catename,tpl,desc,image')
+		$category = $this->field('id,ename,type,name,tpl,description,image')
         ->where('ename', $ename)
         ->where('status', 1)
-        ->cache('cate_'.$ename, 3500)
+        ->cache('category_'.$ename, 3500)
         ->find();
 
-        return $cate;
+        return $category;
 	}
 
     /**
@@ -59,7 +59,7 @@ class Category extends BaseEntity
      */
     public function getCateInfoById(int $id): mixed
     {
-        return $this->field('id,pid,ename,type,catename,tpl,icon,sort,desc,url,image')->find($id);
+        return $this->field('id,pid,ename,type,name,tpl,icon,sort,description,url,image')->find($id);
     }
 
     /**
@@ -81,7 +81,7 @@ class Category extends BaseEntity
         $cate = $this->getCateInfoByEname($ename);
 
         if(!empty($cate['id'])){
-            $where[] = ['cate_id' ,'=', $cate['id']];
+            $where[] = ['category_id' ,'=', $cate['id']];
         }
 
         switch ($flag) {
@@ -164,8 +164,8 @@ class Category extends BaseEntity
                         // ->field($field)
                         // ->whereIn('id', $idArr)
                         // ->with([
-                        //     'cate' => function (Query $query) {
-                        //         $query->field('id,catename,ename');
+                        //     'category' => function (Query $query) {
+                        //         $query->field('id,name,ename');
                         //     },
                         //     'user' => function(Query $query){
                         //         $query->field('id,name,nickname,user_img,vip');
@@ -220,11 +220,11 @@ class Category extends BaseEntity
 
                 // 往datas数组中追加cate和url 减少查询
                 foreach($datas as &$da) {
-                    // $da['cate'] = ['catename' => $cate['catename'], 'ename' => $cate['ename']];
+                    // $da['category'] = ['name' => $cate['name'], 'ename' => $cate['ename']];
 
                     $id = IdEncode::encode($da['id']);
                     
-                    $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id, 'ename' => $da['cate']['ename']])->domain(true);
+                    $da['url'] = (string) Route::buildUrl('article_detail', ['id' => $id, 'ename' => $da['category']['ename']])->domain(true);
                     // $da['url'] = (string) Route::buildUrl("{$cate['ename']}/{$id}")->domain(true);
                     
                     // $da['master_pic'] = $da['has_image'] > 0 ? $da['media']['images'][0] : '';
@@ -258,10 +258,10 @@ class Category extends BaseEntity
     {
         // 3. 构建主键分页子查询（核心：仅查ID，利用主键索引快速定位）
         $subQuery = Article::suffix($suffix)
-            ->with(['cate' => function($query) {
+            ->with(['category' => function($query) {
                 $query->where('status', 1);  // 只关联状态正常的
             }])
-            ->has('cate')  // 关键：只返回有关联user的记录
+            ->has('category')  // 关键：只返回有关联user的记录
             ->field('id')
             ->where($where)
             ->where('status', 1)
@@ -278,13 +278,13 @@ class Category extends BaseEntity
             ->join([$subQuery => 'b'], 'a.id = b.id')
             // 关联分类/用户（保留原逻辑，简化闭包）
             ->with([
-                'cate' => fn(Query $query) => $query->field('id,catename,ename'),
+                'category' => fn(Query $query) => $query->field('id,name,ename'),
                 'user' => fn(Query $query) => $query->field('id,name,nickname,user_img,vip')
             ])
             // 字段筛选（主表加别名，避免字段冲突）
             ->field([
                 'a.id',
-                'a.cate_id',
+                'a.category_id',
                 'a.user_id',
                 'a.title',
                 'a.content',
@@ -336,19 +336,19 @@ class Category extends BaseEntity
         if($pid == 0) {
             return null;
         }
-        return $this->field('ename,type,catename,image')->where('pid', $pid)->append(['url'])->select();
+        return $this->field('ename,type,name,image')->where('pid', $pid)->append(['url'])->select();
     }
 
     // 查询兄弟分类
     public function getBrotherCate(string $ename)
     {
-        return $this->field('id,ename,type,catename,desc,image')->where('pid', $this->where('ename', $ename)->value('pid'))->append(['url'])->order('sort asc')->select();
+        return $this->field('id,ename,type,name,desc,image')->where('pid', $this->where('ename', $ename)->value('pid'))->append(['url'])->order('sort asc')->select();
     }
 
     // 查询子分类
     public function getSubCate(string $ename)
     {
-        return $this->field('id,ename,type,catename,desc,image')->where('pid', $this->where('ename', $ename)->value('id'))->append(['url'])->select();
+        return $this->field('id,ename,type,name,desc,image')->where('pid', $this->where('ename', $ename)->value('id'))->append(['url'])->select();
     }
 
     /**
@@ -375,7 +375,7 @@ class Category extends BaseEntity
     public function getList() : array
     {
         $data = $this->where('status', 1)
-        ->field('id,pid,ename,type,sort,catename,tpl,icon,status,is_hot,desc,url,image')
+        ->field('id,pid,ename,type,sort,name,tpl,icon,status,is_hot,desc,url,image')
         ->append(['url'])
         ->order('sort asc')
         ->cache(true, 900)
@@ -431,8 +431,8 @@ class Category extends BaseEntity
         $subCateArray = Cache::remember("subnav_{$ename}", function() use($ename){
 			$subCateList = []; // 没有点击任何分类，点击首页获取全部分类信息
 			//1.查询父分类id
-			$pCate = Db::name('cate')
-			->field('id,pid,ename,catename,is_hot')
+			$pCate = Db::name('category')
+			->field('id,pid,ename,name,is_hot')
 			->where(['ename' => $ename,'status'=>1,'delete_time'=>0])
 			->find();
 
@@ -440,8 +440,8 @@ class Category extends BaseEntity
 				// 点击分类，获取子分类信息
 				$parentId = $pCate['id'];
 
-				$subCate = Db::name('cate')
-				->field('id,ename,catename,is_hot,pid')
+				$subCate = Db::name('category')
+				->field('id,ename,name,is_hot,pid')
 				->where(['pid'=>$parentId,'status'=>1])
                 ->whereNull('delete_time')
 				->select()
@@ -457,8 +457,8 @@ class Category extends BaseEntity
 						$subCateList[] = $pCate;
 					} else {
 						//子菜单下如果无子菜单，则显示全部兄弟分类
-						$parament = Db::name('cate')
-						->field('id,ename,catename,is_hot,pid')
+						$parament = Db::name('category')
+						->field('id,ename,name,is_hot,pid')
 						->where(['pid'=>$pCate['pid'],'status'=>1])
                         ->whereNull('delete_time')
 						->order(['sort' => 'asc'])

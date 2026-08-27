@@ -2197,7 +2197,7 @@ INSERT INTO `tao_area` VALUES (2114, 201, '西华县');
 DROP TABLE IF EXISTS `tao_article`;
 CREATE TABLE `tao_article`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `cate_id` int UNSIGNED NOT NULL COMMENT '栏目id',
+  `category_id` int UNSIGNED NOT NULL COMMENT '栏目id',
   `user_id` int UNSIGNED NOT NULL COMMENT '用户id',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标题',
   `thum_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '缩略图',
@@ -2220,9 +2220,9 @@ CREATE TABLE `tao_article`  (
   `flags` json NOT NULL COMMENT '标记is_top置顶is_good推荐is_wait完结',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE COMMENT '文章的用户索引',
-  INDEX `cate_id`(`cate_id` ASC) USING BTREE COMMENT '文章栏目索引',
+  INDEX `category_id`(`category_id` ASC) USING BTREE COMMENT '文章栏目索引',
   INDEX `idx_article_create_time`(`create_time` DESC) USING BTREE COMMENT '创建时间',
-  INDEX `idx_article_cid_status_dtime`(`cate_id` ASC, `status` ASC, `delete_time` ASC) USING BTREE COMMENT '栏目状态时间索引'
+  INDEX `idx_article_cid_status_dtime`(`category_id` ASC, `status` ASC, `delete_time` ASC) USING BTREE COMMENT '栏目状态时间索引'
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章主表' ROW_FORMAT = Dynamic;
 
 DROP TABLE IF EXISTS `tao_article_flag`;
@@ -2455,7 +2455,7 @@ CREATE TABLE `tao_cate`  (
   `pid` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '上级id',
   `ename` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类别名',
   `type` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '1列表2单页3链接',
-  `catename` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '导航名称',
+  `name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '导航名称',
   `tpl` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'default' COMMENT '详情模板',
   `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图标',
   `image` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '图片路径',
@@ -2619,7 +2619,7 @@ CREATE TABLE `tao_message_to`  (
 DROP TABLE IF EXISTS `tao_page`;
 CREATE TABLE `tao_page`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `cate_id` int UNSIGNED NOT NULL COMMENT '类别id',
+  `category_id` int UNSIGNED NOT NULL COMMENT '类别id',
   `pv` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标题',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
@@ -2628,7 +2628,7 @@ CREATE TABLE `tao_page`  (
   `create_time` datetime NOT NULL COMMENT '时间',
   `update_time` datetime NOT NULL COMMENT '更新',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `idx_cate_id`(`cate_id` ASC) USING BTREE COMMENT '栏目id'
+  UNIQUE INDEX `idx_category_id`(`category_id` ASC) USING BTREE COMMENT '栏目id'
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '栏目单页' ROW_FORMAT = Dynamic;
 
 -- ----------------------------

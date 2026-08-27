@@ -46,13 +46,13 @@ class Taglist extends BaseModel
             if(count($ids)) {
                 $idArr = array_column($ids, 'article_id');
 
-                $data = Article::field('id,user_id,cate_id,title,content,pv,create_time')
+                $data = Article::field('id,user_id,category_id,title,content,pv,create_time')
                 ->whereIn('id', $idArr)
                 ->where('status', 1)
                 ->with(['user' => function($query){
                     $query->field('id,name,nickname,user_img,vip');
-                },'cate' => function($query){
-                    $query->field('id,catename,ename');
+                },'category' => function($query){
+                    $query->field('id,name,ename');
                 }])
                 ->order('id desc')
                 ->append(['url'])

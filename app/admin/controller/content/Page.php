@@ -27,8 +27,8 @@ class Page extends AdminBaseController
         $page = $request->get('page/d',1);
         $limit = $request->get('limit/d', 20);
         
-        $list = PageEntity::with(['cate' => function($query) {
-            $query->field('id,catename,ename');
+        $list = PageEntity::with(['category' => function($query) {
+            $query->field('id,name,ename');
         }])->select()->toArray();
   
         if($count = count($list)) {
@@ -44,7 +44,7 @@ class Page extends AdminBaseController
             return View::fetch();
         }
 
-        $data = $request->post(['title','cate_id/d','content','description','keywords']);
+        $data = $request->post(['title','category_id/d','content','description','keywords']);
         $data['create_time'] = date('Y-m-d H:i:s');
 
         try{
@@ -62,16 +62,16 @@ class Page extends AdminBaseController
 
         if(!$request->isPost()) {
             $id = $request->get('id/d');
-            $page = PageEntity::field('id,cate_id,title,content,keywords,description,create_time')
-            ->with(['cate'=>function($query) {
-                $query->field('id,catename');
+            $page = PageEntity::field('id,category_id,title,content,keywords,description,create_time')
+            ->with(['category'=>function($query) {
+                $query->field('id,name');
             }])->find($id);
             
             View::assign('page', $page);
             return View::fetch();
         }
 
-        $data = $request->post(['id','title','cate_id/d','content','description', 'keywords']);
+        $data = $request->post(['id','title','category_id/d','content','description', 'keywords']);
         try{
             PageEntity::update($data);
         } catch(Exception $e) {

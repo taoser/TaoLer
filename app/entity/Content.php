@@ -16,11 +16,11 @@ class Content extends BaseEntity
 {
     // 1. 字段常量管理（抽离到模型更佳）
     const ARTICLE_LIST_FIELDS = [
-        'a.id', 'a.cate_id', 'a.user_id', 'a.title', 'a.content', 'a.description',
+        'a.id', 'a.category_id', 'a.user_id', 'a.title', 'a.content', 'a.description',
         'a.create_time', 'a.pv', 'a.thum_img', 'a.has_image', 'a.has_video', 'a.has_audio',
         'a.comments_num', 'a.flags'
     ];
-    const CATE_RELATION_FIELDS = ['id', 'catename', 'ename'];
+    const CATE_RELATION_FIELDS = ['id', 'name', 'ename'];
     const USER_RELATION_FIELDS = ['id', 'name', 'nickname', 'user_img', 'vip'];
 
     // 新的数量, 数据介于两表之间分量时使用
@@ -37,7 +37,7 @@ class Content extends BaseEntity
      */
 	public function add(array $data)
 	{
-        $this->cate_id  = $data['cate_id'];
+        $this->category_id  = $data['category_id'];
         $this->user_id  = $data['user_id'];
         $this->title    = $data['title'];
         $this->content  = $data['content'];
@@ -142,11 +142,11 @@ class Content extends BaseEntity
             }
 
             foreach($sufsAids as $k => $v) {
-                $data = $this->field('id,title,cate_id,user_id,create_time,pv,thum_img,has_image,thum_img,has_video,has_audio,media,comments_num,flags')
+                $data = $this->field('id,title,category_id,user_id,create_time,pv,thum_img,has_image,thum_img,has_video,has_audio,media,comments_num,flags')
                 ->suffix($k)
                 ->with([
-                    'cate' => function (Query $query) {
-                        $query->field('id,catename,ename');
+                    'category' => function (Query $query) {
+                        $query->field('id,name,ename');
                     },
                     'user' => function (Query $query) {
                         $query->field('id,name,nickname,user_img');
@@ -199,7 +199,7 @@ class Content extends BaseEntity
                 // halt($arr);
                 foreach($arr as $suffix => $id) {
                     // 评论数
-                    $data = $this->field('id,cate_id,title,create_time,comments_num')
+                    $data = $this->field('id,category_id,title,create_time,comments_num')
                     ->suffix($suffix)
                     ->whereIn('id', $id)
                     ->where('delete_time', 0)
@@ -238,7 +238,7 @@ class Content extends BaseEntity
             
             for($i = 0; $i < $count; $i++) {
                 // 评论数
-                $data = $this->field('id,cate_id,title,pv,create_time,comments_num')
+                $data = $this->field('id,category_id,title,pv,create_time,comments_num')
                 ->suffix($suffixArr[$i])
                 ->where('delete_time', 0)
                 ->where('status', 1)
@@ -289,7 +289,7 @@ class Content extends BaseEntity
 
             foreach($arr as $k => $v){
                 
-                $data = $this->field('id,cate_id,title,create_time,comments_num')
+                $data = $this->field('id,category_id,title,create_time,comments_num')
                 ->suffix($k)
                 ->whereIn('id', $v)
                 ->where('status', '1')
@@ -319,7 +319,7 @@ class Content extends BaseEntity
             
             $map = self::getSuffixMap(['status' => 1], Content::class);
 
-            $field = 'id,title,cate_id,user_id,content,description,pv,thum_img,has_image,has_video,has_audio,create_time,media,comments_num,flags';
+            $field = 'id,title,category_id,user_id,content,description,pv,thum_img,has_image,has_video,has_audio,create_time,media,comments_num,flags';
             // 判断是否有多个表
             if($map['tableCount'] > 1) {
 
@@ -327,8 +327,8 @@ class Content extends BaseEntity
                 if($map['countArr'][0] >= $num) {
                     $data = $this->suffix($map['tableSuffixArr'][0])->field($field)
                         ->with([
-                        'cate' => function(Query $query){
-                            $query->field('id,catename,ename,tpl');
+                        'category' => function(Query $query){
+                            $query->field('id,name,ename,tpl');
                         },
                         'user' => function(Query $query){
                             $query->field('id,name,nickname,user_img');
@@ -346,8 +346,8 @@ class Content extends BaseEntity
                     // 第一个分表 数量不够 取第二个分表数
                     $data = $this->suffix($map['tableSuffixArr'][0])->field($field)
                         ->with([
-                        'cate' => function(Query $query){
-                            $query->field('id,catename,ename,tpl');
+                        'category' => function(Query $query){
+                            $query->field('id,name,ename,tpl');
                         },
                         'user' => function(Query $query){
                             $query->field('id,name,nickname,user_img');
@@ -364,8 +364,8 @@ class Content extends BaseEntity
                     $data1 = $this->suffix($map['tableSuffixArr'][0])
                         ->field($field)
                         ->with([
-                        'cate' => function(Query $query){
-                            $query->field('id,catename,ename,tpl');
+                        'category' => function(Query $query){
+                            $query->field('id,name,ename,tpl');
                         },
                         'user' => function(Query $query){
                             $query->field('id,name,nickname,user_img');
@@ -385,8 +385,8 @@ class Content extends BaseEntity
                 // 单表
                 $data = $this->field($field)
                     ->with([
-                    'cate' => function(Query $query){
-                        $query->field('id,catename,ename,tpl');
+                    'category' => function(Query $query){
+                        $query->field('id,name,ename,tpl');
                     },
                     'user' => function(Query $query){
                         $query->field('id,name,nickname,user_img');
@@ -419,12 +419,12 @@ class Content extends BaseEntity
             $this->setSuffix(self::byIdGetSuffix($id));
             //查询文章
             try{
-                return $this->field('id,title,content,status,cate_id,user_id,is_comment,pv,keywords,description,create_time,update_time,comments_num,flags')
+                return $this->field('id,title,content,status,category_id,user_id,is_comment,pv,keywords,description,create_time,update_time,comments_num,flags')
                 ->where('id', $id)
                 ->where('status', '1')
                 ->with([
-                    'cate' => function(Query $query){
-                        $query->field('id,catename,ename,tpl');
+                    'category' => function(Query $query){
+                        $query->field('id,name,ename,tpl');
                     },
                     'user' => function(Query $query){
                         $query->field('id,name,nickname,user_img,area_id,vip,city');
@@ -456,14 +456,14 @@ class Content extends BaseEntity
 
         $prevId = $this::where('id', '>=', $id + 1) // >= <= 条件可以使用索引
         ->where([
-            ['cate_id', '=', $cid],
+            ['category_id', '=', $cid],
             ['status', '=',1]
         ])
         ->order('id asc')
         ->value('id');
 
         if(!is_null($prevId)) {
-            $prev[] = $this::field('id,title,cate_id')->append(['url'])->find($prevId)->toArray();
+            $prev[] = $this::field('id,title,category_id')->append(['url'])->find($prevId)->toArray();
         } else {
             $prev[] = ['title' => '前面没有了', 'url' => 'javascript:void(0);'];
         }
@@ -486,14 +486,14 @@ class Content extends BaseEntity
 
         $nextId = $this::where('id', '<=', $id - 1)
         ->where([
-            ['cate_id', '=', $cid],
+            ['category_id', '=', $cid],
             ['status', '=',1]
         ])
         ->order('id desc')
         ->value('id');
 
         if(!is_null($nextId)) {
-            $next[] = $this->field('id,title,cate_id')->append(['url'])->find($nextId)->toArray();
+            $next[] = $this->field('id,title,category_id')->append(['url'])->find($nextId)->toArray();
         } else {
             $next[] = ['title' => '后面没有了', 'url' => 'javascript:void(0);'];
         }
@@ -544,10 +544,10 @@ class Content extends BaseEntity
             if(count($articleIdArr)) {
                 foreach($articleIdArr as $id) {
                     $article = self::suffix(self::byIdGetSuffix($id))
-                    ->with(['cate' => function($query) {
-                        $query->field('id,catename');
+                    ->with(['category' => function($query) {
+                        $query->field('id,name');
                     }])
-                    ->field('id,title,cate_id,pv,create_time,description')
+                    ->field('id,title,category_id,pv,create_time,description')
                     ->where('id', $id)
                     ->append(['url'])
                     ->find();
@@ -555,7 +555,7 @@ class Content extends BaseEntity
                     if(!is_null($article)) {
                         $article['hasImg'] = $article['has_image'] > 0 ? true : false;
                         $article['time'] = $article['create_time'];
-                        $article['cate_name']   = $article['cate']['catename'];
+                        $article['cate_name']   = $article['category']['name'];
                         $article['desc']    = $article['description'];
 
                         $data[] = $article;
@@ -612,14 +612,14 @@ class Content extends BaseEntity
             ->limit($limit)
             ->select();
 
-            $tags = $this->field('id,cate_id,user_id,thum_img,has_image,title,create_time,pv')
+            $tags = $this->field('id,category_id,user_id,thum_img,has_image,title,create_time,pv')
             ->whereIn('id', $arrId)
             ->where('status', '1')
             ->with([
                 'user' => function($query){
                     $query->field('id,name,user_img');
-                },'cate' => function($query){
-                    $query->field('id,catename');
+                },'category' => function($query){
+                    $query->field('id,name');
                 }
             ])
             ->order('pv desc')
@@ -637,7 +637,7 @@ class Content extends BaseEntity
                         'title'     => $v['title'],
                         'desc'      => $v['description'],
                         'auther'    => $v['user']['name'],
-                        'cate_name' => $v['cate']['catename'],
+                        'cate_name' => $v['category']['name'],
                         'pv'        => $v['pv'],
                         'time'      => date('Y-m-d',strtotime($v['create_time'])),
                         'url'       => $v['url']
@@ -654,9 +654,9 @@ class Content extends BaseEntity
     // 获取用户发帖列表
     public function getUserArtList(int $id) {
         $userArtList = Cache::remember('user_recently_post_'.$id, function() use($id) {
-            return $this::field('id,cate_id,title,flags,create_time,pv')
+            return $this::field('id,category_id,title,flags,create_time,pv')
             ->with([
-                'cate' => function($query){
+                'category' => function($query){
                     $query->where(['status'=>1])->field('id,ename');
                 }
             ])
@@ -696,13 +696,13 @@ class Content extends BaseEntity
     // 获取所有帖子内容
     public function getList(array $where, int $limit, int $page)
     {
-        return $this::field('id,user_id,cate_id,title,content,is_comment,status,update_time,comments_num,flags')
+        return $this::field('id,user_id,category_id,title,content,is_comment,status,update_time,comments_num,flags')
         ->with([
             'user' => function($query){
                 $query->field('id,name,user_img');
             },
-            'cate' => function($query){
-                $query->field('id,ename,catename');
+            'category' => function($query){
+                $query->field('id,ename,name');
             }
         ])
         ->where(['status' => 1])
@@ -746,8 +746,8 @@ class Content extends BaseEntity
             $where[] = ['id', '=', $data['id']];
         }
 
-        if(!empty($data['cate_id'])){
-            $where[] = ['cate_id', '=', $data['cate_id']];
+        if(!empty($data['category_id'])){
+            $where[] = ['category_id', '=', $data['category_id']];
         }
 
         if(!empty($data['name'])){
@@ -789,13 +789,13 @@ class Content extends BaseEntity
             }
         }
 
-        $data = $this::field('id,user_id,cate_id,title,description,is_comment,status,update_time,comments_num')
+        $data = $this::field('id,user_id,category_id,title,description,is_comment,status,update_time,comments_num')
         ->with([
              'user' => function($query){
                  $query->field('id,name,user_img');
              },
-             'cate' => function($query){
-                 $query->field('id,ename,catename');
+             'category' => function($query){
+                 $query->field('id,ename,name');
              }
          ])
         ->where($where)
@@ -849,8 +849,8 @@ class Content extends BaseEntity
             $where[] = ['id', '=', $data['id']];
         }
 
-        if(!empty($data['cate_id'])){
-            $where[] = ['cate_id', '=', $data['cate_id']];
+        if(!empty($data['category_id'])){
+            $where[] = ['category_id', '=', $data['category_id']];
         }
 
         if(!empty($data['name'])){
@@ -905,7 +905,7 @@ class Content extends BaseEntity
             // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
             self::$newLimit = $limit;
 
-            $field = 'id,cate_id,user_id,title,is_comment,pv,status,create_time,update_time,comments_num,flags';
+            $field = 'id,category_id,user_id,title,is_comment,pv,status,create_time,update_time,comments_num,flags';
 
             for($i = 0; $i < $map['tableCount']; $i++) {
 
@@ -934,8 +934,8 @@ class Content extends BaseEntity
                         'user' => function(Query $query){
                             $query->field('id,name,nickname,user_img,vip');
                         },
-                        'cate' => function(Query $query){
-                            $query->field('id,ename,catename');
+                        'category' => function(Query $query){
+                            $query->field('id,ename,name');
                         }
                     ])
                     // ->withCount(['comments'])
@@ -970,8 +970,8 @@ class Content extends BaseEntity
                         'user' => function(Query $query){
                             $query->field('id,name,nickname,user_img,vip');
                         },
-                        'cate' => function(Query $query){
-                            $query->field('id,ename,catename');
+                        'category' => function(Query $query){
+                            $query->field('id,ename,name');
                         }
                     ])
                     ->order('id', 'desc')

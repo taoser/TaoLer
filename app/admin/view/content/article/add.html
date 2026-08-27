@@ -90,7 +90,7 @@
 		$.get(CATE_TREE_URL, function(res){
 			xmSelect.render({
 				el: '#CateId',
-				name: 'cate_id',
+				name: 'category_id',
 				height: '250px',
 				layVerify: 'required',
 				layVerType: 'tips',
@@ -98,7 +98,7 @@
 				initValue:  [res.data[0].id],
 				model: {label: {type: 'text'}},
 				prop: {
-					name: 'catename',
+					name: 'name',
 					value: 'id'
 				},
 				// radio: true,

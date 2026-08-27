@@ -69,7 +69,7 @@ class Content extends BaseModel
     public function getUrlAttr($value, $data)
     {
         $data['id'] = IdEncode::encode($data['id']);
-        $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
+        $ename = Category::where('id', $data['category_id'])->cache(true)->value('ename');
         return (string) Route::buildUrl('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
        
     }

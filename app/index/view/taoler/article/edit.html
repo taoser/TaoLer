@@ -24,7 +24,7 @@
 								{if ($user.auth == 1)}
 								<div id="CateId" class="xm-select-demo"></div>
 								{else /}
-								<input type="text" name="cate_id"  class="layui-input layui-hide" disabled value="{article:cate_id /}">
+								<input type="text" name="category_id"  class="layui-input layui-hide" disabled value="{article:category_id /}">
 								<input type="text" class="layui-input" disabled value="{article:cate_name}">
 								{/if}
 							</div>
@@ -94,7 +94,7 @@
     ,form = layui.form
     ,upload = layui.upload;
 
-    var cateId = "{article:cate_id /}";
+    var cateId = "{article:category_id /}";
     var artId = "{article:id /}";
 
     // 分类选择
@@ -102,7 +102,7 @@
             // 渲染下拉树
             xmSelect.render({
                 el: '#CateId',
-                name: 'cate_id',
+                name: 'category_id',
                 height: '250px',
                 layVerify: 'required',
                 layVerType: 'tips',
@@ -110,7 +110,7 @@
                 initValue:  [cateId],
                 model: {label: {type: 'text'}},
                 prop: {
-                    name: 'catename',
+                    name: 'name',
                     value: 'id'
                 },
                 // radio: true,

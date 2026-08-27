@@ -68,20 +68,20 @@ class Cate extends AdminBaseController
 
             View::assign([
                 'template'  => $template,
-                'cate'      => $cate
+                'category'      => $cate
             ]);
             return View::fetch($view);
         }
         
         $msg = $addOrEdit ? lang('edit') : lang('add');
-        $data = $request->post(['id/d','pid/d','catename','ename','type','icon','image','tpl','desc','sort', 'url']);
+        $data = $request->post(['id/d','pid/d','name','ename','type','icon','image','tpl','desc','sort', 'url']);
 
         if(isset($data['id']) && $data['pid'] == $data['id']) {
             return json(['code'=>-1,'msg'=> $msg.'不能作为自己的子类']);
         } 
 
         try{
-            Category::cache('catename')->save($data);
+            Category::cache('name')->save($data);
             return json(['code' => 0, 'msg'=> $msg.'成功']);
         } catch(Exception $e) {
             return json(['code' => 1, 'msg' => $msg.'失败'.$e->getMessage()]);
@@ -122,7 +122,7 @@ class Cate extends AdminBaseController
      */
     public function getCateTree(): Response
     {
-        $list = Category::field('id,pid,catename,sort')
+        $list = Category::field('id,pid,name,sort')
         ->order('sort','asc')
         ->select()
         ->toArray();
@@ -138,7 +138,7 @@ class Cate extends AdminBaseController
             'data'  => [[
                 'id' => 0,
                 'pid'   => 0,
-                'catename' => '顶级',
+                'name' => '顶级',
                 'children'  => $data
             ]]
         ]);
@@ -151,7 +151,7 @@ class Cate extends AdminBaseController
      */
     public function getArticleCateTree(): Json
     {
-        $list = Category::field('id,pid,catename,sort')
+        $list = Category::field('id,pid,name,sort')
         ->order('sort','asc')
         ->select()
         ->toArray();
@@ -175,7 +175,7 @@ class Cate extends AdminBaseController
      */
     public function getSingleCateTree(): Response
     {
-        $list = Category::field('id,pid,catename,sort')
+        $list = Category::field('id,pid,name,sort')
         ->order('sort','asc')
         ->where('type', 2)
         ->select()
@@ -199,9 +199,9 @@ class Cate extends AdminBaseController
      */
     public function getSingleArticleCateTree(): Response
     {
-        $pageCate = Db::name('page')->field('cate_id')->group('cate_id')->select()->column('cate_id');
+        $pageCate = Db::name('page')->field('category_id')->group('category_id')->select()->column('category_id');
    
-        $list = Category::field('id,pid,catename,sort')
+        $list = Category::field('id,pid,name,sort')
         ->where('type', 2)
         ->whereNotIn('id', $pageCate)
         ->order('sort','asc')

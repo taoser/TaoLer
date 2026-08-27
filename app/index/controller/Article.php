@@ -79,7 +79,7 @@ class Article extends IndexBaseController
 			'lrDate_time' 	=> $lrDate_time,
 		]);
 
-		$html = View::fetch('category/'.$detail['cate']['tpl'].'/detail');
+		$html = View::fetch('category/'.$detail['category']['tpl'].'/detail');
 		
 		// 生成静态html
 		$this->buildHtml($html);
@@ -94,9 +94,9 @@ class Article extends IndexBaseController
     public function add(Request $request): Response | string
     {
         if (!$request->isPost()) {
-			$ename = $request->get('cate');
+			$ename = $request->get('category');
 			// 子模块自定义自适应add.html模板
-			$cate = Db::name('cate')->field('id,tpl')->where('ename', $ename)->find();
+			$cate = Db::name('category')->field('id,tpl')->where('ename', $ename)->find();
 			// 子模块下有add.html模板
 			if(!empty($cate)) {
 				$cid = $cate['id'];
@@ -114,7 +114,7 @@ class Article extends IndexBaseController
 			return View::fetch($addTpl);
         }
 
-		$data = $request->post(['cate_id/d', 'title','content', 'keywords', 'description', 'captcha','tagid']);
+		$data = $request->post(['category_id/d', 'title','content', 'keywords', 'description', 'captcha','tagid']);
 		$data['user_id'] = $this->uid;
 
 		try{
@@ -142,8 +142,8 @@ class Article extends IndexBaseController
 			$result = $articleServer->add($data);
 
 			// 获取分类ename, appname
-			$cateName = Db::name('cate')->field('ename')->find($data['cate_id']);
-			$link = $this->getRouteUrl((int) $result['article_id'], $cateName['ename']);
+			$categoryName = Db::name('category')->field('ename')->find($data['category_id']);
+			$link = $this->getRouteUrl((int) $result['article_id'], $categoryName['ename']);
 			$status = Db::name('article')->where('id', $result['article_id'])->value('status');
 			$url = $status ? $link : (string) url('index/');
 
@@ -183,7 +183,7 @@ class Article extends IndexBaseController
 		$this->removeDetailHtml($article);
 		
 		if($request->isPost()){
-			$data = $request->post(['id/d','cate_id/d','title','content','keywords','description','captcha', 'tagid']);
+			$data = $request->post(['id/d','category_id/d','title','content','keywords','description','captcha', 'tagid']);
 
 			try {
 
@@ -226,7 +226,7 @@ class Article extends IndexBaseController
         View::assign(['article' => $article]);
 		
 		// 编辑多模板支持
-		$tpl = Db::name('cate')->where('id', $article['cate_id'])->value('tpl');
+		$tpl = Db::name('category')->where('id', $article['category_id'])->value('tpl');
 		
 		$view = 'category' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'edit';
 
@@ -383,7 +383,7 @@ class Article extends IndexBaseController
      */
     public function getCateTree()
     {
-        $cateList = Category::field('id,pid,catename,sort')
+        $cateList = Category::field('id,pid,name,sort')
 		->order('sort','asc')
 		->where(['status' => 1])
 		->select()

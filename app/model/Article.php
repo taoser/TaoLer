@@ -28,7 +28,7 @@ class Article extends BaseModel
 
 
     //文章关联栏目表
-    public function cate()
+    public function category()
     {
         return $this->belongsTo(Category::class); // 内连接：无匹配分类的文章会被过滤;
     }
@@ -69,7 +69,7 @@ class Article extends BaseModel
     public function getUrlAttr($value, $data)
     {
         $data['id'] = IdEncode::encode($data['id']);
-        $ename = Category::where('id', $data['cate_id'])->cache(true)->value('ename');
+        $ename = Category::where('id', $data['category_id'])->cache(true)->value('ename');
         return (string) Route::buildUrl('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
        
     }

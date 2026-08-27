@@ -25,7 +25,7 @@
             <h2><a href="{$Request.domain}{$art.url}" title="{$art.title}">{$art.title}</a></h2>
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
-              <a class="layui-badge" href="{$Request.domain}{:url('cate',['ename'=>$art.cate.ename])}">{$art.cate.catename}</a>
+              <a class="layui-badge" href="{$Request.domain}{:url('category',['ename'=>$art.cate.ename])}">{$art.cate.name}</a>
               {/if}
               <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" link><cite>{$art.user.name}</cite></a>
               <span>{$art.create_time|date='Y-m-d'}</span>

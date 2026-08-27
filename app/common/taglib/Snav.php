@@ -50,7 +50,7 @@ class Snav extends TagLib
 
     public function tagName($tag): string
     {
-        return '{$snav.catename}';
+        return '{$snav.name}';
     }
 
     public function tagEname(): string
@@ -60,7 +60,7 @@ class Snav extends TagLib
 
     public function tagTitle(): string
     {
-        return '{$snav.catename}';
+        return '{$snav.name}';
     }
 
     public function tagDetpl(): string

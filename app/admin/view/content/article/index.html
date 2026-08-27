@@ -83,7 +83,7 @@
 <script type="text/html" id="titleTpl">
 	<ul>
 		<li><a href="{{- d.url }}" target="_blank"><strong>{{- d.title }}</strong></a></li>
-		<li>类别：{{ d.cate.catename }}</li>
+		<li>类别：{{ d.cate.name }}</li>
 		<li>{{ d.user.name }} - {{ d.create_time }}</li>
 	</ul>
 </script>
@@ -172,7 +172,7 @@
 		// 渲染下拉树
 		xmSelect.render({
 			el: '#CateId',
-			name: 'cate_id',
+			name: 'category_id',
 			height: '250px',
 			layVerify: '',
 			layVerType: 'tips',
@@ -180,7 +180,7 @@
 			initValue:  [],
 			model: {label: {type: 'text'}},
 			prop: {
-				name: 'catename',
+				name: 'name',
 				value: 'id'
 			},
 			clickClose: true,

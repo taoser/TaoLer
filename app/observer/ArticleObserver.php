@@ -94,7 +94,7 @@ class ArticleObserver
             $table = "
             CREATE TABLE `{$tableName}`  (
                 `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-                `cate_id` int UNSIGNED NOT NULL COMMENT '分类id',
+                `category_id` int UNSIGNED NOT NULL COMMENT '分类id',
                 `user_id` int UNSIGNED NOT NULL COMMENT '用户id',
                 `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
                 `thum_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '缩略图',
@@ -117,9 +117,9 @@ class ArticleObserver
                 `flags` json NOT NULL COMMENT '标记is_top置顶is_good推荐is_wait完结',
                 PRIMARY KEY (`id`) USING BTREE,
                 INDEX `user_id`(`user_id` ASC) USING BTREE COMMENT '文章的用户索引',
-                INDEX `cate_id`(`cate_id` ASC) USING BTREE COMMENT '文章分类索引',
+                INDEX `category_id`(`category_id` ASC) USING BTREE COMMENT '文章分类索引',
                 INDEX `idx_article_create_time`(`create_time` DESC) USING BTREE COMMENT '创建时间',
-                INDEX `idx_article_cid_status_dtime`(`cate_id` ASC, `status` ASC, `delete_time` ASC) USING BTREE COMMENT '分类状态时间索引'
+                INDEX `idx_article_cid_status_dtime`(`category_id` ASC, `status` ASC, `delete_time` ASC) USING BTREE COMMENT '分类状态时间索引'
             ) ENGINE = InnoDB AUTO_INCREMENT = {$autoIncrement} CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '文章表' ROW_FORMAT = Dynamic;";
 
             Db::execute($table);

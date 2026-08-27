@@ -94,7 +94,7 @@
 		var xmSelect = layui.xmSelect;
 		let popup = layui.popup;
 
-		let INIT_CID = "{$article.cate_id}";
+		let INIT_CID = "{$article.category_id}";
 
 		//1.渲染标签
 		var addTags = xmSelect.render({
@@ -131,7 +131,7 @@
 			// 渲染下拉树
 			xmSelect.render({
 				el: '#CateId',
-				name: 'cate_id',
+				name: 'category_id',
 				height: '250px',
 				layVerify: 'required',
 				layVerType: 'tips',
@@ -139,7 +139,7 @@
 				initValue:  [INIT_CID],
 				model: {label: {type: 'text'}},
 				prop: {
-					name: 'catename',
+					name: 'name',
 					value: 'id'
 				},
 				clickClose: true,
