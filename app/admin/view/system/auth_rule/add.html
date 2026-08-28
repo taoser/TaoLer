@@ -133,6 +133,7 @@
 				url: RULE_ADD,
 				dataType: 'json',
 				type: 'post',
+				data: data.field,
 				success: function(res) {
 					if(res.code) {
 						return popup.failure(res.msg);

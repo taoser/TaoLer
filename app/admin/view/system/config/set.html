@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>网站设置</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <style>
+        body{background:#f4f6f9;}
+        .wrap-box{max-width:900px;margin:24px auto;}
+        .card{background:#fff;border-radius:10px;padding:24px;margin-bottom:16px;box-shadow: 0 1px 8px rgba(0,0,0,0.06);}
+        .layui-field-title{border-left:4px solid #1677ff;padding-left:12px;}
+    </style>
+</head>
+<body>
+<div class="wrap-box">
+    <div class="card">
+        <form class="layui-form" id="configForm">
+        </form>
+    </div>
+</div>
+<script src="/static/layui/layui.js"></script>
+<script>
+    const MODULE_NAME = '/3MPasq1n';
+    const FORM_DATA_URL = MODULE_NAME + '/system_config/get_form_data';
+    const BATCH_SAVE_URL = MODULE_NAME + '/system_config/batch_save';
+
+layui.use(['form','jquery','layer'],function(){
+    var $ = layui.jquery;
+    var form = layui.form;
+    var layer = layui.layer;
+
+    function loadForm(){
+        $.post(FORM_DATA_URL, {},function(res){
+            if(res.code !== 0) return layer.msg(res.msg,{icon:2});
+            var html = '';
+            var groupData = res.data;
+            for(var groupKey in groupData){
+                html += '<fieldset class="layui-elem-field layui-field-title">';
+                html += '<legend>'+groupKey+' 分组配置</legend></fieldset>';
+                var items = groupData[groupKey];
+                for(var i=0;i<items.length;i++){
+                    var item = items[i];
+                    if(item.status !==1) continue;
+                    html += '<div class="layui-form-item">';
+                    html += '<label class="layui-form-label">'+item.title+'</label>';
+                    html += '<div class="layui-input-block">';
+                    switch(item.type){
+                        case 'text':
+                            html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input">`;
+                            break;
+                        case 'number':
+                            html += `<input type="number" name="${item.name}" value="${item.value||''}" class="layui-input">`;
+                            break;
+                        case 'switch':
+                            var checked = item.value == 1 ? 'checked' : '';
+                            html += `<input type="checkbox" name="${item.name}" lay-skin="switch" lay-text="开启|关闭" ${checked} value="1">`;
+                            break;
+                        case 'radio':
+                            var opts = item.options || [];
+                            for(var oi=0;oi<opts.length;oi++){
+                                var o = opts[oi];
+                                var chk = item.value == o.value ? 'checked' : '';
+                                html += `<input type="radio" name="${item.name}" value="${o.value}" title="${o.label}" ${chk}>`;
+                            }
+                            break;
+                        case 'checkbox':
+                            var opts = item.options || [];
+                            var vals = (item.value||'').split(',');
+                            for(var oi=0;oi<opts.length;oi++){
+                                var o = opts[oi];
+                                var chk = vals.includes(String(o.value)) ? 'checked' : '';
+                                html += `<input type="checkbox" name="${item.name}[]" value="${o.value}" title="${o.label}" ${chk}>`;
+                            }
+                            break;
+                        case 'select':
+                            html += `<select name="${item.name}">`;
+                            var opts = item.options || [];
+                            for(var oi=0;oi<opts.length;oi++){
+                                var o = opts[oi];
+                                var chk = item.value == o.value ? 'selected' : '';
+                                html += `<option value="${o.value}" ${chk}>${o.label}</option>`;
+                            }
+                            html += `</select>`;
+                            break;
+                        case 'date':
+                            html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input layui-date">`;
+                            break;
+                    }
+                    html += '</div>';
+                    if(item.tip){
+                        html += '<div class="layui-form-mid layui-word-aux">'+item.tip+'</div>';
+                    }
+                    html += '</div>';
+                }
+            }
+            html += '<div class="layui-form-item"><div class="layui-input-block">';
+            html += '<button class="layui-btn layui-btn-normal" lay-submit lay-filter="submitConfig">保存配置</button>';
+            html += '</div></div>';
+            $('#configForm').html(html);
+            form.render();
+        },'json');
+    }
+
+    form.on('submit(submitConfig)',function(data){
+
+        var field = data.field;
+        // 修复：遍历页面所有switch开关，未勾选则手动补0
+        $('#configForm input[lay-skin="switch"]').each(function(){
+            var name = $(this).attr('name');
+            if(!field.hasOwnProperty(name)){
+                field[name] = 0;
+            }
+        });
+
+        $.post(BATCH_SAVE_URL, field,function(res){
+            if(res.code===0){
+                layer.msg('保存成功',{icon:1});
+            }else{
+                layer.msg(res.msg,{icon:2});
+            }
+        },'json');
+        return false;
+    });
+
+    loadForm();
+});
+</script>
+</body>
+</html>

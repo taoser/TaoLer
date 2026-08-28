@@ -54,7 +54,9 @@ class AuthRule extends BaseEntity
 		if(!empty($sub)){
 			$sub->update(['level' => $data['level'] + 1]);
 		}
-		return $this->save($data);
+        $rule = $this->find($data['id']);
+        unset($data['id']);
+		return $rule->save($data);
     }
 
     /**

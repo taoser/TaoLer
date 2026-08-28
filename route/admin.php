@@ -32,6 +32,17 @@ Route::group($moduleName, function () {
     // 获取导航接口
     Route::get('system/getnav$','system.menu/getnav')->name('get_nav');
 
+    Route::post('system_config/get_form_data','system.Config/getFormData');
+    Route::post('system_config/batch_save','system.Config/batchSave');
+    Route::post('system_config/item_list','system.Config/itemList');
+    Route::post('system_config/save_item','system.Config/saveItem');
+    Route::post('system_config/delete_item','system.Config/deleteItem');
+    Route::get('system_config/get','system.Config/getConfig');
+    Route::get('system_config/all','system.Config/getAll');
+    Route::post('system_config/update_sort',   'system.Config/updateSort');
+    Route::post('system_config/update_status', 'system.Config/updateStatus');
+
+    // 可变路由
     Route::rule(':controller/:action$',':controller/:action');
     Route::rule(':dirname/:controller/:action$',':dirname.:controller/:action');
     

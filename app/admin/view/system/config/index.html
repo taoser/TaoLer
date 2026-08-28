@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>配置项管理</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <style>
+        body{background:#f4f6f9;}
+        .wrap-box{max-width:1200px;margin:24px auto;}
+        .card{background:#fff;border-radius:10px;padding:24px;box-shadow: 0 1px 8px rgba(0,0,0,0.06);}
+        .top-bar{margin-bottom:16px;}
+    </style>
+</head>
+<body>
+<div class="wrap-box">
+    <div class="card">
+        <div class="top-bar">
+            <button class="layui-btn layui-btn-normal" id="addBtn">新增配置项</button>
+        </div>
+        <table id="itemTable" lay-filter="itemTable"></table>
+    </div>
+</div>
+
+<script type="text/html" id="tableBar">
+    <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+</script>
+
+<script src="/static/layui/layui.js"></script>
+<script>
+    const MODULE_NAME = '/3MPasq1n';
+
+    const ITEM_LIST_URL = MODULE_NAME + '/system_config/item_list';
+    const SAVE_ITEM_URL = MODULE_NAME + '/system_config/save_item';
+    const DELETE_ITEM_URL = MODULE_NAME + '/system_config/delete_item';
+    const CONFIG_URL = MODULE_NAME + '/system_config/get';
+    const ALL_CONFIG_URL = MODULE_NAME + '/system_config/all';
+    const ENABLE_URL = MODULE_NAME + '/system_config/enable';
+    const DISABLE_URL = MODULE_NAME + '/system_config/disable';
+    const BATCH_SAVE_URL = MODULE_NAME + '/system_config/batch_save';
+    const BATCH_REMOVE_URL = MODULE_NAME + '/system_config/batch_remove';
+    const EXPAND_ALL_URL = MODULE_NAME + '/system_config/expand_all';
+    const REFRESH_URL = MODULE_NAME + '/system_config/refresh';
+    const FORM_DATA_URL = MODULE_NAME + '/system_config/get_form_data';
+
+layui.use(['table','form','jquery','layer'],function(){
+    var $ = layui.jquery;
+    var table = layui.table;
+    var form = layui.form;
+    var layer = layui.layer;
+
+    var tableIns = table.render({
+        elem:'#itemTable',
+        url: ITEM_LIST_URL,
+        method:'post',
+        cols:[[
+            {field:'id',title:'ID',width:70},
+            {field:'group',title:'分组',width:100},
+            {field:'name',title:'配置键名'},
+            {field:'title',title:'显示名称'},
+            {field:'type',title:'表单类型',width:110},
+            {field:'value',title:'当前值'},
+            {field:'sort',title:'排序',width:80},
+            {field:'status',title:'状态',width:80,templet:function(d){return d.status===1?'启用':'禁用'}},
+            {title:'操作',toolbar:'#tableBar',width:180}
+        ]],
+        page:true
+    });
+
+    function openPopup(data){
+        var isEdit = !!data;
+        var d = data || {group:'base',type:'text',options:[],status:1,sort:0};
+        var html = `
+        <form class="layui-form" style="padding:15px;">
+            <input type="hidden" name="id" value="${d.id||''}">
+            <div class="layui-form-item">
+                <label class="layui-form-label">分组</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" name="group" value="${d.group||''}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">配置键名</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" name="name" value="${d.name||''}" ${isEdit?'readonly':''}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">显示标题</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" name="title" value="${d.title||''}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">提示说明</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="tip">${d.tip||''}</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">表单类型</label>
+                <div class="layui-input-block">
+                    <select name="type">
+                        <option value="text">text文本</option>
+                        <option value="number">number数值</option>
+                        <option value="switch">switch开关</option>
+                        <option value="radio">radio单选</option>
+                        <option value="checkbox">checkbox多选</option>
+                        <option value="select">select下拉</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">选项JSON</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="options">${JSON.stringify(d.options||[],null,2)}</textarea>
+                    <div class="layui-word-aux">单选/多选/下拉使用，格式[{"value":"1","label":"开启"}]</div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">默认值</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" name="default_value" value="${d.default_value||''}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" name="sort" value="${d.sort||0}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="status" lay-skin="switch" value="1" ${d.status==1?'checked':''}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveItem">保存</button>
+                </div>
+            </div>
+        </form>
+        `;
+        var idx = layer.open({
+            title: isEdit?'编辑配置项':'新增配置项',
+            type:1,
+            area:['680px','650px'],
+            content:html,
+            success:function(){
+                form.render();
+                form.val('form',{type:d.type});
+            }
+        });
+        form.on('submit(saveItem)',function(postData){
+            try{
+                postData.field.options = JSON.parse(postData.field.options);
+            }catch(e){
+                return layer.msg('options JSON格式错误！',{icon:2});
+            }
+            $.post(SAVE_ITEM_URL, postData.field,function(res){
+                if(res.code===0){
+                    layer.close(idx);
+                    tableIns.reload();
+                    layer.msg('保存成功',{icon:1});
+                }else{
+                    layer.msg(res.msg,{icon:2});
+                }
+            },'json');
+            return false;
+        })
+    }
+
+    $('#addBtn').click(function(){
+        openPopup(null);
+    });
+
+    table.on('tool(itemTable)',function(obj){
+        var row = obj.data;
+        if(obj.event === 'edit'){
+            openPopup(row);
+        }else if(obj.event === 'del'){
+            layer.confirm('确定删除该配置项？删除后配置数据会丢失！',function(){
+                $.post(DELETE_ITEM_URL, {id:row.id},function(res){
+                    if(res.code===0){
+                        tableIns.reload();
+                        layer.msg('删除成功',{icon:1});
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                },'json');
+            })
+        }
+    })
+})
+</script>
+</body>
+</html>

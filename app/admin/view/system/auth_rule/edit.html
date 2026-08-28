@@ -149,6 +149,7 @@
 
 		// 提交表单
 		form.on('submit(save)', function(data) {
+			data.field.id = layui.url().search['id'];
 			$.ajax({
 				type: 'POST',
 				url: RULE_EDIT,

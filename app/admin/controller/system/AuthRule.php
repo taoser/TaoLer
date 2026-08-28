@@ -54,7 +54,9 @@ class AuthRule extends AdminBaseController
 		if(!$request->isPost()){
 			return View::fetch();
 		}
+
 		$data = $request->post(['pid/d','title','name','icon','sort/d','ismenu/d']);
+
 
 		$this->model->add($data);
 		
