@@ -12,9 +12,6 @@ declare (strict_types = 1);
 
 namespace app\index\controller;
 
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\Request;
 use think\facade\View;
 use think\facade\Db;
@@ -31,7 +28,7 @@ class IndexBaseController extends \app\BaseController
 	 *
 	 * @var int|null
 	 */
-	protected int|null $uid = null;
+	protected ?int $uid	= null;
 
 	/**
 	 * 登录用户信息
@@ -40,66 +37,42 @@ class IndexBaseController extends \app\BaseController
 	 */
 	protected array|object $user = [];
 
-	protected bool $isLogin = false;
-
-	protected string $adminEmail;
-
     /**
      * 初始化系统，导航，用户
      * @return void
      */
     protected function initialize()
     {
-		$this->uid = session('?user_id') ? (int)session('user_id') : null;
+		parent::initialize();
 
-		$this->user = $this->userInfo();
+		$this->uid = $this->request->uid;
 
-		$this->adminEmail = Db::name('user')->where('id',1)->cache('adminEmail',3600)->value('email');
+		$this->user = $this->getUserInfo();
 
-		//系统配置
-		$this->showSystem();
-
-		//变量赋给模板
+		// 模板全局赋值，index下所有模板直接可以使用 $user
 		View::assign('user', $this->user);
 
 	}
 
-	//显示当前登录用户
-    protected function userInfo()
+	/**
+	 * 当前用户信息
+	 *
+	 * @return array|object
+	 */
+    protected function getUserInfo(): array|object
     {
-		if($this->uid === null) return [];
-		//1.查询用户
-        try {
-            $user = Db::name('user')
-                ->alias('u')
-                ->join('user_viprule v', 'v.vip = u.vip')
-                ->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as create_time')
-                ->cache(true)
-                ->find($this->uid);
+		if($this->uid === null) {
+			return [];
+		}
 
-        } catch (DataNotFoundException $e) {
-        } catch (ModelNotFoundException $e) {
-        } catch (DbException $e) {
-        }
+		$user = Db::name('user')
+			->alias('u')
+			->join('user_viprule v', 'v.vip = u.vip')
+			->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as create_time')
+			->cache(true)
+			->findOrEmpty($this->uid);
 
-        return $user;
-    }
-
-	
-	//显示网站设置
-    protected function showSystem()
-    {
-        //1.查询分类表获取所有分类
-		$sysInfo = $this->getSystem();
-
-		$assign = [
-			'sysInfo'	=> $sysInfo,
-			'host'		=> $this->request->domain() . '/'
-		];
-		
-        View::assign($assign);
-		
-		return $sysInfo;
+		return $user;
     }
 
     /**

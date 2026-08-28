@@ -2,21 +2,18 @@
 namespace app\middleware;
 
 use think\Request;
-use think\facade\Config;
+use think\Response;
 use think\facade\View;
-use think\facade\Session;
-use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Cache;
-use think\facade\Lang;
-use app\common\helper\FileHelper;
 
 class Index
 {
 	/**
-	 * 前置中间件
+	 * Index模块 前置中间件
 	 * 检测项目是否安装
-	 * 用户登陆及赋值
+	 * 配置视图路径/模板/标签库预加载
+	 * 从session中获取用户ID 存储到$request中
 	 *
 	 * @param Request $request
 	 * @param \Closure $next
@@ -24,19 +21,13 @@ class Index
 	 */
     public function handle(Request $request, \Closure $next)
     {
-        // 检查是否安装
-        $app = $request->pathinfo();
-		if(!file_exists(public_path().'install.lock') && !str_starts_with($app, 'install/')){
+        // 检查系统是否安装
+        $path = $request->pathinfo();
+		if(!file_exists(public_path().'install.lock') && !str_starts_with($path, 'install/')) {
 			return redirect('/install/index');
 		}
 
-		$lang = Config::get('lang.default_lang');
-		// $langArr = glob(root_path().'app/index/lang/*.php');
-		$file = root_path().'app/index/lang/'.$lang.'.php';
-		// 加载语言包
-        Lang::load($file);
-
-        // 配置视图路径
+        // 配置视图路径/模板/标签库预加载
         View::config([
             // 'view_path'			=> app_path() .'index' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
 			'view_path'			=> root_path()  . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
@@ -44,50 +35,11 @@ class Index
 			'taglib_pre_load'	=> $this->setTaglibPreLoad(),
         ]);
 
-		$userInfo = [];
-
-
-		// 登录检测
-		if(session('?user_id')){
-			$userId = session('user_id');
-			$userInfo = $this->getUserInfo($userId);
-		} else {
-			// 未登陆，获取加密的Cookie
-			$cooAuth = Cookie::get('auth');
-			if(!empty($cooAuth)) {
-				$resArr = explode(':',$cooAuth);
-				$userId = end($resArr);
-				$userInfo = $this->getUserInfo($userId);
-				if(!is_null($userInfo)){
-					//验证cookie
-					$salt = Config::get('taoler.salt');
-					$auth = md5($userInfo['name'].$salt).":".$userId;
-					if($auth == $cooAuth){
-						Session::set('user_name', $userInfo['name']);
-						Session::set('user_id', $userId);
-					}
-				}
-			}
-		}
-
-		$request->user = $userInfo;
-		$request->isLogin = !empty($userInfo);
-		View::assign('user', $userInfo);
+		// 从session中获取用户ID 存储到$request中
+		$request->uid = $request->session('user_id');
 
 		return $next($request);
     }
-
-	protected function getUserInfo(int $userId)
-	{
-		$user = Db::name('user')
-			->alias('u')
-			->join('user_viprule v', 'v.vip = u.vip')
-			->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as create_time')
-			->cache(true)
-			->find($userId);
-
-		return $user;
-	}
 
 	/**
 	 * 获取模板名称
@@ -99,7 +51,7 @@ class Index
 	}
 
 	/**
-	 * 获取标签库预加载
+	 * 预加载视图view标签库
 	 * @return string
 	 */
 	protected function setTaglibPreLoad() : string

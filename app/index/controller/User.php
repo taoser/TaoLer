@@ -382,17 +382,15 @@ class User extends IndexBaseController
 	//邮箱激活
 	public function active(Request $request)
 	{
-
 		if($request->isPost()){
 			$email = $request->get('email');
 			$url = $request->domain().$request->root().'/active/index?url='.time().md5($email).$this->uid;
-			$content = "Hi亲爱的{$this->showUser($this->uid)['name']}:</br>您正在进行邮箱激活，请在10分钟内完成激活。 <a href='{$url}' target='_blank' >请点击进行激活</a> </br>若无法跳转请复制链接激活：{$url}";
+			$content = "Hi亲爱的{$this->user['name']}:</br>您正在进行邮箱激活，请在10分钟内完成激活。 <a href='{$url}' target='_blank' >请点击进行激活</a> </br>若无法跳转请复制链接激活：{$url}";
 			$res = hook('mailtohook',[$email,'邮箱激活',$content]);
 			if($res){
 				return json(['status'=>0]);
-			}else{
-				return json(['status'=>-1,'发送邮件出错！']);
 			}
+			return json(['status'=>-1,'发送邮件出错！']);
 		}
 	}
 	
@@ -419,12 +417,15 @@ class User extends IndexBaseController
 		}
 	}
 	
-	//退出账户
-	public function logout()
+	/**
+	 * 退出账户
+	 *
+	 * @return Response
+	 */
+	public function logout(Request $request): Response
 	{
-		Session::delete('user_name');
 		Session::delete('user_id');
-		Cookie::delete('auth');
+		Session::delete('user_name');
 
 		if(Session::has('user_id')){
 			return json(['code' => -1, 'msg' => '退出失败']);

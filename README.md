@@ -2,62 +2,147 @@
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 # TaoLer
 
-> TaoLer是一个简单迅捷的管理系统，支持千万级别数据，插件化开发，适用于企业、个人或组织建站需求，小程序app开发。
+> TaoLer，简单迅捷的内容管理系统，支持千万级别数据，插件化开发，适用于企业、个人建站需求，小程序、app开发。
 
-支持多模板、多单页自由切换，网站风格可定制性强，支持插件化开发，方便二开。可做为企业门户网站，生活服务，学习问答笔记，文章分享等。
-默认内置一套完整的**问答+博客+论坛+新闻+轻社区化+企业站+商店**的模板系统，还可持续增加模块，一个系统拥有多个版式的网站风格。
+## 📖 简介
+- 可轻松搭建web站点，api接口，小程序、app后端数据管理等；一套系统多端应用。
+- 系统使用简单，新手容易学习，看的懂，开发效率高。
+- 企业站、问答、博客、论坛、新闻、商城，或作为后端管理皆可选择。
+- PHP语言新特性，如：异步IO、协程、事件驱动等，使系统运行更高效、更稳定。
+  
+## ✨ 功能特性
+- 采用TinkPHP8为基础框架，可使用传统FPM模式 或 Workerman5.2/Swoole常驻内存驱动模式
+- 采用动态密码加密，相同密码在入库时具有唯一性，即使管理员也无法破解，用户信息安全牢固
+- 自适应多合一模板，站点视图支持模版风格切换，支持分类单独绑定模版模块，一套模版多风格
+- 成熟的热插拔插件化系统，功能无限拓展，让您专注于您的业务逻辑，数据交由系统维护
+- 支持多用户角色，可自由分配权限，确保数据安全
+- 完善的后台系统，管理便捷，动态菜单和权限角色分配系统。支持3级菜单和无限极分类
+- 双升级系统，可支持自动和手动升级。可在线检测并升级系统，保持网站的更新和安全
+- 代码开源，更新频繁，持续维护，避免断更焦虑，确保系统稳定运行
+- 项目会长期迭代更新维护，优化更新
+- 新版插件管理机制3.x
+- 支持多语言
 
+## 🖼️ 截图/演示（可选）
+放效果图、截图、GIF演示
+![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/3cf60f90f7d75b7ddb7efedd96b9e62c.png "TaoLerCMS首页")
+![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/6ea6bb3e40d9a3bc7c9ec28f3e0d7b90.png "TaoLerCMS列表")
 
+## 🚀 快速开始
+### 环境要求
+- 4.x版本构架：
+	- 构架：Tinkphp8
+	- 环境：php8.5 + mysql9.x
+	- 驱动：可选 Workerman5.2 + Swoole常驻内存驱动模式
+  
+### 📚 使用文档
  * 官网：https://www.aieok.com
  * 文档：http://wiki.aieok.com
 
-#### 项目地址
+### 项目地址
 
-1.	gitee	https://www.gitee.com/toogee/Taoler
-2.	github	https://www.github.com/taoser/TaoLer
-3.  composer create-project taoser/taoler
+- gitee	https://www.gitee.com/toogee/Taoler
+- github https://www.github.com/taoser/TaoLer
+  
+```bash
+composer create-project taoser/taoler
+```
 
-![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/3cf60f90f7d75b7ddb7efedd96b9e62c.png "TaoLerCMS")
+## 🛠️ 开发指南
+### 目录结构
+```bash
+www  WEB部署目录（或者子目录）
+├─addons			插件目录
+|  ├─pay				支付插件
+|  |  ├─controller			插件控制器目录
+|  |  ├─lang				插件语言目录
+|  |  ├─model				插件模型目录
+|  |  ├─route				插件路由目录
+|  |  ├─view				插件视图目录
+|  |  |  ├─index			插件控制器视图目录
+|  |  |  |  ├─index.html	插件控制器视图文件
+|  |  |  |  └─gopay.html	插件支付视图文件
+|  |  |  └─plugin			插件钩子视图目录
+|  |  |     ├─pay.html		插件钩子视图文件
+|  |  |     └─...			更多钩子视图文件
+|  |  ├─data				插件数据目录
+|  |  ├─config.php			插件配置文件
+|  |  ├─info.ini			插件信息文件
+|  |  └─Plugin.php			插件类入口文件
+|  |
+|  ├─sign				签到插件
+|  └─...				更多插件
+|
+├─app           应用目录
+|  ├─admin				admin管理模块
+|  ├─api				api接口模块
+|  ├─common      		common目录
+|  ├─entity     		entity数据目录
+|  ├─event      		event目录
+|  ├─facade     		facade静态门面目录
+|  ├─index      		index前端模块
+|  ├─install      		引导安装模块
+|  ├─lang      			多语言目录
+|  ├─listener      		事件监听器目录
+|  ├─middleware     	中间件目录
+│  ├─controller			控制器目录
+│  ├─model				模型目录
+|  ├─service			服务目录
+|  ├─observer			观察者目录
+|  ├─subscribe			订阅目录
+|  ├─validate			验证目录
+│  ├─ ...             	更多类库目录
+│  │
+│  ├─common.php         公共函数文件
+│  └─event.php          事件定义文件
+│
+├─config		配置目录
+│  ├─addons.php         插件配置
+│  ├─app.php            应用配置
+│  ├─cache.php          缓存配置
+│  ├─console.php        控制台配置
+│  ├─cookie.php         Cookie配置
+│  ├─database.php       数据库配置
+│  ├─filesystem.php     文件磁盘配置
+│  ├─lang.php           多语言配置
+│  ├─log.php            日志配置
+│  ├─middleware.php     中间件配置
+│  ├─route.php          URL和路由配置
+│  ├─session.php        Session配置
+│  ├─trace.php          Trace配置
+│  ├─taoler .php        系统配置
+│  ├─throttle.php       限流配置
+│  ├─view.php           视图配置
+│  └─worker.php         Workererman配置
+│
+├─view            视图目录
+├─route           路由定义目录
+│  ├─route.php          路由定义文件
+│  └─ ...   
+│
+├─public                WEB目录（对外访问目录）
+│  ├─index.php          入口文件
+│  ├─router.php         快速测试文件
+│  └─.htaccess          用于apache的重写
+│
+├─extend                扩展类库目录
+├─runtime               应用的运行时目录（可写，可定制）
+├─vendor                Composer类库目录
+├─.example.env          环境变量示例文件
+├─composer.json         composer 定义文件
+├─LICENSE.txt           授权说明文件
+├─README.md             README 文件
+├─think                 命令行入口文件
+```
 
-#### 介绍
-
-1.	系统采用Workerman5.2驱动 + TinkPHP8框架开发，底层安全可靠，运行效率高，毫秒级响应。
-2.	采用动态密码加密，相同密码在入库时具有唯一性，即使管理员也无法破解，用户信息安全牢固。
-3.	自适应前端，桌面和移动端访问界面友好简洁，模块清晰。
-4.	多合一单页模板，可自由切换单页显示，分类可以绑定不同模版模块，单页模块，论坛模块，问答模板，企业站模板，产品模块等自由切换风格。
-5.	完善的后台系统，管理便捷，动态菜单和权限角色分配系统。支持3级菜单和无限极分类。
-6.	双升级系统，可支持自动和手动升级。可在线检测并升级系统，保持网站的更新和安全。
-7.	代码开源，更新频繁，持续维护，避免断更焦虑，确保系统稳定运行。
-8.	项目会长期迭代更新维护，优化更新。
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
-
-9.	新版插件管理机制3.x
-
-![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/6ea6bb3e40d9a3bc7c9ec28f3e0d7b90.png "TaoLerCMS")
-
-#### 构架组成
-- 4.x版本构架：
-	- 构架：Workerman5.2 + Tinkphp8
-	- 环境：php8.5 + mysql9.x
-	
-#### 构架介绍
-	经过长期验证的国产框架,学习简单，资料丰富，出色的性能和至简代码的，注重易用性和开发效率。
-	
-![alt taoler官网](https://www.aieok.com/storage/1/article_pic/20220802/edd9bfc2ca1d1ec52a551b2233b5ab62.png "TaoLerCMS")
-	
-#### 重点
-* 长期维护，对抗消亡
-* 迭代及时，查漏补缺
-* 多模板多模块，一站顶多站
-
-#### 安装教程
+### 安装教程
 
 1.	首选确保满目使用环境要求，php > 8.5, mysql > 9
 2.	https://github.com/taoser/TaoLer/archive/refs/heads/master.zip
 	git下载：https://gitee.com/toogee/TaoLer 
 	官网下载：https://www.aieok.com
 	
-#### 引导安装
+### 引导安装
 
 1. 绑定域名 
  

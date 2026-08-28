@@ -18,6 +18,7 @@ use think\facade\Db;
 use think\facade\Route;
 use app\common\helper\Msgres;
 use app\common\helper\ResponseHelper;
+use think\facade\Session;
 
 use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
@@ -39,6 +40,16 @@ class Index extends IndexBaseController
      */
     public function index(Request $request)
     {
+		// Session::set('user_id', 1);
+
+		// $uid = Session::get('user_id_1');
+
+		$uid = $request->session('user_id');
+
+		$tagItems = Cache::getTagItems('tag');
+
+		var_dump($uid, $tagItems);
+
 		// var_dump(get_addons_config('ads',true));
 	// var_dump(__DIR__);
 	// echo 111;

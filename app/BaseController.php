@@ -4,10 +4,11 @@ declare (strict_types = 1);
 namespace app;
 
 use think\App;
-use think\exception\ValidateException;
+use think\Request;
 use think\Validate;
 use think\facade\Db;
-use think\Request;
+use think\facade\View;
+use think\exception\ValidateException;
 use app\common\helper\Uploads;
 use app\common\helper\IdEncode;
 
@@ -63,7 +64,10 @@ abstract class BaseController
 
     // 初始化
     protected function initialize()
-    {}
+    {
+        $sysInfo = $this->getSystem();
+        View::assign('sysInfo', $sysInfo);
+    }
 
     /**
      * 验证数据
@@ -103,14 +107,13 @@ abstract class BaseController
     }
 
     /**
-	 * // 查、改、删 tabname
+	 * 分表查询。查、改、删时, 根据id获取所属表的表名
 	 *
-	 * @param integer $id
-	 * @return string
+	 * @param int $id 文章id
+	 * @return string 表名 tao_article,tao_article_1...
 	 */
 	protected function getTableName(int $id) : string
 	{
-		
 		$suffix = '';
 		$num = (int) floor(($id - 1) / config('taoler.single_table_num'));
 		if($num > 0) {
@@ -119,15 +122,16 @@ abstract class BaseController
 		}
 
 		// 表名
-		$tableName = config('database.connections.mysql.prefix') . 'article' . $suffix; 
+		$tableName = config('database.connections.mysql.prefix') . 'article' . $suffix;
+
 		return $tableName;
 	}
 
 	/**
-     * 查、改、删时需要传入id,获取所在表的后缀
+     * 分表查询。查、改、删时,根据id获取所属表的后缀
      *
-     * @param integer $id
-     * @return string
+     * @param int $id 文章id
+     * @return string 表后缀 _1,_2...
      */
     protected function byIdGetSuffix(int $id): string
     {
@@ -152,7 +156,7 @@ abstract class BaseController
     }
 	
 	//域名协议转换 把数据库中的带HTTP或不带协议的域名转换为当前协议的域名前缀
-	protected function getHttpUrl($url)
+	protected function getHttpUrl(string $url) : string
 	{
 		//域名转换为无http协议
         $www = stripos($url,'://') ? substr(stristr($url,'://'),3) : $url;

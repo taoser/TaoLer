@@ -34,23 +34,20 @@ class AdminAuth
      */
     public function handle($request, \Closure $next)
     {
-        // if(empty($request->param('sec')) || $request->param('sec') != 100){
-        //     return response('403','403','text/plain');
-        // }
-
+        // admin模块名称
         $adminModuleName = Config::get('taoler.admin_module_name');
         $controller = $request->controller();
         $action = $request->action();
-        // var_dump($controller);
-        // var_dump($action);
+        // var_dump($controller,$action);
+
         $path = strtolower($controller) . '/' . strtolower($action);
 
-        // 加载语言包
-        Lang::load([
-            app_path() . 'admin/lang/zh-cn.php',
-            app_path() . 'admin/lang/en-us.php',
-            app_path() . 'admin/lang/zh-tw.php',
-        ]);
+        // 默认语言
+        // $lang = Config::get('lang.default_lang');
+        // // $langArr = glob(app_path().'admin/lang/*.php');
+		// $file = app_path().'admin/lang/'.$lang.'.php';
+        // // 加载语言包
+        // Lang::load($file);
 
         // 配置视图路径
         View::config([
