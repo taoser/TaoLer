@@ -102,13 +102,33 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
                 break;
 
             case 'upload':
+                // 上传类型：input存储value(文件地址) + 上传按钮 + 文件类型标签 + 图片预览
+                let fileUrl = item.value||'';
+                let ext = parseFileExtFromUrl(fileUrl);
+                let fType = getFileTypeByExt(ext);
+                let tag = getFileTagInfo(fType);
+
+                let previewHtml = '';
+                // 图片类型显示缩略预览
+                if(fileUrl && fType === 'image'){
+                    previewHtml = `<img src="${fileUrl}" style="max-height:28px;max-width:240px;">`;
+                } else {
+                    previewHtml = `<span class="layui-badge ${tag.cls} file-type-tag">${tag.text}</span>`;
+                }
+
                 // 上传类型：input存储value(文件地址) + 上传按钮，上传成功回调回填
                 html += `
-                <div class="upload-wrap">
+                <div class="layui-input-wrap upload-wrap">
+                    ${previewHtml}
                     <input class="layui-input cfg-upload-input" name="${item.name}" value="${item.value||''}" placeholder="文件地址/上传后自动填充">
                     <button type="button" class="layui-btn layui-btn-primary cfg-upload-btn">选择文件</button>
                 </div>`;
                 break;
+
+            case 'areatext':
+                // 多行文本域 textarea
+                html += `<textarea class="layui-textarea" name="${item.name}" rows="4">${item.value||''}</textarea>`;
+            break;
 
             default:
                 html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input">`;
@@ -144,6 +164,8 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
             upload.render({
                 elem: this,
                 url: UPLOAD_URL,
+                accept: 'file', // 普通文件
+                exts: 'jpg|jpeg|png|gif|mp3|avi|mpg|m4|zip|rar|7z',
                 done: function(res){
                     if(res.code===0){
                         // 上传成功，回填url到同行的input
@@ -214,6 +236,55 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
         },'json');
     }
 
+    /**
+     * 根据扩展名判断文件类型
+     * @param {string} ext 小写扩展名，如 jpg、mp4、zip
+     * @returns {string} image|video|audio|archive|other
+     */
+    function getFileTypeByExt(ext){
+        if(!ext) return 'other';
+        ext = ext.toLowerCase().trim();
+        const imageExts  = ['jpg','jpeg','png','gif','bmp','webp','svg'];
+        const videoExts  = ['mp4','mov','avi','mkv','flv','wmv'];
+        const audioExts  = ['mp3','wav','flac','aac','ogg'];
+        const archiveExts= ['zip','rar','7z','tar','gz','bz2'];
+
+        if(imageExts.includes(ext)) return 'image';
+        if(videoExts.includes(ext)) return 'video';
+        if(audioExts.includes(ext)) return 'audio';
+        if(archiveExts.includes(ext)) return 'archive';
+        return 'other';
+    }
+
+    /**
+     * 从url路径解析文件扩展名
+     * @param {string} url
+     * @returns {string}
+     */
+    function parseFileExtFromUrl(url){
+        if(!url) return '';
+        const arr = url.split('?')[0].split('.');
+        if(arr.length <2) return '';
+        return arr.pop().toLowerCase();
+    }
+
+    /**
+     * 获取类型对应的标签文字与样式class
+     * @param {string} fileType
+     * @returns {{text:string,cls:string}}
+     */
+    function getFileTagInfo(fileType){
+        const map = {
+            image:   {text:'图片',cls:'layui-bg-green'},
+            video:   {text:'视频',cls:'layui-bg-blue'},
+            audio:   {text:'音频',cls:'layui-bg-purple'},
+            archive: {text:'压缩包',cls:'layui-bg-orange'},
+            other:   {text:'其他',cls:'layui-bg-gray'}
+        };
+        return map[fileType] || map.other;
+    }
+
+    
     /**
      * 统一保存回调：data.field 就是当前触发form（当前group）的所有字段
      * 因每个group是独立form，天然只提交当前group数据

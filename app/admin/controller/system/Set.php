@@ -258,7 +258,7 @@ class Set extends AdminBaseController
 	{
 		$param = $request->post('field');
         $uploads = new \app\common\helper\Uploads();
-        $upRes = $uploads->put('file','SYS_logo',2000,'image');
+        $upRes = $uploads->put('file','SYS_logo',2000,'image|application');
         $logoJson = $upRes->getData();
 		if($logoJson['status'] == 0){
 			if($param == 'logo'){

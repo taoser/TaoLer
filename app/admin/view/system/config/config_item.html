@@ -32,7 +32,7 @@
 
 <!-- 状态开关模板 -->
 <script type="text/html" id="statusTpl">
-    <input type="checkbox" lay-skin="switch" lay-filter="tableStatusSwitch" data-id="{{d.id}}" {{d.status===1?'checked':''}} >
+    <input type="checkbox" lay-skin="switch" lay-text="启用|禁用" lay-filter="tableStatusSwitch" data-id="{{d.id}}" {{d.status===1?'checked':''}} >
 </script>
 
 {__block__}
@@ -65,7 +65,7 @@
         var laydate = layui.laydate;
 
         const OPTION_TYPES = ['radio','checkbox','select'];
-        const NORMAL_TYPES = ['text','number','switch','date','upload'];
+        const NORMAL_TYPES = ['text','number','switch','date','upload','areatext'];
 
         var tableIns = table.render({
             elem:'#itemTable',
@@ -78,11 +78,13 @@
                 {field:'group',title:'分组',width:100},
                 {field:'name',title:'配置键名'},
                 {field:'title',title:'显示名称'},
-                {field:'type',title:'表单类型',width:110},
+                {field:'type',title:'表单类型',width:100,align:'center'},
                 {field:'value',title:'当前值',minWidth:150},
+                {field:'options',title:'选项',minWidth:150, templet:'<div>{{JSON.stringify(d.options)}}</div>'},
+                {field:'default_value',title:'默认值',minWidth:150},
                 {field:'tip',title:'提示',minWidth:200},
                 {field:'sort',title:'排序',width:80,edit:'text',align:'center'},
-                {field:'status',title:'状态',width:80,templet:'#statusTpl'},
+                {field:'status',title:'状态',width:90,templet:'#statusTpl',align:'center'},
                 {title:'操作',toolbar:'#tableBar',width:120}
             ]],
             page:true,
@@ -206,6 +208,14 @@
                 </div>
                 `;
             }
+            if(cfgType === 'areatext') {
+                /**
+                * areatext 多行文本域
+                * defVal：数据库存储value值
+                */
+                return `<textarea class="layui-textarea" name="value" rows="4">${(defVal||'')}</textarea>`;
+            }
+
             if(!OPTION_TYPES.includes(cfgType)){
                 return `<input class="layui-input" name="value" value="${defVal||''}">`;
             }
@@ -267,6 +277,7 @@
                     <div class="layui-input-block">
                         <select name="type" id="cfg_type_select" lay-filter="cfg_type">
                             <option value="text"        ${d.type==='text'?'selected':''}>text文本</option>
+                            <option value="areatext"    ${d.type==='areatext'?'selected':''}>areatext文本域</option>
                             <option value="number"      ${d.type==='number'?'selected':''}>number数值</option>
                             <option value="switch"      ${d.type==='switch'?'selected':''}>switch开关</option>
                             <option value="radio"       ${d.type==='radio'?'selected':''}>radio单选</option>
@@ -360,6 +371,8 @@
                             layui.upload.render({
                                 elem: $defWrap.find('.upload-btn'),
                                 url: UPLOAD_URL, // 你的后台文件上传接口
+                                accept: 'file', // 普通文件
+                                exts: 'jpg|jpeg|png|gif|mp3|avi|mpg|m4|zip|rar|7z',
                                 done: function(res){
                                     if(res.code === 0){
                                         // 上传成功，回填文件url到input
