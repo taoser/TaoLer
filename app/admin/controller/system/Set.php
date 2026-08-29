@@ -254,9 +254,9 @@ class Set extends AdminBaseController
 	}
 
 	//上传logo
-	public function upload()
+	public function upload(Request $request)
 	{
-		$param = Request::param('field');
+		$param = $request->post('field');
         $uploads = new \app\common\helper\Uploads();
         $upRes = $uploads->put('file','SYS_logo',2000,'image');
         $logoJson = $upRes->getData();
@@ -269,7 +269,7 @@ class Set extends AdminBaseController
 			}
 			
 			if($result){
-				$res = ['code'=>0,'msg'=>'更新logo成功'];
+				$res = ['code'=>0,'msg'=>'更新logo成功', 'data' => ['url' => $logoJson['url']]];
 			} else {
 				$res = ['code'=>-1,'msg'=>'上传成功，数据无须更新'];
 			}

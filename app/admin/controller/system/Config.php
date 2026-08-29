@@ -25,7 +25,7 @@ class Config extends AdminBaseController
 
     public function set()
     {
-        return View::fetch();
+        return View::fetch('config_form');
     }
 
     /**
@@ -46,7 +46,10 @@ class Config extends AdminBaseController
     public function batchSave(Request $request): Response
     {
         $post = $request->post();
-        $this->entity->batchSaveValue($post);
+        $group = trim((string)$request->post('group', ''));
+        unset($post['group']); // 移除分组标识，避免当配置项处理
+        
+        $this->entity->batchSaveValue($post, $group);
         return json(['code' => 0, 'msg' => '保存成功']);
     }
 

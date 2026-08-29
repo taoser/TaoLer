@@ -96,12 +96,17 @@ class SystemConfig extends BaseEntity
     }
 
     /**
-     * 批量保存表单提交的配置值（后台表单页面批量更新value）
+     * 批量保存配置值（支持按group只更新当前分组）
      * @param array $postData ['site_name'=>'xxx','site_status'=>'1']
+     * @param string $group 分组名，为空则更新全部配置项，否则仅更新指定分组的配置项
      */
-    public function batchSaveValue(array $postData): void
+    public function batchSaveValue(array $postData, string $group = ''): void
     {
-        $allRows = $this->select();
+        $query = $this;
+        if ($group !== '') {
+            $query = $query->where('group', $group);
+        }
+        $allRows = $query->select();
         foreach ($allRows as $row) {
             // 如果是switch类型，post不存在该key，则赋值0
             if ($row['type'] === 'switch' && !array_key_exists($row['name'], $postData)) {
@@ -129,9 +134,12 @@ class SystemConfig extends BaseEntity
      */
     public function getGroupFormList(): array
     {
-        $rows = $this->order('sort asc')->select();
+        $rows = $this->order(['sort' => 'asc', 'group' => 'desc'])->select()->toArray();
         $groups = [];
         foreach ($rows as $r) {
+            if(is_null($r['options'])){
+                $r['options'] = [];
+            }
             $groups[$r['group']][] = $r;
         }
         return $groups;
@@ -142,7 +150,7 @@ class SystemConfig extends BaseEntity
      */
     public function getConfigList(?string $keyword, int $page = 1, int $limit = 20): array
     {
-        $query = $this->order('sort asc,id desc');
+        $query = $this->order(['group' => 'asc', 'sort' => 'asc']);
         
         if($keyword){
             $query->whereOr('group', $keyword)->whereOr('name','like','%'.$keyword.'%');

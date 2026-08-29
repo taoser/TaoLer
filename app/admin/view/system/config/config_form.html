@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>网站设置</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <style>
+        body{background:#f4f6f9;}
+        .wrap-box{max-width:960px;margin:24px auto;}
+        .card{background:#fff;border-radius:10px;padding:24px;box-shadow:0 1px 8px rgba(0,0,0,0.06);}
+        .group-actions{margin-top:16px;}
+        .upload-wrap{display:flex;gap:10px;align-items:center;}
+    </style>
+</head>
+<body>
+<div class="wrap-box">
+    <div class="card">
+        <!-- 用 layui-tabs 按 group 分组 -->
+        <div class="layui-tab layui-tab-brief" lay-filter="cfgTabs" id="cfgTabs">
+            <ul class="layui-tab-title" id="tabTitle"></ul>
+            <div class="layui-tab-content" id="tabContent"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script>
+layui.use(['form','jquery','layer','laydate','upload','element'],function(){
+    var $ = layui.jquery;
+    var form = layui.form;
+    var layer = layui.layer;
+    var laydate = layui.laydate;
+    var upload = layui.upload;
+    var element = layui.element;
+
+    const MODULE_NAME = '/3MPasq1n';
+
+    // 需要 options 的可选类型（与配置项管理页保持一致）
+    const OPTION_TYPES = ['radio','checkbox','select'];
+
+    // 文件上传接口（根据你的项目实际地址调整）
+    const UPLOAD_URL = MODULE_NAME + '/system/set/upload';
+
+    
+    const FORM_DATA_URL = MODULE_NAME + '/system_config/get_form_data';
+    const BATCH_SAVE_URL = MODULE_NAME + '/system_config/batch_save';
+
+    /**
+     * 渲染单个配置项的表单控件，返回html
+     * @param item 配置项 {name,title,tip,type,value,options}
+     */
+    function renderControl(item){
+        let html = '<div class="layui-form-item">';
+        html += '<label class="layui-form-label">'+(item.title||'')+'</label>';
+        html += '<div class="layui-input-block">';
+
+        // 关键兜底：options 为 null / undefined 强制转为空数组
+        let opts = item.options || [];
+
+        switch(item.type) {
+            case 'text':
+                html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input">`;
+                break;
+
+            case 'number':
+                html += `<input type="number" name="${item.name}" value="${item.value||''}" class="layui-input">`;
+                break;
+
+            case 'switch':
+                // 开关：1开启 0关闭；兼容value为null
+                const chk = String(item.value ?? '0') === '1' ? 'checked' : '';
+                html += `<input type="checkbox" name="${item.name}" lay-skin="switch" ${chk}>`;
+                break;
+
+            case 'radio':
+                for(var i=0;i<opts.length;i++){
+                    var o=opts[i];
+                    var rchk = String(item.value ?? '')===String(o.value)?'checked':'';
+                    html += `<input type="radio" name="${item.name}" value="${o.value}" title="${o.label}" ${rchk}>`;
+                }
+                break;
+
+            case 'checkbox':
+                var vals = (item.value||'').split(',');
+                for(var i=0;i<opts.length;i++){
+                    var o=opts[i];
+                    var cchk = vals.includes(String(o.value))?'checked':'';
+                    html += `<input type="checkbox" name="${item.name}[]" value="${o.value}" title="${o.label}" ${cchk}>`;
+                }
+                break;
+
+            case 'select':
+                html += `<select name="${item.name}">`;
+                html += `<option value="">请选择</option>`;
+                for(var i=0;i<opts.length;i++){
+                    var o=opts[i];
+                    var schk = String(item.value ?? '')===String(o.value)?'selected':'';
+                    html += `<option value="${o.value}" ${schk}>${o.label}</option>`;
+                }
+                html += `</select>`;
+                break;
+
+            case 'date':
+                // 日期：value存日期字符串，laydate渲染
+                html += `<input class="layui-input cfg-laydate" name="${item.name}" value="${item.value||''}" readonly placeholder="请选择日期">`;
+                break;
+
+            case 'upload':
+                // 上传类型：input存储value(文件地址) + 上传按钮，上传成功回调回填
+                html += `
+                <div class="upload-wrap">
+                    <input class="layui-input cfg-upload-input" name="${item.name}" value="${item.value||''}" placeholder="文件地址/上传后自动填充">
+                    <button type="button" class="layui-btn layui-btn-primary cfg-upload-btn">选择文件</button>
+                </div>`;
+                break;
+
+            default:
+                html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input">`;
+        }
+
+        html += '</div>';
+        if(item.tip){
+            html += '<div class="layui-input-block">';
+            html += '<div class="layui-form-mid layui-word-aux">'+item.tip+'</div>';
+            html += '</div>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+
+    /**
+     * 初始化容器内所有日期组件（date类型）
+     */
+    function initLaydate($container){
+        $container.find('.cfg-laydate').each(function(){
+            laydate.render({ elem: this, type:'date' });
+        });
+    }
+
+    /**
+     * 初始化容器内所有上传组件（upload类型）
+     * 上传成功后，把返回的url回填到同组input
+     */
+    function initUploads($container){
+        $container.find('.cfg-upload-btn').each(function(){
+            var $btn = $(this);
+            upload.render({
+                elem: this,
+                url: UPLOAD_URL,
+                done: function(res){
+                    if(res.code===0){
+                        // 上传成功，回填url到同行的input
+                        $btn.closest('.upload-wrap').find('.cfg-upload-input').val(res.data.url);
+                        layer.msg('上传成功',{icon:1,time:1000});
+                    }else{
+                        layer.msg(res.msg||'上传失败',{icon:2});
+                    }
+                },
+                error: function(){
+                    layer.msg('上传请求异常',{icon:2});
+                }
+            });
+        });
+    }
+
+    /**
+     * 渲染分组tabs
+     */
+    function loadForm(){
+        $.post(FORM_DATA_URL, {}, function(res){
+            if(res.code!==0) return layer.msg(res.msg,{icon:2});
+            var groupData = res.data || {};   // { groupName: [items...] }
+            var groupKeys = Object.keys(groupData);
+
+            // 渲染tab标题
+            var titleHtml = '';
+            groupKeys.forEach(function(g, idx){
+                titleHtml += `<li ${idx===0?'class="layui-this"':''}>${g}</li>`;
+            });
+            $('#tabTitle').html(titleHtml);
+
+            // 渲染tab内容：每个group一个独立form
+            var contentHtml = '';
+            groupKeys.forEach(function(g, idx){
+                var items = groupData[g]||[];
+                var inner = '';
+                items.forEach(function(item){
+                    if(item.status !== 1) return; // 跳过禁用项
+                    inner += renderControl(item);
+                });
+                // 隐藏group字段，用于提交时标识分组
+                inner += `<input type="hidden" name="_group" value="${g}">`;
+                // 该分组的保存按钮
+                inner += `<div class="layui-form-item group-actions">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="groupSave">保存 ${g}</button>
+                    </div>
+                </div>`;
+
+                // form 去掉 lay‑filter="cfgForm"
+                contentHtml += `<div class="layui-tab-item ${idx===0?'layui-show':''}">
+                    <form class="layui-form">${inner}</form>
+                </div>`;
+            });
+            $('#tabContent').html(contentHtml);
+
+            // 只渲染tab组件
+            element.render('tab', 'cfgTabs');
+            // 全局渲染所有表单组件（switch/radio/select/checkbox）
+            form.render();
+
+            // 初始化日期、上传组件
+            $('#tabContent').find('.layui-tab-item').each(function(){
+                initLaydate($(this));
+                initUploads($(this));
+            });
+        },'json');
+    }
+
+    /**
+     * 统一保存回调：data.field 就是当前触发form（当前group）的所有字段
+     * 因每个group是独立form，天然只提交当前group数据
+     */
+    form.on('submit(groupSave)',function(data){
+        var field = data.field;
+        var group = field._group || '';
+
+        // 当前group内的switch：未勾选时不提交，手动补0
+        var $form = $(data.form);
+        $form.find('input[lay-skin="switch"]').each(function(){
+            var name = $(this).attr('name');
+            if(!field.hasOwnProperty(name)){
+                field[name] = '0';
+            }
+        });
+        // switch勾选时layui提交的值为"on"，统一转1
+        $form.find('input[lay-skin="switch"]:checked').each(function(){
+            field[$(this).attr('name')] = '1';
+        });
+
+        // 删除辅助字段
+        delete field._group;
+
+        // 只提交当前group的数据
+        $.post(BATCH_SAVE_URL,{group:group, ...field},function(res){
+            if(res.code===0){
+                layer.msg('保存成功',{icon:1});
+            }else{
+                layer.msg(res.msg,{icon:2});
+            }
+        },'json');
+        return false;
+    });
+
+    loadForm();
+});
+</script>
+</body>
+</html>

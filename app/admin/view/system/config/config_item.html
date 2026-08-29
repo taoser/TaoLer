@@ -50,6 +50,7 @@
     const DELETE_ITEM_URL = MODULE_NAME + '/system_config/delete_item';
     const UPDATE_SORT_URL = MODULE_NAME + '/system_config/update_sort';
     const UPDATE_STATUS_URL = MODULE_NAME + '/system_config/update_status';
+    const UPLOAD_URL = MODULE_NAME + '/system/set/upload';
 
 
     const CONFIG_URL = MODULE_NAME + '/system_config/get';
@@ -70,7 +71,7 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
     var laydate = layui.laydate;
 
     const OPTION_TYPES = ['radio','checkbox','select'];
-    const NORMAL_TYPES = ['text','number','switch','date'];
+    const NORMAL_TYPES = ['text','number','switch','date','upload'];
 
     var tableIns = table.render({
         elem:'#itemTable',
@@ -84,10 +85,11 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
             {field:'name',title:'配置键名'},
             {field:'title',title:'显示名称'},
             {field:'type',title:'表单类型',width:110},
-            {field:'value',title:'当前值'},
-            {field:'sort',title:'排序',width:80,edit:'text'},
-            {field:'status',title:'状态',width:100,templet:'#statusTpl'},
-            {title:'操作',toolbar:'#tableBar',width:180}
+            {field:'value',title:'当前值',minWidth:150},
+            {field:'tip',title:'提示',minWidth:200},
+            {field:'sort',title:'排序',width:80,edit:'text',align:'center'},
+            {field:'status',title:'状态',width:80,templet:'#statusTpl'},
+            {title:'操作',toolbar:'#tableBar',width:120}
         ]],
         page:true,
         request:{
@@ -125,9 +127,9 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
             id:row.id,
             sort:value
         },function(res){
-            if(res.code===0){
+            if(res.code === 0){
                 layer.msg('排序已更新',{icon:1,time:1000});
-            }else{
+            } else {
                 layer.msg(res.msg||'更新失败',{icon:2});
                 tableIns.reload();
             }
@@ -135,7 +137,7 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
     });
 
     // =========表格内状态switch开关切换=========
-    form.on('switch(tableStatusSwitch)',function(obj){
+    form.on('switch(tableStatusSwitch)',function(obj) {
         let id = $(this).data('id');
         let status = obj.elem.checked ? 1 : 0;
         $.post(UPDATE_STATUS_URL, {
@@ -144,6 +146,9 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
         },function(res){
             if(res.code !== 0){
                 layer.msg(res.msg||'状态更新失败',{icon:2});
+                tableIns.reload();
+            } else {
+                layer.msg('状态已更新',{icon:1,time:1000});
                 tableIns.reload();
             }
         },'json');
@@ -188,6 +193,24 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
         }
         if(cfgType === 'date'){
             return `<input class="layui-input def-laydate" name="value" value="${defVal||''}" readonly placeholder="请选择日期">`;
+        }
+        if(cfgType === 'upload'){
+            /**
+            * upload上传类型
+            * defVal：数据库存储的文件路径/url(value)
+            * input name="value" 保存最终值；按钮触发layui上传组件
+            * 外层div用于js绑定上传实例
+            */
+            return `
+            <div class="upload-wrap">
+                <div class="layui-input-inline" style="width:calc(100% - 110px);">
+                    <input class="layui-input upload-input" name="value" value="${defVal||''}" placeholder="文件URL/上传后自动填充">
+                </div>
+                <div class="layui-input-inline">
+                    <button type="button" class="layui-btn layui-btn-primary upload-btn">选择文件</button>
+                </div>
+            </div>
+            `;
         }
         if(!OPTION_TYPES.includes(cfgType)){
             return `<input class="layui-input" name="value" value="${defVal||''}">`;
@@ -249,13 +272,14 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
                 <label class="layui-form-label">表单类型</label>
                 <div class="layui-input-block">
                     <select name="type" id="cfg_type_select" lay-filter="cfg_type">
-                        <option value="text"    ${d.type==='text'?'selected':''}>text文本</option>
-                        <option value="number"  ${d.type==='number'?'selected':''}>number数值</option>
-                        <option value="switch"  ${d.type==='switch'?'selected':''}>switch开关</option>
-                        <option value="radio"   ${d.type==='radio'?'selected':''}>radio单选</option>
-                        <option value="checkbox"${d.type==='checkbox'?'selected':''}>checkbox多选</option>
-                        <option value="select"  ${d.type==='select'?'selected':''}>select下拉</option>
-                        <option value="date"    ${d.type==='date'?'selected':''}>date日期</option>
+                        <option value="text"        ${d.type==='text'?'selected':''}>text文本</option>
+                        <option value="number"      ${d.type==='number'?'selected':''}>number数值</option>
+                        <option value="switch"      ${d.type==='switch'?'selected':''}>switch开关</option>
+                        <option value="radio"       ${d.type==='radio'?'selected':''}>radio单选</option>
+                        <option value="checkbox"    ${d.type==='checkbox'?'selected':''}>checkbox多选</option>
+                        <option value="select"      ${d.type==='select'?'selected':''}>select下拉</option>
+                        <option value="date"        ${d.type==='date'?'selected':''}>date日期</option>
+                        <option value="upload"      ${d.type==='upload'?'selected':''}>upload上传</option>
                     </select>
                 </div>
             </div>
@@ -336,6 +360,27 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
                             laydate.render({ elem: this, type:'date' });
                         });
                     }
+
+                    // ========= upload上传组件初始化 =========
+                    if(curType === 'upload'){
+                        layui.upload.render({
+                            elem: $defWrap.find('.upload-btn'),
+                            url: UPLOAD_URL, // 你的后台文件上传接口
+                            done: function(res){
+                                if(res.code === 0){
+                                    // 上传成功，回填文件url到input
+                                    let fileUrl = res.data.url;
+                                    $defWrap.find('.upload-input').val(fileUrl);
+                                    layer.msg('上传成功',{icon:1,time:1000});
+                                }else{
+                                    layer.msg(res.msg || '上传失败',{icon:2});
+                                }
+                            },
+                            error: function(){
+                                layer.msg('上传请求异常',{icon:2});
+                            }
+                        });
+                    }
                 }
 
                 toggleOptionPanel(d.type);
@@ -385,7 +430,7 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
                     const curType = field.type;
                     if(OPTION_TYPES.includes(curType)){
                         field.value = field.default_value;
-                    }else{
+                    } else {
                         // text / number / switch / date：default_value置空
                         field.default_value = '';
                         // 单独处理switch开关：layui提交on/无值 → 转为1/0
@@ -396,11 +441,11 @@ layui.use(['table','form','jquery','layer','laydate'],function(){
                     }
 
                     $.post(SAVE_ITEM_URL, field, function(res){
-                        if(res.code===0){
+                        if(res.code === 0){
                             layer.close(idx);
                             tableIns.reload();
                             layer.msg('保存成功',{icon:1});
-                        }else{
+                        } else {
                             layer.msg(res.msg,{icon:2});
                         }
                     },'json');
