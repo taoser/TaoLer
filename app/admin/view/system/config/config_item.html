@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <title>配置项管理</title>
-    <link rel="stylesheet" href="/static/layui/css/layui.css">
+{extend name="public/base" /}
+
+{block name="title"}权限菜单{/block}
+{block name="head"}
     <style>
-        body{background:#f4f6f9;}
-        .wrap-box{max-width:1200px;margin:24px auto;}
-        .card{background:#fff;border-radius:10px;padding:24px;box-shadow: 0 1px 8px rgba(0,0,0,0.06);}
         .top-bar{margin-bottom:16px;}
         .search-wrap{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
         .option-panel{border:1px solid #e6e6e6;padding:12px;border-radius:6px;margin-top:8px;}
         .option-item{display:flex;gap:10px;margin-bottom:8px;align-items:center;}
     </style>
-</head>
-<body>
-<div class="wrap-box">
-    <div class="card">
-        <div class="top-bar">
+{/block}
+
+{block name="body"}
+
+    <div class="layui-card">
+        <div class="layui-card-body">
             <div class="search-wrap">
                 <input class="layui-input" id="kw" placeholder="搜索分组 / 配置键名" style="width:240px;">
                 <button class="layui-btn layui-btn-primary" id="searchBtn">搜索</button>
@@ -28,7 +24,6 @@
         </div>
         <table id="itemTable" lay-filter="itemTable"></table>
     </div>
-</div>
 
 <script type="text/html" id="tableBar">
     <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="edit">编辑</a>
@@ -40,10 +35,9 @@
     <input type="checkbox" lay-skin="switch" lay-filter="tableStatusSwitch" data-id="{{d.id}}" {{d.status===1?'checked':''}} >
 </script>
 
-<script src="/static/layui/layui.js"></script>
+{__block__}
 
 <script>
-    const MODULE_NAME = '/3MPasq1n';
 
     const ITEM_LIST_URL = MODULE_NAME + '/system_config/item_list';
     const SAVE_ITEM_URL = MODULE_NAME + '/system_config/save_item';
@@ -63,420 +57,420 @@
     const REFRESH_URL = MODULE_NAME + '/system_config/refresh';
     const FORM_DATA_URL = MODULE_NAME + '/system_config/get_form_data';
 
-layui.use(['table','form','jquery','layer','laydate'],function(){
-    var $ = layui.jquery;
-    var table = layui.table;
-    var form = layui.form;
-    var layer = layui.layer;
-    var laydate = layui.laydate;
+    layui.use(['table','form','jquery','layer','laydate'],function(){
+        var $ = layui.jquery;
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
 
-    const OPTION_TYPES = ['radio','checkbox','select'];
-    const NORMAL_TYPES = ['text','number','switch','date','upload'];
+        const OPTION_TYPES = ['radio','checkbox','select'];
+        const NORMAL_TYPES = ['text','number','switch','date','upload'];
 
-    var tableIns = table.render({
-        elem:'#itemTable',
-        url: ITEM_LIST_URL,
-        method:'post',
-        // 开启单元格编辑，只对sort列生效
-        edit:'text',
-        cols:[[
-            {field:'id',title:'ID',width:70},
-            {field:'group',title:'分组',width:100},
-            {field:'name',title:'配置键名'},
-            {field:'title',title:'显示名称'},
-            {field:'type',title:'表单类型',width:110},
-            {field:'value',title:'当前值',minWidth:150},
-            {field:'tip',title:'提示',minWidth:200},
-            {field:'sort',title:'排序',width:80,edit:'text',align:'center'},
-            {field:'status',title:'状态',width:80,templet:'#statusTpl'},
-            {title:'操作',toolbar:'#tableBar',width:120}
-        ]],
-        page:true,
-        request:{
-            pageName:'page',
-            limitName:'limit'
-        }
-    });
-
-    // =========搜索处理=========
-    $('#searchBtn').on('click',function(){
-        let kw = $.trim($('#kw').val());
-        tableIns.reload({
-            where:{kw:kw},
-            page:{curr:1}
-        })
-    });
-    $('#resetBtn').on('click',function(){
-        $('#kw').val('');
-        tableIns.reload({
-            where:{kw:''},
-            page:{curr:1}
-        })
-    });
-
-    // =========双击编辑sort单元格事件=========
-    table.on('edit(itemTable)',function(obj){
-        let value = $.trim(obj.value);
-        let row = obj.data;
-        // 简单校验必须数字
-        if(!/^\d+$/.test(value)){
-            layer.msg('排序必须为数字',{icon:2});
-            return;
-        }
-        $.post(UPDATE_SORT_URL, {
-            id:row.id,
-            sort:value
-        },function(res){
-            if(res.code === 0){
-                layer.msg('排序已更新',{icon:1,time:1000});
-            } else {
-                layer.msg(res.msg||'更新失败',{icon:2});
-                tableIns.reload();
+        var tableIns = table.render({
+            elem:'#itemTable',
+            url: ITEM_LIST_URL,
+            method:'post',
+            // 开启单元格编辑，只对sort列生效
+            edit:'text',
+            cols:[[
+                {field:'id',title:'ID',width:70},
+                {field:'group',title:'分组',width:100},
+                {field:'name',title:'配置键名'},
+                {field:'title',title:'显示名称'},
+                {field:'type',title:'表单类型',width:110},
+                {field:'value',title:'当前值',minWidth:150},
+                {field:'tip',title:'提示',minWidth:200},
+                {field:'sort',title:'排序',width:80,edit:'text',align:'center'},
+                {field:'status',title:'状态',width:80,templet:'#statusTpl'},
+                {title:'操作',toolbar:'#tableBar',width:120}
+            ]],
+            page:true,
+            request:{
+                pageName:'page',
+                limitName:'limit'
             }
-        },'json');
-    });
+        });
 
-    // =========表格内状态switch开关切换=========
-    form.on('switch(tableStatusSwitch)',function(obj) {
-        let id = $(this).data('id');
-        let status = obj.elem.checked ? 1 : 0;
-        $.post(UPDATE_STATUS_URL, {
-            id:id,
-            status:status
-        },function(res){
-            if(res.code !== 0){
-                layer.msg(res.msg||'状态更新失败',{icon:2});
-                tableIns.reload();
-            } else {
-                layer.msg('状态已更新',{icon:1,time:1000});
-                tableIns.reload();
+        // =========搜索处理=========
+        $('#searchBtn').on('click',function(){
+            let kw = $.trim($('#kw').val());
+            tableIns.reload({
+                where:{kw:kw},
+                page:{curr:1}
+            })
+        });
+        $('#resetBtn').on('click',function(){
+            $('#kw').val('');
+            tableIns.reload({
+                where:{kw:''},
+                page:{curr:1}
+            })
+        });
+
+        // =========双击编辑sort单元格事件=========
+        table.on('edit(itemTable)',function(obj){
+            let value = $.trim(obj.value);
+            let row = obj.data;
+            // 简单校验必须数字
+            if(!/^\d+$/.test(value)){
+                layer.msg('排序必须为数字',{icon:2});
+                return;
             }
-        },'json');
-    });
-
-
-    function renderOptionHtml(options){
-        let html = '';
-        if(!options || !options.length){
-            html = `<div class="layui-word-aux">暂无选项，请点击添加选项</div>`;
-        }else{
-            options.forEach((opt,idx)=>{
-                html += `
-                <div class="option-item">
-                    <input class="layui-input opt-value" placeholder="value值" value="${opt.value??''}">
-                    <input class="layui-input opt-label" placeholder="显示文本label" value="${(opt.label??'')}">
-                    <button type="button" class="layui-btn layui-btn-xs layui-btn-danger del-opt">删除</button>
-                </div>`;
-            })
-        }
-        html += `<div style="margin-top:10px;"><button type="button" class="layui-btn layui-btn-xs add-opt">+ 添加选项</button></div>`;
-        return html;
-    }
-
-    function getOptionsFromDom($wrap){
-        let arr = [];
-        $wrap.find('.option-item').each(function(){
-            let val = $(this).find('.opt-value').val().trim();
-            let lab = $(this).find('.opt-label').val().trim();
-            if(val !== '' && lab !==''){
-                arr.push({value:val, label:lab})
-            }
-        })
-        return arr;
-    }
-
-    function renderDefaultValueHtml(cfgType, options, defVal){
-        if(cfgType === 'switch'){
-            // switch类型：1勾选，0不勾选；defVal此时为d.value
-            const checked = String(defVal) === '1' ? 'checked' : '';
-            return `<input type="checkbox" name="value" lay-skin="switch" ${checked}>`;
-        }
-        if(cfgType === 'date'){
-            return `<input class="layui-input def-laydate" name="value" value="${defVal||''}" readonly placeholder="请选择日期">`;
-        }
-        if(cfgType === 'upload'){
-            /**
-            * upload上传类型
-            * defVal：数据库存储的文件路径/url(value)
-            * input name="value" 保存最终值；按钮触发layui上传组件
-            * 外层div用于js绑定上传实例
-            */
-            return `
-            <div class="upload-wrap">
-                <div class="layui-input-inline" style="width:calc(100% - 110px);">
-                    <input class="layui-input upload-input" name="value" value="${defVal||''}" placeholder="文件URL/上传后自动填充">
-                </div>
-                <div class="layui-input-inline">
-                    <button type="button" class="layui-btn layui-btn-primary upload-btn">选择文件</button>
-                </div>
-            </div>
-            `;
-        }
-        if(!OPTION_TYPES.includes(cfgType)){
-            return `<input class="layui-input" name="value" value="${defVal||''}">`;
-        }
-
-        // ========== 以下为可选类型 radio/checkbox/select 使用 default_value ==========
-        let html = '';
-        if(cfgType === 'checkbox'){
-            let defArr = (defVal||'').split(',');
-            options.forEach(opt=>{
-                let chk = defArr.includes(String(opt.value)) ? 'checked' : '';
-                html += `<input type="checkbox" name="default_value[]" value="${opt.value}" title="${opt.label}" ${chk}>`;
-            })
-        }else{
-            html += `<select name="default_value">`;
-            html += `<option value="">请选择默认值</option>`;
-            options.forEach(opt=>{
-                let sel = String(opt.value) === String(defVal) ? 'selected' : '';
-                html += `<option value="${opt.value}" ${sel}>${opt.label}</option>`;
-            })
-            html += `</select>`;
-        }
-        return html;
-    }
-
-
-    function openPopup(data){
-        var isEdit = !!data;
-        var d = data || {group:'base',type:'text',options:[],status:1,sort:0,default_value:'',value:''};
-
-        var html = `
-        <form class="layui-form" style="padding:15px;">
-            <input type="hidden" name="id" value="${d.id||''}">
-            <div class="layui-form-item">
-                <label class="layui-form-label">分组</label>
-                <div class="layui-input-block">
-                    <input class="layui-input" name="group" value="${d.group||''}">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">配置键名(name)</label>
-                <div class="layui-input-block">
-                    <input class="layui-input" name="name" value="${d.name||''}" ${isEdit?'readonly':''} placeholder="仅允许英文字母、数字、下划线" autocomplete="off">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">显示标题</label>
-                <div class="layui-input-block">
-                    <input class="layui-input" name="title" value="${d.title||''}">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">提示说明</label>
-                <div class="layui-input-block">
-                    <textarea class="layui-textarea" name="tip">${d.tip||''}</textarea>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">表单类型</label>
-                <div class="layui-input-block">
-                    <select name="type" id="cfg_type_select" lay-filter="cfg_type">
-                        <option value="text"        ${d.type==='text'?'selected':''}>text文本</option>
-                        <option value="number"      ${d.type==='number'?'selected':''}>number数值</option>
-                        <option value="switch"      ${d.type==='switch'?'selected':''}>switch开关</option>
-                        <option value="radio"       ${d.type==='radio'?'selected':''}>radio单选</option>
-                        <option value="checkbox"    ${d.type==='checkbox'?'selected':''}>checkbox多选</option>
-                        <option value="select"      ${d.type==='select'?'selected':''}>select下拉</option>
-                        <option value="date"        ${d.type==='date'?'selected':''}>date日期</option>
-                        <option value="upload"      ${d.type==='upload'?'selected':''}>upload上传</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="layui-form-item" id="option_wrap" style="display:none;">
-                <label class="layui-form-label">选项配置</label>
-                <div class="layui-input-block">
-                    <div class="option-panel" id="option_panel">
-                    </div>
-                    <div class="layui-word-aux">仅单选/多选/下拉生效；输入value、label，失去焦点自动更新默认值列表；label直接存储中文</div>
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">默认值</label>
-                <div class="layui-input-block" id="default_value_wrap">
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">排序</label>
-                <div class="layui-input-block">
-                    <input class="layui-input" name="sort" value="${d.sort||0}">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="status" lay-skin="switch" value="1" ${d.status==1?'checked':''}>
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveItem">保存</button>
-                </div>
-            </div>
-        </form>
-        `;
-        var idx = layer.open({
-            title:isEdit?'编辑配置项':'新增配置项',
-            type:1,
-            area:['720px','740px'],
-            content:html,
-            success:function(layDom){
-                let $wrap = $(layDom);
-                let $typeSel = $wrap.find('#cfg_type_select');
-                let $optionWrap = $wrap.find('#option_wrap');
-                let $optionPanel = $wrap.find('#option_panel');
-                let $defWrap = $wrap.find('#default_value_wrap');
-
-                let initOptions = d.options || [];
-                $optionPanel.html(renderOptionHtml(initOptions));
-
-                function toggleOptionPanel(typeVal){
-                    if(OPTION_TYPES.includes(typeVal)){
-                        $optionWrap.show();
-                    }else{
-                        $optionWrap.hide();
-                    }
-                    refreshDefaultValueUI();
+            $.post(UPDATE_SORT_URL, {
+                id:row.id,
+                sort:value
+            },function(res){
+                if(res.code === 0){
+                    layer.msg('排序已更新',{icon:1,time:1000});
+                } else {
+                    layer.msg(res.msg||'更新失败',{icon:2});
+                    tableIns.reload();
                 }
+            },'json');
+        });
 
-                function refreshDefaultValueUI(){
-                    let curType = $typeSel.val();
-                    let optArr  = getOptionsFromDom($optionPanel);
-                    let oldDef;
-                    if(OPTION_TYPES.includes(curType)){
-                        oldDef = d.default_value || '';
-                    }else{
-                        oldDef = d.value || '';
-                    }
-                    $defWrap.html(renderDefaultValueHtml(curType, optArr, oldDef));
-                    form.render();
-
-                    if(curType === 'date'){
-                        $defWrap.find('.def-laydate').each(function(){
-                            laydate.render({ elem: this, type:'date' });
-                        });
-                    }
-
-                    // ========= upload上传组件初始化 =========
-                    if(curType === 'upload'){
-                        layui.upload.render({
-                            elem: $defWrap.find('.upload-btn'),
-                            url: UPLOAD_URL, // 你的后台文件上传接口
-                            done: function(res){
-                                if(res.code === 0){
-                                    // 上传成功，回填文件url到input
-                                    let fileUrl = res.data.url;
-                                    $defWrap.find('.upload-input').val(fileUrl);
-                                    layer.msg('上传成功',{icon:1,time:1000});
-                                }else{
-                                    layer.msg(res.msg || '上传失败',{icon:2});
-                                }
-                            },
-                            error: function(){
-                                layer.msg('上传请求异常',{icon:2});
-                            }
-                        });
-                    }
+        // =========表格内状态switch开关切换=========
+        form.on('switch(tableStatusSwitch)',function(obj) {
+            let id = $(this).data('id');
+            let status = obj.elem.checked ? 1 : 0;
+            $.post(UPDATE_STATUS_URL, {
+                id:id,
+                status:status
+            },function(res){
+                if(res.code !== 0){
+                    layer.msg(res.msg||'状态更新失败',{icon:2});
+                    tableIns.reload();
+                } else {
+                    layer.msg('状态已更新',{icon:1,time:1000});
+                    tableIns.reload();
                 }
+            },'json');
+        });
 
-                toggleOptionPanel(d.type);
 
-                form.on('select(cfg_type)',function(obj){
-                    toggleOptionPanel(obj.value);
-                });
-                $typeSel.on('change',function(){
-                    toggleOptionPanel($(this).val());
-                });
-
-                $wrap.on('blur','.opt-value,.opt-label',function(){
-                    refreshDefaultValueUI();
-                });
-
-                $wrap.on('click','.add-opt',function(){
-                    let newItemHtml = `
+        function renderOptionHtml(options){
+            let html = '';
+            if(!options || !options.length){
+                html = `<div class="layui-word-aux">暂无选项，请点击添加选项</div>`;
+            }else{
+                options.forEach((opt,idx)=>{
+                    html += `
                     <div class="option-item">
-                        <input class="layui-input opt-value" placeholder="value值" value="">
-                        <input class="layui-input opt-label" placeholder="显示文本label" value="">
+                        <input class="layui-input opt-value" placeholder="value值" value="${opt.value??''}">
+                        <input class="layui-input opt-label" placeholder="显示文本label" value="${(opt.label??'')}">
                         <button type="button" class="layui-btn layui-btn-xs layui-btn-danger del-opt">删除</button>
                     </div>`;
-                    $optionPanel.append(newItemHtml);
-                    refreshDefaultValueUI();
                 })
+            }
+            html += `<div style="margin-top:10px;"><button type="button" class="layui-btn layui-btn-xs add-opt">+ 添加选项</button></div>`;
+            return html;
+        }
 
-                $wrap.on('click','.del-opt',function(){
-                    $(this).closest('.option-item').remove();
-                    refreshDefaultValueUI();
+        function getOptionsFromDom($wrap){
+            let arr = [];
+            $wrap.find('.option-item').each(function(){
+                let val = $(this).find('.opt-value').val().trim();
+                let lab = $(this).find('.opt-label').val().trim();
+                if(val !== '' && lab !==''){
+                    arr.push({value:val, label:lab})
+                }
+            })
+            return arr;
+        }
+
+        function renderDefaultValueHtml(cfgType, options, defVal){
+            if(cfgType === 'switch'){
+                // switch类型：1勾选，0不勾选；defVal此时为d.value
+                const checked = String(defVal) === '1' ? 'checked' : '';
+                return `<input type="checkbox" name="value" lay-skin="switch" ${checked}>`;
+            }
+            if(cfgType === 'date'){
+                return `<input class="layui-input def-laydate" name="value" value="${defVal||''}" readonly placeholder="请选择日期">`;
+            }
+            if(cfgType === 'upload'){
+                /**
+                * upload上传类型
+                * defVal：数据库存储的文件路径/url(value)
+                * input name="value" 保存最终值；按钮触发layui上传组件
+                * 外层div用于js绑定上传实例
+                */
+                return `
+                <div class="upload-wrap">
+                    <div class="layui-input-inline" style="width:calc(100% - 110px);">
+                        <input class="layui-input upload-input" name="value" value="${defVal||''}" placeholder="文件URL/上传后自动填充">
+                    </div>
+                    <div class="layui-input-inline">
+                        <button type="button" class="layui-btn layui-btn-primary upload-btn">选择文件</button>
+                    </div>
+                </div>
+                `;
+            }
+            if(!OPTION_TYPES.includes(cfgType)){
+                return `<input class="layui-input" name="value" value="${defVal||''}">`;
+            }
+
+            // ========== 以下为可选类型 radio/checkbox/select 使用 default_value ==========
+            let html = '';
+            if(cfgType === 'checkbox'){
+                let defArr = (defVal||'').split(',');
+                options.forEach(opt=>{
+                    let chk = defArr.includes(String(opt.value)) ? 'checked' : '';
+                    html += `<input type="checkbox" name="default_value[]" value="${opt.value}" title="${opt.label}" ${chk}>`;
                 })
+            }else{
+                html += `<select name="default_value">`;
+                html += `<option value="">请选择默认值</option>`;
+                options.forEach(opt=>{
+                    let sel = String(opt.value) === String(defVal) ? 'selected' : '';
+                    html += `<option value="${opt.value}" ${sel}>${opt.label}</option>`;
+                })
+                html += `</select>`;
+            }
+            return html;
+        }
 
-                form.on('submit(saveItem)',function(postData){
-                    let field = postData.field;
-                    let optArr = getOptionsFromDom($optionPanel);
-                    field.options = optArr;
 
-                    const nameReg = /^[a-zA-Z0-9_]+$/;
-                    if(!nameReg.test(field.name||'')){
-                        layer.msg('配置键名只能为英文字母、数字、下划线',{icon:2});
-                        return false;
+        function openPopup(data){
+            var isEdit = !!data;
+            var d = data || {group:'base',type:'text',options:[],status:1,sort:0,default_value:'',value:''};
+
+            var html = `
+            <form class="layui-form" style="padding:15px;">
+                <input type="hidden" name="id" value="${d.id||''}">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">分组</label>
+                    <div class="layui-input-block">
+                        <input class="layui-input" name="group" value="${d.group||''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">配置键名(name)</label>
+                    <div class="layui-input-block">
+                        <input class="layui-input" name="name" value="${d.name||''}" ${isEdit?'readonly':''} placeholder="仅允许英文字母、数字、下划线" autocomplete="off">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">显示标题</label>
+                    <div class="layui-input-block">
+                        <input class="layui-input" name="title" value="${d.title||''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">提示说明</label>
+                    <div class="layui-input-block">
+                        <textarea class="layui-textarea" name="tip">${d.tip||''}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">表单类型</label>
+                    <div class="layui-input-block">
+                        <select name="type" id="cfg_type_select" lay-filter="cfg_type">
+                            <option value="text"        ${d.type==='text'?'selected':''}>text文本</option>
+                            <option value="number"      ${d.type==='number'?'selected':''}>number数值</option>
+                            <option value="switch"      ${d.type==='switch'?'selected':''}>switch开关</option>
+                            <option value="radio"       ${d.type==='radio'?'selected':''}>radio单选</option>
+                            <option value="checkbox"    ${d.type==='checkbox'?'selected':''}>checkbox多选</option>
+                            <option value="select"      ${d.type==='select'?'selected':''}>select下拉</option>
+                            <option value="date"        ${d.type==='date'?'selected':''}>date日期</option>
+                            <option value="upload"      ${d.type==='upload'?'selected':''}>upload上传</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" id="option_wrap" style="display:none;">
+                    <label class="layui-form-label">选项配置</label>
+                    <div class="layui-input-block">
+                        <div class="option-panel" id="option_panel">
+                        </div>
+                        <div class="layui-word-aux">仅单选/多选/下拉生效；输入value、label，失去焦点自动更新默认值列表；label直接存储中文</div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">默认值</label>
+                    <div class="layui-input-block" id="default_value_wrap">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-block">
+                        <input class="layui-input" name="sort" value="${d.sort||0}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="status" lay-skin="switch" value="1" ${d.status==1?'checked':''}>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveItem">保存</button>
+                    </div>
+                </div>
+            </form>
+            `;
+            var idx = layer.open({
+                title:isEdit?'编辑配置项':'新增配置项',
+                type:1,
+                area:['720px','740px'],
+                content:html,
+                success:function(layDom){
+                    let $wrap = $(layDom);
+                    let $typeSel = $wrap.find('#cfg_type_select');
+                    let $optionWrap = $wrap.find('#option_wrap');
+                    let $optionPanel = $wrap.find('#option_panel');
+                    let $defWrap = $wrap.find('#default_value_wrap');
+
+                    let initOptions = d.options || [];
+                    $optionPanel.html(renderOptionHtml(initOptions));
+
+                    function toggleOptionPanel(typeVal){
+                        if(OPTION_TYPES.includes(typeVal)){
+                            $optionWrap.show();
+                        }else{
+                            $optionWrap.hide();
+                        }
+                        refreshDefaultValueUI();
                     }
 
-                    if(Array.isArray(field.default_value)){
-                        field.default_value = field.default_value.join(',');
-                    }
+                    function refreshDefaultValueUI(){
+                        let curType = $typeSel.val();
+                        let optArr  = getOptionsFromDom($optionPanel);
+                        let oldDef;
+                        if(OPTION_TYPES.includes(curType)){
+                            oldDef = d.default_value || '';
+                        }else{
+                            oldDef = d.value || '';
+                        }
+                        $defWrap.html(renderDefaultValueHtml(curType, optArr, oldDef));
+                        form.render();
 
-                    const curType = field.type;
-                    if(OPTION_TYPES.includes(curType)){
-                        field.value = field.default_value;
-                    } else {
-                        // text / number / switch / date：default_value置空
-                        field.default_value = '';
-                        // 单独处理switch开关：layui提交on/无值 → 转为1/0
-                        if(curType === 'switch'){
-                            // 勾选时field.value === "on"，未勾选则不存在该属性
-                            field.value = field.value === 'on' ? '1' : '0';
+                        if(curType === 'date'){
+                            $defWrap.find('.def-laydate').each(function(){
+                                laydate.render({ elem: this, type:'date' });
+                            });
+                        }
+
+                        // ========= upload上传组件初始化 =========
+                        if(curType === 'upload'){
+                            layui.upload.render({
+                                elem: $defWrap.find('.upload-btn'),
+                                url: UPLOAD_URL, // 你的后台文件上传接口
+                                done: function(res){
+                                    if(res.code === 0){
+                                        // 上传成功，回填文件url到input
+                                        let fileUrl = res.data.url;
+                                        $defWrap.find('.upload-input').val(fileUrl);
+                                        layer.msg('上传成功',{icon:1,time:1000});
+                                    }else{
+                                        layer.msg(res.msg || '上传失败',{icon:2});
+                                    }
+                                },
+                                error: function(){
+                                    layer.msg('上传请求异常',{icon:2});
+                                }
+                            });
                         }
                     }
 
-                    $.post(SAVE_ITEM_URL, field, function(res){
-                        if(res.code === 0){
-                            layer.close(idx);
-                            tableIns.reload();
-                            layer.msg('保存成功',{icon:1});
+                    toggleOptionPanel(d.type);
+
+                    form.on('select(cfg_type)',function(obj){
+                        toggleOptionPanel(obj.value);
+                    });
+                    $typeSel.on('change',function(){
+                        toggleOptionPanel($(this).val());
+                    });
+
+                    $wrap.on('blur','.opt-value,.opt-label',function(){
+                        refreshDefaultValueUI();
+                    });
+
+                    $wrap.on('click','.add-opt',function(){
+                        let newItemHtml = `
+                        <div class="option-item">
+                            <input class="layui-input opt-value" placeholder="value值" value="">
+                            <input class="layui-input opt-label" placeholder="显示文本label" value="">
+                            <button type="button" class="layui-btn layui-btn-xs layui-btn-danger del-opt">删除</button>
+                        </div>`;
+                        $optionPanel.append(newItemHtml);
+                        refreshDefaultValueUI();
+                    })
+
+                    $wrap.on('click','.del-opt',function(){
+                        $(this).closest('.option-item').remove();
+                        refreshDefaultValueUI();
+                    })
+
+                    form.on('submit(saveItem)',function(postData){
+                        let field = postData.field;
+                        let optArr = getOptionsFromDom($optionPanel);
+                        field.options = optArr;
+
+                        const nameReg = /^[a-zA-Z0-9_]+$/;
+                        if(!nameReg.test(field.name||'')){
+                            layer.msg('配置键名只能为英文字母、数字、下划线',{icon:2});
+                            return false;
+                        }
+
+                        if(Array.isArray(field.default_value)){
+                            field.default_value = field.default_value.join(',');
+                        }
+
+                        const curType = field.type;
+                        if(OPTION_TYPES.includes(curType)){
+                            field.value = field.default_value;
                         } else {
+                            // text / number / switch / date：default_value置空
+                            field.default_value = '';
+                            // 单独处理switch开关：layui提交on/无值 → 转为1/0
+                            if(curType === 'switch'){
+                                // 勾选时field.value === "on"，未勾选则不存在该属性
+                                field.value = field.value === 'on' ? '1' : '0';
+                            }
+                        }
+
+                        $.post(SAVE_ITEM_URL, field, function(res){
+                            if(res.code === 0){
+                                layer.close(idx);
+                                tableIns.reload();
+                                layer.msg('保存成功',{icon:1});
+                            } else {
+                                layer.msg(res.msg,{icon:2});
+                            }
+                        },'json');
+                        return false;
+                    })
+                }
+            });
+        }
+
+        $('#addBtn').click(function(){
+            openPopup(null);
+        });
+
+        table.on('tool(itemTable)',function(obj){
+            var row = obj.data;
+            if(obj.event === 'edit'){
+                openPopup(row);
+            }else if(obj.event === 'del'){
+                layer.confirm('确定删除该配置项？删除后配置数据会丢失！',function(){
+                    $.post('/system_config/delete_item',{id:row.id},function(res){
+                        if(res.code===0){
+                            tableIns.reload();
+                            layer.msg('删除成功',{icon:1});
+                        }else{
                             layer.msg(res.msg,{icon:2});
                         }
                     },'json');
-                    return false;
                 })
             }
-        });
-    }
-
-    $('#addBtn').click(function(){
-        openPopup(null);
-    });
-
-    table.on('tool(itemTable)',function(obj){
-        var row = obj.data;
-        if(obj.event === 'edit'){
-            openPopup(row);
-        }else if(obj.event === 'del'){
-            layer.confirm('确定删除该配置项？删除后配置数据会丢失！',function(){
-                $.post('/system_config/delete_item',{id:row.id},function(res){
-                    if(res.code===0){
-                        tableIns.reload();
-                        layer.msg('删除成功',{icon:1});
-                    }else{
-                        layer.msg(res.msg,{icon:2});
-                    }
-                },'json');
-            })
-        }
+        })
     })
-})
 </script>
-</body>
-</html>
+
+{/block} 

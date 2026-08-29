@@ -1,20 +1,17 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <title>网站设置</title>
-    <link rel="stylesheet" href="/static/layui/css/layui.css">
+{extend name="public/base" /}
+
+{block name="title"}权限菜单{/block}
+{block name="head"}
     <style>
-        body{background:#f4f6f9;}
-        .wrap-box{max-width:960px;margin:24px auto;}
-        .card{background:#fff;border-radius:10px;padding:24px;box-shadow:0 1px 8px rgba(0,0,0,0.06);}
         .group-actions{margin-top:16px;}
         .upload-wrap{display:flex;gap:10px;align-items:center;}
     </style>
-</head>
-<body>
-<div class="wrap-box">
-    <div class="card">
+{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+    <div class="layui-card-body">
         <!-- 用 layui-tabs 按 group 分组 -->
         <div class="layui-tab layui-tab-brief" lay-filter="cfgTabs" id="cfgTabs">
             <ul class="layui-tab-title" id="tabTitle"></ul>
@@ -23,7 +20,8 @@
     </div>
 </div>
 
-<script src="/static/layui/layui.js"></script>
+{__block__}
+
 <script>
 layui.use(['form','jquery','layer','laydate','upload','element'],function(){
     var $ = layui.jquery;
@@ -40,8 +38,6 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
 
     // 文件上传接口（根据你的项目实际地址调整）
     const UPLOAD_URL = MODULE_NAME + '/system/set/upload';
-
-    
     const FORM_DATA_URL = MODULE_NAME + '/system_config/get_form_data';
     const BATCH_SAVE_URL = MODULE_NAME + '/system_config/batch_save';
 
@@ -256,5 +252,5 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
     loadForm();
 });
 </script>
-</body>
-</html>
+
+{/block}
