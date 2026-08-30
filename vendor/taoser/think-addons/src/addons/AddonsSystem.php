@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 namespace taoser\addons;
-
 use think\facade\Config;
 use think\facade\Cache;
 use think\facade\Lang;

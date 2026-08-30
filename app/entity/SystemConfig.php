@@ -43,6 +43,19 @@ class SystemConfig extends BaseEntity
     }
 
     /**
+     * 设置单个配置值
+     * @param string $name 配置键名
+     * @param mixed $value 配置值
+     * @return mixed
+     */
+    public function setValue(string $name, $value): mixed
+    {
+        $this->where('name', $name)->update(['value' => $value]);
+        $this->clearCache();
+        return $value;
+    }
+
+    /**
      * 清除配置缓存，新增/修改/删除后必须调用
      */
     public function clearCache(): void

@@ -26,6 +26,10 @@ class Taoler extends TagLib
         'link'      => ['attr' => ''],
 
         // system
+        'site_name'     => ['attr' => '', 'close' => 0],
+        'site_title'    => ['attr' => '', 'close' => 0],
+        'template'      => ['attr' => '', 'close' => 0],
+        
         'title'     => ['attr' => '', 'close' => 0],
         'name'      => ['attr' => '', 'close' => 0],
         'logo'      => ['attr' => '', 'close' => 0],
@@ -40,7 +44,7 @@ class Taoler extends TagLib
         
     ];
 
-    public function tagNav($tag, $content): string
+    public function tagNav(array $tag, string $content): string
     {
         $id = $tag['id'] ?? 'nav';
         $parse = '{php}$__CATEGORY__ = \app\facade\Category::getNav();{/php}';
@@ -52,7 +56,7 @@ class Taoler extends TagLib
         return $parse;
     }
 
-    public function tagSnav($tag, $content): string
+    public function tagSnav(array $tag, string $content): string
     {
         $id = $tag['id'] ?? 'snav';
         $parse = '{notempty name="nav.children"}';
@@ -63,7 +67,7 @@ class Taoler extends TagLib
         return $parse;
     }
 
-    public function tagGnav($tag, $content): string
+    public function tagGnav(array $tag, string $content): string
     {
         $id = $tag['id'] ?? 'gnav';
         $parse = '{notempty name="snav.children"}';
@@ -100,13 +104,23 @@ class Taoler extends TagLib
         return $parse;
     }
 
-    // 网站 标题
-    public function tagTitle($tag, $content): string
+    public function tagSite_name(array $tag, string $content): string
+    {
+        return '{$systemConfig.site_name}';
+    }
+
+    public function tagSite_title(array $tag, string $content): string
+    {
+        return '{$systemConfig.site_title}';
+    }
+
+    public function tagTitle(array $tag, string $content): string
     {
         return '{$sysInfo.webtitle}';
     }
+
     // 网站名
-    public function tagName($tag, $content): string
+    public function tagName(array $tag, string  $content): string
     {
         return '{$sysInfo.webname}';
     }
@@ -123,22 +137,22 @@ class Taoler extends TagLib
     // 关键词
     public function tagKeywords($tag, $content): string
     {
-        return '{$sysInfo.keywords}';
+        return '{$systemConfig.keywords}';
     }
     // 描述
     public function tagDescription($tag, $content): string
     {
-        return '{$sysInfo.descript}';
+        return '{$systemConfig.description}';
     }
     // 版权
     public function tagCopyright($tag, $content): string
     {
-        return '{$sysInfo.copyright}';
+        return '{$systemConfig.copyright}';
     }
     // icp备案
     public function tagIcp($tag, $content): string
     {
-        return '{$sysInfo.icp}';
+        return '{$systemConfig.icp}';
     }
 
     //section

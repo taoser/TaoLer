@@ -56,7 +56,7 @@ class AuthGroup extends AdminBaseController
 	{
 
 		$id = $request->get('id/d');
-		$query = $this->model->field('id,title,limits,descr,status');
+		$query = $this->model->field('id,title,limits,description,status');
 		if(!empty($id)){
 			$query->where('id', $id);
 		}

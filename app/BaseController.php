@@ -65,6 +65,11 @@ abstract class BaseController
     // 初始化
     protected function initialize()
     {
+        $config = new \app\entity\SystemConfig();
+        $systemConfig = $config->getAllConfig();
+
+        View::assign('systemConfig', $systemConfig);
+        
         $sysInfo = $this->getSystem();
         View::assign('sysInfo', $sysInfo);
     }

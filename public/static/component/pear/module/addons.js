@@ -237,7 +237,7 @@ layui.define(['toast','common'], function (exports) {
 				title: '配置插件',
 				content: url + "?name=" + data.name,
 				maxmin: true,
-				area: ["780px", "90%"],
+				area: ["100%", "100%"],
 				btn: ["确定", "取消"],
 				yes: function (index, layero) {
 					var iframeWindow = window["layui-layer-iframe" + index], submitID = "LAY-addons-config-submit", submit = layero.find("iframe").contents().find("#" + submitID);

@@ -32,6 +32,11 @@ Route::group($moduleName, function () {
     // 获取导航接口
     Route::get('system/getnav$','system.menu/getnav')->name('get_nav');
 
+    Route::get('addons', 'Addons/index');
+    Route::get('addons_config/:name', 'Addons/config');
+    Route::post('addons_save', 'Addons/saveConfig');
+    Route::post('addons_upload', 'Addons/upload');
+
     // 系统配置项接口
     Route::post('system_config/get_form_data','system.Config/getFormData');
     Route::post('system_config/batch_save','system.Config/batchSave');

@@ -15,6 +15,11 @@ class BaseModel extends Model
             'dateFormat' => 'Y-m-d H:i:s',
         ];
     }
+
+    protected function getJsonEncodeOptions(): int
+    {
+        return JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+    }
     
     /**
      * article 查、改、删时需要传入id,获取所在表的后缀

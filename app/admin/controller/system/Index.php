@@ -54,7 +54,9 @@ class Index extends AdminBaseController
 
 			$bool = filter_var($status, FILTER_VALIDATE_BOOLEAN);
 
-			cache('APP_DEBUG', $bool);
+			$debugValue = $bool ? 1 : 0;
+
+			system_config_set('app_debug', $debugValue);
 			
 			return json(['code' => 0, 'msg' => $msg]);
 		}

@@ -18,14 +18,14 @@
 	<meta name="renderer" content="webkit" />
 	<meta name="force-rendering" content="webkit" />
 	<!-- seo -->
-	<title>{block name="title"}{taoler:title /}{/block}</title>
+	<title>{block name="title"}{taoler:site_title /}{/block}</title>
 	<meta name="keywords" content="{block name='keywords'}{taoler:keywords /}{/block}" />
 	<meta name="description" content="{block name='description'}{taoler:description /}{/block}" />
 	<meta name="copyright" content="{taoler:copyright /}" />
 	{block name="ogtitle"}{/block}
 	{block name="ogdescription"} {/block}
 	<meta property="og:url" content="{$Request.url}" />
-	<meta property="og:site_name" content="{taoler:name /}" />
+	<meta property="og:site_name" content="{taoler:site_name /}" />
 	{block name="ogimage"} {/block}
 	{block name="meta"}{/block}
 

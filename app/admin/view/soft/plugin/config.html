@@ -1,94 +1,671 @@
 {extend name="public/form" /}
 
+{block name="title"}插件配置{/block}
+{block name="link"}
+<style>
+        .config-group { margin-bottom: 25px; padding: 20px; border: 1px solid #e6e6e6; border-radius: 4px; background: #fafafa; }
+        .config-group h3 { margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #e6e6e6; color: #333; font-size: 16px; }
+        .layui-form-label { width: 150px; }
+        .layui-input-block { margin-left: 180px; }
+        .array-item, .multi-helper-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .array-item .layui-input-inline, .multi-helper-item .layui-input-inline { margin-right: 0; }
+        .preview-images { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .preview-images .preview-item { position: relative; display: inline-block; border: 1px solid #ddd; padding: 3px; border-radius: 4px; }
+        .preview-images img { width: 100px; height: 100px; object-fit: cover; }
+        .preview-files { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .preview-files .preview-item { position: relative; display: inline-block; background: #f5f5f5; border: 1px solid #ddd; padding: 5px 10px; border-radius: 3px; }
+        .preview-files a { color: #333; text-decoration: none; font-size: 13px; }
+        .remove-resource {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff5722;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 18px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        .remove-resource:hover { transform: scale(1.2); }
+        .help-block { color: #999; font-size: 12px; margin-top: 5px; }
+        .multi-array-container .layui-textarea { font-family: 'Courier New', monospace; }
+        .layui-form-item { clear: both; }
+        .btn-group { margin-top: 10px; }
+        .btn-group .layui-btn { margin-right: 10px; }
+        .array-item .layui-input-inline { margin-bottom: 5px; }
+        .layui-upload-list { margin-top: 10px; }
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; padding-top: 5px; }
+    </style>
+{/block}
+
 {block name="body"}
 
-<form class="layui-form" lay-filter="layuiadmin-form-addons" id="layuiadmin-form-addons">
-	<div class="mainBox">
-		<div class="main-container">
-			{foreach name="formData" item="vo" key="k"}
-				{php}$name = "params[".$k."]";{/php}
-				{switch name="$vo.type"}
-					{case value="text"}
-						{:form_input($name,'text',['label'=>$vo.title,'verify'=>$vo.rule,'tips'=>$vo.tips],$vo.value)}
-					{/case}
-					{case value="textarea"}
-						{:form_textarea($name,['label'=>$vo.title,'tips'=>$vo.tips],$vo.value)}
-					{/case}
-					{case value="password"}
-						{:form_input($name,'password',['label'=>$vo.title,'tips'=>$vo.tips],$vo.value)}
-					{/case}
-					{case value="radio"}
-						{:form_radio($name,$vo.content,['label'=>$vo.title,'tips'=>$vo.tips],$vo.value)}
-					{/case}
-					{case value="checkbox"}
-						{:form_checkbox($name, $vo.content,['label'=>$vo.title, 'verify' =>$vo.rule,'tips'=>$vo.tips,], $vo['value'])}
-					{/case}
-					{case value="switch"}
-						{:form_switch($name, $vo.content,['label'=>$vo.title, 'verify' =>$vo.rule,'tips'=>$vo.tips,], $vo['value'])}
-					{/case}
-					{case value="select"}
-						{:form_select($name,$vo.content,['label'=>$vo.title,'verify'=>$vo.rule,'tips'=>$vo.tips,'search'=>1] ,[],$vo.value)}
-					{/case}
-					{case value="selects"}
-						{:form_select($name,$vo.content,['label'=>$vo.title,'multipsle'=>1.,'verify'=>$vo.rule,'tips'=>$vo.tips,'search'=>1] ,[],$vo.value)}
-					{/case}
-					{case value="image"}
-						{:form_upload($name,$vo.value,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule,'type'=>'radio','num'=>'1','mime'=>'images'])}
-					{/case}
-					{case value="images"}
-						{:form_upload($name,$vo.value,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule,'type'=>'checkbox','num'=>$vo.num,'mime'=>'images'])}
-					{/case}
-					{case value="file"}
-						{:form_upload($name,$vo.value,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule,'type'=>'radio','num'=>$vo.num,'mime'=>'*'])}
-					{/case}
-					{case value="files"}
-						{:form_upload($name,$vo.value,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule,'type'=>'checkbox','num'=>$vo.num,'mime'=>'*'])}
-					{/case}
-					{case value="editor"}
-						{:form_editor($name,2,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule])}
-					{/case}
-					{case value="array"}
-						{:form_arrays($name,$vo.value?$vo.value:$vo.content,['label'=>$vo.title,'tips'=>$vo.tips,'verify'=>$vo.rule])}
-					{/case}
-				{/switch}
-			{/foreach}
-		</div>
-	</div>
-	<div class="layui-form-item layui-hide">
-		<input type="hidden" name="name" value="{$Request.param.name}">
-		<input type="button" lay-submit lay-filter="plugin-config-submit" id="plugin-config-submit" value="确认">
-	</div>
-</form>
+    <h2 style="margin-bottom: 20px;border-bottom: 2px solid #5FB878;padding-bottom: 10px;">
+        🔧 插件配置：{$name}
+    </h2>
+    
+    <form class="layui-form" lay-filter="configForm">
+        <input type="hidden" name="name" value="{$name}">
+
+        <!-- 循环输出分组 -->
+        {foreach $grouped as $groupName => $items}
+        <div class="config-group">
+            <h3>{$groupName}</h3>
+            {foreach $items as $key => $item}
+            <div class="layui-form-item" data-key="{$key}" data-type="{$item.type}">
+                <label class="layui-form-label">{$item.title}</label>
+                <div class="layui-input-block">
+                    {switch $item.type}
+                    
+                    {case text}
+                    <input type="text" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-input">
+                    {/case}
+                    
+                    {case number}
+                    <input type="number" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-input">
+                    {/case}
+                    
+                    {case date}
+                    <input type="text" name="{$key}" id="date_{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-input" readonly>
+                    {/case}
+                    
+                    {case areatext}
+                    <textarea name="{$key}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-textarea" rows="4">{$item.value}</textarea>
+                    {/case}
+                    
+                    {case bool}
+                    <input type="checkbox" name="{$key}" lay-skin="switch" lay-text="开启|关闭" {if $item.value}checked{/if}>
+                    {/case}
+                    
+                    {case radio}
+                    {foreach $item.options as $optKey => $opt}
+                    <input type="radio" name="{$key}" value="{$optKey}" title="{$opt}" {if $item.value == $optKey}checked{/if}>
+                    {/foreach}
+                    {/case}
+                    
+                    {case select}
+                    <select name="{$key}" lay-verify="{$item.layui_rule}">
+                        {foreach $item.options as $optKey => $opt}
+                        <option value="{$optKey}" {if $item.value == $optKey}selected{/if}>{$opt}</option>
+                        {/foreach}
+                    </select>
+                    {/case}
+                    
+                    {case checkbox}
+                    <div class="checkbox-group">
+                        {foreach $item.options as $optKey => $opt}
+                        <input type="checkbox" name="{$key}[]" title="{$opt}" value="{$optKey}" lay-skin="primary" 
+                               {if is_array($item.value) && in_array($optKey, $item.value)}checked{/if}>
+                        {/foreach}
+                    </div>
+                    {/case}
+                    
+                    {case image}
+                    <div class="image-upload-container" data-key="{$key}">
+                        <div class="layui-upload">
+                            <button type="button" class="layui-btn layui-btn-sm upload-image-btn" data-key="{$key}">📷 上传图片</button>
+                            <input type="hidden" name="{$key}" class="image-input" value="{$item.value}">
+                        </div>
+                        <div class="preview-images image-preview">
+                            {if !empty($item.value)}
+                            <div class="preview-item">
+                                <img src="{$item.value}" alt="预览图">
+                                <span class="remove-resource" data-url="{$item.value}" style="position:absolute;top:-8px;right:-8px;background:red;color:white;border-radius:50%;width:20px;height:20px;text-align:center;line-height:20px;cursor:pointer;font-size:14px;">×</span>
+                            </div>
+                            {/if}
+                        </div>
+                        {if !empty($item.tips)}<div class="help-block">{$item.tips}</div>{/if}
+                    </div>
+                    {/case}
+                    
+                    {case images}
+                    <div class="images-upload-container" data-key="{$key}">
+                        <div class="layui-upload">
+                            <button type="button" class="layui-btn layui-btn-sm upload-images-btn" data-key="{$key}">🖼️ 上传多张图片</button>
+                            <input type="hidden" name="{$key}" class="images-input" value="{if is_array($item.value)}{$item.value|json_encode}{else}{$item.value}{/if}">
+                        </div>
+                        <div class="preview-images images-preview">
+                            {if is_array($item.value)}
+                            {foreach $item.value as $img}
+                            <div class="preview-item">
+                                <img src="{$img}" alt="预览图">
+                                <span class="remove-resource" data-url="{$img}">×</span>
+                            </div>
+                            {/foreach}
+                            {/if}
+                        </div>
+                        {if !empty($item.tips)}<div class="help-block">{$item.tips}</div>{/if}
+                    </div>
+                    {/case}
+                    
+                    {case file}
+                    <div class="file-upload-container" data-key="{$key}">
+                        <div class="layui-upload">
+                            <button type="button" class="layui-btn layui-btn-sm upload-file-btn" data-key="{$key}">📎 上传文件</button>
+                            <input type="hidden" name="{$key}" class="file-input" value="{$item.value}">
+                        </div>
+                        <div class="preview-files file-preview">
+                            {if !empty($item.value)}
+                            <div class="preview-item">
+                                <a href="{$item.value}" target="_blank">📄 查看文件</a>
+                                <span class="remove-resource" data-url="{$item.value}">×</span>
+                            </div>
+                            {/if}
+                        </div>
+                        {if !empty($item.tips)}<div class="help-block">{$item.tips}</div>{/if}
+                    </div>
+                    {/case}
+                    
+                    {case files}
+                    <div class="files-upload-container" data-key="{$key}">
+                        <div class="layui-upload">
+                            <button type="button" class="layui-btn layui-btn-sm upload-files-btn" data-key="{$key}">📦 上传多个文件</button>
+                            <input type="hidden" name="{$key}" class="files-input" value="{if is_array($item.value)}{$item.value|json_encode}{else}{$item.value}{/if}">
+                        </div>
+                        <div class="preview-files files-preview">
+                            {if is_array($item.value)}
+                            {foreach $item.value as $file}
+                            <div class="preview-item">
+                                <a href="{$file}" target="_blank">📄 文件</a>
+                                <span class="remove-resource" data-url="{$file}">×</span>
+                            </div>
+                            {/foreach}
+                            {/if}
+                        </div>
+                        {if !empty($item.tips)}<div class="help-block">{$item.tips}</div>{/if}
+                    </div>
+                    {/case}
+                    
+                    {case array}
+                    <div class="dynamic-array-container" data-key="{$key}">
+                        <div class="array-items">
+                            {if is_array($item.value) && !empty($item.value)}
+                            {foreach $item.value as $k => $val}
+                            <div class="array-item">
+                                <div class="layui-input-inline" style="width:150px;">
+                                    <input type="text" name="array_keys[{$key}][]" value="{$k}" placeholder="键名" class="layui-input array-key">
+                                </div>
+                                <div class="layui-input-inline" style="width:200px;">
+                                    <input type="text" name="array_vals[{$key}][]" value="{$val}" placeholder="值" class="layui-input array-val">
+                                </div>
+                                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger remove-array-item">删除</button>
+                            </div>
+                            {/foreach}
+                            {/if}
+                        </div>
+                        <button type="button" class="layui-btn layui-btn-sm add-array-item" data-key="{$key}">＋ 添加键值对</button>
+                        <input type="hidden" name="{$key}" class="array-json-input" value="{if is_array($item.value)}{$item.value|json_encode}{else}{$item.value}{/if}">
+                        {if !empty($item.tips)}<div class="help-block">{$item.tips}</div>{/if}
+                    </div>
+                    {/case}
+                    
+                    {case multi_array}
+                    <div class="multi-array-container" data-key="{$key}">
+                        <div style="margin-left:0;padding:0;">
+                            <textarea name="{$key}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-textarea multi-array-textarea" style="height:150px;font-family:monospace;">{if is_array($item.value)}{$item.value|json_encode}{else}{$item.value}{/if}</textarea>
+                            <button type="button" class="layui-btn layui-btn-sm layui-btn-primary multi-array-helper" style="margin-top:8px;">📋 辅助表单生成</button>
+                            {if !empty($item.tips)}<div class="help-block">{$item.tips}</div>{/if}
+                        </div>
+                    </div>
+                    {/case}
+                    
+                    {default /}
+                    <input type="text" name="{$key}" value="{$item.value}" class="layui-input">
+                    {/switch}
+                </div>
+            </div>
+            {/foreach}
+        </div>
+        {/foreach}
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block" style="margin-left:180px;">
+                <button type="submit" class="layui-btn" lay-submit lay-filter="plugin-config-submit" id="plugin-config-submit">💾 保存配置</button>
+
+                <button type="reset" class="layui-btn layui-btn-primary">🔄 重置</button>
+            </div>
+        </div>
+    </form>
 
 {__block__}
 
 <script>
-	const UPLOAD_URL = MODULE_NAME + '/soft/plugin/uploads';
+layui.use(['form', 'layer', 'upload', 'laydate', 'jquery'], function(){
+    var form = layui.form;
+    var layer = layui.layer;
+    var upload = layui.upload;
+    var laydate = layui.laydate;
+    var $ = layui.jquery;
 
-	layui.use(['upload','toast'], function(){
-		let $ = layui.$;
-		let upload = layui.upload;
-		let form = layui.form;
-		let toast = layui.toast;
-		
-		//上传
-		upload.render({
-			elem: '.upload-select'
-			,url: UPLOAD_URL
-			,data: {type:'image'}
-			,accept: 'images'
-			,method: 'get'
-			,acceptMime: 'image/*'
-			,done: function(res){
-				$(this.item).prevAll("input").val(res.url);
-				if(res.status === 0){
-					toast.success({title:"成功",message:res.msg,position: 'topRight'});
-				} else {
-					toast.error({title:"失败",message:res.msg,position: 'topRight'});
-				}
-			}
-		});
-	})
+    const UPLOAD_URL = MODULE_NAME + '/soft/plugin/upload';
+    const SAVE_URL = MODULE_NAME + '/soft/plugin/saveConfig';
+
+
+    // ============================================
+    // 1. 日期控件初始化
+    // ============================================
+    $('input[id^="date_"]').each(function(){
+        laydate.render({ elem: this, type: 'date' });
+    });
+
+    // ============================================
+    // 2. 图片上传 (单图)
+    // ============================================
+    $('.upload-image-btn').each(function(){
+        var container = $(this).closest('.image-upload-container');
+        upload.render({
+            elem: this,
+            url: UPLOAD_URL,
+            data: { plugin: '{$name}' },
+            accept: 'image',
+            done: function(res){
+                if(res.code == 0){
+                    var input = container.find('.image-input');
+                    input.val(res.data.url);
+                    var preview = container.find('.image-preview');
+                    preview.html('<div class="preview-item"><img src="'+res.data.url+'" alt="预览图"><span class="remove-resource" data-url="'+res.data.url+'">×</span></div>');
+                    // 绑定删除事件（使用事件委托，所以不需要额外绑定）
+                    layer.msg('上传成功', {icon:1});
+                } else {
+                    layer.msg(res.msg || '上传失败', {icon:2});
+                }
+            },
+            error: function(){
+                layer.msg('上传请求失败', {icon:2});
+            }
+        });
+    });
+
+    // ============================================
+    // 3. 多图上传
+    // ============================================
+    $('.upload-images-btn').each(function(){
+        var container = $(this).closest('.images-upload-container');
+        var input = container.find('.images-input');
+        var preview = container.find('.images-preview');
+        
+        // 获取当前数组
+        function getUrls() {
+            try {
+                var val = input.val();
+                if(val) {
+                    var parsed = JSON.parse(val);
+                    if(Array.isArray(parsed)) return parsed;
+                }
+            } catch(e) {}
+            return [];
+        }
+        
+        // 渲染预览
+        function renderPreview(urls) {
+            var html = '';
+            urls.forEach(function(url){
+                html += '<div class="preview-item"><img src="'+url+'" alt="预览图"><span class="remove-resource" data-url="'+url+'">×</span></div>';
+            });
+            preview.html(html);
+            input.val(JSON.stringify(urls));
+        }
+        
+        upload.render({
+            elem: this,
+            url: UPLOAD_URL,
+            data: { plugin: '{$name}' },
+            accept: 'image',
+            multiple: true,
+            done: function(res){
+                if(res.code == 0){
+                    var urls = getUrls();
+                    urls.push(res.data.url);
+                    renderPreview(urls);
+                    layer.msg('上传成功', {icon:1});
+                } else {
+                    layer.msg(res.msg || '上传失败', {icon:2});
+                }
+            },
+            error: function(){
+                layer.msg('上传请求失败', {icon:2});
+            }
+        });
+        
+        // 删除事件委托（在容器上监听）
+        container.on('click', '.remove-resource', function(){
+            var url = $(this).data('url');
+            var urls = getUrls();
+            var index = urls.indexOf(url);
+            if(index !== -1) {
+                urls.splice(index, 1);
+                renderPreview(urls);
+                layer.msg('已删除', {icon:1});
+            }
+        });
+    });
+
+    // ============================================
+    // 4. 单文件上传
+    // ============================================
+    $('.upload-file-btn').each(function(){
+        var container = $(this).closest('.file-upload-container');
+        upload.render({
+            elem: this,
+            url: UPLOAD_URL,
+            data: { plugin: '{$name}' },
+            accept: 'file',
+            done: function(res){
+                if(res.code == 0){
+                    var input = container.find('.file-input');
+                    input.val(res.data.url);
+                    var preview = container.find('.file-preview');
+                    preview.html('<div class="preview-item"><a href="'+res.data.url+'" target="_blank">📄 查看文件</a><span class="remove-resource" data-url="'+res.data.url+'">×</span></div>');
+                    layer.msg('上传成功', {icon:1});
+                } else {
+                    layer.msg(res.msg || '上传失败', {icon:2});
+                }
+            },
+            error: function(){
+                layer.msg('上传请求失败', {icon:2});
+            }
+        });
+    });
+
+    // ============================================
+    // 5. 多文件上传
+    // ============================================
+    $('.upload-files-btn').each(function(){
+        var container = $(this).closest('.files-upload-container');
+        var input = container.find('.files-input');
+        var preview = container.find('.files-preview');
+        
+        function getFiles() {
+            try {
+                var val = input.val();
+                if(val) {
+                    var parsed = JSON.parse(val);
+                    if(Array.isArray(parsed)) return parsed;
+                }
+            } catch(e) {}
+            return [];
+        }
+        
+        function renderPreview(files) {
+            var html = '';
+            files.forEach(function(file){
+                html += '<div class="preview-item"><a href="'+file+'" target="_blank">📄 文件</a><span class="remove-resource" data-url="'+file+'">×</span></div>';
+            });
+            preview.html(html);
+            input.val(JSON.stringify(files));
+        }
+        
+        upload.render({
+            elem: this,
+            url: UPLOAD_URL,
+            data: { plugin: '{$name}' },
+            accept: 'file',
+            multiple: true,
+            done: function(res){
+                if(res.code == 0){
+                    var files = getFiles();
+                    files.push(res.data.url);
+                    renderPreview(files);
+                    layer.msg('上传成功', {icon:1});
+                } else {
+                    layer.msg(res.msg || '上传失败', {icon:2});
+                }
+            },
+            error: function(){
+                layer.msg('上传请求失败', {icon:2});
+            }
+        });
+        
+        container.on('click', '.remove-resource', function(){
+            var url = $(this).data('url');
+            var files = getFiles();
+            var index = files.indexOf(url);
+            if(index !== -1) {
+                files.splice(index, 1);
+                renderPreview(files);
+                layer.msg('已删除', {icon:1});
+            }
+        });
+    });
+
+    // ============================================
+    // 6. 动态数组 (array 类型)
+    // ============================================
+    // 添加行
+    $(document).on('click', '.add-array-item', function(){
+        var container = $(this).closest('.dynamic-array-container');
+        var key = container.data('key');
+        var html = `
+            <div class="array-item">
+                <div class="layui-input-inline" style="width:150px;">
+                    <input type="text" name="array_keys[${key}][]" placeholder="键名" class="layui-input array-key">
+                </div>
+                <div class="layui-input-inline" style="width:200px;">
+                    <input type="text" name="array_vals[${key}][]" placeholder="值" class="layui-input array-val">
+                </div>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger remove-array-item">删除</button>
+            </div>
+        `;
+        container.find('.array-items').append(html);
+        form.render();
+        updateArrayJson(container);
+    });
+
+    // 删除行
+    $(document).on('click', '.remove-array-item', function(){
+        var container = $(this).closest('.dynamic-array-container');
+        $(this).closest('.array-item').remove();
+        updateArrayJson(container);
+    });
+
+    // 监听输入变化
+    $(document).on('change keyup', '.array-item input', function(){
+        var container = $(this).closest('.dynamic-array-container');
+        updateArrayJson(container);
+    });
+
+    function updateArrayJson(container) {
+        var items = container.find('.array-item');
+        var data = {};
+        items.each(function(){
+            var keyInput = $(this).find('.array-key');
+            var valInput = $(this).find('.array-val');
+            var k = keyInput.val().trim();
+            var v = valInput.val().trim();
+            if (k !== '') {
+                data[k] = v;
+            }
+        });
+        container.find('.array-json-input').val(JSON.stringify(data));
+    }
+
+    // 初始化所有数组容器
+    $('.dynamic-array-container').each(function(){
+        updateArrayJson($(this));
+    });
+
+    // ============================================
+    // 7. 多维数组 (multi_array) 辅助表单
+    // ============================================
+    $(document).on('click', '.multi-array-helper', function(){
+        var container = $(this).closest('.multi-array-container');
+        var key = container.data('key');
+        var textarea = container.find('.multi-array-textarea');
+        var currentVal = textarea.val();
+        var currentData = {};
+        try { 
+            if(currentVal) currentData = JSON.parse(currentVal); 
+        } catch(e) { 
+            currentData = {}; 
+        }
+
+        // 构建弹窗内容
+        var content = `
+            <div style="padding:20px;">
+                <p style="margin-bottom:15px;color:#666;">添加键值对，点击"生成JSON"将结果填入配置项</p>
+                <div class="multi-helper-items">
+                    ${Object.keys(currentData).map(k => `
+                        <div class="multi-helper-item">
+                            <div class="layui-input-inline" style="width:150px;">
+                                <input type="text" class="layui-input helper-key" value="${k.replace(/"/g, '&quot;')}" placeholder="键名">
+                            </div>
+                            <div class="layui-input-inline" style="width:220px;">
+                                <input type="text" class="layui-input helper-val" value="${typeof currentData[k] === 'string' ? currentData[k].replace(/"/g, '&quot;') : JSON.stringify(currentData[k])}" placeholder="值（支持JSON）">
+                            </div>
+                            <button type="button" class="layui-btn layui-btn-sm layui-btn-danger helper-remove">删除</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top:15px;">
+                    <button type="button" class="layui-btn layui-btn-sm helper-add">＋ 添加键值对</button>
+                    <button type="button" class="layui-btn layui-btn-sm helper-confirm" style="margin-left:10px;">✅ 生成JSON</button>
+                </div>
+            </div>
+        `;
+
+        var index = layer.open({
+            type: 1,
+            title: '辅助编辑键值对 - ' + key,
+            area: ['650px', '500px'],
+            content: content,
+            btn: ['关闭'],
+            yes: function(){ layer.close(index); }
+        });
+
+        // 在弹窗内添加行
+        $(document).on('click', '.helper-add', function(){
+            var html = `
+                <div class="multi-helper-item">
+                    <div class="layui-input-inline" style="width:150px;">
+                        <input type="text" class="layui-input helper-key" placeholder="键名">
+                    </div>
+                    <div class="layui-input-inline" style="width:220px;">
+                        <input type="text" class="layui-input helper-val" placeholder="值（支持JSON）">
+                    </div>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger helper-remove">删除</button>
+                </div>
+            `;
+            $('.multi-helper-items').append(html);
+        });
+
+        // 删除行（使用事件委托，确保新添加的行也能响应）
+        $(document).on('click', '.helper-remove', function(){
+            $(this).closest('.multi-helper-item').remove();
+        });
+
+        // 确认生成 JSON
+        $(document).on('click', '.helper-confirm', function(){
+            var items = $('.multi-helper-item');
+            var data = {};
+            items.each(function(){
+                var k = $(this).find('.helper-key').val().trim();
+                var v = $(this).find('.helper-val').val().trim();
+                if (k !== '') {
+                    try {
+                        if (v && (v.startsWith('{') || v.startsWith('['))) {
+                            data[k] = JSON.parse(v);
+                        } else if (v === 'true') {
+                            data[k] = true;
+                        } else if (v === 'false') {
+                            data[k] = false;
+                        } else if (v === 'null') {
+                            data[k] = null;
+                        } else if (!isNaN(v) && v !== '') {
+                            data[k] = Number(v);
+                        } else {
+                            data[k] = v;
+                        }
+                    } catch(e) {
+                        data[k] = v;
+                    }
+                }
+            });
+            var jsonStr = JSON.stringify(data);
+            textarea.val(jsonStr);
+            textarea.trigger('change');
+            layer.close(index);
+            layer.msg('✅ 已生成 JSON', {icon:1});
+        });
+    });
+
+    // ============================================
+    // 8. 表单提交
+    // ============================================
+    form.on('submit(plugin-config-submit)', function(data){
+        var formData = data.field;
+        
+        // 对于 bool 类型，如果未勾选，手动设置为 false
+        $('input[type="checkbox"][lay-skin="switch"]').each(function(){
+            var name = $(this).attr('name');
+            if (!formData.hasOwnProperty(name)) {
+                formData[name] = 'false';
+            }
+        });
+        
+        // 提交前，确保所有 array 和多维数组的隐藏 JSON 已更新
+        $('.dynamic-array-container').each(function(){
+            var key = $(this).data('key');
+            var jsonInput = $(this).find('.array-json-input');
+            formData[key] = jsonInput.val();
+        });
+        
+        var hasError = false;
+        $('.multi-array-container').each(function(){
+            var key = $(this).data('key');
+            var textarea = $(this).find('.multi-array-textarea');
+            try {
+                var val = textarea.val();
+                if (val) {
+                    JSON.parse(val);
+                }
+                formData[key] = val;
+            } catch(e) {
+                layer.msg('❌ 多维数组配置 "'+key+'" 格式错误，请检查 JSON 语法', {icon:2});
+                hasError = true;
+                return false;
+            }
+        });
+        
+        if (hasError) {
+            return false;
+        }
+
+        var loadIndex = layer.load(1);
+        $.ajax({
+            url: SAVE_URL,
+            type: 'post',
+            data: formData,
+            dataType: 'json',
+            success: function(res){
+                layer.close(loadIndex);
+                if(res.code == 0){
+                    layer.msg('✅ ' + res.msg, {icon: 1});
+                } else {
+                    layer.msg('❌ ' + res.msg, {icon: 2});
+                }
+            },
+            error: function(){
+                layer.close(loadIndex);
+                layer.msg('❌ 请求失败，请检查网络', {icon: 2});
+            }
+        });
+        return false;
+    });
+
+    // ============================================
+    // 9. 初始化表单渲染
+    // ============================================
+    form.render();
+});
 </script>
 
 {/block}

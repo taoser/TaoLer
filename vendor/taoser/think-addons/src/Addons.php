@@ -234,6 +234,7 @@ abstract class Addons
         }
 
         $configFile = $this->addonPath . 'config.php';
+
         if (!is_file($configFile)) {
             return [];
         }

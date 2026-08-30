@@ -183,14 +183,6 @@ class Set extends AdminBaseController
 			$app_map[$data['admin_map']] ='admin';
 		}
 
-		//halt($app_map);
-		// $set = new SetArrConf('app');
-		// $res = $set->delete(['app_map' => config('app.app_map')])->add([
-		// 	'app_map' => $app_map,
-		// ])->put();
-
-		// halt($res);
-
 		// 匹配整个app_map数组
 		$pats_app_map = '/\'(app_map)\'[^\]]*\],/';
 		preg_match($pats_app_map,$str,$arr_map);
@@ -220,37 +212,6 @@ class Set extends AdminBaseController
 		}
 		return json(['code'=>0,'msg'=>'绑定成功']);
 		
-	}
-
-    /**
-     * URL美化，设置访问链接
-     * @return Json
-     */
-	public function setUrl()
-	{
-		$data = Request::post(['article_as','cate_as']);
-		$arr = [];
-		foreach($data as $k => $v) {
-			if(!empty($v)) {
-				$arr['url_rewrite'][$k] = $v . '/';
-			} else {
-				$arr['url_rewrite'][$k] = '';
-			}
-		}
-		// if(empty($arr['url_rewrite']['cate_as'])) return json(['code'=>-1,'msg'=>'分类不能为空']);
-
-		if(!array_key_exists('url_rewrite',config('taoler'))){
-			$result = SetArr::name('taoler')->add($arr);
-		} else {
-			$result = SetArr::name('taoler')->edit($arr);
-		}
-		if($result){
-			$res = ['code'=>0,'msg'=>'配置成功'];
-		} else {
-			$res = ['code'=>-1,'msg'=>'配置出错！'];
-		}
-		return json($res);
-
 	}
 
 	//上传logo

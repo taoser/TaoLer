@@ -405,6 +405,7 @@ if (!function_exists('get_addons_config')) {
     /**
      * 获取插件配置，优先插件实例getConfig，实例不存在直接读取config.php磁盘文件降级
      * @param string $name 插件名
+     * @param bool $type 是否返回原始数组（包含value字段）
      * @return array
      */
     function get_addons_config(string $name, bool $type = false): array
@@ -455,7 +456,8 @@ if (!function_exists('set_addons_config')) {
             throw new \Exception('插件名称非法');
         }
 
-        $addonsPath = app()->getAddonsPath();
+        // $addonsPath = app()->getAddonsPath();
+        $addonsPath = addons_path();
         $pluginDir  = $addonsPath . $name . DIRECTORY_SEPARATOR;
         $file       = $pluginDir . 'config.php';
 

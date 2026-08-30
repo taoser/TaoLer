@@ -6,6 +6,37 @@ use think\facade\Db;
 use think\facade\Session;
 use taoser\think\Auth;
 
+if(!function_exists('system_config'))
+{
+    /**
+     * 系统配置
+     * @param string $name 配置键名
+     * @param mixed $default 默认值
+     * @return mixed
+     */
+    function system_config(string $name, mixed $default = null): mixed
+    {
+        $config = new \app\entity\SystemConfig();
+
+        return $config->getValue($name, $default);
+    }
+}
+
+if(!function_exists('system_config_set'))
+{
+    /**
+     * 设置系统配置
+     * @param string $name 配置键名
+     * @param mixed $value 配置值
+     * @return mixed
+     */
+    function system_config_set(string $name, mixed $value): mixed
+    {
+        $config = new \app\entity\SystemConfig();
+        return $config->setValue($name, $value);
+    }
+}
+
 if(!function_exists('create_order_no'))
 {
     /**

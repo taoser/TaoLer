@@ -299,7 +299,7 @@ layui.define(['toast','loading','storage'], function (exports) {
 					title: '插件配置',
 					content: CONFIG_URL + "?name=" + data.name,
 					maxmin: true,
-					area: ["780px", "90%"],
+					area: ["100%", "100%"],
 					btn: ["确定", "取消"],
 					yes: function (index, layero) {
 						var iframeWindow = window["layui-layer-iframe" + index]; 
