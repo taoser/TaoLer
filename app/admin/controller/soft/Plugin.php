@@ -783,6 +783,8 @@ class Plugin extends AdminBaseController
         $origin = include $configFile;
         $postData = $request->post();
 
+        var_dump($postData);
+
         // array、multi_array 完全排除，不走ThinkPHP验证器，规避复合数组指针错乱BUG
         $validateRule = [];
         foreach ($origin as $name => $item) {
@@ -807,6 +809,20 @@ class Plugin extends AdminBaseController
                     case 'bool':
                         // 开关提交时若选中为 'on'，否则不存在，统一转为布尔
                         $val = ($val === 'on');
+                        break;
+                     case 'area':
+                        // 前端提交的是 JSON 字符串（由隐藏域组装）
+                        if (is_string($val)) {
+                            try {
+                                $decoded = json_decode($val, true, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $e) {
+                                return json(['code' => 1, 'msg' => "字段「{$key}」的 JSON 格式无效"]);
+                            }
+                            if (!is_array($decoded)) {
+                                return json(['code' => 1, 'msg' => "字段「{$key}」的 JSON 必须是数组"]);
+                            }
+                            $val = $decoded;
+                        }
                         break;
                     case 'array':
                         // 前端提交的是 JSON 字符串（由隐藏域组装）

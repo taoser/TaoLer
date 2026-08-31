@@ -61,28 +61,24 @@
             <h3>{$groupName}</h3>
             {foreach $items as $key => $item}
             <div class="layui-form-item" data-key="{$key}" data-type="{$item.type}">
-                <label class="layui-form-label">{$item.title}</label>
+                <label class="layui-form-label">{$key} {$item.title}</label>
                 <div class="layui-input-block">
                     {switch $item.type}
+
+                    {case number}
+                    <input type="number" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|number" placeholder="{$item.tips}" class="layui-input">
+                    {/case}
+
+                    {case bool}
+                    <input type="checkbox" name="{$key}" lay-skin="switch" lay-text="开启|关闭" {if $item.value}checked{/if}>
+                    {/case}
                     
                     {case text}
                     <input type="text" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-input">
                     {/case}
                     
-                    {case number}
-                    <input type="number" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-input">
-                    {/case}
-                    
-                    {case date}
-                    <input type="text" name="{$key}" id="date_{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-input" readonly>
-                    {/case}
-                    
-                    {case areatext}
+                    {case textarea}
                     <textarea name="{$key}" lay-verify="{$item.layui_rule}" placeholder="{$item.tips}" class="layui-textarea" rows="4">{$item.value}</textarea>
-                    {/case}
-                    
-                    {case bool}
-                    <input type="checkbox" name="{$key}" lay-skin="switch" lay-text="开启|关闭" {if $item.value}checked{/if}>
                     {/case}
                     
                     {case radio}
@@ -107,7 +103,62 @@
                         {/foreach}
                     </div>
                     {/case}
-                    
+
+                    {case year}
+                    <input type="text" name="{$key}" id="year_{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|year" placeholder="{$item.tips}" class="layui-input" readonly>
+                    {/case}
+
+                    {case month}
+                    <input type="text" name="{$key}" id="month_{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|month" placeholder="{$item.tips}" class="layui-input" readonly>
+                    {/case}
+
+                    {case date}
+                    <input type="text" name="{$key}" id="date_{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|date" placeholder="{$item.tips}" class="layui-input" readonly>
+                    {/case}
+
+                    {case time}
+                    <input type="text" name="{$key}" id="time_{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|time" placeholder="{$item.tips}" class="layui-input" readonly>
+                    {/case}
+
+                    {case datetime}
+                    <input type="text" name="{$key}" id="datetime_{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|datetime" placeholder="{$item.tips}" class="layui-input" readonly>
+                    {/case}
+
+                    {case password}
+                    <input type="password" name="{$key}" lay-verify="{$item.layui_rule}|pass" placeholder="{$item.tips}" autocomplete="off" lay-affix="eye" class="layui-input">
+                    {/case}
+
+                    {case phone}
+                    <input type="text" name="{$key}" lay-verify="{$item.layui_rule}|phone" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
+                    {/case}
+
+                    {case email}
+                    <input type="text" name="{$key}" lay-verify="{$item.layui_rule}|email" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
+                    {/case}
+
+                    {case url}
+                    <input type="text" name="{$key}" lay-verify="{$item.layui_rule}|url" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
+                    {/case}
+
+                    {case identity}
+                    <input type="text" name="{$key}" lay-verify="{$item.layui_rule}|identity" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
+                    {/case}
+
+                    {case area}
+                    <div id="area_{$key}">
+                        <div class="layui-input-inline" style="width: 200px;">
+                            <select name="province" class="province-selector" data-value="{$item.value.province ?? ''}">北京</select>
+                        </div>
+                        <div class="layui-input-inline" style="width: 200px;">
+                            <select name="city" class="city-selector" data-value="{$item.value.city ?? ''}">北京市</select>
+                        </div>
+                        <div class="layui-input-inline" style="width: 200px;">
+                            <select name="county" class="county-selector" data-value="{$item.value.county ?? ''}">海淀区</select>
+                        </div>
+                        <input type="hidden" name="{$key}" class="area-json-input" value="{if is_array($item.value)}{$item.value|json_encode}{else}{$item.value}{/if}">
+                    </div>
+                    {/case}
+
                     {case image}
                     <div class="image-upload-container" data-key="{$key}">
                         <div class="layui-upload">
@@ -239,22 +290,46 @@
 {__block__}
 
 <script>
-layui.use(['form', 'layer', 'upload', 'laydate', 'jquery'], function(){
+layui.use(['form', 'layer', 'upload', 'laydate', 'jquery', 'area'], function(){
     var form = layui.form;
     var layer = layui.layer;
     var upload = layui.upload;
     var laydate = layui.laydate;
     var $ = layui.jquery;
+    var area = layui.area;
 
     const UPLOAD_URL = MODULE_NAME + '/soft/plugin/upload';
     const SAVE_URL = MODULE_NAME + '/soft/plugin/saveConfig';
+
+    // ============================================
+    // 1. 地址联动控件初始化
+    // ============================================
+    $('[id^="area_"]').each(function(){
+        area.render({ elem: this, change: function (res) {
+                var data = {province: res.province, city: res.city, county: res.county};
+                $('.area-json-input').val(JSON.stringify(data));
+            } 
+        });
+    });
 
 
     // ============================================
     // 1. 日期控件初始化
     // ============================================
+    $('input[id^="year_"]').each(function(){
+        laydate.render({ elem: this, type: 'year' });
+    });
+    $('input[id^="month_"]').each(function(){
+        laydate.render({ elem: this, type: 'month' });
+    });
     $('input[id^="date_"]').each(function(){
         laydate.render({ elem: this, type: 'date' });
+    });
+    $('input[id^="time_"]').each(function(){
+        laydate.render({ elem: this, type: 'time' });
+    });
+    $('input[id^="datetime_"]').each(function(){
+        laydate.render({ elem: this, type: 'datetime' });
     });
 
     // ============================================
