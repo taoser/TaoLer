@@ -714,10 +714,10 @@ class Plugin extends AdminBaseController
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
         
-        // 预处理：为每个配置项添加 layui_rule 字段
+        // 预处理：为每个配置项添加 layui_rule 校验规则的 字段
         foreach ($config as &$item) {
             if (isset($item['rule']) && !empty($item['rule'])) {
-                $item['layui_rule'] = str_replace('|', ',', $item['rule']);
+                $item['layui_rule'] = str_replace('require', 'required', $item['rule']);
             } else {
                 $item['layui_rule'] = '';
             }
@@ -782,8 +782,6 @@ class Plugin extends AdminBaseController
         // 获取原始配置结构
         $origin = include $configFile;
         $postData = $request->post();
-
-        var_dump($postData);
 
         // array、multi_array 完全排除，不走ThinkPHP验证器，规避复合数组指针错乱BUG
         $validateRule = [];

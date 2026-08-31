@@ -125,36 +125,39 @@
                     {/case}
 
                     {case password}
-                    <input type="password" name="{$key}" lay-verify="{$item.layui_rule}|pass" placeholder="{$item.tips}" autocomplete="off" lay-affix="eye" class="layui-input">
+                    <input type="password" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|pass" placeholder="{$item.tips}" autocomplete="off" lay-affix="eye" class="layui-input">
                     {/case}
 
                     {case phone}
-                    <input type="text" name="{$key}" lay-verify="{$item.layui_rule}|phone" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
+                    <input type="text" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|phone" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
                     {/case}
 
                     {case email}
-                    <input type="text" name="{$key}" lay-verify="{$item.layui_rule}|email" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
+                    <input type="text" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|email" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
                     {/case}
 
                     {case url}
-                    <input type="text" name="{$key}" lay-verify="{$item.layui_rule}|url" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
+                    <input type="text" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|url" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
                     {/case}
 
                     {case identity}
-                    <input type="text" name="{$key}" lay-verify="{$item.layui_rule}|identity" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
+                    <input type="text" name="{$key}" value="{$item.value}" lay-verify="{$item.layui_rule}|identity" placeholder="{$item.tips}" autocomplete="off" class="layui-input">
                     {/case}
 
                     {case area}
                     <div id="area_{$key}">
-                        <div class="layui-input-inline" style="width: 200px;">
-                            <select name="province" class="province-selector" data-value="{$item.value.province ?? ''}">北京</select>
+                        <div class="layui-input-inline">
+                            <select name="province" class="province-selector" data-value="{$item.value.province ?? ''}"></select>
                         </div>
-                        <div class="layui-input-inline" style="width: 200px;">
-                            <select name="city" class="city-selector" data-value="{$item.value.city ?? ''}">北京市</select>
+                        <div class="layui-input-inline">
+                            <select name="city" class="city-selector" data-value="{$item.value.city ?? ''}"></select>
                         </div>
-                        <div class="layui-input-inline" style="width: 200px;">
-                            <select name="county" class="county-selector" data-value="{$item.value.county ?? ''}">海淀区</select>
+                        <div class="layui-input-inline">
+                            <select name="county" class="county-selector" data-value="{$item.value.county ?? ''}"></select>
                         </div>
+                        
+                        <input type="text" name="address" placeholder="请输入详细地址" value="{$item.value.address ?? ''}" class="layui-input address-input">
+                        
                         <input type="hidden" name="{$key}" class="area-json-input" value="{if is_array($item.value)}{$item.value|json_encode}{else}{$item.value}{/if}">
                     </div>
                     {/case}
@@ -305,11 +308,28 @@ layui.use(['form', 'layer', 'upload', 'laydate', 'jquery', 'area'], function(){
     // 1. 地址联动控件初始化
     // ============================================
     $('[id^="area_"]').each(function(){
+        var _this = $(this);
+        var data = {};
+        // 初始化数据
+        if(_this.find('.area-json-input').val()){
+            data = JSON.parse(_this.find('.area-json-input').val());
+        }
+        // 初始化地址联动控件
         area.render({ elem: this, change: function (res) {
-                var data = {province: res.province, city: res.city, county: res.county};
-                $('.area-json-input').val(JSON.stringify(data));
-            } 
+                // var data = {province: res.province, city: res.city, county: res.county};
+                data['province'] = res.province;
+                data['city'] = res.city;
+                data['county'] = res.county;
+                _this.find('.area-json-input').val(JSON.stringify(data));
+            }
         });
+        
+        // 绑定地址输入框变化事件
+        $(this).find('[name="address"]').on('change', function(){
+            data.address = $(this).val();
+            _this.find('.area-json-input').val(JSON.stringify(data));
+        });
+                
     });
 
 

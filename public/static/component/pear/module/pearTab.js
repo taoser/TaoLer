@@ -625,6 +625,9 @@ layui.define(['jquery', 'element'], function(exports) {
 		var $bodyTab = $("body .layui-tab[lay-filter='" + option.elem + "'] .layui-tab-title")
 		var $tabTitle = $('#' + option.elem + '  .layui-tab-title');
 		var mouseScrollStep = 100
+
+		$tabTitle.css('touch-action', 'pan-y');
+
 		// 鼠标滚轮
 		$bodyTab.on("mousewheel DOMMouseScroll", function(e) {
 			e.originalEvent.preventDefault()
@@ -643,20 +646,18 @@ layui.define(['jquery', 'element'], function(exports) {
 
 		// 触摸移动
 		var touchX = 0;
-		$bodyTab.on("touchstart", function(e) {
-			var touch = e.originalEvent.targetTouches[0];
+		$bodyTab[0].addEventListener('touchstart', function(e) {
+			var touch = e.targetTouches[0];
 			touchX = touch.pageX
-		})
-		$bodyTab.on("touchmove", function(e) {
-			var event = e.originalEvent;
-			if (event.targetTouches.length > 1) return;
-			event.preventDefault();
-			var touch = event.targetTouches[0];
+		}, {passive: true});
+		$bodyTab[0].addEventListener('touchmove', function(e) {
+			if (e.targetTouches.length > 1) return;
+			var touch = e.targetTouches[0];
 			var distanceX = touchX - touch.pageX
 			var scrollLeft = $tabTitle.scrollLeft();
 			touchX = touch.pageX
 			$tabTitle.scrollLeft(scrollLeft += distanceX)
-		});
+		}, {passive: true});
 	}
 
 	exports(MOD_NAME, new pearTab());

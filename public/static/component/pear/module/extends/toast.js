@@ -1184,11 +1184,11 @@
 
 			    $DOM.toast.addEventListener('touchstart', function(e) {
 			        drag.startMoving(this, that, settings, e);
-			    }, false);
+			    }, {passive: true});
 
 			    $DOM.toast.addEventListener('touchend', function(e) {
 			        drag.stopMoving(this, e);
-			    }, false);
+			    }, {passive: true});
 			} else {
 
 			    $DOM.toast.addEventListener('mousedown', function(e) {
