@@ -706,10 +706,10 @@ class Plugin extends AdminBaseController
      */
     public function config(Request $request)
     {
-        $name = $request->get('name');
+        $addonName = $request->get('name');
 
         try {
-            $config = $this->getConfigArray($name);
+            $config = $this->getConfigArray($addonName);
         } catch (Exception $e) {
             return json(['code' => -1, 'msg' => $e->getMessage()]);
         }
@@ -739,7 +739,7 @@ class Plugin extends AdminBaseController
         
         $grouped = $this->groupConfig($config);
 
-        View::assign('name', $name);
+        View::assign('addonName', $addonName);
         View::assign('grouped', $grouped);
         return View::fetch();
     }
@@ -783,7 +783,7 @@ class Plugin extends AdminBaseController
         $origin = include $configFile;
         $postData = $request->post();
 
-        // array、multi_array 完全排除，不走ThinkPHP验证器，规避复合数组指针错乱BUG
+        // 构建验证规则数组
         $validateRule = [];
         foreach ($origin as $name => $item) {
             if (!empty($item['rule'])) {
@@ -875,9 +875,8 @@ class Plugin extends AdminBaseController
             
             if (file_put_contents($configFile, $content) !== false) {
                 return json(['code' => 0, 'msg' => '保存成功']);
-            } else {
-                return json(['code' => 1, 'msg' => '保存失败，请检查目录权限']);
             }
+            return json(['code' => 1, 'msg' => '保存失败，请检查目录权限']);
         } catch (\Exception $e) {
             return json(['code' => 1, 'msg' => '保存失败：' . $e->getMessage()]);
         }

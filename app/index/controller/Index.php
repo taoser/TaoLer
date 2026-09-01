@@ -38,30 +38,26 @@ class Index extends IndexBaseController
      */
     public function index(Request $request)
     {
-		// Session::set('user_id', 1);
-
-		// $uid = Session::get('user_id_1');
-
-
+		
 		// dump(get_addons_config('demo'));
 
 		$uid = $request->session('user_id');
 
 		$tagItems = Cache::getTagItems('tag');
 
-		$addon = get_addons_instance('pay');
-        $addonConfig = $addon->getConfig();
+		// $addon = get_addons_instance('pay');
+        // $addonConfig = $addon->getConfig();
         
-		$config = [
-			'alipay' => [
-				'default' => $addonConfig['alipay']
-			],
-			'wechat' => [
-				'default' => $addonConfig['wechat']
-			],
-			'logger' => $addonConfig['logger'],
-			'http' => $addonConfig['http']
-		];
+		// $config = [
+		// 	'alipay' => [
+		// 		'default' => $addonConfig['alipay']
+		// 	],
+		// 	'wechat' => [
+		// 		'default' => $addonConfig['wechat']
+		// 	],
+		// 	'logger' => $addonConfig['logger'],
+		// 	'http' => $addonConfig['http']
+		// ];
 
         // dump($config);
 
