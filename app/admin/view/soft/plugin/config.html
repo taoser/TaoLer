@@ -70,7 +70,7 @@
                     {/case}
 
                     {case bool}
-                    <input type="checkbox" name="{$name}" lay-skin="switch" lay-text="开启|关闭" {if $item.value}checked{/if}>
+                    <input type="checkbox" name="{$name}" lay-skin="switch" lay-text="开启|关闭" lay-verify="{$item.layui_rule}" {if $item.value}checked{/if}>
                     {/case}
                     
                     {case text}
@@ -105,23 +105,23 @@
                     {/case}
 
                     {case year}
-                    <input type="text" name="{$name}" id="year_{$name}" value="{$item.value}" lay-verify="{$item.layui_rule}|year" placeholder="{$item.tips}" class="layui-input" readonly>
+                    <input type="text" name="{$name}" value="{$item.value}" id="year_{$name}" lay-verify="{$item.layui_rule}|year" placeholder="{$item.tips}" class="layui-input" readonly>
                     {/case}
 
                     {case month}
-                    <input type="text" name="{$name}" id="month_{$name}" value="{$item.value}" lay-verify="{$item.layui_rule}|month" placeholder="{$item.tips}" class="layui-input" readonly>
+                    <input type="text" name="{$name}" value="{$item.value}" id="month_{$name}" lay-verify="{$item.layui_rule}|month" placeholder="{$item.tips}" class="layui-input" readonly>
                     {/case}
 
                     {case date}
-                    <input type="text" name="{$name}" id="date_{$name}" value="{$item.value}" lay-verify="{$item.layui_rule}|date" placeholder="{$item.tips}" class="layui-input" readonly>
+                    <input type="text" name="{$name}" value="{$item.value}" id="date_{$name}" lay-verify="{$item.layui_rule}|date" placeholder="{$item.tips}" class="layui-input" readonly>
                     {/case}
 
                     {case time}
-                    <input type="text" name="{$name}" id="time_{$name}" value="{$item.value}" lay-verify="{$item.layui_rule}|time" placeholder="{$item.tips}" class="layui-input" readonly>
+                    <input type="text" name="{$name}" value="{$item.value}" id="time_{$name}" lay-verify="{$item.layui_rule}|time" placeholder="{$item.tips}" class="layui-input" readonly>
                     {/case}
 
                     {case datetime}
-                    <input type="text" name="{$name}" id="datetime_{$name}" value="{$item.value}" lay-verify="{$item.layui_rule}|datetime" placeholder="{$item.tips}" class="layui-input" readonly>
+                    <input type="text" name="{$name}" value="{$item.value}" id="datetime_{$name}" lay-verify="{$item.layui_rule}|datetime" placeholder="{$item.tips}" class="layui-input" readonly>
                     {/case}
 
                     {case password}
