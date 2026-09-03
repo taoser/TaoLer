@@ -20,7 +20,7 @@ class Config extends AdminBaseController
 
     public function index()
     {
-        return View::fetch('config_item');
+        return View::fetch();
     }
 
     public function set()
@@ -31,7 +31,7 @@ class Config extends AdminBaseController
     /**
      * 获取配置表单页面数据源（分组配置，渲染网站设置表单）
      */
-    public function getFormData(): Response
+    public function getFormData(Request $request): Response
     {
         return json([
             'code' => 0,
@@ -56,11 +56,11 @@ class Config extends AdminBaseController
     /**
      * 获取配置项管理列表（增删改配置元数据）
      */
-    public function itemList(Request $request): Response
+    public function list(Request $request): Response
     {
         $page = $request->post('page',1);
         $limit = $request->post('limit',20);
-        $param = $request->post('kw');
+        $param = $request->post('search-word','');
         $data = $this->entity->getConfigList($param, $page, $limit);
         return json([
             'code'=>0,
@@ -73,7 +73,7 @@ class Config extends AdminBaseController
     /**
      * 保存配置项（新增/编辑配置元）
      */
-    public function saveItem(Request $request): Response
+    public function save(Request $request): Response
     {
         $data = $request->post();
         // var_dump($data); // 调试输出
@@ -85,7 +85,7 @@ class Config extends AdminBaseController
     /**
      * 删除配置项
      */
-    public function deleteItem(Request $request): Response
+    public function delete(Request $request): Response
     {
         $id = $request->post('id',0);
         $ok = $this->entity->deleteItem($id);

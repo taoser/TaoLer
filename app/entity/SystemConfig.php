@@ -147,7 +147,7 @@ class SystemConfig extends BaseEntity
      */
     public function getGroupFormList(): array
     {
-        $rows = $this->order(['sort' => 'asc', 'group' => 'desc'])->select()->toArray();
+        $rows = $this->order(['sort' => 'desc', 'group' => 'desc'])->select()->toArray();
         $groups = [];
         foreach ($rows as $r) {
             if(is_null($r['options'])){

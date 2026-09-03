@@ -2,10 +2,13 @@
 
 {block name="title"}权限菜单{/block}
 {block name="head"}
-    <style>
-        .group-actions{margin-top:16px;}
-        .upload-wrap{display:flex;gap:10px;align-items:center;}
-    </style>
+<style>
+    .group-actions{margin-top:16px;}
+    .upload-wrap{display:flex;gap:10px;align-items:center;}
+    .kv-row { display: flex; align-items: center; margin-bottom: 5px; gap: 5px; }
+    .kv-row input { flex: 1; }
+    .kv-row .layui-btn { flex-shrink: 0; }
+</style>
 {/block}
 
 {block name="body"}
@@ -38,8 +41,8 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
 
     // 文件上传接口（根据你的项目实际地址调整）
     const UPLOAD_URL = MODULE_NAME + '/system/set/upload';
-    const FORM_DATA_URL = MODULE_NAME + '/system_config/get_form_data';
-    const BATCH_SAVE_URL = MODULE_NAME + '/system_config/batch_save';
+    const FORM_DATA_URL = MODULE_NAME + '/system/config/getFormData';
+    const BATCH_SAVE_URL = MODULE_NAME + '/system/config/batchSave';
 
     /**
      * 渲染单个配置项的表单控件，返回html
@@ -47,7 +50,7 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
      */
     function renderControl(item){
         let html = '<div class="layui-form-item">';
-        html += '<label class="layui-form-label">'+(item.title||'')+'</label>';
+        html += '<label class="layui-form-label">'+(item.name||'')+'<br>'+(item.title||'')+'</label>';
         html += '<div class="layui-input-block">';
 
         // 关键兜底：options 为 null / undefined 强制转为空数组
@@ -95,12 +98,66 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
                 }
                 html += `</select>`;
                 break;
-
+            case 'year':
+                // 日期：value存日期字符串，laydate渲染
+                html += `<input class="layui-input cfg-layyear" name="${item.name}" value="${item.value||''}" readonly placeholder="请选择年份">`;
+                break;
+            case 'month':
+                // 日期：value存日期字符串，laydate渲染
+                html += `<input class="layui-input cfg-laymonth" name="${item.name}" value="${item.value||''}" readonly placeholder="请选择月份">`;
+                break;
             case 'date':
                 // 日期：value存日期字符串，laydate渲染
                 html += `<input class="layui-input cfg-laydate" name="${item.name}" value="${item.value||''}" readonly placeholder="请选择日期">`;
                 break;
-
+            case 'time':
+                // 日期：value存日期字符串，laydate渲染
+                html += `<input class="layui-input cfg-laytime" name="${item.name}" value="${item.value||''}" readonly placeholder="请选择时间">`;
+                break;
+            case 'datetime':
+                // 日期：value存日期字符串，laydate渲染
+                html += `<input class="layui-input cfg-laydatetime" name="${item.name}" value="${item.value||''}" readonly placeholder="请选择日期时间">`;
+                break;
+            case 'phone':
+                html += `<input type="text" name="${item.name}" value="${item.value||''}" lay-verify="required|phone" class="layui-input">`;
+                break;
+            case 'email':
+                html += `<input type="text" name="${item.name}" value="${item.value||''}" lay-verify="required|email" class="layui-input">`;
+                break;
+            case 'url':
+                html += `<input type="text" name="${item.name}" value="${item.value||''}" lay-verify="required|url" class="layui-input">`;
+                break;
+            case 'identity':
+                html += `<input type="text" name="${item.name}" value="${item.value||''}" lay-verify="required|identity" class="layui-input">`;
+                break;
+            case 'array':
+                // 键值对行，直接返回对象（非 JSON 字符串）
+                var containerId = 'value_kv_container';
+                var obj = (typeof item.value === 'object' && item.value !== null) ? item.value : {};
+                html += '<div class="kv-container" id="' + containerId + '">';
+                var keys = Object.keys(obj);
+                if (keys.length === 0) {
+                    html += '<div class="kv-row">' +
+                        '<input type="text" class="layui-input kv-key" placeholder="键(Key)" value="" style="flex:1;">' +
+                        '<input type="text" class="layui-input kv-value" placeholder="值(Value)" value="" style="flex:1;">' +
+                        '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger kv-del">删除</button>' +
+                        '</div>';
+                } else {
+                    obj.forEach(function(v){
+                        for(var k in v){
+                        html += '<div class="kv-row">' +
+                            '<input type="text" class="layui-input kv-key" placeholder="键(Key)" value="' + k + '" style="flex:1;">' +
+                            '<input type="text" class="layui-input kv-value" placeholder="值(Value)" value="' + v[k] + '" style="flex:1;">' +
+                            '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger kv-del">删除</button>' +
+                            '</div>';
+                        }
+                    });
+                }
+                html += '</div>';
+                html += '<button type="button" class="layui-btn layui-btn-sm layui-btn-primary add-kv-row-btn">添加行</button>';
+                break;
+            case  'image':
+            case 'file':
             case 'upload':
                 // 上传类型：input存储value(文件地址) + 上传按钮 + 文件类型标签 + 图片预览
                 let fileUrl = item.value||'';
@@ -124,7 +181,6 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
                     <button type="button" class="layui-btn layui-btn-primary cfg-upload-btn">选择文件</button>
                 </div>`;
                 break;
-
             case 'areatext':
                 // 多行文本域 textarea
                 html += `<textarea class="layui-textarea" name="${item.name}" rows="4">${item.value||''}</textarea>`;
