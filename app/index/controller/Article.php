@@ -49,10 +49,11 @@ class Article extends IndexBaseController
 		$ID = $request->param('id');
 
 		$commentPage = $request->get('page', 1);
-
+		
 		try{
 			// 解密ID，得到int型
 			$id = IdEncode::decode($ID);
+			
 			// 1.内容
 			$detail = $this->model::getDetail($id);
 	

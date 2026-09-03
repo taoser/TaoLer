@@ -15,9 +15,13 @@ class Request extends \think\Request
 {
 	//过滤空格
 	//protected $filter = ['trim','htmlspecialchars','strip_tags'];
-	//protected $filter = ['trim','htmlspecialchars'];
+	// 过滤空格和HTML标签
+	// protected $filter = ['trim','htmlspecialchars'];
+	// 过滤空格和HTML标签
 	//protected $filter = ['trim','strip_tags'];
-	//protected $filter = ['htmlspecialchars'];
+	// 字符串中的特殊字符转换为 HTML 实体，从而防止 XSS 攻击
+	// protected $filter = ['htmlspecialchars'];
+	// 过滤空格
 	protected $filter = ['trim'];
 
 }

@@ -76,6 +76,8 @@ class Config extends AdminBaseController
     public function saveItem(Request $request): Response
     {
         $data = $request->post();
+        // var_dump($data); // 调试输出
+        // halt($data);
         $id = $this->entity->saveItem($data);
         return json(['code'=>0,'msg'=>'保存成功','data'=>['id'=>$id]]);
     }

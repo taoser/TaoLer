@@ -38,7 +38,6 @@ class Index extends IndexBaseController
      */
     public function index(Request $request)
     {
-		
 		// dump(get_addons_config('demo'));
 
 		$uid = $request->session('user_id');

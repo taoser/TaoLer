@@ -418,9 +418,8 @@ class Article extends BaseEntity
 
         return Cache::remember('article_'.$id, function() use($id){
             
-            return $this->field('id,title,content,status,category_id,user_id,is_comment,pv,keywords,description,create_time,update_time,comments_num,flags')
+            $detail = $this->field('id,title,content,status,category_id,user_id,is_comment,pv,keywords,description,create_time,update_time,comments_num,flags')
             ->where('id', $id)
-            ->where('status', 1)
             ->with([
                 'category' => function(Query $query){
                     $query->field('id,name,ename,tpl');
@@ -430,7 +429,17 @@ class Article extends BaseEntity
                 }
             ])
             ->append(['url'])
-            ->findOrFail();
+            ->find();
+
+            if(is_null($detail)) {
+                throw new Exception('内容不存在', 404);
+            }
+
+            if($detail['status'] == 0) {
+                throw new Exception('内容待审核');
+            }
+
+            return $detail;
         }, 600);
     }
 

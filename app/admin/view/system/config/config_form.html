@@ -77,7 +77,7 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
                 break;
 
             case 'checkbox':
-                var vals = (item.value||'').split(',');
+                var vals = (item.value||'');
                 for(var i=0;i<opts.length;i++){
                     var o=opts[i];
                     var cchk = vals.includes(String(o.value))?'checked':'';
