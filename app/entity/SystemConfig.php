@@ -103,6 +103,9 @@ class SystemConfig extends BaseEntity
         if (!$row) {
             return false;
         }
+        if($row['group'] === 'base'){
+            throw new ValidateException("基础配置项不能删除");
+        }
         $row->delete();
         $this->clearCache();
         return true;

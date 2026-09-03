@@ -114,15 +114,26 @@
             if(obj.event === 'edit'){
                 openPopup(row);
             }else if(obj.event === 'del'){
-                layer.confirm('确定删除该配置项？删除后配置数据会丢失！',function(){
-                    $.post('/system_config/delete_item',{id:row.id},function(res){
-                        if(res.code===0){
-                            tableIns.reload();
-                            layer.msg('删除成功',{icon:1});
-                        }else{
-                            layer.msg(res.msg,{icon:2});
+                layer.confirm('确定删除该配置项？删除后配置数据会丢失！', function(index){
+                    
+                    $.post({
+                        url: DELETE_ITEM_URL,
+                        data:{id:row.id},
+                        dataType:'json',
+                        success(res){
+                            layer.close(index);
+                            if(res.code===0){
+                                tableIns.reload();
+                                layer.msg('删除成功',{icon:1});
+                            }else{
+                                layer.msg(res.msg,{icon:2});
+                            }
+                        },
+                        error(error){ 
+                            layer.msg(error.responseJSON.msg,{icon:2}); 
                         }
-                    },'json');
+                    });
+                    
                 })
             }
         })
