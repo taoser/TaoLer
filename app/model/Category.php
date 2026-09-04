@@ -2,14 +2,6 @@
 
 namespace app\model;
 
-use Exception;
-use think\db\exception\DbException;
-use think\db\Query;
-use think\facade\Db;
-use think\facade\Cache;
-use think\facade\Route;
-use app\common\helper\IdEncode;
-
 use think\model\concern\SoftDelete;
 
 class Category extends BaseModel

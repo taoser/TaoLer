@@ -22,7 +22,8 @@
             <button class="layui-btn layui-btn-primary" lay-submit="table-search" lay-filter="table-search">搜索</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </form>
-        <button class="layui-btn layui-btn-normal" id="addBtn">新增配置项</button>
+        <button class="pear-btn  pear-btn-primary" id="addBtn">新增配置项</button>
+        <button class="pear-btn  pear-btn-danger" id="addGroupBtn">新增配置组</button>
     </div>
     <table id="itemTable" lay-filter="itemTable"></table>
 </div>
@@ -37,6 +38,10 @@
     <input type="checkbox" lay-skin="switch" lay-text="启用|禁用" lay-filter="tableStatusSwitch" data-id="{{d.id}}" {{d.status===1?'checked':''}} >
 </script>
 
+<script type="text/html" id="config-value-tpl">
+    <div>{{#if (Array.isArray(d.value)){ }} {{JSON.stringify(d.value)}}  {{# } else { }} {{d.value}} {{# } }}</div>
+</script>
+
 {__block__}
 
 <script>
@@ -47,8 +52,9 @@
     const UPDATE_SORT_URL = MODULE_NAME + '/system/config/updateSort';
     const UPDATE_STATUS_URL = MODULE_NAME + '/system/config/updateStatus';
     const UPLOAD_URL = MODULE_NAME + '/system/set/upload';
+    const ADD_GROUP_URL = MODULE_NAME + '/system/config/addGroup';
 
-    layui.use(['table','form','jquery','layer','laydate'],function(){
+    layui.use(['table','form','jquery','layer','laydate'],function() {
         var $ = layui.jquery;
         var table = layui.table;
         var form = layui.form;
@@ -59,6 +65,7 @@
         const OPTION_TYPES = ['radio','checkbox','select'];
         const NORMAL_TYPES = ['text','number','switch','date','upload', 'textarea','year','month','time','datetime','image','file','phone','email','url','identity'];
 
+        // 渲染配置项表格
         var tableIns = table.render({
             elem:'#itemTable',
             url: ITEM_LIST_URL,
@@ -67,11 +74,11 @@
             edit:'text',
             cols:[[
                 {field:'id',title:'ID',width:70},
-                {field:'group',title:'分组',width:100},
+                {title:'分组',width:100,templet:'<div>{{d.group.group_name}}</div>'},
                 {field:'name',title:'键名'},
                 {field:'title',title:'名称'},
                 {field:'type',title:'表单类型',width:100,align:'center'},
-                {field:'value',title:'配置值',minWidth:150, templet:'<div>{{#if (Array.isArray(d.value)){ }} {{JSON.stringify(d.value)}}  {{# } else { }} {{d.value}} {{# } }}</div>'},
+                {field:'value',title:'配置值',minWidth:150, templet:'#config-value-tpl'},
                 {field:'options',title:'选项',minWidth:200, templet:'<div>{{JSON.stringify(d.options)}}</div>'},
                 {field:'default_value',title:'默认值',minWidth:100},
                 {field:'tip',title:'提示',minWidth:200},
@@ -113,6 +120,7 @@
             var row = obj.data;
             if(obj.event === 'edit'){
                 openPopup(row);
+                form.val('form-val-filter', row);
             }else if(obj.event === 'del'){
                 layer.confirm('确定删除该配置项？删除后配置数据会丢失！', function(index){
                     
@@ -141,7 +149,6 @@
         // 搜索处理
         form.on('submit(table-search)',function(data){
             var field = data.field; // 获得表单字段
-            console.log(field);
             tableIns.reload({
                 where:field,
                 page:{curr:1}
@@ -164,6 +171,66 @@
             },'json');
         });
         
+        // 添加配置项
+        $('#addBtn').click(function(){
+            openPopup(null);
+        });
+
+        // 添加配置组
+        $('#addGroupBtn').click(function() {
+            var groupHtml = '<div class="layui-card">' +
+                '<div class="layui-card-body">' +
+                    '<form class="layui-form" lay-filter="addGroupForm">' +
+                        '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">名称</label>' +
+                            '<div class="layui-input-inline">' +
+                                '<input type="text" name="group_name" lay-verify="required" class="layui-input group-name-input" placeholder="请输入配置组名称">' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">标题</label>' +
+                            '<div class="layui-input-inline">' +
+                                '<input type="text" name="group_title" lay-verify="required" class="layui-input group-title-input" placeholder="请输入配置组标题">' +   
+                            '</div>' +
+                        '</div>' +
+                    '</form>' +
+                '</div>' +
+            '</div>';
+
+            layer.open({
+                type: 1,
+                title: '新增配置组',
+                area: ['360px', '260px'],
+                content: groupHtml,
+                btn: ['确定', '取消'],
+                yes: function(index, layero) {
+
+                    // 提交表单
+                    form.submit('addGroupForm', function(data) {
+                        var field = data.field;
+                        $.post({
+                            url: ADD_GROUP_URL,
+                            data: field,
+                            dataType:'json',
+                            success(res){
+                                if(res.code !== 0){
+                                    layer.msg(res.msg||'新增失败',{icon:2});
+                                    return;
+                                }else {
+                                    layer.msg('新增成功',{icon:1,time:1000});
+                                    tableIns.reload();
+                                }
+                            },
+                            error(error){ 
+                                layer.msg(error.responseJSON.msg,{icon:2}); 
+                            }
+                        });
+                        return false;
+                    });
+                }
+            });
+        });
+
         // ===============================================
         
         // 根据配置类型渲染选项html
@@ -184,16 +251,17 @@
             return html;
         }
 
-        // 数组添加kv行
+        // 添加数组kv键值对表单行
         function addKvRow(container, key, value) {
             var row = '<div class="kv-row">' +
                 '<input type="text" class="layui-input kv-key" placeholder="键(Key)" value="' + (key || '') + '" style="flex:1;">' +
                 '<input type="text" class="layui-input kv-value" placeholder="值(Value)" value="' + (value || '') + '" style="flex:1;">' +
-                '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger kv-del">删除</button>' +
+                '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger del-array-kv-btn">删除</button>' +
                 '</div>';
             container.append(row);
         }
-        // 数组获取kv数据
+        
+        // 获取数组类型kv键值对数据数组
         function getKvData(container) {
             var arr = [];
             container.find('.kv-row').each(function(){
@@ -205,9 +273,9 @@
         }
 
         // radio/checkbox/select配置类型获取选项数组
-        function getOptionsFromDom($openLayero){
+        function getOptionsFromDom(layero){
             let arr = [];
-            $openLayero.find('.option-item').each(function(){
+            layero.find('.option-item').each(function(){
                 let val = $(this).find('.opt-value').val().trim();
                 let lab = $(this).find('.opt-label').val().trim();
                 if(val !== '' && lab !==''){
@@ -218,10 +286,11 @@
         }
 
         // 根据选择type类型动态渲染配置值html表单
-        function renderValueHtml(cfgType, options, val) {
+        function renderValueHtml(curType, val, options) {
 
             let html = '';
-            switch(cfgType) {
+
+            switch(curType) {
                 case 'number':
                     return `<input  name="value" value="${val||''}" lay-verify="required|number" placeholder="请输入数字" class="layui-input">`;
                 case 'text':
@@ -298,7 +367,7 @@
                         html += '<div class="kv-row">' +
                             '<input type="text" class="layui-input kv-key" placeholder="键(Key)" value="" style="flex:1;">' +
                             '<input type="text" class="layui-input kv-value" placeholder="值(Value)" value="" style="flex:1;">' +
-                            '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger kv-del">删除</button>' +
+                            '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger del-array-kv-btn">删除</button>' +
                             '</div>';
                     } else {
                         obj.forEach(function(v) {
@@ -306,13 +375,13 @@
                             html += '<div class="kv-row">' +
                                 '<input type="text" class="layui-input kv-key" placeholder="键(Key)" value="' + k + '" style="flex:1;">' +
                                 '<input type="text" class="layui-input kv-value" placeholder="值(Value)" value="' + v[k] + '" style="flex:1;">' +
-                                '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger kv-del">删除</button>' +
+                                '<button type="button" class="layui-btn layui-btn-sm layui-btn-danger del-array-kv-btn">删除</button>' +
                                 '</div>';
                             }
                         });
                     }
                     html += '</div>';
-                    html += '<button type="button" class="layui-btn layui-btn-sm layui-btn-primary add-kv-row-btn">添加行</button>';
+                    html += '<button type="button" class="layui-btn layui-btn-sm layui-btn-primary add-array-kv-btn">添加行</button>';
                     return html;
                 default:
                     return `<input class="layui-input"  lay-verify="required" placeholder="请输入" name="value" value="${val||''}">`;
@@ -320,48 +389,149 @@
         
         }
 
+
+        // 刷新配置值html表单
+        function refreshValueHtml(curType, value, layero) {
+            
+            let $optionPanel = layero.find('#option_panel');
+
+            // 根据选择type类型动态渲染默认值html
+            let optArr  = getOptionsFromDom($optionPanel);
+            let curVal = value || '';
+
+            layero.find('#valueInputBlock').html(renderValueHtml(curType, curVal, optArr));
+            form.render();
+
+            // 根据选择type类型动态渲染表单组件（如日期选择器、上传组件等）
+            switch(curType) {
+                case 'year':
+                    laydate.render({ elem: '.def-layyear', type:'year' });
+                    break;
+                case 'month':
+                    laydate.render({ elem: '.def-laymonth', type:'month' });
+                    break;
+                case 'date':
+                    laydate.render({ elem: '.def-laydate', type:'date' });
+                    break;
+                case 'time':
+                    laydate.render({ elem: '.def-laytime', type:'time' });
+                    break;
+                case 'datetime':
+                    laydate.render({ elem: '.def-laydatetime', type:'datetime' });
+                    break;
+                case 'image':
+                    upload.render({
+                        elem: '.upload-image-btn',
+                        url: UPLOAD_URL,
+                        accept: 'images',
+                        acceptMime: 'image/*',
+                        done: function(res){
+                            if(res.code == 0){
+                                var container = $('.upload-image-btn').closest('.image-upload-container');
+                                var input = container.find('.image-input');
+                                input.val(res.data.url);
+                                layer.msg('上传成功', {icon:1});
+                            } else {
+                                layer.msg(res.msg || '上传失败', {icon:2});
+                            }
+                        },
+                        error: function(){
+                            layer.msg('上传请求失败', {icon:2});
+                        }
+                    });
+                    
+                    break;
+                case 'file':
+                    layero.find('.upload-file-btn').each(function(){
+                        var container = $(this).closest('.file-upload-container');
+                        upload.render({
+                            elem: this,
+                            url: UPLOAD_URL,
+                            accept: 'file',
+                            acceptMime: 'application/*',
+                            done: function(res){
+                                if(res.code == 0){
+                                    var input = container.find('.file-input');
+                                    input.val(res.data.url);
+                                    layer.msg('上传成功', {icon:1});
+                                } else {
+                                    layer.msg(res.msg || '上传失败', {icon:2});
+                                }
+                            },
+                            error: function(){
+                                layer.msg('上传请求失败', {icon:2});
+                            }
+                        });
+                    });
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // 切换选项面板
+        function toggleOptionPanel(curType, value, layero){
+            // 选项配置外层容器
+            let $optionWrap = layero.find('#option_wrap');
+            
+            if(OPTION_TYPES.includes(curType)){
+                $optionWrap.show();
+            }else{
+                $optionWrap.hide();
+            }
+            // 刷新配置值html表单
+            refreshValueHtml(curType, value, layero);
+        }
+
+
         // 弹窗表单
         function openPopup(data){
             var isEdit = !!data;
-            var d = data || {group:'base',type:'text',name:'',title:'',tip:'',value:'',options:[],status:1,sort:0,default_value:''};
-
+            var d = data || {type:'text',name:'',title:'',tip:'',value:'',options:[],status:1,sort:0,default_value:''};
+  
             var html = `
-            <form class="layui-form" style="padding:15px;">
-                <input type="hidden" name="id" value="${d.id||''}">
+            <form class="layui-form" style="padding:15px;" lay-filter="form-val-filter">
+                <input type="hidden" name="id">
                 <div class="layui-form-item">
                     <label class="layui-form-label">group 分组</label>
                     <div class="layui-input-block">
-                        <input class="layui-input" name="group" value="${d.group||''}" lay-verify="required" placeholder="请输入分组" autocomplete="off">
+                        <select name="system_group_id" lay-verify="required" placeholder="请选择分组">
+                            <option value="">请选择</option>
+                            {volist name="groupList" id="vo"}
+                            <option value="{$vo.id}">{$vo.group_title}</option>
+                            {/volist}
+                        </select>
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">name 键名</label>
                     <div class="layui-input-block">
-                        <input class="layui-input" name="name" value="${d.name||''}" lay-verify="required" placeholder="请输入配置键名"  ${isEdit?'readonly':''} placeholder="仅允许英文字母、数字、下划线" autocomplete="off">
+                        <input class="layui-input" name="name" lay-verify="required|name" placeholder="请输入配置键名"  ${isEdit?'readonly':''} placeholder="仅允许英文字母、数字、下划线" autocomplete="off">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">title 标题</label>
                     <div class="layui-input-block">
-                        <input class="layui-input" name="title" lay-verify="required" placeholder="请输入显示标题" value="${d.title||''}" autocomplete="off">
+                        <input class="layui-input" name="title" lay-verify="required" placeholder="请输入显示标题" autocomplete="off">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">tip 提示</label>
                     <div class="layui-input-block">
-                        <textarea class="layui-textarea" name="tip" lay-verify="required">${d.tip||''}</textarea>
+                        <textarea name="tip" lay-verify="required" class="layui-textarea"></textarea>
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">type 类型</label>
                     <div class="layui-input-block">
-                        <select name="type" id="cfg_type_select" lay-filter="cfg_type" lay-verify="required">
-                            <option value="number"      ${d.type==='number'?'selected':''}>number数值</option>
+                        <select name="type" lay-filter="configType" lay-verify="required">
+                            <option value="">请选择类型</option>
                             <option value="text"        ${d.type==='text'?'selected':''}>text文本</option>
+                            <option value="number"      ${d.type==='number'?'selected':''}>number数值</option>
                             <option value="textarea"    ${d.type==='textarea'?'selected':''}>textarea文本域</option>
                             <option value="switch"      ${d.type==='switch'?'selected':''}>switch开关</option>
                             <option value="radio"       ${d.type==='radio'?'selected':''}>radio单选</option>
@@ -411,201 +581,53 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">sort 排序</label>
                     <div class="layui-input-block">
-                        <input class="layui-input" name="sort" value="${d.sort||0}">
+                        <input class="layui-input" name="sort" lay-verify="number" value="${d.sort||0}">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">status 状态</label>
                     <div class="layui-input-block">
-                        <input type="checkbox" name="status" lay-skin="switch" value="1" ${d.status==1?'checked':''}>
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveItem">保存</button>
+                        <input type="checkbox" name="status" lay-skin="switch" value="1" ${d.status == 1 ? 'checked':''}>
                     </div>
                 </div>
             </form>
             `;
             
             // =========新增/编辑 弹窗=========
-            var idx = layer.open({
+            layer.open({
                 title:isEdit?'编辑配置项':'新增配置项',
                 type:1,
                 area:['720px','740px'],
                 content: html,
-                success:function(layero, index){
-                    let $openLayero = layero;
-                    // 配置类型选择器
-                    let $typeSel = $openLayero.find('#cfg_type_select');
-                    // 选项配置外层容器
-                    let $optionWrap = $openLayero.find('#option_wrap');
-                    // 选项面板
-                    let $optionPanel = $openLayero.find('#option_panel');
+                btn:['保存','取消'],
+                yes: function(index, layero){
+                    var optionPanel = layero.find('#option_panel');
 
-                    let $valueWrap = $openLayero.find('#valueInputBlock');
-
-                    let initOptions = d.options || [];
-                    $optionPanel.html(renderOptionHtml(initOptions));
-
-                    // 切换选项面板
-                    function toggleOptionPanel(typeVal){
-                        if(OPTION_TYPES.includes(typeVal)){
-                            $optionWrap.show();
-                        }else{
-                            $optionWrap.hide();
+                    // 验证配置键名是否符合要求
+                    form.verify({
+                        name: function(value, elem){
+                            if(!new RegExp("^[a-z0-9_]+$").test(value)){
+                                return '配置键名只能为小写英文字母、数字、下划线';
+                            }
+                            if (/(^_)|(__)|(_+$)/.test(value)) {
+                                return '键名首尾不能出现下划线';
+                            }
+                            if(/^\d+.*/.test(value)) {
+                                return '键名开头不能为数字';
+                            }
                         }
-                        refreshValueUI();
-                    }
-
-                    // 刷新配置值value UI
-                    function refreshValueUI(){
-                        let curType = $typeSel.val();
-                        // 根据选择type类型动态渲染默认值html
-                        let optArr  = getOptionsFromDom($optionPanel);
-                        let curVal = d.value || '';
-
-                        if(OPTION_TYPES.includes(curType)){
-                            oldDef = d.default_value || '';
-                        }else{
-                            oldDef = d.value || '';
-                        }
-
-                        $valueWrap.html(renderValueHtml(curType, optArr, curVal));
-                        form.render();
-
-                        // 根据选择type类型动态渲染表单组件（如日期选择器、上传组件等）
-                        switch(curType) {
-                            case 'year':
-                                laydate.render({ elem: '.def-layyear', type:'year' });
-                                break;
-                            case 'month':
-                                laydate.render({ elem: '.def-laymonth', type:'month' });
-                                break;
-                            case 'date':
-                                laydate.render({ elem: '.def-laydate', type:'date' });
-                                break;
-                            case 'time':
-                                laydate.render({ elem: '.def-laytime', type:'time' });
-                                break;
-                            case 'datetime':
-                                laydate.render({ elem: '.def-laydatetime', type:'datetime' });
-                                break;
-                            case 'image':
-                                upload.render({
-                                    elem: '.upload-image-btn',
-                                    url: UPLOAD_URL,
-                                    accept: 'images',
-                                    acceptMime: 'image/*',
-                                    done: function(res){
-                                        if(res.code == 0){
-                                            var container = $('.upload-image-btn').closest('.image-upload-container');
-                                            var input = container.find('.image-input');
-                                            input.val(res.data.url);
-                                            layer.msg('上传成功', {icon:1});
-                                        } else {
-                                            layer.msg(res.msg || '上传失败', {icon:2});
-                                        }
-                                    },
-                                    error: function(){
-                                        layer.msg('上传请求失败', {icon:2});
-                                    }
-                                });
-                                
-                                break;
-                            case 'file':
-                                $openLayero.find('.upload-file-btn').each(function(){
-                                    var container = $(this).closest('.file-upload-container');
-                                    upload.render({
-                                        elem: this,
-                                        url: UPLOAD_URL,
-                                        accept: 'file',
-                                        acceptMime: 'application/*',
-                                        done: function(res){
-                                            if(res.code == 0){
-                                                var input = container.find('.file-input');
-                                                input.val(res.data.url);
-                                                layer.msg('上传成功', {icon:1});
-                                            } else {
-                                                layer.msg(res.msg || '上传失败', {icon:2});
-                                            }
-                                        },
-                                        error: function(){
-                                            layer.msg('上传请求失败', {icon:2});
-                                        }
-                                    });
-                                });
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                    toggleOptionPanel(d.type);
-
-                    // 键值对行动态添加（array / multi_array）
-                    layero.find('#valueInputBlock').on('click', '.add-kv-row-btn', function(){
-                        var container = $(this).siblings('.kv-container');
-                        addKvRow(container, '', '');
-                        form.render();
                     });
-                    layero.find('#valueInputBlock').on('click', '.kv-del', function(){
-                        $(this).closest('.kv-row').remove();
-                    });
-
-                    form.on('select(cfg_type)',function(obj){
-                        toggleOptionPanel(obj.value);
-                    });
-
-                    $typeSel.on('change',function(){
-                        toggleOptionPanel($(this).val());
-                    });
-
-                    $openLayero.on('blur','.opt-value,.opt-label',function(){
-                        refreshValueUI();
-                    });
-
-                    $openLayero.on('click','.add-opt',function(){
-                        let newItemHtml = `
-                        <div class="option-item">
-                            <input class="layui-input opt-value" placeholder="value值" value="">
-                            <input class="layui-input opt-label" placeholder="显示文本label" value="">
-                            <button type="button" class="layui-btn layui-btn-xs layui-btn-danger del-opt">删除</button>
-                        </div>`;
-                        $optionPanel.append(newItemHtml);
-                        refreshValueUI();
-                    })
-
-                    $openLayero.on('click','.del-opt',function(){
-                        $(this).closest('.option-item').remove();
-                        refreshValueUI();
-                    })
 
                     // 保存配置项
-                    form.on('submit(saveItem)',function(postData){
-                        let field = postData.field;
+                    form.submit('form-val-filter', function(data){
+                        let field = data.field;
                         // 处理数组类型
                         if(field.type === 'array' || field.type === 'multi_array'){
-                            field.value = getKvData($openLayero.find('#valueInputBlock'));
+                            field.value = getKvData(layero.find('#valueInputBlock'));
                         }
 
-                        console.log(field);
-                        <!-- return false; -->
-
-
-                        let optArr = getOptionsFromDom($optionPanel);
+                        let optArr = getOptionsFromDom(optionPanel);
                         field.options = optArr;
-
-                        const nameReg = /^[a-zA-Z0-9_]+$/;
-                        if(!nameReg.test(field.name||'')){
-                            layer.msg('配置键名只能为英文字母、数字、下划线',{icon:2});
-                            return false;
-                        }
-
-                        //if(Array.isArray(field.default_value)){
-                        //    field.default_value = field.default_value.join(',');
-                        //}
 
                         const curType = field.type;
                         if(OPTION_TYPES.includes(curType)){
@@ -622,7 +644,7 @@
 
                         $.post(SAVE_ITEM_URL, field, function(res){
                             if(res.code === 0){
-                                layer.close(idx);
+                                layer.close(index);
                                 tableIns.reload();
                                 layer.msg('保存成功',{icon:1});
                             } else {
@@ -630,15 +652,72 @@
                             }
                         },'json');
                         return false;
+                    });
+                },
+                success:function(layero, index){
+                    
+                    // ===============选项面板功能=================
+
+                    // 选项面板ID
+                    let $optionPanel = layero.find('#option_panel');
+                    // 初始选项面板
+                    let initOptions = d.options || [];
+                    // 渲染选项面板
+                    $optionPanel.html(renderOptionHtml(initOptions));
+
+                    // 默认切换选项面板
+                    toggleOptionPanel(d.type, d.value, layero);
+
+                    // 1.添加选项
+                    layero.find('#option_panel').on('click','.add-opt',function(){
+                        let newItemHtml = `
+                        <div class="option-item">
+                            <input class="layui-input opt-value" placeholder="value值" value="">
+                            <input class="layui-input opt-label" placeholder="显示文本label" value="">
+                            <button type="button" class="layui-btn layui-btn-xs layui-btn-danger del-opt">删除</button>
+                        </div>`;
+                        $optionPanel.append(newItemHtml);
+                        // 刷新配置值html表单
+                        refreshValueHtml(curType, d.value, layero);
                     })
+
+                    // 2.删除选项
+                    layero.find('#option_panel').on('click','.del-opt',function(){
+                        $(this).closest('.option-item').remove();
+                        // 刷新配置值html表单
+                        refreshValueHtml(curType, d.value, layero);
+                    })
+
+                    // 选项面板 输入框失去焦点时刷新配置值html表单
+                    layero.on('blur','.opt-value,.opt-label',function(){
+                        // 刷新配置值html表单
+                        refreshValueHtml(curType, d.value, layero);
+                    });
+                   
+                    //================数组类型功能==========================
+
+                    //  动态添加键值对（array / multi_array）
+                    layero.find('#valueInputBlock').on('click', '.add-array-kv-btn', function(){
+                        var container = $(this).siblings('.kv-container');
+                        addKvRow(container, '', '');
+                        form.render();
+                    });
+                    
+                    // 删除键值对行动态（array / multi_array）
+                    layero.find('#valueInputBlock').on('click', '.del-array-kv-btn', function(){
+                        $(this).closest('.kv-row').remove();
+                    });
+
+                    // 配置类型选择器
+                    form.on('select(configType)',function(obj){
+                        toggleOptionPanel(obj.value, d.value, layero);
+                    });
+
+                    
                 }
             });
         }
 
-        // 添加配置项
-        $('#addBtn').click(function(){
-            openPopup(null);
-        });
 
     })
 </script>

@@ -145,34 +145,22 @@ class SystemConfig extends BaseEntity
     }
 
     /**
-     * 获取分组后的配置列表，用于渲染配置表单页面
-     * @return array
-     */
-    public function getGroupFormList(): array
-    {
-        $rows = $this->order(['sort' => 'desc', 'group' => 'desc'])->select()->toArray();
-        $groups = [];
-        foreach ($rows as $r) {
-            if(is_null($r['options'])){
-                $r['options'] = [];
-            }
-            $groups[$r['group']][] = $r;
-        }
-        return $groups;
-    }
-
-    /**
      * 获取配置项列表（用于配置项管理列表页，增删改配置元数据）
      */
     public function getConfigList(?string $keyword, int $page = 1, int $limit = 20): array
     {
-        $query = $this->order(['group' => 'asc', 'sort' => 'asc']);
-        
+        $query = $this->with(['group'])
+        ->hasWhere('group', function($q) use($keyword) {
+            if($keyword){
+                $q->whereOr('group_name', $keyword);
+            }
+        });
+
         if($keyword){
-            $query->whereOr('group', $keyword)->whereOr('name','like','%'.$keyword.'%');
+            $query->whereOr('name','like','%'.$keyword.'%');
         }
 
-        $res = $query
+        $res = $query->order(['sort' => 'asc'])
             ->paginate([
                 'page' => $page,
                 'list_rows' => $limit

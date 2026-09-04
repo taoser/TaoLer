@@ -21,7 +21,6 @@ class SystemConfig extends BaseModel
         return [
             'type' => [
                 'id' => 'integer',
-                'group' => 'string',
                 'name' => 'string',
                 'title' => 'string',
                 'type' => 'string',
@@ -29,9 +28,16 @@ class SystemConfig extends BaseModel
                 'value' => 'string',
                 'sort' => 'integer',
                 'status' => 'integer',
+                'system_group_id' => 'integer',
                 'options' => 'json', //自动解析options字段为数组
             ]
         ];
+    }
+
+    // 关联配置分组
+    public function group()
+    {
+        return $this->belongsTo(SystemGroup::class);
     }
 
     /**

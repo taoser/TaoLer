@@ -3,7 +3,6 @@ declare (strict_types = 1);
 
 namespace app\model;
 
-use Exception;
 use think\model\concern\SoftDelete;
 use app\observer\ArticleObserver;
 use app\common\helper\IdEncode;
