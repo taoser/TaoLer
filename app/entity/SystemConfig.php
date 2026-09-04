@@ -103,11 +103,14 @@ class SystemConfig extends BaseEntity
         if (!$row) {
             return false;
         }
-        if($row['group'] === 'base'){
-            throw new ValidateException("基础配置项不能删除");
+
+        if($row['is_system'] === 1){
+            throw new ValidateException("系统配置不能删除");
         }
+
         $row->delete();
         $this->clearCache();
+
         return true;
     }
 
@@ -134,9 +137,9 @@ class SystemConfig extends BaseEntity
             if (array_key_exists($row['name'], $postData)) {
                 $val = $postData[$row['name']];
                 //多选数组转逗号字符串
-                if (is_array($val)) {
-                    $val = implode(',', $val);
-                }
+                // if (is_array($val)) {
+                //     $val = implode(',', $val);
+                // }
                 $row->value = $val;
                 $row->save();
             }

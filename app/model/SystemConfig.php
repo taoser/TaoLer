@@ -24,13 +24,15 @@ class SystemConfig extends BaseModel
                 'name' => 'string',
                 'title' => 'string',
                 'type' => 'string',
-                'default_value' => 'string',
+                'tip' => 'string',
                 'value' => 'string',
+                'default_value' => 'string',
                 'sort' => 'integer',
                 'status' => 'integer',
                 'system_group_id' => 'integer',
                 'options' => 'json', //自动解析options字段为数组
-            ]
+            ],
+            'readonly' => ['name'],
         ];
     }
 

@@ -82,9 +82,10 @@ class Config extends AdminBaseController
      */
     public function save(Request $request): Response
     {
-        $data = $request->post();
+        $data = $request->post(['id','system_group_id/d','name','title','tip','type','sort/d','status/d','value','is_system/d','default_value']);
 
         $id = $this->config->saveItem($data);
+        
         return json(['code'=>0,'msg'=>'保存成功','data'=>['id'=>$id]]);
     }
 

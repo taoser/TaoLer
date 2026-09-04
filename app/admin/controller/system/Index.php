@@ -56,7 +56,7 @@ class Index extends AdminBaseController
 
 			$debugValue = $bool ? 1 : 0;
 
-			system_config_set('app_debug', $debugValue);
+			system_config_set('system_debug', $debugValue);
 			
 			return json(['code' => 0, 'msg' => $msg]);
 		}

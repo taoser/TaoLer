@@ -29,8 +29,8 @@
 </div>
 
 <script type="text/html" id="tableBar">
-    <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    <button class="pear-btn pear-btn-xs pear-btn-primary" lay-event="edit">编辑</button>
+    <button class="layui-btn pear-btn-xs pear-btn-danger" lay-event="del">删除</button>
 </script>
 
 <!-- 状态开关模板 -->
@@ -84,7 +84,7 @@
                 {field:'tip',title:'提示',minWidth:200},
                 {field:'sort',title:'排序',width:80,edit:'text',align:'center'},
                 {field:'status',title:'状态',width:90,templet:'#statusTpl',align:'center'},
-                {title:'操作',toolbar:'#tableBar',width:120}
+                {title:'操作',toolbar:'#tableBar',width:150}
             ]],
             page:true,
             request:{
@@ -588,6 +588,16 @@
                     <label class="layui-form-label">status 状态</label>
                     <div class="layui-input-block">
                         <input type="checkbox" name="status" lay-skin="switch" value="1" ${d.status == 1 ? 'checked':''}>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">system 系统</label>
+                    <div class="layui-input-block">
+                        <select name="is_system" lay-verify="required" lay-filter="is_system">
+                            <option value="">请选择</option>
+                            <option value="0" ${d.is_system == 0 ? 'selected':''}>否</option>
+                            <option value="1" ${d.is_system == 1 ? 'selected':''}>是</option>
+                        </select>
                     </div>
                 </div>
             </form>

@@ -255,7 +255,7 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
             // 渲染tab内容：每个group一个独立form
             var contentHtml = '';
             groupData.forEach(function(g, idx){
-                var items = g.config||[];
+                var items = g.config||[]; // 配置数据
                 var inner = '';
                 items.forEach(function(item){
                     if(item.status !== 1) return; // 跳过禁用项
@@ -266,7 +266,7 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
                 // 该分组的保存按钮
                 inner += `<div class="layui-form-item group-actions">
                     <div class="layui-input-block">
-                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="groupSave">保存 ${g.group_title}</button>
+                        <button class="pear-btn pear-btn-primary" lay-submit lay-filter="groupSave">保存 ${g.group_title}</button>
                     </div>
                 </div>`;
 
@@ -368,7 +368,7 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
         $.post(BATCH_SAVE_URL, {system_group_id: system_group_id, ...field}, function(res){
             if(res.code === 0){
                 layer.msg('保存成功',{icon:1});
-            }else{
+            } else {
                 layer.msg(res.msg,{icon:2});
             }
         },'json');
