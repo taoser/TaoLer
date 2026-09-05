@@ -14,12 +14,12 @@ class Page extends BaseModel
         return [
             'autoWriteTimestamp'    => true,
             'deleteTime'            => 'delete_time',
-            'defaultSoftDelete'     => null,
+            'defaultSoftDelete'     => null
         ];
     }
 
     //文章关联栏目表
-    public function cate()
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }

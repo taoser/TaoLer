@@ -99,7 +99,7 @@ class Article extends TagLib
 
     public function tagAuthor_avatar(array $tag, string $content): string
     {
-        return '{$article.user.user_img}';
+        return '{$article.user.avatar}';
     }
 
     public function tagAuthor_link(array $tag, string $content): string
@@ -235,7 +235,7 @@ class Article extends TagLib
             'id' => '{$article.user.id}',
             'name' => '{$article.user.name}',
             'nick' => '{$article.user.nickname}',
-            'avatar' => '{$article.user.user_img}',
+            'avatar' => '{$article.user.avatar}',
             'vip' => '{$article.user.vip}',
             'link'  => '{:url("user_home",["id"=>$article.user.id])->domain(true)}',
             default => ''

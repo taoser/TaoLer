@@ -27,7 +27,7 @@
         {//作者}
         <div class="detail-about" style="margin-top: 10px;">
           <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
-            <img src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}">
+            <img src="{$Request.domain}{$article.user.avatar}" alt="{$article.user.name}">
             {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
           </a>
           <div class="fly-detail-user">
@@ -86,7 +86,7 @@
               <a name="item-1111111111"></a>
               <div class="detail-about detail-about-reply">
                 <a class="fly-avatar" href="{$Request.domain}{:url('user/home',['id'=>$vo.user_id])}">
-                  <img src="{$Request.domain}{$vo.user.user_img}" alt=" ">
+                  <img src="{$Request.domain}{$vo.user.avatar}" alt=" ">
                 </a>
                 <div class="fly-detail-user">
                   <a href="{$Request.domain}{:url('user/home',['id'=>$vo.user.id])}" class="fly-link"><cite>{$vo.user.nickname ?: $vo.user.name}</cite></a>
@@ -125,7 +125,7 @@
         <div class="fly-panel-main wenda-user">
           <div class="user-img">
             <a href="{$Request.domain}{:url('user/home',['id'=>$article.user.id])}">
-              <img class="" src="{$Request.domain}{$article.user.user_img}" alt="{$article.user.name}" />
+              <img class="" src="{$Request.domain}{$article.user.avatar}" alt="{$article.user.name}" />
               {if($article.user.vip > 0)}<i class="iconfont icon-renzheng" title="认证信息"></i>{/if}
             </a>
           </div>

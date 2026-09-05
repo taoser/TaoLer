@@ -50,7 +50,7 @@ class Taglist extends BaseModel
                 ->whereIn('id', $idArr)
                 ->where('status', 1)
                 ->with(['user' => function($query){
-                    $query->field('id,name,nickname,user_img,vip');
+                    $query->field('id,name,nickname,avatar,vip');
                 },'category' => function($query){
                     $query->field('id,name,ename');
                 }])

@@ -218,7 +218,7 @@ class Login extends IndexBaseController
 
 		$data = [
 			'name' => $user['name'],
-			'avatar' => $user['user_img'],
+			'avatar' => $user['avatar'],
 			'user_home' => (string) url('user_home', ['id' => $user['id']])
 		];
 

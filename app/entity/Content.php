@@ -21,7 +21,7 @@ class Content extends BaseEntity
         'a.comments_num', 'a.flags'
     ];
     const CATE_RELATION_FIELDS = ['id', 'name', 'ename'];
-    const USER_RELATION_FIELDS = ['id', 'name', 'nickname', 'user_img', 'vip'];
+    const USER_RELATION_FIELDS = ['id', 'name', 'nickname', 'avatar', 'vip'];
 
     // 新的数量, 数据介于两表之间分量时使用
     protected static $newLimit;
@@ -149,7 +149,7 @@ class Content extends BaseEntity
                         $query->field('id,name,ename');
                     },
                     'user' => function (Query $query) {
-                        $query->field('id,name,nickname,user_img');
+                        $query->field('id,name,nickname,avatar');
                     }
                 ])
                 ->whereIn('id', $v)
@@ -331,7 +331,7 @@ class Content extends BaseEntity
                             $query->field('id,name,ename,tpl');
                         },
                         'user' => function(Query $query){
-                            $query->field('id,name,nickname,user_img');
+                            $query->field('id,name,nickname,avatar');
                         } ])
                         ->where('status', '1')
                         ->order('id','desc')
@@ -350,7 +350,7 @@ class Content extends BaseEntity
                             $query->field('id,name,ename,tpl');
                         },
                         'user' => function(Query $query){
-                            $query->field('id,name,nickname,user_img');
+                            $query->field('id,name,nickname,avatar');
                         } ])
                         ->where('status', '1')
                         ->order('id','desc')
@@ -368,7 +368,7 @@ class Content extends BaseEntity
                             $query->field('id,name,ename,tpl');
                         },
                         'user' => function(Query $query){
-                            $query->field('id,name,nickname,user_img');
+                            $query->field('id,name,nickname,avatar');
                         } ])
                         ->where('status', '1')
                         ->order('id','desc')
@@ -389,7 +389,7 @@ class Content extends BaseEntity
                         $query->field('id,name,ename,tpl');
                     },
                     'user' => function(Query $query){
-                        $query->field('id,name,nickname,user_img');
+                        $query->field('id,name,nickname,avatar');
                     } ])
                     ->where('status', '1')
                     ->order('id','desc')
@@ -427,7 +427,7 @@ class Content extends BaseEntity
                         $query->field('id,name,ename,tpl');
                     },
                     'user' => function(Query $query){
-                        $query->field('id,name,nickname,user_img,area_id,vip,city');
+                        $query->field('id,name,nickname,avatar,area_id,vip,city');
                     }
                 ])
                 ->append(['url'])
@@ -582,7 +582,7 @@ class Content extends BaseEntity
             ->column('user_id');
             $count = count($uidArr);
             if($count) {
-                $data = User::field('user_img as avatar,name')
+                $data = User::field('avatar as avatar,name')
                 ->whereIn('id', $uidArr)
                 ->select()
                 ->toArray();
@@ -617,7 +617,7 @@ class Content extends BaseEntity
             ->where('status', '1')
             ->with([
                 'user' => function($query){
-                    $query->field('id,name,user_img');
+                    $query->field('id,name,avatar');
                 },'category' => function($query){
                     $query->field('id,name');
                 }
@@ -699,7 +699,7 @@ class Content extends BaseEntity
         return $this::field('id,user_id,category_id,title,content,is_comment,status,update_time,comments_num,flags')
         ->with([
             'user' => function($query){
-                $query->field('id,name,user_img');
+                $query->field('id,name,avatar');
             },
             'category' => function($query){
                 $query->field('id,ename,name');
@@ -792,7 +792,7 @@ class Content extends BaseEntity
         $data = $this::field('id,user_id,category_id,title,description,is_comment,status,update_time,comments_num')
         ->with([
              'user' => function($query){
-                 $query->field('id,name,user_img');
+                 $query->field('id,name,avatar');
              },
              'category' => function($query){
                  $query->field('id,ename,name');
@@ -932,7 +932,7 @@ class Content extends BaseEntity
                     ->whereIn('id', $idArr)
                     ->with([
                         'user' => function(Query $query){
-                            $query->field('id,name,nickname,user_img,vip');
+                            $query->field('id,name,nickname,avatar,vip');
                         },
                         'category' => function(Query $query){
                             $query->field('id,ename,name');
@@ -968,7 +968,7 @@ class Content extends BaseEntity
                     ->whereIn('id', $idArr)
                     ->with([
                         'user' => function(Query $query){
-                            $query->field('id,name,nickname,user_img,vip');
+                            $query->field('id,name,nickname,avatar,vip');
                         },
                         'category' => function(Query $query){
                             $query->field('id,ename,name');

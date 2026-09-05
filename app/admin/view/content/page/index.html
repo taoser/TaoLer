@@ -6,21 +6,21 @@
 
 <div class="layui-card">
 	<div class="layui-card-body">
-		<form class="layui-form" action="">
+		<form class="layui-form">
 			<div class="layui-row layui-col-space15 ">
-				<div class="layui-col-md2">
+				<div class="layui-col-md3">
 					<label class="layui-form-label">选择类目</label>
 					<div class="layui-input-block">
 						<div id="CateId" class="xm-select-demo"></div>
 					</div>
 				</div>
-				<div class="layui-col-md2">
+				<div class="layui-col-md3">
 					<label class="layui-form-label">标题</label>
 					<div class="layui-input-block">
 						<input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input">
 					</div>
 				</div>
-				<div class="layui-col-md2">
+				<div class="layui-col-md3">
 					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="page-query">
 						<i class="layui-icon layui-icon-search"></i>
 						查询
@@ -45,20 +45,6 @@
 	<i class="layui-icon layui-icon-add-1"></i>
 	新增
 	</button>
-</script>
-<script type="text/html" id="titleTpl">
-	<ul>
-		<li><a href="{{- d.aurl }}" target="_blank"><strong>{{- d.title }}</strong></a></li>
-		<li>类别：{{ d.cate.name }}</li>
-		<li>{{ d.user.name }} - {{ d.create_time }}</li>
-	</ul>
-</script>
-
-<script type="text/html" id="buttonReply">
-	<input type="checkbox" name="is_comment" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isComment" {{ d.is_comment == 0 ? 'checked' : '' }}>
-</script>
-<script type="text/html" id="buttonCheck">
-	<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.status == 0 ? '待审' : '禁止' }}" {{ d.status == 1 ? 'checked' : '' }}>
 </script>
 
 <script type="text/html" id="page-table-bar">
@@ -91,7 +77,7 @@
 			cols: [[
 				{type: 'checkbox'}
 				,{field: 'id', width: 60, title: 'ID', sort: true}
-				,{title: '栏目', width: 150, align: 'center',templet: '<div>{{ d.cate.name }}</div>'}
+				,{title: '栏目', width: 150, align: 'center',templet: '<div>{{ d.category.name }}</div>'}
 				,{field: 'title', title: '标题', width: 200}
 				,{field: 'description', title: '描述', minWidth: 300}
 				,{field: 'keywords', title: '关键词', width: 200, align: 'center'}

@@ -20,7 +20,7 @@
 		    {volist name="artList" id="art"}
           <li>
             <a href="{$Request.domain}{:url('user/home',['id'=>$art.user_id])}" class="fly-avatar">
-              <img src="{$art.user.user_img}" alt="{$art.user_id|getUserName}"><i class="iconfont icon-renzheng" title="认证信息"></i>  
+              <img src="{$art.user.avatar}" alt="{$art.user_id|getUserName}"><i class="iconfont icon-renzheng" title="认证信息"></i>  
             </a>
             <h2><a href="{$Request.domain}{$art.url}" title="{$art.title}">{$art.title}</a></h2>
             <div class="fly-list-info">

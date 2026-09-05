@@ -89,7 +89,7 @@
 </script>
 
 <script type="text/html" id="avatarTpl">
-	<div><img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= "{{ d.user.user_img }}"></div>
+	<div><img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= "{{ d.user.avatar }}"></div>
 </script>
 <script type="text/html" id="forum-istop">
 	<input type="checkbox" name="is_top" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.flags.is_top == 1 ? 'checked' : '' }}>
@@ -121,7 +121,6 @@
 	const CHECK_URL = MODULE_NAME + '/content/article/check';
 	const SET_FLAG_URL = MODULE_NAME + '/content/article/setFlag';
 	const CHECK_SELECT_URL = MODULE_NAME + '/content/article/checkSelect';
-
 
 	layui.use(['popup', 'toast','common','xmSelect'], function(){
 		let $ = layui.jquery;

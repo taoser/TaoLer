@@ -58,7 +58,7 @@ class Cate extends AdminBaseController
         $id = $request->get('id/d');
         $addOrEdit = !is_null($id);//true是编辑false新增
         
-        if($request->isPost()) {
+        if(!$request->isPost()) {
             
             //详情模板
             $template = $this->getIndexTpl();

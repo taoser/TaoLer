@@ -21,7 +21,7 @@
 		    {volist name="artList['data']" id="art"}
           <li>
             <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" class="fly-avatar">
-              <img src="{$Request.domain}{$art.user.user_img}" alt="{$art.user.name}">
+              <img src="{$Request.domain}{$art.user.avatar}" alt="{$art.user.name}">
             </a>
             <h2>
               <a href="{$Request.domain}{$art.url}">{$art.title}</a>

@@ -34,7 +34,7 @@
             {//作者}
             <div class="detail-about">
                 <a class="fly-avatar" href="{:url('user/home',['id'=>$article.user.id])}">
-                <img src="{$article.user.user_img}" alt="{$article.user.name}">
+                <img src="{$article.user.avatar}" alt="{$article.user.name}">
                 <i class="iconfont icon-renzheng" title="认证信息"></i>
                 </a>
                 <div class="fly-detail-user">
@@ -86,7 +86,7 @@
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
                 <a class="fly-avatar" href="{:url('user/home',['id'=>$vo.user.id])}">
-                <img src="{$vo.user.user_img}" alt=" "><i class="iconfont icon-renzheng" title="认证信息"></i>
+                <img src="{$vo.user.avatar}" alt=" "><i class="iconfont icon-renzheng" title="认证信息"></i>
                 </a>
                 <div class="fly-detail-user">
                 <a href="{:url('user/home',['id'=>$vo.user.id])}" class="fly-link">

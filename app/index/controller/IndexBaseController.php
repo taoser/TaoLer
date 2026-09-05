@@ -68,7 +68,7 @@ class IndexBaseController extends \app\BaseController
 		$user = Db::name('user')
 			->alias('u')
 			->join('user_viprule v', 'v.vip = u.vip')
-			->field('u.id as id,v.id as vid,name,nickname,user_img,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as create_time')
+			->field('u.id as id,v.id as vid,name,nickname,avatar,sex,area_id,auth,city,phone,email,active,sign,point,u.vip as vip,nick,u.create_time as create_time')
 			->cache(true)
 			->findOrEmpty($this->uid);
 

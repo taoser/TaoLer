@@ -32,7 +32,7 @@ class Category extends BaseModel
     //关联主题单页
     public function page()
     {
-        return $this->hasOne(Page::class);
+        return $this->hasOne(Page::class, 'category_id', 'id');
     }
 	
     // 获取url

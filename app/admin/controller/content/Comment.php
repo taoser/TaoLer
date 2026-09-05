@@ -86,7 +86,7 @@ class Comment extends AdminBaseController
                 ->join('user u', 'a.user_id = u.id')
                 ->join('article c', 'a.article_id = c.id')
                 ->join('category cate', 'c.category_id = cate.id')
-                ->field('a.id as aid, u.name, cate.ename, c.title, u.user_img, a.content, a.create_time, a.status as astatus, c.id as cid')
+                ->field('a.id as aid, u.name, cate.ename, c.title, u.avatar, a.content, a.create_time, a.status as astatus, c.id as cid')
                 ->where($where)
                 ->whereNull('a.delete_time')
                 ->order('a.create_time', 'desc');
@@ -107,7 +107,7 @@ class Comment extends AdminBaseController
                         'id'        => (int)$v['aid'],
                         'replyer'   => htmlspecialchars($v['name']),
                         'title'     => htmlspecialchars($v['title']),
-                        'avatar'    => $v['user_img'],
+                        'avatar'    => $v['avatar'],
                         'content'   => mb_substr(strip_tags($v['content']), 0, 100, 'UTF-8'),
                         'replytime' => $v['create_time'],
                         'check'     => (int)$v['astatus'],

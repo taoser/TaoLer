@@ -66,7 +66,7 @@ class User extends AdminBaseController
 		$query = Db::name('user')
 		->alias('u')
 		->join('user_viprule v', 'u.vip = v.vip')
-		->field('u.id,name,nickname,user_img,phone,email,sex,last_login_ip,city,point,last_login_time,u.create_time,status,auth,note,v.nick as vipnick,u.vip');
+		->field('u.id,name,nickname,avatar,phone,email,sex,last_login_ip,city,point,last_login_time,u.create_time,status,auth,note,v.nick as vipnick,u.vip');
 
 		if(!empty($param['id'])) {
 			$query->where('u.id', $param['id']);
@@ -111,7 +111,7 @@ class User extends AdminBaseController
 			return View::fetch();
 		}
 
-		$data = $request->post(['name','email','user_img','password','phone','sex']);
+		$data = $request->post(['name','email','avatar','password','phone','sex']);
 		try{
 			validate(userValidate::class)->scene('userReg')->check($data);
 
@@ -140,7 +140,7 @@ class User extends AdminBaseController
 			return View::fetch();
 		}
 		
-		$data = $request->post(['id/d','name','email','user_img','password','phone','sex']);
+		$data = $request->post(['id/d','name','email','avatar','password','phone','sex']);
 
 		if(empty($data['password'])) {
 			unset($data['password']);

@@ -304,7 +304,7 @@ class User extends IndexBaseController
 			$encoded->save($realPath);
 
 			//查出当前用户头像删除原头像并更新
-			$imgPath = Db::name('user')->where('id',$this->uid)->value('user_img');
+			$imgPath = Db::name('user')->where('id',$this->uid)->value('avatar');
 
 			if(file_exists('.'.$imgPath)){
 				$dirPath    = dirname('.'.$imgPath);
@@ -315,7 +315,7 @@ class User extends IndexBaseController
 
             Db::name('user')
 			->where('id', $this->uid)
-			->update(['user_img' => $src]);
+			->update(['avatar' => $src]);
 
 			Cache::tag(['user','tagArtDetail','tagArt'])->clear();
 
@@ -341,7 +341,7 @@ class User extends IndexBaseController
     {
 		$id = Session::get('user_id') ?? $request->get('id');
 		//用户
-		$u = Db::name('user')->field('name,nickname,city,sex,sign,user_img,point,vip,create_time')->find($id);
+		$u = Db::name('user')->field('name,nickname,city,sex,sign,avatar,point,vip,create_time')->find($id);
 	
 		$arts = Article::getUserArtList((int) $id);
 

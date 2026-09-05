@@ -168,7 +168,7 @@ class Category extends BaseEntity
                         //         $query->field('id,name,ename');
                         //     },
                         //     'user' => function(Query $query){
-                        //         $query->field('id,name,nickname,user_img,vip');
+                        //         $query->field('id,name,nickname,avatar,vip');
                         //     }
                         // ])
                         // ->order('id', 'desc')
@@ -279,7 +279,7 @@ class Category extends BaseEntity
             // 关联分类/用户（保留原逻辑，简化闭包）
             ->with([
                 'category' => fn(Query $query) => $query->field('id,name,ename'),
-                'user' => fn(Query $query) => $query->field('id,name,nickname,user_img,vip')
+                'user' => fn(Query $query) => $query->field('id,name,nickname,avatar,vip')
             ])
             // 字段筛选（主表加别名，避免字段冲突）
             ->field([
@@ -410,7 +410,23 @@ class Category extends BaseEntity
      */
     public function getNav(): array
     {
-        $list = $this->where('status', 1)
+        $list = $this
+        // ->with('page')
+            // ->alias('category') // 必须设置，否则会报错: has('page') 会生成一个 whereExists 子查询，其中引用了 category.id（以模型名作为表别名）。但问题是：alias('category') 只被设置在 whereOr 闭包内的 $q 对象上，而不是主查询对象上。当闭包的条件合并回主查询时，别名丢失了，导致主查询的表名是 tao_category（带前缀），而子查询中却引用了 category.id，因此报错 Unknown column 'category.id'。
+            // ->where('type', '<>', 2)
+            // ->WhereOr(function($query) {
+            //     $query->where('type', 2)->has('page');
+            // })
+            
+            ->where('type', '<>', 2)
+            ->whereOr(function($query){
+                $query->where('type', 2)
+                    ->whereExists(function($sub){
+                        $sub->name('page')->where('category_id = id');
+                });
+            })
+
+            ->where('status', 1)
             ->order('sort asc')
             ->append(['url'])
             ->cache(3600)

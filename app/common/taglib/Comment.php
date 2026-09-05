@@ -90,7 +90,7 @@ class Comment extends TagLib
 
     public function tagUimg()
     {
-        return '{$comment.user.user_img}';
+        return '{$comment.user.avatar}';
     }
 
     public function tagUlink()

@@ -74,7 +74,7 @@ class Comment extends BaseModel
             if($count) {
                 $data = self::whereIn('id', $idArr)
                 ->with(['user'=>function($query){
-                    $query->field('id,name,user_img,sign,city,vip');
+                    $query->field('id,name,avatar,sign,city,vip');
                 }])
                 ->order(['cai'=>'asc','create_time'=>'asc'])
                 ->append(['touser'])
@@ -92,7 +92,7 @@ class Comment extends BaseModel
     public function reply($num)
     {
         try {
-            $user = User::field('id,user_img,name,nickname')
+            $user = User::field('id,avatar,name,nickname')
             ->withCount(['comments'=> function($query) {
                 $query->where(['status'=>1]);
             }])
@@ -113,7 +113,7 @@ class Comment extends BaseModel
                 // $u['uid'] = (string) \think\facade\Route::buildUrl('user_home', ['id' => $v['id']]);
                 $u['count'] = $v['comments_count'];
                 
-                $u['user'] = ['username'=>$v['nickname'] ?: $v['name'] ,'avatar'=>$v['user_img']];
+                $u['user'] = ['username'=>$v['nickname'] ?: $v['name'] ,'avatar'=>$v['avatar']];
                 
                 $res['data'][] = $u;
             }
@@ -169,7 +169,7 @@ class Comment extends BaseModel
         return $this->field('id,article_id,user_id,content,status,create_time')
             ->with([
                 'user'=> function($query){
-                    $query->field('id,name,user_img');
+                    $query->field('id,name,avatar');
                 },
                 'article' => function($query) {
                 $query->field('id,title');

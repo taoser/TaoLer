@@ -138,7 +138,7 @@ class User extends BaseEntity
         $token = JwtAuth::encode([
             'uid'       => $user['id'],
             'username'  => $user['name'],
-            'avatar'    => $user['user_img']
+            'avatar'    => $user['avatar']
         ]);
 
         // 过期时间
@@ -200,10 +200,10 @@ class User extends BaseEntity
 		//随机图片
 		$i = array_rand($images);
 		$img = $images[$i];
-        $data['user_img'] = '/'.str_replace('\\','/',$img);
+        $data['avatar'] = '/'.str_replace('\\','/',$img);
         //随机存入默认头像
         // $code = mt_rand('1','11');
-        // $data['user_img'] = "/static/res/images/avatar/$code.jpg";        
+        // $data['avatar'] = "/static/res/images/avatar/$code.jpg";        
         
         return $this->save($data);
 
