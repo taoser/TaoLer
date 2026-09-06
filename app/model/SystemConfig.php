@@ -94,4 +94,10 @@ class SystemConfig extends BaseModel
         return (string) $value;
     }
 
+    // 查询范围：仅查询启用项 使用方法 SystemConfig::scope('enabled')->select();
+    public function scopeEnabled($query)
+    {
+        return $query->where('status', 1);
+    }
+
 }

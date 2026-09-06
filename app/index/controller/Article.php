@@ -58,9 +58,9 @@ class Article extends IndexBaseController
 			$detail = $this->model::getDetail($id);
 	
 			// 2.pv
-			$detail->setInc('pv', 1); // 延迟更新
-			$pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
-			$detail->pv = $pv;
+			$detail->inc('pv', 1, 60)->save(); // 延迟60秒更新
+			// $pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
+			// $detail->pv = $pv;
 
 		} catch(Exception $e) {
 			throw new HttpException(404, $e->getMessage());
@@ -74,7 +74,7 @@ class Article extends IndexBaseController
 	
 		View::assign([
 			'article'		=> $detail,
-			'pv'			=> $pv,
+			// 'pv'			=> $pv,
 			'page'			=> $commentPage,
 			'cid' 			=> $id,
 			'lrDate_time' 	=> $lrDate_time,

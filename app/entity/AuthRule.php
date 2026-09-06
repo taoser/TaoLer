@@ -64,7 +64,7 @@ class AuthRule extends BaseEntity
      * @param int $id 
      * @return bool
      */
-    public function delete(int $id): bool
+    public function del(int $id): bool
     {
         DB::startTrans();
         try {
@@ -76,7 +76,7 @@ class AuthRule extends BaseEntity
             $rule->delete();
             
             // 删除当前权限下的所有子权限
-            $this->where('pid', $id)->delete();
+            // $this->where('pid', $id)->delete();
             DB::commit();
             return true;
         } catch (Exception $e) {

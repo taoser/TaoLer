@@ -240,7 +240,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
     /**
      * 渲染分组tabs
      */
-    function loadForm(){
+    function renderForm(){
         $.post(FORM_DATA_URL, {}, function(res){
             if(res.code !== 0) return layer.msg(res.msg,{icon:2});
             var groupData = res.data || {};   // [{id, group_name, group_title, config:[] }]
@@ -259,7 +259,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                 var inner = '';
                 var items = g.config||[]; // 配置数据
                 
-                items.forEach(function(item){
+                items.forEach(function(item) {
                     if(item.status !== 1) return; // 跳过禁用项
                     inner += renderControl(item);
                 });
@@ -382,7 +382,9 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
         return false;
     });
 
-    loadForm();
+    // 初始化表单
+    renderForm();
+
 });
 </script>
 

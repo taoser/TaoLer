@@ -21,7 +21,7 @@ class Article extends BaseModel
             'defaultSoftDelete'     => null,
             'eventObserver'         => ArticleObserver::class,
             'jsonAssoc'             => true,
-            'lazyFields'            => 'pv' // 延迟写入pv
+            'lazyFields'            => ['pv'] // 延迟写入pv,实时获取pv数据
         ];
     }
 

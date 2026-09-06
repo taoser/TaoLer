@@ -131,7 +131,8 @@ class AuthRule extends AdminBaseController
 	public function delete(Request $request): Response
 	{	
 		$id = $request->get('id/d');
-		$this->model->delete($id);
+
+		$this->model->del($id);
 		
 		return json(['code'=>0,'msg'=>'删除成功']);
 	}
