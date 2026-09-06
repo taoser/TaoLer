@@ -247,25 +247,26 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
 
             // 渲染tab标题
             var titleHtml = '';
-            groupData.forEach(function(g, idx){
-                titleHtml += `<li ${idx === 0 ? 'class="layui-this"' : ''} lay-id="${g.group_name}"><a href="#${g.group_name}">${g.group_title}</a></li>`;
-            });
-
-            $('#tabTitle').html(titleHtml);
 
             // 渲染tab内容：每个group一个独立form
             var contentHtml = '';
-            groupData.forEach(function(g, idx){
-                var items = g.config||[]; // 配置数据
+            groupData.forEach(function(g, idx) {
+
+                if(g.config.length === 0) return; // 跳过空分组
+
+                titleHtml += `<li ${idx === 0 ? 'class="layui-this"' : ''} lay-id="${g.group_name}"><a href="#${g.group_name}">${g.group_title}</a></li>`;
+
                 var inner = '';
+                var items = g.config||[]; // 配置数据
+                
                 items.forEach(function(item){
                     if(item.status !== 1) return; // 跳过禁用项
                     inner += renderControl(item);
                 });
+                
                 // 隐藏group字段，用于提交时标识分组
-                inner += `<input type="hidden" name="_group" value="${g.id}">`;
-                // 该分组的保存按钮
-                inner += `<div class="layui-form-item group-actions">
+                inner += `<input type="hidden" name="_group" value="${g.id}">
+                <div class="layui-form-item group-actions">
                     <div class="layui-input-block">
                         <button class="pear-btn pear-btn-primary" lay-submit lay-filter="groupSave">保存 ${g.group_title}</button>
                     </div>
@@ -276,6 +277,8 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                     <form class="layui-form">${inner}</form>
                 </div>`;
             });
+
+            $('#tabTitle').html(titleHtml);
 
             $('#tabContent').html(contentHtml);
 
@@ -295,6 +298,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                 initLaydate($(this));
                 initUploads($(this));
             });
+
         },'json');
     }
 
@@ -353,7 +357,6 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
      */
     form.on('submit(groupSave)',function(data){
         var field = data.field;
-        var system_group_id = field._group || '';
 
         // 当前group内的switch：未勾选时不提交，手动补0
         var $form = $(data.form);
@@ -368,11 +371,8 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
             field[$(this).attr('name')] = '1';
         });
 
-        // 删除辅助字段
-        delete field._group;
-
         // 只提交当前group的数据
-        $.post(BATCH_SAVE_URL, {system_group_id: system_group_id, ...field}, function(res){
+        $.post(BATCH_SAVE_URL, field, function(res){
             if(res.code === 0){
                 layer.msg('保存成功',{icon:1});
             } else {

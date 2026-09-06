@@ -53,10 +53,11 @@ class Config extends AdminBaseController
     public function batchSave(Request $request): Response
     {
         $post = $request->post();
-        $group = trim((string)$request->post('group', ''));
-        unset($post['group']); // 移除分组标识，避免当配置项处理
+        $systemGroupId = $post['_group'];
+        unset($post['_group']); // 移除分组标识，避免当配置项处理
         
-        $this->config->batchSaveValue($post, $group);
+        $this->config->batchSaveValue($post, $systemGroupId);
+        
         return json(['code' => 0, 'msg' => '保存成功']);
     }
 

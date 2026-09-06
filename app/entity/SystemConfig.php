@@ -119,11 +119,11 @@ class SystemConfig extends BaseEntity
      * @param array $postData ['site_name'=>'xxx','site_status'=>'1']
      * @param string $group 分组名，为空则更新全部配置项，否则仅更新指定分组的配置项
      */
-    public function batchSaveValue(array $postData, string $group = ''): void
+    public function batchSaveValue(array $postData, string $systemGroupId = ''): void
     {
         $query = $this;
-        if ($group !== '') {
-            $query = $query->where('group', $group);
+        if ($systemGroupId !== '') {
+            $query = $query->where('system_group_id', $systemGroupId);
         }
         $allRows = $query->select();
         foreach ($allRows as $row) {
