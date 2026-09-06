@@ -7,9 +7,9 @@ use think\facade\Config;
 // 执照图片
 Route::rule('data/storage/[:id]/licence_pic/:name$', 'addons.jida.Lawyer/showImg')->name('lic_img');
 
-$moduleName = Config::get('taoler.admin_module_name');
+$adminModuleName = '/' . trim(system_config('admin_module', 'admin'), '/');
 
-Route::group($moduleName, function () {
+Route::group($adminModuleName, function () {
 
     Route::get('/','index/index');
     Route::get('index','index/index')->name('admin-index');

@@ -21,12 +21,13 @@ use think\facade\Session;
 
 class Menu extends AdminBaseController
 {
-
+    protected  string $adminModuleName = '';
 
     #[Override]
     public function initialize()
     {
         parent::initialize();
+        $this->adminModuleName = '/' . trim(system_config('admin_module', 'admin'), '/');
     }
 
     /**
@@ -42,8 +43,6 @@ class Menu extends AdminBaseController
         // 菜单数组
         $menu   = [];
 
-        $moduleName = config('taoler.admin_module_name');
-
         // 初始菜单
         $menu[] = [
             'id'    => 501,
@@ -51,7 +50,7 @@ class Menu extends AdminBaseController
             "icon"  => "layui-icon layui-icon-console",
             "type"  => 1,
             "openType"  =>"_iframe",
-            "href"  => (string) url($moduleName."/index/console1"),
+            "href"  => (string) url($this->adminModuleName . "/index/console1"),
             'sort'  => 1,
             'pid'   => 1,
         ];
@@ -72,7 +71,7 @@ class Menu extends AdminBaseController
                     'id'        => $v['id'],
                     'title'     => Lang::get($v['title']),
                     'icon'      => 'layui-icon ' . $v['icon'],
-                    'href'      => (string) url($moduleName.'/'.str_replace('.', '/', $v['name'])),
+                    'href'      => (string) url($this->adminModuleName . '/'.str_replace('.', '/', $v['name'])),
                     'pid'       => $v['pid'],
                     'sort'      => $v['sort'],
                     'ismenu'    => $v['ismenu']
@@ -118,7 +117,7 @@ class Menu extends AdminBaseController
             'id'    => 999,
             'title' => '用户后台',
             'icon'  => 'layui-icon layui-icon-console',
-            'href'  => (string) url("{$moduleName}/apps/delete"),
+            'href'  => (string) url("{$this->adminModuleName}/apps/delete"),
             'sort'  => 999,
             'type'  => 1,
             "openType"  => "_blank",
@@ -126,7 +125,7 @@ class Menu extends AdminBaseController
             'id'    => 999,
             'title' => '管理后台',
             'icon'  => 'layui-icon layui-icon-console',
-            'href'  => (string) url($moduleName."/apps/index"),
+            'href'  => (string) url($this->adminModuleName . "/apps/index"),
             'sort'  => 999,
             'type'  => 1,
             "openType"  => "_blank",
@@ -244,8 +243,6 @@ class Menu extends AdminBaseController
     // 后台菜单控制
     public function getMenuJsonData()
     {
-        $moduleName = config('taoler.admin_module_name');
-
         $menu = [
             "logo" => [
                 "title"=> "TaoLer Admin",
@@ -268,7 +265,7 @@ class Menu extends AdminBaseController
                 "max"=> "30",
                 "index"=> [
                     "id"=> "501",
-                    "href"=> (string) url($moduleName."/index/console1"),
+                    "href"=> (string) url($this->adminModuleName . "/index/console1"),
                     "title"=> "首页"
                 ]
             ],

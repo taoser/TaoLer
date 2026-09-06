@@ -26,7 +26,7 @@ use think\facade\Config;
 class AdminBaseController extends \app\BaseController
 {
 
-    protected $aid = '';
+    protected int|string|null $aid = null;
 
     /**
      * 初始化菜单
@@ -41,11 +41,12 @@ class AdminBaseController extends \app\BaseController
         $syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
         $runTime = $this->getRunTime();
         
-        // 用于加密的模块名称 访问路径前缀
-        $moduleName = Config::get('taoler.admin_module_name');
+        // 用于管理后台访问路径前缀，加密的模块名称 /adminExvJcL
+        $moduleName = system_config('admin_module', 'admin');
+        $adminModuleName = '/' . trim($moduleName, '/');
 
         View::assign([
-            'moduleName'    => $moduleName,
+            'moduleName'    => $adminModuleName,
             'domain'        => $this->getDomain(),
             'insurl'        => $sys['domain'],
             'syscy'         => $syscy,

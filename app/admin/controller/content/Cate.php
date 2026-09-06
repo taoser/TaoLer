@@ -175,20 +175,13 @@ class Cate extends AdminBaseController
      */
     public function getSingleCateTree(): Response
     {
-        $list = Category::field('id,pid,name,sort')
-        ->order('sort','asc')
-        ->where('type', 2)
-        ->select()
-        ->toArray();
-
-        $data =  build_tree($list);
-        $count = count($data);
+        $list = Category::getSinglePageTreeList();
 
         return json([
             'code' => 0,
             'msg' => 'ok',
-            'count' => $count,
-            'data'  => $data
+            'count' => $list['count'],
+            'data'  => $list['data']
         ]);
     }
 

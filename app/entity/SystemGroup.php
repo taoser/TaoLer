@@ -35,7 +35,7 @@ class SystemGroup extends BaseEntity
     public function getGroupFormList(): array
     {
         $groupList = $this->with(['config' => function($query){
-            $query->order(['sort' => 'asc']);
+            $query->where('is_hidden', 0)->order(['sort' => 'asc']);
         }])
         ->field('id,group_name,group_title')
         ->order(['sort' => 'asc'])

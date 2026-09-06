@@ -492,6 +492,28 @@ class Category extends BaseEntity
 		return $subCateArray;
     }
 
+    public function getSinglePageTreeList(): array
+    {
+        $list = $this->field('id,pid,name,sort')
+        ->where('type', 2)
+        ->whereNotExists(function($query) {
+            $query->name('page')->where('category_id', '=', 'id');
+        })
+        ->where('status', 1)
+        ->order('sort','asc')
+        ->select()
+        ->toArray();
+
+        if(empty($list)) {
+            return ['count' => 0, 'data' => []];
+        }
+        
+        $count = count($list);
+        $data =  build_tree($list);
+        
+        return ['count' => $count, 'data' => $data];
+    }
+
     /**
      * 审核
      *

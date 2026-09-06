@@ -1,6 +1,7 @@
 {extend name="public/base" /}
 
 {block name="title"}权限菜单{/block}
+
 {block name="head"}
 <style>
     .group-actions{margin-top:16px;}
@@ -16,7 +17,7 @@
 <div class="layui-card">
     <div class="layui-card-body">
         <!-- 用 layui-tabs 按 group 分组 -->
-        <div class="layui-tab layui-tab-brief" lay-filter="cfgTabs" id="cfgTabs">
+        <div class="layui-tabs layui-tab layui-tab-brief" id="groupTabs">
             <ul class="layui-tab-title" id="tabTitle"></ul>
             <div class="layui-tab-content" id="tabContent"></div>
         </div>
@@ -31,13 +32,13 @@
     const FORM_DATA_URL = MODULE_NAME + '/system/config/getFormData';
     const BATCH_SAVE_URL = MODULE_NAME + '/system/config/batchSave';
 
-layui.use(['form','jquery','layer','laydate','upload','element'],function(){
+layui.use(['form','jquery','layer','laydate','upload'],function(){
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
     var laydate = layui.laydate;
     var upload = layui.upload;
-    var element = layui.element;
+    var tabs = layui.tabs;
 
     // 需要 options 的可选类型（与配置项管理页保持一致）
     const OPTION_TYPES = ['radio','checkbox','select'];
@@ -247,7 +248,7 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
             // 渲染tab标题
             var titleHtml = '';
             groupData.forEach(function(g, idx){
-                titleHtml += `<li ${idx===0?'class="layui-this"':''}>${g.group_title}</li>`;
+                titleHtml += `<li ${idx === 0 ? 'class="layui-this"' : ''} lay-id="${g.group_name}"><a href="#${g.group_name}">${g.group_title}</a></li>`;
             });
 
             $('#tabTitle').html(titleHtml);
@@ -278,8 +279,14 @@ layui.use(['form','jquery','layer','laydate','upload','element'],function(){
 
             $('#tabContent').html(contentHtml);
 
-            // 只渲染tab组件
-            element.render('tab', 'cfgTabs');
+            tabs.render({
+                elem: '#groupTabs',
+            });
+
+            // HASH 初始定位
+            var hash = layui.hash();
+            tabs.change('groupTabs', hash.href);
+
             // 全局渲染所有表单组件（switch/radio/select/checkbox）
             form.render();
 
