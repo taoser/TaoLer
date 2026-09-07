@@ -18,10 +18,10 @@ use app\facade\Article;
 class Search extends IndexBaseController
 {
     //搜索功能
-	public function getSearch()
+	public function getSearch(Request $request)
 	{
         // $page = Request::param('page/d', 1);
-        $keywords = Request::param('keywords');
+        $keywords = $request->param('keywords');
 		$artList = Article::getSearchKeyWord($keywords);
 
         $counts = $artList->count();

@@ -35,9 +35,9 @@ class Category extends IndexBaseController
 		}
 
 		if(empty($flag)) {
-			$url = (string) url('cate_page', ['ename' => $ename, 'page' => $page]);
+			$url = (string) url('category_page', ['ename' => $ename, 'page' => $page]);
 		} else {
-			$url = (string) url('cate_flag_page', ['ename' => $ename, 'flag' => $flag, 'page' => $page]);
+			$url = (string) url('category_flag_page', ['ename' => $ename, 'flag' => $flag, 'page' => $page]);
 		}
 		// 当前页url
 		
