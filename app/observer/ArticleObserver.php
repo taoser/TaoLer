@@ -1,13 +1,15 @@
 <?php
 namespace app\observer;
 
+use Exception;
 use app\model\Article;
 use think\facade\Db;
-use Exception;
+use app\service\ArticleCache;
+
 
 class ArticleObserver
 {
-    // 插入前
+    // 新增前
     public function onBeforeInsert(Article $article)
     {
         $single_table_num = config('taoler.single_table_num');
@@ -53,18 +55,71 @@ class ArticleObserver
             }
         }
 
+        // 设置文章后缀
         $article->setSuffix($suffix);
+
+        // 初始化media字段
+        if(empty($article->media)){
+            $article->media = [
+                'images' => [],
+                'videos' => [],
+                'audios' => []
+            ];
+        }
+
+        // 初始化flags字段
+        if(empty($article->flags)){
+            $article->flags = [
+                'is_top'    => '0',
+                'is_good'   => '0',
+                'is_wait'   => '0',
+            ];
+        }
     }
 
+    /**
+     * 更新前事件
+     * @param Article $article 文章模型
+     * @return void
+     */
     public function onBeforeUpdate(Article $article)
     {
-        // dump($article->id);
         $article->setSuffix($this->byIdGetSuffix($article->id));
     }
 
-    public function BeforeDelete(Article $article)
+    /**
+     * 更新后事件
+     * @param Article $article 文章模型
+     * @return void
+     */
+    public function onAfterUpdate(Article $article)
+    {
+        ArticleCache::del($article->id);
+    }
+
+    /**
+     * 删除前事件
+     * @param Article $article 文章模型
+     * @return void
+     */
+    public function onBeforeDelete(Article $article)
     {
         $article->setSuffix($this->byIdGetSuffix($article->id));
+    }
+
+    /**
+     * 删除后事件
+     * @param Article $article 文章模型
+     * @return void
+     */
+    public function onAfterDelete(Article $article)
+    {
+        ArticleCache::del($article->id);
+    }
+
+    private function getSuffix(array $data)
+    {
+        ArticleCache::set($data);
     }
 
     /**
@@ -73,7 +128,7 @@ class ArticleObserver
      * @param integer $id
      * @return string
      */
-    public function byIdGetSuffix(int $id): string
+    private function byIdGetSuffix(int $id): string
     {
         // 数据表后缀为空时，id在主表中
         $suffix = '';
@@ -88,7 +143,7 @@ class ArticleObserver
     }
 
     // 自动创建表结构
-    public function createTable(string $tableName, int $autoIncrement)
+    private function createTable(string $tableName, int $autoIncrement)
     {
         try{
             $table = "
@@ -129,4 +184,5 @@ class ArticleObserver
         
         return true;
     }
+
 }

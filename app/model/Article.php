@@ -21,9 +21,16 @@ class Article extends BaseModel
             'defaultSoftDelete'     => null,
             'eventObserver'         => ArticleObserver::class,
             'jsonAssoc'             => true,
-            'lazyFields'            => ['pv'] // 延迟写入pv,实时获取pv数据
+            'lazyFields'            => ['pv'] // 实时获取延迟写入数据
         ];
     }
+
+    // 模型初始化
+    // protected static function init()
+    // {
+    //     //TODO:初始化内容
+
+    // }
 
 
     //文章关联栏目表
@@ -69,8 +76,8 @@ class Article extends BaseModel
     {
         $data['id'] = IdEncode::encode($data['id']);
         $ename = Category::where('id', $data['category_id'])->cache(true)->value('ename');
+
         return (string) Route::buildUrl('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
-       
     }
 
     /**
@@ -87,5 +94,6 @@ class Article extends BaseModel
         }
         return '';
     }
+
 
 }

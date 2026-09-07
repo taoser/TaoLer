@@ -24,7 +24,7 @@ class TagObserver implements Observer
             foreach($tagIdArr as $tid) {
                 if(!in_array($tid, $artTags)){
                     //新标签
-                    $tagArr[] = ['article_id' => $data['id'], 'tag_id'=>$tid,'create_time'=>time()];
+                    $tagArr[] = ['article_id' => $data['id'], 'tag_id'=>$tid,'create_time' => date('Y-m-d H:i:s')];
                 }
             }
             //更新新标签

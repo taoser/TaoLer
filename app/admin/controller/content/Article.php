@@ -10,10 +10,10 @@
 
 namespace app\admin\controller\content;
 
-use app\admin\controller\AdminBaseController;
 use Exception;
 use think\Request;
-use app\facade\Article as ArticleModel;
+use think\Response;
+use app\facade\Article as ArticleEntity;
 use app\facade\Category;
 use think\facade\View;
 use think\facade\Db;
@@ -33,21 +33,21 @@ use app\common\observer\LogObserver;
 use app\common\observer\TagObserver;
 use app\common\observer\MailObserver;
 
-
+use app\admin\controller\AdminBaseController;
 
 class Article extends AdminBaseController
 {
     /**
      * 文章模型
-     * @var ArticleModel $model
+     * @var ArticleEntity $entity
      */
-    protected $model;
+    protected $entity;
 
     public function initialize()
     {
         parent::initialize();
         
-        $this->model = new ArticleModel();
+        $this->entity = new ArticleEntity();
     }
 
 	public function index()
@@ -61,7 +61,7 @@ class Article extends AdminBaseController
         $page = $request->get('page/d', 1);
         $limit = $request->get('limit/d', 10);
         
-        $list = $this->model::getFilterList($data, $page, $limit);
+        $list = $this->entity::getFilterList($data, $page, $limit);
         
         if($list['total']) {
             return json([
@@ -81,45 +81,38 @@ class Article extends AdminBaseController
      */
     public function add(Request $request)
     {
-        if ($request->isPost()) {
-
-            $data = $request->param(['category_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'tagid']);
-            $data['user_id'] = 1; //管理员ID
-            $data['status'] = 1; //正常
-
-             try{
-
-				$articleServer = new ArticleService();
-			
-				// 校验策略
-				$articleServer->setValidation(new ArticleValidation())
-					->addValidation(new DataValidationStrategy())
-					->addValidation(new AuthValidationStrategy())
-					->addValidation(new \app\common\strategy\PostValidationStrategy());
-
-				// 装饰
-				$articleServer->setDecorator(new MainArticleProcessorDecorator())
-					->addProcessor(new SensitiveWordFilter()) //违禁词过滤
-					->addProcessor(new WordsDesc()) //关键词描述
-					->addProcessor(new Media()) // 媒体处理
-					->addProcessor(new \app\common\decorator\Image()); // 图片处理
-
-				// 观察者策略
-				$articleServer->setObserverManager(new ObserverManager())
-					->addObserver(new LogObserver())
-					->addObserver(new MailObserver());
-
-				$data = $articleServer->add($data);
-                
-
-                return json(['code' => 0, 'msg' => 'ok']);
-                
-            } catch(Exception $e) {
-                return json(['code' => -1, 'msg' => $e->getMessage()]);
-            }
+        if (!$request->isPost()) {
+            return View::fetch('add');
         }
 
-        return View::fetch('add');
+        $data = $request->param(['category_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'tagid']);
+        $data['user_id'] = 1; // 管理员ID
+        $data['status'] = 1; // 不用审核
+
+        $articleServer = new ArticleService();
+    
+        // 校验策略
+        $articleServer->setValidation(new ArticleValidation())
+            ->addValidation(new DataValidationStrategy())
+            ->addValidation(new AuthValidationStrategy())
+            ->addValidation(new \app\common\strategy\PostValidationStrategy());
+
+        // 装饰
+        $articleServer->setDecorator(new MainArticleProcessorDecorator())
+            ->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+            ->addProcessor(new WordsDesc()) //关键词描述
+            ->addProcessor(new Media()) // 媒体处理
+            ->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+        // 观察者策略
+        $articleServer->setObserverManager(new ObserverManager())
+            ->addObserver(new LogObserver())
+            ->addObserver(new MailObserver());
+
+        $data = $articleServer->add($data);
+        
+        return json(['code' => 0, 'msg' => 'ok']);
+            
     }
 
     /**
@@ -132,59 +125,49 @@ class Article extends AdminBaseController
      */
     public function edit(Request $request)
     {
-        $id = $request->get('id');
-
-		// $id = IdEncode::decode($id);
-
-		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
+        $id = $request->get('id/d');
+		$article = $this->entity::suffix($this->byIdGetSuffix($id))->find($id);
         
         View::assign('article', $article);
 
         return View::fetch();
     }
 
-    public function editData()
+    /**
+     * 编辑文章数据
+     * @param Request $request
+     * @return Response
+     */
+    public function editData(Request $request): Response
     {
-        $data = Request::post(['id/d','category_id','title','content','keywords','description','tagid']);
-		// $id = IdEncode::decode($data['id']);
+        $data = $request->post(['id/d','category_id','title','content','keywords','description','tagid']);
 
-		$article = $this->model::suffix($this->byIdGetSuffix($data['id']))->find($data['id']);
+		$article = $this->entity::suffix($this->byIdGetSuffix($data['id']))->find($data['id']);
  
-        if(is_null($article)) return json(['code' => -1, 'msg' => '不能编辑！']);
-
-        
-        try{
-            $articleServer = new ArticleService();
-            
-            // 校验策略
-            $articleServer->setValidation(new ArticleValidation())
-                ->addValidation(new DataValidationStrategy())
-                ->addValidation(new AuthValidationStrategy());
-
-            // 装饰
-            $articleServer->setDecorator(new MainArticleProcessorDecorator())
-                ->addProcessor(new SensitiveWordFilter()) //违禁词过滤
-                ->addProcessor(new WordsDesc()) //关键词描述
-                ->addProcessor(new Media()) // 媒体处理
-                ->addProcessor(new \app\common\decorator\Image()); // 图片处理
-
-            // 观察者策略
-            $articleServer->setObserverManager(new ObserverManager())
-                ->addObserver(new TagObserver())
-                ->addObserver(new MailObserver());
-
-        
-            $articleServer->edit($data, $article);
-
-        } catch(Exception $e) {
-            return json(['code' => -1, 'msg' => $e->getMessage()]);
+        if(is_null($article)) {
+            return json(['code' => -1, 'msg' => '不能编辑！']);
         }
 
-        //删除原有缓存显示编辑后内容
-        Cache::delete('article_'.$data['id']);
-        // $link = (string) url('article_detail', ['id' => $data['id'], 'ename' => $article->cate->ename]);
-        // hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-        // return Msgres::success('edit_success');
+        $articleServer = new ArticleService();
+            
+        // 校验策略
+        $articleServer->setValidation(new ArticleValidation())
+            ->addValidation(new DataValidationStrategy())
+            ->addValidation(new AuthValidationStrategy());
+
+        // 装饰
+        $articleServer->setDecorator(new MainArticleProcessorDecorator())
+            ->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+            ->addProcessor(new WordsDesc()) //关键词描述
+            ->addProcessor(new Media()) // 媒体处理
+            ->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+        // 观察者策略
+        $articleServer->setObserverManager(new ObserverManager())
+            ->addObserver(new TagObserver())
+            ->addObserver(new MailObserver());
+
+        $articleServer->edit($data, $article);
 
         return json(['code' => 0, 'msg' => 'ok']);
         
@@ -198,7 +181,7 @@ class Article extends AdminBaseController
         try {
             $arr = explode(",",$id);
             foreach($arr as $v){
-                $article = $this->model::find($v);
+                $article = $this->entity::find($v);
                 $article->together(['comments'])->delete();
             }
             return json(['code'=>0,'msg'=>'删除成功']);
@@ -302,7 +285,7 @@ class Article extends AdminBaseController
         }
 
 		//获取状态
-		$res = $this->model::saveAll($data);
+		$res = $this->entity::saveAll($data);
 	
 		if($res){
 			return json(['code'=>0,'msg'=>'审核成功','icon'=>6]);

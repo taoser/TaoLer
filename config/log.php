@@ -7,7 +7,7 @@ return [
     // 默认日志记录通道
     'default'      => env('log.channel', 'file'),
     // 日志记录级别
-    'level'        => ['error','critical','alert','emergency'],
+    'level'        => ['info','debug','error','critical','alert','emergency'],
     // 日志类型记录的通道 ['error'=>'email',...]
     'type_channel' => [],
     // 关闭全局日志写入
@@ -47,7 +47,7 @@ return [
             // 日志记录方式
             'type'           => 'file',
             // 日志保存目录
-            'path'           => '../runtime/log/login/',
+            'path'           => runtime_path() . 'log/login/',
             // 单文件日志写入
             'single'         => false,
             // 最大日志文件数量
@@ -63,7 +63,7 @@ return [
             // 日志记录方式
             'type'           => 'file',
             // 日志保存目录
-            'path'           => '../runtime/log/browse/',
+            'path'           => runtime_path() . 'log/browse/',
             // 单文件日志写入
             'single'         => false,
             // 最大日志文件数量
@@ -79,7 +79,7 @@ return [
             // 日志记录方式
             'type'           => 'file',
             // 日志保存目录
-            'path'           => '../runtime/update/log/',
+            'path'           => runtime_path() . 'log/update/log/',
             // 单文件日志写入
             'single'         => false,
             // 最大日志文件数量
@@ -95,7 +95,7 @@ return [
             // 日志记录方式
             'type'           => 'file',
             // 日志保存目录
-            'path'           => '../runtime/taocai/',
+            'path'           => runtime_path() . 'log/taocai/',
             // 单文件日志写入
             'single'         => false,
             // 最大日志文件数量

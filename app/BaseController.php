@@ -203,23 +203,11 @@ abstract class BaseController
      */
     protected function getRouteUrl(int|string $aid, $ename = '')
     {
-        $domain = $this->getDomain();
-        $appName = app('http')->getName();
         $aid = IdEncode::decode($aid);
         // 详情动态路由，$aid, $ename
-        if(empty(config('taoler.url_rewrite.article_as'))){
-            return (string) url('article_detail', ['id' => $aid, 'ename' => $ename])->domain(true);
-        }
-
-        return (string) url('article_detail',['id' => $aid])->domain(true);
-
-//        // 判断应用是否绑定域名
-//        $app_bind = array_search($appName, config('app.domain_bind'));
-//        // 判断应用是否域名映射
-//        $app_map = array_search($appName, config('app.app_map'));
-
-        //a.appName不是admin
-        // return $domain . $articleUrl;
+        
+        return (string) url('article_detail', ['id' => $aid, 'ename' => $ename])->domain(true);
+     
     }
 
 

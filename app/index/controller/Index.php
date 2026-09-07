@@ -19,6 +19,7 @@ use think\facade\Route;
 use app\common\helper\Msgres;
 use app\common\helper\ResponseHelper;
 use think\facade\Session;
+use think\facade\Log;
 
 use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;
@@ -26,10 +27,11 @@ use app\facade\Category;
 use app\common\facade\HttpHelper;
 use app\facade\Article;
 use think\db\Query;
-use app\index\entity\Article as ArticleEntity;
 use app\common\helper\JwtAuth;
 
 use think\facade\Cache;
+
+use app\entity\Article as ArticleEntity;
 
 class Index extends IndexBaseController
 {
@@ -38,6 +40,8 @@ class Index extends IndexBaseController
      */
     public function index(Request $request)
     {
+
+
 		// dump(get_addons_config('demo'));
 
 		$uid = $request->session('user_id');

@@ -9,7 +9,7 @@ use app\common\decorator\ArticleProcessor;
 use app\common\decorator\ArticleProcessorDecorator;
 use app\common\observer\ObserverManager;
 use app\common\observer\Observer;
-use app\facade\Article;
+use app\entity\Article;
 
 class ArticleService
 {
@@ -40,9 +40,12 @@ class ArticleService
                 $data = $this->decorator->process($data);
             }
 
-            $article = Article::add($data);
+            $article = new Article();
 
-            $data['article_id'] = $article['id'];
+            $result = $article->add($data);
+
+            $data['article_id'] = $result['id'];
+            $data['status'] = $result['status'];
 
             // 通知观察者
             if($this->observer) {
@@ -51,8 +54,6 @@ class ArticleService
 
             return $data;
 
-            return true;
-
         } catch(Exception $e) {
             // echo "文章发布失败：". $e->getMessage(). "\n";
             throw new Exception($e->getMessage());
@@ -60,19 +61,23 @@ class ArticleService
         
     }
 
-    public function edit($data, $articleModel)
+    /**
+     * 编辑文章
+     * @param array $data 文章数据
+     * @param Article $articleModel 文章模型
+     * @return bool 是否编辑成功
+     */
+    public function edit(array $data, Article $articleModel): bool
     {
         try{
             // 校验
             if($this->validation) {
                 $this->validation->validate($data);
             }
-
             // 装饰器
             if($this->decorator) {
                 $data = $this->decorator->process($data);
             }
-
             // 数据保存
             $articleModel->save($data);
 
@@ -86,7 +91,6 @@ class ArticleService
             return true;
             
         } catch(Exception $e) {
-            // echo "文章编辑失败：". $e->getMessage(). "\n";
             throw new Exception($e->getMessage());
         }
     }

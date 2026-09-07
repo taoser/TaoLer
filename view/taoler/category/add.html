@@ -18,7 +18,7 @@
 							<div class="layui-col-md3">
 								<label class="layui-form-label">{:lang('special column')}</label>
 								<div class="layui-input-block">
-									<div id="CateId" class="xm-select-demo"></div>
+									<div class="xm-select-demo" id="cate-id"></div>
 								</div>
 							</div>
 							<div class="layui-col-md9">
@@ -98,7 +98,7 @@
 				var cid = "{$cid}";
 				// 渲染下拉树
 				xmSelect.render({
-					el: '#CateId',
+					el: '#cate-id',
 					name: 'category_id',
 					height: '250px',
 					layVerify: 'required',

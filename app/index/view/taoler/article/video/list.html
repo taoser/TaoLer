@@ -29,7 +29,7 @@
             
             <div class="fly-list-info">
               {if config('taoler.config.cate_show') == 1}
-              <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.cate.ename : $art.cate.name}</a>
+              <a class="layui-badge">{:cookie('think_lang') == 'en-us' ? $art.category.ename : $art.category.name}</a>
               {/if}
               <a href="{$Request.domain}{:url('user/home',['id'=>$art.user.id])}" link>
                 <cite>{$art.user.nickname ?: $art.user.name}</cite>

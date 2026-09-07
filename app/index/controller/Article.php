@@ -34,39 +34,28 @@ class Article extends IndexBaseController
     	'logincheck' => ['except' 	=> ['list','detail','download'] ],
     ];
 
-    protected $model;
+	protected $articleServer;
+
+    protected $entity;
 
     public function initialize()
     {
         parent::initialize();
-        $this->model = new \app\facade\Article();
+        $this->entity = new \app\entity\Article();
+		$this->articleServer = new ArticleService();
     }
 
 
 	//文章详情页
     public function detail(Request $request): Response | string
     {
-		$ID = $request->param('id');
+		$id = $request->param('id');
 
 		$commentPage = $request->get('page', 1);
-		
-		try{
-			// 解密ID，得到int型
-			$id = IdEncode::decode($ID);
 			
-			// 1.内容
-			$detail = $this->model::getDetail($id);
-	
-			// 2.pv
-			$detail->inc('pv', 1, 60)->save(); // 延迟60秒更新
-			// $pv = Db::table($this->getTableName($id))->where('id', $id)->value('pv');
-			// $detail->pv = $pv;
+		$detail = $this->entity->getDetail($id);
 
-		} catch(Exception $e) {
-			throw new HttpException(404, $e->getMessage());
-		}
-
-		// 3.设置内容的tag内链
+		// 设置内容的tag内链
 		// $artDetail->content = $this->setArtTagLink($artDetail->content);		
 		
 		//最新评论时间
@@ -74,13 +63,12 @@ class Article extends IndexBaseController
 	
 		View::assign([
 			'article'		=> $detail,
-			// 'pv'			=> $pv,
 			'page'			=> $commentPage,
 			'cid' 			=> $id,
 			'lrDate_time' 	=> $lrDate_time,
 		]);
 
-		$html = View::fetch('category/'.$detail['category']['tpl'].'/detail');
+		$html = View::fetch("category/{$detail['category']['tpl']}/detail");
 		
 		// 生成静态html
 		$this->buildHtml($html);
@@ -145,8 +133,7 @@ class Article extends IndexBaseController
 			// 获取分类ename, appname
 			$categoryName = Db::name('category')->field('ename')->find($data['category_id']);
 			$link = $this->getRouteUrl((int) $result['article_id'], $categoryName['ename']);
-			$status = Db::name('article')->where('id', $result['article_id'])->value('status');
-			$url = $status ? $link : (string) url('index/');
+			$url = $result['status'] ? $link : (string) url('index/');
 
 			// 清除文章tag缓存
 			Cache::tag('tagArtDetail')->clear();
@@ -167,62 +154,20 @@ class Article extends IndexBaseController
     }
 
     /**
-     * 编辑文章
-     * @param $id
-     * @return string|\think\Response|\think\response\Json|void
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
+	 * 编辑文章
+	 * @param $request
+	 * @return string|\think\Response|\think\response\Json|void
+	 */
     public function edit(Request $request): Response | string
     {
-		$id = $this->request->param('id/d');
-		// $id = IdEncode::decode($id);
+		$id = $request->param('id/d');
+		
+		$id = IdEncode::decode($id);
 
-		$article = $this->model::suffix($this->byIdGetSuffix($id))->find($id);
+		$article = $this->entity::suffix($this->byIdGetSuffix($id))->find($id);
 
 		$this->removeDetailHtml($article);
 		
-		if($request->isPost()){
-			$data = $request->post(['id/d','category_id/d','title','content','keywords','description','captcha', 'tagid']);
-
-			try {
-
-				$articleServer = new ArticleService();
-				
-				// 校验策略
-				$articleServer->setValidation(new ArticleValidation())
-					->addValidation(new DataValidationStrategy())
-					->addValidation(new AuthValidationStrategy());
-
-				// 装饰
-				$articleServer->setDecorator(new MainArticleProcessorDecorator())
-					->addProcessor(new SensitiveWordFilter()) //违禁词过滤
-					->addProcessor(new WordsDesc()) //关键词描述
-					->addProcessor(new Media()) // 媒体处理
-					->addProcessor(new \app\common\decorator\Image()); // 图片处理
-
-				// 观察者策略
-				$articleServer->setObserverManager(new ObserverManager())
-					->addObserver(new TagObserver())
-					->addObserver(new MailObserver());
-
-				$articleServer->edit($data, $article);
-
-				//删除原有缓存显示编辑后内容
-				Cache::delete('article_'.$data['id']);
-
-				$id = IdEncode::encode($data['id']);
-				
-				$link = $this->getRouteUrl($data['id'], $article->cate->ename);
-
-				// hook('SeoBaiduPush', ['link'=>$link]); // 推送给百度收录接口
-				return Msgres::success('edit_success', $link);
-
-			} catch(Exception $e) {
-				return json(['code' => -1, 'msg' => $e->getMessage()]);
-			}
-		}
 			
         View::assign(['article' => $article]);
 		
@@ -234,6 +179,40 @@ class Article extends IndexBaseController
 		$editTpl = is_file($view) ? $view : 'category/edit';
 
 		return View::fetch($editTpl);
+    }
+
+	public function editData(Request $request)
+    {
+        $data = $request->post(['id/d','category_id/d','title','content','keywords','description','captcha', 'tagid']);
+
+		$article = $this->entity::suffix($this->byIdGetSuffix($data['id']))->find($data['id']);
+		
+		// 校验策略
+		$this->articleServer->setValidation(new ArticleValidation())
+			->addValidation(new DataValidationStrategy())
+			->addValidation(new AuthValidationStrategy());
+
+		// 装饰
+		$this->articleServer->setDecorator(new MainArticleProcessorDecorator())
+			->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+			->addProcessor(new WordsDesc()) //关键词描述
+			->addProcessor(new Media()) // 媒体处理
+			->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+		// 观察者策略
+		$this->articleServer->setObserverManager(new ObserverManager())
+			->addObserver(new TagObserver())
+			->addObserver(new MailObserver());
+
+		$this->articleServer->edit($data, $article);
+
+
+		$id = IdEncode::encode($data['id']);
+		
+		$link = $this->getRouteUrl($data['id'], $article->category->ename);
+
+		return Msgres::success('edit_success', $link);
+
     }
 	
 	/**
@@ -248,7 +227,7 @@ class Article extends IndexBaseController
 		try {
 			$arr = explode(",", $id);
 			$ids = array_map('intval', $arr);
-			$this->model::remove($ids);
+			$this->entity->remove($ids);
 				
 		} catch (\Exception $e) {
 			return ResHelper::error($e->getMessage());
@@ -277,7 +256,7 @@ class Article extends IndexBaseController
 	{
 		$param = $request->post(['id/d','field','rank/d']);
 		
-		$article = $this->model::suffix($this->byIdGetSuffix($param['id']))
+		$article = $this->entity::suffix($this->byIdGetSuffix($param['id']))
 		->field('id,is_top,is_hot,is_reply')
 		->find($param['id']);
 		

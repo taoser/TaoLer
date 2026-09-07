@@ -53,9 +53,10 @@ Route::group('',function () {
 
 	// 定义文章添加路由
 	Route::rule('article/add/<cate?>','article/add')->name('add_article');
+	Route::get('article/edit/<id>$','article/edit')->name('article_edit');
+	Route::post('article/edit-data/<id>$','article/editData')->name('article_edit_data');
 	Route::rule('article/delete/<id>$','article/delete');
 	Route::rule('article/tags','article/tags')->allowCrossDomain();
-	Route::rule('article/edit/<id>$','article/edit')->name('article_edit');
 	Route::get('article/catetree','article/getCateTree')->name('get_cate_tree');
 
 	// comment

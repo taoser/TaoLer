@@ -9,6 +9,8 @@ use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Session;
 use app\common\helper\IdEncode;
+use app\common\service\ArticleService;
+use app\service\ArticleCache;
 
 class Article extends BaseEntity
 {
@@ -31,53 +33,52 @@ class Article extends BaseEntity
     /**
      * 添加
      * @param array $data
-     * @return int|string|array
+     * @return array
      */
-	public function add(array $data)
+	public function add(array $data): array
 	{
-        $this->category_id  = $data['category_id'];
-        $this->user_id  = $data['user_id'];
-        $this->title    = $data['title'];
-        $this->content  = $data['content'];
-        $this->keywords = $data['keywords'];
+        // $this->category_id  = $data['category_id'];
+        // $this->user_id  = $data['user_id'];
+        // $this->title    = $data['title'];
+        // $this->content  = $data['content'];
+        // $this->keywords = $data['keywords'];
 
-        if(isset($data['status'])) {
-            $this->status   = $data['status'];
-        }
+        // if(isset($data['status'])) {
+        //     $this->status   = $data['status'];
+        // }
 
-        if(isset($data['has_image'])) {
-            $this->has_image = $data['has_image'];
-            $this->thum_img = $data['thum_img'];
-        }
-        if(isset($data['has_video'])) {
-            $this->has_video = $data['has_video'];
-        }
+        // if(isset($data['has_image'])) {
+        //     $this->has_image = $data['has_image'];
+        //     $this->thum_img = $data['thum_img'];
+        // }
+        // if(isset($data['has_video'])) {
+        //     $this->has_video = $data['has_video'];
+        // }
 
-        if(isset($data['has_audio'])) {
-            $this->has_audio = $data['has_audio'];
-        }
+        // if(isset($data['has_audio'])) {
+        //     $this->has_audio = $data['has_audio'];
+        // }
         
-        $this->description  = $data['description'];
+        // $this->description  = $data['description'];
        
-        $this->media = empty($data['media']) ? [
-            'images' => [],
-            'videos' => [],
-            'audios' => []
-        ] : $data['media'];
+        // $this->media = empty($data['media']) ? [
+        //     'images' => [],
+        //     'videos' => [],
+        //     'audios' => []
+        // ] : $data['media'];
         
-        $this->flags = empty($data['flags']) ? [
-            'is_top'    => '0',
-            'is_good'   => '0',
-            'is_wait'   => '0',
-        ] : $data['flags'];
+        // $this->flags = empty($data['flags']) ? [
+        //     'is_top'    => '0',
+        //     'is_good'   => '0',
+        //     'is_wait'   => '0',
+        // ] : $data['flags'];
 
-        $result = $this->save();
+        $this->save($data);
         
-        if(!$result) {
-            throw new Exception('save error');
-        }
-
-        return ['id' => $this->id];
+        return [
+            'id' => $this->id,
+            'status' => $this->status
+        ];
 	}
 
     /**
@@ -408,17 +409,22 @@ class Article extends BaseEntity
 
     /**
      * 获取详情
-     * @param int $id 文章id
+     * @param int|string $id 文章id
      * @return mixed
      * @throws \Throwable
      */
-    public function getDetail(int $id)
+    public function getDetail(int|string $id)
     {
+        // 如果id是加密的，解密后获取id值
+        $id = IdEncode::decode($id);
+        // 设置分表后缀
         $this->setSuffix(self::byIdGetSuffix($id));
+        // 从缓存中获取文章详情
+        $detail = ArticleCache::get($id);
 
-        return Cache::remember('article_'.$id, function() use($id){
-            
-            $detail = $this->field('id,title,content,status,category_id,user_id,is_comment,pv,keywords,description,create_time,update_time,comments_num,flags')
+        if(is_null($detail)) {
+
+            $detail =  $this->field('id,title,content,status,category_id,user_id,is_comment,keywords,description,create_time,update_time,comments_num,flags')
             ->where('id', $id)
             ->with([
                 'category' => function(Query $query){
@@ -439,8 +445,17 @@ class Article extends BaseEntity
                 throw new Exception('内容待审核');
             }
 
-            return $detail;
-        }, 600);
+            // 缓存文章详情
+            ArticleCache::set($id, $detail);
+
+        }
+
+        // 步增pv
+        $detail->setInc('pv', 1);
+
+        $detail['pv'] = $this->where('id', $id)->value('pv');
+
+        return $detail;
     }
 
     /**

@@ -30,7 +30,7 @@
 						
 						<div class="fly-list-info">
 							{if config('taoler.config.cate_show') == 1}
-							<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? article.cate.ename : article.cate.catename}</a>
+							<a class="layui-badge">{:cookie('think_lang') == 'en-us' ? article.category.ename : article.category.name}</a>
 							{/if}
 							<a href="{article:author_link /}" link>
 								<cite>{article:author /}</cite>

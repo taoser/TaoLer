@@ -21,7 +21,7 @@ class LogObserver implements Observer
 				$tagArr = [];
 				$tagIdArr = explode(',', $data['tagid']);
 				foreach($tagIdArr as $tid) {
-					$tagArr[] = [ 'article_id' => $data['article_id'], 'tag_id' => $tid, 'create_time'=>time()];
+					$tagArr[] = [ 'article_id' => $data['article_id'], 'tag_id' => $tid, 'create_time'=>date('Y-m-d H:i:s')];
 				}
 
 				Db::name('taglist')->insertAll($tagArr);

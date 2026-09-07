@@ -49,7 +49,7 @@
         {//图标}
         <div class="fly-detail-info">
           原创 · {$pv}万次观看
-              <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.cate.ename : $article.cate.catename}</span>
+              <span class="layui-badge layui-bg-green fly-detail-column">{:cookie('think_lang') == 'en-us' ? $article.category.ename : $article.category.name}</span>
               {if ($article.is_top == 1)}<span class="layui-badge layui-bg-black">{:lang('top')}</span>{/if}
 		      {if ($article.is_good == 1)}<span class="layui-badge layui-bg-red">{:lang('hot')}</span>{/if}
 		      <span id="LAY_jieAdmin" data-id="{$article['id']}"></span>

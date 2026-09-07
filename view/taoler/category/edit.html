@@ -22,7 +22,7 @@
 							<label class="layui-form-label">{:lang('special column')}</label>
 							<div class="layui-input-block">
 								{if ($user.auth == 1)}
-								<div id="CateId" class="xm-select-demo"></div>
+								<div class="xm-select-demo" id="cate-id"></div>
 								{else /}
 								<input type="text" name="cate_id"  class="layui-input layui-hide" disabled value="{article:cate_id /}">
 								<input type="text" class="layui-input" disabled value="{article:category_name}">
@@ -94,15 +94,15 @@
     ,form = layui.form
     ,upload = layui.upload;
 
-    var cateId = "{article:cate_id /}";
+    var cateId = "{article:category_id /}";
     var artId = "{article:id /}";
 
     // 分类选择
       $.get("{:url('get_cate_tree')}",function(res){
             // 渲染下拉树
             xmSelect.render({
-                el: '#CateId',
-                name: 'cate_id',
+                el: '#cate-id',
+                name: 'category_id',
                 height: '250px',
                 layVerify: 'required',
                 layVerType: 'tips',
@@ -110,7 +110,7 @@
                 initValue:  [cateId],
                 model: {label: {type: 'text'}},
                 prop: {
-                    name: 'catename',
+                    name: 'name',
                     value: 'id'
                 },
                 // radio: true,
@@ -168,14 +168,14 @@
   //编辑文章
 	form.on('submit(article-edit)', function(data){
       var field = data.field;
-      var loadIndex = layer.load(2);
+      var index = layer.load(2);
 		$.ajax({
 			type:"post",
-			url:"{:url('article/edit')}",
+			url:"{:url('article/editData')}",
 			data: field,
 			daType:"json",
 			success:function (res){
-              layer.close(loadIndex);
+              layer.close(index);
 				if (res.code === 0) {
                   toast.success({title:"成功消息",message: res.msg});
                   location.href = res.url;
@@ -183,6 +183,10 @@
                   toast.error({title:"失败消息",message:res.msg});
                   layui.jquery('#captcha').attr('src', '{:captcha_src()}?'+Math.random());
 				}
+			},
+			error: function(res){
+				layer.closeAll('loading');
+				toast.error({title:"失败消息",message: res.responseJSON.msg});
 			}
 		});
 		return false;
