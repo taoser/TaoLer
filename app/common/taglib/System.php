@@ -33,7 +33,7 @@ class System extends TagLib
         'is_open'       => ['attr' => '', 'close' => 0],
         'is_comment'    => ['attr' => '', 'close' => 0],
         'is_reg'        => ['attr' => '', 'close' => 0],
-        'icp'           => ['attr' => '', 'close' => 0],
+       
         'showlist'      => ['attr' => '', 'close' => 0],
         'blackname'     => ['attr' => '', 'close' => 0],
         'sys_version_num'=> ['attr' => '', 'close' => 0],
@@ -49,17 +49,17 @@ class System extends TagLib
 
     public function tagWebname(): string
     {
-        return '{$sysInfo.webname}';
+        return '{:system_config("webname")}';
     }
 
     public function tagTitle(): string
     {
-        return '{$sysInfo.webtitle}';
+        return '{:system_config("title")}';
     }
 
     public function tagDomain(): string
     {
-        return '{$sysInfo.domain}';
+        return '{:system_config("domain")}';
     }
 
     public function tagTemplate(): string
@@ -69,7 +69,7 @@ class System extends TagLib
 
     public function tagLogo(): string
     {
-        return '{$sysInfo.logo}';
+        return '{:system_config("logo")}';
     }
 
     public function tagMlogo(): string
@@ -79,7 +79,7 @@ class System extends TagLib
 
     public function tagCopyright(): string
     {
-        return '{$sysInfo.copyright}';
+        return '{:system_config("copyright")}';
     }
 
     public function tagKeywords(): string
@@ -89,7 +89,7 @@ class System extends TagLib
 
     public function tagDescript(): string
     {
-        return '{$sysInfo.descript}';
+        return '{:system_config("descript")}';
     }
 
     public function tagState(): string
@@ -99,7 +99,7 @@ class System extends TagLib
 
     public function tagIcp(): string
     {
-        return '{$sysInfo.icp}';
+        return '{:system_config("icp")}';
     }
 
     public function tagSys_version(): string

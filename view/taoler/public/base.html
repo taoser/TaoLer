@@ -1,11 +1,11 @@
 <!--
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:51
- * @LastEditTime: 2022-08-10 16:50:38
+ * @LastEditTime: 2026-09-08 19:53:52
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
- * @FilePath: \github\TaoLer\view\taoler\index\public\base.html
- * Copyright (c) 2020~2025 https://www.aieok.com All rights reserved.
+ * @FilePath: \TaoLer\view\taoler\public\base.html
+ * @Copyright: Copyright(c) 2020~2026 https://www.aieok.com All rights reserved.
 -->
 <!DOCTYPE html>
 <html>
@@ -18,16 +18,21 @@
 	<meta name="renderer" content="webkit" />
 	<meta name="force-rendering" content="webkit" />
 	<!-- seo -->
-	<title>{block name="title"}{taoler:site_title /}{/block}</title>
+	<title>{block name="title"}{taoler:title /}{/block}</title>
 	<meta name="keywords" content="{block name='keywords'}{taoler:keywords /}{/block}" />
 	<meta name="description" content="{block name='description'}{taoler:description /}{/block}" />
+	<!-- robots -->
+    <meta name="robots" content="{'index,follow'}">
 	<meta name="copyright" content="{taoler:copyright /}" />
 	{block name="ogtitle"}{/block}
+	<meta property="og:type" content="website">
 	{block name="ogdescription"} {/block}
-	<meta property="og:url" content="{$Request.url}" />
+	<meta property="og:url" content="{taoler:domain /}" />
 	<meta property="og:site_name" content="{taoler:site_name /}" />
-	{block name="ogimage"} {/block}
+	{block name="ogimage"}{/block}
 	{block name="meta"}{/block}
+	<!-- 百度禁止转码 -->
+    <meta http-equiv="Cache-Control" content="no-site-transcode">
 
 	<script src="/static/layui/layui.js" charset="utf-8"></script>
 	<script src="/static/tpl/taoler/mods/toast.js"></script>

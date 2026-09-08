@@ -66,8 +66,8 @@ class Config extends AdminBaseController
      */
     public function list(Request $request): Response
     {
-        $page = $request->post('page',1);
-        $limit = $request->post('limit',20);
+        $page = $request->post('page', 1);
+        $limit = $request->post('limit', 20);
         $param = $request->post('search-word','');
         $data = $this->config->getConfigList($param, $page, $limit);
         return json([

@@ -59,6 +59,9 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
             case 'text':
                 html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input">`;
                 break;
+            case 'textarea':
+                html += `<textarea name="${item.name}" class="layui-textarea">${item.value||''}</textarea>`;
+                break;
 
             case 'number':
                 html += `<input type="number" name="${item.name}" value="${item.value||''}" class="layui-input">`;
@@ -67,7 +70,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
             case 'switch':
                 // 开关：1开启 0关闭；兼容value为null
                 const chk = String(item.value ?? '0') === '1' ? 'checked' : '';
-                html += `<input type="checkbox" name="${item.name}" lay-skin="switch" ${chk}>`;
+                html += `<input type="checkbox" name="${item.name}" lay-skin="switch" ${chk} lay-text="开启|关闭">`;
                 break;
 
             case 'radio':
