@@ -45,13 +45,18 @@ class Admin extends AdminBaseController
 	 */
 	public function list(Request $request):Response
 	{
-		$data = $request->post(['id','username','mobile','email']);
-		$map = array_filter($data);
+		$data = $request->param(['name']);
 
-		$admins = $this->model
-		->field('id,avatar,username,mobile,email,remarks,status,last_login_ip,last_login_time,create_time')
-		->where($map)
-		->select();
+		$query = $this->model
+		->field('id,avatar,username,mobile,email,remarks,status,last_login_ip,last_login_time,create_time');
+
+		if(!empty($data['name'])){
+			$query->whereOr('username', $data['name'])
+			->whereOr('mobile', $data['name'])
+			->whereOr('email', $data['name']);
+		}
+
+		$admins = $query->select();
 
 		$count = $admins->count();
 		if($count){
@@ -72,20 +77,16 @@ class Admin extends AdminBaseController
 	{
 		$data = $request->post(['id', 'status']);
 
-        if($data['id'] == 1 && $data['status'] == -1) {
-            return json(['code' => -1, 'msg' => '无法禁用超级管理员']);
+        if($data['id'] == 1) {
+            return json(['code' => -1, 'msg' => '超级管理员禁止操作']);
         }
 
-		//获取状态
-		$res = $this->model->where('id', $data['id'])->save(['status' => $data['status']]);
+		$admin = $this->model->find($data['id']);
+		$admin->status = $data['status'];
+		$res = $admin->save();
 		if($res){
-			if($data['status']){
-				return json(['code' => 0, 'msg' => '审核通过', 'icon' => 6]);
-			}
-			return json(['code' => 0, 'msg' => '审核取消', 'icon' => 5]);
+			return json(['code' => 0, 'msg' => 'ok', 'icon' => 5]);
 		}
-
-		return json(['code' => -1, 'msg' => '审核出错']);
 	}
 	
 	/**

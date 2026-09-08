@@ -59,7 +59,7 @@
 	const SINGLE_PAGE_Add = MODULE_NAME + '/content/page/add';
 	const SINGLE_PAGE_Edit = MODULE_NAME + '/content/page/edit';
 	const SINGLE_PAGE_Delete = MODULE_NAME + '/content/page/delete';
-	const SINGLE_CATE_TREE = MODULE_NAME + '/content/category/getSingleCateTree';
+	const SINGLE_CATE_TREE = MODULE_NAME + '/content/category/getSingleSelectCategoryList';
 
 	layui.use(['toast','common','xmSelect','popup'], function(){
 		var $ = layui.jquery;
@@ -183,7 +183,6 @@
 					layer.msg(res.msg,{icon:res.icon,time:2000})
 					return false
 				}
-				
 				layer.open({
 					type: 2,
 					title: '修改',
@@ -196,16 +195,13 @@
 		}
 
 		window.remove = function(obj) {
-			layer.confirm('确定要删除?', {
-				icon: 3,
-				title: '提示'
-			}, function(index) {
+			layer.confirm('确定要删除?', {icon: 3, title: '提示'}, function(index) {
 				layer.close(index);
 				let loading = layer.load();
 				$.ajax({
+					type: 'delete',
 					url: SINGLE_PAGE_Delete + '?id=' + obj.data['id'],
 					dataType: 'json',
-					type: 'delete',
 					success: function(result) {
 						layer.close(loading);
 						if (result.code === 0) {

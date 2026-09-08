@@ -122,7 +122,7 @@
         });
 
         form.on('switch(rule-status)', function(obj) {
-            var status = obj.elem.checked ? 1 : -1;
+            var status = obj.elem.checked ? 1 : 0;
             $.ajax({
                 type:'post',
                 url: RULES_ENABLE,
@@ -163,7 +163,8 @@
 
                 let loading = layer.load();
                 $.ajax({
-                    url: RULES_DELETE+"?id="+obj.data['id'],
+                    url: RULES_DELETE,
+                    data:{id:obj.data['id']},
                     dataType:'json',
                     type:'delete',
                     success:function(res){
