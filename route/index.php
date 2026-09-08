@@ -28,7 +28,7 @@ Route::group('',function () {
 		Route::post('edit-data/<id>$', 'article/editData')->name('article_edit_data');
 		Route::rule('delete/<id>$', 'article/delete');
 		Route::rule('tags', 'article/tags')->allowCrossDomain();
-		Route::get('catetree', 'article/getCateTree')->name('get_cate_tree');
+		Route::get('catetree', 'category/getArticleSelectCategoryTree')->name('get_cate_tree');
 	});
 
 	// 用户中心

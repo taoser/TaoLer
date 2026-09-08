@@ -1,9 +1,9 @@
 <?php
 /*
  * @Program: TaoLer 2023/3/14
- * @FilePath: app\admin\controller\content\Cate.php
+ * @FilePath: \TaoLer\app\admin\controller\content\Cate.php
  * @Description: Cate 分类菜单
- * @LastEditTime: 2023-03-14 15:40:53
+ * @LastEditTime: 2026-09-08 12:16:18
  * @Author: Taoker <317927823@qq.com>
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  */
@@ -16,11 +16,11 @@ use think\Request;
 use think\Response;
 use think\facade\View;
 use think\facade\Db;
-use app\facade\Category;
+use app\facade\Category as CategoryEntity;
 use app\common\helper\FileHelper;
 use think\Response\Json;
 
-class Cate extends AdminBaseController
+class Category extends AdminBaseController
 {
 
 
@@ -41,7 +41,7 @@ class Cate extends AdminBaseController
 	//帖子分类
 	public function list()
 	{
-        $categoryList = Category::getList();
+        $categoryList = CategoryEntity::getList();
         if(empty($categoryList)) {
 			return json(['code' => 1, 'msg' => 'no data！']);
 		}
@@ -63,7 +63,7 @@ class Cate extends AdminBaseController
             //详情模板
             $template = $this->getIndexTpl();
             // 如果是新增，pid=0, tpl默认第一个子模块，如果是编辑，查询出cate
-            $category = $addOrEdit ? Category::getCateInfoById($id) : '';
+            $category = $addOrEdit ? CategoryEntity::getCateInfoById($id) : '';
             $view = $addOrEdit ? 'edit' : 'add';
 
             View::assign([
@@ -81,7 +81,7 @@ class Cate extends AdminBaseController
         } 
 
         try{
-            Category::cache('name')->save($data);
+            CategoryEntity::cache('name')->save($data);
             return json(['code' => 0, 'msg'=> $msg.'成功']);
         } catch(Exception $e) {
             return json(['code' => 1, 'msg' => $msg.'失败'.$e->getMessage()]);
@@ -94,7 +94,7 @@ class Cate extends AdminBaseController
 	{
         $id = $request->post('id/d');
 
-        return Category::delete($id);
+        return CategoryEntity::delete($id);
 	}
 
 	// 动态审核
@@ -102,7 +102,7 @@ class Cate extends AdminBaseController
 	{
         $param = $request->post(['id','name','value']);
         $data = ['id' => $param['id'], $param['name'] => $param['value']];
-        return Category::check($data);
+        return CategoryEntity::check($data);
 	}
 
     /**
@@ -122,7 +122,7 @@ class Cate extends AdminBaseController
      */
     public function getCateTree(): Response
     {
-        $list = Category::field('id,pid,name,sort')
+        $list = CategoryEntity::field('id,pid,name,sort')
         ->order('sort','asc')
         ->select()
         ->toArray();
@@ -145,26 +145,18 @@ class Cate extends AdminBaseController
     }
 
     /**
-     * 文章可选分类菜单
+     * 文章可选分类树(排除单页分类)
      *
      * @return Json
      */
-    public function getArticleCateTree(): Json
+    public function getArticleSelectCategoryList(): Json
     {
-        $list = Category::field('id,pid,name,sort')
-        ->order('sort','asc')
-        ->select()
-        ->toArray();
-
-        $data =  build_tree($list);
-
-        $count = count($data);
+        $list = CategoryEntity::getArticleSelectTree();
 
         return json([
             'code' => 0,
             'msg' => 'ok',
-            'count' => $count,
-            'data'  => $data
+            'data'  => $list
         ]);
     }
 
@@ -173,15 +165,14 @@ class Cate extends AdminBaseController
      *
      * @return Response
      */
-    public function getSingleCateTree(): Response
+    public function getSingleSelectCategoryList(): Response
     {
-        $list = Category::getSinglePageTreeList();
+        $list = CategoryEntity::getSinglePageSelectTree();
 
         return json([
             'code' => 0,
             'msg' => 'ok',
-            'count' => $list['count'],
-            'data'  => $list['data']
+            'data'  => $list
         ]);
     }
 
@@ -194,7 +185,7 @@ class Cate extends AdminBaseController
     {
         $pageCate = Db::name('page')->field('category_id')->group('category_id')->select()->column('category_id');
    
-        $list = Category::field('id,pid,name,sort')
+        $list = CategoryEntity::field('id,pid,name,sort')
         ->where('type', 2)
         ->whereNotIn('id', $pageCate)
         ->order('sort','asc')

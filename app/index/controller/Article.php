@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-08 11:00:12
+ * @TaoLer: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\index\controller\Article.php
+ * @Copyright: Copyright (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\index\controller;
 
@@ -353,27 +363,5 @@ class Article extends IndexBaseController
 		}
 		
 	}
-
-    /**
-     * 分类树
-     * @return \think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function getCateTree()
-    {
-        $categoryList = Category::field('id,pid,name,sort')
-		->order('sort','asc')
-		->where(['status' => 1])
-		->select()
-		->toArray();
-
-		$list = build_tree($categoryList);
-
-        $count = count($list);
-
-		return ResHelper::success(data:$list, count:$count);
-    }
 
 }

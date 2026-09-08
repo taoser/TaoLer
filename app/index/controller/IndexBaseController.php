@@ -2,11 +2,11 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2024-09-02 15:47:05
- * @LastEditors: TaoLer
+ * @LastEditTime: 2026-09-08 09:38:48
+ * @LastEditors: Please set LastEditors
  * @Description: 前端基础控制器设置
  * @FilePath: \TaoLer\app\common\controller\BaseController.php
- * Copyright (c) 2020~2024 https://www.aieok.com All rights reserved.
+ * @Copyright (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
 declare (strict_types = 1);
 

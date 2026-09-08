@@ -1,12 +1,13 @@
 <?php
 /*
- * @Author: TaoLer <317927823@qq.com>
- * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-27 09:14:12
- * @LastEditors: TaoLer
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-08 09:56:05
+ * @TaoLer: TaoLer
  * @Description: 首页优化版
- * @FilePath: \github\TaoLer\app\index\controller\Index.php
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\index\controller\Index.php
+ * @Copyright: Copyright (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
 namespace app\index\controller;
 
@@ -40,8 +41,6 @@ class Index extends IndexBaseController
      */
     public function index(Request $request)
     {
-
-
 		// dump(get_addons_config('demo'));
 
 		$uid = $request->session('user_id');

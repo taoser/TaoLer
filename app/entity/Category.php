@@ -492,7 +492,35 @@ class Category extends BaseEntity
 		return $subCateArray;
     }
 
-    public function getSinglePageTreeList(): array
+    /**
+     * 文章无限极分类树(排除单页分类) 
+     *
+     * @return array
+     */
+    public function getArticleSelectTree(): array
+    {
+        $list = $this->field('id,pid,name,sort')
+        ->where('type', 1)
+        ->where('status', 1)
+        ->order('sort','asc')
+        ->select()
+        ->toArray();
+
+         if(empty($list)) {
+            return [];
+        }
+        
+        $data =  build_tree($list);
+        
+        return $data;
+    }
+
+    /**
+     * 单页分类
+     *
+     * @return array
+     */
+    public function getSinglePageSelectTree(): array
     {
         $list = $this->field('id,pid,name,sort')
         ->where('type', 2)
@@ -505,13 +533,12 @@ class Category extends BaseEntity
         ->toArray();
 
         if(empty($list)) {
-            return ['count' => 0, 'data' => []];
+            return [];
         }
-        
-        $count = count($list);
+
         $data =  build_tree($list);
         
-        return ['count' => $count, 'data' => $data];
+        return $data;
     }
 
     /**

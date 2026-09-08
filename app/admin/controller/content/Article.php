@@ -1,15 +1,18 @@
 <?php
 /*
- * @Program: TaoLer 2023/3/14
- * @FilePath: app\admin\controller\content\Forum.php
- * @Description: Forum
- * @LastEditTime: 2023-03-14 15:42:00
- * @Author: Taoker <317927823@qq.com>
- * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ * @Author: TaoLer <alipay_tao@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-08 12:31:10
+ * @LastEditors: TaoLer
+ * @Description: 文章管理
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\admin\controller\content\Article.php
+ * @Copyright: Copyright (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
 
 namespace app\admin\controller\content;
 
+use app\admin\controller\AdminBaseController;
 use Exception;
 use think\Request;
 use think\Response;
@@ -32,8 +35,6 @@ use app\common\observer\ObserverManager;
 use app\common\observer\LogObserver;
 use app\common\observer\TagObserver;
 use app\common\observer\MailObserver;
-
-use app\admin\controller\AdminBaseController;
 
 class Article extends AdminBaseController
 {
@@ -174,21 +175,18 @@ class Article extends AdminBaseController
     }
 
 
-    //删除帖子 多选和单独
+    // 删除帖子 多选和单独
 	public function delete(Request $request)
 	{
 		$id = $request->get('id');
-        try {
-            $arr = explode(",",$id);
-            foreach($arr as $v){
-                $article = $this->entity::find($v);
-                $article->together(['comments'])->delete();
-            }
-            return json(['code'=>0,'msg'=>'删除成功']);
-        } catch (\Exception $e) {
-            return json(['code'=>-1,'msg'=>'删除失败']);
+        
+        $arr = explode(",",$id);
+        foreach($arr as $v){
+            $article = $this->entity::find($v);
+            $article->together(['comments'])->delete();
         }
-		
+
+        return json(['code'=>0,'msg'=>'删除成功']);
 	}
 
     /**

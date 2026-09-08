@@ -59,4 +59,17 @@ class Category extends IndexBaseController
 
         return View::fetch($categoryView);
     }
+
+	/**
+	 * 文章可选分类树(排除单页分类)
+	 * @return Response
+	 */
+	public function getArticleSelectCategoryTree(Request $request): Response
+	{
+		$list = CategoryEntity::getArticleSelectTree();
+
+		return json(['code' => 0, 'msg' => 'success', 'data' => $list]);
+	}
+
+
 }
