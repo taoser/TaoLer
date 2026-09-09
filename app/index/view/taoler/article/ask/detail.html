@@ -33,7 +33,7 @@
 					{article:comments_num /}
 					<i class="iconfont" title="浏览">&#xe60b;</i>
 					{$pv}
-					{if ($article.flags.is_wait == 0) }
+					{if ($article.flags.is_complete == 0) }
 					<span class="layui-btn layui-btn-xs" style="background-color: #ff5722">{:lang('no finished')}</span>
 					{else /}
 					<span class="layui-btn layui-btn-xs" style="background-color: #009688">{:lang('finished')}</span>

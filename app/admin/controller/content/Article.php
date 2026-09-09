@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-08 12:31:10
+ * @LastEditTime: 2026-09-09 22:23:36
  * @LastEditors: TaoLer
  * @Description: 文章管理
  * @Version: V4.0.0
@@ -190,59 +190,20 @@ class Article extends AdminBaseController
 	}
 
     /**
-	 * 置顶、加精、
+	 * 置顶、推荐、加精
 	 *
 	 * @return Json
 	 */
 	public function setFlag(Request $request)
 	{
-		$param = $request->post(['id/d', 'name', 'value/d']);
+		$param = $request->post(['id/d', 'type', 'value/d']);
 
-        $data["flags->{$param['name']}"] = $param['value'];
+        $flag = new \app\entity\ArticleFlag();
+        $flag->setFlag($param['id'], $param['type'], $param['value']);
 
-        try{
-            //获取状态
-            Db::table($this->getTableName($param['id']))
-            ->json(['flags'])
-            ->where('id', $param['id'])
-            ->update($data);
+        return json(['code' => 0, 'msg' => '设置成功', 'icon'=>6]);
 
-            $has = Db::table($this->getTableName($param['id']))
-            ->where('id', $param['id'])
-            ->where('type', $param['name'])
-            ->find();
-
-            // 增加
-            if($param['value'] === 1) {
-                Db::name('article_flag')->save([
-                    'type' => $this->getTypeValue($param['name']),
-                    'article_id' => $param['id'],
-                    'create_time'   => date('Y-m-d H:i:s')
-                ]);
-            }
-            // 删除
-            if($param['value'] === 0) {
-                Db::name('article_flag')
-                ->where('article_id', $param['id'])
-                ->where('type', $this->getTypeValue($param['name']))
-                ->delete();
-            }
-            
-            // Cache::delete('article_'.$param['id']);
-            
-			return json(['code' => 0, 'msg' => '设置成功', 'icon'=>6]);
-        } catch(Exception $e) {
-            return json(['code' => -1, 'msg' => $e->getMessage(), 'icon'=>6]);
-        }
 	}
-
-    protected function getTypeValue($type) {
-        return match($type) {
-            'is_top'    => 1,
-            'is_good'   => 2,
-            'is_wait'   => 3,
-        };
-    }
 
 	/**
 	 * 评论开关，审核等状态管理
@@ -377,7 +338,7 @@ class Article extends AdminBaseController
 		if(!empty($images)) {
 			$data['media']['images'] = $images;
 			$data['has_image'] = count($images);
-            $data['thum_img'] = $images[0];
+            $data['thumb'] = $images[0];
 		}
 		
 		if(!empty($video)) {

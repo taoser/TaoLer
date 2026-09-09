@@ -92,10 +92,10 @@ class Category extends BaseEntity
                 $where[] = ['flags->is_top', '=', '1'];
                 break;
             case 'wait':
-                $where[] = ['flags->is_wait', '=', '1'];
+                $where[] = ['flags->is_complete', '=', '1'];
                 break;
             case 'end':
-                $where[] = ['flags->is_wait', '=', '0'];
+                $where[] = ['flags->is_complete', '=', '0'];
                 break;
             default:
                 break;
@@ -291,7 +291,7 @@ class Category extends BaseEntity
                 'a.description',
                 'a.create_time',
                 'a.pv',
-                'a.thum_img',
+                'a.thumb',
                 'a.has_image',
                 'a.has_video',
                 'a.has_audio',

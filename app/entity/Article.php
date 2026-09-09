@@ -17,7 +17,7 @@ class Article extends BaseEntity
     // 1. 字段常量管理（抽离到模型更佳）
     const ARTICLE_LIST_FIELDS = [
         'a.id', 'a.category_id', 'a.user_id', 'a.title', 'a.content', 'a.description',
-        'a.create_time', 'a.pv', 'a.thum_img', 'a.has_image', 'a.has_video', 'a.has_audio',
+        'a.create_time', 'a.pv', 'a.thumb', 'a.has_image', 'a.has_video', 'a.has_audio',
         'a.comments_num', 'a.flags'
     ];
     const CATE_RELATION_FIELDS = ['id', 'name', 'ename'];
@@ -49,7 +49,7 @@ class Article extends BaseEntity
 
         // if(isset($data['has_image'])) {
         //     $this->has_image = $data['has_image'];
-        //     $this->thum_img = $data['thum_img'];
+        //     $this->thumb = $data['thumb'];
         // }
         // if(isset($data['has_video'])) {
         //     $this->has_video = $data['has_video'];
@@ -70,7 +70,7 @@ class Article extends BaseEntity
         // $this->flags = empty($data['flags']) ? [
         //     'is_top'    => '0',
         //     'is_good'   => '0',
-        //     'is_wait'   => '0',
+        //     'is_complete'   => '0',
         // ] : $data['flags'];
 
         $this->save($data);
@@ -141,7 +141,7 @@ class Article extends BaseEntity
             }
 
             foreach($sufsAids as $k => $v) {
-                $data = $this->field('id,title,category_id,user_id,create_time,pv,thum_img,has_image,thum_img,has_video,has_audio,media,comments_num,flags')
+                $data = $this->field('id,title,category_id,user_id,create_time,pv,thumb,has_image,thumb,has_video,has_audio,media,comments_num,flags')
                 ->suffix($k)
                 ->with([
                     'category' => function (Query $query) {
@@ -318,7 +318,7 @@ class Article extends BaseEntity
   
             $map = $this->getSuffixMap(['status' => 1], Article::class);
 
-            $field = 'id,title,category_id,user_id,content,description,pv,thum_img,has_image,has_video,has_audio,create_time,media,comments_num,flags';
+            $field = 'id,title,category_id,user_id,content,description,pv,thumb,has_image,has_video,has_audio,create_time,media,comments_num,flags';
             // 判断是否有多个表
             if($map['tableCount'] > 1) {
 
@@ -424,7 +424,7 @@ class Article extends BaseEntity
 
         if(is_null($detail)) {
 
-            $detail =  $this->field('id,title,content,status,category_id,user_id,is_comment,keywords,description,create_time,update_time,comments_num,flags')
+            $detail =  $this->field('id,title,content,status,category_id,user_id,forbid_comment,keywords,description,create_time,update_time,comments_num,flags')
             ->where('id', $id)
             ->with([
                 'category' => function(Query $query){
@@ -629,7 +629,7 @@ class Article extends BaseEntity
             ->limit($limit)
             ->select();
 
-            $tags = $this->field('id,category_id,user_id,thum_img,has_image,title,create_time,pv')
+            $tags = $this->field('id,category_id,user_id,thumb,has_image,title,create_time,pv')
             ->whereIn('id', $arrId)
             ->where('status', '1')
             ->with([
@@ -713,7 +713,7 @@ class Article extends BaseEntity
     // 获取所有帖子内容
     public function getList(array $where, int $limit, int $page)
     {
-        return $this::field('id,user_id,category_id,title,content,is_comment,status,update_time,comments_num,flags')
+        return $this::field('id,user_id,category_id,title,content,forbid_comment,status,update_time,comments_num,flags')
         ->with([
             'user' => function($query){
                 $query->field('id,name,avatar');
@@ -806,7 +806,7 @@ class Article extends BaseEntity
             }
         }
 
-        $data = $this::field('id,user_id,category_id,title,description,is_comment,status,update_time,comments_num')
+        $data = $this::field('id,user_id,category_id,title,description,forbid_comment,status,update_time,comments_num')
         ->with([
              'user' => function($query){
                  $query->field('id,name,avatar');
@@ -850,7 +850,7 @@ class Article extends BaseEntity
                     $where[] = ['flags->is_good', '=', 1];
                     break;
                 case '4':
-                    $where[] = ['is_comment', '=', 1];
+                    $where[] = ['forbid_comment', '=', 1];
                     break;
                 case '5':
                     $where[] = ['status', '=', -1];
@@ -922,7 +922,7 @@ class Article extends BaseEntity
             // newLimit首次=limit, newLimit 在数据介于两表之间时分量使用
             self::$newLimit = $limit;
 
-            $field = 'id,category_id,user_id,title,is_comment,pv,status,create_time,update_time,comments_num,flags';
+            $field = 'id,category_id,user_id,title,forbid_comment,pv,status,create_time,update_time,comments_num,flags';
 
             for($i = 0; $i < $map['tableCount']; $i++) {
 

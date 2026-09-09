@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2022-05-17 13:08:11
- * @LastEditTime: 2022-07-23 09:39:52
+ * @LastEditTime: 2026-09-09 19:26:14
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\common\taglib\Article.php
@@ -19,36 +19,45 @@ class Article extends TagLib
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1闭合标签） alias 标签别名 level 嵌套层次
         'id'            => ['attr' => '', 'close' => 0],
+        'category_id'   => ['attr' => '', 'close' => 0],
+        'user_id'       => ['attr' => '', 'close' => 0],
         'title'         => ['attr' => '', 'close' => 0],
         'content'       => ['attr' => '', 'close' => 0],
-        'author'        => ['attr' => '', 'close' => 0],
-        'author_id'     => ['attr' => '', 'close' => 0],
-        'author_avatar' => ['attr' => '', 'close' => 0],
-        'author_link'   => ['attr' => '', 'close' => 0],
-        'pv'            => ['attr' => '', 'close' => 0],
-        'comments_num'  => ['attr' => '', 'close' => 0],
+        'thumb'         => ['attr' => '', 'close' => 0],
         'keywords'      => ['attr' => '', 'close' => 0],
         'description'   => ['attr' => '', 'close' => 0],
-        'link'          => ['attr' => '', 'close' => 0],
-        'url'           => ['attr' => '', 'close' => 0],
-        'time'          => ['attr' => '', 'close' => 0],
-        'uptime'        => ['attr' => '', 'close' => 0],
-        'is_top'        => ['attr' => '', 'close' => 0],
-        'is_good'       => ['attr' => '', 'close' => 0],
-        'is_wait'       => ['attr' => '', 'close' => 0],
+        'ip'            => ['attr' => '', 'close' => 0],
+        'type'          => ['attr' => '', 'close' => 0],
+        'status'        => ['attr' => '', 'close' => 0],
         'has_image'     => ['attr' => '', 'close' => 0],
         'has_video'     => ['attr' => '', 'close' => 0],
+        'has_audio'     => ['attr' => '', 'close' => 0],
+        'forbid_comment'    => ['attr' => '', 'close' => 0],
+        'pv'            => ['attr' => '', 'close' => 0],
+        'comments_num'  => ['attr' => '', 'close' => 0],
+        'media'         => ['attr' => '', 'close' => 0],
+        'flags'         => ['attr' => '', 'close' => 0],
+        'create_time'   => ['attr' => '', 'close' => 0],
+        'update_time'   => ['attr' => '', 'close' => 0],
+
+        'link'          => ['attr' => '', 'close' => 0],
+        'url'           => ['attr' => '', 'close' => 0],
+        'is_top'        => ['attr' => '', 'close' => 0],
+        'is_good'       => ['attr' => '', 'close' => 0],
+        'is_complete'       => ['attr' => '', 'close' => 0],
+        
         'master_pic'    => ['attr' => '', 'close' => 0],
-        'thum_img'      => ['attr' => '', 'close' => 0],
 
         'category'      => ['attr' => 'name', 'close' => 0],
         'category_name' => ['attr' => '', 'close' => 0],
         'category_ename'=> ['attr' => '', 'close' => 0],
-        'category_id'   => ['attr' => '', 'close' => 0],
-
         'field'         => ['attr' => 'name', 'close' => 0],
-        
         'user'          => ['attr' => 'name', 'close' => 0],
+
+        'author'        => ['attr' => '', 'close' => 0],
+        'author_id'     => ['attr' => '', 'close' => 0],
+        'author_avatar' => ['attr' => '', 'close' => 0],
+        'author_link'   => ['attr' => '', 'close' => 0],
 
         'list'          => ['attr' => ''],
         'prev'          => ['attr' => ''],
@@ -72,77 +81,98 @@ class Article extends TagLib
     ];
 
     // id
-    public function tagId(array $tag, string $content): string
+    public function tagId(array $tag): string
     {
         return '{$article.id}';
     }
 
-    public function tagTitle(array $tag, string $content): string
+    // category_id
+    public function tagCategory_id(array $tag): string
+    {
+        return '{$article.category_id}';
+    }
+
+    // user_id
+    public function tagUser_id(array $tag): string
+    {
+        return '{$article.user_id}';
+    }
+
+    // title
+    public function tagTitle(array $tag): string
     {
         return '{$article.title}';
     }
 
-    public function tagContent(array $tag, string $content): string
+    public function tagContent(array $tag): string
     {
         return '{$article.content|raw}';
     }
 
-    public function tagAuthor(array $tag, string $content): string
+    // thumb
+    public function tagThumb(array $tag): string
     {
-        return '{$article.user.nickname ?: $article.user.name}';
+        return '{$article.thumb}';
     }
 
-    public function tagAuthor_id(array $tag, string $content): string
-    {
-        return '{$article.user.id}';
-    }
-
-    public function tagAuthor_avatar(array $tag, string $content): string
-    {
-        return '{$article.user.avatar}';
-    }
-
-    public function tagAuthor_link(array $tag, string $content): string
-    {
-        return '{:url("user_home",["id"=>$article.user.id])->domain(true)}';
-    }
-
-    public function tagPv(array $tag, string $content): string
-    {
-        return '{$article.pv}';
-    }
-
-    public function tagComments_num(array $tag, string $content): string
-    {
-        return '{$article.comments_num}';
-    }
-
-    public function tagKeywords(array $tag, string $content): string
+    public function tagKeywords(array $tag): string
     {
         return '{$article.keywords ?: $article.title}';
     }
 
-    public function tagDescription(array $tag, string $content): string
+    public function tagDescription(array $tag): string
     {
         return '{$article.description}';
     }
+
+    public function tagAuthor(array $tag): string
+    {
+        return '{$article.user.nickname ?: $article.user.name}';
+    }
+
+    public function tagAuthor_id(array $tag): string
+    {
+        return '{$article.user.id}';
+    }
+
+    public function tagAuthor_avatar(array $tag): string
+    {
+        return '{$article.user.avatar}';
+    }
+
+    public function tagAuthor_link(array $tag): string
+    {
+        return '{:url("user_home",["id"=>$article.user.id])->domain(true)}';
+    }
+
+    public function tagPv(array $tag): string
+    {
+        return '{$article.pv}';
+    }
+
+    public function tagComments_num(array $tag): string
+    {
+        return '{$article.comments_num}';
+    }
+
+    
 
     // public function tagLink(array $tag, string $content): string
     // {
     //     return '{:url(\'detail\', [\'ename\' => $article.category.ename,\'id\' => $article.id])->domain(true)}';
     // }
 
-    public function tagLink(array $tag, string $content): string
+    public function tagLink(array $tag): string
     {
         return '{$article.url}';
     }
 
-    public function tagUrl(array $tag, string $content): string
+    public function tagUrl(array $tag): string
     {
         return '{$article.url}';
     }
 
-    public function tagTime(array $tag, string $content): string
+    public function tagTime(array $tag): string
     {
         return '{$article.create_time}';
     }
@@ -152,39 +182,39 @@ class Article extends TagLib
         return '{$article.update_time}';
     }
 
-    public function tagIs_top(array $tag, string $content): string
+    public function tagIs_top(array $tag): string
     {
         return '{$article.flags.is_top}';
     }
 
-    public function tagIs_good(array $tag, string $content): string
+    public function tagIs_good(array $tag): string
     {
         return '{$article.flags.is_good}';
     }
 
-    public function tagIs_wait(array $tag, string $content): string
+    public function tagis_complete(array $tag): string
     {
-        return '{$article.flags.is_wait}';
+        return '{$article.flags.is_complete}';
     }
 
-    public function tagHas_image(array $tag, string $content): string
+    public function tagHas_image(array $tag): string
     {
         return '{$article.has_image}';
     }
 
-    public function tagHas_video(array $tag, string $content): string
+    public function tagHas_video(array $tag): string
     {
         return '{$article.has_video}';
     }
 
-    public function tagMaster_pic(array $tag, string $content): string
+    public function tagMaster_pic(array $tag): string
     {
         return '{notempty name="article.media.images"}{$article.media.images[0]}{/notempty}';
     }
 
-    public function tagThum_img(array $tag, string $content): string
+    public function tagthumb(array $tag): string
     {
-        return '{egt name="article.has_image" value="1"}{$article.thum_img}{/egt}';
+        return '{egt name="article.has_image" value="1"}{$article.thumb}{/egt}';
     }
 
     public function tagMaster_pic2(array $tag, string $content): string

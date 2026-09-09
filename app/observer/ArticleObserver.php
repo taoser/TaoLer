@@ -61,8 +61,11 @@ class ArticleObserver
         // 初始化media字段
         if(empty($article->media)){
             $article->media = [
+                // 图片
                 'images' => [],
+                // 视频
                 'videos' => [],
+                // 音频
                 'audios' => []
             ];
         }
@@ -70,9 +73,14 @@ class ArticleObserver
         // 初始化flags字段
         if(empty($article->flags)){
             $article->flags = [
-                'is_top'    => '0',
-                'is_good'   => '0',
-                'is_wait'   => '0',
+                // 是否置顶
+                'is_top'     => '0',
+                // 是否推荐
+                'is_index'   => '0',
+                // 是否精选
+                'is_good'    => '0',
+                // 是否完成
+                'is_complete'=> '0',
             ];
         }
     }
@@ -152,7 +160,7 @@ class ArticleObserver
                 `category_id` int UNSIGNED NOT NULL COMMENT '分类id',
                 `user_id` int UNSIGNED NOT NULL COMMENT '用户id',
                 `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
-                `thum_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '缩略图',
+                `thumb` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '缩略图',
                 `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '关键词',
                 `description` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'seo描述',
                 `content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
@@ -162,14 +170,14 @@ class ArticleObserver
                 `has_image` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '图片张数',
                 `has_video` tinyint NOT NULL DEFAULT 0 COMMENT '1有视频0无',
                 `has_audio` tinyint NOT NULL DEFAULT 0 COMMENT '1有音频0无',
-                `is_comment` tinyint UNSIGNED NOT NULL COMMENT '可评论1是0否',
+                `forbid_comment` tinyint UNSIGNED NOT NULL COMMENT '可评论1是0否',
                 `pv` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览量',
                 `create_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
                 `update_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
                 `delete_time` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
                 `comments_num` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '评论数',
                 `media` json NOT NULL COMMENT '媒体image,video,audio',
-                `flags` json NOT NULL COMMENT '标记is_top置顶is_good推荐is_wait完结',
+                `flags` json NOT NULL COMMENT '标记is_top置顶is_good推荐is_complete完结',
                 PRIMARY KEY (`id`) USING BTREE,
                 INDEX `user_id`(`user_id` ASC) USING BTREE COMMENT '文章的用户索引',
                 INDEX `category_id`(`category_id` ASC) USING BTREE COMMENT '文章分类索引',

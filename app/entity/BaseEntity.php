@@ -29,10 +29,10 @@ class BaseEntity extends Entity
     }
 
     /**
-     * 根据id数组，获取以表前缀为key, id为值的数组 ['' => [1,2,3], '_1' => [5,6,7,8,9],'_2' => [10,11]]
+     * 根据id数组，获取以表前缀为key 
      *
-     * @param array $idArr
-     * @return array
+     * @param array $idArr id数组:[1,2,3,5,6,7,8,9,10,11]
+     * @return array 表前缀为key, id为值的数组 ['' => [1,2,3], '_1' => [5,6,7,8,9],'_2' => [10,11]]
      */
     public static function getSfxKeyIdValueArrByIdArr(array $idArr): array
     {
@@ -46,10 +46,10 @@ class BaseEntity extends Entity
         return $suffixIdArr;
     }
 
-        /**
-     * 获取子表报名数组['tao_article_1','tao_article_2','tao_article_3']
-     * @param string|null $tableName
-     * @return array
+    /**
+     * 获取子表报名数组
+     * @param string|null $tableName 表名 article
+     * @return array 子表报名数组 ['tao_article_1','tao_article_2','tao_article_3']
      */
     public static function getSubTables(?string $tableName = null): array
     {
@@ -67,9 +67,9 @@ class BaseEntity extends Entity
     }
 
     /**
-     * 获取所有分表的后缀数组 ['_1','_2','_3']
-     * @param string|null $tableName
-     * @return array
+     * 获取所有分表的后缀数组 
+     * @param string|null $tableName 表名 article
+     * @return array 所有分表的后缀数组 ['_1','_2','_3']
      */
     public static function getSubTablesSuffix(?string $tableName = null): array
     {

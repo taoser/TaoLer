@@ -47,7 +47,7 @@
 					</div>
 				</div>
 				<div class="layui-col-md2">
-					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="forum-query">
+					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="article-query">
 						<i class="layui-icon layui-icon-search"></i>
 						查询
 					</button>
@@ -67,7 +67,7 @@
 	</div>
 </div>
 
-<script type="text/html" id="forum-toolbar">
+<script type="text/html" id="article-toolbar">
 	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
 	<i class="layui-icon layui-icon-add-1"></i>
 	新增
@@ -91,17 +91,20 @@
 <script type="text/html" id="avatarTpl">
 	<div><img style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;" src= "{{ d.user.avatar }}"></div>
 </script>
-<script type="text/html" id="forum-istop">
-	<input type="checkbox" name="is_top" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isTop" {{ d.flags.is_top == 1 ? 'checked' : '' }}>
+<script type="text/html" id="buttonIstop">
+	<input type="checkbox" name="is_top" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="set-flag" {{ d.flags.is_top == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="buttonIndex">
+	<input type="checkbox" name="is_index" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="set-flag" {{ d.flags.is_index == 1 ? 'checked' : '' }}>
 </script>
 <script type="text/html" id="buttonHot">
-	<input type="checkbox" name="is_good" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isGood" {{ d.flags.is_good == 1 ? 'checked' : '' }}>
+	<input type="checkbox" name="is_good" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="set-flag" {{ d.flags.is_good == 1 ? 'checked' : '' }}>
 </script>
 <script type="text/html" id="buttonReply">
-	<input type="checkbox" name="is_comment" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isComment" {{ d.is_comment == 0 ? 'checked' : '' }}>
+	<input type="checkbox" name="forbid_comment" id="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="forbid-comment" {{ d.forbid_comment == 1 ? 'checked' : '' }}>
 </script>
 <script type="text/html" id="buttonCheck">
-	<input type="checkbox" name="status" id="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.status == 0 ? '待审' : '禁止' }}" {{ d.status == 1 ? 'checked' : '' }}>
+	<input type="checkbox" name="status" id="{{d.id}}" lay-skin="switch" lay-filter="artStatus" lay-text="通过|{{ d.status === 0 ? '待审' : '禁止' }}" {{ d.status == 1 ? 'checked' : '' }}>
 </script>
 
 <script type="text/html" id="table-bar">
@@ -114,7 +117,7 @@
 <script>
 
 	const LIST_URL = MODULE_NAME + '/content/article/list';
-	const CATE_TREE_URL = MODULE_NAME + '/content/category/getArticleCateTree';
+	const CATE_TREE_URL = MODULE_NAME + '/content/category/getArticleSelectCategoryList';
 	const ADD_URL = MODULE_NAME + '/content/article/add';
 	const EDIT_URL = MODULE_NAME + '/content/article/edit';
 	const DELETE_URL = MODULE_NAME + '/content/article/delete';
@@ -142,7 +145,8 @@
 					,{field: 'id', width: 80, title: 'ID', sort: true}
 					,{title: '头像', width: 80, templet: '#avatarTpl'}
 					,{title: '详情', minWidth: 200, templet: '#titleTpl'}
-					,{title: '置顶', templet: '#forum-istop', width: 100, align: 'center'}
+					,{title: '置顶', templet: '#buttonIstop', width: 100, align: 'center'}
+					,{title: '推荐', templet: '#buttonIndex', width: 100, align: 'center'}
 					,{title: '加精', templet: '#buttonHot', width: 100, align: 'center'}
 					,{title: '禁评', templet: '#buttonReply', width: 100, align: 'center'}
 					,{title: '审帖', templet: '#buttonCheck', width: 100, align: 'center'}
@@ -155,7 +159,7 @@
 			},
 			skin: 'line',
 			lineStyle: 'height: 120px;',
-			toolbar: '#forum-toolbar',
+			toolbar: '#article-toolbar',
 			defaultToolbar: [{
 				title: '刷新',
 				layEvent: 'refresh',
@@ -218,7 +222,7 @@
 		}
 	});
 
-	form.on('submit(forum-query)', function(data) {
+	form.on('submit(article-query)', function(data) {
 		table.reloadData('table', {
 			where: data.field,
 			page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
@@ -233,9 +237,9 @@
 		return false;
 	});
 
-	// 监听置顶
-	form.on('switch(isTop)', function(obj){
-		$.post(SET_FLAG_URL, {id: this.id, name: obj.elem.name, value: obj.elem.checked ? 1 : 0},function(res){
+	// 监听 置顶/推荐/加精
+		form.on('switch(set-flag)', function(obj){
+		$.post(SET_FLAG_URL, {id: this.id, type: this.name, value: obj.elem.checked ? 1 : 0},function(res){
 			if(res.code) {
 				return popup.failure(res.msg)
 			}
@@ -244,20 +248,9 @@
 		return false;
 	});
 
-	// 监听加精
-	form.on('switch(isGood)', function(obj){
-		$.post(SET_FLAG_URL, {id:this.id, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
-			if(res.code) {
-				return popup.failure(res.msg)
-			}
-			return popup.success(res.msg)
-		});
-		return false;
-	});
-
-	// 监听回复
-	form.on('switch(isComment)', function(obj){
-		$.post(CHECK_URL, {id:this.id, name:obj.elem.name,value: obj.elem.checked ? 0 : 1},function(res){
+	// 监听禁评
+	form.on('switch(forbid-comment)', function(obj){
+		$.post(CHECK_URL, {id:this.id, name:obj.elem.name,value: obj.elem.checked ? 1 : 0},function(res){
 			if(res.code) {
 				return popup.failure(res.msg)
 			}
@@ -268,7 +261,7 @@
 
 	// 监听审贴
 	form.on('switch(artStatus)', function(obj){
-		$.post(CHECK_URL, {id:this.id, name:obj.elem.name,value: obj.elem.checked ? 1 : -1},function(res){
+		$.post(CHECK_URL, {id: this.id, name: obj.elem.name, value: obj.elem.checked ? 1 : 2},function(res){
 			if(res.code) {
 				return popup.failure(res.msg)
 			}

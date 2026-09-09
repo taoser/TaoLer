@@ -11,7 +11,7 @@
 
 {block name="body"}
 
-<form class="layui-form" action="">
+<form class="layui-form">
 	<div class="mainBox">
 		<div class="main-container">
 			<div class="layui-row layui-col-space15 layui-form-item">
@@ -24,7 +24,7 @@
 				<div class="layui-col-md9">
 					<label for="L_title" class="layui-form-label">{:lang('title')}</label>
 					<div class="layui-input-block">
-						<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;" value=""/>
+						<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;"/>
 					</div>
 				</div>
 			</div>
@@ -59,7 +59,7 @@
 	</div>
 	<div class="bottom">
 		<div class="button-container">
-			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="forum-save">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="form-save">
 			<i class="layui-icon layui-icon-ok"></i>
 			提交
 			</button>
@@ -162,12 +162,13 @@
 		});
 
 		// 保存
-		form.on('submit(forum-save)', function(data) {
+		form.on('submit(form-save)', function(data) {
+			var field = data.field;
+			console.log(field);
 			$.ajax({
 				url: ADD_URL,
-				data: data.field,
+				data: field,
 				dataType: 'json',
-				contentType: 'application/json',
 				type: 'post',
 				success: function(res) {
 					if(res.code) {

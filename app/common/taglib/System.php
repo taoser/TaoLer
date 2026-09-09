@@ -31,7 +31,7 @@ class System extends TagLib
         'descript'      => ['attr' => '', 'close' => 0],
         'state'         => ['attr' => '', 'close' => 0],
         'is_open'       => ['attr' => '', 'close' => 0],
-        'is_comment'    => ['attr' => '', 'close' => 0],
+        'forbid_comment'    => ['attr' => '', 'close' => 0],
         'is_reg'        => ['attr' => '', 'close' => 0],
        
         'showlist'      => ['attr' => '', 'close' => 0],

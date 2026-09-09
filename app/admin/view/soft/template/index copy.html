@@ -95,7 +95,7 @@ layui.use(['jquery','toast','loading'], function() {
         let html = `
         <div class="layui-col-md3 layui-col-xs6 ew-datagrid-item">
           <div class="project-list-item">
-            <img class="project-list-item-cover" src="${vo.thum_img || ''}">
+            <img class="project-list-item-cover" src="${vo.thumb || ''}">
             <div class="project-list-item-body">
               <h2 class="layui-elip">${vo.name || ''}</h2>
               <div class="project-list-item-text">${vo.ver_desc || ''}</div>
@@ -232,7 +232,7 @@ layui.use(['jquery','toast','loading'], function() {
 			let html = `
 			<div class="layui-col-md3 layui-col-xs6 ew-datagrid-item">
 				<div class="project-list-item">
-					<img class="project-list-item-cover" src="${vo.thum_img || ''}">
+					<img class="project-list-item-cover" src="${vo.thumb || ''}">
 					<div class="project-list-item-body">
 						<h2 class="layui-elip">${vo.name || ''}</h2>
 						<div class="project-list-item-text ">${vo.ver_desc || ''}</div>
@@ -421,7 +421,7 @@ layui.use(['jquery','toast','loading'], function() {
 			let html = `
 			<div class="layui-col-md3 layui-col-xs6 ew-datagrid-item">
 				<div class="project-list-item">
-					<img class="project-list-item-cover" src="${vo.thum_img || ''}">
+					<img class="project-list-item-cover" src="${vo.thumb || ''}">
 					<div class="project-list-item-body">
 						<h2 class="layui-elip">${vo.name || ''}</h2>
 						<div class="project-list-item-text ">${vo.ver_desc || ''}</div>

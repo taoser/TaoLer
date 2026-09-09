@@ -13,7 +13,7 @@
 			{else /}
 				<span class="layui-btn layui-btn-xs jie-admin" type="set" field="hot" rank="0" title="取消加精">精</span>
 			{/if}
-			{if($article.is_comment == 1)}
+			{if($article.forbid_comment == 1)}
 			<span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="0" title="禁评">评</span>
 			{else /}
 			<span class="layui-btn layui-btn-xs jie-admin" type="set" field="reply" rank="1" style="background-color:#ccc;" title="可评">评</span>

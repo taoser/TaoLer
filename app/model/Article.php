@@ -20,7 +20,8 @@ class Article extends BaseModel
             'deleteTime'            => 'delete_time',
             'defaultSoftDelete'     => null,
             'eventObserver'         => ArticleObserver::class,
-            'jsonAssoc'             => true,
+            'json'                  => ['flags','media'],
+            // 'jsonAssoc'             => true, // 设置json返回数组类型
             'lazyFields'            => ['pv'] // 实时获取延迟写入数据
         ];
     }
@@ -31,6 +32,11 @@ class Article extends BaseModel
     //     //TODO:初始化内容
 
     // }
+
+    public function flag()
+    {
+        return $this->hasMany(ArticleFlag::class);
+    }
 
 
     //文章关联栏目表

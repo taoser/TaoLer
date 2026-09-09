@@ -19,7 +19,7 @@ class Media extends ArticleProcessorDecorator {
 		if(!empty($images)) {
 			$data['media']['images'] = $images;
 			$data['has_image'] = count($images);
-			$data['thum_img'] = $images[0];
+			$data['thumb'] = $images[0];
 		}
 		
 		if(!empty($video)) {

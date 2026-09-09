@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-08 19:49:00
+ * @LastEditTime: 2026-09-09 07:17:38
  * @LastEditors: TaoLer
  * @Description: 系统配置项标签库
  * @Version: V4.0.0
@@ -15,10 +15,9 @@ use think\template\TagLib;
 
 class Taoler extends TagLib
 {
+    // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
     protected $tags   =  [
-        // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
         
-
         // 系统配置项
         'site_name'      => ['attr' => '', 'close' => 0],
         'title'          => ['attr' => '', 'close' => 0],
@@ -53,78 +52,78 @@ class Taoler extends TagLib
     //=====================================================
 
     // 网站名称
-    public function tagSite_name(array $tag, string $content): string
+    public function tagSite_name(array $tag): string
     {
         return '{:system_config("site_name")}';
     }
 
     // 网站标题
-    public function tagTitle(array $tag, string $content): string
+    public function tagTitle(array $tag): string
     {
         return '{:system_config("title")}';
     }
 
     // 关键词
-    public function tagKeywords($tag, $content): string
+    public function tagKeywords(array $tag): string
     {
         return '{:system_config("keywords")}';
     }
 
     // 描述
-    public function tagDescription($tag, $content): string
+    public function tagDescription(array $tag): string
     {
         return '{:system_config("description")}';
     }
 
     // favicon
-    public function tagFavicon(array $tag, string $content): string
+    public function tagFavicon(array $tag): string
     {
         return '{:system_config("favicon")}';
     }
 
     // logo
-    public function tagLogo($tag, $content): string
+    public function tagLogo(array $tag): string
     {
         return '{:system_config("logo")}';
     }
 
     // 网站名
-    public function tagAdmin_module(array $tag, string  $content): string
+    public function tagAdmin_module(array $tag): string
     {
         return '{:system_config("admin_module")}';
     }
     
     // 版权
-    public function tagCopyright($tag, $content): string
+    public function tagCopyright(array $tag): string
     {
         return '{$systemConfig.copyright}';
     }
     // icp备案
-    public function tagIcp($tag, $content): string
+    public function tagIcp(array $tag): string
     {
         return '{:system_config("icp")}';
     }
 
     // 域名
-    public function tagDomain($tag, $content): string
+    public function tagDomain(array $tag): string
     {
         return '{:system_config("domain")}';
     }
 
     // 系统调试
-    public function tagSystem_debug($tag, $content): string
+    public function tagSystem_debug(array $tag): string
     {
         return '{:system_config("system_debug")}';
     }
 
     // 网站开关
-    public function tagSite_switch($tag, $content): string
+    public function tagSite_switch(array $tag): string
     {
         return '{:system_config("site_switch")}';
     }
 
     // API开关
-    public function tagApi_switch($tag, $content): string
+    public function tagApi_switch(array $tag): string
     {
         return '{:system_config("api_switch")}';
     }
