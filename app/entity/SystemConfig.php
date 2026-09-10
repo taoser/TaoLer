@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-10 21:06:16
+ * @LastEditors: TaoLer
+ * @Description: 系统配置项
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\entity\SystemConfig.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 namespace app\entity;
 
 use think\facade\Cache;
@@ -7,7 +17,6 @@ use think\exception\ValidateException;
 class SystemConfig extends BaseEntity
 {
     public const CACHE_KEY = 'system_config';
-
 
     /**
      * 获取全部配置【带缓存】返回键值数组 name=>value
@@ -27,6 +36,7 @@ class SystemConfig extends BaseEntity
             $result[$item['name']] = $item['value'];
         }
         Cache::set(self::CACHE_KEY, $result);
+
         return $result;
     }
 

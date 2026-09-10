@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-10 21:09:37
+ * @LastEditors: TaoLer
+ * @Description: 系统配置模型
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\model\SystemConfig.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 namespace app\model;
 
 use think\Model;
@@ -8,7 +18,6 @@ use think\Model;
  */
 class SystemConfig extends BaseModel
 {
-
     // 需要序列化存储的类型（值需转为 JSON）
     protected static $serializeTypes = ['array', 'multi_array', 'checkbox', 'images', 'files'];
 

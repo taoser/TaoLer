@@ -28,13 +28,13 @@ class Index
 		}
 
 		// 获取当前模板名称
-		$tplName = system_config('tpl_name');
+		$tpl = system_config('current_tpl');
 
         // 配置视图路径/模板/标签库预加载
         View::config([
             // 'view_path'			=> app_path() .'index' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $tplName . DIRECTORY_SEPARATOR,
-			'view_path'			=> root_path()  . 'view' . DIRECTORY_SEPARATOR . $tplName . DIRECTORY_SEPARATOR,
-			'view_dir_name'		=> 'view' . DIRECTORY_SEPARATOR . $tplName,
+			'view_path'			=> root_path()  . 'view' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR,
+			'view_dir_name'		=> 'view' . DIRECTORY_SEPARATOR . $tpl,
 			'taglib_pre_load'	=> $this->setTaglibPreLoad(),
         ]);
 

@@ -3,7 +3,7 @@
  * @Program: TaoLer 2023/3/14
  * @FilePath: \TaoLer\app\admin\controller\content\Category.php
  * @Description: Cate 分类菜单
- * @LastEditTime: 2026-09-10 17:22:28
+ * @LastEditTime: 2026-09-10 20:46:05
  * @Author: Taoker <317927823@qq.com>
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  */
@@ -19,6 +19,7 @@ use think\facade\Db;
 use app\facade\Category as CategoryEntity;
 use app\common\helper\FileHelper;
 use think\Response\Json;
+use app\common\helper\Tpl;
 
 class Category extends AdminBaseController
 {
@@ -60,13 +61,12 @@ class Category extends AdminBaseController
         
         if(!$request->isPost()) {
 
-            $template = FileHelper::getSubDirNames(root_path(). 'view/'. system_config('tpl_name') . '/category/');
             // 如果是新增，pid=0, tpl默认第一个子模块，如果是编辑，查询出cate
             $category = $addOrEdit ? CategoryEntity::getCateInfoById($id) : '';
             $view = $addOrEdit ? 'edit' : 'add';
 
             View::assign([
-                'template'  => $template,
+                'template'  => Tpl::getCurrentTplCategoryNames(),
                 'category'  => $category
             ]);
             return View::fetch($view);
@@ -103,16 +103,6 @@ class Category extends AdminBaseController
         $data = ['id' => $param['id'], $param['name'] => $param['value']];
         return CategoryEntity::check($data);
 	}
-
-    /**
-     * index/view/article下模板文件
-     * @return array
-     */
-    protected function getIndexTpl() :array
-    {
-        $sys = $this->getSystem();
-        return FileHelper::getSubDirNames('../view/'.$sys['template'].'/category/');
-    }
 
     /**
      * 有顶级菜单的分类数

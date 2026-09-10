@@ -9,6 +9,7 @@
  * @FilePath: \TaoLer\app\index\controller\Index.php
  * @Copyright: Copyright (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
+
 namespace app\index\controller;
 
 use Exception;

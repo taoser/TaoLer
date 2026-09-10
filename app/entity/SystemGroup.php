@@ -2,18 +2,19 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-10 16:46:47
+ * @LastEditTime: 2026-09-10 21:02:18
  * @LastEditors: TaoLer
- * @Description: 
+ * @Description: 系统配置组
  * @Version: V4.0.0
  * @FilePath: \TaoLer\app\entity\SystemGroup.php
  * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
+
 namespace app\entity;
 
 use think\facade\Cache;
 use think\exception\ValidateException;
-use app\common\helper\FileHelper;
+use app\common\helper\Tpl;
 
 class SystemGroup extends BaseEntity
 {
@@ -58,11 +59,11 @@ class SystemGroup extends BaseEntity
             foreach($group['config'] as &$item) {
                 // 模板列表
                 if($item['type'] === 'tpl') {
-                    $item['options'] = $this->getTplList();
+                    $item['options'] = Tpl::getAllTplNames();
                 }
                 // 首页模板列表
                 if($item['type'] === 'indextpl') {
-                    $item['options'] = $this->getIndextplList();
+                    $item['options'] = Tpl::getIndexTplNames();
                 }
             }
             unset($item);
@@ -70,25 +71,6 @@ class SystemGroup extends BaseEntity
         unset($group);
 
         return $groupList;
-    }
-
-    protected function getTplList(): array
-    {
-        $tplPath = root_path() . 'view' . DIRECTORY_SEPARATOR;
-        if(!is_dir($tplPath)){
-            return [];
-        }
-        return FileHelper::getSubDirNames($tplPath);
-    }
-
-    protected function getIndextplList(): array
-    {
-        $tplName = system_config('tpl_name');
-        $tplPath = root_path() . 'view' . DIRECTORY_SEPARATOR . $tplName . DIRECTORY_SEPARATOR . 'index' . DIRECTORY_SEPARATOR;
-        if(!is_dir($tplPath)){
-            return [];
-        }
-        return FileHelper::getDirFileBaseNames($tplPath);
     }
 
 }
