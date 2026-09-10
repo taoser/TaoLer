@@ -138,7 +138,7 @@ abstract class BaseController
      * @param int $id 文章id
      * @return string 表后缀 _1,_2...
      */
-    protected function byIdGetSuffix(int $id): string
+    protected function getSuffixById(int $id): string
     {
         // 数据表后缀为空时，id在主表中
         $suffix = '';

@@ -108,7 +108,7 @@ class Article extends BaseEntity
     {
         try {
             foreach($ids as $id){
-                $this->setSuffix(self::byIdGetSuffix($id));
+                $this->setSuffix(self::getSuffixById($id));
                 $article = $this->find($id);
                 $article->together(['comments'])->delete();
                 $article->delete();
@@ -121,50 +121,98 @@ class Article extends BaseEntity
     }
 
     /**
-     * 置顶推荐文章
+     * Flag文章列表
+     * @param string $type 类型 top/index/good
+     * @param integer $limit 数量
+     * @return array
+     */
+    public function getFlagArticles(string $type, int $limit = 5): array
+    {
+        $types = [
+            'top'   => 1,
+            'index' => 2,
+            'good'  => 3,
+        ];
+
+        if(!isset($types[$type])) {
+            throw new Exception('type error');
+        }
+
+        // 获取缓存Flag文章列表
+        $flagArticles = ArticleCache::getFlagArticles($type);
+        if($flagArticles) {
+            return $flagArticles;
+        }
+
+        $datas = [];
+        // type = 1为置顶推荐文章
+        $articleIds = Db::name('article_flag')->field('article_id')->where('type', $types[$type])->limit($limit)->select();
+
+        $sufsAids = [];
+        foreach($articleIds as $v){
+            $key = self::getSuffixById($v['article_id']);
+            $sufsAids[$key][] = $v['article_id'];
+        }
+
+        foreach($sufsAids as $suf => $ids) {
+            $data = $this->suffix($suf)
+            ->field('id,title,category_id,user_id,description,create_time,pv,thumb,has_image,thumb,has_video,has_audio,media,comments_num,flags')
+            ->with([
+                'category' => function (Query $query) {
+                    $query->field('id,name,ename');
+                },
+                'user' => function (Query $query) {
+                    $query->field('id,name,nickname,avatar');
+                }
+            ])
+            ->whereIn('id', $ids)
+            ->order('id', 'desc')
+            // ->append(['url','master_pic'])
+            ->append(['url'])
+            ->select()
+            ->toArray();
+
+            $datas = array_merge($datas, $data);
+        }
+        // 缓存Flag文章列表
+        ArticleCache::setFlagArticles($type, $datas);
+
+        return $datas;
+    }
+
+    /**
+     * 置顶推荐列表
      *
      * @param integer $limit 数量
      * @return array
      */
     public function getTops(int $limit = 5): array
     {
-        return  Cache::remember('top_article', function() use($limit) {
-
-            $datas = [];
-            // type = 1为置顶推荐文章
-            $articleIds = Db::name('article_flag')->field('article_id')->where('type', 1)->limit($limit)->select();
-
-            $sufsAids = [];
-            foreach($articleIds as $v){
-                $key = self::byIdGetSuffix($v['article_id']);
-                $sufsAids[$key][] = $v['article_id'];
-            }
-
-            foreach($sufsAids as $k => $v) {
-                $data = $this->field('id,title,category_id,user_id,create_time,pv,thumb,has_image,thumb,has_video,has_audio,media,comments_num,flags')
-                ->suffix($k)
-                ->with([
-                    'category' => function (Query $query) {
-                        $query->field('id,name,ename');
-                    },
-                    'user' => function (Query $query) {
-                        $query->field('id,name,nickname,avatar');
-                    }
-                ])
-                ->whereIn('id', $v)
-                ->order('id', 'desc')
-                // ->append(['url','master_pic'])
-                ->append(['url'])
-                ->select()
-                ->toArray();
-
-                $datas = array_merge($datas, $data);
-            }
-
-            return $datas;
-            
-        }, 600);
+        return $this->getFlagArticles('top', $limit);
     }
+
+    /**
+     * 获取首页列表
+     * @param int $limit
+     * @return array
+     * @throws \Throwable
+     */
+    public function getIndexs(int $limit = 10): array
+    {
+        return $this->getFlagArticles('index', $limit);
+    }
+
+    /**
+     * 精华文章
+     * @param int $limit
+     * @return array
+     * @throws \Throwable
+     */
+    public function getGoods(int $limit = 10): array
+    {
+        return $this->getFlagArticles('good', $limit);
+    }
+
 
     /**
      * 热评
@@ -263,151 +311,6 @@ class Article extends BaseEntity
     }
 
     /**
-     * 精华文章
-     * @param int $limit
-     * @return array
-     * @throws \Throwable
-     */
-    public function getGoods(int $limit = 10): array
-    {
-        $goods =  Cache::remember('goods', function() use($limit){
-
-            $datas = [];
-            $articleIds = Db::name('article_flag')
-            ->field('article_id')
-            ->where('type', 2)
-            // ->whereMonth('create_time')
-            ->limit($limit)
-            ->select();
-
-            $articleArr = $articleIds->toArray();
-
-            $idArr = array_column($articleArr, 'article_id');
-
-            $arr = self::getSfxKeyIdValueArrByIdArr($idArr);
-
-            foreach($arr as $k => $v){
-                
-                $data = $this->field('id,category_id,title,create_time,comments_num')
-                ->suffix($k)
-                ->whereIn('id', $v)
-                ->where('status', '1')
-                ->append(['url'])
-                ->select()
-                ->toArray();
-
-                $datas = array_merge($datas, $data);
-            }
-
-            return $datas;
-        
-        }, 3600);
-
-        return $goods;
-    }
-
-    /**
-     * 获取首页文章列表
-     * @param int $limit
-     * @return array
-     * @throws \Throwable
-     */
-    public function getIndexs(int $limit = 10): array
-    {
-        $indexs = Cache::remember('idx_article', function() use($limit){
-  
-            $map = $this->getSuffixMap(['status' => 1], Article::class);
-
-            $field = 'id,title,category_id,user_id,content,description,pv,thumb,has_image,has_video,has_audio,create_time,media,comments_num,flags';
-            // 判断是否有多个表
-            if($map['tableCount'] > 1) {
-
-                // 分表中$limit数够
-                if($map['countArr'][0] >= $limit) {
-                    $data = $this->suffix($map['tableSuffixArr'][0])->field($field)
-                        ->with([
-                        'category' => function(Query $query){
-                            $query->field('id,name,ename,tpl');
-                        },
-                        'user' => function(Query $query){
-                            $query->field('id,name,nickname,avatar');
-                        } ])
-                        ->where('status', '1')
-                        ->order('id','desc')
-                        ->append(['enid'])
-                        // ->append(['url','master_pic'])
-                        ->append(['url'])
-                        ->limit($limit)
-                        ->select()
-                        ->toArray();
-
-                } else {
-                    // 第一个主表 数量不够，取第二个分表数
-                    $data = $this->suffix($map['tableSuffixArr'][0])
-                    ->field($field)
-                        ->with([
-                        'category' => function(Query $query){
-                            $query->field('id,name,ename,tpl');
-                        },
-                        'user' => function(Query $query){
-                            $query->field('id,name,nickname,avatar');
-                        } ])
-                        ->where('status', '1')
-                        ->order('id','desc')
-                        ->append(['enid'])
-                        // ->append(['url','master_pic'])
-                        ->append(['url'])
-                        ->limit($map['countArr'][0])
-                        ->select()
-                        ->toArray();
-
-                    $data1 = $this->suffix($map['tableSuffixArr'][1])
-                        ->field($field)
-                        ->with([
-                        'category' => function(Query $query){
-                            $query->field('id,name,ename,tpl');
-                        },
-                        'user' => function(Query $query){
-                            $query->field('id,name,nickname,avatar');
-                        } ])
-                        ->where('status', '1')
-                        ->order('id','desc')
-                        ->append(['enid'])
-                        // ->append(['url','master_pic'])
-                        ->append(['url'])
-                        ->limit($limit - $map['countArr'][0])
-                        ->select()
-                        ->toArray();
-
-                    $data = array_merge($data, $data1);
-                }
-            } else {
-                // 单表
-                $data = $this->field($field)
-                    ->with([
-                    'category' => function(Query $query){
-                        $query->field('id,name,ename,tpl');
-                    },
-                    'user' => function(Query $query){
-                        $query->field('id,name,nickname,avatar');
-                    } ])
-                    ->where('status', '1')
-                    ->order('id','desc')
-                    ->append(['enid'])
-                    // ->append(['url','master_pic'])
-                    ->append(['url'])
-                    ->limit($limit)
-                    ->select()
-                    ->toArray();
-            }
-
-            return $data;
-		}, 120);
-
-        return $indexs;
-    }
-
-    /**
      * 获取详情
      * @param int|string $id 文章id
      * @return mixed
@@ -418,7 +321,7 @@ class Article extends BaseEntity
         // 如果id是加密的，解密后获取id值
         $id = IdEncode::decode($id);
         // 设置分表后缀
-        $this->setSuffix(self::byIdGetSuffix($id));
+        $this->setSuffix(self::getSuffixById($id));
         // 从缓存中获取文章详情
         $detail = ArticleCache::get($id);
 
@@ -467,7 +370,7 @@ class Article extends BaseEntity
      */
     public function getPrev(int $id, int $cid): array
     {
-        $this->setSuffix(self::byIdGetSuffix($id));
+        $this->setSuffix(self::getSuffixById($id));
 
         $prev = [];
 
@@ -497,7 +400,7 @@ class Article extends BaseEntity
      */
     public function getNext(int $id, int $cid): array
     {
-        $this->setSuffix(self::byIdGetSuffix($id));
+        $this->setSuffix(self::getSuffixById($id));
 
         $next = [];
 
@@ -560,7 +463,7 @@ class Article extends BaseEntity
             $data = [];
             if(count($articleIdArr)) {
                 foreach($articleIdArr as $id) {
-                    $article = self::suffix(self::byIdGetSuffix($id))
+                    $article = self::suffix(self::getSuffixById($id))
                     ->with(['category' => function($query) {
                         $query->field('id,name');
                     }])

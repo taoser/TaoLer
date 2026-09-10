@@ -183,10 +183,24 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                     <button type="button" class="layui-btn layui-btn-primary cfg-upload-btn">选择文件</button>
                 </div>`;
                 break;
-            case 'areatext':
-                // 多行文本域 textarea
-                html += `<textarea class="layui-textarea" name="${item.name}" rows="4">${item.value||''}</textarea>`;
-            break;
+            case 'tpl':
+                html += `<select name="${item.name}">`;
+                html += `<option value="">请选择</option>`;
+                opts.forEach(function(v) {
+                    var schk = String(item.value ?? '') === String(v) ? 'selected' : '';
+                    html += `<option value="${v}" ${schk}>${v}</option>`;
+                });
+                html += `</select>`;
+                break;
+            case 'indextpl':
+                html += `<select name="${item.name}">`;
+                html += `<option value="">请选择</option>`;
+                opts.forEach(function(v) {
+                    var schk = String(item.value ?? '') === String(v) ? 'selected' : '';
+                    html += `<option value="${v}" ${schk}>${v}</option>`;
+                });
+                html += `</select>`;
+                break;
 
             default:
                 html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input">`;

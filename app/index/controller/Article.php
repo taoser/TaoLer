@@ -174,7 +174,7 @@ class Article extends IndexBaseController
 		
 		$id = IdEncode::decode($id);
 
-		$article = $this->entity::suffix($this->byIdGetSuffix($id))->find($id);
+		$article = $this->entity::suffix($this->getSuffixById($id))->find($id);
 
 		$this->removeDetailHtml($article);
 		
@@ -195,7 +195,7 @@ class Article extends IndexBaseController
     {
         $data = $request->post(['id/d','category_id/d','title','content','keywords','description','captcha', 'tagid']);
 
-		$article = $this->entity::suffix($this->byIdGetSuffix($data['id']))->find($data['id']);
+		$article = $this->entity::suffix($this->getSuffixById($data['id']))->find($data['id']);
 		
 		// 校验策略
 		$this->articleServer->setValidation(new ArticleValidation())
@@ -266,7 +266,7 @@ class Article extends IndexBaseController
 	{
 		$param = $request->post(['id/d','field','rank/d']);
 		
-		$article = $this->entity::suffix($this->byIdGetSuffix($param['id']))
+		$article = $this->entity::suffix($this->getSuffixById($param['id']))
 		->field('id,is_top,is_hot,is_reply')
 		->find($param['id']);
 		

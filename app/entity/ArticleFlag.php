@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-09 20:25:10
- * @LastEditTime: 2026-09-09 22:20:44
+ * @LastEditTime: 2026-09-10 07:47:31
  * @LastEditors: TaoLer
  * @Description: 文章实体
  * @Version: V4.0.0
@@ -14,14 +14,15 @@ namespace app\entity;
 use Exception;
 use think\facade\Db;
 use app\facade\Article;
+use app\service\ArticleCache;
 
 class ArticleFlag extends BaseEntity
 {
     
     public const array TYPE = [
-        'is_top' => 1,
-        'is_index' => 2,
-        'is_good' => 3,
+        'is_top'    => 1,
+        'is_index'  => 2,
+        'is_good'   => 3,
     ];
 
     /**
@@ -59,13 +60,25 @@ class ArticleFlag extends BaseEntity
                 }
             }
             // 更新文章标志
-            $article = Article::setSuffix(self::byIdGetSuffix($article_id))->find($article_id);
+            $article = Article::setSuffix(self::getSuffixById($article_id))->find($article_id);
             $flags = $article->flags;
             $flags[$type] = $value;
             $article->flags = $flags;
             $article->save();
 
             Db::commit();
+
+            // 清除缓存
+            if($typeValue == self::TYPE['is_top']) {
+                ArticleCache::delFlagArticles('top');
+            }
+            if($typeValue == self::TYPE['is_index']) {
+                ArticleCache::delFlagArticles('index');
+            }
+            if($typeValue == self::TYPE['is_good']) {
+                ArticleCache::delFlagArticles('good');
+            }
+
             return true;
         } catch (Exception $e) {
             Db::rollback();

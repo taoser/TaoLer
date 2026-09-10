@@ -27,7 +27,7 @@ class BaseModel extends Model
      * @param integer $id
      * @return string
      */
-    public static function byIdGetSuffix(int $id): string
+    public static function getSuffixById(int $id): string
     {
         // 主数据表后缀为空，id存在主表中
         $suffix = '';
@@ -51,7 +51,7 @@ class BaseModel extends Model
     {
         $suffixIdArr = [];
         foreach($idArr as $id){
-            $key = self::byIdGetSuffix($id);
+            $key = self::getSuffixById($id);
             $suffixIdArr[$key][] = $id;
         }
         

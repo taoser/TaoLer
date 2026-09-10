@@ -92,7 +92,7 @@ class ArticleObserver
      */
     public function onBeforeUpdate(Article $article)
     {
-        $article->setSuffix($this->byIdGetSuffix($article->id));
+        $article->setSuffix($this->getSuffixById($article->id));
     }
 
     /**
@@ -112,7 +112,7 @@ class ArticleObserver
      */
     public function onBeforeDelete(Article $article)
     {
-        $article->setSuffix($this->byIdGetSuffix($article->id));
+        $article->setSuffix($this->getSuffixById($article->id));
     }
 
     /**
@@ -136,7 +136,7 @@ class ArticleObserver
      * @param integer $id
      * @return string
      */
-    private function byIdGetSuffix(int $id): string
+    private function getSuffixById(int $id): string
     {
         // 数据表后缀为空时，id在主表中
         $suffix = '';

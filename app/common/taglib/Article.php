@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2022-05-17 13:08:11
- * @LastEditTime: 2026-09-09 19:26:14
+ * @LastEditTime: 2026-09-10 08:02:23
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\common\taglib\Article.php
@@ -112,8 +112,14 @@ class Article extends TagLib
     // thumb
     public function tagThumb(array $tag): string
     {
-        return '{$article.thumb}';
+        return '{$article.thumb ?? ""}';
     }
+
+    public function tagthumbs(array $tag): string
+    {
+        return '{egt name="article.has_image" value="1"}{$article.thumb}{/egt}';
+    }
+
 
     public function tagKeywords(array $tag): string
     {
@@ -212,11 +218,6 @@ class Article extends TagLib
         return '{notempty name="article.media.images"}{$article.media.images[0]}{/notempty}';
     }
 
-    public function tagthumb(array $tag): string
-    {
-        return '{egt name="article.has_image" value="1"}{$article.thumb}{/egt}';
-    }
-
     public function tagMaster_pic2(array $tag, string $content): string
     {
         return '{$article.master_pic}';
@@ -231,12 +232,6 @@ class Article extends TagLib
     {
         return '{$article.category.ename}';
     }
-
-    public function tagCategory_id(array $tag, string $content): string
-    {
-        return '{$article.category.id}';
-    }
-
 
     // field of detail page
     public function tagField($tag): string
@@ -327,10 +322,10 @@ class Article extends TagLib
         $num = empty($tag['num']) ? 10 : (int)$tag['num'];
         $parse = match($type) {
             "top"       => '<?php $__TOPS__ = \app\facade\Article::getTops('.$num.'); ?> {volist name="__TOPS__" id="article"}' .$content. '{/volist}',
+            "index"     => '<?php $__INDEXS__ = \app\facade\Article::getIndexs('.$num.'); ?> {volist name="__INDEXS__" id="article"}' .$content. '{/volist}',
             "good"      => '<?php $__GOODS__ = \app\facade\Article::getGoods('.$num.'); ?> {volist name="__GOODS__" id="article"}' .$content. '{/volist}',
             "comment"   => '<?php $__COMMENTS__ = \app\facade\Article::getHotComments('.$num.'); ?> {volist name="__COMMENTS__" id="article"}' .$content. '{/volist}',
             "pv"        => '<?php $__PVS__ = \app\facade\Article::getHotPvs('.$num.'); ?> {volist name="__PVS__" id="article"}' .$content. '{/volist}',
-            "index"     => '<?php $__INDEXS__ = \app\facade\Article::getIndexs('.$num.'); ?> {volist name="__INDEXS__" id="article"}' .$content. '{/volist}',
             default     => '{assign name="ename" value="$Request.param.ename ?? \'all\'" /}
                             {assign name="page" value="$Request.param.page ?? 1" /}
                             {assign name="flag" value="$Request.param.flag ?? \'all\'" /}

@@ -383,6 +383,10 @@
                     html += '</div>';
                     html += '<button type="button" class="layui-btn layui-btn-sm layui-btn-primary add-array-kv-btn">添加行</button>';
                     return html;
+                case 'tpl':
+                    return `<input class="layui-input"  lay-verify="required" placeholder="模板，禁止修改" name="value" value="${val||''}" readonly>`;
+                case 'indextpl':
+                    return `<input class="layui-input"  lay-verify="required" placeholder="首页模板，禁止修改" name="value" value="${val||''}" readonly>`;
                 default:
                     return `<input class="layui-input"  lay-verify="required" placeholder="请输入" name="value" value="${val||''}">`;
             }
@@ -530,27 +534,29 @@
                     <div class="layui-input-block">
                         <select name="type" lay-filter="configType" lay-verify="required">
                             <option value="">请选择类型</option>
-                            <option value="text"        ${d.type==='text'?'selected':''}>text文本</option>
-                            <option value="number"      ${d.type==='number'?'selected':''}>number数值</option>
-                            <option value="textarea"    ${d.type==='textarea'?'selected':''}>textarea文本域</option>
-                            <option value="switch"      ${d.type==='switch'?'selected':''}>switch开关</option>
-                            <option value="radio"       ${d.type==='radio'?'selected':''}>radio单选</option>
-                            <option value="checkbox"    ${d.type==='checkbox'?'selected':''}>checkbox多选</option>
-                            <option value="select"      ${d.type==='select'?'selected':''}>select下拉</option>
-                            <option value="password"    ${d.type==='password'?'selected':''}>password密码</option>
-                            <option value="year"        ${d.type==='year'?'selected':''}>year年份</option>
-                            <option value="month"       ${d.type==='month'?'selected':''}>month年月</option>
-                            <option value="date"        ${d.type==='date'?'selected':''}>date日期</option>
-                            <option value="time"        ${d.type==='time'?'selected':''}>time时间</option>
-                            <option value="datetime"    ${d.type==='datetime'?'selected':''}>datetime日期时间</option>
-                            <option value="image"       ${d.type==='image'?'selected':''}>image单图</option>
-                            <option value="file"        ${d.type==='file'?'selected':''}>file文件</option>
-                            <option value="phone"       ${d.type==='phone'?'selected':''}>phone手机号</option>
-                            <option value="email"       ${d.type==='email'?'selected':''}>email邮箱</option>
-                            <option value="url"         ${d.type==='url'?'selected':''}>url链接</option>
-                            <option value="identity"    ${d.type==='identity'?'selected':''}>identity身份证号</option>
-                            <option value="area"        ${d.type==='area'?'selected':''}>area地址</option>
-                            <option value="array"       ${d.type==='array'?'selected':''}>array数组</option>
+                            <option value="text"        ${d.type === 'text' ? 'selected' : ''}>text文本</option>
+                            <option value="number"      ${d.type === 'number' ? 'selected' : ''}>number数值</option>
+                            <option value="textarea"    ${d.type === 'textarea' ? 'selected': ''}>textarea文本域</option>
+                            <option value="switch"      ${d.type === 'switch'?'selected':''}>switch开关</option>
+                            <option value="radio"       ${d.type === 'radio' ? 'selected' : ''}>radio单选</option>
+                            <option value="checkbox"    ${d.type === 'checkbox' ? 'selected' : ''}>checkbox多选</option>
+                            <option value="select"      ${d.type === 'select' ? 'selected' : ''}>select下拉</option>
+                            <option value="password"    ${d.type === 'password' ? 'selected' : ''}>password密码</option>
+                            <option value="year"        ${d.type === 'year' ? 'selected' : ''}>year年份</option>
+                            <option value="month"       ${d.type === 'month' ? 'selected' : ''}>month年月</option>
+                            <option value="date"        ${d.type === 'date' ? 'selected' : ''}>date日期</option>
+                            <option value="time"        ${d.type === 'time' ? 'selected' : ''}>time时间</option>
+                            <option value="datetime"    ${d.type === 'datetime' ? 'selected' : ''}>datetime日期时间</option>
+                            <option value="image"       ${d.type === 'image' ? 'selected' : ''}>image单图</option>
+                            <option value="file"        ${d.type === 'file' ? 'selected' : ''}>file文件</option>
+                            <option value="phone"       ${d.type === 'phone' ? 'selected' : ''}>phone手机号</option>
+                            <option value="email"       ${d.type === 'email' ? 'selected' : ''}>email邮箱</option>
+                            <option value="url"         ${d.type === 'url' ? 'selected' : ''}>url链接</option>
+                            <option value="identity"    ${d.type === 'identity' ? 'selected' : ''}>identity身份证号</option>
+                            <option value="area"        ${d.type === 'area' ? 'selected' : ''}>area地址</option>
+                            <option value="array"       ${d.type === 'array' ? 'selected' : ''}>array数组</option>
+                            <option value="tpl"         ${d.type === 'tpl' ? 'selected' : ''} disabled>tpl模板</option>
+                            <option value="indextpl"    ${d.type === 'indextpl' ? 'selected' : '' } disabled>indextpl首页模板</option>
                         </select>
                     </div>
                 </div>
@@ -565,7 +571,7 @@
                             <!-- <div class="opt-item">...</div> -->
                         </div>
                         <!-- 添加按钮：放在 option_panel 外部，面板的下方 -->
-                        <button type="button" class="layui-btn layui-btn-xs add-opt">+ 添加选项</button>
+                        <button type="button" class="layui-btn layui-btn-xs add-opt" id="addOptBtn">+ 添加选项</button>
                     </div>
                     <div class="layui-input-block">
                         <div class="layui-word-aux">选项配置仅对radio/checkbox/select类型生效</div>
@@ -595,8 +601,8 @@
                     <div class="layui-input-block">
                         <select name="is_system" lay-verify="required" lay-filter="is_system">
                             <option value="">请选择</option>
-                            <option value="0" ${d.is_system == 0 ? 'selected':''}>否</option>
-                            <option value="1" ${d.is_system == 1 ? 'selected':''}>是</option>
+                            <option value="0" ${d.is_system == 0 ? 'selected' : ''}>否</option>
+                            <option value="1" ${d.is_system == 1 ? 'selected' : ''}>是</option>
                         </select>
                     </div>
                 </div>
@@ -629,7 +635,7 @@
                     });
 
                     // 保存配置项
-                    form.submit('form-val-filter', function(data){
+                    form.submit('form-val-filter', function(data) {
                         let field = data.field;
                         // 处理数组类型
                         if(field.type === 'array' || field.type === 'multi_array'){
@@ -666,26 +672,31 @@
                 },
                 success:function(layero, index){
                     
-                    // ===============选项面板功能=================
-
+                    // ===============默认选项面板功能=================
+                    let curType = d.type;
                     // 选项面板ID
                     let $optionPanel = layero.find('#option_panel');
+                    
                     // 初始选项面板
                     let initOptions = d.options || [];
                     // 渲染选项面板
                     $optionPanel.html(renderOptionHtml(initOptions));
+                    form.render();
 
                     // 默认切换选项面板
                     toggleOptionPanel(d.type, d.value, layero);
 
+                    // =================选项面板功能=================
+
                     // 1.添加选项
-                    layero.find('#option_panel').on('click','.add-opt',function(){
+                    $('#addOptBtn').on('click', function() {
                         let newItemHtml = `
                         <div class="option-item">
                             <input class="layui-input opt-value" placeholder="value值" value="">
                             <input class="layui-input opt-label" placeholder="显示文本label" value="">
                             <button type="button" class="layui-btn layui-btn-xs layui-btn-danger del-opt">删除</button>
                         </div>`;
+
                         $optionPanel.append(newItemHtml);
                         // 刷新配置值html表单
                         refreshValueHtml(curType, d.value, layero);
@@ -718,9 +729,12 @@
                         $(this).closest('.kv-row').remove();
                     });
 
+                    // =================切换类型功能=================
+
                     // 配置类型选择器
                     form.on('select(configType)',function(obj){
-                        toggleOptionPanel(obj.value, d.value, layero);
+                        curType = obj.value;
+                        toggleOptionPanel(curType, d.value, layero);
                     });
 
                     

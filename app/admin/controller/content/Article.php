@@ -127,7 +127,7 @@ class Article extends AdminBaseController
     public function edit(Request $request)
     {
         $id = $request->get('id/d');
-		$article = $this->entity::suffix($this->byIdGetSuffix($id))->find($id);
+		$article = $this->entity::suffix($this->getSuffixById($id))->find($id);
         
         View::assign('article', $article);
 
@@ -143,7 +143,7 @@ class Article extends AdminBaseController
     {
         $data = $request->post(['id/d','category_id','title','content','keywords','description','tagid']);
 
-		$article = $this->entity::suffix($this->byIdGetSuffix($data['id']))->find($data['id']);
+		$article = $this->entity::suffix($this->getSuffixById($data['id']))->find($data['id']);
  
         if(is_null($article)) {
             return json(['code' => -1, 'msg' => '不能编辑！']);

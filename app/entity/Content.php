@@ -109,7 +109,7 @@ class Content extends BaseEntity
     {
         try {
             foreach($ids as $id){
-                $this->setSuffix(self::byIdGetSuffix($id));
+                $this->setSuffix(self::getSuffixById($id));
                 $article = $this->find($id);
                 $article->together(['comments'])->delete();
                 $article->delete();
@@ -137,7 +137,7 @@ class Content extends BaseEntity
 
             $sufsAids = [];
             foreach($articleIds as $v){
-                $key = self::byIdGetSuffix($v['article_id']);
+                $key = self::getSuffixById($v['article_id']);
                 $sufsAids[$key][] = $v['article_id'];
             }
 
@@ -416,7 +416,7 @@ class Content extends BaseEntity
     public function getDetail(int $id)
     {
         $detail = Cache::remember('article_'.$id, function() use($id){
-            $this->setSuffix(self::byIdGetSuffix($id));
+            $this->setSuffix(self::getSuffixById($id));
             //查询文章
             try{
                 return $this->field('id,title,content,status,category_id,user_id,forbid_comment,pv,keywords,description,create_time,update_time,comments_num,flags')
@@ -450,7 +450,7 @@ class Content extends BaseEntity
      */
     public function getPrev(int $id, int $cid): array
     {
-        $this->setSuffix(self::byIdGetSuffix($id));
+        $this->setSuffix(self::getSuffixById($id));
 
         $prev = [];
 
@@ -480,7 +480,7 @@ class Content extends BaseEntity
      */
     public function getNext(int $id, int $cid): array
     {
-        $this->setSuffix(self::byIdGetSuffix($id));
+        $this->setSuffix(self::getSuffixById($id));
 
         $next = [];
 
@@ -543,7 +543,7 @@ class Content extends BaseEntity
             $data = [];
             if(count($articleIdArr)) {
                 foreach($articleIdArr as $id) {
-                    $article = self::suffix(self::byIdGetSuffix($id))
+                    $article = self::suffix(self::getSuffixById($id))
                     ->with(['category' => function($query) {
                         $query->field('id,name');
                     }])
