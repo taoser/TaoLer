@@ -1,3 +1,13 @@
+<!--
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-10 17:06:02
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\index\view\taoler\article\news\detail.html
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+-->
 {extend name="public/base" /}
 {block name="title"}{$article.title} - {$sysInfo.webname}{/block} 
 {block name="keywords"}{$article.keywords ?: $article.title}{/block}
@@ -25,7 +35,7 @@
 					<div class="detail-hits" style="left:-30px;">
 						<span>{$article.category.name}</span>
 						<span>{$article.user.name}</span>
-						<span class="post-time" style="padding-top: 5px;" data="{$article.update_time}">{article:uptime /} </span>
+						<span class="post-time" style="padding-top: 5px;" data="{$article.update_time}">{article:update_time /} </span>
 						<span><i class="iconfont" title="浏览">&#xe60b;</i> {article:pv /}</span>
 					</div>
 				</div>

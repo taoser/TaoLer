@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2022-05-17 13:08:11
- * @LastEditTime: 2026-09-10 08:02:23
+ * @LastEditTime: 2026-09-10 19:31:51
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\common\taglib\Article.php
@@ -178,12 +178,12 @@ class Article extends TagLib
         return '{$article.url}';
     }
 
-    public function tagTime(array $tag): string
+    public function tagCreate_time(array $tag): string
     {
         return '{$article.create_time}';
     }
 
-    public function tagUptime(array $tag, string $content): string
+    public function tagUpdate_time(array $tag): string
     {
         return '{$article.update_time}';
     }

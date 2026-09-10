@@ -1,9 +1,9 @@
 <?php
 /*
  * @Program: TaoLer 2023/3/14
- * @FilePath: \TaoLer\app\admin\controller\content\Cate.php
+ * @FilePath: \TaoLer\app\admin\controller\content\Category.php
  * @Description: Cate 分类菜单
- * @LastEditTime: 2026-09-08 12:16:18
+ * @LastEditTime: 2026-09-10 17:22:28
  * @Author: Taoker <317927823@qq.com>
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  */
@@ -59,16 +59,15 @@ class Category extends AdminBaseController
         $addOrEdit = !is_null($id);//true是编辑false新增
         
         if(!$request->isPost()) {
-            
-            //详情模板
-            $template = $this->getIndexTpl();
+
+            $template = FileHelper::getSubDirNames(root_path(). 'view/'. system_config('tpl_name') . '/category/');
             // 如果是新增，pid=0, tpl默认第一个子模块，如果是编辑，查询出cate
             $category = $addOrEdit ? CategoryEntity::getCateInfoById($id) : '';
             $view = $addOrEdit ? 'edit' : 'add';
 
             View::assign([
                 'template'  => $template,
-                'category'      => $category
+                'category'  => $category
             ]);
             return View::fetch($view);
         }

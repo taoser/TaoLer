@@ -27,11 +27,14 @@ class Index
 			return redirect('/install/index');
 		}
 
+		// 获取当前模板名称
+		$tplName = system_config('tpl_name');
+
         // 配置视图路径/模板/标签库预加载
         View::config([
-            // 'view_path'			=> app_path() .'index' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
-			'view_path'			=> root_path()  . 'view' . DIRECTORY_SEPARATOR . $this->getTemplate() . DIRECTORY_SEPARATOR,
-			'view_dir_name'		=> 'view' . DIRECTORY_SEPARATOR . $this->getTemplate(),
+            // 'view_path'			=> app_path() .'index' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $tplName . DIRECTORY_SEPARATOR,
+			'view_path'			=> root_path()  . 'view' . DIRECTORY_SEPARATOR . $tplName . DIRECTORY_SEPARATOR,
+			'view_dir_name'		=> 'view' . DIRECTORY_SEPARATOR . $tplName,
 			'taglib_pre_load'	=> $this->setTaglibPreLoad(),
         ]);
 
@@ -40,15 +43,6 @@ class Index
 
 		return $next($request);
     }
-
-	/**
-	 * 获取模板名称
-	 * @return string
-	 */
-	protected function getTemplate() : string
-	{
-		return Db::name('system')->where('id',1)->cache(true)->value('template');
-	}
 
 	/**
 	 * 预加载视图view标签库

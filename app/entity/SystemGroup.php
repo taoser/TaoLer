@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-10 16:11:37
+ * @LastEditTime: 2026-09-10 16:46:47
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -85,8 +85,10 @@ class SystemGroup extends BaseEntity
     {
         $tplName = system_config('tpl_name');
         $tplPath = root_path() . 'view' . DIRECTORY_SEPARATOR . $tplName . DIRECTORY_SEPARATOR . 'index' . DIRECTORY_SEPARATOR;
-        $name = FileHelper::getDirFileBaseNames($tplPath);
-        return $name;
+        if(!is_dir($tplPath)){
+            return [];
+        }
+        return FileHelper::getDirFileBaseNames($tplPath);
     }
 
 }
