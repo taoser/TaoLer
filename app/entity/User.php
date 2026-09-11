@@ -159,6 +159,12 @@ class User extends BaseEntity
 		if(config('taoler.config.is_regist') == 0 ) {
             throw new Exception('抱歉，注册暂时未开放', -1);
 		}
+        
+        // 禁止使用黑名单用户名
+        $blackNames = system_config('black_names');
+        if(str_contains($blackNames, $data['name'])) {
+            throw new Exception("抱歉，用户名【{$data['name']}】已被禁用", -1);
+        }
 
         $registType = Config::get('taoler.config.regist_type');
 
@@ -220,7 +226,7 @@ class User extends BaseEntity
      * @param array $data ['uid','password']
      * @return bool
     */
-    public function reSetPassword(array $data): bool
+    public function resetPassword(array $data): bool
     {
         $this->id = $data['uid'];
 		$this->password = PasswordHash::make($data['password']);
@@ -231,7 +237,7 @@ class User extends BaseEntity
     //更新设置
     public function setNew($data)
     {
-        $user = User::where('id', session('user_id'))->find();
+        $user = $this->where('id', session('user_id'))->find();
         $result = $user->allowField(['email','active','nickname','sex','city','area_id','sign'])->save($data);
         if($result){
             return 1;

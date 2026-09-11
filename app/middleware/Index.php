@@ -27,6 +27,12 @@ class Index
 			return redirect('/install/index');
 		}
 
+		// 站点开关检测
+		$siteSwitch = system_config('site_switch');
+		if($siteSwitch !== '1'){
+			return json(['code' => 404, 'msg' => 'website is closed'], 404);
+		}
+
 		// 获取当前模板名称
 		$tpl = system_config('current_tpl');
 

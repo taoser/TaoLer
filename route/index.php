@@ -55,7 +55,7 @@ Route::group('',function () {
 		Route::get('login$', 'login/index')->name('login_index');
 		Route::post('gologin$', 'login/login')->name('user_login');
 		Route::post('forget$', 'login/forget')->name('user_forget');
-		Route::rule('register$', 'login/register')->name('user_register')->middleware(\app\middleware\CheckRegister::class);
+		Route::rule('register$', 'login/register')->name('user_register');
 		Route::post('postcode$', 'login/postcode');
 		Route::post('sentemailcode$', 'login/sentMailCode');
 		Route::post('respass$', 'login/respass');

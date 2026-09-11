@@ -1,9 +1,9 @@
 {extend name="public/base" /}
 <!--seo-->
-{block name="title"}{article:title /} - {taoler:name /}{/block} 
+{block name="title"}{article:title /} - {taoler:site_name /}{/block} 
 {block name="keywords"}{article:keywords /}{/block}
 {block name="description"}{article:title /},{article:description /}{/block}
-{block name="ogtitle"}<meta property="og:title" content="{article:title /} - {taoler:name /}">{/block}
+{block name="ogtitle"}<meta property="og:title" content="{article:title /} - {taoler:site_name /}">{/block}
 {block name="ogdescription"}<meta property="og:description" content="{article:title /},{$article.description ?: ''}" />{/block}
 {block name="meta"}
 <meta property="og:type" content="article"/>

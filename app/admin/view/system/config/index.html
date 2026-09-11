@@ -71,11 +71,11 @@
             url: ITEM_LIST_URL,
             method:'post',
             // 开启单元格编辑，只对sort列生效
-            edit:'text',
+            edit:'text', 
             cols:[[
                 {field:'id',title:'ID',width:70},
-                {title:'分组',width:100,templet:'<div>{{d.group.group_name}}</div>'},
-                {field:'name',title:'键名'},
+                {title:'分组',width:80,templet:'<div>{{d.group.group_name}}</div>'},
+                {field:'name',title:'键名',minWidth:120},
                 {field:'title',title:'名称'},
                 {field:'type',title:'表单类型',width:100,align:'center'},
                 {field:'value',title:'配置值',minWidth:150, templet:'#config-value-tpl'},
@@ -121,7 +121,7 @@
             if(obj.event === 'edit'){
                 openPopup(row);
                 form.val('form-val-filter', row);
-            }else if(obj.event === 'del'){
+            } else if(obj.event === 'del'){
                 layer.confirm('确定删除该配置项？删除后配置数据会丢失！', function(index){
                     
                     $.post({
@@ -211,12 +211,12 @@
                         $.post({
                             url: ADD_GROUP_URL,
                             data: field,
-                            dataType:'json',
+                            dataType: 'json',
                             success(res){
                                 if(res.code !== 0){
                                     layer.msg(res.msg||'新增失败',{icon:2});
                                     return;
-                                }else {
+                                } else {
                                     layer.msg('新增成功',{icon:1,time:1000});
                                     tableIns.reload();
                                 }

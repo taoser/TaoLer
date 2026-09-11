@@ -1,8 +1,8 @@
 <?php
 /*
- * @Author: TaoLer <alipay_tao@qq.com>
+ * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-10 16:08:31
+ * @LastEditTime: 2026-09-10 21:22:49
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -160,7 +160,7 @@ class Index extends IndexBaseController
 		View::assign('next', $next);
 
 		// 首页模板
-		$indexTplName = system_config('index_tpl');
+		$indexTplName = system_config('index_tpl', '');
 
 		$html = View::fetch($indexTplName);
 

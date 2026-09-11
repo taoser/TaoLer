@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-10 21:06:16
+ * @LastEditTime: 2026-09-11 18:01:52
  * @LastEditors: TaoLer
  * @Description: 系统配置项
  * @Version: V4.0.0
@@ -28,13 +28,31 @@ class SystemConfig extends BaseEntity
         if (!empty($cacheData)) {
             return $cacheData;
         }
+
         $list = $this->where('status', 1)
             ->order('sort asc')
             ->select();
+
         $result = [];
         foreach ($list as $item) {
-            $result[$item['name']] = $item['value'];
+            if($item['type'] === 'number') {
+                // 是数字字符串
+                if(is_numeric($item['value'])){
+                    if(str_contains($item['value'], '.')){
+                        $result[$item['name']] = (float) $item['value'];
+                    } else{
+                        $result[$item['name']] = (int) $item['value'];
+                    }
+                } else {
+                    $result[$item['name']] = 0;
+                }
+            } elseif ($item['type'] === 'boolean') {
+                $result[$item['name']] = $item['value'] === '1';
+            } else {
+                $result[$item['name']] = $item['value'];
+            }
         }
+
         Cache::set(self::CACHE_KEY, $result);
 
         return $result;

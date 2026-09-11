@@ -1,18 +1,20 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-11 18:38:48
+ * @LastEditors: TaoLer
+ * @Description: 插件访问控制中间件
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\middleware\AccessControl.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
+
 namespace app\middleware;
 
 use think\Request;
 use think\exception\HttpException;
 use app\common\helper\JwtAuth;
-
-/**
- * @Program: table.css 2024/6/2
- * @FilePath: ${NAMESPACE}\AccessControl.php
- * @Description: AccessControl.php
- * @LastEditTime: 2024-06-02 11:52:04
- * @Author: Taoker <317927823@qq.com>
- * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
- */
 
 class AccessControl
 {
