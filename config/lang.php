@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-13 21:03:10
+ * @LastEditTime: 2026-09-14 10:20:02
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -19,7 +19,7 @@ return [
     // 自动侦测浏览器语言
     'auto_detect_browser' => false,
     // 允许的语言列表
-    'allow_lang_list'     => ['en-us','zh-cn'],
+    'allow_lang_list'     => ['zh-cn','en-us'],
     // 多语言自动侦测变量名
     'detect_var'          => 'lang',
     // 是否使用Cookie记录

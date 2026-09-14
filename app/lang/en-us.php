@@ -29,7 +29,7 @@ return [
 	 
 	//menu
     'index'				=> 'Index',
-    'home page'			=> 'HomePage',
+    'home page'			=> 'Home',
 	'user center'		=> 'Center',
 	'set info'			=> 'Set info',
 	'my message'		=> 'Message',

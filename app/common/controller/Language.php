@@ -9,16 +9,17 @@ class Language
 	public function select($lang)
 	{
 		switch ($lang) {
-			case 'cn':
+			case 'zh-cn':
 				Cookie::set('think_lang','zh-cn');
 				break;
-			case 'en':
+			case 'en-us':
 				Cookie::set('think_lang','en-us');
 				break;
-			case 'tw':
+			case 'zh-tw':
 				Cookie::set('think_lang','zh-tw');
 				break;
 			default:
+				Cookie::set('think_lang','zh-cn');
 				break;
 			}
 		return true;

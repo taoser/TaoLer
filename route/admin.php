@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-14 11:05:12
+ * @LastEditors: TaoLer
+ * @Description: admin管理路由
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\route\admin.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 use think\facade\Route;
 use think\facade\Config;
 
@@ -28,7 +38,7 @@ Route::group($adminModuleName, function () {
     // 清理缓存接口
     Route::post('system/clearcache$','system.admin/clearCache')->name('clear_cache');
     // 获取菜单接口
-	Route::get('system/getmenu$','system.menu/getMenuJsonData')->name('get_menu');
+	Route::get('system/getmenu$','system.menu/getMenu')->name('get_menu');
     // 获取导航接口
     Route::get('system/getnav$','system.menu/getnav')->name('get_nav');
 

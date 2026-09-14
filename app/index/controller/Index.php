@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-13 21:17:30
+ * @LastEditTime: 2026-09-14 18:30:06
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -177,17 +177,15 @@ class Index extends IndexBaseController
         return redirect((string) url('user/home',['id'=>$uid]));
     }
 	
-	public function language()
+	public function language(Request $request)
 	{
-		if(request()->isPost()){
+		$lang = $request->param('language');
 			$language = new \app\common\controller\Language;
-			$lang = $language->select(input('language'));
-			if($lang){
+			$res = $language->select($lang);
+			if($res){
 				return Msgres::success();
 			}
-		}
 		
-		return Msgres::error('illegal_request');
 	}
 
 	public function showImg(string $filename) {

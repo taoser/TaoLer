@@ -3,6 +3,7 @@
 namespace app\model;
 
 use think\model\concern\SoftDelete;
+use think\facade\Lang;
 
 class Category extends BaseModel
 {
@@ -42,6 +43,22 @@ class Category extends BaseModel
             return $data['url'];
         }
         return (string) url('category', ['ename' => $data['ename']]);
+    }
+
+    /**
+     * 根据语言获取分类名称
+     * @param string $value 分类名称
+     * @param array $data 分类数据
+     * @return string 分类名称
+     */
+    public function getNameAttr($value, $data): string
+    {
+        $lang = Lang::getLangSet();
+
+        if($lang === 'en-us') {
+            return $data['ename'];
+        }
+        return $data['name'];
     }
 
 }

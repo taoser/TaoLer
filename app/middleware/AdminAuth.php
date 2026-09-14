@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2026-09-12 09:45:14
+ * @LastEditTime: 2026-09-14 10:18:34
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\middleware\AdminAuth.php
@@ -48,6 +48,11 @@ class AdminAuth
 		// $file = app_path().'admin/lang/'.$lang.'.php';
         // // 加载语言包
         // Lang::load($file);
+
+        $currentLang = system_config('current_lang', 'en-us');
+        $lang = strtolower($currentLang);
+        // 切换语言
+        Lang::switchLangSet($lang);
 
         // 配置视图路径
         View::config([

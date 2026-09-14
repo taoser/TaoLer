@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-14 10:40:22
+ * @LastEditors: TaoLer
+ * @Description: 分别实体类
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\entity\Category.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 declare (strict_types = 1);
 
 namespace app\entity;
@@ -428,7 +438,7 @@ class Category extends BaseEntity
 
             ->where('status', 1)
             ->order('sort asc')
-            ->append(['url'])
+            ->append(['url','name'])
             ->cache(3600)
             ->select()
             ->toArray();

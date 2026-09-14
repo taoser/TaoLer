@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-13 21:23:46
+ * @LastEditTime: 2026-09-14 11:26:43
  * @LastEditors: TaoLer
  * @Description: 菜单控制器
  * @Version: V4.0.0
@@ -90,7 +90,9 @@ class Menu extends AdminBaseController
             }
         }
 
-        $nav = $this->getTrees($menu);
+        // $nav = $this->getTrees($menu);
+
+        $nav = $menu;
 
         // halt($nav);
 
@@ -126,6 +128,7 @@ class Menu extends AdminBaseController
 
         $nav[] = Session::has('ruleTable') ? [
             'id'    => 999,
+            'pid'   => 0,
             'title' => '用户后台',
             'icon'  => 'layui-icon layui-icon-console',
             'href'  => (string) url("{$this->adminModuleName}/apps/delete"),
@@ -134,6 +137,7 @@ class Menu extends AdminBaseController
             "openType"  => "_blank",
         ] : [
             'id'    => 999,
+            'pid'   => 0,
             'title' => '管理后台',
             'icon'  => 'layui-icon layui-icon-console',
             'href'  => (string) url($this->adminModuleName . "/apps/index"),
@@ -144,6 +148,7 @@ class Menu extends AdminBaseController
 
         $nav[] = [
             'id'    => 1000,
+            'pid'   => 0,
             'title' => '官网',
             'icon'  => 'layui-icon layui-icon-console',
             'href'  => 'https://www.aieok.com',
@@ -152,9 +157,11 @@ class Menu extends AdminBaseController
             "openType"  => "_blank",
         ];
 
-        //SORT排序
-        $cmf_arr = array_column($nav, 'sort');
-        array_multisort($cmf_arr, SORT_ASC, $nav);
+        // //SORT排序
+        // $cmf_arr = array_column($nav, 'sort');
+        // array_multisort($cmf_arr, SORT_ASC, $nav);
+
+        $nav = build_tree($nav);
 
         return json($nav);
 
@@ -252,7 +259,7 @@ class Menu extends AdminBaseController
     }
 
     // 后台菜单控制
-    public function getMenuJsonData()
+    public function getMenu()
     {
         $menu = [
             "logo" => [

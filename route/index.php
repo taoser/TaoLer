@@ -62,6 +62,8 @@ Route::group('',function () {
 		Route::get('login-status', 'login/status')->name('login_status');
 	});
 
+	Route::post('language$', 'index/language')->name('language');
+
 	// tag
 	Route::group(function (){
 		Route::get('tag$', 'tag/getAllTag')->name('get_all_tag');

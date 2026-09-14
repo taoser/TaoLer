@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-13 20:46:17
+ * @LastEditTime: 2026-09-14 10:18:56
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -21,6 +21,4 @@ return [
     \think\middleware\SessionInit::class,
      // 静态文件
     //  \app\middleware\StaticFile::class,
-    // 切换语言
-    \app\middleware\SwitchLang::class,
 ];
