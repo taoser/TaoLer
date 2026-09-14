@@ -387,6 +387,8 @@
                     return `<input class="layui-input"  lay-verify="required" placeholder="模板，禁止修改" name="value" value="${val||''}" readonly>`;
                 case 'indextpl':
                     return `<input class="layui-input"  lay-verify="required" placeholder="首页模板，禁止修改" name="value" value="${val||''}" readonly>`;
+                case 'lang':
+                    return `<input class="layui-input"  lay-verify="required" placeholder="语言，禁止修改" name="value" value="${val||''}" readonly>`;
                 default:
                     return `<input class="layui-input"  lay-verify="required" placeholder="请输入" name="value" value="${val||''}">`;
             }
@@ -557,6 +559,7 @@
                             <option value="array"       ${d.type === 'array' ? 'selected' : ''}>array数组</option>
                             <option value="tpl"         ${d.type === 'tpl' ? 'selected' : ''} disabled>tpl模板</option>
                             <option value="indextpl"    ${d.type === 'indextpl' ? 'selected' : '' } disabled>indextpl首页模板</option>
+                            <option value="lang"        ${d.type === 'lang' ? 'selected' : '' } disabled>lang语言</option>
                         </select>
                     </div>
                 </div>

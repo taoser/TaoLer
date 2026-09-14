@@ -7,6 +7,8 @@ return [
 	'tChinese'			=> '中文繁体',
 	'english'			=> 'English',
 
+	'control panel'		=> '控制面板',
+
 	//弹窗提示消息
     'add'				=> '添加',
 	'delete'			=> '删除',

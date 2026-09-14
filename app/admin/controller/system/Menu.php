@@ -1,11 +1,13 @@
 <?php
-/**
- * @Program: TaoLer 2023/3/14
- * @FilePath: app\admin\controller\system\Menu.php
- * @Description: Menu
- * @LastEditTime: 2023-03-14 16:46:37
- * @Author: Taoker <317927823@qq.com>
- * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-13 21:23:46
+ * @LastEditors: TaoLer
+ * @Description: 菜单控制器
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\admin\controller\system\Menu.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
 
 namespace app\admin\controller\system;
@@ -18,6 +20,7 @@ use think\facade\Db;
 use taoser\think\Auth;
 use think\facade\Lang;
 use think\facade\Session;
+use app\entity\AuthRule;
 
 class Menu extends AdminBaseController
 {
@@ -46,7 +49,7 @@ class Menu extends AdminBaseController
         // 初始菜单
         $menu[] = [
             'id'    => 501,
-            "title" => "控制后台",
+            "title" => lang::get('control panel'),
             "icon"  => "layui-icon layui-icon-console",
             "type"  => 1,
             "openType"  =>"_iframe",
@@ -56,25 +59,33 @@ class Menu extends AdminBaseController
         ];
 
         // 多后台菜单
-        $rule = Session::has('ruleTable') ? Session::get('ruleTable') : 'auth_rule';
 
-        $auth_rule_list = Db::name($rule)
-        ->field('id,pid,title,icon,name,sort,ismenu')
+        // $rule = Session::has('ruleTable') ? Session::get('ruleTable') : 'auth_rule';
+
+        // $auth_rule_list = Db::name($rule)
+
+        $rule = new AuthRule();
+
+        $auth_rule_list = $rule->with(['lang' => function($query) {
+                $query->field('auth_rule_id,lang,title');
+            }
+        ])
+        ->field('id,pid,title,icon,name,sort,type')
         ->where('status', 1)
-        ->whereNull('delete_time')
         ->order('sort', 'asc')
+        ->append(['title'])
         ->select();
         
         foreach ($auth_rule_list as $v) {
             if ($auth->check($v['name'], $this->aid) || $this->aid == 1) {
                 $menu[] = [
                     'id'        => $v['id'],
-                    'title'     => Lang::get($v['title']),
-                    'icon'      => 'layui-icon ' . $v['icon'],
+                    'title'     => $v['title'],
+                    'icon'      => $v['icon'],
                     'href'      => (string) url($this->adminModuleName . '/'.str_replace('.', '/', $v['name'])),
                     'pid'       => $v['pid'],
                     'sort'      => $v['sort'],
-                    'ismenu'    => $v['ismenu']
+                    'type'      => $v['type'],
                 ];
             }
         }
@@ -172,7 +183,7 @@ class Menu extends AdminBaseController
                     //     //$v['children'][$m]['type'] = 1;
                     //     //$v['children'][$m]['openType'] = '_iframe';
                     // }
-                    $v['type'] = $v['ismenu'];
+                    $v['type'] = $v['type'];
                     $v['children'] = $child;
                 } else {
                     // 没有子菜单type=1
@@ -203,7 +214,7 @@ class Menu extends AdminBaseController
         $auth     = new Auth();
 
         $pid = empty(input('id')) ? 0 : input('id');
-        $data = Db::name('auth_rule')->field('id,title,icon,name,sort')->where(['pid'=>$pid,'status'=> 1, 'ismenu'=>1, 'delete_time'=> 0])->select();
+        $data = Db::name('auth_rule')->field('id,title,icon,name,sort')->where(['pid'=>$pid,'status'=> 1, 'type'=>1, 'delete_time'=> 0])->select();
         $tree = [];
         foreach ($data as $k => $v) {
             $hasChild = $this->hasChildren($v['id']);
@@ -234,7 +245,7 @@ class Menu extends AdminBaseController
      */
     public function hasChildren(int | string $pid)
     {
-        $count = Db::name('auth_rule')->where(['pid' => $pid, 'status' => 1, 'ismenu' => 1, 'delete_time' => 0])->count();
+        $count = Db::name('auth_rule')->where(['pid' => $pid, 'status' => 1, 'type' => 1, 'delete_time' => 0])->count();
 
         return $count ? true : false;
 
@@ -266,7 +277,7 @@ class Menu extends AdminBaseController
                 "index"=> [
                     "id"=> "501",
                     "href"=> (string) url($this->adminModuleName . "/index/console1"),
-                    "title"=> "首页"
+                    "title"=> lang::get('home page')
                 ]
             ],
             "theme"=> [

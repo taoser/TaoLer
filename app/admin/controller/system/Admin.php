@@ -278,7 +278,7 @@ class Admin extends AdminBaseController
 		}
 
 		if(!empty($ruleArr)){
-			$nameArr = Db::name('auth_rule')->whereIn('id', $ruleArr)->where('status',1)->where('ismenu',2)->column('name');
+			$nameArr = Db::name('auth_rule')->whereIn('id', $ruleArr)->where('status',1)->where('type', 2)->column('name');
 			foreach($nameArr as $v){
 				$codes[] = str_replace('/', '.', strtolower(trim($v)));
 			}

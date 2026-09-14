@@ -55,7 +55,7 @@ class AuthRule extends AdminBaseController
 			return View::fetch();
 		}
 
-		$data = $request->post(['pid/d','title','name','icon','sort/d','ismenu/d']);
+		$data = $request->post(['pid/d','title','name','icon','sort/d','type/d']);
 
 
 		$this->model->add($data);
@@ -71,7 +71,7 @@ class AuthRule extends AdminBaseController
 			return View::fetch();
 		}
 
-		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','ismenu/d']);
+		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','type/d']);
 	
 		$this->model->edit($data);
 		
@@ -82,24 +82,10 @@ class AuthRule extends AdminBaseController
 	// 权限树列表 + 2026.6.23
 	public function getRuleTreeList()
 	{
-		$authRules = Db::name('auth_rule')
-		->field('id,pid,title,name,icon,status,ismenu,sort,create_time')
-		->order('sort','asc')
-		->select()
-		->toArray();
-
-		if(empty($authRules)) {
-			return json(['code' => 1, 'msg' => 'no data']);
-		}
-
-		foreach($authRules as $key => $value){
-			// $authRules[$key]['title'] = Lang::get($value['title']);
-			$authRules[$key]['icon'] = empty($value['icon']) ? '' : 'layui-icon ' . $value['icon'];
-		}
-
-		$data = build_tree($authRules);
+		$data = $this->model->getRuleTree();
 
 		return json(['code' => 0,'msg' => 'ok','data' => $data]);
+
 	}
 
     /**
@@ -107,19 +93,23 @@ class AuthRule extends AdminBaseController
      * @return response
      */
 	public function ruleTree(Request $request): Response
-		{
-		$data = $this->getRoleMenu(1);
+	{
+		$data = $this->model->getRuleTree();
 
-		$count = count($data);
-		$tree = [];			
-		if($count){
-			$tree = ['code'=>0, 'msg'=>'ok','count'=>$count];
-			
-			//构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
-			$tree['data'][] = ['id'=>0, 'title'=>'顶级', 'pid'=>0, 'children'=>$data];
-		}
-
-		return json($tree);
+		return json([
+			'code'	=> 0,
+			'msg'	=>'ok',
+			'count'	=>count($data),
+			'data'	=> [
+				// 构造一个顶级菜单pid=0的数组。把权限放入顶级菜单下子权限中
+				[
+					'id'        => 0,
+					'pid'       => 0,
+					'title'     => Lang::get('top'),
+					'children'  => $data,
+				]
+			]
+		]);
 	}
 
 	

@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-13 20:46:17
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\middleware.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 // 全局中间件定义文件
 return [
     // 节流
@@ -11,4 +21,6 @@ return [
     \think\middleware\SessionInit::class,
      // 静态文件
     //  \app\middleware\StaticFile::class,
+    // 切换语言
+    \app\middleware\SwitchLang::class,
 ];

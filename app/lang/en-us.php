@@ -5,6 +5,8 @@ return [
 	'language'			=> 'language',
 	'chinese'			=> '中文简体',
 	'english'			=> 'English',
+
+	'control panel'		=> 'Control panel',
 	 
     //message
 	'add'				=> 'add',
@@ -27,7 +29,7 @@ return [
 	 
 	//menu
     'index'				=> 'Index',
-    'home page'			=> 'Home',
+    'home page'			=> 'HomePage',
 	'user center'		=> 'Center',
 	'set info'			=> 'Set info',
 	'my message'		=> 'Message',

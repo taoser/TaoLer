@@ -201,7 +201,15 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                 });
                 html += `</select>`;
                 break;
-
+            case 'lang':
+                html += `<select name="${item.name}">`;
+                html += `<option value="">请选择</option>`;
+                opts.forEach(function(v) {
+                    var schk = String(item.value ?? '') === String(v) ? 'selected' : '';
+                    html += `<option value="${v}" ${schk}>${v}</option>`;
+                });
+                html += `</select>`;
+                break;
             default:
                 html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input">`;
         }

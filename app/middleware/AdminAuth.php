@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-04-22 06:24:03
+ * @LastEditTime: 2026-09-12 09:45:14
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
- * @FilePath: \TaoLer\app\middleware\Auth.php
+ * @FilePath: \TaoLer\app\middleware\AdminAuth.php
  * Copyright (c) 2020~2026 http://www.aieok.com All rights reserved.
  */
 declare(strict_types=1);
@@ -38,7 +38,7 @@ class AdminAuth
         $adminModuleName = Config::get('taoler.admin_module_name');
         $controller = $request->controller();
         $action = $request->action();
-        // var_dump($controller,$action);
+        // var_dump($controller, $action);
 
         $path = strtolower($controller) . '/' . strtolower($action);
 

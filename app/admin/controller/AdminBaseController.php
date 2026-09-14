@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-05-17 11:15:46
+ * @LastEditTime: 2026-09-13 18:05:05
  * @LastEditors: TaoLer
  * @Description: 后台控制器设置
- * @FilePath: \TaoLer\app\common\controller\AdminController.php
+ * @FilePath: \TaoLer\app\admin\controller\AdminBaseController.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 declare (strict_types = 1);
@@ -72,7 +72,7 @@ class AdminBaseController extends \app\BaseController
                 $child = $this->getRuleTree($data, $v['id']);
                 // 有子类
                 if(!empty($child)) {
-                    $v['type'] = $v['pid'] == 0 ? 0 : $v['ismenu'];
+                    $v['type'] = $v['type'];
                     $v['children'] = $child;
                     $v['isParent'] = true;
                 } else {
@@ -102,7 +102,7 @@ class AdminBaseController extends \app\BaseController
         $auth     = new Auth();
 
         $auth_rule_list = Db::name('auth_rule')
-        ->where(['status' => 1, 'ismenu' => 1, 'delete_time'=> 0])
+        ->where(['status' => 1, 'type' => 1, 'delete_time'=> 0])
         ->select();
 
         foreach ($auth_rule_list as $value) {
@@ -112,32 +112,6 @@ class AdminBaseController extends \app\BaseController
         }
 
         return !empty($menu) ? build_tree($menu) : [];
-    }
-	
-	/**
-     * 获取角色菜单
-     * $type 1 admin后端权限, 2 index前端权限
-     */
-    protected function getRoleMenu($type)
-    {
-        $authRuleList = Db::name('auth_rule')
-        ->field('id,pid,title,sort,level')
-        ->where(['type'=> $type, 'status'=> 1])
-        ->whereNull('delete_time')
-        ->order('sort','asc')
-        ->select()
-        ->toArray();
-
-        if(empty($authRuleList)){
-            return [];
-        }
-
-        foreach ($authRuleList as &$v) {
-            $v['title'] = Lang::get($v['title']); 
-        }
-        unset($v);
-        
-        return build_tree($authRuleList);
     }
 	
 

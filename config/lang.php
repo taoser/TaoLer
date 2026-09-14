@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-13 21:03:10
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\config\lang.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 // +----------------------------------------------------------------------
 // | 多语言设置
 // +----------------------------------------------------------------------
@@ -7,9 +17,9 @@ return [
     // 默认语言
     'default_lang'        => env('DEFAULT_LANG', 'zh-cn'),
     // 自动侦测浏览器语言
-    'auto_detect_browser' => true,
+    'auto_detect_browser' => false,
     // 允许的语言列表
-    'allow_lang_list'     => ['zh-cn', 'en-us'],
+    'allow_lang_list'     => ['en-us','zh-cn'],
     // 多语言自动侦测变量名
     'detect_var'          => 'lang',
     // 是否使用Cookie记录

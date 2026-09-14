@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-12 11:07:46
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\admin\model\AuthRule.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 /**
  * @Program: TaoLer 2023/3/14
  * @FilePath: app\admin\model\AuthRule.php
@@ -36,7 +46,7 @@ class AuthRule extends Model
      */
     public function getAuthRuleTree()
     {
-        $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')
+        $authRules = $this->field('id,pid,title,name,icon,status,sort,create_time')
         ->order('sort','asc')
         ->select()
         ->toArray();
@@ -63,7 +73,7 @@ class AuthRule extends Model
      */
     public function getAuthRuleArray() :Response
     {
-        $authRules = $this->field('id,pid,title,name,icon,status,ismenu,sort,create_time')
+        $authRules = $this->field('id,pid,title,name,icon,status,sort,create_time')
         ->order('sort','asc')
         ->select()
         ->toArray();
@@ -72,7 +82,7 @@ class AuthRule extends Model
             $ruls[] = [
                 'powerId'   => $v['id'],
                 'powerName' => Lang::get($v['title']),
-                'powerType' => $v['ismenu'],
+                'powerType' => $v['type'],
                 'powerCode' => '',
                 "powerUrl"  => $v['name'],
                 "openType"  => null,

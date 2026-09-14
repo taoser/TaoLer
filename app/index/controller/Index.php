@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-10 21:22:49
+ * @LastEditTime: 2026-09-13 21:17:30
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -22,6 +22,7 @@ use app\common\helper\Msgres;
 use app\common\helper\ResponseHelper;
 use think\facade\Session;
 use think\facade\Log;
+use think\facade\Lang;
 
 use app\facade\Category;
 //use addons\pay\controller\AlipayFactory;

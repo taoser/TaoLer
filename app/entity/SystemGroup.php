@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-10 21:02:18
+ * @LastEditTime: 2026-09-13 21:06:18
  * @LastEditors: TaoLer
  * @Description: 系统配置组
  * @Version: V4.0.0
@@ -64,6 +64,10 @@ class SystemGroup extends BaseEntity
                 // 首页模板列表
                 if($item['type'] === 'indextpl') {
                     $item['options'] = Tpl::getIndexTplNames();
+                }
+                // 允许的语言列表
+                if($item['type'] === 'lang') {
+                    $item['options'] = config('lang.allow_lang_list');
                 }
             }
             unset($item);

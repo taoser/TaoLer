@@ -6,6 +6,7 @@ use think\Response;
 use think\facade\View;
 use think\facade\Db;
 use think\facade\Cache;
+use think\facade\Lang;
 
 class Index
 {

@@ -20,6 +20,7 @@ use app\admin\model\AuthGroup as AuthGroupModel;
 use app\admin\model\AuthGroupAccess;
 use app\admin\model\AuthRule as AuthRuleModel;
 use app\admin\model\Admin as adminModel;
+use app\entity\AuthRule;
 
 
 class AuthGroup extends AdminBaseController
@@ -83,7 +84,8 @@ class AuthGroup extends AdminBaseController
 	public function add(Request $request): Response | string
 	{
 		if(!$request->isPost()){
-			$menus = $this->getRoleMenu(1);
+			$rule = new AuthRule();
+			$menus = $rule->getRoleMenu();
 			View::assign('menus',$menus);
 			
 			return View::fetch();
@@ -102,7 +104,7 @@ class AuthGroup extends AdminBaseController
 	{
 		if(!$request->isPost()){
 			$id = $request->get('id/d');
-			$menus = $this->getRoleMenu(1);
+			$menus = $this->getRoleMenu();
 			$role = AuthGroupModel::find($id);
 			$rus = explode(',',$role->rules);
 				
