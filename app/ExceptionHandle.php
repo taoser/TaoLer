@@ -12,6 +12,7 @@ use think\exception\HttpResponseException;
 use think\exception\ValidateException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
+use app\exception\BusinessException;
 
 /**
  * 应用异常处理类
@@ -44,9 +45,9 @@ class ExceptionHandle extends Handle
         //     return;
         // }
 
-        // Log::error($exception->getMessage().':'.$exception->getFile().':'.$exception->getLine());
+        Log::error($exception->getMessage().':'.$exception->getFile().':'.$exception->getLine());
         // 使用内置的方式记录异常日志
-        parent::report($exception);
+        // parent::report($exception);
     }
 
     /**
@@ -76,7 +77,7 @@ class ExceptionHandle extends Handle
     {
         // 方式1：通过请求头 Accept 判断（推荐）
          // 判断是否为API请求（关键：区分接口/网页）
-        $isApi = $request->header('Accept')
+        return $request->header('Accept')
             && str_contains($request->header('Accept'), 'application/json')
             || str_starts_with($request->pathinfo(), 'api/')
             || $request->isPost()
@@ -85,9 +86,7 @@ class ExceptionHandle extends Handle
             || $request->isOptions()
             || $request->isAjax();
 
-        if ($isApi) {
-            return true;
-        }
+ 
 
         // 方式2：通过路由名称前缀，例如定义 api 路由组时设置别名
         // $rule = $request->rule();
@@ -100,7 +99,7 @@ class ExceptionHandle extends Handle
         //     return true;
         // }
 
-        return false;
+    
     }
 
     /**
@@ -108,21 +107,28 @@ class ExceptionHandle extends Handle
      */
     protected function renderApiResponse(Throwable $e): Response
     {
-        $code = $e->getCode() ?: 500;
+        if ($e instanceof BusinessException) {
+            return json([
+                'code'  => $e->getCode() ?: -1,
+                'msg'   => $e->getMessage(),
+                'data'  => $e->getData(),
+            ], 200);
+        }
+
+        // 业务失败返回1或者-1，其他错误返回500
+        $code = $e->getCode() ?: 1;
+        $httpStatus = ($code >= 100 && $code < 600) ? $code : 500;
         $message = $e->getMessage();
-        
-        // 生产环境下可隐藏真实错误信息，只暴露统一提示
+
         if (!env('app_debug', false)) {
             $message = '服务器内部错误';
         }
 
-        $data = [
-            'code'      => $code,
-            'msg'       => $message,
-            'data'      => [],
-        ];
-
-        return json($data, $code);
+        return json([
+            'code'  => $code,
+            'msg'   => $message,
+            'data'  => [],
+        ], $httpStatus);
     }
 
 }

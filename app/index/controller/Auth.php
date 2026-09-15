@@ -14,7 +14,7 @@ use app\facade\User;
 use app\index\validate\User as UserValidate;
 use app\index\controller\IndexBaseController;
 
-class Login extends IndexBaseController
+class Auth extends IndexBaseController
 {
 	protected $userModel;
 
@@ -43,9 +43,11 @@ class Login extends IndexBaseController
 	public function login(Request $request)
 	{
 		$data = $request->post(['name','email','phone','password','captcha','remember']);
-	
+	try{
 		$res = User::login($data);
-
+	} catch (Exception $e) {
+		return json(['code'=>-1,'msg'=>$e->getMessage()]);
+		}
 		return json([
 			'code' => 0,
 			'msg' => '登录成功',
@@ -57,24 +59,11 @@ class Login extends IndexBaseController
 		]);
 	}
 
-    //注册
+    // 注册
     public function register(Request $request)
     {
-        if (!$request->isPost()) {
-			return View::fetch();
-		}
-
 		$data = $request->post(['name','email','password','repassword','email_code','captcha']);
-		
 		$this->userModel::add($data);
-
-		if (Config::get('taoler.config.email_notice')) {
-			// hook('mailtohook',[
-			// 	$this->$adminEmail,
-			// 	'新用户注册通知',
-			// 	"Hi亲爱的管理员:</br>新用户 <b>{$data['name']}</b> 刚刚注册了新的账号，请尽快处理。"
-			// ]);
-		}
 
 		return json([
 			'code'	=> 0,

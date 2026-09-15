@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-13 21:06:18
+ * @LastEditTime: 2026-09-14 18:51:14
  * @LastEditors: TaoLer
  * @Description: 系统配置组
  * @Version: V4.0.0
@@ -47,7 +47,8 @@ class SystemGroup extends BaseEntity
     public function getGroupFormList(): array
     {
         $groupList = $this->with(['config' => function($query){
-            $query->where('is_hidden', 0)->order(['sort' => 'asc']);
+            // $query->where('is_hidden', 0)->order(['sort' => 'asc']);
+            $query->order(['sort' => 'asc']);
         }])
         ->field('id,group_name,group_title')
         ->order(['sort' => 'asc'])

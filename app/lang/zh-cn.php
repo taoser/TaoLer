@@ -8,28 +8,87 @@ return [
 	'english'			=> 'English',
 
 	'control panel'		=> '控制面板',
+	
+	'user'	=> [
+		'center'		=> '用户中心',
+	],
 
-	//弹窗提示消息
+	// 动作按钮
     'add'				=> '添加',
 	'delete'			=> '删除',
     'edit'				=> '编辑',
-    'uploads'            => '上传',
-	'login success'     => '登录成功',
-    'login error'     	=> '登录失败',
-	'username or password error' => '用户名或密码错误',
-	'The user name or password is incorrect' => '用户名或密码错误',
-	'Login error 3, Please log in 10 minutes later' => '失败3次，请10分钟后重试',
+	'save'				=> '保存',
+	'update'			=> '更新',
+	'confirm'			=> '确认',
+	'cancel'			=> '取消',
+	'verify'			=> '验证',
+	'destroy'			=> '销毁',
+    'uploads'           => '上传',
+	'upgrade'			=> '升级',
+	'submit'			=> '提交',
+
+	// 消息提示
+	'success'			=> '成功',
+	'error'				=> '失败',
+	'warning'			=> '警告',
+	'info'				=> '信息',
+	'notice'			=> '提示',
+	'open'				=> '打开',
+	'close'				=> '关闭',
+	'enable'			=> '启用',
+	'disable'			=> '禁用',
+	
+	// 动作消息
 	'add success'		=> '添加成功!',
 	'add error'			=> '添加失败',
-	'edit success'		=> '修改成功',
-	'edit error'		=> '修改失败',
 	'delete success'	=> '删除成功',
 	'delete error'		=> '删除失败',
+	'edit success'		=> '修改成功',
+	'edit error'		=> '修改失败',
+	'save success'		=> '保存成功',
+	'save error'		=> '保存失败',
+	'update success'	=> '更新成功',
+	'update error'		=> '更新失败',
+	'confirm success'	=> '确认成功',
+	'confirm error'		=> '确认失败',
+	'cancel success'	=> '取消成功',
+	'cancel error'		=> '取消失败',
+	'verify success'	=> '验证成功',
+	'verify error'		=> '验证失败',
+	'destroy success'	=> '销毁成功',
+	'destroy error'		=> '销毁失败',
 	'upload success'	=> '上传成功',
 	'upload error'		=> '上传失败',
 	'upgrade success'	=> '升级成功',
 	'upgrade error'		=> '升级失败',
 	'illegal request'	=> '非法请求',
+
+
+	// input
+	'please input'		=> '请输入',
+	'please input the content' => '请输入内容',
+	'please input the username' => '请输入用户名',
+	'please input the password' => '请输入密码',
+	'please input the confirm password' => '请确认密码',
+	'please input the email' => '请输入邮箱',
+	'please input the phone' => '请输入手机号',
+	'please input the captcha' => '请输入验证码',
+
+	// form
+	'please select' => '请选择',
+
+	
+
+
+	'sorry, the registration is closed' => '抱歉,注册暂时未开放',
+	'sorry, the username is disabled' => '抱歉,用户名{:name}已被禁用',
+
+
+	'username or password error' => '用户名或密码错误',
+	'The user name or password is incorrect' => '用户名或密码错误',
+	'Login error 3, Please log in 10 minutes later' => '失败3次，请10分钟后重试',
+	
+	
 
 	//菜单
      'index'			=> 'index',
@@ -116,9 +175,7 @@ return [
 	 'strong type encryption'	=> '强类型加密',
 	 'it cannot be changed'	=> '不能更改',
 	 'the only way to get back your password'	=> '找回密码唯一途径',
-	 'please input the password' => '请输入密码',
-	 'please confirm the password' => '请确认密码',
-	 'please input the captcha' => '请输入验证码',
+	
 
 	 //user
 	 'add friends'		=> '添加为好友',

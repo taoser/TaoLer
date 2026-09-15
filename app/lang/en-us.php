@@ -4,7 +4,11 @@ return [
 	//语言
 	'language'			=> 'language',
 	'chinese'			=> '中文简体',
+	'chinese tw'		=> '中文繁体',
 	'english'			=> 'English',
+	'france'			=> 'Français',
+	'Japanese'			=> '日本語',
+	
 
 	'control panel'		=> 'Control panel',
 	 

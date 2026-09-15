@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-14 18:30:06
+ * @LastEditTime: 2026-09-15 08:24:59
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -44,6 +44,8 @@ class Index extends IndexBaseController
     public function index(Request $request)
     {
 		// dump(get_addons_config('demo'));
+
+		// var_dump(Lang::get('user.center'));
 
 		$uid = $request->session('user_id');
 

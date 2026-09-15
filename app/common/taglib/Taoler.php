@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-09 07:17:38
+ * @LastEditTime: 2026-09-15 21:16:35
  * @LastEditors: TaoLer
  * @Description: 系统配置项标签库
  * @Version: V4.0.0
@@ -96,7 +96,7 @@ class Taoler extends TagLib
     // 版权
     public function tagCopyright(array $tag): string
     {
-        return '{$systemConfig.copyright}';
+        return '{:system_config("copyright")}';
     }
     // icp备案
     public function tagIcp(array $tag): string

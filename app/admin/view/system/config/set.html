@@ -62,17 +62,15 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
             case 'textarea':
                 html += `<textarea name="${item.name}" class="layui-textarea">${item.value||''}</textarea>`;
                 break;
-
             case 'number':
                 html += `<input type="number" name="${item.name}" value="${item.value||''}" class="layui-input">`;
                 break;
-
             case 'switch':
                 // 开关：1开启 0关闭；兼容value为null
                 const chk = String(item.value ?? '0') === '1' ? 'checked' : '';
-                html += `<input type="checkbox" name="${item.name}" lay-skin="switch" ${chk} lay-text="开启|关闭">`;
+                var isHidden = item.is_hidden ? 'disabled':'';
+                html += `<input type="checkbox" name="${item.name}" lay-skin="switch" ${chk} ${isHidden} lay-text="开启|关闭">`;
                 break;
-
             case 'radio':
                 for(var i=0;i<opts.length;i++){
                     var o=opts[i];
@@ -80,7 +78,6 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                     html += `<input type="radio" name="${item.name}" value="${o.value}" title="${o.label}" ${rchk}>`;
                 }
                 break;
-
             case 'checkbox':
                 var vals = (item.value||'');
                 for(var i=0;i<opts.length;i++){
@@ -89,7 +86,6 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                     html += `<input type="checkbox" name="${item.name}[]" value="${o.value}" title="${o.label}" ${cchk}>`;
                 }
                 break;
-
             case 'select':
                 html += `<select name="${item.name}">`;
                 html += `<option value="">请选择</option>`;
@@ -212,6 +208,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                 break;
             default:
                 html += `<input type="text" name="${item.name}" value="${item.value||''}" class="layui-input">`;
+                break;
         }
 
         html += '</div>';
@@ -293,7 +290,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                 inner += `<input type="hidden" name="_group" value="${g.id}">
                 <div class="layui-form-item group-actions">
                     <div class="layui-input-block">
-                        <button class="pear-btn pear-btn-primary" lay-submit lay-filter="groupSave">保存 ${g.group_title}</button>
+                        <button class="pear-btn pear-btn-primary" lay-submit lay-filter="groupSave">{:lang('save')} ${g.group_title}</button>
                     </div>
                 </div>`;
 
@@ -404,6 +401,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
                 layer.msg(res.msg,{icon:2});
             }
         },'json');
+        parent.window.parent.location.reload();
         return false;
     });
 

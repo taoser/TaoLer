@@ -50,16 +50,30 @@ Route::group('',function () {
 		Route::get('logout$', 'user/logout')->name('user_logout');
 	});
 
-	// 登录注册
+	// 注册/登录/找回密码/发送验证码
 	Route::group(function () {
-		Route::get('login$', 'login/index')->name('login_index');
-		Route::post('gologin$', 'login/login')->name('user_login');
-		Route::post('forget$', 'login/forget')->name('user_forget');
-		Route::rule('register$', 'login/register')->name('user_register');
-		Route::post('postcode$', 'login/postcode');
-		Route::post('sentemailcode$', 'login/sentMailCode');
-		Route::post('respass$', 'login/respass');
-		Route::get('login-status', 'login/status')->name('login_status');
+		// Route::get('login$', 'auth/index')->name('login_index');
+		// Route::get('register$', 'login/register')->name('register_page');
+		// 登录注册页面
+
+		Route::post('auth/register$', 'auth/register')->name('user_register');
+		Route::get('login$', function() {
+			return view('auth/login');
+		});
+		// 注册页面
+		Route::get('register$', function() {
+			return view('auth/register');
+		});
+		
+		Route::post('login$', 'auth/login')->name('user_login');
+		
+
+		Route::post('forget$', 'auth/forget')->name('user_forget');
+		
+		Route::post('postcode$', 'auth/postcode');
+		Route::post('sentemailcode$', 'auth/sentMailCode');
+		Route::post('respass$', 'auth/respass');
+		Route::get('login-status', 'auth/status')->name('login_status');
 	});
 
 	Route::post('language$', 'index/language')->name('language');

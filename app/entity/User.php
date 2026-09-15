@@ -3,6 +3,7 @@ namespace app\entity;
 
 use Exception;
 use think\exception\ValidateException;
+use app\exception\BusinessException;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Config;
@@ -156,14 +157,14 @@ class User extends BaseEntity
     public function add(array $data): bool
     {
         // 检验注册是否开放
-		if(config('taoler.config.is_regist') == 0 ) {
-            throw new Exception('抱歉，注册暂时未开放', -1);
+		if(system_config('register_open') == '0' ) {
+           throw new BusinessException(Lang::get('sorry, the registration is closed'),1);
 		}
         
         // 禁止使用黑名单用户名
         $blackNames = system_config('black_names');
         if(str_contains($blackNames, $data['name'])) {
-            throw new Exception("抱歉，用户名【{$data['name']}】已被禁用", -1);
+            throw new Exception(Lang::get('sorry, the username is disabled', ['name' => $data['name']]), -1);
         }
 
         $registType = Config::get('taoler.config.regist_type');
