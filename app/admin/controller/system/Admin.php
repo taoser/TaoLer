@@ -211,7 +211,7 @@ class Admin extends AdminBaseController
     //修改密码
 	public function repassSet(Request $request): Response
 	{
-		$data = $request->post(['oldPassword','password','repassword']);
+		$data = $request->post(['oldPassword','password','confirm_password']);
 		$data['admin_id'] = $request->aid;
 		
 		try{

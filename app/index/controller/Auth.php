@@ -20,7 +20,7 @@ class Auth extends IndexBaseController
 
 	//已登陆中间件检测
 	protected $middleware = [
-	    'logedcheck' => ['except' 	=> ['index', 'login', 'status']]
+	    'logedcheck' => ['except' 	=> ['login', 'status']]
     ];
 
 	public function initialize()
@@ -29,25 +29,18 @@ class Auth extends IndexBaseController
 		$this->userModel = new User();
 	}
 
-    //用户登陆
-	public function index()
-	{
-        //已登陆跳出
-        if(Session::has('user_id')){
-            return redirect((string) url('user_index'));
-        }
-		
-        return View::fetch('login');
-	}
 
-	public function login(Request $request)
+	/**
+	 * 用户登陆
+	 * @param Request $request
+	 * @return Response
+	 */	
+	public function login(Request $request): Response
 	{
 		$data = $request->post(['name','email','phone','password','captcha','remember']);
-	try{
+
 		$res = User::login($data);
-	} catch (Exception $e) {
-		return json(['code'=>-1,'msg'=>$e->getMessage()]);
-		}
+
 		return json([
 			'code' => 0,
 			'msg' => '登录成功',
@@ -59,10 +52,14 @@ class Auth extends IndexBaseController
 		]);
 	}
 
-    // 注册
-    public function register(Request $request)
+    /**
+	 * 用户注册
+	 * @param Request $request
+	 * @return Response
+	 */	
+	public function register(Request $request): Response
     {
-		$data = $request->post(['name','email','password','repassword','email_code','captcha']);
+		$data = $request->post(['name','email','password','confirm_password','email_code','captcha']);
 		$this->userModel::add($data);
 
 		return json([

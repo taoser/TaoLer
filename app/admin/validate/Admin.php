@@ -8,7 +8,7 @@ class Admin extends Validate
     protected $rule = [
         'username|用户名' => 'require|min:2|max:18|unique:admin',
         'password|密码' => 'require|min:6|max:20',
-        'repassword|确认密码'=>'require|confirm:password',
+        'confirm_password|确认密码'=>'require|confirm:password',
         'nickname|昵称' => 'require|min:2|max:20',
         'email|邮箱' => 'require|email|unique:admin',
         'captcha|验证码' => 'require|captcha',
@@ -28,7 +28,7 @@ class Admin extends Validate
         //注册验证场景
     public function sceneReg()
     {
-        return $this->only(['username','password','repassword','email','captcha']);
+        return $this->only(['username','password','confirm_password','email','captcha']);
             //->append('email','unique:user');
            // ->remove('password', 'confirm');
     }
@@ -42,7 +42,7 @@ class Admin extends Validate
 	//密码重设
     public function sceneRepass()
     {
-        return $this->only(['password','repassword','captcha']);
+        return $this->only(['password','confirm_password','captcha']);
     }
 	
 	//用户资料
@@ -55,6 +55,6 @@ class Admin extends Validate
 	//设置新密码
 	public function sceneSetpass()
 	{
-		return $this->only(['nowpass','password','repassword']);
+		return $this->only(['nowpass','password','confirm_password']);
 	}
 }

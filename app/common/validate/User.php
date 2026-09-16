@@ -19,7 +19,7 @@ class User extends Validate
 		'email|邮箱' => 'require|email|unique:user',
         'phone|手机号' => 'require|mobile|unique:user',
         'password|密码' => 'require|min:6|max:20',
-        'repassword|确认密码'=>'require|confirm:password',
+        'confirm_password|确认密码'=>'require|confirm:password',
         'nickname|昵称' => 'require|min:2|max:20',      
         'captcha|验证码' => 'require|captcha',
 		'city|城市' => 'min:2|max:25',
@@ -59,7 +59,7 @@ class User extends Validate
     //注册验证场景
     public function sceneReg()
     {
-        return $this->only(['name','email','password','repassword']);
+        return $this->only(['name','email','password','confirm_password']);
     }
 
     //后台注册验证场景
@@ -78,13 +78,13 @@ class User extends Validate
 	//密码重设
     public function sceneRepass()
     {
-        return $this->only(['password','repassword','captcha']);
+        return $this->only(['password','confirm_password','captcha']);
     }
 	
 	//密码重置
     public function sceneRespass()
     {
-        return $this->only(['password','repassword','captcha']);
+        return $this->only(['password','confirm_password','captcha']);
     }
 	
 	//用户资料
@@ -97,6 +97,6 @@ class User extends Validate
 	//设置新密码
 	public function sceneSetpass()
 	{
-		return $this->only(['nowpass','password','repassword']);
+		return $this->only(['nowpass','password','confirm_password']);
 	}
 }

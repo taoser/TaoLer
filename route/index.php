@@ -52,21 +52,17 @@ Route::group('',function () {
 
 	// 注册/登录/找回密码/发送验证码
 	Route::group(function () {
-		// Route::get('login$', 'auth/index')->name('login_index');
-		// Route::get('register$', 'login/register')->name('register_page');
 		// 登录注册页面
-
-		Route::post('auth/register$', 'auth/register')->name('user_register');
 		Route::get('login$', function() {
 			return view('auth/login');
-		});
+		})->name('login_page');
 		// 注册页面
 		Route::get('register$', function() {
 			return view('auth/register');
-		});
+		})->name('register_page');
 		
 		Route::post('login$', 'auth/login')->name('user_login');
-		
+		Route::post('register$', 'auth/register')->name('user_register_post');
 
 		Route::post('forget$', 'auth/forget')->name('user_forget');
 		

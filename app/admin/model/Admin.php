@@ -106,7 +106,7 @@ class Admin extends Model
 			return json(['code'=>-1,'msg'=>'当前密码错误']);
 		}
 		
-		if($data['password'] != $data['repassword']){
+		if($data['password'] != $data['confirm_password']){
 			return json(['code'=>-1,'msg'=>'两次密码不一致']);
 		}
 

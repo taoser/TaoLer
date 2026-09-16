@@ -81,7 +81,7 @@ class Admin extends BaseEntity
 	//修改密码
 	public function setpass(array $data)
 	{
-		if($data['password'] !== $data['repassword']){
+		if($data['password'] !== $data['confirm_password']){
 			throw new Exception('两次密码不一致');
 		}
 

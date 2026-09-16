@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-04 20:55:54
+ * @LastEditTime: 2026-09-16 07:27:18
  * @LastEditors: TaoLer
  * @Description: 网站公共配置
  * @FilePath: \TaoLer\config\taoler.php
@@ -31,7 +31,7 @@ return [
 		// 注册开关
 		'is_regist'   => 1,
 		// 登录开关
-		'is_login'   => 1,
+		'is_login'   => 0,
 		// 发帖开关
 		'is_post'   => 1,
 		// 评论开关

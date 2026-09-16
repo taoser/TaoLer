@@ -42,18 +42,18 @@ class User extends BaseEntity
      * 登录校验
      *
      * @param array $data 登录数据（用户名/手机号/邮箱、密码、验证码（可选）（仅在登录配置中开启验证码时必填））
-     * @return array 登录成功后的用户信息  ['token','expire_time']
+     * @return array 登录成功后返回用户信息  ['token','expire_time']
      */
     public function login(array $data): array
     {
         // 检验登录是否开放
-        if(Config::get('taoler.config.is_login') == 0 ) {
-			throw new Exception("Sorry,Sorry, website maintenance, temporarily unable to log in!", -1);
+        if(system_config('login_open') == '0' ) {
+			throw new BusinessException("sorry, website maintenance, temporarily unable to log in!");
         }
 
         // 校验验证码
-        if(Config::get('taoler.config.login_captcha') == 1 && !captcha_check($data['captcha'])) {				
-			throw new Exception("验证码失败", -1);
+        if(system_config('login_verify') == '1' && !captcha_check($data['captcha'])) {				
+			throw new BusinessException(Lang::get('captcha error'));
         }
 
         // 登陆请求
@@ -82,27 +82,27 @@ class User extends BaseEntity
 				$user = $this->where('name', $data['name'])->findOrEmpty();
 			}
 		} catch (ValidateException $e) {
-            throw new Exception($e->getError(), -1);
+            throw new BusinessException($e->getError());
 		} catch(Exception $e) {
-			throw new Exception($e->getMessage(), -1);
+			throw new Exception($e->getMessage());
 		}
 
         if($user->isEmpty()) {
-			throw new Exception(Lang::get('username or password error'), -1);
+			throw new BusinessException(Lang::get('username or password error'));
         }
 
         //被禁用和待审核
         if($user['status'] == -1) {
-            throw new Exception(Lang::get('Account disabled'), -1);
+            throw new BusinessException(Lang::get('Account disabled'));
         }
 
         if($user['status'] == 0) {
-            throw new Exception(Lang::get('Pending approval'), -1);
+            throw new BusinessException(Lang::get('Pending approval'));
         }
 
         //错误登陆连续3次且小于10分钟
         if((time() - $user->login_error_time < 60) && is_int($user->login_error_num/3)) {	
-            throw new Exception(Lang::get('Please log in 10 minutes later'), -1);
+            throw new BusinessException(Lang::get('Please log in 10 minutes later'));
         }
 
         $result = PasswordHash::verify($data['password'], $user['password']);
@@ -113,10 +113,10 @@ class User extends BaseEntity
       
              //连续3次错误
              if(is_int(($user->login_error_num+1)/3) && $user->login_error_num >0 ) {
-                 throw new Exception(Lang::get('Login error 3, Please log in 10 minutes later'), -1);
+                 throw new BusinessException(Lang::get('login error 3, please login 10 minutes later'));
              }
 
-             throw new Exception(Lang::get('The user name or password is incorrect'), -1);
+             throw new BusinessException(Lang::get('The user name or password is incorrect'));
         }
 
         //将用户数据写入Session
@@ -164,7 +164,7 @@ class User extends BaseEntity
         // 禁止使用黑名单用户名
         $blackNames = system_config('black_names');
         if(str_contains($blackNames, $data['name'])) {
-            throw new Exception(Lang::get('sorry, the username is disabled', ['name' => $data['name']]), -1);
+            throw new BusinessException(Lang::get('sorry, the username is disabled', ['name' => $data['name']]), -1);
         }
 
         $registType = Config::get('taoler.config.regist_type');
@@ -173,7 +173,7 @@ class User extends BaseEntity
 		if($registType == 1) {				
 			//先校验验证码 // 验证失败
 			if(!captcha_check($data['captcha'])){
-                throw new Exception("验证码失败", -1);
+                throw new BusinessException("验证码失败", -1);
 			};
 		}
 
@@ -181,11 +181,11 @@ class User extends BaseEntity
 		if($registType == 2) {
 			$emailCode = Cache::get($data['email']);
 			if(!$emailCode) {
-                throw new Exception("验证码过期，请重试", -1);
+                throw new BusinessException("验证码过期，请重试", -1);
 			}
 
 			if($data['email_code'] !== $emailCode) {
-                throw new Exception("验证码不正确", -1);
+                throw new BusinessException("验证码不正确", -1);
 			}
 		}
 
@@ -195,7 +195,7 @@ class User extends BaseEntity
                 ->scene('Reg')
                 ->check($data);
         } catch (ValidateException $e) {
-            throw new Exception($e->getError(), -1);
+            throw new BusinessException($e->getError());
         }
 
         $data['password'] = PasswordHash::make($data['password']);
