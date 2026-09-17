@@ -33,8 +33,13 @@ Route::group('',function () {
 
 	// 用户中心
 	Route::group('user',function () {
+		// 用户中心首页
+		Route::get('/', function() {
+			return view('user/index');
+		})->name('user_page');
+
+
 		Route::get('<id>$', 'user/home')->name('user_home')->pattern(['id'   => '\d+',]);
-		Route::get('idx$', 'user/index')->name('user_index');
 		Route::get('set$', 'user/set')->name('user_set');
 		Route::get('message$', 'user/message');
 		Route::get('post$', 'user/post');
@@ -60,6 +65,10 @@ Route::group('',function () {
 		Route::get('register$', function() {
 			return view('auth/register');
 		})->name('register_page');
+		// 找回密码页面
+		Route::get('forget$', function() {
+			return view('auth/forget');
+		})->name('forget_page');
 		
 		Route::post('login$', 'auth/login')->name('user_login');
 		Route::post('register$', 'auth/register')->name('user_register_post');

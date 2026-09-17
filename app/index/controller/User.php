@@ -30,13 +30,6 @@ class User extends IndexBaseController
     	'logincheck' => ['except' 	=> ['home'] ],
     ];
 		
-	//用户中心
-	public function index()
-	{
-        return View::fetch();
-    }
-	
-	
 	// 我的发帖list
 	public function myArticles(Request $request)
 	{

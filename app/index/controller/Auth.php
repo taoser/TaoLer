@@ -72,41 +72,38 @@ class Auth extends IndexBaseController
 	//找回密码
 	public function forget(Request $request)
 	{
-		if($request->isAjax()){
-			$data = $request->post();
-			
-			try{
-				validate(UserValidate::class)
-					->scene('Forget')
-					->check($data);
-			} catch (ValidateException $e) {
-				return json(['code'=>-1,'msg'=>$e->getError()]);
-			}
-			//查询用户
-			$user = $this->userModel::field('id,name')->where('email',$data['email'])->find();
-			if(is_null($user)) {
-				return json(['code' =>-1,'msg'=>'邮箱错误或不存在']);
-			}
-
-			$code = mt_rand(1111, 9999);
-			Cache::set('code', $code, 600);
-			Cache::set('userid', $user['id'], 600);
-
-			$result = hook('mailtohook',[
-				$data['email'],
-				'重置密码',
-				"Hi亲爱的{$user['name']}:</br>您正在维护您的信息，请在10分钟内验证，您的验证码为:{$code}"
-			]);
-
-			if($result){
-				Cache::set('repass','postcode',60);	//设置repass标志为1存入Cache
-				$res = ['code'=>0,'msg'=>'验证码已发送成功，请去邮箱查看！','url'=>(string) url('login/postcode')]; 
-			} else {
-				$res = ['code'=>-1,'msg'=>'验证码发送失败!'];
-			}
-			return json($res);
+		$data = $request->post(['name','phone','captcha','email']);
+		
+		try{
+			validate(UserValidate::class)
+				->scene('Forget')
+				->check($data);
+		} catch (ValidateException $e) {
+			return json(['code'=>-1,'msg'=>$e->getError()]);
 		}
-		return View::fetch();
+		//查询用户
+		$user = $this->userModel::field('id,name')->where('email',$data['email'])->find();
+		if(is_null($user)) {
+			return json(['code' =>-1,'msg'=>'邮箱错误或不存在']);
+		}
+
+		$code = mt_rand(1111, 9999);
+		Cache::set('code', $code, 600);
+		Cache::set('userid', $user['id'], 600);
+
+		$result = hook('mailtohook',[
+			$data['email'],
+			'重置密码',
+			"Hi亲爱的{$user['name']}:</br>您正在维护您的信息，请在10分钟内验证，您的验证码为:{$code}"
+		]);
+
+		if($result){
+			Cache::set('repass','postcode',60);	//设置repass标志为1存入Cache
+			$res = ['code'=>0,'msg'=>'验证码已发送成功，请去邮箱查看！','url'=>(string) url('login/postcode')]; 
+		} else {
+			$res = ['code'=>-1,'msg'=>'验证码发送失败!'];
+		}
+		return json($res);
 	}
 	
 	//接收验证码
