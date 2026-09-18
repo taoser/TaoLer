@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-18 10:43:05
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\admin\controller\content\Page.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\admin\controller\content;
 
@@ -64,7 +74,7 @@ class Page extends AdminBaseController
             $id = $request->get('id/d');
             $page = PageEntity::field('id,category_id,title,content,keywords,description,create_time')
             ->with(['category'=>function($query) {
-                $query->field('id,name');
+                $query->field('id,name,ename');
             }])->find($id);
             
             View::assign('page', $page);

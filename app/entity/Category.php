@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-14 10:40:22
+ * @LastEditTime: 2026-09-18 11:28:28
  * @LastEditors: TaoLer
  * @Description: 分别实体类
  * @Version: V4.0.0
@@ -509,7 +509,7 @@ class Category extends BaseEntity
      */
     public function getArticleSelectTree(): array
     {
-        $list = $this->field('id,pid,name,sort')
+        $list = $this->field('id,pid,name,ename,sort')
         ->where('type', 1)
         ->where('status', 1)
         ->order('sort','asc')
@@ -532,7 +532,7 @@ class Category extends BaseEntity
      */
     public function getSinglePageSelectTree(): array
     {
-        $list = $this->field('id,pid,name,sort')
+        $list = $this->field('id,pid,name,ename,sort')
         ->where('type', 2)
         ->whereNotExists(function($query) {
             $query->name('page')->where('category_id', '=', 'id');

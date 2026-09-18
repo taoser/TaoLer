@@ -10,6 +10,7 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\View;
 use think\facade\Config;
+use think\facade\Lang;
 use app\facade\User;
 use app\index\validate\User as UserValidate;
 use app\index\controller\IndexBaseController;
@@ -18,17 +19,11 @@ class Auth extends IndexBaseController
 {
 	protected $userModel;
 
-	//已登陆中间件检测
-	protected $middleware = [
-	    'logedcheck' => ['except' 	=> ['login', 'status']]
-    ];
-
 	public function initialize()
 	{
 		parent::initialize();
 		$this->userModel = new User();
 	}
-
 
 	/**
 	 * 用户登陆
@@ -47,7 +42,7 @@ class Auth extends IndexBaseController
 			'data' => [
 				'token'			=> $res['token'],
 				'expire_time'	=> $res['expire_time'],
-				'url'			=> (string) url('user_index')
+				'url'			=> (string) url('user_page')
 			]
 		]);
 	}
@@ -193,19 +188,24 @@ class Auth extends IndexBaseController
 		
 	}
 
-	public function status() {
+	/**
+	 * 登录状态
+	 * @return Response 
+	 */
+	public function status(): Response
+	{
 		$user = $this->user;
 		if(empty($user)) {
-			return json(['code' => 0]);
+			return json(['code' => 1, 'msg' => Lang::get('no login in')]);
 		}
 
 		$data = [
-			'name' => $user['name'],
-			'avatar' => $user['avatar'],
+			'name'		=> $user['name'],
+			'avatar'	=> $user['avatar'],
 			'user_home' => (string) url('user_home', ['id' => $user['id']])
 		];
 
-		return json(['code' => 1, 'msg' => 'ok', 'data' => $data]);
+		return json(['code' => 0, 'msg' => Lang::get('already logged in'), 'data' => $data]);
 	}
 
 }

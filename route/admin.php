@@ -4,7 +4,7 @@
  * @Date: 2026-09-05 08:12:25
  * @LastEditTime: 2026-09-14 11:05:12
  * @LastEditors: TaoLer
- * @Description: admin管理路由
+ * @Description: admin模块 后台路由
  * @Version: V4.0.0
  * @FilePath: \TaoLer\route\admin.php
  * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.

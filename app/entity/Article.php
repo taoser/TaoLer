@@ -3,7 +3,6 @@ declare (strict_types = 1);
 
 namespace app\entity;
 
-use Exception;
 use think\db\Query;
 use think\facade\Db;
 use think\facade\Cache;
@@ -11,6 +10,7 @@ use think\facade\Session;
 use app\common\helper\IdEncode;
 use app\common\service\ArticleService;
 use app\service\ArticleCache;
+use app\exception\BusinessException;
 
 class Article extends BaseEntity
 {
@@ -37,42 +37,6 @@ class Article extends BaseEntity
      */
 	public function add(array $data): array
 	{
-        // $this->category_id  = $data['category_id'];
-        // $this->user_id  = $data['user_id'];
-        // $this->title    = $data['title'];
-        // $this->content  = $data['content'];
-        // $this->keywords = $data['keywords'];
-
-        // if(isset($data['status'])) {
-        //     $this->status   = $data['status'];
-        // }
-
-        // if(isset($data['has_image'])) {
-        //     $this->has_image = $data['has_image'];
-        //     $this->thumb = $data['thumb'];
-        // }
-        // if(isset($data['has_video'])) {
-        //     $this->has_video = $data['has_video'];
-        // }
-
-        // if(isset($data['has_audio'])) {
-        //     $this->has_audio = $data['has_audio'];
-        // }
-        
-        // $this->description  = $data['description'];
-       
-        // $this->media = empty($data['media']) ? [
-        //     'images' => [],
-        //     'videos' => [],
-        //     'audios' => []
-        // ] : $data['media'];
-        
-        // $this->flags = empty($data['flags']) ? [
-        //     'is_top'    => '0',
-        //     'is_good'   => '0',
-        //     'is_complete'   => '0',
-        // ] : $data['flags'];
-
         $this->save($data);
         
         return [
@@ -83,39 +47,56 @@ class Article extends BaseEntity
 
     /**
      * 编辑
-     *
      * @param array $data
      * @return bool
      */
 	public function edit(array $data): bool
 	{
-		$result = $this->save($data);
-
-		if(!$result) {
-			throw new Exception('edit error');
-		}
-
-        return true;
+		return $this->save($data);
 	}
 
+    public function del(int $id, int $uid): string
+    {
+        Db::startTrans();
+        try {
+            $this->setSuffix(self::getSuffixById($id));
+
+            $article = $this->where('user_id', $uid)->find($id);
+            if (is_null($article)) {
+                throw new BusinessException('文章不存在', 1, ['id' => $id]);
+            }
+            $article->together(['comments'])->force()->delete();
+            
+            Db::commit();
+        } catch (\Throwable $e) {
+            Db::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
     /**
-     * 选和单选删除
+     * 多选和单选删除
      * @param array $ids
      * @return bool
-     * @throws Exception
+     * @throws BusinessException
      */
     public function remove(array $ids): bool
     {
+        Db::startTrans();
         try {
-            foreach($ids as $id){
+            foreach ($ids as $id) {
                 $this->setSuffix(self::getSuffixById($id));
                 $article = $this->find($id);
+                if (is_null($article)) {
+                    throw new BusinessException('文章不存在', -1, ['id' => $id]);
+                }
                 $article->together(['comments'])->delete();
-                $article->delete();
             }
-            
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            Db::commit();
+        } catch (\Throwable $e) {
+            Db::rollback();
+            throw $e;
         }
         return true;
     }
@@ -135,7 +116,7 @@ class Article extends BaseEntity
         ];
 
         if(!isset($types[$type])) {
-            throw new Exception('type error');
+            throw new BusinessException('type error');
         }
 
         // 获取缓存Flag文章列表
@@ -341,11 +322,11 @@ class Article extends BaseEntity
             ->find();
 
             if(is_null($detail)) {
-                throw new Exception('内容不存在', 404);
+                throw new BusinessException('内容不存在', 404);
             }
 
             if($detail['status'] == 0) {
-                throw new Exception('内容待审核');
+                throw new BusinessException('内容待审核');
             }
 
             // 缓存文章详情
@@ -571,7 +552,7 @@ class Article extends BaseEntity
         return $allTags;
     }
 
-    // 获取用户发帖列表
+    // 获取用户最新发帖列表
     public function getUserArtList(int $id) {
         $userArtList = Cache::remember('user_recently_post_'.$id, function() use($id) {
             return $this::field('id,category_id,title,flags,create_time,pv')
@@ -589,6 +570,35 @@ class Article extends BaseEntity
         });
         
         return $userArtList;
+    }
+
+    /**
+     * 获取用户发帖列表
+     * @param array $data
+     * @return array
+     */
+    public function getMyList(array $data): array
+    {
+        $query = $this->where(['user_id' => $data['uid']]);
+
+        $count = $query->count();
+
+        if($count === 0) {
+            return ['count' => $count, 'data' => []];
+        }
+        
+        $data =$query->with(['category' => function($query) {
+            $query->field('id,ename,name');
+        }])
+        ->field('id,category_id,title,create_time,pv')
+        ->page($data['page'])
+        ->limit($data['limit'])
+        ->order('id','desc')
+        ->append(['url'])
+        ->select()
+        ->toArray();
+
+        return ['count' => $count, 'data' => $data];
     }
 
     // 获取搜索文章
@@ -815,7 +825,7 @@ class Article extends BaseEntity
         if($map['totals']) {
 
             if($page > $lastPage) {
-                throw new Exception('no data');
+                throw new BusinessException('no data');
             }
             
             // 最大偏移量

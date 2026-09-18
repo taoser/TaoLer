@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-18 21:44:07
+ * @LastEditors: TaoLer
+ * @Description: index模块 前台路由
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\route\index.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 
 use think\facade\Route;
 use think\Response;
@@ -9,6 +19,8 @@ Route::group('',function () {
 	Route::get('/', 'index/index');
 	// 滑动页码
 	Route::get('index/<page>$', 'index/index')->name('index_page');
+	// 登录状态
+	Route::get('login-status', 'auth/status')->name('login_status');
 
 	Route::group('<ename>-list', function () {
 		// 类别
@@ -34,16 +46,26 @@ Route::group('',function () {
 	// 用户中心
 	Route::group('user',function () {
 		// 用户中心首页
-		Route::get('/', function() {
+		Route::get('', function() {
 			return view('user/index');
 		})->name('user_page');
+		// 添加文章
+		Route::get('add-article$', function() {
+			return view('user/add_article');
+		})->name('user_add_article_page');
+		// 文章列表
+		Route::get('article-list$', function() {
+			return view('user/article_list');
+		})->name('user_article_list_page');
 
+		Route::get('articles$', 'user/myArticles')->name('user_article_list');
+		Route::post('delete$', 'user/delete')->name('user_article_delete');
 
 		Route::get('<id>$', 'user/home')->name('user_home')->pattern(['id'   => '\d+',]);
 		Route::get('set$', 'user/set')->name('user_set');
 		Route::get('message$', 'user/message');
 		Route::get('post$', 'user/post');
-		Route::get('article$', 'user/myArticles');
+		
 		Route::post('editpv$', 'user/editPv');
 		Route::post('updatetime$', 'user/updateTime');
 		Route::get('mycoll$', 'user/myCollect');
@@ -53,11 +75,12 @@ Route::group('',function () {
 		Route::get('active$', 'user/active');
 		Route::get('uploadHeadImg$', 'user/uploadHeadImg');
 		Route::get('logout$', 'user/logout')->name('user_logout');
-	});
 
-	// 注册/登录/找回密码/发送验证码
+	})->middleware(\app\middleware\LoginCheck::class);
+
+	// auth注册/登录/找回密码/发送验证码
 	Route::group(function () {
-		// 登录注册页面
+		// 登录页面
 		Route::get('login$', function() {
 			return view('auth/login');
 		})->name('login_page');
@@ -78,8 +101,8 @@ Route::group('',function () {
 		Route::post('postcode$', 'auth/postcode');
 		Route::post('sentemailcode$', 'auth/sentMailCode');
 		Route::post('respass$', 'auth/respass');
-		Route::get('login-status', 'auth/status')->name('login_status');
-	});
+
+	})->middleware(\app\middleware\LogedCheck::class);
 
 	Route::post('language$', 'index/language')->name('language');
 

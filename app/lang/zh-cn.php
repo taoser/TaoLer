@@ -66,13 +66,13 @@ return [
 
 	// input
 	'please input'		=> '请输入',
-	'please input the content' => '请输入内容',
+	'please input the content'	=> '请输入内容',
 	'please input the username' => '请输入用户名',
 	'please input the password' => '请输入密码',
 	'please input the confirm password' => '请确认密码',
-	'please input the email' => '请输入邮箱',
-	'please input the phone' => '请输入手机号',
-	'please input the captcha' => '请输入验证码',
+	'please input the email'	=> '请输入邮箱',
+	'please input the phone'	=> '请输入手机号',
+	'please input the captcha'	=> '请输入验证码',
 
 	// form
 	'please select' => '请选择',
@@ -83,10 +83,12 @@ return [
 	'sorry, the registration is closed' => '抱歉,注册暂时未开放',
 	'sorry, the username is disabled' => '抱歉,用户名{:name}已被禁用',
 
-
 	'username or password error' => '用户名或密码错误',
 	'The user name or password is incorrect' => '用户名或密码错误',
 	'Login error 3, Please log in 10 minutes later' => '失败3次，请10分钟后重试',
+
+	'already logged in' => '已登录',
+	'no login in'		=> '未登录',
 	
 	
 

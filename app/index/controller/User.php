@@ -10,6 +10,7 @@ use think\facade\Cache;
 use think\facade\Cookie;
 use think\facade\View;
 use think\response\Json;
+use think\facade\Lang;
 use app\facade\Article;
 use app\facade\User as userModel;
 use app\model\Collection;
@@ -26,43 +27,37 @@ use Intervention\Image\Format;
 
 class User extends IndexBaseController
 {	
-	protected $middleware = [ 
-    	'logincheck' => ['except' 	=> ['home'] ],
-    ];
+	
 		
 	// 我的发帖list
 	public function myArticles(Request $request)
 	{
 		$page = $request->get('page/d', 1);
 		$limit = $request->get('limit/d', 20);
-		$myArticle = Article::field('id,category_id,title,status,pv,create_time,update_time')
-            ->withCount(['comments'])
-            ->where(['user_id' => $this->uid])
-            ->order('update_time','desc')
-            ->paginate([
-                'list_rows' => $limit,
-                'page' 		=> $page
-            ]);
-		$count = $myArticle->total();
-		$res = [];
-		if($count){
-			$res['code'] = 0;
-			$res['count'] = $count;
-			foreach($myArticle as $v){
-				$res['data'][] = ['id'=>$v['id'],
-					'title'	=> htmlspecialchars($v['title']),
-					'url'	=> $this->getRouteUrl($v['id'], $v->cate->ename, $v->cate->appname),
-					'status'	=> $this->artStatus($v['status']),
-					'ctime'		=> $v['create_time'],
-					'utime'		=> $v['update_time'],
-					'pv'		=> $v['pv'],
-					'datas'		=> $v['comments_count'].'答'
-				];
-			} 
-			return json($res);
+
+		$result = Article::getMyList(['uid' => $this->uid, 'page' => $page,'limit' => $limit]);
+
+		if($result['count'] > 0){
+			return json(['code'=>0,'msg'=>'success','count'=>$result['count'],'data'=>$result['data']]);
 		}
-			
-		return json(['code'=>-1,'msg'=>'无数据']);			
+		return json(['code'=>1,'msg'=>Lang::get('no data')]);				
+	}
+
+	public function edit()
+	{
+		return View::fetch();
+	}
+
+	/**
+	 * 用户删除自己的文章
+	 */
+	public function delete(Request $request)
+	{
+		$id = $request->post('id/d');
+
+		Article::del($id, $this->uid);
+
+		return json(['code' => 0, 'msg' => Lang::get('delete success')]);
 	}
 
 	// 文章状态
@@ -420,9 +415,9 @@ class User extends IndexBaseController
 		Session::delete('user_name');
 
 		if(Session::has('user_id')){
-			return json(['code' => -1, 'msg' => '退出失败']);
+			return json(['code' => 1, 'msg' => '退出失败']);
 		}
-        return json(['code' => 200, 'msg' => '退出成功', 'url' => '/']);
+        return json(['code' => 0, 'msg' => '退出成功', 'url' => '/']);
 	}
 
 }

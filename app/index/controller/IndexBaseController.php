@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2026-09-08 09:38:48
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2026-09-18 15:26:12
+ * @LastEditors: TaoLer
  * @Description: 前端基础控制器设置
- * @FilePath: \TaoLer\app\common\controller\BaseController.php
+ * @FilePath: \TaoLer\app\index\controller\IndexBaseController.php
  * @Copyright (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
 declare (strict_types = 1);

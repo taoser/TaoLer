@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-18 21:58:05
+ * @LastEditors: TaoLer
+ * @Description: 公共路由
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\route\common.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 
 
 use think\facade\Route;

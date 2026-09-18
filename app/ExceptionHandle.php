@@ -29,6 +29,7 @@ class ExceptionHandle extends Handle
         ModelNotFoundException::class,
         DataNotFoundException::class,
         ValidateException::class,
+        BusinessException::class,  // 业务异常不写日志
     ];
 
     /**
