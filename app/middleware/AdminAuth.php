@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2026-09-14 10:18:34
+ * @LastEditTime: 2026-09-19 22:05:16
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\middleware\AdminAuth.php
@@ -35,10 +35,14 @@ class AdminAuth
     public function handle($request, \Closure $next)
     {
         // admin模块名称
-        $adminModuleName = Config::get('taoler.admin_module_name');
+        // $adminModuleName = Config::get('taoler.admin_module_name');
+
+        $adminModuleName = '/' . trim(system_config('admin_module', 'admin'), '/');
         $controller = $request->controller();
         $action = $request->action();
         // var_dump($controller, $action);
+
+        View::assign('moduleName', $adminModuleName);
 
         $path = strtolower($controller) . '/' . strtolower($action);
 

@@ -1,9 +1,19 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-19 21:07:43
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\common\decorator\Image.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\common\decorator;
 
 use app\common\helper\FileHelper;
-use think\Request;
+use think\facade\Request;
 use app\common\helper\HttpClient;
 
 class Image extends ArticleProcessorDecorator

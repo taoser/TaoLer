@@ -9,6 +9,17 @@ use think\facade\Cache;
 use think\facade\Session;
 use app\common\helper\IdEncode;
 use app\common\service\ArticleService;
+use app\common\strategy\ArticleValidation;
+use app\common\strategy\DataValidationStrategy;
+use app\common\strategy\AuthValidationStrategy;
+use app\common\decorator\MainArticleProcessorDecorator;
+use app\common\decorator\SensitiveWordFilter;
+use app\common\decorator\WordsDesc;
+use app\common\decorator\Media;
+use app\common\observer\ObserverManager;
+use app\common\observer\LogObserver;
+use app\common\observer\TagObserver;
+use app\common\observer\MailObserver;
 use app\service\ArticleCache;
 use app\exception\BusinessException;
 
@@ -55,6 +66,70 @@ class Article extends BaseEntity
 		return $this->save($data);
 	}
 
+    public function addData(array $data): Article
+    {
+        $articleServer = new ArticleService();
+		
+        // 校验策略
+        $articleServer->setValidation(new ArticleValidation())
+            ->addValidation(new DataValidationStrategy())
+            ->addValidation(new AuthValidationStrategy())
+            ->addValidation(new \app\common\strategy\PostValidationStrategy());
+
+        // 装饰
+        $articleServer->setDecorator(new MainArticleProcessorDecorator())
+            ->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+            ->addProcessor(new WordsDesc()) //关键词描述
+            ->addProcessor(new Media()) // 媒体处理
+            ->addProcessor(new \app\common\decorator\Image()); // 图片处理
+        // 观察者策略
+        $articleServer->setObserverManager(new ObserverManager())
+            ->addObserver(new LogObserver())
+            ->addObserver(new MailObserver());
+
+        return $articleServer->add($data, $this);
+    }
+
+    /**
+     * 编辑文章
+     * @param array $data 文章数据
+     * @return Article 文章实体
+     */
+    public function editData(array $data): Article
+    {
+        $articleServer = new ArticleService();
+
+        $article = self::suffix(self::getSuffixById($data['id']))->find($data['id']);
+ 
+        if(is_null($article)) {
+            throw new BusinessException('文章不存在', 1, ['id' => $data['id']]);
+        }
+
+        $articleServer = new ArticleService();
+            
+        // 校验策略
+        $articleServer->setValidation(new ArticleValidation())
+            ->addValidation(new DataValidationStrategy())
+            ->addValidation(new AuthValidationStrategy());
+
+        // 装饰
+        $articleServer->setDecorator(new MainArticleProcessorDecorator())
+            ->addProcessor(new SensitiveWordFilter()) //违禁词过滤
+            ->addProcessor(new WordsDesc()) //关键词描述
+            ->addProcessor(new Media()) // 媒体处理
+            ->addProcessor(new \app\common\decorator\Image()); // 图片处理
+
+        // 观察者策略
+        $articleServer->setObserverManager(new ObserverManager())
+            ->addObserver(new TagObserver())
+            ->addObserver(new MailObserver());
+
+        $result = $articleServer->edit($data, $article);
+        
+        return $result;
+
+    }
+
     /**
      * 删除
      * @param int $id 文章ID
@@ -62,7 +137,7 @@ class Article extends BaseEntity
      * @return bool
      * @throws BusinessException
      */
-    public function del(int $id, int $uid): bool
+    public function deleteData(int $id, int $uid): bool
     {
         Db::startTrans();
         try {

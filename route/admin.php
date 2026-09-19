@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-14 11:05:12
+ * @LastEditTime: 2026-09-19 22:19:47
  * @LastEditors: TaoLer
  * @Description: admin模块 后台路由
  * @Version: V4.0.0
@@ -20,9 +20,15 @@ Route::rule('data/storage/[:id]/licence_pic/:name$', 'addons.jida.Lawyer/showImg
 $adminModuleName = '/' . trim(system_config('admin_module', 'admin'), '/');
 
 Route::group($adminModuleName, function () {
-
     Route::get('/','index/index');
     Route::get('index','index/index')->name('admin-index');
+
+    // 添加文章视图
+    Route::get('content/article-add', function () {
+        return view('content/article/add');
+    })->name('admin-add-article-page');
+
+   
     // 登录接口
     Route::rule('login$','login/index')->name('admin-login');
     // 注册接口

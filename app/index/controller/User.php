@@ -48,14 +48,35 @@ class User extends IndexBaseController
 		return View::fetch();
 	}
 
+	public function addArticle(Request $request)
+	{
+		$data = $request->post(['title','content','category_id','description','tagid']);
+		$data['user_id'] = $this->uid;
+
+		$result = Article::addData($data);
+
+		return json(['code' => 0, 'msg' => Lang::get('add success'), 'data' => ['url' => $result->url]]);
+		
+	}
+
+	public function editArticle(Request $request)
+	{
+		$data = $request->post(['id','title','content','category_id','description','tagid']);
+
+		$result = Article::editData($data);
+
+		return json(['code' => 0, 'msg' => Lang::get('edit success'), 'data' => ['url' => $result->url]]);
+		
+	}
+
 	/**
 	 * 用户删除自己的文章
 	 */
-	public function delete(Request $request)
+	public function deleteArticle(Request $request)
 	{
-		$id = $request->post('id/d');
+		$id = $request->delete('id/d');
 
-		Article::del($id, $this->uid);
+		Article::deleteData($id, $this->uid);
 
 		return json(['code' => 0, 'msg' => Lang::get('delete success')]);
 	}

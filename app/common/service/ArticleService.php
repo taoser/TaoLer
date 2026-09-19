@@ -26,73 +26,68 @@ class ArticleService
         
     // }
 
-    public function add($data)
+    /**
+     * 添加文章
+     * @param array $data 文章数据
+     * @return Article 文章实体
+     */
+    public function add(array $data, Article $article): Article
     {
-        try{
-
-            // 校验
-            if($this->validation) {
-                $this->validation->validate($data);
-            }
-
-            // 装饰器
-            if($this->decorator) {
-                $data = $this->decorator->process($data);
-            }
-
-            $article = new Article();
-
-            $result = $article->add($data);
-
-            $data['article_id'] = $result['id'];
-            $data['status'] = $result['status'];
-
-            // 通知观察者
-            if($this->observer) {
-                $this->observer->notify($data);
-            }
-
-            return $data;
-
-        } catch(Exception $e) {
-            // echo "文章发布失败：". $e->getMessage(). "\n";
-            throw new Exception($e->getMessage());
+        // 校验
+        if($this->validation) {
+            $this->validation->validate($data);
         }
-        
+
+        // 装饰器
+        if($this->decorator) {
+            $data = $this->decorator->process($data);
+        }
+
+        $article->save($data);
+
+        $data['article_id'] = $article->id;
+        $data['status']     = $article->status;
+
+        // 通知观察者
+        if($this->observer) {
+            $this->observer->notify($data);
+        }
+
+        return $article;        
     }
 
     /**
      * 编辑文章
      * @param array $data 文章数据
-     * @param Article $articleModel 文章模型
-     * @return bool 是否编辑成功
+     * @param Article $article 文章实体
+     * @return Article 文章实体
      */
-    public function edit(array $data, Article $articleModel): bool
+    public function edit(array $data, Article $article): Article
     {
-        try{
-            // 校验
-            if($this->validation) {
-                $this->validation->validate($data);
-            }
-            // 装饰器
-            if($this->decorator) {
-                $data = $this->decorator->process($data);
-            }
-            // 数据保存
-            $articleModel->save($data);
-
-            $data['article_id'] = $data['id'];
-
-            // 通知观察者
-            if($this->observer) {
-                $this->observer->notify($data);
-            }
-
-            return true;
-            
-        } catch(Exception $e) {
-            throw new Exception($e->getMessage());
+        // 校验
+        if($this->validation) {
+            $this->validation->validate($data);
         }
+        // 装饰器
+        if($this->decorator) {
+            $data = $this->decorator->process($data);
+        }
+        // 数据保存
+        if(!empty($data['id'])){
+            unset($data['id']);
+        }
+
+        $article->save($data);
+
+        $data['id'] = $article->id;
+        $data['status']     = $article->status;
+
+        // 通知观察者
+        if($this->observer) {
+            $this->observer->notify($data);
+        }
+
+        return $article;
     }
 
     // 校验器

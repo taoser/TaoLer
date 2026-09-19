@@ -118,7 +118,10 @@
 
 	const LIST_URL = MODULE_NAME + '/content/article/list';
 	const CATE_TREE_URL = MODULE_NAME + '/content/category/getArticleSelectCategoryList';
-	const ADD_URL = MODULE_NAME + '/content/article/add';
+	// const ADD_URL = MODULE_NAME + '/content/article/add';
+	// const ADD_URL = MODULE_NAME + '/content/article-add';
+	const ADD_PAGE = "{:url('admin-add-article-page')}";
+
 	const EDIT_URL = MODULE_NAME + '/content/article/edit';
 	const DELETE_URL = MODULE_NAME + '/content/article/delete';
 	const CHECK_URL = MODULE_NAME + '/content/article/check';
@@ -277,7 +280,7 @@
 			title: '新增',
 			shade: 0.1,
 			area: [common.isModile()?'100%':'100%', common.isModile()?'100%':'100%'],
-			content: ADD_URL
+			content: ADD_PAGE
 		});
 	}
 	// 编辑

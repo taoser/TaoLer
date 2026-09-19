@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-18 15:26:52
+ * @LastEditTime: 2026-09-19 16:09:20
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -47,7 +47,7 @@ class Index extends IndexBaseController
 
 		// var_dump(Lang::get('user.center'));
 
-	// var_dump($request->baseFile());
+	// var_dump($request->layer());
 
 		$uid = $request->session('user_id');
 

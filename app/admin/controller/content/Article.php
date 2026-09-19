@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-09 22:23:36
+ * @LastEditTime: 2026-09-19 22:41:21
  * @LastEditors: TaoLer
  * @Description: 文章管理
  * @Version: V4.0.0
@@ -12,7 +12,7 @@
 
 namespace app\admin\controller\content;
 
-use app\admin\controller\AdminBaseController;
+
 use Exception;
 use think\Request;
 use think\Response;
@@ -22,19 +22,8 @@ use think\facade\View;
 use think\facade\Db;
 use think\facade\Cache;
 use think\response\Json;
-
-use app\common\service\ArticleService;
-use app\common\strategy\ArticleValidation;
-use app\common\strategy\DataValidationStrategy;
-use app\common\strategy\AuthValidationStrategy;
-use app\common\decorator\MainArticleProcessorDecorator;
-use app\common\decorator\SensitiveWordFilter;
-use app\common\decorator\WordsDesc;
-use app\common\decorator\Media;
-use app\common\observer\ObserverManager;
-use app\common\observer\LogObserver;
-use app\common\observer\TagObserver;
-use app\common\observer\MailObserver;
+use app\exception\BusinessException;
+use app\admin\controller\AdminBaseController;
 
 class Article extends AdminBaseController
 {
@@ -78,39 +67,15 @@ class Article extends AdminBaseController
 
     /**
      * 添加帖子文章
-     * @return string|\think\Response|\think\response\Json|void
+     * @return Response
      */
-    public function add(Request $request)
+    public function add(Request $request): Response
     {
-        if (!$request->isPost()) {
-            return View::fetch('add');
-        }
-
         $data = $request->param(['category_id', 'title', 'tiny_content', 'content', 'keywords', 'description', 'tagid']);
         $data['user_id'] = 1; // 管理员ID
         $data['status'] = 1; // 不用审核
-
-        $articleServer = new ArticleService();
-    
-        // 校验策略
-        $articleServer->setValidation(new ArticleValidation())
-            ->addValidation(new DataValidationStrategy())
-            ->addValidation(new AuthValidationStrategy())
-            ->addValidation(new \app\common\strategy\PostValidationStrategy());
-
-        // 装饰
-        $articleServer->setDecorator(new MainArticleProcessorDecorator())
-            ->addProcessor(new SensitiveWordFilter()) //违禁词过滤
-            ->addProcessor(new WordsDesc()) //关键词描述
-            ->addProcessor(new Media()) // 媒体处理
-            ->addProcessor(new \app\common\decorator\Image()); // 图片处理
-
-        // 观察者策略
-        $articleServer->setObserverManager(new ObserverManager())
-            ->addObserver(new LogObserver())
-            ->addObserver(new MailObserver());
-
-        $data = $articleServer->add($data);
+        
+        $this->entity::addData($data);
         
         return json(['code' => 0, 'msg' => 'ok']);
             
@@ -143,32 +108,7 @@ class Article extends AdminBaseController
     {
         $data = $request->post(['id/d','category_id','title','content','keywords','description','tagid']);
 
-		$article = $this->entity::suffix($this->getSuffixById($data['id']))->find($data['id']);
- 
-        if(is_null($article)) {
-            return json(['code' => -1, 'msg' => '不能编辑！']);
-        }
-
-        $articleServer = new ArticleService();
-            
-        // 校验策略
-        $articleServer->setValidation(new ArticleValidation())
-            ->addValidation(new DataValidationStrategy())
-            ->addValidation(new AuthValidationStrategy());
-
-        // 装饰
-        $articleServer->setDecorator(new MainArticleProcessorDecorator())
-            ->addProcessor(new SensitiveWordFilter()) //违禁词过滤
-            ->addProcessor(new WordsDesc()) //关键词描述
-            ->addProcessor(new Media()) // 媒体处理
-            ->addProcessor(new \app\common\decorator\Image()); // 图片处理
-
-        // 观察者策略
-        $articleServer->setObserverManager(new ObserverManager())
-            ->addObserver(new TagObserver())
-            ->addObserver(new MailObserver());
-
-        $articleServer->edit($data, $article);
+		$this->entity::editData($data);
 
         return json(['code' => 0, 'msg' => 'ok']);
         

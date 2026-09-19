@@ -41,12 +41,13 @@ class AdminBaseController extends \app\BaseController
         $syscy = $sys['clevel'] ? Lang::get('Authorized') : Lang::get('Free version');
         $runTime = $this->getRunTime();
         
+        // 中间件已赋值，这里无需重复赋值
         // 用于管理后台访问路径前缀，加密的模块名称 /adminExvJcL
-        $moduleName = system_config('admin_module', 'admin');
-        $adminModuleName = '/' . trim($moduleName, '/');
+        // $moduleName = system_config('admin_module', 'admin');
+        // $adminModuleName = '/' . trim($moduleName, '/');
 
         View::assign([
-            'moduleName'    => $adminModuleName,
+            // 'moduleName'    => $adminModuleName,
             'domain'        => $this->getDomain(),
             'insurl'        => $sys['domain'],
             'syscy'         => $syscy,

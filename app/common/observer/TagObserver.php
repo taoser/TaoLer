@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-07-30 07:19:57
+ * @LastEditTime: 2026-09-19 22:36:58
+ * @LastEditors: TaoLer
+ * @Description: 文章标签观察者
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\common\observer\TagObserver.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 
 namespace app\common\observer;
 
@@ -10,7 +20,7 @@ class TagObserver implements Observer
     {
         //处理标签
         $artTags = Db::name('taglist')->where('article_id', $data['id'])->column('tag_id','id');
-        if(isset($data['tagid'])) {
+        if(!empty($data['tagid'])) {
             $tagIdArr = explode(',', $data['tagid']);
             foreach($artTags as $aid => $tid) {
                 if(!in_array($tid, $tagIdArr)){

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-18 21:44:07
+ * @LastEditTime: 2026-09-19 16:41:59
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -58,8 +58,9 @@ Route::group('',function () {
 			return view('user/article_list');
 		})->name('user_article_list_page');
 
-		Route::get('articles$', 'user/myArticles')->name('user_article_list');
-		Route::post('delete$', 'user/delete')->name('user_article_delete');
+		Route::get('articles$', 'user/myArticles')->name('article_list');
+		Route::post('add-article', 'user/addArticle')->name('add_article');
+		Route::delete('delete-article$', 'user/deleteArticle')->name('delete_article');
 
 		Route::get('<id>$', 'user/home')->name('user_home')->pattern(['id'   => '\d+',]);
 		Route::get('set$', 'user/set')->name('user_set');

@@ -8,9 +8,14 @@ class WordsDesc extends ArticleProcessorDecorator {
         
         // 把中文，转换为英文,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
         // 关键词
-        $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，', ',', $data['keywords'])))));
+        if(!empty($data['keywords'])){
+            $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，', ',', $data['keywords'])))));
+        }
+
         // 描述
-        $data['description'] = strip_tags($this->filterEmoji($data['description']));
+        if(!empty($data['description'])){
+            $data['description'] = strip_tags($this->filterEmoji($data['description']));
+        }
 
         return $data;
     }
