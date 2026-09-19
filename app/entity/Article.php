@@ -55,7 +55,14 @@ class Article extends BaseEntity
 		return $this->save($data);
 	}
 
-    public function del(int $id, int $uid): string
+    /**
+     * 删除
+     * @param int $id 文章ID
+     * @param int $uid 用户ID
+     * @return bool
+     * @throws BusinessException
+     */
+    public function del(int $id, int $uid): bool
     {
         Db::startTrans();
         try {
@@ -446,7 +453,7 @@ class Article extends BaseEntity
                 foreach($articleIdArr as $id) {
                     $article = self::suffix(self::getSuffixById($id))
                     ->with(['category' => function($query) {
-                        $query->field('id,name');
+                        $query->field('id,name,ename');
                     }])
                     ->field('id,title,category_id,pv,create_time,description')
                     ->where('id', $id)
@@ -454,10 +461,12 @@ class Article extends BaseEntity
                     ->find();
 
                     if(!is_null($article)) {
-                        $article['hasImg'] = $article['has_image'] > 0 ? true : false;
-                        $article['time'] = $article['create_time'];
-                        $article['cate_name']   = $article['category']['name'];
-                        $article['desc']    = $article['description'];
+                        $article['hasImg']          = $article['has_image'] > 0 ? true : false;
+                        $article['create_time']     = $article['create_time'];
+                        $article['category_name']   = $article['category']['name'];
+                        $article['description']     = $article['description'];
+                        $article['link']            = $article['url'];
+                        
 
                         $data[] = $article;
                     }

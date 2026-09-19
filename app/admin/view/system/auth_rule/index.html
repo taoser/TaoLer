@@ -164,7 +164,7 @@
                 let loading = layer.load();
                 $.ajax({
                     url: RULES_DELETE,
-                    data:{id:obj.data['id']},
+                    data:{id: obj.data.id},
                     dataType:'json',
                     type:'delete',
                     success:function(res){

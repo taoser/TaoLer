@@ -385,9 +385,9 @@ class Category extends BaseEntity
     public function getList() : array
     {
         $data = $this->where('status', 1)
-        ->field('id,pid,ename,type,sort,name,tpl,icon,status,is_hot,description,url,image')
-        ->append(['url'])
+        ->field('id,pid,ename,type,sort,name,ename,tpl,icon,status,is_hot,description,url,image')
         ->order('sort asc')
+        ->append(['url'])
         ->cache(true, 900)
         ->select()
         ->toArray();
@@ -457,19 +457,16 @@ class Category extends BaseEntity
         $subCateArray = Cache::remember("subnav_{$ename}", function() use($ename){
 			$subCateList = []; // 没有点击任何分类，点击首页获取全部分类信息
 			//1.查询父分类id
-			$pCate = Db::name('category')
-			->field('id,pid,ename,name,is_hot')
-			->where(['ename' => $ename,'status'=>1,'delete_time'=>0])
+			$pCate = $this->field('id,pid,ename,name,is_hot')
+			->where(['ename' => $ename,'status'=>1])
 			->find();
 
 			if(!is_null($pCate)) {
 				// 点击分类，获取子分类信息
 				$parentId = $pCate['id'];
 
-				$subCate = Db::name('category')
-				->field('id,ename,name,is_hot,pid')
+				$subCate =$this->field('id,pid,name,ename,is_hot')
 				->where(['pid'=>$parentId,'status'=>1])
-                ->whereNull('delete_time')
 				->select()
 				->toArray();
 					
@@ -483,10 +480,8 @@ class Category extends BaseEntity
 						$subCateList[] = $pCate;
 					} else {
 						//子菜单下如果无子菜单，则显示全部兄弟分类
-						$parament = Db::name('category')
-						->field('id,ename,name,is_hot,pid')
+						$parament = $this->field('id,pid,name,ename,is_hot')
 						->where(['pid'=>$pCate['pid'],'status'=>1])
-                        ->whereNull('delete_time')
 						->order(['sort' => 'asc'])
 						->select()
 						->toArray();

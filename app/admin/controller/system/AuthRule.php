@@ -120,19 +120,24 @@ class AuthRule extends AdminBaseController
 	 */
 	public function delete(Request $request): Response
 	{	
-		$id = $request->get('id/d');
+		$id = $request->delete('id/d');
 
 		$this->model->del($id);
 		
 		return json(['code'=>0,'msg'=>'删除成功']);
 	}
 
+	/**
+	 * 获取权限详情
+	 * 
+	 * @return Response
+	 */
 	public function getInfo(Request $request): Response
 	{
 		$id = $request->get('id/d');
 		$rules = $this->model->find($id);
 		
-		return json(['code'=>0,'msg'=>'ok','data'=>$rules]);
+		return json(['code' => 0, 'msg' => 'ok', 'data' => $rules]);
 	}
 
 
