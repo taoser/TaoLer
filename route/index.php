@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-19 16:41:59
+ * @LastEditTime: 2026-09-20 22:11:44
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -53,11 +53,18 @@ Route::group('',function () {
 		Route::get('add-article$', function() {
 			return view('user/add_article');
 		})->name('user_add_article_page');
+		// 编辑文章
+		Route::get('edit-article$', function() {
+			return view('user/edit_article');
+		})->name('edit_article_page');
 		// 文章列表
 		Route::get('article-list$', function() {
 			return view('user/article_list');
 		})->name('user_article_list_page');
-
+		
+		// 获取文章详情
+		Route::get('get-article-info$', 'user/getArticleInfo')->name('get_article_info');
+		
 		Route::get('articles$', 'user/myArticles')->name('article_list');
 		Route::post('add-article', 'user/addArticle')->name('add_article');
 		Route::delete('delete-article$', 'user/deleteArticle')->name('delete_article');

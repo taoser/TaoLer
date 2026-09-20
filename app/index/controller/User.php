@@ -35,7 +35,7 @@ class User extends IndexBaseController
 		$page = $request->get('page/d', 1);
 		$limit = $request->get('limit/d', 20);
 
-		$result = Article::getMyList(['uid' => $this->uid, 'page' => $page,'limit' => $limit]);
+		$result = Article::getMyList(['uid' => $this->uid, 'page' => $page, 'limit' => $limit]);
 
 		if($result['count'] > 0){
 			return json(['code'=>0,'msg'=>'success','count'=>$result['count'],'data'=>$result['data']]);
@@ -57,6 +57,15 @@ class User extends IndexBaseController
 
 		return json(['code' => 0, 'msg' => Lang::get('add success'), 'data' => ['url' => $result->url]]);
 		
+	}
+
+	public function getArticleInfo(Request $request)
+	{
+		$id = $request->get('id/d');
+
+		$article = Article::getInfo($id);
+
+		return json(['code' => 0, 'msg' => Lang::get('get success'), 'data' => $article]);
 	}
 
 	public function editArticle(Request $request)

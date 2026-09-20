@@ -374,6 +374,28 @@ class Article extends BaseEntity
     }
 
     /**
+     * 详情信息
+     * @param int $id 文章id
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function getInfo(int $id)
+    {
+        // 设置分表后缀
+        $this->setSuffix(self::getSuffixById($id));
+
+        $detail =  $this->field('id,title,content,category_id,keywords,description')
+        ->where('id', $id)
+        ->find();
+
+        if(is_null($detail)) {
+            throw new BusinessException('内容不存在', 404);
+        }
+
+        return $detail;
+    }
+
+    /**
      * 获取详情
      * @param int|string $id 文章id
      * @return mixed

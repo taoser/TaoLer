@@ -66,6 +66,7 @@ return [
 
 	// input
 	'please input'		=> '请输入',
+	'please input the title'	=> '请输入标题',
 	'please input the content'	=> '请输入内容',
 	'please input the username' => '请输入用户名',
 	'please input the password' => '请输入密码',
