@@ -99,7 +99,7 @@ class Article extends BaseEntity
     {
         $articleServer = new ArticleService();
 
-        $article = self::suffix(self::getSuffixById($data['id']))->find($data['id']);
+        $article = $this->suffix(self::getSuffixById($data['id']))->find($data['id']);
  
         if(is_null($article)) {
             throw new BusinessException('文章不存在', 1, ['id' => $data['id']]);

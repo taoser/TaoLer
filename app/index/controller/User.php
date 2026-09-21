@@ -43,14 +43,9 @@ class User extends IndexBaseController
 		return json(['code'=>1,'msg'=>Lang::get('no data')]);				
 	}
 
-	public function edit()
-	{
-		return View::fetch();
-	}
-
 	public function addArticle(Request $request)
 	{
-		$data = $request->post(['title','content','category_id','description','tagid']);
+		$data = $request->post(['title','content','category_id/d','description','tagid']);
 		$data['user_id'] = $this->uid;
 
 		$result = Article::addData($data);
@@ -70,7 +65,7 @@ class User extends IndexBaseController
 
 	public function editArticle(Request $request)
 	{
-		$data = $request->post(['id','title','content','category_id','description','tagid']);
+		$data = $request->post(['id/d','title','content','category_id/d','description','tagid']);
 
 		$result = Article::editData($data);
 
