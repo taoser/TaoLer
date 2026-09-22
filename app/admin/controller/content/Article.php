@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-19 22:41:21
+ * @LastEditTime: 2026-09-22 22:00:27
  * @LastEditors: TaoLer
  * @Description: 文章管理
  * @Version: V4.0.0
@@ -16,6 +16,7 @@ namespace app\admin\controller\content;
 use Exception;
 use think\Request;
 use think\Response;
+use think\facade\Lang;
 use app\facade\Article as ArticleEntity;
 use app\facade\Category;
 use think\facade\View;
@@ -92,12 +93,21 @@ class Article extends AdminBaseController
     public function edit(Request $request)
     {
         $id = $request->get('id/d');
-		$article = $this->entity::suffix($this->getSuffixById($id))->find($id);
+		$article = $this->entity::getInfo($id);
         
         View::assign('article', $article);
 
         return View::fetch();
     }
+
+    public function getArticleInfo(Request $request)
+	{
+		$id = $request->get('id/d');
+
+		$article = $this->entity::getInfo($id);
+
+		return json(['code' => 0, 'msg' => Lang::get('get success'), 'data' => $article]);
+	}
 
     /**
      * 编辑文章数据

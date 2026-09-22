@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2022-08-14 09:39:01
- * @LastEditTime: 2026-09-22 17:40:14
+ * @LastEditTime: 2026-09-22 21:47:34
  * @LastEditors: TaoLer
  * @Description: 标签控制器
  * @Version: V4.0.0
@@ -16,7 +16,6 @@ namespace app\admin\controller\content;
 use think\Request;
 use think\Response;
 use think\facade\View;
-use app\facade\TagList;
 use app\facade\Tag as TagModel;
 use app\admin\controller\AdminBaseController;
 
@@ -90,7 +89,23 @@ class Tag extends AdminBaseController
         TagModel::del($id);
         
         return json(['code'=>0,'msg'=>'删除成功']);
-        
+    }
+
+    /**
+     * 标签树
+     * @param Request $request
+     * @return Response
+     */
+    public function tree(Request $request): Response
+    {
+        $result = TagModel::tree();
+        $data = [];
+        if($result['count'] > 0) {
+            foreach($result['data'] as  $v) {
+                $data[] = ['name' => $v['name'],'value' => $v['id']];
+            }
+        }
+        return json(['code' => 0, 'msg' => 'ok','data'=>$data]);
     }
 
 }

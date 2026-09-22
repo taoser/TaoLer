@@ -279,7 +279,8 @@
 			type: 2,
 			title: '新增',
 			shade: 0.1,
-			area: [common.isModile()?'100%':'100%', common.isModile()?'100%':'100%'],
+			maxmin: true,
+			area: ['90%', '90%'],
 			content: ADD_PAGE
 		});
 	}
@@ -295,7 +296,8 @@
 				type: 2,
 				title: '修改',
 				shade: 0.1,
-				area: ['100%', '100%'],
+				maxmin: true,
+				area: ['90%', '90%'],
 				content: EDIT_URL+'?id=' + obj.data.id
 			})
 		})

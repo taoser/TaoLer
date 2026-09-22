@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-20 10:45:41
- * @LastEditTime: 2026-09-22 17:22:28
+ * @LastEditTime: 2026-09-22 20:48:41
  * @LastEditors: TaoLer
  * @Description: 文章tag设置
  * @FilePath: \TaoLer\app\entity\Tag.php
@@ -89,6 +89,7 @@ class Tag extends BaseEntity
             return ['count' => 0, 'data' => []];
         }
         $data = $this->page($page, $limit)->select()->toArray();
+        
         return ['count' => $count, 'data' => $data];
     }
 

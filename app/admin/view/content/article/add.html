@@ -1,7 +1,8 @@
-{extend name="public/form" /}
+{extend name="public:form" /}
 
-{block name="head"}
+{block name="link"}
 <style>
+	.form-panel{padding: 10px;}
 	#L_title {position: relative;}
 	.bdsug {height: auto; position: absolute; left: 0; top: 30px; z-index: 100; background: #fff; border-radius: 0 0 10px 10px; border: 1px solid #dadade!important; border-top: 0!important; box-shadow: none;}
 	.bdsug ul{display: block;margin: 5px 2px 0; padding: 5px 0 7px; background: 0 0; border-top: 0px solid #f5f5f6;}
@@ -11,64 +12,46 @@
 
 {block name="body"}
 
-<form class="layui-form">
-	<div class="mainBox">
-		<div class="main-container">
-			<div class="layui-row layui-col-space15 layui-form-item">
-				<div class="layui-col-md3">
-					<label class="layui-form-label">分类</label>
-					<div class="layui-input-block">
-						<div id="CateId" class="xm-select-demo"></div>
-					</div>
-				</div>
-				<div class="layui-col-md9">
-					<label for="L_title" class="layui-form-label">{:lang('title')}</label>
-					<div class="layui-input-block">
-						<input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" style="position:relative;"/>
-					</div>
-				</div>
+<form class="layui-form form-panel">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md9">
+			<div class="layui-form-item">
+				<input type="text" id="L_title" name="title" lay-verify="required" placeholder="{:lang('please input the title')}" required autocomplete="off" class="layui-input" style="position:relative;"/>
 			</div>
-
 			<div class="layui-form-item layui-form-text">
-				<div class="layui-input-block">
 				<textarea id="L_content" name="content" lay-verify="" placeholder="{:lang('please input the content')}" class="layui-textarea taonyeditor"></textarea>
-				</div>
+			</div>
+		</div>
+
+		<div class="layui-col-md3">
+			<div class="layui-form-item">
+				<div id="cate-id" class="xm-select-demo"></div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">{:lang('描述')}</label>
-				<div class="layui-input-block">
 				<textarea name="description" class="layui-textarea" placeholder="SEO描述"></textarea>
-				</div>
 			</div>
 			{//关键词}
 			<div class="layui-form-item">
-				<label class="layui-form-label">{:lang('关键词')}</label>
-				<div class="layui-input-block">
-					<!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
-					<input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="关键词" />
-				</div>
+				<!-- <input type="text" class="layui-input" name="" id="inputTags"  value="" placeholder="多个回车添加" title="添加关键词" /> -->
+				<input type="text" class="layui-input" name="keywords" value="" placeholder="多个用逗号隔开" title="关键词" />
 			</div>
 			{//tag}
 			<div class="layui-form-item">
-				<label class="layui-form-label">{:lang('add tags')}</label>
-				<div class="layui-input-block">
-					<div id="tag"></div>
+				<div id="tag"></div>
+			</div>
+			<div class="layui-form-item">
+				<div class="button-container">
+					<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="form-save">
+						<i class="layui-icon layui-icon-ok"></i>提交
+					</button>
+					<button type="reset" class="pear-btn pear-btn-sm">
+						<i class="layui-icon layui-icon-refresh"></i>重置
+					</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="bottom">
-		<div class="button-container">
-			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="form-save">
-			<i class="layui-icon layui-icon-ok"></i>
-			提交
-			</button>
-			<button type="reset" class="pear-btn pear-btn-sm">
-			<i class="layui-icon layui-icon-refresh"></i>
-			重置
-			</button>
-		</div>
-	</div>
+
 </form>
 
 {__block__}
@@ -77,7 +60,7 @@
 
 	const ADD_URL = MODULE_NAME + '/content/article/add';
 	const CATE_TREE_URL = MODULE_NAME + '/content/category/getArticleSelectCategoryList';
-	const TAG_URL = MODULE_NAME + '/content/tag/getAllTag';
+	const TAG_URL = MODULE_NAME + '/content/tag/tree';
 	const UPLOAD_URL = MODULE_NAME + '/content/article/uploads';
 
 	
@@ -89,13 +72,13 @@
 		// 分类选择 渲染下拉树
 		$.get(CATE_TREE_URL, function(res){
 			xmSelect.render({
-				el: '#CateId',
+				el: '#cate-id',
 				name: 'category_id',
 				height: '250px',
 				layVerify: 'required',
 				layVerType: 'tips',
 				data: res.data,
-				initValue:  [res.data[0].id],
+				initValue:  [],
 				model: {label: {type: 'text'}},
 				prop: {
 					name: 'name',
@@ -107,37 +90,33 @@
 					show: false,
 					indent: 15,
 					strict: false,
-					expandedKeys: true
+					expandedKeys: false
 				},
 				on: function(data){ // 单选on模式
 					if(data.isAdd){
 						return data.change.slice(0, 1)
 					}
 				},
-				tips: '请选择'
+				tips: '请选择类别'
 			});
-		});
-
-		// tag标签
-
-		//1.渲染标签
-		var addTags = xmSelect.render({
-			el: '#tag',
-			name: 'tagid',
-			layVerify: '',
-			layVerType: 'msg',
-			paging: true,
-			pageSize: 5,
-			data: []
 		});
 
 		//2.动态标签赋值
 		$.get(TAG_URL, function(res){
 			if(res.code === 0){
-			addTags.update({
-				data: res.data,
-				autoRow: true,
-			})
+				xmSelect.render({
+					el: '#tag',
+					name: 'tagid',
+					layVerify: '',
+					layVerType: 'msg',
+					paging: true,
+					pageSize: 10,
+					filterable: true,
+					pageEmptyShow: false,
+					data: res.data,
+					autoRow: true,
+					tips: '请选择标签'
+				});
 			}
 		});
 

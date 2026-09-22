@@ -214,7 +214,7 @@ class Article extends BaseEntity
 
             $datas = array_merge($datas, $data);
         }
-        
+
         // 缓存Flag文章列表
         ArticleCache::setFlagArticles($type, $datas);
 
