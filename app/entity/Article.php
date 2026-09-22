@@ -41,31 +41,6 @@ class Article extends BaseEntity
     // 当前用到的数据总和
     protected static int $currentTotalNum = 0;
 
-    /**
-     * 添加
-     * @param array $data
-     * @return array
-     */
-	public function add(array $data): array
-	{
-        $this->save($data);
-        
-        return [
-            'id' => $this->id,
-            'status' => $this->status
-        ];
-	}
-
-    /**
-     * 编辑
-     * @param array $data
-     * @return bool
-     */
-	public function edit(array $data): bool
-	{
-		return $this->save($data);
-	}
-
     public function addData(array $data): Article
     {
         $articleServer = new ArticleService();
@@ -85,7 +60,8 @@ class Article extends BaseEntity
         // 观察者策略
         $articleServer->setObserverManager(new ObserverManager())
             ->addObserver(new LogObserver())
-            ->addObserver(new MailObserver());
+            ->addObserver(new MailObserver())
+            ->addObserver(new TagObserver());
 
         return $articleServer->add($data, $this);
     }
@@ -122,7 +98,8 @@ class Article extends BaseEntity
         // 观察者策略
         $articleServer->setObserverManager(new ObserverManager())
             ->addObserver(new TagObserver())
-            ->addObserver(new MailObserver());
+            ->addObserver(new MailObserver())
+            ->addObserver(new LogObserver());
 
         $result = $articleServer->edit($data, $article);
         
@@ -219,7 +196,7 @@ class Article extends BaseEntity
 
         foreach($sufsAids as $suf => $ids) {
             $data = $this->suffix($suf)
-            ->field('id,title,category_id,user_id,description,create_time,pv,thumb,has_image,thumb,has_video,has_audio,media,comments_num,flags')
+            ->field('id,title,category_id,user_id,description,create_time,pv,thumb,has_image,has_video,has_audio,media,comments_num,flags')
             ->with([
                 'category' => function (Query $query) {
                     $query->field('id,name,ename');
@@ -237,6 +214,7 @@ class Article extends BaseEntity
 
             $datas = array_merge($datas, $data);
         }
+        
         // 缓存Flag文章列表
         ArticleCache::setFlagArticles($type, $datas);
 
@@ -309,7 +287,9 @@ class Article extends BaseEntity
                 // halt($arr);
                 foreach($arr as $suffix => $id) {
                     // 评论数
-                    $data = $this->field('id,category_id,title,create_time,comments_num')
+                    $data = $this::with(['category'=> function($query) {
+                        $query->field('id,name,ename');
+                    }])->field('id,category_id,title,create_time,comments_num')
                     ->suffix($suffix)
                     ->whereIn('id', $id)
                     ->whereNull('delete_time')
@@ -348,7 +328,10 @@ class Article extends BaseEntity
             
             for($i = 0; $i < $count; $i++) {
                 // 评论数
-                $data = $this->field('id,category_id,title,pv,create_time,comments_num')
+                $data = $this::with(['category'=> function($query) {
+                    $query->field('id,name,ename');
+                }])
+                ->field('id,category_id,title,pv,create_time,comments_num')
                 ->suffix($suffixArr[$i])
                 ->whereNull('delete_time')
                 ->where('status', 1)
@@ -386,6 +369,7 @@ class Article extends BaseEntity
 
         $detail =  $this->field('id,title,content,category_id,keywords,description')
         ->where('id', $id)
+        ->append(['tagid'])
         ->find();
 
         if(is_null($detail)) {
@@ -409,10 +393,10 @@ class Article extends BaseEntity
         $this->setSuffix(self::getSuffixById($id));
         // 从缓存中获取文章详情
         $detail = ArticleCache::get($id);
-
+ 
         if(is_null($detail)) {
 
-            $detail =  $this->field('id,title,content,status,category_id,user_id,forbid_comment,keywords,description,create_time,update_time,comments_num,flags')
+            $detail =  $this->field('pv,id,title,content,status,category_id,user_id,forbid_comment,keywords,description,create_time,update_time,comments_num,flags')
             ->where('id', $id)
             ->with([
                 'category' => function(Query $query){
@@ -430,7 +414,7 @@ class Article extends BaseEntity
             }
 
             if($detail['status'] == 0) {
-                throw new BusinessException('内容待审核');
+                throw new BusinessException('内容待审核', 2);
             }
 
             // 缓存文章详情
@@ -441,7 +425,7 @@ class Article extends BaseEntity
         // 步增pv
         $detail->setInc('pv', 1);
 
-        $detail['pv'] = $this->where('id', $id)->value('pv');
+        $detail->pv = $this->where('id', $id)->value('pv');
 
         return $detail;
     }
@@ -459,7 +443,9 @@ class Article extends BaseEntity
 
         $prev = [];
 
-        $prevId = $this::where('id', '>=', $id + 1) // >= <= 条件可以使用索引
+        $prevId = $this::with(['category'=> function($query) {
+            $query->field('id,name,ename');
+        }])->where('id', '>=', $id + 1) // >= <= 条件可以使用索引
         ->where([
             ['category_id', '=', $cid],
             ['status', '=',1]
@@ -468,7 +454,9 @@ class Article extends BaseEntity
         ->value('id');
 
         if(!is_null($prevId)) {
-            $prev[] = $this::field('id,title,category_id')->append(['url'])->find($prevId)->toArray();
+            $prev[] = $this::with(['category'=> function($query) {
+                $query->field('id,name,ename');
+            }])->field('id,title,category_id')->append(['url'])->find($prevId)->toArray();
         } else {
             $prev[] = ['title' => '前面没有了', 'url' => 'javascript:void(0);'];
         }
@@ -489,7 +477,9 @@ class Article extends BaseEntity
 
         $next = [];
 
-        $nextId = $this::where('id', '<=', $id - 1)
+        $nextId = $this::with(['category' => function($query) {
+            $query->field('id,name,ename');
+        }])->where('id', '<=', $id - 1)
         ->where([
             ['category_id', '=', $cid],
             ['status', '=',1]
@@ -498,7 +488,9 @@ class Article extends BaseEntity
         ->value('id');
 
         if(!is_null($nextId)) {
-            $next[] = $this->field('id,title,category_id')->append(['url'])->find($nextId)->toArray();
+            $next[] = $this::with(['category'=> function($query) {
+                $query->field('id,name,ename');
+            }])->field('id,title,category_id')->append(['url'])->find($nextId)->toArray();
         } else {
             $next[] = ['title' => '后面没有了', 'url' => 'javascript:void(0);'];
         }
@@ -626,7 +618,7 @@ class Article extends BaseEntity
                 'user' => function($query){
                     $query->field('id,name,avatar');
                 },'category' => function($query){
-                    $query->field('id,name');
+                    $query->field('id,name,ename');
                 }
             ])
             ->order('pv desc')
@@ -696,7 +688,7 @@ class Article extends BaseEntity
         $data =$query->with(['category' => function($query) {
             $query->field('id,ename,name');
         }])
-        ->field('id,category_id,title,create_time,pv')
+        ->field('id,category_id,title,status,create_time,pv')
         ->page($data['page'])
         ->limit($data['limit'])
         ->order('id','desc')

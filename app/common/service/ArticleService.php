@@ -1,5 +1,14 @@
 <?php
-
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-07-30 07:19:57
+ * @LastEditTime: 2026-09-22 14:19:31
+ * @LastEditors: TaoLer
+ * @Description: 文章添加和编辑服务
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\common\service\ArticleService.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 namespace app\common\service;
 
 use Exception;
@@ -22,10 +31,6 @@ class ArticleService
     // 观察者管理器
     private $observer = null;
 
-    // public function __construct($observer) {
-        
-    // }
-
     /**
      * 添加文章
      * @param array $data 文章数据
@@ -45,12 +50,12 @@ class ArticleService
 
         $article->save($data);
 
-        $data['article_id'] = $article->id;
+        $data['id'] = $article->id;
         $data['status']     = $article->status;
 
         // 通知观察者
         if($this->observer) {
-            $this->observer->notify($data);
+            $this->observer->notify($data, $article);
         }
 
         return $article;        
@@ -76,7 +81,6 @@ class ArticleService
         if(!empty($data['id'])){
             unset($data['id']);
         }
-
         $article->save($data);
 
         $data['id'] = $article->id;
@@ -84,7 +88,7 @@ class ArticleService
 
         // 通知观察者
         if($this->observer) {
-            $this->observer->notify($data);
+            $this->observer->notify($data, $article);
         }
 
         return $article;
@@ -96,20 +100,20 @@ class ArticleService
         return $this;
     }
 
-    // 设置校验器类
+    // 装饰器
     public function setDecorator(ArticleProcessorDecorator $decorator) {
         $this->decorator = $decorator;
         return $this;
     }
 
-    // 被观察者
+    // 观察者管理器
     public function setObserverManager(ObserverManager $observer)
     {
         $this->observer = $observer;
         return $this;
     }
 
-    // 添加校验器
+    // 添加校验策略
     public function addValidation(ValidationStrategy $validation) {
         if ($this->validation) {
             $this->validation->addValidation($validation);
@@ -117,7 +121,7 @@ class ArticleService
         return $this;
     }
 
-    // 添加校验器
+    // 添加装饰策略
     public function addProcessor(ArticleProcessor $processor) {
         if ($this->decorator) {
             $this->decorator->addProcessor($processor);
@@ -125,7 +129,7 @@ class ArticleService
         return $this;
     }
 
-    // 被观察者
+    // 添加观察策略
     public function addObserver(Observer $observer)
     {
         if($this->observer) {

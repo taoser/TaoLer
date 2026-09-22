@@ -2,22 +2,23 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2022-08-14 09:39:01
- * @LastEditTime: 2022-08-15 16:12:13
+ * @LastEditTime: 2026-09-22 17:40:14
  * @LastEditors: TaoLer
- * @Description: 优化版
- * @FilePath: \TaoLer\app\admin\controller\Tag.php
- * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
+ * @Description: 标签控制器
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\admin\controller\content\Tag.php
+ * Copyright (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
 declare(strict_types=1);
 
 namespace app\admin\controller\content;
 
-use app\admin\controller\AdminBaseController;
 use think\Request;
+use think\Response;
 use think\facade\View;
 use app\facade\TagList;
 use app\facade\Tag as TagModel;
-use think\response\Json;
+use app\admin\controller\AdminBaseController;
 
 class Tag extends AdminBaseController
 {
@@ -33,46 +34,38 @@ class Tag extends AdminBaseController
 
     /**
      * 数据列表
-     *
-     * @return void
+     * @param Request $request
+     * @return Response
      */
-    public function list(Request $request): Json
+    public function list(Request $request): Response
     {
         $page = $request->get('page/d', 1);
         $limit = $request->get('limit/d', 10);
     
-        $tags = TagModel::getTagList($page, $limit);
+        $result = TagModel::getList($page, $limit);
 
-        if($tags['data']){
-            return json([
-                'code'  => 0,
-                'msg'   => 'ok',
-                'count' => $tags['total'],
-                'data'  => $tags['data']
-            ]);
-        };
-
-        return json([ 'code'=>-1, 'msg'=>'no data']);
+        return json(['code'  => 0, 'msg'   => 'ok', 'count' => $result['count'], 'data'  => $result['data']]);
     }
 
-    public function add(Request $request)
+    /**
+     * 添加
+     * @param Request $request
+     * @return Response
+     */
+    public function add(Request $request): Response
     {
-        if(!$request->isPost()) {
-            return View::fetch();
-        }
-        $data = $request->post(['name','ename','keywords','description','title']);
-        // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-        $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-
-        $res = TagModel::save($data);
-        if($res == true){
-            return json(['code'=>0,'msg'=>'设置成功']);
-        }
+        $data = $request->post(['name','ename','description','title']);
+        TagModel::save($data);
+        return json([' code' => 0, 'msg' => '添加成功']);
+        
     }
 
+    /**
+     * 编辑
+     * @return void
+     */
     public function edit(Request $request)
     {
-
         if(!$request->isPost()) {
             $id = $request->get('id/d');
             $tag = TagModel::find($id);
@@ -80,67 +73,24 @@ class Tag extends AdminBaseController
             return View::fetch();
         }
 
-        $data = $request->post(['name','ename','id/d','keywords','description','title']);
+        $data = $request->post(['id/d','name','ename','description','title']);
+        TagModel::update($data);
 
-        // 把，转换为,并去空格->转为数组->去掉空数组->再转化为带,号的字符串
-        $data['keywords'] = implode(',',array_filter(explode(',',trim(str_replace('，',',',$data['keywords'])))));
-        try{
-            TagModel::update($data);
-            return json(['code'=>0,'msg'=>'设置成功']);
-        } catch(\Exception $e) {
-            return json(['code'=>-1,'msg'=>$e->getMessage()]);
-        }
+        return json(['code' => 0, 'msg' => '设置成功']);
     }
 
     /**
      * 删除
-     * @return \think\response\Json
+     * @param Request $request
+     * @return Response
      */
-    public function delete(Request $request)
+    public function delete(Request $request): Response
     {
-        $id = $request->get('id/d');
-        $res = TagModel::del($id);
-        if($res){
-            return json(['code'=>0,'msg'=>'删除成功']);
-        }
-        return json(['code'=>-1,'msg'=>'删除失败']);
-    }
-
-    /**
-     * 所有tag标签
-     *
-     * @return void
-     */
-    public function getAllTag(Request $request)
-    {
-        $data = [];
-        $page = $request->get('page/d', 1);
-        $limit = $request->get('limit/d', 10);
-    
-        $tags = TagModel::getTagList($page, $limit);
-        if($tags['total'] > 0) {
-            foreach($tags['data'] as $tag) {
-                $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
-            }
-        }
+        $id = $request->delete('id/d');
+        TagModel::del($id);
         
-        return json(['code'=>0,'data'=>$data]);
-    }
-
-    // 文章的tag
-    public function getArticleTag(Request $request)
-    {
-        $id = $request->get('id/d');
-        $data = [];
-        $artTags = TagList::where('article_id', $id)->select();
-
-        foreach($artTags as $v) {
-            $tag = TagModel::find($v['tag_id']);
-            if(!is_null($tag))
-            $data[] = ['name' => $tag['name'],'value' => $tag['id']];
-        }
+        return json(['code'=>0,'msg'=>'删除成功']);
         
-        return json(['code'=>0,'data'=>$data]);
     }
 
 }

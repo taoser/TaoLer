@@ -2,14 +2,17 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-20 10:45:41
- * @LastEditTime: 2022-08-15 12:16:41
+ * @LastEditTime: 2026-09-22 17:22:28
  * @LastEditors: TaoLer
  * @Description: 文章tag设置
- * @FilePath: \TaoLer\app\common\model\Tag.php
+ * @FilePath: \TaoLer\app\entity\Tag.php
  * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
  */
 
 namespace app\entity;
+
+use think\facade\Db;
+use app\exception\BusinessException;
 
 class Tag extends BaseEntity
 {
@@ -22,7 +25,7 @@ class Tag extends BaseEntity
      */
     public function getTagByEname(string $ename)
     {
-        return $this->field('id,name,keywords,description,title')
+        return $this->field('id,name,description,title')
         ->where('ename', $ename)
         ->cache(true)
         ->find();
@@ -56,6 +59,21 @@ class Tag extends BaseEntity
         return ['count' => $count, 'data' => $data];
     }
 
+    /**
+     * 标签列表树
+     * @return array
+     */
+    public function tree(): array
+    {
+        $query = $this;
+        $count = $query->count();
+        if($count === 0) {
+            return ['count' => 0, 'data' => []];
+        }
+        $data = $query->field('id,name,ename')->select()->toArray();
+
+        return ['count' => $count, 'data' => $data];
+    }
 
     /**
      * 管理端数据
@@ -64,26 +82,36 @@ class Tag extends BaseEntity
      * @param integer $limit
      * @return array
      */
-    public function getTagList(int $page = 1, int $limit = 10): array
+    public function getList(int $page = 1, int $limit = 10): array
     {
-        return self::paginate([
-            'list_rows' => $limit,
-            'page'      => $page
-        ])->toArray();
+        $count = $this->count();
+        if($count === 0) {
+            return ['count' => 0, 'data' => []];
+        }
+        $data = $this->page($page, $limit)->select()->toArray();
+        return ['count' => $count, 'data' => $data];
     }
 
     /**
      * 删除数据
-     * @param $id
+     * @param int $id
      * @return bool
      */
-    public function del($id)
+    public function del(int $id): bool
     {
-        $res = $this::destroy($id);
-       if($res) {
-           return true;
-       }
-       return false;
+
+        Db::startTrans();
+        try{
+            $tag = self::find($id);
+            $tag->delete();
+
+            Db::name('article_tag')->where('tag_id', $id)->delete();
+            Db::commit();
+            return true;
+        }catch(BusinessException $e){
+            Db::rollback();
+            throw new BusinessException($e->getMessage());
+        }       
     }
 
     public function getUrlAttr($value, $data)

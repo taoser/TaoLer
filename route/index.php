@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-21 11:18:36
+ * @LastEditTime: 2026-09-22 12:27:13
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -118,12 +118,18 @@ Route::group('',function () {
 
 	Route::post('language$', 'index/language')->name('language');
 
-	// tag
-	Route::group(function (){
+	// tag标签
+	Route::group('tag', function () {
+		Route::get('list$', 'tag/getTree')->name('tag_tree');
+	});
+
+	Route::group(function () {
 		Route::get('tag$', 'tag/getAllTag')->name('get_all_tag');
 		Route::get('arttag$', 'tag/getArticleTag')->name('get_art_tag');
-		Route::get('tag/<ename>$', 'tag/list')->name('tag_list');
+		// Route::get('tag/<ename>$', 'tag/list')->name('tag_list');
 	});
+
+	
 
 	// comment
 	Route::get('index/reply$', 'index/reply')->name('user_reply');

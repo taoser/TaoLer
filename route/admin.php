@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-19 22:19:47
+ * @LastEditTime: 2026-09-21 14:42:28
  * @LastEditors: TaoLer
  * @Description: admin模块 后台路由
  * @Version: V4.0.0
@@ -27,6 +27,14 @@ Route::group($adminModuleName, function () {
     Route::get('content/article-add', function () {
         return view('content/article/add');
     })->name('admin-add-article-page');
+
+    Route::get('content/tag', function () {
+        return view('content/tag/index');
+    })->name('admin-tag-index-page');
+    
+    Route::get('content/tag-add', function () {
+        return view('content/tag/add');
+    })->name('admin-tag-add-page');
 
    
     // 登录接口

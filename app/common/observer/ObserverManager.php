@@ -17,9 +17,9 @@ class ObserverManager {
     }
 
     // 通知观察者
-    public function notify($data){
+    public function notify($data, $article){
         foreach($this->observers as $observer) {
-            $observer->update($data);
+            $observer->update($data, $article);
         }
     }
 }

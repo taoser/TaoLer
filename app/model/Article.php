@@ -26,18 +26,23 @@ class Article extends BaseModel
         ];
     }
 
-    // 模型初始化
-    // protected static function init()
-    // {
-    //     //TODO:初始化内容
 
-    // }
-
+    /**
+     * 文章关联标签表
+     */
     public function flag()
     {
         return $this->hasMany(ArticleFlag::class);
     }
 
+    /**
+     * 多对多关联标签
+     * belongsToMany(关联模型,中间表,当前模型外键,关联模型外键)
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, ArticleTag::class);
+    }
 
     //文章关联栏目表
     public function category()
@@ -80,10 +85,25 @@ class Article extends BaseModel
     // 两种模式 获取url
     public function getUrlAttr($value, $data)
     {
-        $data['id'] = IdEncode::encode($data['id']);
-        $ename = Category::where('id', $data['category_id'])->cache(true)->value('ename');
+        // $data['id'] = IdEncode::encode($data['id']);
+        // $ename = Category::where('id', $data['category_id'])->cache(true)->value('ename');
+    
+        $ename = is_array($data) ? $data['category']['ename'] : $data->category->ename;
 
-        return (string) Route::buildUrl('article_detail', ['id' => $data['id'],'ename' => $ename])->domain(true);
+        return (string) Route::buildUrl('article_detail', ['id' => $data['id'], 'ename' => $ename])->domain(true);
+    }
+
+    /**
+     * 文章关联标签id
+     * @return array
+     */
+    public function getTagidAttr($value, $data): array
+    {
+        $tagIds = $this->tags()->column('tag_id');
+        if(!empty($tagIds)){
+            return $tagIds;
+        }
+        return [];
     }
 
     /**

@@ -45,12 +45,15 @@ class User extends IndexBaseController
 
 	public function addArticle(Request $request)
 	{
-		$data = $request->post(['title','content','category_id/d','description','tagid']);
+		$data = $request->post(['title','content','category_id/d','description','tag_ids']);
 		$data['user_id'] = $this->uid;
+
+		// var_dump($data);
+		// return;
 
 		$result = Article::addData($data);
 
-		return json(['code' => 0, 'msg' => Lang::get('add success'), 'data' => ['url' => $result->url]]);
+		return json(['code' => 0, 'msg' => Lang::get('add success'), 'data' => []]);
 		
 	}
 
@@ -65,11 +68,11 @@ class User extends IndexBaseController
 
 	public function editArticle(Request $request)
 	{
-		$data = $request->post(['id/d','title','content','category_id/d','description','tagid']);
+		$data = $request->post(['id/d','title','content','category_id/d','description','tag_ids']);
 
 		$result = Article::editData($data);
 
-		return json(['code' => 0, 'msg' => Lang::get('edit success'), 'data' => ['url' => $result->url]]);
+		return json(['code' => 0, 'msg' => Lang::get('edit success'), 'data' => []]);
 		
 	}
 

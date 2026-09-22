@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2022-07-24 15:58:51
- * @LastEditTime: 2022-08-15 14:52:49
+ * @LastEditTime: 2026-09-22 12:30:51
  * @LastEditors: TaoLer
  * @Description: 标签
  * @FilePath: \TaoLer\app\index\controller\Tag.php
@@ -10,10 +10,11 @@
  */
 namespace app\index\controller;
 
+use think\Response;
 use think\facade\View;
 use app\facade\Tag as TagModel;
 use app\facade\Taglist;
-use think\response\Json;
+
 
 class Tag extends IndexBaseController
 {
@@ -50,12 +51,37 @@ class Tag extends IndexBaseController
     /**
      * 所有tag标签
      *
+     * @return Response
+     */
+    public function getTree(): Response
+    {
+        $data = [];
+        $tags = TagModel::tree();
+
+        if($tags['count'] === 0) {
+            return json(['code' => 0, 'data' => []]);
+        }
+
+        foreach($tags['data'] as $tag) {
+            $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
+        }
+        
+        return json(['code' => 0, 'data' => $data]);
+    }
+
+    /**
+     * 所有tag标签
+     *
      * @return void
      */
     public function getAllTag(): Json
     {
         $data = [];
-        $tags = TagModel::getTagList();
+        $tags = TagModel::list();
+
+        if($tags['count'] === 0) {
+            return json(['code' => 0, 'data' => []]);
+        }
 
         foreach($tags['data'] as $tag) {
             $data[] = ['name'=> $tag['name'], 'value'=> $tag['id']]; 
