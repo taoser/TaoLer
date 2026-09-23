@@ -77,6 +77,8 @@ return [
 
 	// form
 	'please select' => '请选择',
+	'please select the category' => '请选择分类',
+	'please select the tag' => '请选择标签',
 
 	
 

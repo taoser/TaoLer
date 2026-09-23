@@ -42,10 +42,10 @@
 			<div class="layui-form-item">
 				<div class="button-container">
 					<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="form-save">
-						<i class="layui-icon layui-icon-ok"></i>提交
+						<i class="layui-icon layui-icon-ok"></i>{:lang('submit')}
 					</button>
 					<button type="reset" class="pear-btn pear-btn-sm">
-						<i class="layui-icon layui-icon-refresh"></i>重置
+						<i class="layui-icon layui-icon-refresh"></i>{:lang('reset')}
 					</button>
 				</div>
 			</div>
@@ -58,12 +58,11 @@
 
 <script>
 
-	const EDIT_URL = MODULE_NAME + '/content/article/edit';
-	const TAG_URL = MODULE_NAME + '/content/tag/tree';
+	const GET_TAG_TREE = MODULE_NAME + '/content/tag/tree';
+	const GET_CATEGORY_TREE = MODULE_NAME + '/content/category/getArticleSelectCategoryList';
+	const GET_ARTICLE_INFO = MODULE_NAME + '/content/article/getArticleInfo' + location.search;
+	const EDIT_ARTICLE_DATA = MODULE_NAME + '/content/article/editData';
 	const UPLOAD_URL = MODULE_NAME + '/content/article/uploads';
-	const CATE_TREE_URL = MODULE_NAME + '/content/category/getArticleSelectCategoryList';
-	const EDIT_DATA_URL = MODULE_NAME + '/content/article/editData';
-	const GET_ARTICLE_INFO_URL = MODULE_NAME + '/content/article/getArticleInfo' + location.search;
 	
 	layui.use(['xmSelect','popup'], function(){
 		var $ = layui.jquery
@@ -73,7 +72,7 @@
 		var xmSelect = layui.xmSelect;
 		let popup = layui.popup;
 
-		$.get(GET_ARTICLE_INFO_URL,function(res) {
+		$.get(GET_ARTICLE_INFO,function(res) {
 
 			var category_id = 0;
 			var tagInitValue = [];
@@ -89,7 +88,7 @@
 			}
 
 			// 分类选择
-			$.get(CATE_TREE_URL, function(res){
+			$.get(GET_CATEGORY_TREE, function(res){
 				// 渲染下拉树
 				xmSelect.render({
 					el: '#cate-id',
@@ -116,12 +115,12 @@
 							return data.change.slice(0, 1)
 						}
 					},
-					tips: '请选择类别'
+					tips: '{:lang("please select the category")}'
 				});
 			});
 
 			//2.标签数据
-			$.get(TAG_URL,function(tagRes){
+			$.get(GET_TAG_TREE, function(tagRes){
 				if(tagRes.code === 0){
 					xmSelect.render({
 						el: '#tag',
@@ -135,7 +134,7 @@
 						filterable: true,
 						pageEmptyShow: false,
 						data: tagRes.data,
-						tips: '请选择标签'
+						tips: '{:lang("please select the tag")}'
 					});
 				}
 			});
@@ -168,7 +167,7 @@
 				field.id = layui.url().search['id'];
 				
 			$.ajax({
-				url: EDIT_DATA_URL,
+				url: EDIT_ARTICLE_DATA,
 				data: field,
 				dataType: 'json',
 				type: 'post',

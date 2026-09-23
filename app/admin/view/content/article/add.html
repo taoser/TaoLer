@@ -28,7 +28,7 @@
 				<div id="cate-id" class="xm-select-demo"></div>
 			</div>
 			<div class="layui-form-item">
-				<textarea name="description" class="layui-textarea" placeholder="SEO描述"></textarea>
+				<textarea name="description" class="layui-textarea" placeholder="{:lang('please input the description')}"></textarea>
 			</div>
 			{//关键词}
 			<div class="layui-form-item">
@@ -42,10 +42,10 @@
 			<div class="layui-form-item">
 				<div class="button-container">
 					<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="form-save">
-						<i class="layui-icon layui-icon-ok"></i>提交
+						<i class="layui-icon layui-icon-ok"></i>{:lang('submit')}
 					</button>
 					<button type="reset" class="pear-btn pear-btn-sm">
-						<i class="layui-icon layui-icon-refresh"></i>重置
+						<i class="layui-icon layui-icon-refresh"></i>{:lang('reset')}
 					</button>
 				</div>
 			</div>
@@ -58,19 +58,18 @@
 
 <script>
 
-	const ADD_URL = MODULE_NAME + '/content/article/add';
-	const CATE_TREE_URL = MODULE_NAME + '/content/category/getArticleSelectCategoryList';
-	const TAG_URL = MODULE_NAME + '/content/tag/tree';
+	const ADD_ARTICLE = MODULE_NAME + '/content/article/add';
+	const GET_CATEGORY_TREE = MODULE_NAME + '/content/category/getArticleSelectCategoryList';
+	const GET_TAG_TREE = MODULE_NAME + '/content/tag/tree';
 	const UPLOAD_URL = MODULE_NAME + '/content/article/uploads';
 
-	
 	layui.use(['xmSelect','popup'], function () {
 		var $ = layui.jquery, form = layui.form, upload = layui.upload;
 		var xmSelect = layui.xmSelect;
 		let popup = layui.popup;
 
 		// 分类选择 渲染下拉树
-		$.get(CATE_TREE_URL, function(res){
+		$.get(GET_CATEGORY_TREE, function(res){
 			xmSelect.render({
 				el: '#cate-id',
 				name: 'category_id',
@@ -97,12 +96,12 @@
 						return data.change.slice(0, 1)
 					}
 				},
-				tips: '请选择类别'
+				tips: '{:lang("please select the category")}'
 			});
 		});
 
 		//2.动态标签赋值
-		$.get(TAG_URL, function(res){
+		$.get(GET_TAG_TREE, function(res){
 			if(res.code === 0){
 				xmSelect.render({
 					el: '#tag',
@@ -115,7 +114,7 @@
 					pageEmptyShow: false,
 					data: res.data,
 					autoRow: true,
-					tips: '请选择标签'
+					tips: '{:lang("please select the tag")}'
 				});
 			}
 		});
@@ -145,7 +144,7 @@
 			var field = data.field;
 			console.log(field);
 			$.ajax({
-				url: ADD_URL,
+				url: ADD_ARTICLE,
 				data: field,
 				dataType: 'json',
 				type: 'post',

@@ -1,4 +1,4 @@
-{extend name="public/base" /}
+{extend name="public:base" /}
 
 {block name="title"}管理员{/block}
 
@@ -113,8 +113,9 @@
 				},
 				{
 					title: '电话',
-					field: 'phone',
-					align: 'center'
+					field: 'mobile',
+					align: 'center',
+					width: 120
 				},
 				{
 					title: '邮箱',
@@ -126,6 +127,11 @@
 					align: 'center'
 				},
 				{
+					title: '注册',
+					field: 'create_time',
+					align: 'center'
+				},
+				{
 					title: '登录时间',
 					field: 'last_login_time',
 					align: 'center'
@@ -133,11 +139,6 @@
 				{
 					title: '备注',
 					field: 'remarks',
-					align: 'center'
-				},
-				{
-					title: '注册',
-					field: 'create_time',
 					align: 'center'
 				},
 				{

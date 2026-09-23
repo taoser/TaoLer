@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-10 20:15:35
- * @LastEditTime: 2026-09-10 21:07:41
+ * @LastEditTime: 2026-09-23 08:59:31
  * @LastEditors: TaoLer
  * @Description: 模板助手类
  * @Version: V4.0.0
@@ -28,7 +28,7 @@ class Tpl
     }
 
     /**
-     * 获取所有首页模板名称
+     * 获取首页模板目录所有文件名
      */
     public static function getIndexTplNames(): array
     {
@@ -38,12 +38,15 @@ class Tpl
         }
 
         $tplPath = root_path() . 'view' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'index' . DIRECTORY_SEPARATOR;
+        if(!is_dir($tplPath)) {
+            return [];
+        }
 
         return FileHelper::getDirFileBaseNames($tplPath);
     }
 
     /**
-     * 获取当前模板分类所有模板名称
+     * 获取当前模板分类目录所有模板目录名
      */
     public static function getCurrentTplCategoryNames(): array
     {
@@ -53,6 +56,9 @@ class Tpl
         }
 
         $tplPath = root_path() . 'view' . DIRECTORY_SEPARATOR . $tpl . DIRECTORY_SEPARATOR . 'category' . DIRECTORY_SEPARATOR;
+        if(!is_dir($tplPath)) {
+            return [];
+        }
 
         return FileHelper::getSubDirNames($tplPath);
     }
