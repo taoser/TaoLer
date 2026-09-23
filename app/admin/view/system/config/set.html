@@ -1,6 +1,6 @@
-{extend name="public/base" /}
+{extend name="public:base" /}
 
-{block name="title"}权限菜单{/block}
+{block name="title"}系统配置{/block}
 
 {block name="head"}
 <style>
@@ -39,6 +39,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
     var laydate = layui.laydate;
     var upload = layui.upload;
     var tabs = layui.tabs;
+    var hash = layui.hash();
 
     // 需要 options 的可选类型（与配置项管理页保持一致）
     const OPTION_TYPES = ['radio','checkbox','select'];
@@ -262,16 +263,16 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
     /**
      * 渲染分组tabs
      */
-    function renderForm(){
-        $.post(FORM_DATA_URL, {}, function(res){
+    function renderForm() {
+        $.post(FORM_DATA_URL, {}, function(res) {
             if(res.code !== 0) return layer.msg(res.msg,{icon:2});
             var groupData = res.data || {};   // [{id, group_name, group_title, config:[] }]
 
             // 渲染tab标题
             var titleHtml = '';
-
             // 渲染tab内容：每个group一个独立form
             var contentHtml = '';
+
             groupData.forEach(function(g, idx) {
 
                 if(g.config.length === 0) return; // 跳过空分组
@@ -301,19 +302,17 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
             });
 
             $('#tabTitle').html(titleHtml);
-
             $('#tabContent').html(contentHtml);
+
+            // 全局渲染所有表单组件（switch/radio/select/checkbox）
+            form.render();
 
             tabs.render({
                 elem: '#groupTabs',
             });
 
             // HASH 初始定位
-            var hash = layui.hash();
             tabs.change('groupTabs', hash.href);
-
-            // 全局渲染所有表单组件（switch/radio/select/checkbox）
-            form.render();
 
             // 初始化日期、上传组件
             $('#tabContent').find('.layui-tab-item').each(function(){
@@ -396,12 +395,13 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
         // 只提交当前group的数据
         $.post(BATCH_SAVE_URL, field, function(res){
             if(res.code === 0){
-                layer.msg('保存成功',{icon:1});
+                layer.msg('保存成功',{icon:1},function(){
+                    parent.window.parent.location.reload();
+                });
             } else {
                 layer.msg(res.msg,{icon:2});
             }
         },'json');
-        parent.window.parent.location.reload();
         return false;
     });
 

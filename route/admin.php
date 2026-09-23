@@ -2,13 +2,14 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-21 14:42:28
+ * @LastEditTime: 2026-09-23 22:44:31
  * @LastEditors: TaoLer
  * @Description: admin模块 后台路由
  * @Version: V4.0.0
  * @FilePath: \TaoLer\route\admin.php
  * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
+use think\Request;
 use think\facade\Route;
 use think\facade\Config;
 
@@ -23,20 +24,30 @@ Route::group($adminModuleName, function () {
     Route::get('/','index/index');
     Route::get('index','index/index')->name('admin-index');
 
-    // 添加文章视图
-    Route::get('content/article-add', function () {
-        return view('content/article/add');
-    })->name('admin-add-article-page');
+    // 内容管理
+    Route::group('content', function () {
+        // 添加文章视图
+        Route::view('article-add', 'content/article/add')->name('admin-add-article-page');
+        // 编辑文章视图
+        Route::get('article-edit', function (Request $request) {
+            $id = $request->get('id/d');
+            $article = \app\facade\Article::getInfo($id);
+            return view('content/article/edit', ['article'=>$article]);
+        })->name('admin-edit-article-page');
+        // 标签视图
+        Route::get('tag', function () {
+            return view('content/tag/index');
+        })->name('admin-tag-index-page');
+        // 添加标签视图
+        Route::get('tag-add', function () {
+            return view('content/tag/add');
+        })->name('admin-tag-add-page');
+        // 编辑标签视图
+        Route::get('tag-edit', function () {
+            return view('content/tag/edit');
+        })->name('admin-edit-tag-page');
+    });
 
-    Route::get('content/tag', function () {
-        return view('content/tag/index');
-    })->name('admin-tag-index-page');
-    
-    Route::get('content/tag-add', function () {
-        return view('content/tag/add');
-    })->name('admin-tag-add-page');
-
-   
     // 登录接口
     Route::rule('login$','login/index')->name('admin-login');
     // 注册接口

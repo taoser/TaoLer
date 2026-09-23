@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-22 22:00:27
+ * @LastEditTime: 2026-09-23 22:46:40
  * @LastEditors: TaoLer
  * @Description: 文章管理
  * @Version: V4.0.0
@@ -82,23 +82,6 @@ class Article extends AdminBaseController
             
     }
 
-    /**
-     * 编辑文章
-     * @param $id
-     * @return string|\think\Response|\think\response\Json|void
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function edit(Request $request)
-    {
-        $id = $request->get('id/d');
-		$article = $this->entity::getInfo($id);
-        
-        View::assign('article', $article);
-
-        return View::fetch();
-    }
 
     public function getArticleInfo(Request $request)
 	{
@@ -114,7 +97,7 @@ class Article extends AdminBaseController
      * @param Request $request
      * @return Response
      */
-    public function editData(Request $request): Response
+    public function edit(Request $request): Response
     {
         $data = $request->post(['id/d','category_id','title','content','keywords','description','tagid']);
 

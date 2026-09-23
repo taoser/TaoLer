@@ -121,6 +121,7 @@
 	// const ADD_URL = MODULE_NAME + '/content/article/add';
 	// const ADD_URL = MODULE_NAME + '/content/article-add';
 	const ADD_PAGE = "{:url('admin-add-article-page')}";
+	const EDIT_PAGE = "{:url('admin-edit-article-page')}";
 
 	const EDIT_ARTICLE = MODULE_NAME + '/content/article/edit';
 	const DELETE_ARTICLE = MODULE_NAME + '/content/article/delete';
@@ -286,19 +287,13 @@
 	}
 	// 编辑
 	window.edit = function(obj) {
-		$.get(EDIT_ARTICLE +'?id=' + obj.data.id, function(res){
-			if(res.code === -1) {
-				toast.error({title:"错误消息", message:res.msg})
-				return false
-			}
-			layer.open({
-				type: 2,
-				title: '修改',
-				shade: 0.1,
-				maxmin: true,
-				area: ['90%', '90%'],
-				content: EDIT_ARTICLE +'?id=' + obj.data.id
-			})
+		layer.open({
+			type: 2,
+			title: '修改',
+			shade: 0.1,
+			maxmin: true,
+			area: ['90%', '90%'],
+			content: EDIT_PAGE +'?id=' + obj.data.id
 		})
 	}
 

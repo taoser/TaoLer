@@ -1,8 +1,8 @@
-{extend name="public/form" /}
+{extend name="public:form" /}
 
 {block name="body"}
 
-<form class="layui-form" action="">
+<form class="layui-form">
 	<div class="mainBox">
 		<div class="main-container">
 			
@@ -52,11 +52,11 @@
 		let popup = layui.popup;
 		
 		form.on('submit(section-save)', function(data) {
+
 			$.ajax({
 				url: ADD_EDIT,
-				data: JSON.stringify(data.field),
+				data: data.field,
 				dataType: 'json',
-				contentType: 'application/json',
 				type: 'post',
 				success: function(res) {
 					if(res.code) {

@@ -2,12 +2,14 @@
 
 namespace app\admin\controller\service;
 
-use app\admin\controller\AdminBaseController;
-use think\facade\View;
 use think\Request;
+use think\Response;
+use think\facade\View;
 use app\facade\Section as SectionEntity;
 use app\facade\SectionAccess;
-use Exception;
+use app\exception\BusinessException;
+use app\admin\controller\AdminBaseController;
+
 
 class Section extends AdminBaseController
 {
@@ -21,8 +23,8 @@ class Section extends AdminBaseController
 
     /**
      * 列表
-     * @return \think\response\Json
-     * @throws \think\db\exception\DbException
+     * @param Request $request
+     * @return Response
      */
     public function list(Request $request): Response
     {
@@ -62,13 +64,10 @@ class Section extends AdminBaseController
 
         $data = $request->post(['type','title','subtitle','alias']);
         $data['create_time'] = date('Y-m-d H:i:s', time());
+        SectionEntity::save($data);
 
-        try{
-            SectionEntity::save($data);
-            return json( ['code'=>0,'msg'=>'添加成功']);
-        } catch (Exception $e) {
-            return json(['code'=>-1,'msg'=>'添加失败']);
-        }
+        return json( ['code'=>0,'msg'=>'添加成功']);
+        
     }	
 		
 
@@ -90,12 +89,9 @@ class Section extends AdminBaseController
         $data = Request::post(['id/d','type','title','subtitle','alias','status/d']);
         $data['update_time'] = date('Y-m-d H:i:s');
 
-        try{
-            SectionEntity::update($data);
-            return json(['code'=>0,'msg'=>'编辑成功']);
-        } catch (Exception $e) {
-            return json(['code'=>-1,'msg'=>'编辑失败']);
-        }
+        SectionEntity::update($data);
+        return json(['code'=>0,'msg'=>'编辑成功']);
+        
     }
 
     /** 

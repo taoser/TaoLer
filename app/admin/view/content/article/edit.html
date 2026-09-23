@@ -61,7 +61,7 @@
 	const GET_TAG_TREE = MODULE_NAME + '/content/tag/tree';
 	const GET_CATEGORY_TREE = MODULE_NAME + '/content/category/getArticleSelectCategoryList';
 	const GET_ARTICLE_INFO = MODULE_NAME + '/content/article/getArticleInfo' + location.search;
-	const EDIT_ARTICLE_DATA = MODULE_NAME + '/content/article/editData';
+	const EDIT_ARTICLE = MODULE_NAME + '/content/article/edit';
 	const UPLOAD_URL = MODULE_NAME + '/content/article/uploads';
 	
 	layui.use(['xmSelect','popup'], function(){
@@ -167,7 +167,7 @@
 				field.id = layui.url().search['id'];
 				
 			$.ajax({
-				url: EDIT_ARTICLE_DATA,
+				url: EDIT_ARTICLE,
 				data: field,
 				dataType: 'json',
 				type: 'post',
