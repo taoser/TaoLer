@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2022-04-20 10:45:41
- * @LastEditTime: 2026-09-22 20:48:41
+ * @LastEditTime: 2026-09-25 08:07:01
  * @LastEditors: TaoLer
  * @Description: 文章tag设置
  * @FilePath: \TaoLer\app\entity\Tag.php
@@ -25,10 +25,39 @@ class Tag extends BaseEntity
      */
     public function getTagByEname(string $ename)
     {
-        return $this->field('id,name,description,title')
+        return $this->field('id,name,ename,description,title')
         ->where('ename', $ename)
         ->cache(true)
         ->find();
+    }
+
+    public function getArticleList(string $tagEname, int $page = 1, int $limit = 15)
+    {
+        return Cache::remember("taglist:{$tagEname}:{$page}", function() use($tagEname, $page, $limit){
+
+            $tag = $this->getTagByEname($tagEname);
+            $idArr = $tag->articles()->column('article_id');
+            
+            $count = count($idArr);
+            if($count === 0) {
+                return ['count' => 0, 'data' => []];
+            }
+
+            $data = Article::field('id,user_id,category_id,title,content,pv,create_time,pv,has_image,has_video,has_audio,media,comments_num,flags,description')
+            ->whereIn('id', $idArr)
+            ->where('status', 1)
+            ->with(['user' => function($query){
+                $query->field('id,name,nickname,avatar,vip');
+            },'category' => function($query){
+                $query->field('id,name,ename');
+            }])
+            ->order('id desc')
+            ->append(['url'])
+            ->select()
+            ->toArray();
+
+            return ['count' => count($data), 'data' => $data];
+        }, 1200);
     }
 
     /**
@@ -38,25 +67,13 @@ class Tag extends BaseEntity
      */
     public function getHots(): array
     {
-        $data = [];
-
-        $tagList = Taglist::fieldRaw('tag_id, count(*) as counts')
-        ->group('tag_id')
-        ->order('counts', 'desc')
+        $data = $this->field('id,name,ename')
+        ->order('count', 'desc')
         ->limit(30)
-        ->select()
-        ->column('tag_id');
+        ->append(['url'])
+        ->select();
 
-        $count = count($tagList);
-        if($count) {
-            $data = self::field('name,ename')
-            ->whereIn('id', $tagList)
-            ->append(['url'])
-            ->select()
-            ->toArray();
-        }
-
-        return ['count' => $count, 'data' => $data];
+        return ['count' => count($data), 'data' => $data];
     }
 
     /**
@@ -115,9 +132,6 @@ class Tag extends BaseEntity
         }       
     }
 
-    public function getUrlAttr($value, $data)
-    {
-        return (string) url('tag_list', ['ename' => $data['ename']])->domain(true);
-    }
+
 
 }

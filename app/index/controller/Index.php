@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-22 18:17:46
+ * @LastEditTime: 2026-09-25 08:12:01
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -33,6 +33,7 @@ use think\db\Query;
 use app\common\helper\JwtAuth;
 
 use think\facade\Cache;
+use app\entity\Tag;
 
 use app\entity\Article as ArticleEntity;
 
@@ -45,7 +46,6 @@ class Index extends IndexBaseController
     {
 		// dump(get_addons_config('demo'));
 
-		// var_dump(Lang::get('user.center'));
 
 	// var_dump($request->layer());
 

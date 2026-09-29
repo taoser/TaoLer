@@ -43,8 +43,9 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">性别</label>
 				<div class="layui-input-block">
-					<input type="radio" name="sex" value="0" title="男" {if condition="$user['sex'] eq 0"} checked {/if}>
-					<input type="radio" name="sex" value="1" title="女" {if condition="$user['sex'] eq 1"} checked {/if}>
+					<input type="radio" name="sex" value="1" title="男" {if condition="$user['sex'] eq 1"} checked {/if}>
+					<input type="radio" name="sex" value="2" title="女" {if condition="$user['sex'] eq 2"} checked {/if}>
+					<input type="radio" name="sex" value="0" title="保密" {if condition="$user['sex'] eq 0"} checked {/if}>
 				</div>
 			</div>
 		</div>

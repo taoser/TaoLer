@@ -1,9 +1,9 @@
 <?php
 /*
  * @Program: table.css 2023/4/16
- * @FilePath: app\common\taglib\Comment.php
+ * @FilePath: \TaoLer\app\common\taglib\Tag.php
  * @Description: Comment.php 评论标签
- * @LastEditTime: 2023-04-16 11:37:01
+ * @LastEditTime: 2026-09-25 07:34:59
  * @Author: Taoker <317927823@qq.com>
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  */
@@ -22,13 +22,16 @@ class Tag extends TagLib
      */
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
-        'list'      => ['attr' => '', 'close' => 1],
-        'count'     => ['attr' => '', 'close' => 0],
-        'id'        => ['attr' => '', 'close' => 0],
-        'name'      => ['attr' => '', 'close' => 0],
-        'keywords'  => ['attr' => '', 'close' => 0],
-        'description'=> ['attr' => '', 'close' => 0],
-        'title'      => ['attr' => '', 'close' => 0],
+        'list'          => ['attr' => '', 'close' => 1],
+        'count'         => ['attr' => '', 'close' => 0],
+        'id'            => ['attr' => '', 'close' => 0],
+        'name'          => ['attr' => '', 'close' => 0],
+        'ename'         => ['attr' => '', 'close' => 0],
+        'keywords'      => ['attr' => '', 'close' => 0],
+        'description'   => ['attr' => '', 'close' => 0],
+        'title'         => ['attr' => '', 'close' => 0],
+        'create_time'   => ['attr' => '', 'close' => 0],
+        'update_time'   => ['attr' => '', 'close' => 0],
     ];
 
     // 评论
@@ -37,7 +40,7 @@ class Tag extends TagLib
         $num = isset($tag['num']) ? (int)$tag['num'] : 10;
         $parse = '{notpresent name="ename"}{assign name="ename" value="$Request.param.ename" /}{/notpresent}';
         $parse .= '{notpresent name="page"}{assign name="page" value="$Request.param.page ?? 1" /}{/notpresent}';
-        $parse .= '<?php if(!isset($__TAGLIST__)) $__TAGLIST__ = \app\facade\Taglist::getArticleList($ename,$page,'. $num .');';
+        $parse .= '<?php if(!isset($__TAGLIST__)) $__TAGLIST__ = \app\facade\Tag::getArticleList($ename,$page,'. $num .');';
         $parse .= ' ?>';
         $parse .= '{volist name="__TAGLIST__.data" id="article" empty= "还没有内容"}';
         $parse .= $content;
@@ -50,7 +53,7 @@ class Tag extends TagLib
     {
         $parse = '{notpresent name="ename"}{assign name="ename" value="$Request.param.ename" /}{/notpresent}';
         $parse .= '{notpresent name="page"}{assign name="page" value="$Request.param.page ?? 1" /}{/notpresent}';
-        $parse .= '<?php if(!isset($__TAGLIST__)) $__TAGLIST__ = \app\facade\Taglist::getArticleList($ename,$page); ?>';
+        $parse .= '<?php if(!isset($__TAGLIST__)) $__TAGLIST__ = \app\facade\Tag::getArticleList($ename,$page); ?>';
         $parse .= '{$__TAGLIST__.count}';
 
         return $parse;
@@ -71,9 +74,9 @@ class Tag extends TagLib
         return '{$tag.title}';
     }
 
-    public function tagKeywords(array $tag, string $content): string
+    public function tagEname(array $tag, string $content): string
     {
-        return '{$tag.keywords}';
+        return '{$tag.ename}';
     }
 
     public function tagDescription(array $tag, string $content): string

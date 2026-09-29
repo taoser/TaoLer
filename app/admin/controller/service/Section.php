@@ -53,7 +53,7 @@ class Section extends AdminBaseController
     /**
      * 添加
      *
-     * @return void
+     * @return Response | string
      */
     public function add(Request $request): Response | string
     {
@@ -74,7 +74,7 @@ class Section extends AdminBaseController
     /**
      * 编辑
      *
-     * @return void
+     * @return Response | string
      */
     public function edit(Request $request): Response | string
     {
@@ -111,11 +111,11 @@ class Section extends AdminBaseController
     }
 
     /**
-     * 添加
-     *
-     * @return void
+     * 添加子模块
+     * @param Request $request
+     * @return Response | string
      */
-    public function addSub(Request $request): Response
+    public function addSub(Request $request): Response | string
     {
         if(!$request->isPost()) {
             $section = SectionEntity::select();
@@ -135,9 +135,9 @@ class Section extends AdminBaseController
     }
 
     /**
-     * 编辑
-     *
-     * @return void
+     * 编辑子模块
+     * @param Request $request
+     * @return Response | string
      */
     public function editSub(Request $request): Response | string
     {
@@ -164,8 +164,10 @@ class Section extends AdminBaseController
     }
 
     /** 
-     * 
-    */
+     * 删除子模块
+     * @param Request $request
+     * @return Response
+     */
     public function deleteSub(Request $request): Response
     {
         $id = $request->get('id/d');

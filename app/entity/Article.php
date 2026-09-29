@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-25 19:51:05
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\entity\Article.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 declare (strict_types = 1);
 
 namespace app\entity;
@@ -526,44 +536,63 @@ class Article extends BaseEntity
      * @param integer $limit 数量
      * @return array
      */
-    public static function getRelationArticle(int $id, int $limit = 5): array
+    public function getRelationArticle(int $id, int $limit = 10): array
     {
-        return Cache::remember('rela_'.$id, function() use($id,$limit) {
+        // $rela = Cache::get('rela_'.$id);
+        // if(!is_null($rela)) {
+        //     return $rela;
+        // }
+        // var_dump($id);
+        $this->setSuffix(self::getSuffixById($id));
+        $art = $this->find($id);
 
-            $tagId = Taglist::where('article_id', $id)->value('tag_id');
+        $tagIds = $art->tags()->column('tag_id');
+        
+        if(count($tagIds) === 0) {
+            return [];
+        }
 
-            $articleIdArr = Taglist::where('tag_id', $tagId)
-            ->where('article_id','<>', $id)
-            ->limit($limit)
-            ->column('article_id');
+        $tagId = Tag::whereIn('id', $tagIds)->order('count', 'desc')->value('id');
 
-            $data = [];
-            if(count($articleIdArr)) {
-                foreach($articleIdArr as $id) {
-                    $article = self::suffix(self::getSuffixById($id))
-                    ->with(['category' => function($query) {
-                        $query->field('id,name,ename');
-                    }])
-                    ->field('id,title,category_id,pv,create_time,description')
-                    ->where('id', $id)
-                    ->append(['url'])
-                    ->find();
+        $idArr = Db::name('article_tag')
+        ->where('article_id', '<>', $id)
+        ->where('tag_id', $tagId)
+        ->order('article_id', 'desc')
+        ->limit($limit)
+        ->column('article_id');
 
-                    if(!is_null($article)) {
-                        $article['hasImg']          = $article['has_image'] > 0 ? true : false;
-                        $article['create_time']     = $article['create_time'];
-                        $article['category_name']   = $article['category']['name'];
-                        $article['description']     = $article['description'];
-                        $article['link']            = $article['url'];
-                        
+        $count = count($idArr);
+        if($count === 0) {
+            return [];
+        }
 
-                        $data[] = $article;
-                    }
-                }
+        
+        foreach($idArr as $id) {
+            $article = self::suffix(self::getSuffixById($id))
+            ->with(['category' => function($query) {
+                $query->field('id,name,ename');
+            }])
+            ->field('id,title,category_id,pv,create_time,description')
+            ->where('id', $id)
+            ->where('status', 1)
+            ->append(['url'])
+            ->find();
+
+            if(!is_null($article)) {
+                $article['hasImg']          = $article['has_image'] > 0 ? true : false;
+                $article['create_time']     = $article['create_time'];
+                $article['category_name']   = $article['category']['name'];
+                $article['description']     = $article['description'];
+                $article['link']            = $article['url'];
+                
+
+                $data[] = $article;
             }
-            
-            return $data;
-        }, 3600);
+        }
+
+        
+        return $data;
+        
     }
 
     /**

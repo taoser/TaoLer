@@ -1,3 +1,13 @@
+<!--
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-24 17:09:36
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\admin\view\service\section\add.html
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+-->
 {extend name="public:form" /}
 
 {block name="body"}
@@ -47,12 +57,11 @@
 	let ADD_EDIT = MODULE_NAME + '/service/section/add';
 
 	layui.use(['popup'], function(){
-		var $ = layui.jquery
-		,form = layui.form ;
-		let popup = layui.popup;
+		var $ = layui.jquery;
+		var form = layui.form ;
+		var popup = layui.popup;
 		
 		form.on('submit(section-save)', function(data) {
-
 			$.ajax({
 				url: ADD_EDIT,
 				data: data.field,
@@ -62,7 +71,6 @@
 					if(res.code) {
 						return popup.failure(res.msg);
 					}
-
 					return popup.success(res.msg, function() {
 						// parent.layui.table.reload("section-table");
 							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页

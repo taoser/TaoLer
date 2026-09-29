@@ -25,6 +25,14 @@ class Tag extends BaseModel
     }
 
     /**
+     * 标签关联
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(self::class, ArticleTag::class);
+    }
+
+    /**
      * 获取标签url
      */
     public function getUrlAttr($value, $data)
@@ -32,6 +40,9 @@ class Tag extends BaseModel
         return (string) url('tag_list', ['ename' => $data['ename']])->domain(true);
     }
 
+    /**
+     * 获取多语言自适应标签名
+     */
     public function getNameAttr($value, $data)
     {
         $lang = Lang::getLangSet();

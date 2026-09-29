@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-07-30 07:19:57
- * @LastEditTime: 2026-09-22 18:19:10
+ * @LastEditTime: 2026-09-25 07:32:23
  * @LastEditors: TaoLer
  * @Description: 文章标签观察者
  * @Version: V4.0.0
@@ -31,13 +31,12 @@ class TagObserver implements Observer
                 $article->tags()->detach($tagIdArr);
             }
         }
-        
-        // 更新article_count
+        // 更新count
         if(!empty($tagIdArr)) {
             $tagArr = [];
             foreach($tagIdArr as $tagId) {
                 $count = Db::name('article_tag')->where('tag_id', $tagId)->count();
-                $tagArr[] = ['id' => $tagId, 'article_count' => $count];
+                $tagArr[] = ['id' => $tagId, 'count' => $count];
             }
             // 批量更新标签article_count
             Tag::saveAll($tagArr);

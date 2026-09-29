@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2022-05-17 13:08:11
- * @LastEditTime: 2026-09-10 19:31:51
+ * @LastEditTime: 2026-09-25 19:57:28
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\common\taglib\Article.php
@@ -32,7 +32,7 @@ class Article extends TagLib
         'has_image'     => ['attr' => '', 'close' => 0],
         'has_video'     => ['attr' => '', 'close' => 0],
         'has_audio'     => ['attr' => '', 'close' => 0],
-        'forbid_comment'    => ['attr' => '', 'close' => 0],
+        'forbid_comment'=> ['attr' => '', 'close' => 0],
         'pv'            => ['attr' => '', 'close' => 0],
         'comments_num'  => ['attr' => '', 'close' => 0],
         'media'         => ['attr' => '', 'close' => 0],

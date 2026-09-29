@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-22 12:27:13
+ * @LastEditTime: 2026-09-24 19:42:17
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -52,6 +52,9 @@ Route::group('',function () {
 		})->name('user_page');
 		// 添加文章
 		Route::get('add-article$', function() {
+			if(system_config('publish_open') == '0') {
+				return json(['code'=>403, 'msg'=>'发布功能已关闭']);
+			}
 			return view('user/add_article');
 		})->name('add_article_page');
 		// 编辑文章

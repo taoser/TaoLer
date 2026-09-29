@@ -4,7 +4,7 @@
  * @Date: 2026-09-09 12:28:21
  * @LastEditTime: 2026-09-09 21:46:17
  * @LastEditors: TaoLer
- * @Description: 文章标签表
+ * @Description: 文章标记表
  * @Version: V4.0.0
  * @FilePath: \TaoLer\app\model\ArticleFlag.php
  * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
