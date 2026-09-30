@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-30 22:03:55
+ * @LastEditors: TaoLer
+ * @Description: 分类控制器
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\index\controller\Category.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 namespace app\index\controller;
 
 use think\Request;
@@ -6,6 +16,7 @@ use think\Response;
 use think\facade\View;
 use think\facade\Db;
 use app\facade\Category as CategoryEntity;
+use app\entity\Page as PageEntity;
 
 class Category extends IndexBaseController
 {
@@ -19,17 +30,13 @@ class Category extends IndexBaseController
 
 		// 分类信息
 		$categoryInfo = CategoryEntity::getCateInfoByEname($ename);
-		if(!$categoryInfo && $ename !== 'all') {
-			throw new \think\exception\HTTPException('404', '分类不存在');
-		}
 
 		// 单页分类
 		// type 1列表2单页3链接
 		if($ename !== 'all' && $categoryInfo->type == 2) {
-			$single = CategoryEntity::getSinglePage($categoryInfo->id);
-			if(!$single) {
-				throw new \think\exception\HTTPException('404', '页面不存在');
-			}
+			$pageEntity = new PageEntity();
+			$single = $pageEntity->getSinglePageDetail($categoryInfo->id);
+			
 			View::assign('article', $single);
 			return View::fetch('category/' . $categoryInfo->tpl . '/single');
 		}

@@ -58,6 +58,10 @@ class Category extends BaseEntity
         ->cache('category_'.$ename, 3500)
         ->find();
 
+        if(!$category && $ename !== 'all') {
+			throw new BusinessException('分类不存在', 404);
+		}
+
         return $category;
 	}
 
@@ -324,19 +328,7 @@ class Category extends BaseEntity
 
         // 空值兜底：若无数据直接返回空数组
         return $list ?: [];
-
          
-    }
-
-    /**
-     * 查询单页分类
-     *
-     * @param int $categoryId 分类id
-     * @return mixed 单页分类信息
-     */
-    public function getSinglePage(int $categoryId): mixed
-    {
-        return Page::where('id', $categoryId)->find();
     }
 
     // 查询父分类

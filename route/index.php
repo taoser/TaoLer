@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-24 19:42:17
+ * @LastEditTime: 2026-09-30 20:32:40
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -17,7 +17,7 @@ use think\Response;
 Route::group('',function () {
 
 	// 首页
-	Route::get('/', 'index/index');
+	Route::get('/', 'Index/index');
 	// 滑动页码
 	Route::get('index/<page>$', 'index/index')->name('index_page');
 	// 登录状态

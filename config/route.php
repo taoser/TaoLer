@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-09-30 20:35:35
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\config\route.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 // +----------------------------------------------------------------------
 // | 路由设置
 // +----------------------------------------------------------------------
