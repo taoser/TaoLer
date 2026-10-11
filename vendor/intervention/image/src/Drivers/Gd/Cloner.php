@@ -67,13 +67,18 @@ class Cloner
         // fill with background
         $processor = new ColorProcessor();
 
-        imagefill($clone, 0, 0, $processor->export($background));
+        // filled rectangle without blending is equivalent to imagefill() on a
+        // blank canvas but avoids the much slower flood fill algorithm
+        imagealphablending($clone, false);
+        imagefilledrectangle($clone, 0, 0, $size->width() - 1, $size->height() - 1, $processor->export($background));
         imagealphablending($clone, true);
         imagesavealpha($clone, true);
 
-        // set background image as transparent if alpha channel value if color is below .5
-        // comes into effect when the end format only supports binary transparency (like GIF)
-        if ($background->alpha()->value() < .5) {
+        // mark a fully transparent background as transparent color, which comes
+        // into effect when the end format only supports binary transparency (like GIF)
+        // semi-transparent backgrounds must not be marked, as GD treats the transparent
+        // color of truecolor images as color key and skips matching pixels when copying
+        if ($background->isClear()) {
             imagecolortransparent($clone, $processor->export($background));
         }
 

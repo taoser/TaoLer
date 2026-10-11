@@ -1,227 +1,161 @@
 {extend name="public/base" /}
 
-{block name="title"}文章内容{/block}
+{block name="title"}幻灯管理（分组+子项同页 | datetime）{/block}
 
 {block name="body"}
 
-<div class="layui-card">
-	<div class="layui-card-body">
-		<form class="layui-form" wid100 lay-filter="">
-			<div class="layui-form-item">
-				<div class="layui-form-item layui-inline">
-					<label class="layui-form-label">位置</label>
-					<div class="layui-input-block">
-						<select name="type" lay-verify="required" lay-filter="slid-type">
-							<option value="1">pc - 1920x650</option>
-							<option value="2">移动端 - auto</option>
-						</select>
-					</div>
-				</div>
-				<div class="layui-form-item layui-inline">
-					<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="slide-query">
-						<i class="layui-icon layui-icon-search"></i>
-						查询
-					</button>
-					<button type="reset" class="pear-btn pear-btn-md">
-						<i class="layui-icon layui-icon-refresh"></i>
-						重置
-					</button>
-				</div>
-			</div> 
-		</form>
-	</div>
+<div class="layui-btn-group">
+    <button class="layui-btn layui-btn-sm" id="addGroup">新增幻灯分组</button>
 </div>
 
-<div class="layui-card">
-	<div class="layui-card-body">
-		<table id="slide-table" lay-filter="slide-table"></table>
-	</div>
-</div>
+<table id="tableGroup" lay-filter="tableGroup"></table>
 
-<script type="text/html" id="slide-toolbar">
-	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
-		<i class="layui-icon layui-icon-add-1"></i>
-		新增
-	</button>
+<!-- 分组操作：添加子项、查看子项、编辑、删除 -->
+<script type="text/html" id="barGroup">
+<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="addChild">添加子项</a>
+<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="viewChild">查看子项</a>
+<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑分组</a>
+<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除分组</a>
 </script>
 
-
-<script type="text/html" id="slide-bar">
-	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
-</script>
-
-<script type="text/html" id="slide-enable">
-	<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="slide-enable" {{ d.status == 1 ? 'checked' : '' }} />
+<!-- 子项表格工具栏模板 -->
+<script type="text/html" id="barItem">
+<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="editItem">编辑</a>
+<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delItem">删除</a>
 </script>
 
 {__block__}
 
 <script>
-	const LIST_URL = "{:url('service.slide/list')}";
+    const GROUP_DATA = MODULE_NAME + '/service/slide/groupData';
+    const ITEM_DATA = MODULE_NAME + '/service/slide/itemData';
+    const GROUP_FORM = MODULE_NAME + '/service/slide/groupForm';
+    const ITEM_FORM = MODULE_NAME + '/service/slide/itemForm';
+    const GROUP_DEL = MODULE_NAME + '/service/slide/groupDel';
+    const ITEM_DEL = MODULE_NAME + '/service/slide/itemDel';
 
-	layui.use(['common'], function(){
-		var $ = layui.jquery
-		,layer = layui.layer
-		,table = layui.table
-		,form = layui.form;
-		let common = layui.common;
+layui.use(['table','layer','jquery'],function(){
+    var table = layui.table;
+    var layer = layui.layer;
+    var $ = layui.jquery;
+    var tableIns;
 
-		//第一个实例
-		table.render({
-			elem: '#slide-table'
-			,url: LIST_URL
-			,page: true
-			,cols: [[
-				{field: 'id', title: 'ID', width:80, sort: true}
-				,{field: 'image', title: '图片', minWidth:120, templet: '<div><img src="{{d.image}}" height="60" width="80"></div>'}
-				,{field: 'title', title: '标题', width:180, templet: '<div>{{d.title}}</br>{{d.create_time}}</div>'}
-				,{field: 'type', title: '类型', width:80}
-				,{field: 'url', title: 'URL', minWidth: 200}
-				,{field: 'description', title: '描述', minWidth: 200}
-				,{field: 'start_time', title: '开始','escape':false, width: 130, sort: true}
-				,{field: 'end_time', title: '结束','escape':false, width: 130, sort: true}
-				,{field: 'status', title: '状态', width: 95, templet: '#slide-enable'}
-				,{title:'操作', toolbar: '#slide-bar', width:110}
-			]]
-			,skin: 'line'
-			,lineStyle: 'height: 100px;'
-			,toolbar: '#slide-toolbar'
-			,limit: 10
-			,text: '对不起，加载出现异常！'
-		});
+    tableIns = table.render({
+        elem:'#tableGroup',
+        url:GROUP_DATA,
+        page:true,
+        cols:[[
+            // 移除 {type:'expand'} !!! layui2.13.9不支持
+            {field:'id',title:'ID',width:60},
+            {field:'name',title:'分组名称'},
+            {field:'code',title:'调用标识'},
+            {field:'remark',title:'备注'},
+            {field:'create_time',title:'创建时间'},
+            {title:'操作',toolbar:'#barGroup',width:380}
+        ]]
+    });
 
-		table.on('tool(slide-table)', function(obj) {
-			if (obj.event === 'remove') {
-				window.remove(obj);
-			} else if (obj.event === 'edit') {
-				window.edit(obj);
-			}
-		});
+    //主表格工具栏事件
+    table.on('tool(tableGroup)',function(obj){
+        var data = obj.data;
+        if(obj.event === 'addChild'){
+            // 添加幻灯子项弹窗
+            layer.open({
+                type:2,
+                title:'新增幻灯子项【'+data.name+'】',
+                area:['700px','550px'],
+                content: ITEM_FORM +'?group_id=' + data.id,
+            })
+        }else if(obj.event === 'viewChild'){
+            // 查看子项，弹窗内渲染子表格，子表无分页
+            var childLayerIndex = layer.open({
+                type:1,
+                title:'幻灯子项列表【'+data.name+'】',
+                area:['900px','600px'],
+                content:'<div style="padding:15px;"><table id="childTable-'+data.id+'" lay-filter="childTable-'+data.id+'"></table></div>'
+            });
+            // 渲染子表格
+            setTimeout(function(){
+                table.render({
+                    elem:'#childTable-'+data.id,
+                    url:ITEM_DATA+'?group_id='+data.id,
+                    page:false, //子项不开启分页
+                    cols:[[
+                        {field:'id',title:'ID',width:60},
+                        {field:'title',title:'标题'},
+                        {field:'image',title:'图片',templet:function(d){
+                            return '<img src="'+d.image+'" style="height:40px;">';
+                        }},
+                        {field:'start_time',title:'开始时间'},
+                        {field:'end_time',title:'结束时间'},
+                        {field:'status',title:'状态',templet:function(d){
+                            return d.status===1 ? '<span class="layui-green">启用</span>' : '<span class="layui-red">禁用</span>';
+                        }},
+                        {field:'sort',title:'排序',width:80},
+                        {title:'操作',toolbar:'#barItem',width:160}
+                    ]]
+                })
+            },100);
+        }else if(obj.event === 'edit'){
+            layer.open({
+                type:2,title:'编辑分组',area:['500px','320px'],
+                content:GROUP_FORM+'?id='+data.id,
+                end:function(){tableIns.reload();}
+            })
+        }else if(obj.event === 'del'){
+            layer.confirm('确定删除该分组？分组下所有幻灯子项将会同步删除！',function(){
+                $.post(GROUP_DEL,{id:data.id},function(res){
+                    if(res.code===0){
+                        layer.msg(res.msg);
+                        tableIns.reload();
+                    }else {
+                        layer.msg(res.msg);
+                    }
+                },'json');
+            })
+        }
+    })
 
-		table.on('toolbar(slide-table)', function(obj) {
-			if (obj.event === 'add') {
-				window.add();
-			} else if (obj.event === 'refresh') {
-				window.refresh();
-			} else if (obj.event === 'batchRemove') {
-				window.batchRemove(obj);
-			}
-		});
+    //子表格编辑删除事件
+    table.on('tool(*)',function(obj){
+        var filter = obj.config.layFilter;
+        if(filter.indexOf('childTable-') === 0){
+            var d = obj.data;
+            if(obj.event === 'editItem'){
+                layer.open({
+                    type:2,title:'编辑幻灯子项',area:['700px','550px'],
+                    content:ITEM_FORM+'?id='+d.id,
+                    end:function(){
+                        table.reload(filter);
+                    }
+                })
+            }else if(obj.event === 'delItem'){
+                layer.confirm('确定删除这条幻灯？',function(){
+                    $.post(ITEM_DEL,{id:d.id},function(res){
+                        if(res.code===0){
+                            layer.msg('删除成功');
+                            table.reload(filter);
+                        }else{
+                            layer.msg(res.msg);
+                        }
+                    },'json');
+                })
+            }
+        }
+    })
 
-		form.on('submit(slide-query)', function(data) {
-			table.reload('slide-table', {
-				where: data.field
-			})
-			return false;
-		});
-
-		form.on('select(slid-type)', function(data){
-			$.post("{:url('service.slide/list')}", {type: data.value}, function (res){
-				if (res.code === -1){
-					layer.open({content:res.msg,icon:5,anim:6});
-				}
-			}
-		);
-		
-		//执行重载
-		table.reload('slide-table', {
-			where: {type: data.value}
-			,page: {
-						curr: 1 //重新从第 1 页开始
-					}
-			});
-		});
-
-		form.on('switch(slide-enable)', function(obj) {
-			layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
-			var status = obj.elem.checked ? 1 : 0;
-
-			//执行用户审核
-			$.ajax({
-				type:'post',
-				url:"{:url('service.slide/check')}",
-				data:{"id":this.value, "status":status},
-				dataType:'json',
-				success:function(res){
-					if(res.code === 0){
-						layer.msg(res.msg,{
-							icon:res.icon,
-							time:2000
-						}
-								//,function(){location.reload();}
-						);
-					} else {
-						layer.open({
-							title:'审核失败',
-							content:res.msg,
-							icon:5,
-							adim:6
-						})
-					}
-				}
-			});
-
-			return false;
-		});
-
-		window.add = function() {
-			layer.open({
-				type: 2,
-				title: '新增',
-				shade: 0.1,
-				area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'600px'],
-				content: 'add.html'
-			});
-		}
-
-		window.edit = function(obj) {
-			layer.open({
-				type: 2,
-				title: '修改',
-				shade: 0.1,
-				area: ['500px', '600px'],
-				content: 'edit.html?id=' + obj.data.id
-			});
-		}
-
-		window.remove = function(obj) {
-
-			layer.confirm('确定要删除?', {
-				icon: 3,
-				title: '提示'
-			}, function(index) {
-				layer.close(index);
-				let loading = layer.load();
-
-				$.ajax({
-					url: "{:url('service.slide/delete')}?id=" + obj.data['id'],
-					dataType: 'json',
-					type: 'delete',
-					success: function(result) {
-						layer.close(loading);
-						if (result.code === 0) {
-							layer.msg(result.msg, {
-								icon: 1,
-								time: 1000
-							}, function() {
-								obj.del();
-							});
-						} else {
-							layer.msg(result.msg, {
-								icon: 2,
-								time: 1000
-							});
-						}
-					}
-				})
-			});
-		}
-
-		window.refresh = function(param) {
-			table.reload('slide-table');
-		}
-
-	});
+    //新增分组
+    $('#addGroup').on('click',function(){
+        layer.open({
+            type:2,
+            title:'新增幻灯分组',
+            area:['500px','320px'],
+            content:GROUP_FORM,
+            end:function(){tableIns.reload();}
+        })
+    })
+})
 </script>
 {/block}
+
+

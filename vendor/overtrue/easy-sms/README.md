@@ -60,10 +60,14 @@
 - [移动云MAS（黑名单模式）](https://mas.10086.cn)
 - [电信天翼云](https://www.ctyun.cn/document/10020426/10021544)
 - [微趣云](https://sms.weiqucloud.com/)
+- [秒信短信平台](http://www.51miaoxin.com)
 
 ## 环境需求
 
-- PHP >= 8.4
+- PHP >= 8.4（已在 PHP 8.5 上验证）
+- [guzzlehttp/guzzle](https://github.com/guzzle/guzzle) `^7.0 || ^8.0`
+
+> Guzzle 8 起 `headers` 选项的值必须是字符串（或非空字符串数组）。在网关配置的 `options.headers` 里传入数字、布尔值或 `null` 时会触发 `GuzzleHttp\Exception\InvalidArgumentException`，请先自行转成字符串。
 
 ## 安装
 
@@ -1085,6 +1089,48 @@ $easySms->send(18888888888, [
     'content'  =>"【已备案签名】您的验证码是 xx。",
 ]);
 ```
+
+### [秒信短信平台](http://www.51miaoxin.com)
+
+短信使用 `content` 或 `template`，根据消息内容自动选择发送方式：
+
+1. 设置 `template`（模板短信）→ 走模板接口（`/sms/sendTemplateParamd`）
+2. 未设置 `template` 但配置了 `signature_id`（固定签名）→ 走固定签名接口（`/sms/sendFixedSignature`）
+3. 未设置 `template` 且未配置 `signature_id`（自定义内容）→ 走发送接口（`/sms/send`）
+
+```php
+  'miaoxin' => [
+        'account'  => '',    // 服务商提供的账号
+        'secret'   => '',    // 服务商提供的密钥，用于生成 token 签名
+        // 'signature_id' => '',   // 可选，固定签名 ID（配置后自定义内容走固定签名接口）
+        // 'ref' => '',            // 可选，客户自定义编号，用于对账
+        // 'ext' => '',            // 可选，分机号
+        // 'schedule' => '',       // 可选，定时发送时间，模板短信专用
+        // 'endpoint' => '',       // 可选，接口地址覆盖，默认 http://www.51miaoxin.com
+    ],
+```
+
+发送示例（自定义内容）：
+
+```php
+$easySms->send(18888888888, [
+    'content'  => '【秒信】您的验证码是 6379，5 分钟内有效。',
+]);
+```
+
+发送示例（模板短信）：
+
+```php
+$easySms->send(18888888888, [
+    'template' => '模板ID',
+    'data' => [
+        '1234', // 对应模板的 param1、param2…按顺序填充，最多 8 个
+        '张三',
+    ],
+]);
+```
+
+> 自定义内容时如需固定签名，在配置中加上 `signature_id` 即可自动切换到固定签名发送方式。
 
 ## :heart: 支持我
 

@@ -1,0 +1,502 @@
+{extend name="public/base" /}
+
+{block name="title"}幻灯管理（分组+子项同页）{/block}
+
+{block name="body"}
+<style>
+	.time-tip { font-size: 12px; color: #999; }
+	.desc-tip { font-size: 12px; color: #999; }
+	.code-tag {
+		display: inline-block; padding: 1px 8px; border-radius: 3px;
+		background: #eef5ff; color: #1e5fb4; font-size: 12px;
+		font-family: Consolas, Monaco, monospace;
+	}
+	.layui-table-cell { height: auto; line-height: 28px; }
+	.upload-preview {
+		max-width: 200px; max-height: 120px; margin-top: 8px;
+		border: 1px solid #eee; border-radius: 3px; display: none;
+	}
+	.upload-preview.show { display: inline-block; }
+	.form-tip { font-size: 12px; color: #999; line-height: 1.6; margin-top: 4px; }
+</style>
+{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+	<div class="layui-card-body">
+		<table id="sliderTable" lay-filter="sliderTable"></table>
+	</div>
+</div>
+
+<script type="text/html" id="toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增分组
+    </button>
+    <button class="pear-btn pear-btn-success pear-btn-md" lay-event="expandAll">
+        <i class="layui-icon layui-icon-spread-left"></i>
+        展开/折叠
+    </button>
+</script>
+
+<script type="text/html" id="tplToolbar">
+  {{# if(d.type === 'group'){ }}
+    <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="addItem" title="添加子项"><i class="layui-icon layui-icon-add-1"></i></button>
+  {{# } }}
+    <button class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+
+{__block__}
+
+<script>
+
+  const TREE_DATA = MODULE_NAME + '/service/slider/tree';
+  const GROUP_SAVE = MODULE_NAME + '/service/slider/groupSave';
+  const GROUP_DEL = MODULE_NAME + '/service/slider/groupDelete';
+  const ITEM_SAVE = MODULE_NAME + '/service/slider/itemSave';
+  const ITEM_DEL = MODULE_NAME + '/service/slider/itemDelete';
+
+layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
+	var treeTable = layui.treeTable;
+	var layer     = layui.layer;
+	var form      = layui.form;
+	var laydate   = layui.laydate;
+	var upload    = layui.upload;
+	var $         = layui.$;
+	var table = layui.table;
+
+	// 折叠/展开所有节点
+    let onExpandAll = true;
+
+	var TABLE_ID = 'treeTableIns';
+
+	/* ============================================================
+	*  1. 渲染树形表格
+	* ============================================================ */
+	treeTable.render({
+		elem: '#sliderTable',
+		id: TABLE_ID,
+		url: TREE_DATA,
+		page: false,                 // 关闭分页
+		toolbar: '#toolbar',
+		defaultToolbar: [],
+		lineStyle: 'height: 60px;',
+		tree: {
+			customName: {
+				name:     'name',
+				children: 'children',
+				isParent: 'isParent'
+			},
+			view: {
+				expandAllDefault: true,  // ✅ 默认展开所有节点
+				dblClickExpand:   false,
+				indent:           20
+			},
+			data: {
+				isSimpleData: false
+			}
+		},
+		cols: [[
+			{field: 'name', title: '名称/标题', width: 150, treeNode: true},
+			{field: 'image', title: '预览', width: 110, align: 'center', templet: function (d) {
+				if (d.type !== 'item' || !d.image) return '';
+				return '<img src="' + escapeHtml(d.image) + '" class="slider-thumb" onerror="this.style.display=\'none\'">';
+				}
+			},
+			{field: 'code', title: '标识码', width: 120, align: 'center', templet: function (d) {
+				if (d.type !== 'group' || !d.code) return '';
+					return '<span class="code-tag">' + escapeHtml(d.code) + '</span>';
+				}
+			},
+			{field: 'description', title: '描述', minWidth: 180, templet: function (d) {
+				if (!d.description) return '';
+				return '<span class="desc-tip" title="' + escapeHtml(d.description) + '">'
+				+ escapeHtml(truncate(d.description, 30)) + '</span>';
+				}
+			},
+			{field: 'type', title: '类型', width: 80, align: 'center', templet: function (d) {
+				return d.type === 'group'
+				? '<span class="layui-badge layui-bg-blue">分组</span>'
+				: '<span class="layui-badge layui-bg-green">子项</span>';
+				}
+			},
+			{field: 'url', title: '跳转链接', width: 180, templet: function (d) {
+				if (d.type !== 'item' || !d.url) return '';
+				return '<a href="' + escapeHtml(d.url) + '" target="_blank" class="time-tip">'
+				+ escapeHtml(truncate(d.url, 22)) + '</a>';
+				}
+			},
+			{field: 'start_time', title: '生效时间', width: 160, templet: function (d) {
+				if (d.type !== 'item') return '';
+				var s = d.start_time ? d.start_time : '不限';
+				var e = d.end_time   ? d.end_time   : '不限';
+				var tag = d.is_effective
+				? '<span class="layui-badge layui-bg-green" style="margin-left:6px;">生效中</span>'
+				: '<span class="layui-badge layui-bg-orange" style="margin-left:6px;">未生效</span>';
+				return '<span class="time-tip">' + s + ' ~ ' + e + '</span>' + tag;
+			}
+			},
+			{field: 'sort', title: '排序', width: 70, align: 'center'},
+			{field: 'status', title: '状态', width: 80, align: 'center', templet: function (d) {
+				return d.status == 1
+				? '<span style="color:#16baaa;">启用</span>'
+				: '<span style="color:#999;">禁用</span>';
+				}
+			},
+			{title: '操作', width: 140, align: 'center', toolbar: '#tplToolbar', fixed: 'right'}
+		]],
+		done: function () {
+			// 渲染完成钩子
+		}
+	});
+
+	/* ============================================================
+	*  2. 操作列事件
+	* ============================================================ */
+	treeTable.on('tool(sliderTable)', function (obj) {
+		var data  = obj.data;
+		var event = obj.event;
+
+		if (event === 'addItem') {
+			openItemForm(null, data.real_id);
+		} else if (event === 'edit') {
+			if (data.type === 'group') {
+				openGroupForm(data);
+			} else {
+				openItemForm(data);
+			}
+		} else if (event === 'del') {
+			var delUrl = data.type === 'group' ? GROUP_DEL : ITEM_DEL;
+			var tip = data.type === 'group'
+			? '删除分组将同时删除该组下所有子项，确定删除？'
+			: '确定删除该子项？';
+			layer.confirm(tip, { icon: 3, title: '提示' }, function (index) {
+				$.post(delUrl, { id: data.real_id }, function (res) {
+					layer.close(index);
+					if (res.code === 0) {
+						layer.msg('删除成功', { icon: 1 });
+							reloadTree();
+						} else {
+						layer.msg(res.msg || '删除失败', { icon: 2 });
+					}
+				}, 'json').fail(function () {
+					layer.close(index);
+					layer.msg('网络异常', { icon: 2 });
+				});
+			});
+		}
+	});
+
+	treeTable.on('toolbar(sliderTable)', function(obj){
+		if(obj.event === 'add'){
+			openGroupForm(null);
+		} else if(obj.event === 'expandAll'){
+			onExpandAll = !onExpandAll;
+			treeTable.expandAll(TABLE_ID, onExpandAll);
+		}
+	});
+
+	/* ============================================================
+	*  4. 分组表单弹窗（含 code / description）
+	* ============================================================ */
+	function openGroupForm(data) {
+		var isEdit = !!data;
+
+		var html = ''
+		+ '<div style="padding:20px 24px 0;">'
+		+ '<form class="layui-form" id="groupForm" lay-filter="groupForm">'
+		+   '<input type="hidden" name="id" value="' + (isEdit ? data.real_id : '') + '">'
+
+		+   '<div class="layui-form-item">'
+		+     '<label class="layui-form-label"><span style="color:#ff5722;">*</span>名称</label>'
+		+     '<div class="layui-input-block">'
+		+       '<input type="text" name="name" value="' + (isEdit ? escapeHtml(data.name) : '') + '"class="layui-input" placeholder="请输入分组名称" autocomplete="off">'
+		+     '</div>'
+		+   '</div>'
+
+		+   '<div class="layui-form-item">'
+		+     '<label class="layui-form-label"><span style="color:#ff5722;">*</span>标识</label>'
+		+     '<div class="layui-input-block">'
+		+       '<input type="text" name="code" value="' + (isEdit ? escapeHtml(data.code) : '') + '"class="layui-input" placeholder="小写字母开头，仅含小写字母/数字/下划线" autocomplete="off">'
+		+       '<div class="form-tip">用于前台按标识取值，例如：<code>home_banner</code></div>'
+		+     '</div>'
+		+   '</div>'
+
+		+   '<div class="layui-form-item layui-form-text">'
+		+     '<label class="layui-form-label">描述</label>'
+		+     '<div class="layui-input-block">'
+		+       '<textarea name="description" class="layui-textarea" maxlength="500" placeholder="选填，最多 500 字">' + (isEdit ? escapeHtml(data.description || '') : '') + '</textarea>'
+		+     '</div>'
+		+   '</div>'
+
+		+   '<div class="layui-form-item">'
+		+     '<label class="layui-form-label">排序</label>'
+		+     '<div class="layui-input-block">'
+		+       '<input type="number" name="sort" value="' + (isEdit ? data.sort : 0) + '" class="layui-input">'
+		+     '</div>'
+		+   '</div>'
+
+		+   '<div class="layui-form-item">'
+		+     '<label class="layui-form-label">状态</label>'
+		+     '<div class="layui-input-block">'
+		+       '<input type="radio" name="status" value="1" title="启用" ' + (!isEdit || data.status == 1 ? 'checked' : '') + '>'
+		+       '<input type="radio" name="status" value="0" title="禁用" ' + (isEdit && data.status == 0 ? 'checked' : '') + '>'
+		+     '</div>'
+		+   '</div>'
+
+		+ '</form>'
+		+ '</div>';
+
+		layer.open({
+			type: 1,
+			title: isEdit ? '编辑分组' : '新增分组',
+			area: ['560px', '520px'],
+			content: html,
+			btn: ['保存', '取消'],
+			yes: function (index) {
+				var $form = $('#groupForm');
+				var postData = {
+					id:          $form.find('input[name=id]').val(),
+					code:        $.trim($form.find('input[name=code]').val()),
+					name:        $.trim($form.find('input[name=name]').val()),
+					description: $.trim($form.find('textarea[name=description]').val()),
+					sort:        $form.find('input[name=sort]').val(),
+					status:      $form.find('input[name=status]:checked').val()
+				};
+
+				if (!postData.name) {
+					layer.msg('分组名称不能为空', { icon: 2 });
+					return;
+				}
+				if (!postData.code) {
+					layer.msg('标识码不能为空', { icon: 2 });
+					return;
+				}
+				if (!/^[a-z][a-z0-9_]{1,49}$/.test(postData.code)) {
+					layer.msg('标识码格式不正确', { icon: 2 });
+					return;
+				}
+
+				$.post(GROUP_SAVE, postData, function (res) {
+					if (res.code === 0) {
+					layer.close(index);
+					layer.msg('保存成功', { icon: 1 });
+					reloadTree();
+					} else {
+					layer.msg(res.msg || '保存失败', { icon: 2 });
+					}
+				}, 'json');
+			},
+			success: function () {
+				form.render();
+			}
+		});
+	}
+
+	/* ============================================================
+	*  5. 子项表单弹窗（含 description）
+	* ============================================================ */
+	function openItemForm(data, groupId) {
+		var isEdit = !!data;
+		var realId = isEdit ? data.real_id : '';
+		var realGroupId = isEdit ? data.group_id : groupId;
+
+		var html = ''
+			+ '<div style="padding:20px 24px 0;">'
+			+ '<form class="layui-form" id="itemForm" lay-filter="itemForm">'
+			+   '<input type="hidden" name="id" value="' + realId + '">'
+			+   '<input type="hidden" name="group_id" value="' + realGroupId + '">'
+
+			+   '<div class="layui-form-item">'
+			+     '<label class="layui-form-label"><span style="color:#ff5722;">*</span> 标题</label>'
+			+     '<div class="layui-input-block">'
+			+       '<input type="text" name="title" value="' + (isEdit ? escapeHtml(data.name) : '') + '" '
+			+              'class="layui-input" placeholder="请输入标题" autocomplete="off">'
+			+     '</div>'
+			+   '</div>'
+
+			+   '<div class="layui-form-item layui-form-text">'
+			+     '<label class="layui-form-label">描述</label>'
+			+     '<div class="layui-input-block">'
+			+       '<textarea name="description" class="layui-textarea" maxlength="500" '
+			+                 'placeholder="选填，最多 500 字">' + (isEdit ? escapeHtml(data.description || '') : '') + '</textarea>'
+			+     '</div>'
+			+   '</div>'
+
+			+   '<div class="layui-form-item">'
+			+     '<label class="layui-form-label">图片</label>'
+			+     '<div class="layui-input-block">'
+			+       '<input type="text" name="image" id="itemImage" value="' + (isEdit ? escapeHtml(data.image) : '') + '" '
+			+              'class="layui-input" placeholder="图片路径" autocomplete="off">'
+			+       '<button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="btnUpload" style="margin-top:8px;">'
+			+         '<i class="layui-icon layui-icon-upload"></i> 上传图片'
+			+       '</button>'
+			+       '<img id="imgPreview" class="upload-preview ' + (isEdit && data.image ? 'show' : '') + '" '
+			+            'src="' + (isEdit && data.image ? escapeHtml(data.image) : '') + '">'
+			+     '</div>'
+			+   '</div>'
+
+			+   '<div class="layui-form-item">'
+			+     '<label class="layui-form-label">跳转链接</label>'
+			+     '<div class="layui-input-block">'
+			+       '<input type="text" name="url" value="' + (isEdit ? escapeHtml(data.url || '') : '') + '" '
+			+              'class="layui-input" placeholder="http://..." autocomplete="off">'
+			+     '</div>'
+			+   '</div>'
+
+			+   '<div class="layui-form-item">'
+			+     '<label class="layui-form-label">生效开始</label>'
+			+     '<div class="layui-input-block">'
+			+       '<input type="text" name="start_time" id="itemStart" '
+			+              'value="' + (isEdit && data.start_time ? data.start_time : '') + '" '
+			+              'class="layui-input" placeholder="留空表示不限" readonly autocomplete="off">'
+			+     '</div>'
+			+   '</div>'
+
+			+   '<div class="layui-form-item">'
+			+     '<label class="layui-form-label">生效结束</label>'
+			+     '<div class="layui-input-block">'
+			+       '<input type="text" name="end_time" id="itemEnd" '
+			+              'value="' + (isEdit && data.end_time ? data.end_time : '') + '" '
+			+              'class="layui-input" placeholder="留空表示不限" readonly autocomplete="off">'
+			+     '</div>'
+			+   '</div>'
+
+			+   '<div class="layui-form-item">'
+			+     '<label class="layui-form-label">排序</label>'
+			+     '<div class="layui-input-block">'
+			+       '<input type="number" name="sort" value="' + (isEdit ? data.sort : 0) + '" class="layui-input">'
+			+     '</div>'
+			+   '</div>'
+
+			+   '<div class="layui-form-item">'
+			+     '<label class="layui-form-label">状态</label>'
+			+     '<div class="layui-input-block">'
+			+       '<input type="radio" name="status" value="1" title="启用" ' + (!isEdit || data.status == 1 ? 'checked' : '') + '>'
+			+       '<input type="radio" name="status" value="0" title="禁用" ' + (isEdit && data.status == 0 ? 'checked' : '') + '>'
+			+     '</div>'
+			+   '</div>'
+
+			+ '</form>'
+			+ '</div>';
+
+		layer.open({
+			type: 1,
+			title: isEdit ? '编辑子项' : '添加子项',
+			area: ['580px', '700px'],
+			content: html,
+			btn: ['保存', '取消'],
+			yes: function (index) {
+				var $form = $('#itemForm');
+				var postData = {
+					id:          $form.find('input[name=id]').val(),
+					group_id:    $form.find('input[name=group_id]').val(),
+					title:       $.trim($form.find('input[name=title]').val()),
+					description: $.trim($form.find('textarea[name=description]').val()),
+					image:       $form.find('input[name=image]').val(),
+					url:         $form.find('input[name=url]').val(),
+					start_time:  $form.find('input[name=start_time]').val(),
+					end_time:    $form.find('input[name=end_time]').val(),
+					sort:        $form.find('input[name=sort]').val(),
+					status:      $form.find('input[name=status]:checked').val()
+				};
+
+				if (!postData.title) {
+					layer.msg('标题不能为空', { icon: 2 });
+					return;
+				}
+				if (postData.start_time && postData.end_time && postData.start_time > postData.end_time) {
+					layer.msg('结束时间不能早于开始时间', { icon: 2 });
+					return;
+				}
+
+				$.post(ITEM_SAVE, postData, function (res) {
+					if (res.code === 0) {
+					layer.close(index);
+					layer.msg('保存成功', { icon: 1 });
+					reloadTree();
+					} else {
+					layer.msg(res.msg || '保存失败', { icon: 2 });
+					}
+				}, 'json');
+			},
+			success: function () {
+				form.render();
+
+				// 时间选择器
+				laydate.render({
+					elem: '#itemStart',
+					type: 'datetime',
+					format: 'yyyy-MM-dd HH:mm:ss',
+					trigger: 'click'
+				});
+				laydate.render({
+					elem: '#itemEnd',
+					type: 'datetime',
+					format: 'yyyy-MM-dd HH:mm:ss',
+					trigger: 'click'
+				});
+
+				// 图片上传
+				upload.render({
+					elem: '#btnUpload',
+					url: '/slider/upload',
+					field: 'file',
+					accept: 'images',
+					exts: 'jpg|jpeg|png|gif|webp',
+					size: 5120,
+					done: function (res) {
+					if (res.code === 0) {
+						$('#itemImage').val(res.data.url);
+						$('#imgPreview').attr('src', res.data.url).addClass('show');
+						layer.msg('上传成功', { icon: 1 });
+					} else {
+						layer.msg(res.msg || '上传失败', { icon: 2 });
+					}
+					},
+					error: function () {
+					layer.msg('上传失败', { icon: 2 });
+					}
+				});
+
+				// 手动输入图片路径时同步预览
+				$('#itemImage').on('input', function () {
+					var url = $.trim($(this).val());
+					if (url) {
+						$('#imgPreview').attr('src', url).addClass('show');
+					} else {
+						$('#imgPreview').removeClass('show');
+					}
+				});
+			}
+		});
+	}
+
+	/* ============================================================
+	*  工具函数
+	* ============================================================ */
+	function reloadTree() {
+		treeTable.reloadData(TABLE_ID, { url: TREE_DATA });
+	}
+
+	function escapeHtml(str) {
+		if (str === null || str === undefined) return '';
+		return String(str)
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#39;');
+	}
+
+	function truncate(str, len) {
+		str = String(str || '');
+		return str.length > len ? str.substr(0, len) + '…' : str;
+	}
+	
+});
+</script>
+
+{/block}

@@ -126,11 +126,12 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      */
     public function mode($key = null)
     {
-        if ($this->isEmpty()) {
+        $collection = (isset($key) ? $this->pluck($key) : $this)
+            ->reject(fn ($item) => is_null($item));
+
+        if ($collection->isEmpty()) {
             return;
         }
-
-        $collection = isset($key) ? $this->pluck($key) : $this;
 
         $counts = $this->newInstance();
 
@@ -167,14 +168,14 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
         $results = [];
 
-        foreach ($this->items as $key => $values) {
-            if ($values instanceof Collection) {
+        foreach ($this->items as $values) {
+            if ($values instanceof Enumerable) {
                 $values = $values->all();
             } elseif (! is_array($values)) {
                 continue;
             }
 
-            $results[$key] = $values;
+            $results[] = $values;
         }
 
         if (! $results) {
@@ -219,7 +220,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
         }
 
         if ($this->useAsCallable($key)) {
-            return ! is_null($this->first($key));
+            return array_any($this->items, $key);
         }
 
         return in_array($key, $this->items, true);
@@ -508,6 +509,8 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param  mixed  $key
      * @param  TGetOrPutValue|(\Closure(): TGetOrPutValue)  $value
      * @return TValue|TGetOrPutValue
+     *
+     * @phpstan-this-out static<TKey, TValue|TGetOrPutValue>
      */
     public function getOrPut($key, $value)
     {
@@ -1053,8 +1056,10 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * Push an item onto the beginning of the collection.
      *
      * @param  TValue  $value
-     * @param  TKey  $key
+     * @param  TKey|null  $key
      * @return $this
+     *
+     * @phpstan-this-out ($key is null ? static<TKey|int, TValue> : $this)
      */
     public function prepend($value, $key = null)
     {
@@ -1068,6 +1073,8 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      *
      * @param  TValue  ...$values
      * @return $this
+     *
+     * @phpstan-this-out static<TKey|int, TValue>
      */
     public function push(...$values)
     {
@@ -1083,6 +1090,8 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      *
      * @param  TValue  ...$values
      * @return $this
+     *
+     * @phpstan-this-out static<TKey|int, TValue>
      */
     public function unshift(...$values)
     {
@@ -1128,9 +1137,13 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     /**
      * Put an item in the collection by key.
      *
+     * @template TPutValue
+     *
      * @param  TKey  $key
-     * @param  TValue  $value
+     * @param  TPutValue  $value
      * @return $this
+     *
+     * @phpstan-this-out static<TKey, TValue|TPutValue>
      */
     public function put($key, $value)
     {
@@ -1271,16 +1284,16 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
             throw new InvalidArgumentException('Number of shifted items may not be less than zero.');
         }
 
-        if ($this->isEmpty()) {
-            return null;
-        }
-
         if ($count === 0) {
             return $this->newInstance();
         }
 
         if ($count === 1) {
             return array_shift($this->items);
+        }
+
+        if ($this->isEmpty()) {
+            return $this->newInstance();
         }
 
         $results = [];
@@ -1657,7 +1670,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
                         }
                     } else {
                         $result = match ($options) {
-                            SORT_NUMERIC => (int) $values[0] <=> (int) $values[1],
+                            SORT_NUMERIC => (float) $values[0] <=> (float) $values[1],
                             SORT_STRING => strcmp($values[0], $values[1]),
                             SORT_NATURAL => strnatcmp((string) $values[0], (string) $values[1]),
                             SORT_LOCALE_STRING => strcoll($values[0], $values[1]),
@@ -1940,6 +1953,8 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      *
      * @param  TValue  $item
      * @return $this
+     *
+     * @phpstan-this-out static<TKey|int, TValue>
      */
     public function add($item)
     {

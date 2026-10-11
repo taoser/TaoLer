@@ -20,6 +20,7 @@ use RuntimeException;
 use stdClass;
 use Throwable;
 use Workerman\Events\EventInterface;
+use Workerman\Events\Swoole;
 use Workerman\Protocols\Http;
 use Workerman\Protocols\Http\Request;
 use Workerman\Timer;
@@ -160,6 +161,21 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * @var ?callable
      */
     public $onWebSocketClose = null;
+
+    /**
+     * Emitted when a websocket ping frame is received (Only called when protocol is ws).
+     * Without a handler the ping is answered with a pong automatically.
+     *
+     * @var ?callable
+     */
+    public $onWebSocketPing = null;
+
+    /**
+     * Emitted when a websocket pong frame is received (Only called when protocol is ws).
+     *
+     * @var ?callable
+     */
+    public $onWebSocketPong = null;
 
     /**
      * Emitted when data is received.
@@ -483,12 +499,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
 
         // Attempt to send data directly.
         if ($this->sendBuffer === '') {
-            if ($this->transport === 'ssl') {
-                $this->eventLoop->onWritable($this->socket, $this->baseWrite(...));
-                $this->sendBuffer = $sendBuffer;
-                $this->checkBufferWillFull();
-                return null;
-            }
             $len = 0;
             try {
                 $len = @fwrite($this->socket, $sendBuffer);
@@ -675,21 +685,31 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
     public function baseRead($socket, bool $checkEof = true): void
     {
         static $requests = [];
-        // SSL handshake.
-        if ($this->transport === 'ssl' && $this->sslHandshakeCompleted !== true) {
-            if ($this->doSslHandshake($socket)) {
-                $this->sslHandshakeCompleted = true;
-                if ($this->sendBuffer) {
-                    $this->eventLoop->onWritable($socket, $this->baseWrite(...));
-                }
-            } else {
-                return;
-            }
-        }
-
         $buffer = '';
         try {
-            $buffer = @fread($socket, self::READ_BUFFER_SIZE);
+            if ($this->transport !== 'ssl') {
+                $buffer = @fread($socket, self::READ_BUFFER_SIZE);
+            } else {
+                // SSL handshake.
+                if ($this->sslHandshakeCompleted !== true) {
+                    if (!$this->doSslHandshake($socket)) {
+                        return;
+                    }
+                    $this->sslHandshakeCompleted = true;
+                    if ($this->sendBuffer) {
+                        $this->eventLoop->onWritable($socket, $this->baseWrite(...));
+                    }
+                }
+                $buffer = @fread($socket, self::READ_BUFFER_SIZE);
+                // Swoole's TLS hook returns at most one chunk per fread() and enables OpenSSL read-ahead, so decrypted
+                // data may stay inside OpenSSL while the fd is no longer readable and the event loop never fires again.
+                // Drain it here. PHP's native openssl stream has neither behaviour, so other event loops are untouched.
+                if ($buffer !== '' && $buffer !== false && $this->eventLoop instanceof Swoole) {
+                    while (($chunk = @fread($socket, self::READ_BUFFER_SIZE)) !== '' && $chunk !== false) {
+                        $buffer .= $chunk;
+                    }
+                }
+            }
         } catch (Throwable) {
             // do nothing
         }
@@ -801,6 +821,10 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
                     }
                     // Decode request buffer before Emitting onMessage callback.
                     $request = $this->protocol::decode($oneRequestBuffer, $this);
+                    // The protocol closed the connection while decoding, so there is nothing to deliver.
+                    if ($this->status === self::STATUS_CLOSING || $this->status === self::STATUS_CLOSED) {
+                        return;
+                    }
                     if ((!is_object($request) || $request instanceof Request) && !isset($oneRequestBuffer[static::MAX_CACHE_STRING_LENGTH])) {
                         ($this->onMessage)($this, $request);
                         if ($request instanceof Request) {
@@ -845,11 +869,10 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
     {
         $len = 0;
         try {
-            if ($this->transport === 'ssl') {
-                $len = @fwrite($this->socket, $this->sendBuffer, 8192);
-            } else {
-                $len = @fwrite($this->socket, $this->sendBuffer);
-            }
+            // Always retry with the whole buffer. OpenSSL must be given at least the length of the
+            // record it could not flush last time (otherwise SSL_R_BAD_LENGTH kills the session), and
+            // send() may already have queued a partially written 16KB record.
+            $len = @fwrite($this->socket, $this->sendBuffer);
         } catch (Throwable) {
         }
         if ($len === strlen($this->sendBuffer)) {
@@ -878,10 +901,16 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
         if ($len > 0) {
             $this->bytesWritten += $len;
             $this->sendBuffer = substr($this->sendBuffer, $len);
-        } else {
-            ++self::$statistics['send_fail'];
-            $this->destroy();
+            return;
         }
+        // fwrite() returns 0 when the socket would block (e.g. SSL_ERROR_WANT_WRITE while the
+        // kernel send buffer is full). That is back-pressure, not an error: keep the buffer and
+        // wait for the next writable event.
+        if ($len === 0 && is_resource($this->socket) && !feof($this->socket)) {
+            return;
+        }
+        ++self::$statistics['send_fail'];
+        $this->destroy();
     }
 
     /**
@@ -893,7 +922,7 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
     public function doSslHandshake($socket): bool|int
     {
         if (!is_resource($socket) || feof($socket)) {
-            $this->destroy();
+            $this->emitSslHandshakeFailure('connection closed during SSL handshake');
             return false;
         }
         $async = $this instanceof AsyncTcpConnection;
@@ -915,17 +944,19 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
         }
 
         // Hidden error.
-        set_error_handler(static function (int $code, string $msg): bool {
-            if (!Worker::$daemonize) {
-                Worker::safeEcho(sprintf("SSL handshake error: %s\n", $msg));
-            }
+        $reason = '';
+        set_error_handler(static function (int $code, string $msg, ...$args) use (&$reason): bool {
+            $reason = $msg;
             return true;
         });
-        $ret = stream_socket_enable_crypto($socket, true, $type);
-        restore_error_handler();
+        try {
+            $ret = stream_socket_enable_crypto($socket, true, $type);
+        } finally {
+            restore_error_handler();
+        }
         // Negotiation has failed.
         if (false === $ret) {
-            $this->destroy();
+            $this->emitSslHandshakeFailure($reason);
             return false;
         }
         if (0 === $ret) {
@@ -933,6 +964,40 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
             return 0;
         }
         return true;
+    }
+
+    /**
+     * Report a failed SSL negotiation to the application, then tear the connection down.
+     *
+     * onError has to fire before destroy() so the application sees the reason ahead of onClose,
+     * otherwise a client only observes an unexplained disconnect and waits out its own timeout.
+     *
+     * @param string $reason
+     * @return void
+     */
+    private function emitSslHandshakeFailure(string $reason): void
+    {
+        $message = sprintf('SSL handshake with %s failed', $this->getRemoteAddress());
+        if ($reason !== '') {
+            $message .= ": $reason";
+        }
+        if (!Worker::$daemonize) {
+            Worker::safeEcho("$message\n");
+        }
+        $this->status = self::STATUS_CLOSING;
+        if ($this->onError) {
+            try {
+                ($this->onError)($this, static::CONNECT_FAIL, $message);
+            } catch (Throwable $e) {
+                $this->error($e);
+            }
+        }
+        if ($this->status === self::STATUS_CLOSING) {
+            $this->destroy();
+        }
+        if ($this instanceof AsyncTcpConnection && $this->status === self::STATUS_CLOSED) {
+            $this->onConnect = null;
+        }
     }
 
     /**

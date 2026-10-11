@@ -61,7 +61,7 @@ class Worker
      *
      * @var string
      */
-    final public const VERSION = '5.2.2';
+    final public const VERSION = '5.2.3';
 
     /**
      * Status initial.
@@ -188,6 +188,28 @@ class Worker
      * @var ?callable
      */
     public $onWebSocketConnected = null;
+
+    /**
+     * Emitted when a websocket connection is closed by the peer (Only works when protocol is ws).
+     *
+     * @var ?callable
+     */
+    public $onWebSocketClose = null;
+
+    /**
+     * Emitted when a websocket ping frame is received (Only works when protocol is ws).
+     * Without a handler the ping is answered with a pong automatically.
+     *
+     * @var ?callable
+     */
+    public $onWebSocketPing = null;
+
+    /**
+     * Emitted when a websocket pong frame is received (Only works when protocol is ws).
+     *
+     * @var ?callable
+     */
+    public $onWebSocketPong = null;
 
     /**
      * Emitted when data is received.
@@ -546,11 +568,11 @@ class Worker
     protected static bool $outputDecorated;
 
     /**
-     * Worker object's hash id(unique identifier).
+     * Worker object's id(unique identifier).
      *
-     * @var ?string
+     * @var ?int
      */
-    protected ?string $workerId = null;
+    protected ?int $workerId = null;
 
     /**
      * Constructor.
@@ -561,7 +583,7 @@ class Worker
     public function __construct(?string $socketName = null, array $socketContext = [])
     {
         // Save all worker instances.
-        $this->workerId = spl_object_hash($this);
+        $this->workerId = spl_object_id($this);
         $this->context = new stdClass();
         static::$workers[$this->workerId] = $this;
         static::$pidMap[$this->workerId] = [];
@@ -615,8 +637,8 @@ class Worker
      */
     protected static function checkSapiEnv(): void
     {
-        // Only for cli and micro.
-        if (!in_array(PHP_SAPI, ['cli', 'micro'])) {
+        // Only for cli, micro and embed.
+        if (!in_array(PHP_SAPI, ['cli', 'micro', 'embed'])) {
             exit("Only run in command line mode" . PHP_EOL);
         }
         // Check pcntl and posix extension for unix.
@@ -718,6 +740,10 @@ class Worker
     protected static function init(): void
     {
         set_error_handler(static function (int $code, string $msg, string $file, int $line): bool {
+            // A custom handler is called even for diagnostics silenced with @, so honour the mask ourselves.
+            if (!(error_reporting() & $code)) {
+                return true;
+            }
             static::safeEcho(sprintf("%s \"%s\" in file %s on line %d\n", static::getErrorType($code), $msg, $file, $line));
             return true;
         });
@@ -1138,7 +1164,11 @@ class Worker
                 break;
             case 'status':
                 // Delete status file on shutdown
-                register_shutdown_function(unlink(...), static::$statisticsFile);
+                register_shutdown_function(static function () {
+                    if (is_file(static::$statisticsFile)) {
+                        @unlink(static::$statisticsFile);
+                    }
+                });
                 while (1) {
                     // Master process will send SIGIOT signal to all child processes.
                     posix_kill($masterPid, SIGIOT);
@@ -1157,7 +1187,11 @@ class Worker
                 }
             case 'connections':
                 // Delete status file on shutdown
-                register_shutdown_function(unlink(...), static::$connectionsFile);
+                register_shutdown_function(static function () {
+                    if (is_file(static::$connectionsFile)) {
+                        @unlink(static::$connectionsFile);
+                    }
+                });
                 // Master process will send SIGIO signal to all child processes.
                 posix_kill($masterPid, SIGIO);
                 // Waiting a moment.
@@ -1364,8 +1398,9 @@ class Worker
      * Signal handler.
      *
      * @param int $signal
+     * @param mixed ...$args
      */
-    protected static function signalHandler(int $signal): void
+    public static function signalHandler(int $signal, mixed ...$args): void
     {
         switch ($signal) {
             // Stop.
@@ -1462,31 +1497,35 @@ class Worker
             return;
         }
 
-        if (is_resource(STDOUT)) {
-            fclose(STDOUT);
+        if (defined('STDOUT') && is_resource(STDOUT) && get_resource_type(STDOUT) === 'stream') {
+            try {
+                @fclose(STDOUT);
+            } catch (Throwable) {}
         }
 
-        if (is_resource(STDERR)) {
-            fclose(STDERR);
+        if (defined('STDERR') && is_resource(STDERR) && get_resource_type(STDERR) === 'stream') {
+            try {
+                @fclose(STDERR);
+            } catch (Throwable) {}
         }
 
-        if (is_resource(static::$outputStream)) {
-            fclose(static::$outputStream);
+        if (is_resource(static::$outputStream) && get_resource_type(static::$outputStream) === 'stream') {
+            try {
+                @fclose(static::$outputStream);
+            } catch (Throwable) {}
         }
 
-        set_error_handler(static fn (): bool => true);
+        set_error_handler(static fn (...$args): bool => true);
         $stdOutStream = fopen(static::$stdoutFile, 'a');
         restore_error_handler();
 
-        if ($stdOutStream === false) {
-            return;
+        if ($stdOutStream !== false) {
+            static::$outputStream = $stdOutStream;
         }
-
-        static::$outputStream = $stdOutStream;
 
         // Fix standard output cannot redirect of PHP 8.1.8's bug
         if (function_exists('posix_isatty') && posix_isatty(2)) {
-            ob_start(function (string $string) {
+            ob_start(function (string $string, ...$args) {
                 file_put_contents(static::$stdoutFile, $string, FILE_APPEND);
             }, 1);
         }
@@ -1770,11 +1809,11 @@ class Worker
     /**
      * Get worker id.
      *
-     * @param string $workerId
+     * @param int $workerId
      * @param int $pid
      * @return false|int|string
      */
-    protected static function getId(string $workerId, int $pid): false|int|string
+    protected static function getId(int $workerId, int $pid): false|int|string
     {
         return array_search($pid, static::$idMap[$workerId]);
     }
@@ -1821,7 +1860,7 @@ class Worker
      */
     protected static function setProcessTitle(string $title): void
     {
-        set_error_handler(static fn (): bool => true);
+        set_error_handler(static fn (...$args): bool => true);
         cli_set_process_title($title);
         restore_error_handler();
     }
@@ -2068,7 +2107,7 @@ class Worker
             }
             // Execute exit.
             $workers = array_reverse(static::$workers);
-            array_walk($workers, static fn (Worker $worker) => $worker->stop(false));
+            array_walk($workers, static fn (Worker $worker, mixed ...$args) => $worker->stop(false));
 
             $callback = function () use ($code, $workers) {
                 $allWorkerConnectionClosed = true;
@@ -2101,7 +2140,7 @@ class Worker
     /**
      * check if child processes is really running
      */
-    protected static function checkIfChildRunning(): void
+    public static function checkIfChildRunning(): void
     {
         foreach (static::$pidMap as $workerId => $workerPidArray) {
             foreach ($workerPidArray as $pid => $workerPid) {
@@ -2303,9 +2342,10 @@ class Worker
     /**
      * Check errors when current process exited.
      *
+     * @param mixed ...$args
      * @return void
      */
-    protected static function checkErrors(): void
+    public static function checkErrors(mixed ...$args): void
     {
         if (static::STATUS_SHUTDOWN !== static::$status) {
             $errorMsg = DIRECTORY_SEPARATOR === '/' ? 'Worker[' . posix_getpid() . '] process terminated' : 'Worker process terminated';
@@ -2423,8 +2463,13 @@ class Worker
 
         $msg = str_replace(['<n>', '<w>', '<g>'], [$line, $white, $green], $msg);
         $msg = str_replace(['</n>', '</w>', '</g>'], $end, $msg);
-        set_error_handler(static fn (): bool => true);
-        if (!feof(self::$outputStream)) {
+        // The stream is normally set up by runAll(), but safeEcho() is also reachable from plain
+        // client scripts. The resource check also handles a closed handle without another warning.
+        if (static::$outputStream === null) {
+            static::initStdOut();
+        }
+        set_error_handler(static fn (...$args): bool => true);
+        if (is_resource(self::$outputStream) && !feof(self::$outputStream)) {
             fwrite(self::$outputStream, $msg);
             fflush(self::$outputStream);
         }
@@ -2476,7 +2521,7 @@ class Worker
 
             // Try to open keepalive for tcp and disable Nagle algorithm.
             if (function_exists('socket_import_stream') && self::BUILD_IN_TRANSPORTS[$this->transport] === 'tcp') {
-                set_error_handler(static fn (): bool => true);
+                set_error_handler(static fn (...$args): bool => true);
                 $socket = socket_import_stream($this->mainSocket);
                 socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
                 socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
@@ -2506,7 +2551,7 @@ class Worker
     {
         $this->pauseAccept();
         if ($this->mainSocket) {
-            set_error_handler(static fn (): bool => true);
+            set_error_handler(static fn (...$args): bool => true);
             fclose($this->mainSocket);
             restore_error_handler();
             $this->mainSocket = null;
@@ -2532,7 +2577,7 @@ class Worker
                 if (isset($address['host']) && isset($address['port'])) {
                     $address = "tcp://{$address['host']}:{$address['port']}";
                     $server = null;
-                    set_error_handler(function ($code, $msg) {
+                    set_error_handler(function ($code, $msg, ...$args) {
                         throw new RuntimeException($msg);
                     });
                     $server = stream_socket_server($address, $code, $msg);
@@ -2700,10 +2745,10 @@ class Worker
      * @param resource $socket
      * @return void
      */
-    protected function acceptTcpConnection(mixed $socket): void
+    public function acceptTcpConnection(mixed $socket): void
     {
         // Accept a connection on server socket.
-        set_error_handler(static fn (): bool => true);
+        set_error_handler(static fn (...$args): bool => true);
         $newSocket = stream_socket_accept($socket, 0, $remoteAddress);
         restore_error_handler();
 
@@ -2740,9 +2785,9 @@ class Worker
      * @param resource $socket
      * @return void
      */
-    protected function acceptUdpConnection(mixed $socket): void
+    public function acceptUdpConnection(mixed $socket): void
     {
-        set_error_handler(static fn (): bool => true);
+        set_error_handler(static fn (...$args): bool => true);
         $recvBuffer = stream_socket_recvfrom($socket, UdpConnection::MAX_UDP_PACKAGE_SIZE, 0, $remoteAddress);
         restore_error_handler();
         if (false === $recvBuffer || empty($remoteAddress)) {

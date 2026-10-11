@@ -56,7 +56,6 @@
     const RULES_TREE_URL = MODULE_NAME + '/system/AuthRule/getRuleTreeList';
 
     layui.use(['popup'],function () {
-        let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
         let popup = layui.popup;
@@ -67,7 +66,7 @@
 
 
         // 渲染
-        var inst = treeTable.render({
+        treeTable.render({
             elem: '#table',
             url: RULES_TREE_URL, // 此处为静态模拟数据，实际使用时需换成真实接口
             tree: {
@@ -100,7 +99,7 @@
             ]]
         });
 
-        table.on('tool(table)',function(obj){
+        treeTable.on('tool(table)',function(obj){
             if (obj.event === 'remove') {
                 window.remove(obj);
             } else if (obj.event === 'edit') {
@@ -108,7 +107,7 @@
             }
         })
 
-        table.on('toolbar(table)', function(obj){
+        treeTable.on('toolbar(table)', function(obj){
             if(obj.event === 'add'){
                 window.add();
             } else if(obj.event === 'refresh'){

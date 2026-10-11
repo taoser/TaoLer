@@ -1,0 +1,87 @@
+{extend name="public/form" /}
+
+{block name="body"}
+<form class="layui-form" lay-filter="formItem">
+<input type="hidden" name="id" value="{$info.id??0}">
+<input type="hidden" name="group_id" value="{$group_id}">
+<div class="layui-form-item">
+<label class="layui-form-label">标题</label>
+<div class="layui-input-block">
+<input type="text" name="title" value="{$info.title??''}" class="layui-input" lay-verify="required">
+</div>
+</div>
+<div class="layui-form-item">
+<label class="layui-form-label">幻灯图片</label>
+<div class="layui-input-block">
+<input type="text" name="image" value="{$info.image??''}" class="layui-input" lay-verify="required">
+<div class="layui-form-mid layui-word-aux">填写图片完整地址</div>
+</div>
+</div>
+<div class="layui-form-item">
+<label class="layui-form-label">生效时间</label>
+<div class="layui-input-inline">
+<input type="text" name="start_time" id="start_time" value="{$info.start_time??''}" class="layui-input" lay-verify="required">
+</div>
+<div class="layui-input-inline">
+<input type="text" name="end_time" id="end_time" value="{$info.end_time??''}" class="layui-input" lay-verify="required">
+</div>
+</div>
+<div class="layui-form-item">
+<label class="layui-form-label">跳转URL</label>
+<div class="layui-input-block">
+<input type="text" name="url" value="{$info.url??''}" class="layui-input">
+</div>
+</div>
+<div class="layui-form-item">
+<label class="layui-form-label">状态</label>
+<div class="layui-input-block">
+<input type="radio" name="status" value="1" title="启用" {if !isset($info.status) || $info.status ==1}checked{/if}>
+<input type="radio" name="status" value="0" title="禁用" {if isset($info.status) && $info.status ==0}checked{/if}>
+</div>
+</div>
+<div class="layui-form-item">
+<label class="layui-form-label">排序</label>
+<div class="layui-input-block">
+<input type="number" name="sort" value="{$info.sort??0}" class="layui-input">
+</div>
+</div>
+<div class="layui-form-item">
+<label class="layui-form-label">描述</label>
+<div class="layui-input-block">
+<textarea name="description" class="layui-textarea">{$info.description??''}</textarea>
+</div>
+</div>
+<div class="layui-form-item">
+<div class="layui-input-block">
+<button class="layui-btn" lay-submit lay-filter="submitItem">保存</button>
+</div>
+</div>
+</form>
+{__block__}
+<script>
+layui.use(['form','laydate'],function(){
+    var form = layui.form;
+    var laydate = layui.laydate;
+    // 使用datetime选择器，支持时分秒
+    laydate.render({
+        elem:'#start_time',
+        type:'datetime'
+    });
+    laydate.render({
+        elem:'#end_time',
+        type:'datetime'
+    });
+    form.on('submit(submitItem)',function(data){
+        $.post('/slide/itemSave',data.field,function(res){
+            if(res.code===0){
+                layer.msg('保存成功',{time:1000},function(){
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                })
+            }else layer.msg(res.msg);
+        },'json');
+        return false;
+    })
+})
+</script>
+{/block}
