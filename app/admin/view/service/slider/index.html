@@ -2,7 +2,7 @@
 
 {block name="title"}幻灯管理（分组+子项同页）{/block}
 
-{block name="body"}
+{block name="head"}
 <style>
 	.time-tip { font-size: 12px; color: #999; }
 	.desc-tip { font-size: 12px; color: #999; }
@@ -41,9 +41,9 @@
 </script>
 
 <script type="text/html" id="tplToolbar">
-  {{# if(d.type === 'group'){ }}
+	{{# if(d.type === 'group'){ }}
     <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="addItem" title="添加子项"><i class="layui-icon layui-icon-add-1"></i></button>
-  {{# } }}
+	{{# } }}
     <button class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon layui-icon-edit"></i></button>
     <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
@@ -92,7 +92,8 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 			view: {
 				expandAllDefault: true,  // ✅ 默认展开所有节点
 				dblClickExpand:   false,
-				indent:           20
+				indent:           20,
+				iconLeaf:         'layui-icon layui-icon-file'
 			},
 			data: {
 				isSimpleData: false
@@ -100,14 +101,14 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 		},
 		cols: [[
 			{field: 'name', title: '名称/标题', width: 150, treeNode: true},
-			{field: 'image', title: '预览', width: 110, align: 'center', templet: function (d) {
-				if (d.type !== 'item' || !d.image) return '';
-				return '<img src="' + escapeHtml(d.image) + '" class="slider-thumb" onerror="this.style.display=\'none\'">';
-				}
-			},
 			{field: 'code', title: '标识码', width: 120, align: 'center', templet: function (d) {
 				if (d.type !== 'group' || !d.code) return '';
 					return '<span class="code-tag">' + escapeHtml(d.code) + '</span>';
+				}
+			},
+			{field: 'image', title: '预览', width: 110, align: 'center', templet: function (d) {
+				if (d.type !== 'item' || !d.image) return '';
+				return '<img src="' + escapeHtml(d.image) + '" class="slider-thumb" onerror="this.style.display=\'none\'">';
 				}
 			},
 			{field: 'description', title: '描述', minWidth: 180, templet: function (d) {
@@ -212,14 +213,14 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 		+   '<div class="layui-form-item">'
 		+     '<label class="layui-form-label"><span style="color:#ff5722;">*</span>名称</label>'
 		+     '<div class="layui-input-block">'
-		+       '<input type="text" name="name" value="' + (isEdit ? escapeHtml(data.name) : '') + '"class="layui-input" placeholder="请输入分组名称" autocomplete="off">'
+		+       '<input type="text" name="name" value="' + (isEdit ? escapeHtml(data.name) : '') + '" class="layui-input" placeholder="请输入分组名称" autocomplete="off">'
 		+     '</div>'
 		+   '</div>'
 
 		+   '<div class="layui-form-item">'
 		+     '<label class="layui-form-label"><span style="color:#ff5722;">*</span>标识</label>'
 		+     '<div class="layui-input-block">'
-		+       '<input type="text" name="code" value="' + (isEdit ? escapeHtml(data.code) : '') + '"class="layui-input" placeholder="小写字母开头，仅含小写字母/数字/下划线" autocomplete="off">'
+		+       '<input type="text" name="code" value="' + (isEdit ? escapeHtml(data.code) : '') + '" class="layui-input" placeholder="小写字母开头，仅含小写字母/数字/下划线" autocomplete="off">'
 		+       '<div class="form-tip">用于前台按标识取值，例如：<code>home_banner</code></div>'
 		+     '</div>'
 		+   '</div>'
@@ -312,16 +313,7 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 			+   '<div class="layui-form-item">'
 			+     '<label class="layui-form-label"><span style="color:#ff5722;">*</span> 标题</label>'
 			+     '<div class="layui-input-block">'
-			+       '<input type="text" name="title" value="' + (isEdit ? escapeHtml(data.name) : '') + '" '
-			+              'class="layui-input" placeholder="请输入标题" autocomplete="off">'
-			+     '</div>'
-			+   '</div>'
-
-			+   '<div class="layui-form-item layui-form-text">'
-			+     '<label class="layui-form-label">描述</label>'
-			+     '<div class="layui-input-block">'
-			+       '<textarea name="description" class="layui-textarea" maxlength="500" '
-			+                 'placeholder="选填，最多 500 字">' + (isEdit ? escapeHtml(data.description || '') : '') + '</textarea>'
+			+       '<input type="text" name="title" value="' + (isEdit ? escapeHtml(data.name) : '') + '" class="layui-input" placeholder="请输入标题" autocomplete="off">'
 			+     '</div>'
 			+   '</div>'
 
@@ -341,8 +333,15 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 			+   '<div class="layui-form-item">'
 			+     '<label class="layui-form-label">跳转链接</label>'
 			+     '<div class="layui-input-block">'
-			+       '<input type="text" name="url" value="' + (isEdit ? escapeHtml(data.url || '') : '') + '" '
-			+              'class="layui-input" placeholder="http://..." autocomplete="off">'
+			+       '<input type="text" name="url" value="' + (isEdit ? escapeHtml(data.url || '') : '') + '" class="layui-input" placeholder="http://..." autocomplete="off">'
+			+     '</div>'
+			+   '</div>'
+
+			+   '<div class="layui-form-item layui-form-text">'
+			+     '<label class="layui-form-label">描述</label>'
+			+     '<div class="layui-input-block">'
+			+       '<textarea name="description" class="layui-textarea" maxlength="500" '
+			+                 'placeholder="选填，最多 500 字">' + (isEdit ? escapeHtml(data.description || '') : '') + '</textarea>'
 			+     '</div>'
 			+   '</div>'
 
@@ -350,8 +349,7 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 			+     '<label class="layui-form-label">生效开始</label>'
 			+     '<div class="layui-input-block">'
 			+       '<input type="text" name="start_time" id="itemStart" '
-			+              'value="' + (isEdit && data.start_time ? data.start_time : '') + '" '
-			+              'class="layui-input" placeholder="留空表示不限" readonly autocomplete="off">'
+			+              'value="' + (isEdit && data.start_time ? data.start_time : '') + '" class="layui-input" placeholder="留空表示不限" readonly autocomplete="off">'
 			+     '</div>'
 			+   '</div>'
 
@@ -359,8 +357,7 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 			+     '<label class="layui-form-label">生效结束</label>'
 			+     '<div class="layui-input-block">'
 			+       '<input type="text" name="end_time" id="itemEnd" '
-			+              'value="' + (isEdit && data.end_time ? data.end_time : '') + '" '
-			+              'class="layui-input" placeholder="留空表示不限" readonly autocomplete="off">'
+			+         'value="' + (isEdit && data.end_time ? data.end_time : '') + '" class="layui-input" placeholder="留空表示不限" readonly autocomplete="off">'
 			+     '</div>'
 			+   '</div>'
 

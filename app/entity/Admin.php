@@ -16,6 +16,7 @@ use think\facade\Session;
 use think\facade\Config;
 use app\common\helper\PasswordHash;
 use app\admin\validate\Admin as AdminValidate;
+use app\exception\BusinessException;
 
 
 class Admin extends BaseEntity
@@ -32,24 +33,24 @@ class Admin extends BaseEntity
 			->scene('Login')
 			->check($data);
 		} catch (ValidateException $e) {
-			throw new Exception($e->getError(), 1);
+			throw new BusinessException($e->getError(), 1);
 		}
 
         //查询用户
         $admin = $this->where('username', $data['username'])->find();
 
 		if(is_null($admin)){
-			throw new Exception('用户名或密码错误', -1);
+			throw new BusinessException('用户名或密码错误', -1);
 		}
 
 		if($admin['status'] != 1){
-			throw new Exception('用户被禁用或未审核,请联系管理员', 1);
+			throw new BusinessException('用户被禁用或未审核,请联系管理员', 1);
 		}
 
 		['ok'=>$ok,'update'=>$update,'new_hash'=>$new_hash] = PasswordHash::verify($data['password'], $admin['password']);
 
 		if(!$ok) {
-			throw new Exception('密码错误', -1);
+			throw new BusinessException('密码错误', -1);
         }
 
 		//将用户数据写入Session
@@ -82,13 +83,13 @@ class Admin extends BaseEntity
 	public function setpass(array $data)
 	{
 		if($data['password'] !== $data['confirm_password']){
-			throw new Exception('两次密码不一致');
+			throw new BusinessException('两次密码不一致');
 		}
 
 		$admin = $this->find($data['admin_id']);
 
 		if(!password_verify($data['oldPassword'], $admin['password'])){
-			throw new Exception('当前密码错误');
+			throw new BusinessException('当前密码错误');
 		}
 
 		$data['password'] = PasswordHash::make($data['password']);
