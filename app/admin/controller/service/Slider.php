@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace app\admin\controller\service;
 
-use app\admin\controller\AdminBaseController;
+use think\Request;
+use think\Response;
 use think\facade\Db;
 use think\facade\Filesystem;
 use think\response\Json;
+use app\admin\controller\AdminBaseController;
 
 class Slider extends AdminBaseController
 {
@@ -19,7 +21,7 @@ class Slider extends AdminBaseController
     /* ============================================================
      *  获取树形数据（分组 + 子项）
      * ============================================================ */
-    public function tree(): Json
+    public function tree(): Response
     {
         $now = date('Y-m-d H:i:s');
 
@@ -34,8 +36,12 @@ class Slider extends AdminBaseController
         $items = Db::name('slider_item')
             ->order('sort', 'asc')
             ->order('id', 'asc')
+            ->json(['option'])
             ->select()
             ->toArray();
+
+            // dump($items);
+            // return json(['code' => 0, 'msg' => '', 'data' => $items]);
 
         // 3. 按分组ID归类子项
         $itemMap = [];
@@ -49,7 +55,7 @@ class Slider extends AdminBaseController
             $node = [
                 'id'          => 'g_' . $group['id'],
                 'real_id'     => (int)$group['id'],
-                'code'        => $group['code'],
+                'title'       => $group['title'],
                 'name'        => $group['name'],
                 'description' => $group['description'],
                 'type'        => 'group',
@@ -67,10 +73,11 @@ class Slider extends AdminBaseController
                         'id'           => 'i_' . $item['id'],
                         'real_id'      => (int)$item['id'],
                         'group_id'     => (int)$item['group_id'],
-                        'name'         => $item['title'],
+                        'title'        => $item['title'],
                         'description'  => $item['description'],
                         'image'        => $item['image'],
                         'url'          => $item['url'],
+                        'option'       => json_encode($item['option'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                         'start_time'   => $item['start_time'],
                         'end_time'     => $item['end_time'],
                         'is_effective' => $this->checkEffective($item, $now),
@@ -110,32 +117,32 @@ class Slider extends AdminBaseController
     public function groupSave(): Json
     {
         $id          = (int)input('post.id/d', 0);
-        $code        = trim((string)input('post.code/s', ''));
+        $title       = trim((string)input('post.title/s', ''));
         $name        = trim((string)input('post.name/s', ''));
         $description = trim((string)input('post.description/s', ''));
 
         // 基础校验
-        if ($name === '') {
+        if ($title === '') {
             return json(['code' => 1, 'msg' => '分组名称不能为空']);
         }
-        if ($code === '') {
+        if ($name === '') {
             return json(['code' => 1, 'msg' => '唯一标识码不能为空']);
         }
-        if (!preg_match('/^[a-z][a-z0-9_]{1,49}$/', $code)) {
+        if (!preg_match('/^[a-z][a-z0-9_]{1,49}$/', $name)) {
             return json(['code' => 1, 'msg' => '标识码只能由小写字母、数字、下划线组成，且以小写字母开头（2-50 位）']);
         }
 
         // 唯一性校验
-        $existQuery = Db::name('slider_group')->where('code', $code);
+        $existQuery = Db::name('slider_group')->where('name', $name);
         if ($id > 0) {
             $existQuery->where('id', '<>', $id);
         }
         if ($existQuery->count() > 0) {
-            return json(['code' => 1, 'msg' => '标识码「' . $code . '」已存在，请更换']);
+            return json(['code' => 1, 'msg' => '标识码「' . $name . '」已存在，请更换']);
         }
 
         $data = [
-            'code'        => $code,
+            'title'       => $title,
             'name'        => $name,
             'description' => mb_substr($description, 0, 500),
             'sort'        => (int)input('post.sort/d', 0),
@@ -187,14 +194,15 @@ class Slider extends AdminBaseController
     /* ============================================================
      *  保存子项（新增 / 编辑）
      * ============================================================ */
-    public function itemSave(): Json
+    public function itemSave(Request $request): Response
     {
-        $id          = (int)input('post.id/d', 0);
-        $groupId     = (int)input('post.group_id/d', 0);
-        $title       = trim((string)input('post.title/s', ''));
-        $description = trim((string)input('post.description/s', ''));
-        $startTime   = $this->normalizeDatetime((string)input('post.start_time/s', ''));
-        $endTime     = $this->normalizeDatetime((string)input('post.end_time/s', ''));
+        $id          = $request->post('id/d', 0);
+        $groupId     = $request->post('group_id/d', 0);
+        $title       = $request->post('title/s');
+        $description = $request->post('description/s', '');
+        $startTime   = $this->normalizeDatetime($request->post('start_time/s', ''));
+        $endTime     = $this->normalizeDatetime($request->post('end_time/s', ''));
+        $option      = trim($request->post('option/s', ''));
 
         if ($title === '') {
             return json(['code' => 1, 'msg' => '标题不能为空']);
@@ -221,6 +229,7 @@ class Slider extends AdminBaseController
             'end_time'    => $endTime,
             'sort'        => (int)input('post.sort/d', 0),
             'status'      => (int)input('post.status/d', 1),
+            'option'      => $option,
             'update_time' => date('Y-m-d H:i:s'),
         ];
 
@@ -228,7 +237,7 @@ class Slider extends AdminBaseController
             Db::name('slider_item')->where('id', $id)->update($data);
         } else {
             $data['create_time'] = date('Y-m-d H:i:s');
-            Db::name('slider_item')->insert($data);
+            Db::name('slider_item')->json(['option'])->insert($data);
         }
 
         return json(['code' => 0, 'msg' => '保存成功']);
@@ -321,7 +330,7 @@ class Slider extends AdminBaseController
             'data' => [
                 'group' => [
                     'id'          => (int)$group['id'],
-                    'code'        => $group['code'],
+                    'title'       => $group['title'],
                     'name'        => $group['name'],
                     'description' => $group['description'],
                 ],

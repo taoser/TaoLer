@@ -1,11 +1,13 @@
 <?php
-/**
- * @Program: table.css 2023/4/15
- * @FilePath: app\common\taglib\Taoler.php
- * @Description: Taoler.php
- * @LastEditTime: 2023-04-15 11:09:54
- * @Author: Taoker <317927823@qq.com>
- * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-07-30 07:19:57
+ * @LastEditTime: 2026-10-13 21:38:03
+ * @LastEditors: TaoLer
+ * @Description: Section.php
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\common\taglib\Section.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
 
 namespace app\common\taglib;

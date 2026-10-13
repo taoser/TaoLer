@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-30 20:34:52
+ * @LastEditTime: 2026-10-13 20:17:49
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -34,6 +34,7 @@ use app\common\helper\JwtAuth;
 
 use think\facade\Cache;
 use app\entity\Tag;
+use app\facade\Slider;
 
 use app\entity\Article as ArticleEntity;
 
@@ -44,6 +45,12 @@ class Index extends IndexBaseController
      */
     public function index(Request $request)
     {
+		$sliders = Slider::getGroup('home_slider');
+
+		// dump($sliders);
+
+
+
 		// dump(get_addons_config('demo'));
 
 

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-15 21:16:35
+ * @LastEditTime: 2026-10-13 20:10:01
  * @LastEditors: TaoLer
  * @Description: 系统配置项标签库
  * @Version: V4.0.0
@@ -42,6 +42,7 @@ class Taoler extends TagLib
         
         // 幻灯片和链接
         'slide'     => ['attr' => ''],
+        'slider'    => ['attr' => 'name'],
         'link'      => ['attr' => ''],
 
         //
@@ -173,6 +174,19 @@ class Taoler extends TagLib
 
         $parse ='<?php $__SLIDE__ = \app\facade\AdSlide::getSlide(' . $type .',' . $num . '); ?>';
         $parse .= '{volist name="__SLIDE__" id="slide"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+
+        return $parse;
+    }
+
+    // 新版幻灯片
+    public function tagSlider($tag, $content): string
+    {
+        $name = !empty($tag['name']) ? $tag['name'] : '';
+
+        $parse ='<?php $__SLIDE__ = \app\facade\Slider::getGroup(\'' . $name .'\'); ?>';
+        $parse .= '{volist name="__SLIDE__" id="slider"}';
         $parse .= $content;
         $parse .= '{/volist}';
 

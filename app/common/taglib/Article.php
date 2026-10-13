@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2022-05-17 13:08:11
- * @LastEditTime: 2026-09-25 19:57:28
+ * @LastEditTime: 2026-10-13 20:33:38
  * @LastEditors: TaoLer
  * @Description: 搜索引擎SEO优化设置
  * @FilePath: \TaoLer\app\common\taglib\Article.php
@@ -44,7 +44,7 @@ class Article extends TagLib
         'url'           => ['attr' => '', 'close' => 0],
         'is_top'        => ['attr' => '', 'close' => 0],
         'is_good'       => ['attr' => '', 'close' => 0],
-        'is_complete'       => ['attr' => '', 'close' => 0],
+        'is_complete'   => ['attr' => '', 'close' => 0],
         
         'master_pic'    => ['attr' => '', 'close' => 0],
 
