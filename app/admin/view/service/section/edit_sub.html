@@ -2,17 +2,15 @@
 
 {block name="body"}
 
-<form class="layui-form" action="">
-	<div class="mainBox">
+<form class="layui-form" lay-filter="form">
+		<div class="mainBox">
 		<div class="main-container">
-			<input type="text" name="id" lay-verify="number|required" placeholder="请填数字"class="layui-input layui-hide" value="{$sectionSub.id}">
-			
 			<div class="layui-form-item">
 				<label class="layui-form-label">父模块</label>
 				<div class="layui-input-block">
 					<select name="section_id" lay-filter="section">
 						{foreach name="section" id="vo"}
-						<option value="{$vo.id}" {if $sectionSub.section_id == $vo.id} selected {/if}>{$vo.title}</option>
+						<option value="{$vo.id}">{$vo.title}</option>
 						{/foreach}
 					</select>
 				</div>
@@ -20,38 +18,45 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">标题</label>
 				<div class="layui-input-block">
-					<input type="text" name="name" lay-verify="required" placeholder="标题" autocomplete="off" class="layui-input" value="{$sectionSub.name}">
+					<input type="text" name="name" lay-verify="required" placeholder="标题" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">icon</label>
 				<div class="layui-input-block">
-					<input type="text" name="icon" lay-verify="required" placeholder="子标题描述" autocomplete="off" class="layui-input" value="{$sectionSub.icon}">
+					<input type="text" name="icon" lay-verify="required" placeholder="子标题描述" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item" id="img">
 				<label class="layui-form-label">图片</label>
 				<div class="layui-input-inline">
-					<input type="text" name="image" lay-verify="" placeholder="上传图片" autocomplete="off" lay-filter="iconPicker" class="layui-input" value="{$sectionSub.image}">
+					<input type="text" name="image" lay-verify="" placeholder="上传图片" autocomplete="off" lay-filter="iconPicker" class="layui-input">
 				</div>
 				<button style="float: left;" type="button" class="layui-btn" id="upload-section-img">选图</button>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">URL</label>
 				<div class="layui-input-block">
-					<input type="text" name="url" lay-verify="url" placeholder="{:lang('please input the url')}" autocomplete="off" class="layui-input" value="{$sectionSub.url}">
+					<input type="text" name="url" lay-verify="url" placeholder="{:lang('please input the url')}" autocomplete="off" class="layui-input" >
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">SEO描述</label>
 				<div class="layui-input-block">
-					<textarea type="text" name="description" lay-verify="required" placeholder="描述*" autocomplete="off" class="layui-textarea">{$sectionSub.description}</textarea>
+					<textarea type="text" name="description" lay-verify="required" placeholder="描述*" autocomplete="off" class="layui-textarea"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">option</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="option" lay-verify="required" placeholder="请输入JSON格式" autocomplete="off" class="layui-textarea"></textarea>
+					<div class="form-tip">用于额外参数设置，例如：<code>{"button":"查看详情","css":"put-left"}</code></div>
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">排序</label>
 				<div class="layui-input-block">
-					<input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input" value="{$sectionSub.sort}">
+					<input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 		</div>
@@ -75,6 +80,7 @@
 <script>
 	const ADD_EDIT = MODULE_NAME + '/service/section/editSub';
 	const UPLOAD_URL = MODULE_NAME + '/service/section/uploadImg';
+	const INFO_URL = MODULE_NAME + '/service/section/info' + location.search;
 
 	layui.use(['imgcom','popup'],function(){
 		var $ = layui.jquery
@@ -83,12 +89,18 @@
 		var imgcom = layui.imgcom;
 		let popup = layui.popup;
 
+		$.get(INFO_URL, function(res){
+			if(res.code === 0) {
+				form.val('form', res.data);
+			}
+		})
+
 		form.on('submit(cate-save)', function(data) {
+			data.field.id = layui.url().search.id;
 			$.ajax({
 				url: ADD_EDIT,
-				data: JSON.stringify(data.field),
+				data: data.field,
 				dataType: 'json',
-				contentType: 'application/json',
 				type: 'post',
 				success: function(res) {
 
@@ -101,6 +113,9 @@
 							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
 							window.parent.location.reload();
 					});
+				},
+				error:function(e) {
+					return popup.failure(e.responseJSON.msg);
 				}
 			})
 			return false;

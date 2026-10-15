@@ -9,6 +9,7 @@ use app\facade\Section as SectionEntity;
 use app\facade\SectionAccess;
 use app\exception\BusinessException;
 use app\admin\controller\AdminBaseController;
+use think\facade\Db;
 
 
 class Section extends AdminBaseController
@@ -86,7 +87,7 @@ class Section extends AdminBaseController
             return View::fetch();
 		}
 
-        $data = Request::post(['id/d','type','title','subtitle','alias','status/d']);
+        $data = $request->post(['id/d','type','title','subtitle','alias','status/d']);
         $data['update_time'] = date('Y-m-d H:i:s');
 
         SectionEntity::update($data);
@@ -123,7 +124,7 @@ class Section extends AdminBaseController
             return View::fetch();
         }
         
-        $data = $request->post(['section_id','name','icon','image','url','description','sort']);
+        $data = $request->post(['section_id','name','icon','image','url','description','sort','option']);
         $data['create_time'] = date('Y-m-d H:i:s');
 
         try{
@@ -145,22 +146,25 @@ class Section extends AdminBaseController
             $id = $request->get('id/d');
             $section = SectionEntity::select();
             View::assign('section', $section);
-
-            $sectionSub = SectionAccess::find($id);
-            View::assign('sectionSub', $sectionSub);
-            
             return View::fetch();
 		}
 
-        $data = $request->post(['id/d','name','alias','icon','image','description','sort']);
-        $data['update_time'] = date('Y-m-d H:i:s');
-        // halt($data);
+        $data = $request->post(['id/d','section_id','url','name','alias','icon','image','description','sort','option']);
+
         try{
-            SectionAccess::update($data);
+            Db::name('section_access')->json(['option'])->update($data);
             return json( ['code'=>0,'msg'=>'编辑成功']);
         } catch (Exception $e) {
             return json(['code'=>-1,'msg'=>'编辑失败']);
         }
+    }
+
+    public function info(Request $request): Response | string
+    {
+        $id = $request->get('id/d');
+        $sectionSub = Db::name('section_access')->json(['option'])->find($id);
+        $sectionSub['option'] = json_encode($sectionSub['option'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return json(['code'=>0,'msg'=>'ok','data'=>$sectionSub]);
     }
 
     /** 
@@ -181,7 +185,7 @@ class Section extends AdminBaseController
         return json(['code'=>-1,'msg'=>'删除失败']);
     }
 
-    //审核用户
+    //审核子模块
     public function check(Request $request): Response
     {
         $data = $request->post(['id/d','status/d']);

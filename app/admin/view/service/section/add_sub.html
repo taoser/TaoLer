@@ -47,6 +47,13 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
+				<label class="layui-form-label">option</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="option" lay-verify="required" placeholder="json格式" autocomplete="off" class="layui-textarea"></textarea>
+					<div class="form-tip">用于额外参数设置，例如：<code>{"button":"查看详情","css":"put-left"}</code></div>
+				</div>
+			</div>
+			<div class="layui-form-item">
 				<label class="layui-form-label">排序</label>
 				<div class="layui-input-block">
 					<input type="text" name="sort" lay-verify="number|required" placeholder="请填数字" autocomplete="off" class="layui-input">
@@ -98,6 +105,9 @@
 							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
 							window.parent.location.reload();
 					});
+				},
+				error:function(e) {
+					return popup.failure(e.responseJSON.msg);
 				}
 			})
 			return false;

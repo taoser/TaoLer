@@ -114,12 +114,14 @@ class Slider extends AdminBaseController
     /* ============================================================
      *  保存分组（新增 / 编辑）
      * ============================================================ */
-    public function groupSave(): Json
+    public function groupSave(Request $request): Response
     {
-        $id          = (int)input('post.id/d', 0);
-        $title       = trim((string)input('post.title/s', ''));
-        $name        = trim((string)input('post.name/s', ''));
-        $description = trim((string)input('post.description/s', ''));
+        $id          = $request->post('id/d', 0);
+        $title       = trim($request->post('title/s', ''));
+        $name        = trim($request->post('name/s', ''));
+        $description = trim($request->post('description/s', ''));
+        $sort        = $request->post('sort/d', 0);
+        $status      = $request->post('status/d', 1);
 
         // 基础校验
         if ($title === '') {
@@ -145,8 +147,8 @@ class Slider extends AdminBaseController
             'title'       => $title,
             'name'        => $name,
             'description' => mb_substr($description, 0, 500),
-            'sort'        => (int)input('post.sort/d', 0),
-            'status'      => (int)input('post.status/d', 1),
+            'sort'        => $sort,
+            'status'      => $status,
             'update_time' => date('Y-m-d H:i:s'),
         ];
 
@@ -171,9 +173,9 @@ class Slider extends AdminBaseController
     /* ============================================================
      *  删除分组（级联删除子项）
      * ============================================================ */
-    public function groupDelete(): Json
+    public function groupDelete(Request $request): Response
     {
-        $id = (int)input('post.id/d', 0);
+        $id = $request->post('id/d', 0);
         if ($id <= 0) {
             return json(['code' => 1, 'msg' => '参数错误']);
         }
@@ -203,6 +205,10 @@ class Slider extends AdminBaseController
         $startTime   = $this->normalizeDatetime($request->post('start_time/s', ''));
         $endTime     = $this->normalizeDatetime($request->post('end_time/s', ''));
         $option      = trim($request->post('option/s', ''));
+        $sort        = $request->post('sort/d', 0);
+        $status      = $request->post('status/d', 1);
+        $image       = $request->post('image/s', '');
+        $url         = $request->post('url/s', '');
 
         if ($title === '') {
             return json(['code' => 1, 'msg' => '标题不能为空']);
@@ -223,12 +229,12 @@ class Slider extends AdminBaseController
             'group_id'    => $groupId,
             'title'       => $title,
             'description' => mb_substr($description, 0, 500),
-            'image'       => (string)input('post.image/s', ''),
-            'url'         => (string)input('post.url/s', ''),
+            'image'       => $image,
+            'url'         => $url,
             'start_time'  => $startTime,
             'end_time'    => $endTime,
-            'sort'        => (int)input('post.sort/d', 0),
-            'status'      => (int)input('post.status/d', 1),
+            'sort'        => $sort,
+            'status'      => $status,
             'option'      => $option,
             'update_time' => date('Y-m-d H:i:s'),
         ];
@@ -246,9 +252,9 @@ class Slider extends AdminBaseController
     /* ============================================================
      *  删除子项
      * ============================================================ */
-    public function itemDelete(): Json
+    public function itemDelete(Request $request): Response
     {
-        $id = (int)input('post.id/d', 0);
+        $id = $request->post('id/d', 0);
         if ($id <= 0) {
             return json(['code' => 1, 'msg' => '参数错误']);
         }
