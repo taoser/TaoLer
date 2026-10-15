@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-13 20:10:01
+ * @LastEditTime: 2026-10-15 11:38:21
  * @LastEditors: TaoLer
  * @Description: 系统配置项标签库
  * @Version: V4.0.0
@@ -19,34 +19,33 @@ class Taoler extends TagLib
     protected $tags   =  [
         
         // 系统配置项
-        'site_name'      => ['attr' => '', 'close' => 0],
-        'title'          => ['attr' => '', 'close' => 0],
-        'keywords'       => ['attr' => '', 'close' => 0],
-        'description'    => ['attr' => '', 'close' => 0],
-        'template'       => ['attr' => '', 'close' => 0],
-        'logo'           => ['attr' => '', 'close' => 0],
-        'favicon'        => ['attr' => '', 'close' => 0],
-        'icp'            => ['attr' => '', 'close' => 0],
-        'copyright'      => ['attr' => '', 'close' => 0],
-        'domain'         => ['attr' => '', 'close' => 0],
-        'admin_module'   => ['attr' => '', 'close' => 0],
-        'system_debug'   => ['attr' => '', 'close' => 0],
-        'website_switch' => ['attr' => '', 'close' => 0],
-        'api_switch'     => ['attr' => '', 'close' => 0],
-        
+        'site_name'       => ['attr' => '', 'close' => 0],
+        'title'           => ['attr' => '', 'close' => 0],
+        'keywords'        => ['attr' => '', 'close' => 0],
+        'description'     => ['attr' => '', 'close' => 0],
+        'template'        => ['attr' => '', 'close' => 0],
+        'logo'            => ['attr' => '', 'close' => 0],
+        'favicon'         => ['attr' => '', 'close' => 0],
+        'icp'             => ['attr' => '', 'close' => 0],
+        'copyright'       => ['attr' => '', 'close' => 0],
+        'domain'          => ['attr' => '', 'close' => 0],
+        'admin_module'    => ['attr' => '', 'close' => 0],
+        'system_debug'    => ['attr' => '', 'close' => 0],
+        'website_switch'  => ['attr' => '', 'close' => 0],
+        'api_switch'      => ['attr' => '', 'close' => 0],
 
-        // 导航
-        'nav'       => ['attr' => '', 'close' => 1],
-        'snav'      => ['attr' => ''],
-        'gnav'      => ['attr' => ''],
+        // 主导航
+        'nav'             => ['attr' => ''],
+        // 子导航
+        'snav'            => ['attr' => ''],
+        // 三级导航
+        'gnav'            => ['attr' => ''],
         
         // 幻灯片和链接
-        'slide'     => ['attr' => ''],
-        'slider'    => ['attr' => 'name'],
-        'link'      => ['attr' => ''],
+        'slider'          => ['attr' => 'name'],
 
-        //
-        'section'   => ['attr' => 'name,num', 'close' => 1],
+        // 分组部件,可用户自定义内容部件，如友情链接，广告位等
+        'section'         => ['attr' => 'name,num'],
         
     ];
 
@@ -131,7 +130,12 @@ class Taoler extends TagLib
 
     //=====================================================
 
-    // 导航
+    /**
+     * 主导航
+     * @param array $tag
+     * @param string $content
+     * @return string
+     */
     public function tagNav(array $tag, string $content): string
     {
         $id = $tag['id'] ?? 'nav';
@@ -144,6 +148,12 @@ class Taoler extends TagLib
         return $parse;
     }
 
+    /**
+     * 子导航
+     * @param array $tag
+     * @param string $content
+     * @return string
+     */
     public function tagSnav(array $tag, string $content): string
     {
         $id = $tag['id'] ?? 'snav';
@@ -155,6 +165,12 @@ class Taoler extends TagLib
         return $parse;
     }
 
+    /**
+     * 三级导航
+     * @param array $tag
+     * @param string $content
+     * @return string
+     */
     public function tagGnav(array $tag, string $content): string
     {
         $id = $tag['id'] ?? 'gnav';
@@ -169,39 +185,27 @@ class Taoler extends TagLib
     // 幻灯片
     public function tagSlide($tag, $content): string
     {
-        $type = empty($tag['type']) ? 1 : $tag['type'];
-        $num = empty($tag['num']) ? 5 : $tag['num'];
-
+        $type = !empty($tag['type']) ? $tag['type'] : 1;
+        $num = !empty($tag['num']) ? $tag['num'] : 5;
         $parse ='<?php $__SLIDE__ = \app\facade\AdSlide::getSlide(' . $type .',' . $num . '); ?>';
         $parse .= '{volist name="__SLIDE__" id="slide"}';
         $parse .= $content;
         $parse .= '{/volist}';
-
         return $parse;
     }
-
-    // 新版幻灯片
+    /**
+     * 新版幻灯片
+     * @param array $tag
+     * @param string $content
+     * @return string
+     */
     public function tagSlider($tag, $content): string
     {
         $name = !empty($tag['name']) ? $tag['name'] : '';
-
         $parse ='<?php $__SLIDE__ = \app\facade\Slider::getGroup(\'' . $name .'\'); ?>';
         $parse .= '{volist name="__SLIDE__" id="slider"}';
         $parse .= $content;
         $parse .= '{/volist}';
-
-        return $parse;
-    }
-
-    // 友情链接 and 合作伙伴
-    public function tagLink($tag, $content): string
-    {
-        $num = empty($tag['num']) ? 10 : $tag['num'];
-        $parse ='<?php $__LINK__ = \app\facade\Link::getLink(' . $num . '); ?>';
-        $parse .= '{volist name="__LINK__" id="link"}';
-        $parse .= $content;
-        $parse .= '{/volist}';
-
         return $parse;
     }
 
@@ -210,13 +214,11 @@ class Taoler extends TagLib
     {
         $name = !empty($tag['name']) ? $tag['name'] : '';
         $num = !empty($tag['num']) ? $tag['num'] : 10;
-
         $parse ='<?php $section = \app\facade\Section::getSection(\'' . $name . '\'); ?>';
         $parse .='{notempty name="section"}';
         $parse .='<?php $__SECTIONSUB__ = \app\facade\SectionAccess::getSectionAccess("' . $name . '",' . $num . '); ?>';
         $parse .= $content;
         $parse .= '{/notempty}';
-    
         return $parse;
     }
 

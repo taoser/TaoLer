@@ -21,7 +21,7 @@ class Slider extends AdminBaseController
     /* ============================================================
      *  获取树形数据（分组 + 子项）
      * ============================================================ */
-    public function tree(): Response
+    public function list(): Response
     {
         $now = date('Y-m-d H:i:s');
 
@@ -284,81 +284,7 @@ class Slider extends AdminBaseController
         }
     }
 
-    /* ============================================================
-     *  前台：按分组 ID 获取有效幻灯片
-     * ============================================================ */
-    public function active(): Json
-    {
-        $groupId = (int)input('get.group_id/d', 0);
-        if ($groupId <= 0) {
-            return json(['code' => 1, 'msg' => '参数错误']);
-        }
 
-        $items = $this->queryActiveItems(
-            Db::name('slider_item')->where('group_id', $groupId)
-        );
-
-        return json(['code' => 0, 'msg' => '', 'data' => $items]);
-    }
-
-    /* ============================================================
-     *  前台：按分组 code 获取有效幻灯片（推荐用法）
-     * ============================================================ */
-    public function byCode(): Json
-    {
-        $code = trim((string)input('get.code/s', ''));
-        if ($code === '') {
-            return json(['code' => 1, 'msg' => 'code 不能为空']);
-        }
-
-        $group = Db::name('slider_group')
-            ->where('code', $code)
-            ->where('status', 1)
-            ->find();
-
-        if (!$group) {
-            return json(['code' => 1, 'msg' => '分组不存在或已禁用']);
-        }
-
-        $items = $this->queryActiveItems(
-            Db::name('slider_item')->where('group_id', (int)$group['id'])
-        );
-
-        return json([
-            'code' => 0,
-            'msg'  => '',
-            'data' => [
-                'group' => [
-                    'id'          => (int)$group['id'],
-                    'title'       => $group['title'],
-                    'name'        => $group['name'],
-                    'description' => $group['description'],
-                ],
-                'items' => $items,
-            ],
-        ]);
-    }
-
-    /* ============================================================
-     *  公共：查询某分组下当前有效（启用 + 在生效期内）的子项
-     * ============================================================ */
-    private function queryActiveItems(\think\db\Query $query): array
-    {
-        $now = date('Y-m-d H:i:s');
-
-        return $query
-            ->where('status', 1)
-            ->where(function ($q) use ($now) {
-                $q->whereNull('start_time')->whereOr('start_time', '<=', $now);
-            })
-            ->where(function ($q) use ($now) {
-                $q->whereNull('end_time')->whereOr('end_time', '>=', $now);
-            })
-            ->order('sort', 'asc')
-            ->order('id', 'asc')
-            ->select()
-            ->toArray();
-    }
 
     /* ============================================================
      *  工具：规整 datetime 字符串

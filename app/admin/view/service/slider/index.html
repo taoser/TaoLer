@@ -52,7 +52,7 @@
 
 <script>
 
-  const TREE_DATA = MODULE_NAME + '/service/slider/tree';
+  const LIST_DATA = MODULE_NAME + '/service/slider/list';
   const GROUP_SAVE = MODULE_NAME + '/service/slider/groupSave';
   const GROUP_DEL = MODULE_NAME + '/service/slider/groupDelete';
   const ITEM_SAVE = MODULE_NAME + '/service/slider/itemSave';
@@ -77,7 +77,7 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 	treeTable.render({
 		elem: '#sliderTable',
 		id: TABLE_ID,
-		url: TREE_DATA,
+		url: LIST_DATA,
 		page: false,                 // 关闭分页
 		toolbar: '#toolbar',
 		defaultToolbar: [],
@@ -486,7 +486,7 @@ layui.use(['treeTable', 'layer', 'form', 'laydate', 'upload'], function () {
 	*  工具函数
 	* ============================================================ */
 	function reloadTree() {
-		treeTable.reloadData(TABLE_ID, { url: TREE_DATA });
+		treeTable.reloadData(TABLE_ID, { url: LIST_DATA });
 	}
 
 	function escapeHtml(str) {

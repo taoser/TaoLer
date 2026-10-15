@@ -163,6 +163,9 @@
 						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
 						parent.layui.treeTable.reloadData('table')
 					});
+				},
+				error: function(e) {
+					return popup.failure(e.responseJSON.msg);
 				}
 			})
 			return false;
