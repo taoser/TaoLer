@@ -17,7 +17,7 @@ class AddonsSystem extends \think\Service
      *
      * @param App|null $app 应用实例，null 时自动获取单例（兼容常驻内存）
      */
-    public function __construct(App $app = null)
+    public function __construct(?App $app = null)
     {
         parent::__construct($app ?? App::getInstance());
 
@@ -95,12 +95,23 @@ class AddonsSystem extends \think\Service
     private function getManifest(): array
     {
         $cacheKey = 'addons_manifest';
-        $manifest = app()->isDebug() ? null : Cache::get($cacheKey);
-        if (!is_array($manifest) || ($manifest['fp'] ?? '') !== $this->fingerprint()) {
-            $manifest = $this->scanAddons();
-            $manifest['fp'] = $this->fingerprint();
-            Cache::set($cacheKey, $manifest, 86400);
+
+        if (!$this->app->isDebug()) {
+            $manifest = Cache::get($cacheKey);
+            if (is_array($manifest) && isset($manifest['fp'])) {
+                return $manifest;
+            }
+        } else {
+            $manifest = Cache::get($cacheKey);
+            if (is_array($manifest) && ($manifest['fp'] ?? '') === $this->fingerprint()) {
+                return $manifest;
+            }
         }
+
+        $manifest = $this->scanAddons();
+        $manifest['fp'] = $this->fingerprint();
+        Cache::set($cacheKey, $manifest, 86400);
+
         return $manifest;
     }
 
@@ -122,15 +133,8 @@ class AddonsSystem extends \think\Service
         $hooks = [];
         foreach ($rawHooks as $hookName => $addonNames) {
             foreach ((array) $addonNames as $addonName) {
-                $class = \get_addons_class($addonName);
-                if ($class !== '') {
-                    $hooks[$hookName][] = [$class, $hookName];
-                }
+                $hooks[$hookName][] = [$addonName, $hookName];
             }
-        }
-
-        if (!$this->app->isDebug()) {
-            Cache::set('hooks', $hooks);
         }
 
         $loader->initialize($hooks);
@@ -182,12 +186,6 @@ class AddonsSystem extends \think\Service
             'commands'   => [],
         ];
 
-        // 插件基类方法，用于剔除基础方法得到钩子集合
-        $base = array_unique(array_merge(
-            get_class_methods(\taoser\Addons::class),
-            ['initialize', 'install', 'uninstall', 'enabled', 'disabled']
-        ));
-
         foreach (scandir($this->addonsPath) as $name) {
             if ($name === '.' || $name === '..' || !is_dir($this->addonsPath . $name)) {
                 continue;
@@ -195,24 +193,34 @@ class AddonsSystem extends \think\Service
 
             $addonDir = $this->addonsPath . $name . DIRECTORY_SEPARATOR;
 
-            // 找到插件入口与信息文件
             if (!is_file($addonDir . 'Plugin.php') || !is_file($addonDir . 'info.ini')) {
                 continue;
             }
 
             $addonInfo = parse_ini_file($addonDir . 'info.ini', true, INI_SCANNER_TYPED) ?: [];
-            // 排除未安装和未启用的插件
             if (empty($addonInfo['install']) || empty($addonInfo['status'])) {
                 continue;
             }
 
-            $pluginClass = "\\addons\\$name\\Plugin";
-            if (!class_exists($pluginClass)) {
-                continue;
-            }
-            $hookArr = array_diff((array) get_class_methods($pluginClass), $base);
-            foreach ($hookArr as $hook) {
-                $manifest['hooks'][$hook][] = $name;
+            if (!empty($addonInfo['hooks']) && is_array($addonInfo['hooks'])) {
+                foreach ($addonInfo['hooks'] as $hook => $addonName) {
+                    $manifest['hooks'][$hook][] = $name;
+                }
+            } else {
+                static $baseMethods = null;
+                if ($baseMethods === null) {
+                    $baseMethods = array_unique(array_merge(
+                        get_class_methods(\taoser\Addons::class),
+                        ['initialize', 'install', 'uninstall', 'enabled', 'disabled']
+                    ));
+                }
+                $pluginClass = "\\addons\\$name\\Plugin";
+                if (class_exists($pluginClass)) {
+                    $hookArr = array_diff((array) get_class_methods($pluginClass), $baseMethods);
+                    foreach ($hookArr as $hook) {
+                        $manifest['hooks'][$hook][] = $name;
+                    }
+                }
             }
 
             $manifest['addon_list'][] = $name;
@@ -253,49 +261,6 @@ class AddonsSystem extends \think\Service
         return $manifest;
     }
 
-    /**
-     * 加载插件事件（已废弃，保留兼容）
-     *
-     * 原设计将钩子注册到 Event 系统，但当前钩子执行走 HookLazyLoader::executeHook()，
-     * 不走 Event::trigger()。AddonsInit 钩子已在 ensureHooksLoaded() 中触发。
-     *
-     * @deprecated 由 ensureHooksLoaded() 替代
-     */
-    public function loadEvent()
-    {
-        $hooks = $this->app->isDebug() ? [] : Cache::get('hooks', []);
-
-        if (empty($hooks)) {
-            $hooks = (array) Config::get('addons.hooks', []);
-            // 初始化钩子
-            foreach ($hooks as $key => $values) {
-                if (is_string($values)) {
-                    $values = explode(',', $values);
-                } else {
-                    $values = (array) $values;
-                }
-                $hooks[$key] = array_filter(array_map(function ($v) use ($key) {
-                    return [get_addons_class($v), $key];
-                }, $values));
-            }
-
-            Cache::set('hooks', $hooks);
-        }
-
-        //如果在插件中有定义 AddonsInit，则直接执行
-        if (isset($hooks['AddonsInit'])) {
-            foreach ($hooks['AddonsInit'] as $k => $v) {
-                Event::trigger('AddonsInit', $v);
-            }
-        }
-
-        Event::listenEvents($hooks);
-    }
-
-    /**
-     * 获取 addons 路径
-     * @return string
-     */
     public function getAddonsPath()
     {
         // 初始化插件目录

@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-10-18 20:23:08
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\config\database.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 return [
 	// 默认使用的数据库连接配置
     'default'         => env('DB_DRIVER', 'mysql'),
@@ -50,7 +60,11 @@ return [
 			// 开启字段缓存
 			'fields_cache'      => true,
 			// 字段缓存路径
-			'schema_cache_path' => app()->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR,
+			'schema_cache_path' => runtime_path() . 'schema' . DIRECTORY_SEPARATOR,
+			// 开启数据库调试模式
+			'debug'           => false,
+			// 开启SQL性能分析
+			'sql_explain'     => false,
 		],
 
 		// 更多的数据库配置信息

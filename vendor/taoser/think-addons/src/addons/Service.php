@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:26
- * @LastEditTime: 2026-10-18 14:28:19
+ * @LastEditTime: 2026-10-18 18:26:44
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -41,13 +41,15 @@ class Service extends \think\Service
         $route = $this->app->route;
         $execute = '\\taoser\\addons\\Route::execute';
 
-        $middlewareArr = [Addons::class];
-        if (is_file($addonsSystem->getAddonsPath() . 'middleware.php')) {
-            $middlewareArr = array_merge($middlewareArr, include $addonsSystem->getAddonsPath() . 'middleware.php');
+        static $middlewareArr = null;
+        if ($middlewareArr === null) {
+            $middlewareArr = [Addons::class];
+            if (is_file($addonsSystem->getAddonsPath() . 'middleware.php')) {
+                $middlewareArr = array_merge($middlewareArr, include $addonsSystem->getAddonsPath() . 'middleware.php');
+            }
         }
 
         $route->rule("app/:addon/[:controller]/[:action]", $execute)->middleware($middlewareArr);
-        
     }
 
 }

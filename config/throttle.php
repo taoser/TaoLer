@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-10-18 20:37:14
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\config\throttle.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 // +----------------------------------------------------------------------
 // | 节流设置
 // +----------------------------------------------------------------------
@@ -31,8 +41,9 @@ return [
     // 访问受限时的文本信息，__WAIT__ 会被替换为等待秒数
     'visit_fail_text' => 'Too many requests, try again after __WAIT__ seconds.',
     // 访问受限时返回的响应
-    'visit_fail_response' => function (Throttle $throttle, Request $request, int $wait_seconds) {
-        $content = str_replace(Throttle::WAIT, (string)$wait_seconds, $throttle->getFailMessage());
-        return Response::create($content)->code(429);
-    },
+    // 'visit_fail_response' => function (Throttle $throttle, Request $request, int $wait_seconds) {
+    //     $content = str_replace(Throttle::WAIT, (string)$wait_seconds, $throttle->getFailMessage());
+    //     return Response::create($content)->code(429);
+    // },
+    'visit_fail_response' => null,
 ];

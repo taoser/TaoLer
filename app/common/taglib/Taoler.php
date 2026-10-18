@@ -45,7 +45,7 @@ class Taoler extends TagLib
         'slider'          => ['attr' => 'name'],
 
         // 分组部件,可用户自定义内容部件，如友情链接，广告位等
-        'section'         => ['attr' => 'name,num'],
+        'section'         => ['attr' => 'name'],
         
     ];
 
@@ -202,10 +202,8 @@ class Taoler extends TagLib
     public function tagSection($tag, $content): string
     {
         $name = !empty($tag['name']) ? $tag['name'] : '';
-        $num = !empty($tag['num']) ? $tag['num'] : 10;
         $parse ='<?php $section = \app\facade\Section::getSection(\'' . $name . '\'); ?>';
         $parse .='{notempty name="section"}';
-
         $parse .= $content;
         $parse .= '{/notempty}';
         return $parse;

@@ -60,22 +60,16 @@ class HookLazyLoader
 
         try {
             foreach ($listeners as $listener) {
-                [$class, $method] = $listener;
-
-                if (!class_exists($class)) {
-                    continue;
-                }
+                [$addonName, $method] = $listener;
 
                 try {
-                    $instance = $this->instances[$class] ?? null;
+                    $instance = $this->instances[$addonName] ?? null;
                     if ($instance === null) {
-                        $parts     = explode('\\', ltrim($class, '\\'));
-                        $addonName = $parts[1] ?? '';
-                        $instance = $addonName !== '' ? \get_addons_instance($addonName) : null;
+                        $instance = \get_addons_instance($addonName);
                         if ($instance === null) {
-                            $instance = app()->make($class);
+                            continue;
                         }
-                        $this->instances[$class] = $instance;
+                        $this->instances[$addonName] = $instance;
                     }
                     if (method_exists($instance, 'setRequest')) {
                         $instance->setRequest(app()->request);

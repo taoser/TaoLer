@@ -32,4 +32,16 @@ return [
         ],
         'high_frequency_threshold' => 10, // 高频阈值
     ],
+
+    // 插件 HTTP 入口 URL 前缀（取 URL 首段匹配）
+    // 仅命中前缀的请求才会启动插件系统；其他请求（前台控制器、admin、api）零插件加载。
+    // 插件路由文件中的顶层前缀会自动提取合并，此处为快速兜底配置。
+    'entry_prefix' => [
+        'app',    // 默认插件路由 app/:addon/:controller/:action
+        'apps',   // sign 插件
+        'pay',    // pay 插件
+        'shop',   // pay 插件（支付回调/收银台）
+        'taocai', // taocai 插件
+        'addons', // huodong 等插件
+    ],
 ];
