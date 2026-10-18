@@ -22,7 +22,6 @@
         "topthink/think-filesystem": "^3.0",
         "topthink/think-captcha": "^3.0",
         "topthink/think-throttle": "^3.0",
-        "taoser/think-addons": "^2.2",
         "taoser/think-auth": "^2.0",
         "taoser/think-setarr": "^0.0.5",
         "firebase/php-jwt": "^7.1",
@@ -37,7 +36,9 @@
         "overtrue/easy-sms": "^3.3",
         "yansongda/pay": "~3.7.0",
         "illuminate/container": "^13.19",
-        "topthink/think-worker": "^5.0"
+        "topthink/think-worker": "^5.0",
+        "topthink/think-view": "^2.0",
+        "taoser/think-addons": "^3.0"
     },
     "require-dev": {
         "topthink/think-dumper": "^1.0",

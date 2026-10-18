@@ -2,14 +2,21 @@
 
 namespace app\entity;
 
+use think\facade\Cache;
+
 class SliderGroup extends BaseEntity
 {
+    public const CACHE_KEY = 'slider';
     /**
      * 获取所有轮播图组
      * @return array
      */
     public function getAll(): array
     {
+        $cache = Cache::get(self::CACHE_KEY);
+        if($cache) {
+            return $cache;
+        }
         $sliders = $this->with(['items' => function($query) {
             $query->field('id,group_id,title,image,url,description,start_time,end_time,option')->where('status', 1)->order('sort', 'asc');
         }])
@@ -32,6 +39,7 @@ class SliderGroup extends BaseEntity
                 $data[$slider->name] = $items;
             }
         }
+        Cache::set(self::CACHE_KEY, $data, 3600 * 5);
         return $data;
     }
 

@@ -68,22 +68,22 @@ class Index
 			}
 
 			//获取插件下标签 addons/taglib文件
-			$addonsDir = $rootPath . 'addons' . DIRECTORY_SEPARATOR;
-			// $localAddons = FileHelper::getSubDirNames($addonsDir);
-			$localAddons = array_filter(scandir($addonsDir), function($dir) use ($addonsDir) {
-				return $dir !== '.' && $dir !== '..' && is_dir($addonsDir . $dir);
-			});
+			// $addonsDir = $rootPath . 'addons' . DIRECTORY_SEPARATOR;
+			// // $localAddons = FileHelper::getSubDirNames($addonsDir);
+			// $localAddons = array_filter(scandir($addonsDir), function($dir) use ($addonsDir) {
+			// 	return $dir !== '.' && $dir !== '..' && is_dir($addonsDir . $dir);
+			// });
 			
-			foreach($localAddons as $name) {
-				$addonDir = $addonsDir . $name . DIRECTORY_SEPARATOR .'taglib' . DIRECTORY_SEPARATOR;
-				if(!file_exists($addonDir)) continue;
+			// foreach($localAddons as $name) {
+			// 	$addonDir = $addonsDir . $name . DIRECTORY_SEPARATOR .'taglib' . DIRECTORY_SEPARATOR;
+			// 	if(!file_exists($addonDir)) continue;
 
-				// $taglibs = FileHelper::getDirFilePaths($addonDir);
-				$taglibs = glob($addonDir . '*.php');
-				foreach ($taglibs as $a) {
-					$tagsArr[] = str_replace('/','\\', strstr(strstr($a, 'addons'), '.php', true));
-				}
-			}
+			// 	// $taglibs = FileHelper::getDirFilePaths($addonDir);
+			// 	$taglibs = glob($addonDir . '*.php');
+			// 	foreach ($taglibs as $a) {
+			// 		$tagsArr[] = str_replace('/','\\', strstr(strstr($a, 'addons'), '.php', true));
+			// 	}
+			// }
 
 			return empty($tagsArr) ? '' : implode(',', array_unique($tagsArr));
 	

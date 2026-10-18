@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-15 11:38:21
+ * @LastEditTime: 2026-10-18 08:09:38
  * @LastEditors: TaoLer
  * @Description: 系统配置项标签库
  * @Version: V4.0.0
@@ -182,17 +182,6 @@ class Taoler extends TagLib
         return $parse;
     }
 
-    // 幻灯片
-    public function tagSlide($tag, $content): string
-    {
-        $type = !empty($tag['type']) ? $tag['type'] : 1;
-        $num = !empty($tag['num']) ? $tag['num'] : 5;
-        $parse ='<?php $__SLIDE__ = \app\facade\AdSlide::getSlide(' . $type .',' . $num . '); ?>';
-        $parse .= '{volist name="__SLIDE__" id="slide"}';
-        $parse .= $content;
-        $parse .= '{/volist}';
-        return $parse;
-    }
     /**
      * 新版幻灯片
      * @param array $tag
@@ -216,7 +205,7 @@ class Taoler extends TagLib
         $num = !empty($tag['num']) ? $tag['num'] : 10;
         $parse ='<?php $section = \app\facade\Section::getSection(\'' . $name . '\'); ?>';
         $parse .='{notempty name="section"}';
-        $parse .='<?php $__SECTIONSUB__ = \app\facade\SectionAccess::getSectionAccess("' . $name . '",' . $num . '); ?>';
+
         $parse .= $content;
         $parse .= '{/notempty}';
         return $parse;

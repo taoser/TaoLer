@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-13 20:17:49
+ * @LastEditTime: 2026-10-18 11:00:39
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -35,6 +35,7 @@ use app\common\helper\JwtAuth;
 use think\facade\Cache;
 use app\entity\Tag;
 use app\facade\Slider;
+use app\facade\Section;
 
 use app\entity\Article as ArticleEntity;
 
@@ -45,7 +46,9 @@ class Index extends IndexBaseController
      */
     public function index(Request $request)
     {
-		$sliders = Slider::getGroup('home_slider');
+		// $sliders = Slider::getGroup('home_slider');
+		// $section = Section::getSection('select');
+
 
 		// dump($sliders);
 
@@ -67,9 +70,9 @@ class Index extends IndexBaseController
 	
 	// return ;
 
-		$uid = $request->session('user_id');
+		// $uid = $request->session('user_id');
 
-		$tagItems = Cache::getTagItems('tag');
+		// $tagItems = Cache::getTagItems('tag');
 
 		// $addon = get_addons_instance('pay');
         // $addonConfig = $addon->getConfig();

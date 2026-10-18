@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-07-30 07:19:57
- * @LastEditTime: 2026-10-13 21:38:03
+ * @LastEditTime: 2026-10-18 09:06:35
  * @LastEditors: TaoLer
  * @Description: Section.php
  * @Version: V4.0.0
@@ -42,7 +42,7 @@ class Section extends TagLib
     }
     public function tagList($tag, $content): string
     {
-        $parse = '{volist name="__SECTIONSUB__" id="section"}';
+        $parse = '{volist name="section.sectionAccess" id="section"}';
         $parse .= $content;
         $parse .= '{/volist}';
         return $parse;

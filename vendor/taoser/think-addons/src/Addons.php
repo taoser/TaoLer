@@ -44,24 +44,40 @@ abstract class Addons
         $this->addonPath = $this->app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
         $this->addonConfig = "addon_{$this->name}_config";
         $this->addonInfo = "addon_{$this->name}_info";
-        // $this->taglib_pre_load = $this->getTagLib();
-        // $this->view = clone View::engine('Taoler');
-        $this->view = clone View::engine('Think');
-        $this->view->config([
-            'strip_space'   => true, // 去除空格和换行
-            'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR . 'plugin' . DIRECTORY_SEPARATOR,
-            // 'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR,
-            'view_dir_name' => 'view',
-            // 'taglib_pre_load'   => $this->taglib_pre_load
-        ]);
+        $this->view = null;
 
-        // 控制器初始化
         $this->initialize();
     }
 
-    // 初始化
     protected function initialize()
     {}
+
+    private function initView(): void
+    {
+        $this->view = clone View::engine('Think');
+        $taglib = get_addons_taglib();
+        $config = [
+            'strip_space'   => true,
+            'view_path'     => $this->addonPath . 'view' . DIRECTORY_SEPARATOR . 'plugin' . DIRECTORY_SEPARATOR,
+            'view_dir_name' => 'view',
+        ];
+        if ($taglib !== '') {
+            $config['taglib_pre_load'] = $taglib;
+        }
+        $this->view->config($config);
+    }
+
+    /**
+     * 刷新请求对象（Workerman/Swoole 常驻进程下复用插件实例时调用）
+     * @param \think\Request $request
+     * @return void
+     */
+    public function setRequest(\think\Request $request): void
+    {
+        $this->request = $request;
+        $this->app = \think\App::getInstance();
+        $this->view = null;
+    }
 
     /**
      * 获取插件标识
@@ -85,7 +101,9 @@ abstract class Addons
      */
     protected function fetch($template = '', $vars = [])
     {
-        // addons 插件视图此处必须加路径前缀/
+        if ($this->view === null) {
+            $this->initView();
+        }
         return $this->view->fetch('/' . $template, $vars);
     }
 
@@ -98,6 +116,9 @@ abstract class Addons
      */
     protected function display($content = '', $vars = [])
     {
+        if ($this->view === null) {
+            $this->initView();
+        }
         return $this->view->display($content, $vars);
     }
 
@@ -110,7 +131,9 @@ abstract class Addons
      */
     protected function assign($name, $value = '')
     {
-
+        if ($this->view === null) {
+            $this->initView();
+        }
         if (is_array($name)) {
             $this->view->assign($name);
         } else {
@@ -133,24 +156,8 @@ abstract class Addons
         return $this;
     }
 
-    // 获取插件下标签 addons/taglib文件
     protected function getTagLib() {
-        return Cache::remember('addon_taglib', function(){
-            $tagsArr = [];
-            $addonsPath = $this->app->addons->getAddonsPath();
-            
-            foreach (scandir($addonsPath) as $name) {
-                if (in_array($name, ['.', '..'])) continue;
-                $taglibDir = $addonsPath . $name . DIRECTORY_SEPARATOR . 'taglib';
-                if (!is_dir($taglibDir)) continue;
-                
-                foreach (glob($taglibDir . '/*.php') as $file) {
-                    $className = pathinfo($file, PATHINFO_FILENAME);
-                    $tagsArr[] = "\\addons\\{$name}\\taglib\\{$className}";
-                }
-            }
-            return implode(',', $tagsArr);
-        }, 3600); // 添加过期时间
+        return get_addons_taglib();
     }
 
     /**
@@ -246,8 +253,9 @@ abstract class Addons
             return [];
         }
 
-        // 清除opcache，防止读取php缓存
-        if (function_exists('opcache_invalidate')) {
+        // 仅常驻进程（Workerman/Swoole，PHP_SAPI=cli）需要主动失效 opcache；
+        // PHP-FPM 下文件变更由 opcache.validate_timestamps 自动重编译，主动失效反而降低命中
+        if (PHP_SAPI === 'cli' && function_exists('opcache_invalidate')) {
             opcache_invalidate($configFile, true);
         }
 
@@ -281,45 +289,47 @@ abstract class Addons
 
     abstract public function disabled();  // 禁用插件
 
-    // 写入管理位
+    // 写入管理位（批量去重写入，避免 N+1 查询）
     protected function insert(array $hooks = []) {
 
         $methods = (array)get_class_methods("\\addons\\" . $this->name . "\\Plugin");
+
+        // 收集待写入数据
+        $data = [];
         if(!empty($hooks)) {
             foreach($hooks as $k => $v) {
                 // 添加的方法不在类中跳过
                 if(!in_array($k, $methods)) {
                     continue;
                 }
-
-                if(is_array($v)) {
-                    foreach($v as $j) {
-                        if(!is_int($j)) continue;
-                        $result = Db::name('addon_hook')->where([
-                            'hook_name' => $k,
-                            'hook_type' => $j
-                        ])->find();
-                        if(is_null($result)) {
-                            Db::name('addon_hook')->save([
-                                'hook_name' => $k,
-                                'hook_type' => $j
-                            ]);
-                        }
-                    }
-                } else {
-                    if(!is_int($v)) continue;
-                    $data = [
+                foreach((array)$v as $j) {
+                    if(!is_int($j)) continue;
+                    $data[] = [
                         'hook_name' => $k,
-                        'hook_type' => $v
+                        'hook_type' => $j
                     ];
-                    $res = Db::name('addon_hook')->where($data)->find();
-    
-                    if(is_null($res)) {
-                        Db::name('addon_hook')->save($data);
-                    }
                 }
             }
         }
+        if (empty($data)) {
+            return true;
+        }
+
+        // 一次查询出已存在的组合，过滤重复
+        $names = array_unique(array_column($data, 'hook_name'));
+        $rows = Db::name('addon_hook')->whereIn('hook_name', $names)->select()->toArray();
+        $exists = array_map(function ($r) {
+            return $r['hook_name'] . ':' . $r['hook_type'];
+        }, $rows);
+
+        $data = array_values(array_filter($data, function ($d) use ($exists) {
+            return !in_array($d['hook_name'] . ':' . $d['hook_type'], $exists);
+        }));
+
+        if (!empty($data)) {
+            Db::name('addon_hook')->insertAll($data);
+        }
+
         return true;
     }
 

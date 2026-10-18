@@ -97,15 +97,12 @@
                 {
                     title: '编辑',
                     id: 'edit'
-                },{
+                },
+                {
                     title: '删除',
                     id: 'delete'
-                }
-                // ,{
-                //     title: 'Printing',
-                //     id: 'print'
-                // }
-                ,{
+                },
+                {
                     title: '刷新',
                     id: 'reload'
                 }
@@ -135,7 +132,9 @@
                 ,{field: 'section', title: '模块','escape':false, width: 130, templet: '<div>{{d.section.title}}</div>'}
                 ,{field: 'name', title: '名称','escape':false, width: 130}
                 ,{field: 'icon', title: 'icon', width:60, templet: '<div><i class="layui-icon {{d.icon}}"></i></div>'}
-                ,{field: 'image', title: '图片', minWidth:120, templet: '<div><img src="{{d.image}}" height="60" width="80"></div>'}
+                ,{field: 'image', title: '图片', minWidth:120, templet: function(d){
+                    return d.image ? '<div><img src="{{d.image}}" height="60" width="80"></div>' : '';
+                }}
                 ,{field: 'url', title: 'URL', minWidth: 200}
                 ,{field: 'description', title: '描述', minWidth: 200}
                 ,{field: 'sort', title: '排序', width:90}

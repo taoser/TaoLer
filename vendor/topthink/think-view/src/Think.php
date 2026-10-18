@@ -169,109 +169,28 @@ class Think implements TemplateHandlerInterface
     {
         // 分析模板文件规则
         $request = $this->app['request'];
-        // var_dump('视图根目录\n',strpos($template, '@'));
-        // 应用目录模式 custom|default
-        $appDirMode = '';
-        // 是否是插件路径
-        $isAddonsPath = false;
-        // 控制器路径
-        $controllerPath = $request->controller();
-        // var_dump($controllerPath);
+
         // 获取视图根目录
         if (strpos($template, '@')) {
             // 跨模块调用
             list($app, $template) = explode('@', $template);
-            // dump('app-a：'.$app);
         } elseif ($this->app->http->getName()) {
             $app = $this->app->http->getName();
-            // dump('app-b：'.$app);
         } elseif (method_exists($request, 'layer') && $request->layer()) {
-
-            // dump('layer：'. $request->layer());
-            // dump('controller_path：'. $controllerPath);
-
-            // 自定义模块结构 app/index/controller,app/admin/controller
-            if(str_contains($controllerPath,'/') && !str_contains($request->layer(),'.')) {
-                $appDirMode = 'custom';
-            }
-            // 默认单应用多模块 app/controller/index,app/controller/admin
-            if(!str_contains($controllerPath,'/') && !str_contains($request->layer(),'.')) {
-                $appDirMode = 'default';
-            }
-
-            if(str_contains($controllerPath,'/')){
-
-                if(!str_contains($request->layer(),'.')) {
-                    $app = $request->layer();
-                } else {
-                    //
-                    $path_pos = strrpos($controllerPath, '/');
-                    $name_path = substr($controllerPath, 0, $path_pos);
-                    $app = $request->layer(). DIRECTORY_SEPARATOR . $name_path;
-                }
-
-            } else {
-                $app = $request->layer();
-            }
-            
-            $app = str_replace(['/','.'], DIRECTORY_SEPARATOR, $app);
-            
+            $app        = $request->layer();
             $controller = $request->controller(false, true);
-
-            // dump('app-c：'.$app);
-            // dump('app：'.$app);
-            // dump('controller：'.$controller);
-        } else {
-            // 插件addons
-            $app = $request->layer();
-            // dump('app-d：'.$app);
-            $isAddonsPath = true;
         }
 
-        // dump($app);
-        // dump('viewConfig:'. $this->config['view_dir_name']);
-        // dump('view_path:'. $this->config['view_path']);
-
-        // 是否有自定义视图路径
         if ($this->config['view_path']) {
-           
-            $path = $this->config['view_path'] . $app . DIRECTORY_SEPARATOR;
-            // dump(1,$path);
-            
-            if($app == 'index') {
-                $path = $this->config['view_path'];
-                //  dump(2,$path);
-            }
-            
-            // 自定义结构 layer路径中view_path中，表示自定义模块结构
-            if(str_contains($this->config['view_path'], $app)){
-                $path = $this->config['view_path'];
-                // dump(3,$path);
-            }
-            // 插件
-            if(str_contains($this->config['view_path'], 'addons')){
-                $path = $this->config['view_path'];
-                // dump(4,$path);
-            }
-            // 自定义模块结构
-            if($appDirMode == 'custom'){
-                $path = $this->config['view_path'];
-                // dump(5,$path);
-            }
-            
+            $path = $this->config['view_path'];
         } else {
-
             $path = $this->getViewPath($app ?? $this->app->http->getName());
             $this->template->view_path = $path;
-            // dump(6,$path);
         }
-
-        // dump(7,$path);
 
         $depr = $this->config['view_depr'];
 
         if (0 !== strpos($template, '/')) {
-            
             $template   = str_replace(['/', ':'], $depr, $template);
             $controller = $controller ?? $request->controller();
 
@@ -284,7 +203,6 @@ class Think implements TemplateHandlerInterface
 
             if ($controller) {
                 if ('' == $template) {
-                    // dump('xxxx'.$template.'---'.$this->config['auto_rule']);
                     // 如果模板文件名为空 按照默认模板渲染规则定位
                     if (2 == $this->config['auto_rule']) {
                         $template = $request->action(true);
@@ -292,44 +210,18 @@ class Think implements TemplateHandlerInterface
                         $template = $request->action();
                     } else {
                         $template = Str::snake($request->action());
-                        // 驼峰转换为下划线命名法 app/HelloWorld
-                        $controllerPath = preg_replace('/(?<=[a-z])([A-Z])/', '_$1', $controllerPath);
-                        $controllerPath = strtolower($controllerPath);
-                    }
-                    
-                    // 自定义模块定位模板
-                    if($appDirMode == 'custom'){
-                        $template = $controllerPath . $depr . $template;
-                        $template = str_replace('/', DIRECTORY_SEPARATOR, $template);
-                        // dump('custom_tpl:'.$template);
-                    } else {
-                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
                     }
 
+                    $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
                 } elseif (false === strpos($template, $depr)) {
-                    // 自定义模块 定义了模板路径的情况下，需要拼接控制器路径
-                    if($appDirMode == 'custom'){
-                        $template = $controllerPath . $depr . $template;
-                        $template = str_replace('/', DIRECTORY_SEPARATOR, $template);
-                        // dump('custom_tpl:'.$template);
-                    } else {
-                        $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
-                    }
-                    // dump('template-2:'.$template);
+                    $template = str_replace('.', DIRECTORY_SEPARATOR, $controller) . $depr . $template;
                 }
             }
         } else {
             $template = str_replace(['/', ':'], $depr, substr($template, 1));
         }
 
-        // dump('path:'.$path);
-        // dump('tpl:'. $template);
-        
-        $p = $path . ltrim($template, '/') . '.' . ltrim($this->config['view_suffix'], '.');
-        
-        // dump('file:'.$p);
-
-        return $p;
+        return $path . ltrim($template, '/') . '.' . ltrim($this->config['view_suffix'], '.');
     }
 
     /**

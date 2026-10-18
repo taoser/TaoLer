@@ -65,21 +65,31 @@ class Controller
         $this->addonPath = $app->addons->getAddonsPath() . $this->name . DIRECTORY_SEPARATOR;
         $this->addon_config = "addon_{$this->name}_config";
         $this->addon_info = "addon_{$this->name}_info";
-        $this->view = clone View::engine('Think');
-        $this->view->config([
-            'strip_space' => true, // 去除空格和换行
-            'view_path' => $this->addonPath . 'view' . DIRECTORY_SEPARATOR
-        ]);
-        // 加载插件全局中间件
-        $this->middleware = is_file(addons_path() . 'middleware.php') ? include addons_path() . 'middleware.php' : [];
+        $this->view = null;
+        static $middlewareCache = null;
+        if ($middlewareCache === null) {
+            $middlewareCache = is_file(addons_path() . 'middleware.php') ? include addons_path() . 'middleware.php' : [];
+        }
+        $this->middleware = $middlewareCache;
 
-        // 控制器初始化
         $this->initialize();
     }
 
     // 初始化
     protected function initialize()
     {}
+
+    /**
+     * 刷新请求对象（Workerman/Swoole 常驻进程下复用插件实例时调用）
+     * @param \think\Request $request
+     * @return void
+     */
+    public function setRequest(\think\Request $request): void
+    {
+        $this->request = $request;
+        $this->app = \think\App::getInstance();
+        $this->view = null;
+    }
 
     /**
      * 获取插件标识
@@ -103,6 +113,9 @@ class Controller
      */
     protected function fetch($template = '', $vars = [])
     {
+        if ($this->view === null) {
+            $this->initView();
+        }
         return $this->view->fetch($template, $vars);
     }
 
@@ -115,6 +128,9 @@ class Controller
      */
     protected function display($content = '', $vars = [])
     {
+        if ($this->view === null) {
+            $this->initView();
+        }
         return $this->view->display($content, $vars);
     }
 
@@ -127,6 +143,9 @@ class Controller
      */
     protected function assign($name, $value = '')
     {
+        if ($this->view === null) {
+            $this->initView();
+        }
         if (is_array($name)) {
             $this->view->assign($name);
         } else {
@@ -144,11 +163,25 @@ class Controller
      */
     protected function engine($engine)
     {
+        if ($this->view === null) {
+            $this->initView();
+        }
         $this->view->engine($engine);
 
         return $this;
     }
 
-
-
+    private function initView(): void
+    {
+        $this->view = clone View::engine('Think');
+        $taglib = get_addons_taglib();
+        $config = [
+            'strip_space' => true,
+            'view_path' => $this->addonPath . 'view' . DIRECTORY_SEPARATOR
+        ];
+        if ($taglib !== '') {
+            $config['taglib_pre_load'] = $taglib;
+        }
+        $this->view->config($config);
+    }
 }
