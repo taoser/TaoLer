@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-30 20:32:40
+ * @LastEditTime: 2026-10-19 13:00:41
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -185,8 +185,8 @@ Route::group('',function () {
 ->namespace('app\index\controller')
 ->middleware([
 	\app\middleware\Index::class,
-	\app\middleware\Browse::class,
-	\app\middleware\Message::class,
+	// \app\middleware\Browse::class,
+	// \app\middleware\Message::class,
 ])->pattern([
 	'ename' => '[\w|\-]+',
 	'id'   => '\w+',

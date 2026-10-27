@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Workerman\Coroutine\Barrier;
 
+use Swow\Errno;
 use Swow\Sync\WaitReference;
+use Swow\SyncException;
 
 class Swow implements BarrierInterface
 {
@@ -25,7 +27,13 @@ class Swow implements BarrierInterface
      */
     public static function wait(object &$barrier, int $timeout = -1): void
     {
-        WaitReference::wait($barrier, $timeout);
+        try {
+            WaitReference::wait($barrier, $timeout > 0 ? $timeout * 1000 : -1);
+        } catch (SyncException $exception) {
+            if ($exception->getCode() !== Errno::ETIMEDOUT) {
+                throw $exception;
+            }
+        }
     }
 
     /**

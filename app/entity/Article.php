@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-25 19:51:05
+ * @LastEditTime: 2026-10-23 16:35:13
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -429,13 +429,17 @@ class Article extends BaseEntity
 
             // 缓存文章详情
             ArticleCache::set($id, $detail);
+            Cache::set('article_pv_' . $id, $detail['pv']);
 
         }
 
         // 步增pv
-        $detail->setInc('pv', 1);
-
-        $detail->pv = $this->where('id', $id)->value('pv');
+        Cache::inc('article_pv_' . $id, 1);
+        $pv = Cache::get('article_pv_' . $id);
+        if ($pv % 20 === 0) {
+            $detail->setInc('pv', 20);
+        }
+        $detail->pv = $pv;
 
         return $detail;
     }

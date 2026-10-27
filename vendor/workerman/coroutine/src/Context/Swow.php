@@ -50,9 +50,12 @@ class Swow implements ContextInterface
      */
     public static function reset(?ArrayObject $data = null): void
     {
-        $coroutine = Coroutine::getCurrent();
-        $data->setFlags(ArrayObject::ARRAY_AS_PROPS);
-        static::$contexts[$coroutine] = $data;
+        if ($data) {
+            $data->setFlags(ArrayObject::ARRAY_AS_PROPS);
+        } else {
+            $data = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS);
+        }
+        static::$contexts[Coroutine::getCurrent()] = $data;
     }
 
     /**

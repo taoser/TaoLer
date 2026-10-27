@@ -102,7 +102,9 @@ class Swow implements ChannelInterface
      */
     public function close(): void
     {
-        $this->channel->close();
+        if ($this->channel->isAvailable()) {
+            $this->channel->close();
+        }
     }
 
 }

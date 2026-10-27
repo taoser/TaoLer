@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Intervention\Image\Drivers\Imagick;
 
-use Exception;
 use Imagick;
 use ImagickException;
 use Intervention\Image\Collection;
@@ -77,11 +76,11 @@ class Core implements CoreInterface, Iterator
      *
      * @see CoreInterface::filter()
      *
-     * @throws Exception
+     * @throws NotSupportedException
      */
     public function filter(callable $callback): CoreInterface
     {
-        throw new \Exception('Not implemented');
+        throw new NotSupportedException('Not implemented');
     }
 
     /**
@@ -231,7 +230,7 @@ class Core implements CoreInterface, Iterator
     /**
      * {@inheritdoc}
      *
-     * @see Iterator::rewind()
+     * @see Iterator::current()
      *
      * @throws DriverException
      */
@@ -249,7 +248,7 @@ class Core implements CoreInterface, Iterator
     /**
      * {@inheritdoc}
      *
-     * @see Iterator::rewind()
+     * @see Iterator::next()
      */
     public function next(): void
     {
@@ -259,7 +258,7 @@ class Core implements CoreInterface, Iterator
     /**
      * {@inheritdoc}
      *
-     * @see Iterator::rewind()
+     * @see Iterator::key()
      */
     public function key(): mixed
     {
@@ -269,7 +268,7 @@ class Core implements CoreInterface, Iterator
     /**
      * {@inheritdoc}
      *
-     * @see Iterator::rewind()
+     * @see Iterator::valid()
      */
     public function valid(): bool
     {
@@ -337,7 +336,7 @@ class Core implements CoreInterface, Iterator
                     return new Frame($core);
                 }
             } catch (ImagickException | RuntimeException $e) {
-                throw new DriverException('Failed to load image frame a position ' . $position, previous: $e);
+                throw new DriverException('Failed to load image frame at position ' . $position, previous: $e);
             }
         }
 
@@ -399,7 +398,7 @@ class Core implements CoreInterface, Iterator
     /**
      * {@inheritdoc}
      *
-     * @see CollectableInterface::last()
+     * @see CollectionInterface::last()
      *
      * @throws DriverException
      * @throws StateException

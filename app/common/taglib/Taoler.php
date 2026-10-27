@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-18 08:09:38
+ * @LastEditTime: 2026-10-26 19:55:13
  * @LastEditors: TaoLer
  * @Description: 系统配置项标签库
  * @Version: V4.0.0
@@ -27,6 +27,7 @@ class Taoler extends TagLib
         'logo'            => ['attr' => '', 'close' => 0],
         'favicon'         => ['attr' => '', 'close' => 0],
         'icp'             => ['attr' => '', 'close' => 0],
+        'picp'            => ['attr' => '', 'close' => 0],
         'copyright'       => ['attr' => '', 'close' => 0],
         'domain'          => ['attr' => '', 'close' => 0],
         'admin_module'    => ['attr' => '', 'close' => 0],
@@ -102,6 +103,11 @@ class Taoler extends TagLib
     public function tagIcp(array $tag): string
     {
         return '{:system_config("icp")}';
+    }
+    // picp公安备案
+    public function tagPicp(array $tag): string
+    {
+        return '{:system_config("picp")}';
     }
 
     // 域名

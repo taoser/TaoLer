@@ -37,9 +37,12 @@ class Fiber implements WaitGroupInterface
     /** @inheritdoc  */
     public function done(): bool
     {
-        $this->count--;
-        if ($this->count <= 0) {
-            $this->channel->push(true);
+        if ($this->count > 0) {
+            $this->count--;
+            // Signal only a suspended waiter, a buffered signal would wake the next wait() early.
+            if ($this->count === 0 && $this->channel->hasConsumers()) {
+                $this->channel->push(true);
+            }
         }
 
         return true;
@@ -54,10 +57,10 @@ class Fiber implements WaitGroupInterface
     /** @inheritdoc  */
     public function wait(int|float $timeout = -1): bool
     {
-       if ($this->count() > 0) {
-           return $this->channel->pop($timeout);
-       }
-       return true;
+        if ($this->count > 0) {
+            return $this->channel->pop($timeout);
+        }
+        return true;
     }
 
 }

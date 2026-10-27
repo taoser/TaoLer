@@ -237,7 +237,11 @@ class DataUri implements DataUriInterface, JsonSerializable
      */
     private function encodedData(): string
     {
-        return $this->base64 === true ? (string) base64_encode($this->data) : rawurlencode((string) $this->data);
+        if ($this->base64 === true) {
+            return base64_encode((string) $this->data);
+        }
+
+        return rawurlencode((string) $this->data);
     }
 
     /**
@@ -249,7 +253,7 @@ class DataUri implements DataUriInterface, JsonSerializable
             return '';
         }
 
-        $parameters = array_map(function (mixed $key, mixed $value) {
+        $parameters = array_map(function (mixed $key, mixed $value): string {
             return $key . '=' . $value;
         }, array_keys($this->parameters), $this->parameters);
 
@@ -291,7 +295,7 @@ class DataUri implements DataUriInterface, JsonSerializable
     {
         return [
             'mediaType' => $this->mediaType,
-            'size' => strlen($this->data),
+            'size' => strlen((string) $this->data),
         ];
     }
 }

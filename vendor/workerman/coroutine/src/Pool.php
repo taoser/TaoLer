@@ -21,9 +21,9 @@ use Psr\Log\LoggerInterface;
 use stdClass;
 use Throwable;
 use WeakMap;
+use WeakReference;
 use Workerman\Coroutine;
 use Workerman\Coroutine\Exception\PoolException;
-use Workerman\Coroutine\Utils\DestructionWatcher;
 use Workerman\Timer;
 use Workerman\Worker;
 
@@ -46,6 +46,11 @@ class Pool implements PoolInterface
      * @var WeakMap
      */
     protected WeakMap $connections;
+
+    /**
+     * @var WeakMap
+     */
+    protected WeakMap $idleConnections;
 
     /**
      * @var ?object
@@ -126,10 +131,18 @@ class Pool implements PoolInterface
         $this->lastUsedTimes = new WeakMap();
         $this->lastHeartbeatTimes = new WeakMap();
         $this->connections = new WeakMap();
+        $this->idleConnections = new WeakMap();
 
         if (Worker::isRunning()) {
-            Timer::repeat(1, function () {
-                $this->checkConnections();
+            $weakPool = WeakReference::create($this);
+            $timerId = Timer::repeat(1, static function () use ($weakPool, &$timerId) {
+                if ($pool = $weakPool->get()) {
+                    $pool->checkConnections();
+                    return;
+                }
+                // Deleting a timer inside its own callback kills the current coroutine under Swow,
+                // which skips Workerman's timer bookkeeping, so delete it from another callback.
+                Timer::delay(0.001, static fn () => Timer::del($timerId));
             });
         }
     }
@@ -184,14 +197,17 @@ class Pool implements PoolInterface
             }
             return $this->nonCoroutineConnection;
         }
-        $num = $this->channel->length();
-        if ($num === 0 && $this->getConnectionCount() < $this->maxConnections) {
-            return $this->createConnection();
-        }
-        $connection = $this->channel->pop($this->waitTimeout);
-        if (!$connection) {
-            throw new PoolException("Failed to get a connection from the pool within the wait timeout ($this->waitTimeout seconds). The connection pool is exhausted.");
-        }
+        // closeConnection() cannot remove an idle connection from the channel, so discard such connections here.
+        do {
+            if ($this->channel->length() === 0 && $this->getConnectionCount() < $this->maxConnections) {
+                return $this->createConnection();
+            }
+            $connection = $this->channel->pop($this->waitTimeout);
+            if (!$connection) {
+                throw new PoolException("Failed to get a connection from the pool within the wait timeout ($this->waitTimeout seconds). The connection pool is exhausted.");
+            }
+        } while (!isset($this->connections[$connection]));
+        unset($this->idleConnections[$connection]);
         $this->lastUsedTimes[$connection] = time();
         return $connection;
     }
@@ -213,12 +229,20 @@ class Pool implements PoolInterface
         if ($connection === $this->nonCoroutineConnection) {
             return;
         }
+        if (isset($this->idleConnections[$connection])) {
+            throw new PoolException('The connection has already been returned to the connection pool.');
+        }
+        // Mark before pushing: push() may resume a waiting get() which clears the mark before push() returns.
+        $this->idleConnections[$connection] = true;
         try {
-            $this->channel->push($connection);
+            if ($this->channel->push($connection)) {
+                return;
+            }
         } catch (Throwable $throwable) {
             $this->closeConnection($connection);
             throw $throwable;
         }
+        $this->closeConnection($connection);
     }
 
     /**
@@ -273,7 +297,7 @@ class Pool implements PoolInterface
             return;
         }
         // Mark this connection as no longer belonging to the connection pool.
-        unset($this->lastUsedTimes[$connection], $this->lastHeartbeatTimes[$connection], $this->connections[$connection]);
+        unset($this->lastUsedTimes[$connection], $this->lastHeartbeatTimes[$connection], $this->idleConnections[$connection], $this->connections[$connection]);
         if ($this->nonCoroutineConnection === $connection) {
             $this->nonCoroutineConnection = null;
         }
@@ -297,9 +321,13 @@ class Pool implements PoolInterface
         $num = $this->channel->length();
         $time = time();
         for($i = $num; $i > 0; $i--) {
-            $connection = $this->channel->pop(0.001);
+            $connection = $this->channel->pop(0);
             if (!$connection) {
                 return;
+            }
+            // Closed by closeConnection() while idle.
+            if (!isset($this->connections[$connection])) {
+                continue;
             }
             $lastUsedTime = $this->lastUsedTimes[$connection];
             if ($time - $lastUsedTime > $this->idleTimeout && $this->channel->length() >= $this->minConnections) {
@@ -355,7 +383,7 @@ class Pool implements PoolInterface
     {
         $num = $this->channel->length();
         for ($i = $num; $i > 0; $i--) {
-            $connection = $this->channel->pop(0.001);
+            $connection = $this->channel->pop(0);
             if (!$connection) {
                 return;
             }

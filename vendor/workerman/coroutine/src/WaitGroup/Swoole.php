@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Workerman\Coroutine\WaitGroup;
 
 use Swoole\Coroutine\WaitGroup;
-use Throwable;
 
 /**
  * Class Swoole
@@ -52,12 +51,11 @@ class Swoole implements WaitGroupInterface
     /** @inheritdoc  */
     public function wait(int|float $timeout = -1): bool
     {
-        try {
-            $this->waitGroup->wait(max($timeout, $timeout > 0 ? 0.001 : -1));
-            return true;
-        } catch (Throwable) {
-            return false;
+        // Swoole treats a zero timeout as waiting forever.
+        if ($timeout == 0) {
+            return $this->count() === 0;
         }
+        return $this->waitGroup->wait($timeout > 0 ? max($timeout, 0.001) : -1);
     }
 
 }
