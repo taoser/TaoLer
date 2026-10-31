@@ -1,0 +1,338 @@
+{extend name="public/form" /}
+
+{block name="link"}
+<style>
+	.auth-tree-wrap {
+		margin: 10px 0;
+	}
+	.tree-item {
+		margin: 8px 0;
+	}
+	.tree-parent-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		cursor: pointer;
+		padding: 4px 0;
+	}
+	.tree-group-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+		margin-top: 6px;
+	}
+	.tree-group-item {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		white-space: nowrap;
+	}
+	.tree-expand-icon {
+		width: 16px;
+		display: inline-block;
+		text-align: center;
+		user-select: none;
+	}
+	.tree-checkbox {
+		margin: 0 !important;
+	}
+</style>
+{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-btn-group" style="margin-top:15px;">
+            <button class="layui-btn layui-btn-sm" id="saveAuth">保存权限</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" id="expandAll">全部展开</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" id="collapseAll">全部收起</button>
+        </div>
+    </div>
+	<div class="layui-card-body">
+		<div id="authTreeBox" class="auth-tree-wrap"></div>
+	</div>
+</div>
+
+<div class="bottom">
+	<div class="button-container">
+		<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+			lay-filter="user-save">
+			<i class="layui-icon layui-icon-ok"></i>
+			提交
+		</button>
+		<button type="reset" class="pear-btn pear-btn-sm">
+			<i class="layui-icon layui-icon-refresh"></i>
+			重置
+		</button>
+	</div>
+</div>
+
+<script type="text/html" id="treeNodeTpl">
+	<div class="tree-item" data-id="{{d.id}}" style="padding-left:{{d.level * 24}}px;">
+		<div class="tree-parent-row" data-id="{{d.id}}">
+			<span class="tree-expand-icon">
+				{{# if(d.children && d.children.length){ }}
+					{{ d.spread ? '−' : '+' }}
+				{{# } }}
+			</span>
+			<input type="checkbox" class="tree-checkbox" data-id="{{d.id}}" {{d.checked ? 'checked' : ''}}>
+			<span>{{d.title}}</span>
+		</div>
+		{{# if(d.children && d.children.length && d.spread){ }}
+			{{- d.childrenHtml }}
+		{{# } }}
+	</div>
+</script>
+
+<script type="text/html" id="groupItemTpl">
+    <div class="tree-group-item">
+        <input type="checkbox" class="tree-checkbox" data-id="{{d.id}}" {{d.checked ? 'checked' : ''}}>
+        <span>{{d.title}}</span>
+    </div>
+</script>
+
+{__block__}
+
+<script>
+
+	const ROLE_RULE = MODULE_NAME + "/system/AuthRole/rule";
+
+	layui.use(['laytpl','jquery','layer'], function () {
+		const laytpl = layui.laytpl;
+		const $ = layui.$;
+		const layer = layui.layer;
+		
+		const roleId = 1;
+		let treeData = [];
+		// 缩进间距单位
+		const INDENT_STEP = 24;
+
+		function compileNodeHtml(node) {
+			if (!node.children || !node.children.length) {
+				const tpl = $('#groupItemTpl').html();
+				node.groupHtml = laytpl(tpl).render(node);
+				node.html = '';
+				return;
+			}
+			node.children.forEach(child => compileNodeHtml(child));
+
+			const hasChildList = [];
+			const leafList = [];
+			node.children.forEach(child => {
+				if (child.children && child.children.length) {
+					hasChildList.push(child);
+				} else {
+					leafList.push(child);
+				}
+			})
+			let subHtml = '';
+			hasChildList.forEach(child => {
+				subHtml += child.html;
+			})
+			if (leafList.length > 0) {
+				let groupHtml = '';
+				leafList.forEach(child => {
+					groupHtml += child.groupHtml;
+				})
+				const targetLevel = leafList[0].level;
+				// 叶子组额外补偿图标宽度，和父节点复选框视觉对齐
+				let groupIndent = targetLevel * INDENT_STEP;
+				if(targetLevel == 1) {
+					groupIndent = 2 * INDENT_STEP
+				}
+		
+				subHtml += `<div class="tree-group-row" style="padding-left:${groupIndent}px;">${groupHtml}</div>`;
+			}
+			node.childrenHtml = subHtml;
+
+			const tpl = $('#treeNodeTpl').html();
+			node.html = laytpl(tpl).render(node);
+		}
+
+		function renderTree() {
+			treeData.forEach(node => compileNodeHtml(node));
+			let html = '';
+			treeData.forEach(item => html += item.html);
+			$('#authTreeBox').html(html);
+
+			setTimeout(() => {
+				const allNodes = flatTree(treeData);
+				allNodes.forEach(n => {
+					if (!n.children || !n.children.length) return;
+					const $inp = $(`.tree-checkbox[data-id="${n.id}"]`)[0];
+					if (!$inp) return;
+					const checkedCount = n.children.filter(c => c.checked).length;
+					$inp.indeterminate = (checkedCount > 0 && checkedCount < n.children.length);
+				})
+			}, 0);
+		}
+
+		function flatTree(nodes, arr = []) {
+			nodes.forEach(item => {
+				arr.push(item);
+				if (item.children && item.children.length) {
+					flatTree(item.children, arr);
+				}
+			})
+			return arr;
+		}
+
+		function setChildChecked(node, status) {
+			node.checked = status;
+			if (node.children && node.children.length) {
+				node.children.forEach(child => setChildChecked(child, status));
+			}
+		}
+
+		function updateParentChain(node, allList) {
+			const parent = allList.find(i => i.id === node.parent_id);
+			if (!parent) return;
+			const checkedCount = parent.children.filter(c => c.checked).length;
+			parent.checked = (checkedCount === parent.children.length);
+			updateParentChain(parent, allList);
+		}
+
+		$('#authTreeBox').on('click', '.tree-checkbox', function (e) {
+			e.stopPropagation();
+			const id = Number($(this).data('id'));
+			const checked = this.checked;
+			const allNodes = flatTree(treeData);
+			const currNode = allNodes.find(i => i.id === id);
+			if (!currNode) return;
+			setChildChecked(currNode, checked);
+			updateParentChain(currNode, allNodes);
+			renderTree();
+		})
+
+		$('#authTreeBox').on('click', '.tree-parent-row', function (e) {
+			if ($(e.target).is('input')) return;
+			const id = Number($(this).data('id'));
+			const allNodes = flatTree(treeData);
+			const currNode = allNodes.find(i => i.id === id);
+			if (!currNode || !currNode.children || !currNode.children.length) return;
+			currNode.spread = !currNode.spread;
+			renderTree();
+		})
+
+		$('#expandAll').click(function () {
+			const allNodes = flatTree(treeData);
+			allNodes.forEach(n => {
+				if (n.children && n.children.length) n.spread = true;
+			});
+			renderTree();
+		})
+
+		$('#collapseAll').click(function () {
+			const allNodes = flatTree(treeData);
+			allNodes.forEach(n => {
+				if (n.children && n.children.length) n.spread = false;
+			});
+			renderTree();
+		})
+
+		// 只收集**本身 checked=true**的节点 id
+		function getCheckedIds_1() {
+			const ids = [];
+			const allNodes = flatTree(treeData);
+			allNodes.forEach(n => {
+				if (n.checked) ids.push(n.id);
+			})
+			return ids;
+		}
+
+		// ========== 修改后的 getCheckedIds ==========
+		// 任意一个子节点被选中,父级id也会被选中
+		function getCheckedIds() {
+			const allNodes = flatTree(treeData);
+			const idSet = new Set();
+			// 1. 找到所有本身选中的节点
+			const checkedNodes = allNodes.filter(n => n.checked);
+			// 2. 逐个向上追溯父级，加入集合
+			checkedNodes.forEach(node => {
+				let current = node;
+				while (current) {
+					idSet.add(current.id);
+					// 找父节点
+					current = allNodes.find(i => i.id === current.parent_id);
+				}
+			})
+			return Array.from(idSet);
+		}
+
+		$('#saveAuth').click(function () {
+			const ruleIds = getCheckedIds();
+			console.log('选中ID：', ruleIds);
+			$.ajax({
+				url: ROLE_RULE,
+				method: 'POST',
+				data: { role_id: roleId, rule_ids: ruleIds },
+				success(res) {
+					if (res.code === 200) {
+						layer.msg('保存成功');
+					} else {
+						layer.msg(res.msg || '保存失败');
+					}
+				}
+			})
+		})
+
+		function loadMenu() {
+			const mockTree = [
+				{
+					id: 1,
+					title: "系统管理",
+					parent_id: 0,
+					checked: false,
+					spread: true,
+					level: 0,
+					children: [
+						{
+							id: 2,
+							title: "用户管理",
+							parent_id: 1,
+							checked: true,
+							spread: true,
+							level: 1,
+							children: [
+								{ id: 5, title: "新增用户", parent_id: 2, checked: false, level: 2, children: [] },
+								{ id: 6, title: "编辑用户", parent_id: 2, checked: true, level: 2, children: [] }
+							]
+						},
+						{ id: 3, title: "角色管理", parent_id: 1, checked: false, level: 1, children: [] },
+						{ id: 4, title: "日志管理", parent_id: 1, checked: true, level: 1, children: [] }
+					]
+				},
+				{
+					id: 7,
+					title: "订单管理",
+					parent_id: 0,
+					checked: false,
+					spread: true,
+					level: 0,
+					children: [
+						{ id: 8, title: "订单列表", parent_id: 7, checked: false, level: 1, children: [] },
+						{ id: 9, title: "导出订单", parent_id: 7, checked: false, level: 1, children: [] }
+					]
+				}
+			];
+			treeData = mockTree;
+			renderTree();
+		}
+
+		/*
+		function loadMenuFromApi(){
+			$.get('/api/menu/tree',function(res){
+				if(res.code === 200){
+					treeData = res.data;
+					renderTree();
+				}
+			})
+		}
+		*/
+
+		loadMenu();
+	})
+</script>
+
+{/block}

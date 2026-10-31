@@ -11,7 +11,7 @@
 				<div class="layui-col-md3">
 					<label class="layui-form-label">账号</label>
 					<div class="layui-input-block">
-						<input type="text" name="name" placeholder="请输入用户名/手机号/邮箱" class="layui-input">
+						<input type="text" name="account" placeholder="请输入用户名/手机号/邮箱" class="layui-input">
 					</div>
 				</div>
 				<div class="layui-col-md2">
@@ -82,7 +82,7 @@
 	const ADMIN_ADD = MODULE_NAME + '/system/admin/add';
 	const ADMIN_EDIT = MODULE_NAME + '/system/admin/edit';
 	const ADMIN_DELETE = MODULE_NAME + '/system/admin/delete';
-	const ADMIN_CHECK = MODULE_NAME + '/system/admin/check';	
+	const ADMIN_CHECK = MODULE_NAME + '/system/admin/check';
 	
 	layui.use(['common','popup'], function() {
 		let table = layui.table;
@@ -160,7 +160,7 @@
 		table.render({
 			elem: '#table',
 			url: ADMIN_LIST,
-			page: true,
+			page: false,
 			cols: cols,
 			skin: 'line',
 			toolbar: '#user-toolbar',
@@ -201,7 +201,7 @@
 			return false;
 		});
 
-		//执行用户审核
+		// 管理员审核
 		form.on('switch(user-enable)', function(obj) {
 			var status = obj.elem.checked ? 1 : -1;
 			$.ajax({
@@ -214,7 +214,7 @@
 						return popup.failure(res.msg);
 					}
 					return popup.success(res.msg,function(){
-						table.reload('table')
+						table.reloadData('table')
 					});
 				}
 			});
@@ -226,7 +226,7 @@
 				type: 2,
 				title: '新增',
 				shade: 0.1,
-				area: [common.isModile()?'100%':'500px', common.isModile()?'100%':'400px'],
+				area: ['500px', '550px'],
 				content: ADMIN_ADD
 			});
 		}
@@ -236,7 +236,7 @@
 				type: 2,
 				title: '修改',
 				shade: 0.1,
-				area: ['500px', '400px'],
+				area: ['500px', '550px'],
 				content: ADMIN_EDIT + '?id=' + obj.data.id
 			});
 		}

@@ -1,85 +1,73 @@
 {extend name="public/form" /}
 
-{block name="link"}<link rel="stylesheet" href="/static/admin/css/other/person.css" />{/block}
+{block name="link"}
+<link rel="stylesheet" href="/static/admin/css/other/person.css" />
+{/block}
 
 {block name="body"}
 
 <form class="layui-form" action="">
     <div class="mainBox">
       	<div class="main-container">
-			<div class="layui-form-item layui-hide">
-				<input type="text" name="id" class="layui-input" value="{$admin.id}">
-			</div>
-			<div class="layui-form-item">
-				<label class="layui-form-label">我的角色</label>
-				<div class="layui-input-inline">
-					<input type="text" name="auth_group_id" value="{$authGroupTitle}" readonly class="layui-input layui-disabled" disabled>
-				</div>
-			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">用户名</label>
-				<div class="layui-input-inline">
-					<input type="text" name="username" value="{$admin.username}"  readonly class="layui-input layui-disabled">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label class="layui-form-label">昵称</label>
-				<div class="layui-input-inline">
-					<input type="text" name="nickname" value="{$admin.nickname}" lay-verify="nickname" autocomplete="off" placeholder="请输入昵称" class="layui-input">
+				<div class="layui-input-block">
+					<input type="text" name="username" value="{$admin.username}"  readonly class="layui-input layui-disabled" disabled>
 				</div>
 			</div>
 			
-        <!--div class="layui-form-item">
-          <label class="layui-form-label">头像</label>
-          <div class="layui-input-inline">
-            <input name="avatar" lay-verify="required" id="LAY_avatarSrc" placeholder="图片地址" value="http://cdn.layui.com/avatar/168.jpg" class="layui-input">
-          </div>
-          <div class="layui-input-inline pear-btn-container" style="width: auto;">
-            <button type="button" class="pear-btn pear-btn-primary" id="LAY_avatarUpload">
-              <i class="layui-icon">&#xe67c;</i>上传图片
-            </button>
-            <button class="pear-btn pear-btn-primary" layadmin-event="avartatPreview">查看图片</button >
-          </div>
-        </div-->
-        <div class="layui-form-item">
-          <label class="layui-form-label">手机</label>
-          <div class="layui-input-inline">
-            <input type="text" name="mobile" value="{$admin.mobile}" lay-verify="phone" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">邮箱</label>
-          <div class="layui-input-inline">
-            <input type="text" name="email" value="{$admin.email}" lay-verify="email" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-        <div class="layui-form-item layui-form-text">
-          <label class="layui-form-label">备注</label>
-          <div class="layui-input-block">
-            <textarea name="remarks" placeholder="请输入内容" class="layui-textarea">{$admin.remarks}</textarea>
-          </div>
-        </div>
-      </div>
+			<!--div class="layui-form-item">
+			<label class="layui-form-label">头像</label>
+			<div class="layui-input-inline">
+				<input name="avatar" lay-verify="required" id="LAY_avatarSrc" placeholder="图片地址" value="http://cdn.layui.com/avatar/168.jpg" class="layui-input">
+			</div>
+			<div class="layui-input-inline pear-btn-container" style="width: auto;">
+				<button type="button" class="pear-btn pear-btn-primary" id="LAY_avatarUpload">
+				<i class="layui-icon">&#xe67c;</i>上传图片
+				</button>
+				<button class="pear-btn pear-btn-primary" layadmin-event="avartatPreview">查看图片</button >
+			</div>
+			</div-->
+			<div class="layui-form-item">
+			<label class="layui-form-label">手机</label>
+			<div class="layui-input-block">
+				<input type="text" name="mobile" value="{$admin.mobile}" lay-verify="phone" autocomplete="off" class="layui-input">
+			</div>
+			</div>
+			<div class="layui-form-item">
+			<label class="layui-form-label">邮箱</label>
+			<div class="layui-input-block">
+				<input type="text" name="email" value="{$admin.email}" lay-verify="email" autocomplete="off" class="layui-input">
+			</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="remarks" placeholder="请输入内容" class="layui-textarea">{$admin.remarks}</textarea>
+			</div>
+			</div>
+      	</div>
     </div>
     <div class="bottom">
-      <div class="button-container">
-        <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
-          lay-filter="userinfo-save">
-          <i class="layui-icon layui-icon-ok"></i>
-          提交
-        </button>
-        <button type="reset" class="pear-btn pear-btn-sm">
-          <i class="layui-icon layui-icon-refresh"></i>
-          重置
-        </button>
-      </div>
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="userinfo-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
+		</div>
     </div>
 </form>
 
 {__block__}
 
 <script>
-	const INFO_URL = MODULE_NAME + '/system/admin/infoSet';
+
+	const INFO_URL = MODULE_NAME + '/system/admin/setInfo';
+
 	layui.use(['form', 'jquery'], function() {
 		let form = layui.form;
 		let $ = layui.jquery;
@@ -93,8 +81,8 @@
 				success: function(res) {
 					if (res.code === 0) {
 						layer.msg(res.msg, {
-						icon: 1,
-						time: 1000
+							icon: 1,
+							time: 1000
 						}, function() {
 							parent.layer.close(parent.layer.getFrameIndex(window.name));
 						});
@@ -106,6 +94,7 @@
 					}
 				}
 			})
+
 			return false;
 		});
 	})

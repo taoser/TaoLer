@@ -61,7 +61,7 @@ class Feedback extends AdminBaseController
             $id = Request::param('id/d');
             
             $feed['reply'][] = [
-                'username'      => session('admin_name'),
+                'username'      => session('admin.username'),
                 'recontent'     => $recontent,
                 'mine'          => false,
                 'reply_time'    => date('Y-m-d H:i:s')

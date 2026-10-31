@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-23 22:44:31
+ * @LastEditTime: 2026-10-31 10:19:13
  * @LastEditors: TaoLer
  * @Description: admin模块 后台路由
  * @Version: V4.0.0
@@ -48,18 +48,31 @@ Route::group($adminModuleName, function () {
         })->name('admin-edit-tag-page');
     });
 
+    Route::group('system', function () {
+        
+        // 管理员管理
+        Route::group('admin', function () {
+             // 管理员列表
+            Route::get('index', function () {
+                return view('system/admin/index');
+            });
+        });
+        
+    });
+
+
     // 登录接口
     Route::rule('login$','login/index')->name('admin-login');
     // 注册接口
     Route::rule('register$','login/register')->name('admin-register');
-    // 注出接口
+    // 忘记密码接口
+    Route::rule('forget$','login/forget')->name('admin-forget');
+    
+    // 退出登录
     Route::rule('logout$','system.admin/logout')->name('admin-logout');
-    // 修改密码接口
+    // 修改密码
     Route::rule('system/repass$','system.admin/repass')->name('admin-repass');
-    // 基本资料接口
-    Route::rule('system/info$','system.admin/info')->name('admin-info');
-    // 基本资料设置接口
-    Route::get('system/infoedit$','system.admin/infoEdit')->name('admin-infoEdit');
+
     // 清理缓存接口
     Route::post('system/clearcache$','system.admin/clearCache')->name('clear_cache');
     // 获取菜单接口

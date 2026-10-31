@@ -41,7 +41,7 @@ class Notice extends AdminBaseController
 	//添加消息
 	public function add(Request $request): Response
 	{
-		$sendId = Session::get('admin_id');
+		$sendId = Session::get('admin.id');
 
 		$data = $request->post(['type','title','receve_id','content']);
 

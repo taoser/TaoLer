@@ -45,7 +45,7 @@ class AuthGroup extends AdminBaseController
 	 */
 	public function index()
 	{
-		$roles = $this->model->field('id,title')->where('status',1)->select();
+		$roles = $this->model->field('id,name')->where('status',1)->select();
 
 		View::assign('roles',$roles);
 
@@ -57,7 +57,7 @@ class AuthGroup extends AdminBaseController
 	{
 
 		$id = $request->get('id/d');
-		$query = $this->model->field('id,title,limits,description,status');
+		$query = $this->model->field('id,name,remark,status');
 		if(!empty($id)){
 			$query->where('id', $id);
 		}

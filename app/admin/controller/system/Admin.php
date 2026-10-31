@@ -25,68 +25,19 @@ class Admin extends AdminBaseController
     public function initialize()
     {
         parent::initialize();
-
         $this->model = new AdminEntity();
     }
 
     /**
-     * 浏览管理员
-     * @return string
+     * 管理员列表
+     * @param Request $request
+     * @return Response
      */
-	public function index()
+	public function list(Request $request): Response
 	{
-		return View::fetch();
-	}
-
-    /**
-	 * 管理员列表
-	 *
-	 * @return Response
-	 */
-	public function list(Request $request):Response
-	{
-		$data = $request->param(['name']);
-
-		$query = $this->model
-		->field('id,avatar,username,mobile,email,remarks,status,last_login_ip,last_login_time,create_time');
-
-		if(!empty($data['name'])){
-			$query->whereOr('username', $data['name'])
-			->whereOr('mobile', $data['name'])
-			->whereOr('email', $data['name']);
-		}
-
-		$admins = $query->select();
-
-		$count = $admins->count();
-		if($count){
-			return json(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $admins]);
-		}
-
-		return json(['code' => 1,'msg' => 'no data']); 
-	}
-
-	
-	/**
-	 * 审核管理员
-	 *
-	 * @param Request $request
-	 * @return Response
-	 */
-	public function check(Request $request):Response
-	{
-		$data = $request->post(['id', 'status']);
-
-        if($data['id'] == 1) {
-            return json(['code' => -1, 'msg' => '超级管理员禁止操作']);
-        }
-
-		$admin = $this->model->find($data['id']);
-		$admin->status = $data['status'];
-		$res = $admin->save();
-		if($res){
-			return json(['code' => 0, 'msg' => 'ok', 'icon' => 5]);
-		}
+		$account = $request->get('account');
+		$result = $this->model->getList($account);
+		return json(['code' =>0, 'msg' => '查询成功', 'count' => $result['count'], 'data' => $result['data']]);
 	}
 	
 	/**
@@ -95,26 +46,16 @@ class Admin extends AdminBaseController
 	 * @param Request $request
 	 * @return Response | string
 	 */
-	public function add(Request $request):Response | string
+	public function add(Request $request): Response | string
 	{
 		if(!$request->isPost()){
-			//$auth_group = Db::name('auth_group')->select();
-			//View::assign(['auth_group'=>$auth_group]);
 			return View::fetch();
 		}
 
 		$data = $request->post(['username','email','password','mobile']);
-		$roleId = $request->get('roleId');
-
-		$data['password'] = PasswordHash::make($data['password']);
+		$this->model->add($data);
 		
-		$admin = $this->model->save($data);
-		//Db::name('auth_group_access')->insert(['uid'=>$adminId,'group_id'=>$data['auth_group_id']]);
-		if($admin){
-			return json(['code'=>0,'msg'=>'添加成功']);
-		}
-
-		return json(['code'=>-1,'msg'=>'添加失败']);
+		return json(['code' =>0,'msg'=>'添加成功']);
 	}
 	
 	/**
@@ -126,132 +67,99 @@ class Admin extends AdminBaseController
 	public function edit(Request $request): Response | string
 	{
 		if(!$request->isPost()){
-			$id = $request->get('id');
-			$admin = $this->model->find($id);
-			//$auth_group = Db::name('auth_group')->select();,'auth_group'=>$auth_group
-			View::assign(['admin' => $admin]);
 			return View::fetch();
 		}
 
-		$data = $request->post(['id/d','email','password','mobile','roleId']);
-		$result = $this->model->edit($data);
-		//Db::name('auth_group_access')->where('uid',$data['id'])->update(['group_id'=>$data['auth_group_id']]);
-		if($result){
-			return json(['code'=>0,'msg'=>'编辑成功']);
-		}
-		return json(['code'=>-1,'msg'=>'编辑失败']);
+		$data = $request->post(['id/d', 'email', 'password', 'mobile','remarks']);
+		$this->model->edit($data);
+		return json(['code' => 0, 'msg' => '编辑成功']);
 	}
 	
-	//删除管理员
+	// 删除管理员
 	public function delete(Request $request): Response
 	{
 		$id = $request->get('id');
-		
 		$user = $this->model->find($id);
-		$result = $user->delete();
-		if($result){
-			return json(['code'=>0,'msg'=>'删除成功']);
-		}
 
-		return json(['code'=>-1,'msg'=>'删除失败']);
+		$result = $user->delete();
+		if($result) {
+			return json(['code' => 0, 'msg' => '删除成功']);
+		}
+		return json(['code' => 400, 'msg' => '删除失败']);
 	}
 
-	//基本资料浏览
+	/**
+	 * 审核管理员
+	 *
+	 * @param Request $request
+	 * @return Response
+	 */
+	public function check(Request $request): Response
+	{
+		$data = $request->post(['id', 'status']);
+		$this->model->audit($data);
+		return json(['code' => 0, 'msg' => 'ok', 'icon' => 5]);
+	}
+
+	// 基本资料浏览
 	public function info(Request $request)
 	{
-		$id = $request->aid;
-		$admin = $this->model->find($id);
-		$auths = $admin->adminGroup;
-		$authName = [];
-		foreach($auths as $v){
-            $authName[] = $v->title;
-        }
-        $authGroupTitle = implode('|', $authName);
-
-		View::assign(['admin' => $admin, 'authGroupTitle' => $authGroupTitle]);
-		return View::fetch();
+		$id = $request->get('id');
+		$admin = $this->model->field('id,username,mobile,email,remarks')->find($id);
+		return json(['code' => 0, 'msg' => 'ok', 'data' => $admin]);
     }
 
-	//修改基本资料
-	public function infoEdit(Request $request): Response | string
+	// 管理员资料更新
+	public function setInfo(Request $request): Response | string
     {
 		$id = $request->aid;
-		$admin = $this->model->find($id);
-		$auths = $admin->adminGroup;
-		$authName = [];
-		foreach($auths as $v){
-            $authName[] = $v->title;
-        }
-        $authGroupTitle = implode('|', $authName);
+		$admin = $this->model->field('id,username,mobile,email,remarks')->find($id);
 
-		View::assign(['admin'=>$admin,'authGroupTitle'=>$authGroupTitle]);
-		return View::fetch();
-    }
-
-	//管理员资料更新
-	public function infoSet(Request $request): Response
-    {
-		$id = $request->aid;
-		$admin = $this->model->find($id);
-        
-		$data = $request->post(['nickname','mobile','email','remarks']);
-		$result = $admin->save($data);
-		if($result){
-			return json(['code'=>0,'msg'=>'更新成功']);
+		if(!$request->isPost()) {
+			return View::fetch('info_edit',['admin' => $admin]);
 		}
-		return json(['code'=>-1,'msg'=>'更新失败']);
+
+		$data = $request->post(['username','mobile','email','remarks']);
+		$res = $admin->save($data);
+		if(!$res){
+			return json(['code' => 400, 'msg' => '更新失败']);
+		}
+		return json(['code' => 0, 'msg' => '更新成功']);
     }
 
-    //浏览改密码页面
-    public function repass()
-    {
-		return View::fetch();
-    }
-	
-    //修改密码
-	public function repassSet(Request $request): Response
+    // 修改密码
+	public function newPassword(Request $request): Response
 	{
-		$data = $request->post(['oldPassword','password','confirm_password']);
-		$data['admin_id'] = $request->aid;
-		
-		try{
-			$result = $this->model->setpass($data);
-			if($result){
-				return json(['code'=>0,'msg'=>'修改成功']);
-			}
-			return json(['code'=>-1,'msg'=>'修改失败']);
-		} catch (\Exception $e) {
-			return json(['code' => -1, 'msg' => $e->getMessage()]);
+		if(!$request->isPost()) {
+			return view('new_pass');
 		}
+		$data = $request->post(['currentPassword','password','confirm_password']);
+		$data['id'] = $request->aid;
+		$this->model->setNewPassword($data);
+		return json(['code' => 0, 'msg' => '修改成功']);
 	}
 
     /**
      * 清除缓存Cache
-     * @return \think\response\Json
+     * @return Response
      */
 	public function clearCache(Request $request): Response
     {
-		try{
-			//清理缓存
-			Cache::clear();
-			// 清除临时文件
-			$temp = str_replace('\\',"/", runtime_path().'temp/');
-			FileHelper::emptyDir($temp);
-
-			return json(['code' => 0,'msg'=>'清除缓存成功']);
-
-		} catch (\Exception $e) {
-			return json(['code' => -1, 'msg' => $e->getMessage()]);
+		Cache::clear();
+		// 清除临时文件
+		$temp = str_replace('\\',"/", runtime_path().'temp/');
+		$res =FileHelper::emptyDir($temp);
+		if(!$res){
+			return json(['code' => -1, 'msg' => '清除缓存失败']);
 		}
+		return json(['code' => 0,'msg'=>'清除缓存成功']);
     }
 	
-	//退出登陆
+	// 退出登陆
 	public function logout(Request $request): Response
 	{
-		//清空缓存
-		Cookie::delete('adminAuth');
+		// 清空Session
 		Session::clear();
-		
 		return json(['code' => 0, 'msg'=>'退出成功' ]);
 	}
 
@@ -260,7 +168,7 @@ class Admin extends AdminBaseController
 	 *
 	 * @return Response
 	 */
-	public function getRules() :Response
+	public function getRules(): Response
 	{
 		$codes = [];
 		$ruleArr = [];
@@ -286,4 +194,5 @@ class Admin extends AdminBaseController
 
 		return json(['code' => 0, 'msg' => 'ok', 'data' => $codes]);
 	}
+
 }

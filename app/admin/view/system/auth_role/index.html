@@ -1,0 +1,185 @@
+{extend name="public/base" /}
+
+{block name="title"}角色管理{/block}
+
+{block name="body"}
+
+<div class="layui-card">
+	<div class="layui-card-body">
+		<table id="table" lay-filter="table"></table>
+	</div>
+</div>
+
+<script type="text/html" id="role-toolbar">
+	<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+		<i class="layui-icon layui-icon-add-1"></i>
+		新增
+	</button>
+</script>
+
+<script type="text/html" id="bar">
+	<button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit" title="编辑"><i class="layui-icon layui-icon-edit"></i></button>
+	<button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="rule" title="权限"><i class="layui-icon layui-icon-vercode"></i></button>
+	<button class="layui-btn layui-btn-normal pear-btn-sm" lay-event="auth" title="授权"><i class="layui-icon layui-icon-user"></i></button>
+	<button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+</script>
+
+<script type="text/html" id="enable">
+	<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="enable"  {{ d.check== 1 ? 'checked' : '' }} />
+</script>
+
+{__block__}
+
+<script>
+	// 数据接口
+	const ROLE_LIST = MODULE_NAME + "/system/AuthRole/list";
+	const SAVE_FORM_DATA_URL = MODULE_NAME + "/system/AuthRole/form";
+	const ROLE_EDIT = MODULE_NAME + "/system/AuthGroup/edit";
+	const ROLE_DELETE = MODULE_NAME + "/system/AuthGroup/delete";
+	const ROLE_AUTH = MODULE_NAME + "/system/AuthGroup/auth";
+	const ROLE_CHECK = MODULE_NAME + "/system/AuthGroup/check";
+
+	const RULE_LIST = MODULE_NAME + "/system/AuthRole/ruleList";
+	const ROLE_RULE = MODULE_NAME + "/system/AuthRole/rule";
+	
+
+	layui.use(['table','form','jquery','common','popup'],function () {
+		let table = layui.table;
+		let form = layui.form;
+		let $ = layui.jquery;
+		let popup = layui.popup;
+
+		table.render({
+			elem: '#table',
+			url: ROLE_LIST,
+			page: false,
+			cols: [
+				[
+					{title: 'id', field: 'id', align:'center'},
+					{title: '名称', field: 'name', align:'center', width:100},
+					{title: '备注', field: 'remark', align:'center'},
+					{title: '状态', field: 'status', align:'center', templet:'#role-status'},
+					{title: '操作', toolbar: '#bar', align:'center', width:200}
+				]
+			] ,
+			skin: 'line',
+			toolbar: '#role-toolbar',
+			defaultToolbar: [{
+				title: '刷新',
+				layEvent: 'refresh',
+				icon: 'layui-icon-refresh',
+			}, 'filter', 'print', 'exports']
+		});
+
+		table.on('tool(table)', function(obj){
+			if(obj.event === 'remove'){
+				window.remove(obj);
+			} else if(obj.event === 'edit'){
+				window.edit(obj);
+			} else if(obj.event === 'rule'){
+				window.rule(obj);
+			} else if(obj.event === 'auth'){
+				window.power(obj);
+			}
+		});
+
+		table.on('toolbar(table)', function(obj){
+			if(obj.event === 'add'){
+				window.add();
+			} else if(obj.event === 'refresh'){
+				window.refresh();
+			}
+		});
+
+		form.on('submit(role-query)', function(data){
+			table.reload('table',{where:data.field})
+			return false;
+		});
+
+		form.on('switch(enable)', function(obj){
+			layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+			var status = obj.elem.checked ? 1 : -1;
+			//执行用户审核
+			$.ajax({
+				type: 'post',
+				url: ROLE_CHECK,
+				data:{id:this.value, status:status},
+				dataType:'json',
+				success:function(res){
+					if(res.code) {
+						return popup.failure(res.msg);
+					}
+					return popup.success(res.msg);
+				}
+			});
+			return false;
+		});
+
+		window.add = function(){
+			layer.open({
+				type: 2,
+				title: '新增',
+				shade: 0.1,
+				area: ['400px', '350px'],
+				content: SAVE_FORM_DATA_URL
+			});
+		}
+
+		window.edit = function(obj){
+			layer.open({
+				type: 2,
+				title: '修改',
+				shade: 0.1,
+				area: ['400px', '350px'],
+				content: SAVE_FORM_DATA_URL + '?id=' + obj.data.id
+			});
+		}
+
+		window.rule = function(obj){
+			layer.open({
+				type: 2,
+				title: '角色权限',
+				shade: 0.1,
+				area: ['800px', '100%'],
+				content: ROLE_RULE + '?id=' + obj.data.id
+			});
+		}
+
+		window.power = function(obj){
+			layer.open({
+				type: 2,
+				title: '授权',
+				shade: 0.1,
+				area: ['320px', '400px'],
+				content: ROLE_AUTH + '?id=' + obj.data.id
+			});
+		}
+
+		window.remove = function(obj){
+			layer.confirm('确定要删除', {icon: 3, title:'提示'}, function(index){
+				let loading = layer.load();
+				$.ajax({
+					url: ROLE_DELETE + '?id=' + obj.data['id'],
+					dataType:'json',
+					type:'delete',
+					success:function(res){
+						layer.close(loading);
+						if(res.code) {
+							return popup.failure(res.msg);
+						}
+						return popup.success(res.msg, function() {
+							obj.del();
+						});
+					}
+				})
+				layer.close(index);
+			});
+		}
+
+		window.refresh = function(){
+			table.reload('table');
+		}
+	})
+</script>
+
+{/block}

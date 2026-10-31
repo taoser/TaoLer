@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-14 11:26:43
+ * @LastEditTime: 2026-10-31 17:03:59
  * @LastEditors: TaoLer
  * @Description: 菜单控制器
  * @Version: V4.0.0
@@ -230,7 +230,7 @@ class Menu extends AdminBaseController
             } else {
                 $v['hasChildren'] = 0;
             }
-            if ($auth->check($v['name'], session('admin_id')) || session('admin_id') == 1) {
+            if ($auth->check($v['name'], session('admin.id')) || session('admin.id') == 1) {
                 $tree[] = ['id'=>$v['id'],'text'=>$v['title'],'icon'=>$v['icon'],'hasChildren'=>$v['hasChildren'],'href'=>(string) url($v['name']),'sort'=>$v['sort']];
             }
 

@@ -1,0 +1,210 @@
+<?php
+/**
+ * @Program: TaoLer 2023/3/14
+ * @FilePath: app\admin\controller\system\AuthGroup.php
+ * @Description: AuthGroup
+ * @LastEditTime: 2023-03-14 16:43:59
+ * @Author: Taoker <317927823@qq.com>
+ * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
+ */
+
+namespace app\admin\controller\system;
+
+use think\Request;
+use think\Response;
+use think\facade\View;
+use think\facade\Db;
+use think\exception\ValidateException;
+use app\entity\AuthRole as AuthRoleEntity;
+use app\entity\AuthGroupAccess;
+use app\entity\AuthRule as AuthRuleModel;
+use app\entity\Admin as adminModel;
+use app\entity\AuthRule;
+use app\admin\controller\AdminBaseController;
+
+class AuthRole extends AdminBaseController
+{
+	/**
+	 *
+	 * @var AuthRoleEntity
+	 */
+	protected $entity = null;
+
+	public function initialize()
+    {
+		parent::initialize();
+        $this->entity = new AuthRoleEntity;
+    }
+
+	/**
+	 * 浏览
+	 *
+	 * @return void
+	 */
+	public function index()
+	{
+		return View::fetch();
+	}
+	
+	/**
+	 * 角色列表
+	 */
+	public function list(Request $request): Response
+	{
+		$list = $this->entity->getList();
+		return json(['code' => 0,'msg'=>'ok','count' => $list['count'], 'data' => $list['data']]);		
+	}
+
+	public function info(Request $request): Response
+	{
+		$id = $request->get('id/d');
+		$role = $this->entity->find($id);
+		return json(['code' => 0, 'msg' => 'ok','data' => $role]);
+	}
+
+	public function form(Request $request): Response | string
+	{
+		if(!$request->isPost()){
+			return View::fetch();
+		}
+
+		$data = $request->post(['id','name','remark','sort/d']);
+		$this->entity->saveData($data);
+
+		return json(['code' => 0, 'msg' => '保存成功']);
+	}
+
+	public function rule(Request $request): Response | string
+	{
+		if(!$request->isPost()){
+			return View::fetch();
+		}
+
+		$role_id = $request->get('role_id/d');
+		$rules = $request->post('rule_ids');
+		var_dump($role_id,$rules);
+		return json(['code'=>0,'msg'=>'保存成功']);
+	}
+	
+	public function add(Request $request): Response | string
+	{
+		if(!$request->isPost()){
+			$rule = new AuthRule();
+			$menus = $rule->getRoleMenu();
+			View::assign('menus',$menus);
+			
+			return View::fetch();
+		}
+		
+		$data = $request->post();
+		$result = AuthGroupModel::create($data);
+		if($result) {
+			return json(['code'=>0,'msg'=>'添加成功']);
+		}
+		return json(['code'=>-1,'msg'=>'添加失败']);
+	}
+	
+	//角色编辑
+	public function edit(Request $request): Response | string
+	{
+		if(!$request->isPost()){
+			$id = $request->get('id/d');
+			$menus = $this->getRoleMenu();
+			$role = AuthGroupModel::find($id);
+			$rus = explode(',',$role->rules);
+				
+			View::assign(['role'=>$role,'rus'=>$rus,'menus'=>$menus]);
+			return View::fetch();
+		}
+
+		$data = $request->post();
+/*			
+		if(!strpos($data['rules'],'1,2,3,4,5'))
+		{
+			$data['rules'] = substr_replace($data['rules'],"1,2,3,4,5,",0,0);
+		}
+*/			
+		$rule = AuthGroupModel::update($data);
+		if($rule){
+			return json(['code'=>0,'msg'=>'保存成功']);
+		}
+		return json(['code'=>-1,'msg'=>'保存失败']);
+	}
+
+	//角色删除
+	public function delete(Request $request): Response
+	{
+		$id = $request->get('id');
+		$ids = explode(',',$id);
+		
+		$role =AuthGroupModel::select($ids);
+		$result = $role->delete();
+		if($result){
+			return json(['code'=>0,'msg'=>'删除成功']);
+		}
+		return json(['code'=>-1,'msg'=>'删除失败']);
+		
+	}
+	
+	//角色审核
+	public function check(Request $request): Response
+	{
+		$data = $request->post(['id','status']);
+
+		//获取状态
+		$res = Db::name('auth_group')->where('id',$data['id'])->save(['status' => $data['status']]);
+		if($res){
+			return json(['code'=>0,'msg'=> $data['status'] == 1?'角色审核通过' : '禁用此角色', 'icon'=>6]); 
+		}
+		return json(['code'=>-1,'msg'=>'审核出错']);
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @return void
+	 */
+	public function auth(Request $request): Response | string
+	{
+
+		if(!$request->isPost()) {
+			$roleId = $request->get('id');
+			$admin = Db::name('admin')->field('id, username')->select();
+			$role = Db::name('auth_group')->field('id,title')->where('id', (int) $roleId)->find();
+			$uidAccess = Db::name('auth_group_access')->where('group_id', (int) $roleId)->column('uid');
+
+			View::assign(['role'=>$role, 'admin' => $admin, 'uidAccess' => $uidAccess]);
+			return View::fetch();
+		}
+
+		$data = $request->post(['id/d','group_id/d', 'uid/d']);
+		$uidArray = Db::name('auth_group_access')->where('group_id', $data['group_id'])->column('uid');
+		
+		$newUids = explode(',', $data['uid']);
+		try {
+			// 1.循环原有的UID跟现在提交过来的UID比较,没有在新uid的，被删除
+			foreach($uidArray as $oldUid) {
+				if(!in_array($oldUid, $newUids)){
+					Db::name('auth_group_access')->where('uid', $oldUid)->delete();
+				}
+			}
+			
+			// 2.循环现有的UID再次跟已存在的UID比较，没有的，新增加
+			$uids = Db::name('auth_group_access')->where('group_id', (int) $data['group_id'])->column('uid');			
+			foreach($newUids as $newUid){
+				if(!in_array($newUid, $uids)) {
+					Db::name('auth_group_access')->save(['uid' => $newUid, 'group_id' => (int) $data['group_id']]);
+				}
+			}
+			
+			return json(['code' => 0, 'msg' => 'ok']);
+		} catch (\Exception $e) {
+			return json(['code' => -1, 'msg' => $e->getMessage()]);
+		}
+	
+		// $groupAccess = new AuthGroupAccess();
+		// $groupAccess->saveAll($array);
+	}
+
+	
+}

@@ -158,14 +158,14 @@ class Base extends BaseController
 {
     public function initialize()
     {
-        if (!session('admin_id')) {
+        if (!session('admin.id')) {
            $this->redirect('login/index');
         }
         $auth = new Auth();
         $controller = strtolower(request()->controller());
         $action = strtolower(request()->action());
         $url = $controller . "/" . $action;
-        if (!$auth->check($url, session('admin_id'))) {
+        if (!$auth->check($url, session('admin.id'))) {
            $this->error('抱歉，您没有操作权限');
         }
     }
@@ -206,7 +206,7 @@ class Base extends Controller
 {
     public function initialize()
     {
-        if (!session('admin_id')) {
+        if (!session('admin.id')) {
             $this->redirect('login/index');
         }
         $auth = new \taoser\think\Auth();
@@ -220,19 +220,19 @@ class Base extends Controller
         $no_check_status_list = Db::name('auth_rule')->where('status', 0)->column('name');
         $no_check_rules_list = explode(',', strtolower(implode(',', array_merge($no_check_default, (array)$no_check_status_list))));
         $no_check_user_list = Db::name('admin')->where('is_admin', 1)->column('id');
-        if (!in_array(session('admin_id'), $no_check_user_list)) {
+        if (!in_array(session('admin.id'), $no_check_user_list)) {
             if (!in_array($url, $no_check_rules_list)) {
-                if (!$auth->check($url, session('admin_id'))) {
+                if (!$auth->check($url, session('admin.id'))) {
                     $this->error('抱歉，您没有操作权限');
                 }
             }
             foreach ($data as $k => $v) {
-                if (!$auth->check($v['name'], session('admin_id'))) {
+                if (!$auth->check($v['name'], session('admin.id'))) {
                     unset($data[$k]);
                 } else {
                     if (isset($v['_child'])) {
                         foreach ($v['_child'] as $key => $value) {
-                            if (!$auth->check($value['name'], session('admin_id'))) {
+                            if (!$auth->check($value['name'], session('admin.id'))) {
                                 unset($data[$k]['_child'][$key]);
                             }
                         }

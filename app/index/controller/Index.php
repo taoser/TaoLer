@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-18 11:00:39
+ * @LastEditTime: 2026-10-31 17:10:55
  * @TaoLer: TaoLer
  * @Description: 首页优化版
  * @Version: V4.0.0
@@ -51,7 +51,6 @@ class Index extends IndexBaseController
 
 
 		// dump($sliders);
-
 
 
 		// dump(get_addons_config('demo'));

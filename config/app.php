@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-10-31 17:05:44
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\config\app.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 // +----------------------------------------------------------------------
 // | 应用设置
 // +----------------------------------------------------------------------
@@ -19,7 +29,7 @@ return [
     // 禁止URL访问的应用列表（自动多应用模式有效）
     'deny_app_list'    => [],
     // 异常页面的模板文件
-    'exception_tmpl' => env('app_debug') ? app()->getThinkPath() . 'tpl/think_exception.tpl' : public_path() . '404.html',
+    'exception_tmpl' => env('app_debug') ? app()->getThinkPath() . 'tpl/think_exception.tpl' : public_path() . '500.html',
     // 错误显示信息,非调试模式有效
     'error_message'    => '页面错误！请稍后再试～',
     // 显示错误信息

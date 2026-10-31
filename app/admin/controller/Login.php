@@ -14,7 +14,6 @@ use think\Request;
 use think\Response;
 use think\facade\View;
 use think\facade\Session;
-use app\admin\validate\Admin;
 use think\exception\ValidateException;
 
 class Login extends AdminBaseController
@@ -26,32 +25,23 @@ class Login extends AdminBaseController
 			return View::fetch('login');
 		}
 
-		$data = $request->post(['username', 'password', 'captcha', 'remember']);
-		
+		$data = $request->post(['account', 'password', 'captcha', 'remember']);
 		$admin = new \app\entity\Admin();
-		$result = $admin->login($data);
-		if ($result) {
-			return json(['code' => 0, 'msg' => '登陆成功', 'url' => (string) url('admin-index')]);
-		}
+		$admin->login($data);
+		
+		return json(['code' => 0, 'msg' => '登陆成功', 'url' => (string) url('admin-index')]);
+		
 	}
 	
 	// 注册
 	public function register()
 	{
-		if(Session::has('admin_id')){
-			return redirect((string) url('admin-index'));
-		}
-		
 		return View::fetch('register');
 	}
 	
 	//忘记密码
 	public function forget()
 	{
-		if(Session::has('admin_id')){
-			return redirect((string) url('admin-index'));
-		}
-		
 		return View::fetch('forget');
 	}
 	

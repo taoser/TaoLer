@@ -188,7 +188,7 @@ class Index extends AdminBaseController
 		$data = $request->post(['type','title','content','post','uid']);
 
 		$response = HttpHelper::withHost()->post('/v1/reply', $data);
-		$data['poster'] = Session::get('admin_id');
+		$data['poster'] = Session::get('admin.id');
 		unset($data['post']);
 
 		if($response->ok()){

@@ -45,8 +45,14 @@ class ExceptionHandle extends Handle
         // if ($exception instanceof ControllerNotFoundException) {
         //     return;
         // }
+        
+        // 自定义异常 不写入日志
+        if ($exception instanceof BusinessException) {
+             return;
+        }
 
         Log::error($exception->getMessage().':'.$exception->getFile().':'.$exception->getLine());
+
         // 使用内置的方式记录异常日志
         // parent::report($exception);
     }

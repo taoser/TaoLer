@@ -34,7 +34,7 @@ class AdminBaseController extends \app\BaseController
     protected function initialize()
     {
 		//权限auth检查
-        $this->aid = Session::get('admin_id');
+        $this->aid = Session::get('admin.id');
 
 		//系统配置
         $sys = $this->getSystem();

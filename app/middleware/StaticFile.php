@@ -12,7 +12,7 @@ class StaticFile
 		//访问路径
         $path = str_contains($request->pathinfo(), 'licence_pic');
         if($path) {
-            if(!Session::has('admin_id')) {
+            if(!Session::has('admin.id')) {
                 return json(['code' => 0, 'msg' => 'no auth']);
             }
         }

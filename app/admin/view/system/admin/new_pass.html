@@ -1,28 +1,31 @@
+<!-- 重置密码 -->
 {extend name="public/form" /}
 
-{block name="link"}<link rel="stylesheet" href="/static/admin/css/other/person.css" />{/block}
+{block name="link"}
+<link rel="stylesheet" href="/static/admin/css/other/person.css" />
+{/block}
 
 {block name="body"}
 
-<form class="layui-form" action="">
+<form class="layui-form">
 	<div class="mainBox">
 		<div class="main-container">
 		<div class="layui-form-item">
 		<label class="layui-form-label">原密码</label>
 			<div class="layui-input-inline">
-			<input type="password" name="oldPassword" lay-verify="required" lay-verType="tips" placeholder="请输入原密码" class="layui-input">
+			<input type="password" name="currentPassword" lay-verify="required" lay-verType="tips" autocomplete="off" placeholder="请输入原密码" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">新密码</label>
 			<div class="layui-input-inline">
-			<input type="password" name="password" lay-verify="pass" lay-verType="tips" autocomplete="off"  placeholder="新密码6-16位字符" class="layui-input">
+			<input type="password" name="password" lay-verify="required" lay-verType="tips" autocomplete="off"  placeholder="新密码6-16位字符" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">确认密码</label>
 			<div class="layui-input-inline">
-			<input type="password" name="confirm_password" lay-verify="repass" lay-verType="tips" autocomplete="off"   placeholder="再次确认密码" class="layui-input">
+			<input type="password" name="confirm_password" lay-verify="required" lay-verType="tips" autocomplete="off"   placeholder="再次确认密码" class="layui-input">
 			</div>
 		</div>
 		</div>
@@ -45,7 +48,7 @@
 
 <script>
 
-	const REPASS_URL = MODULE_NAME + '/system/admin/repassSet';
+	const REPASS_URL = MODULE_NAME + '/system/admin/newPassword';
 
 	layui.use(['form', 'jquery'], function() {
 		let form = layui.form;

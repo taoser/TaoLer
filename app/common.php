@@ -215,7 +215,7 @@ function getLimtTime(string $create_time)
 //按钮权限检查
 function checkRuleButton(string $rules_button)
 {
-	$admin_id = Session::get('admin_id');
+	$admin_id = Session::get('admin.id');
 	$auth = new Auth();
 	$res = $auth->check($rules_button, $admin_id );
 	

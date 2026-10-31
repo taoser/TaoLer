@@ -12,6 +12,13 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
+				<label class="layui-form-label">手机</label>
+				<div class="layui-input-block">
+					<input type="text" name="mobile" lay-verify="required|phone" autocomplete="off" placeholder="请输入手机号"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
 				<label class="layui-form-label">邮箱</label>
 				<div class="layui-input-block">
 					<input type="text" name="email" lay-verify="required|email" autocomplete="off" placeholder="请输入邮箱"
@@ -26,13 +33,11 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">手机</label>
+				<label class="layui-form-label">备注</label>
 				<div class="layui-input-block">
-					<input type="text" name="mobile" lay-verify="required|phone" autocomplete="off" placeholder="请输入手机号"
-						class="layui-input">
+					<textarea name="remarks" placeholder="请输入内容" class="layui-textarea"></textarea>
 				</div>
 			</div>
-			
 			<!-- <div class="layui-form-item">
 				<label class="layui-form-label">角色</label>
 				<div class="layui-input-block">
@@ -88,9 +93,8 @@
 		form.on('submit(user-save)', function(data) {
 			$.ajax({
 				url: ADMIN_ADD,
-				data: JSON.stringify(data.field),
+				data: data.field,
 				dataType: 'json',
-				contentType: 'application/json',
 				type: 'post',
 				success: function(result) {
 					if (result.code === 0) {
@@ -98,9 +102,8 @@
 							icon: 1,
 							time: 1000
 						}, function() {
-							parent.layer.close(parent.layer.getFrameIndex(window
-								.name)); //关闭当前页
-							parent.layui.table.reload("table");
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+							parent.layui.table.reloadData("table");
 						});
 					} else {
 						layer.msg(result.msg, {

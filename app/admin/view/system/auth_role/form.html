@@ -1,0 +1,104 @@
+<!--
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-10-31 18:08:06
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\admin\view\system\auth_role\form.html
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+-->
+<!-- 编辑管理员 -->
+{extend name="public/form" /}
+
+{block name="body"}
+
+<form class="layui-form" lay-filter="form">
+	<div class="mainBox">
+		<div class="main-container">
+			<!-- 隐藏id，编辑时有值，新增为空 -->
+    		<input type="hidden" name="id" value="">
+			<div class="layui-form-item">
+				<label class="layui-form-label">名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">序号</label>
+				<div class="layui-input-block">
+					<input type="text" name="sort" lay-verify="required|number" autocomplete="off" placeholder="请输入序号" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-block">
+					<textarea name="remark" lay-verify="required" autocomplete="off" placeholder="请输入备注" class="layui-textarea"></textarea>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	<div class="bottom">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+				lay-filter="user-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
+		</div>
+	</div>
+</form>
+
+{__block__}
+
+<script>
+
+	const INFO_URL = MODULE_NAME + '/system/AuthRole/info' + location.search;
+	const SAVE_FORM_DATA_URL = MODULE_NAME + '/system/AuthRole/form';
+
+	layui.use(['form', 'jquery'], function() {
+		let form = layui.form;
+		let $ = layui.jquery;
+
+		$.get(INFO_URL, function(result) {
+			if (result.code === 0) {
+				form.val('form', result.data);
+			}
+		});
+
+		form.on('submit(user-save)', function(data) {
+			data.field.id = layui.url().search.id;
+			$.ajax({
+				type: 'post',
+				url: SAVE_FORM_DATA_URL,
+				data: data.field,
+				dataType: 'json',
+				success: function(result) {
+					if (result.code === 0) {
+						layer.msg(result.msg, {
+							icon: 1,
+							time: 1000
+						}, function() {
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+							parent.layui.table.reloadData("table");
+						});
+					} else {
+						layer.msg(result.msg, {
+							icon: 2,
+							time: 1000
+						});
+					}
+				}
+			})
+			return false;
+		});
+	})
+</script>
+
+{/block}

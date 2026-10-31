@@ -33,7 +33,7 @@
 										<div class="layui-input-prefix">
 											<i class="layui-icon layui-icon-username"></i>
 										</div>
-										<input name="username" lay-verify="required" placeholder="账户" autocomplete="off" class="layui-input">
+										<input name="account" lay-verify="required" placeholder="账户/手机号/邮箱" autocomplete="off" class="layui-input">
 									</div>
 								</div>
 								<div class="layui-form-item">
@@ -86,6 +86,7 @@
 			var form = layui.form;
 			var button = layui.button;
 			var popup = layui.popup;
+			var layer = layui.layer;
 			
 			let $ = layui.jquery;
 			let $body = $('body');
@@ -99,6 +100,7 @@
 
 			// 登 录 提 交
 			form.on('submit(login)', function (data) {
+				var loadIndex = layer.load(2);
 				$("#login-submit").addClass('layui-btn-disabled').attr('disabled', true);
 
 				$.ajax({
@@ -107,6 +109,7 @@
 					data: data.field,
 					dataType: 'json',
 					success: function (res) {
+						layer.close(loadIndex);
 						if (res.code === 0) {
 							button.load({
 								elem: '.login',
@@ -123,7 +126,6 @@
 							layui.jquery('#captcha').attr('src', '{:captcha_src()}?' + Math.random());
 						}
 					},
-
 					error: function () {
 						$("#login-submit").removeClass('layui-btn-disabled').attr('disabled', false);
 						layer.open({ title: '请求失败', content: '网络异常或服务器返回错误', icon: 5, anim: 6 });

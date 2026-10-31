@@ -1,33 +1,50 @@
+<!--
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-10-31 09:06:30
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\admin\view\system\admin\edit.html
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+-->
+<!-- 编辑管理员 -->
 {extend name="public/form" /}
 
 {block name="body"}
 
-<form class="layui-form">
+<form class="layui-form" lay-filter="form">
 	<div class="mainBox">
 		<div class="main-container">
 
 			<div class="layui-form-item">
 				<label class="layui-form-label">账号</label>
 				<div class="layui-input-block">
-					<input type="text" name="username" value="{$admin.username}" readonly lay-verify="required|username" autocomplete="off" placeholder="请输入用户名" class="layui-input">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label class="layui-form-label">邮箱</label>
-				<div class="layui-input-block">
-					<input type="text" name="email" value="{$admin.email}" lay-verify="required|email" autocomplete="off" class="layui-input">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label class="layui-form-label">密码</label>
-				<div class="layui-input-block">
-					<input type="text" name="password" value="" lay-verify="" autocomplete="off" class="layui-input">
+					<input type="text" name="username" disabled lay-verify="required|username" class="layui-input layui-disabled">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">电话</label>
 				<div class="layui-input-block">
-					<input type="text" name="mobile" value="{$admin.mobile}" lay-verify="required|phone" autocomplete="off" placeholder="请输入电话" class="layui-input">
+					<input type="text" name="mobile" lay-verify="required|phone" autocomplete="off" placeholder="请输入电话" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-block">
+					<input type="text" name="email" lay-verify="required|email" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">密码</label>
+				<div class="layui-input-block">
+					<input type="password" name="password" lay-verify="" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-block">
+					<textarea name="remarks" placeholder="请输入内容" class="layui-textarea"></textarea>
 				</div>
 			</div>
 		</div>
@@ -53,18 +70,25 @@
 <script>
 
 	const EDIT_URL = MODULE_NAME + '/system/admin/edit';
+	const INFO_URL = MODULE_NAME + '/system/admin/info' + location.search;
 
 	layui.use(['form', 'jquery'], function() {
 		let form = layui.form;
 		let $ = layui.jquery;
 
+		$.get(INFO_URL, function(result) {
+			if (result.code === 0) {
+				form.val('form', result.data);
+			}
+		});
+
 		form.on('submit(user-save)', function(data) {
 			data.field.id = layui.url().search.id;
 			$.ajax({
+				type: 'post',
 				url: EDIT_URL,
 				data: data.field,
 				dataType: 'json',
-				type: 'post',
 				success: function(result) {
 					if (result.code === 0) {
 						layer.msg(result.msg, {
@@ -72,7 +96,7 @@
 							time: 1000
 						}, function() {
 							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-							parent.layui.table.reload("table");
+							parent.layui.table.reloadData("table");
 						});
 					} else {
 						layer.msg(result.msg, {
