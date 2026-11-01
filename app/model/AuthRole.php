@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-10-31 14:57:54
- * @LastEditTime: 2026-10-31 16:26:08
+ * @LastEditTime: 2026-11-01 14:39:03
  * @LastEditors: TaoLer
  * @Description: 角色模型
  * @Version: V4.0.0
@@ -22,28 +22,23 @@ class AuthRole extends BaseModel
         ];
     }
 
-    //角色多对多关联角色分配表
-    public function GroupAccess()
+    /**
+     * 角色多对多关联权限表
+     * @return \think\model\relation\BelongsToMany
+     */
+    public function rules()
     {
-        return $this->hasMany('AuthGroupAccess','group_id','id');
+        return $this->belongsToMany(AuthRule::class, AuthRoleRule::class);
     }
-	
-	//登陆校验
-    public function authRuleTree()
-    {
-		$authRules = $this->order('sort asc')->select();
-		return $this->sort($authRules);
-	}
-	
-	public function sort($data,$pid=0)
+
+	/**
+	 * 角色多对多关联管理员
+	 * @return \think\model\relation\BelongsToMany
+	 */
+	public function admins()
 	{
-		static $arr = array();
-		foreach($data as $k=> $v){
-			if($v['pid']==$pid){
-				$arr[] = $v;
-				$this->sort($data,$v['id']);	
-			}
-		}
-		return $arr;
+		return $this->belongsToMany(Admin::class, AuthAdminRole::class);
 	}
+
+
 }

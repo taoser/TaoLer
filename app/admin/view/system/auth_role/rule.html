@@ -40,32 +40,36 @@
 {/block}
 
 {block name="body"}
-
-<div class="layui-card">
-    <div class="layui-card-body">
-        <div class="layui-btn-group" style="margin-top:15px;">
-            <button class="layui-btn layui-btn-sm" id="saveAuth">保存权限</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" id="expandAll">全部展开</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" id="collapseAll">全部收起</button>
-        </div>
-    </div>
-	<div class="layui-card-body">
-		<div id="authTreeBox" class="auth-tree-wrap"></div>
+<div>
+	<div class="layui-card" style="position: fixed; top: 0px;left: 0px;z-index: 1000;">
+		<div class="layui-card-body">
+			<div class="layui-btn-group">
+				<button class="layui-btn layui-btn-sm" id="saveAuth">保存权限</button>
+				<button class="layui-btn layui-btn-sm layui-btn-primary" id="expandAll">全部展开</button>
+				<button class="layui-btn layui-btn-sm layui-btn-primary" id="collapseAll">全部收起</button>
+			</div>
+		</div>
 	</div>
-</div>
 
-<div class="bottom">
-	<div class="button-container">
-		<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
-			lay-filter="user-save">
-			<i class="layui-icon layui-icon-ok"></i>
-			提交
-		</button>
-		<button type="reset" class="pear-btn pear-btn-sm">
-			<i class="layui-icon layui-icon-refresh"></i>
-			重置
-		</button>
+	<div class="layui-card" style="margin-top: 40px; margin-bottom: 40px;">
+		<div class="layui-card-body">
+			<div id="authTreeBox" class="auth-tree-wrap"></div>
+		</div>
 	</div>
+	<div class="bottom" style="position: fixed">
+		<div class="button-container">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" id="save"
+				lay-filter="user-save">
+				<i class="layui-icon layui-icon-ok"></i>
+				提交
+			</button>
+			<button type="reset" class="pear-btn pear-btn-sm">
+				<i class="layui-icon layui-icon-refresh"></i>
+				重置
+			</button>
+		</div>
+	</div>
+	
 </div>
 
 <script type="text/html" id="treeNodeTpl">
@@ -96,18 +100,24 @@
 
 <script>
 
-	const ROLE_RULE = MODULE_NAME + "/system/AuthRole/rule";
+	const ROLE_RULE = MODULE_NAME + "/system/AuthRole/getRoleRules" + location.search;
+	const SAVE_RULE = MODULE_NAME + "/system/AuthRole/rule";
 
 	layui.use(['laytpl','jquery','layer'], function () {
 		const laytpl = layui.laytpl;
 		const $ = layui.$;
 		const layer = layui.layer;
+		const form = layui.form;
 		
-		const roleId = 1;
+		let roleId = layui.url().search.id;
 		let treeData = [];
 		// 缩进间距单位
 		const INDENT_STEP = 24;
 
+		/**
+		* 递归组装节点html
+		* 后端直接提供level，前端不再计算层级
+		*/
 		function compileNodeHtml(node) {
 			if (!node.children || !node.children.length) {
 				const tpl = $('#groupItemTpl').html();
@@ -127,9 +137,11 @@
 				}
 			})
 			let subHtml = '';
+			// 有子节点的节点：单独一行渲染（自带child.level缩进）
 			hasChildList.forEach(child => {
 				subHtml += child.html;
 			})
+			// 无子叶子节点：打包成横向flex行，【group-row使用子节点的level来缩进】
 			if (leafList.length > 0) {
 				let groupHtml = '';
 				leafList.forEach(child => {
@@ -155,7 +167,7 @@
 			let html = '';
 			treeData.forEach(item => html += item.html);
 			$('#authTreeBox').html(html);
-
+			// 半选状态
 			setTimeout(() => {
 				const allNodes = flatTree(treeData);
 				allNodes.forEach(n => {
@@ -167,7 +179,7 @@
 				})
 			}, 0);
 		}
-
+		// 扁平化遍历，用于勾选联动、查找父节点
 		function flatTree(nodes, arr = []) {
 			nodes.forEach(item => {
 				arr.push(item);
@@ -177,16 +189,16 @@
 			})
 			return arr;
 		}
-
+		// 子勾选联动父节点
 		function setChildChecked(node, status) {
 			node.checked = status;
 			if (node.children && node.children.length) {
 				node.children.forEach(child => setChildChecked(child, status));
 			}
 		}
-
+		// 向上更新父节点勾选状态
 		function updateParentChain(node, allList) {
-			const parent = allList.find(i => i.id === node.parent_id);
+			const parent = allList.find(i => i.id === node.pid);
 			if (!parent) return;
 			const checkedCount = parent.children.filter(c => c.checked).length;
 			parent.checked = (checkedCount === parent.children.length);
@@ -215,6 +227,7 @@
 			renderTree();
 		})
 
+		// 展开所有节点
 		$('#expandAll').click(function () {
 			const allNodes = flatTree(treeData);
 			allNodes.forEach(n => {
@@ -222,7 +235,7 @@
 			});
 			renderTree();
 		})
-
+		// 收起所有节点
 		$('#collapseAll').click(function () {
 			const allNodes = flatTree(treeData);
 			allNodes.forEach(n => {
@@ -254,7 +267,7 @@
 				while (current) {
 					idSet.add(current.id);
 					// 找父节点
-					current = allNodes.find(i => i.id === current.parent_id);
+					current = allNodes.find(i => i.id === current.pid);
 				}
 			})
 			return Array.from(idSet);
@@ -264,7 +277,7 @@
 			const ruleIds = getCheckedIds();
 			console.log('选中ID：', ruleIds);
 			$.ajax({
-				url: ROLE_RULE,
+				url: SAVE_RULE,
 				method: 'POST',
 				data: { role_id: roleId, rule_ids: ruleIds },
 				success(res) {
@@ -277,12 +290,34 @@
 			})
 		})
 
+		$('#save').click(function () {
+			const ruleIds = getCheckedIds();
+			console.log('选中ID：', ruleIds);
+			console.log('角色ID：', roleId);
+
+			$.ajax({
+				url: SAVE_RULE,
+				method: 'POST',
+				data: { role_id: roleId, rule_ids: ruleIds },
+				success(res) {
+					if (res.code === 200) {
+						layer.msg('保存成功');
+					} else {
+						layer.msg(res.msg || '保存失败');
+					}
+				}
+			})
+		})
+
+		/**
+		 * 模拟数据
+		 */
 		function loadMenu() {
 			const mockTree = [
 				{
 					id: 1,
 					title: "系统管理",
-					parent_id: 0,
+					pid: 0,
 					checked: false,
 					spread: true,
 					level: 0,
@@ -290,29 +325,29 @@
 						{
 							id: 2,
 							title: "用户管理",
-							parent_id: 1,
+							pid: 1,
 							checked: true,
 							spread: true,
 							level: 1,
 							children: [
-								{ id: 5, title: "新增用户", parent_id: 2, checked: false, level: 2, children: [] },
-								{ id: 6, title: "编辑用户", parent_id: 2, checked: true, level: 2, children: [] }
+								{ id: 5, title: "新增用户", pid: 2, checked: false, level: 2, children: [] },
+								{ id: 6, title: "编辑用户", pid: 2, checked: true, level: 2, children: [] }
 							]
 						},
-						{ id: 3, title: "角色管理", parent_id: 1, checked: false, level: 1, children: [] },
-						{ id: 4, title: "日志管理", parent_id: 1, checked: true, level: 1, children: [] }
+						{ id: 3, title: "角色管理", pid: 1, checked: false, level: 1, children: [] },
+						{ id: 4, title: "日志管理", pid: 1, checked: true, level: 1, children: [] }
 					]
 				},
 				{
 					id: 7,
 					title: "订单管理",
-					parent_id: 0,
+					pid: 0,
 					checked: false,
 					spread: true,
 					level: 0,
 					children: [
-						{ id: 8, title: "订单列表", parent_id: 7, checked: false, level: 1, children: [] },
-						{ id: 9, title: "导出订单", parent_id: 7, checked: false, level: 1, children: [] }
+						{ id: 8, title: "订单列表", pid: 7, checked: false, level: 1, children: [] },
+						{ id: 9, title: "导出订单", pid: 7, checked: false, level: 1, children: [] }
 					]
 				}
 			];
@@ -320,18 +355,22 @@
 			renderTree();
 		}
 
-		/*
-		function loadMenuFromApi(){
-			$.get('/api/menu/tree',function(res){
-				if(res.code === 200){
+		//loadMenu();
+
+		/**
+		 * 从API加载角色权限树
+		 */
+		function loadMenuFromApi() {
+			$.get(ROLE_RULE, function(res){
+				if(res.code === 0){
 					treeData = res.data;
 					renderTree();
 				}
 			})
 		}
-		*/
 
-		loadMenu();
+		loadMenuFromApi();
+
 	})
 </script>
 

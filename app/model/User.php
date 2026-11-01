@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-11-01 10:49:11
+ * @LastEditors: TaoLer
+ * @Description: 用户模型
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\model\User.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 namespace app\model;
 
 use think\model\concern\SoftDelete;

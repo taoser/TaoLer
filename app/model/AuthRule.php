@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-13 18:11:15
+ * @LastEditTime: 2026-11-01 10:56:34
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -25,6 +25,15 @@ class AuthRule extends BaseModel
             'deleteTime'            => 'delete_time',
             'defaultSoftDelete'     => null,
         ];
+    }
+
+    /**
+     * 权限多对多关联角色
+     * @return \think\model\relation\BelongsToMany
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(AuthRole::class, AuthRoleRule::class);
     }
 
     /**

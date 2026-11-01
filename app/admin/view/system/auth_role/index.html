@@ -34,13 +34,16 @@
 	// 数据接口
 	const ROLE_LIST = MODULE_NAME + "/system/AuthRole/list";
 	const SAVE_FORM_DATA_URL = MODULE_NAME + "/system/AuthRole/form";
-	const ROLE_EDIT = MODULE_NAME + "/system/AuthGroup/edit";
-	const ROLE_DELETE = MODULE_NAME + "/system/AuthGroup/delete";
-	const ROLE_AUTH = MODULE_NAME + "/system/AuthGroup/auth";
-	const ROLE_CHECK = MODULE_NAME + "/system/AuthGroup/check";
-
+	const ROLE_AUTH = MODULE_NAME + "/system/AuthRole/auth";
 	const RULE_LIST = MODULE_NAME + "/system/AuthRole/ruleList";
 	const ROLE_RULE = MODULE_NAME + "/system/AuthRole/rule";
+
+	const ROLE_EDIT = MODULE_NAME + "/system/AuthGroup/edit";
+	const ROLE_DELETE = MODULE_NAME + "/system/AuthGroup/delete";
+	
+	const ROLE_CHECK = MODULE_NAME + "/system/AuthGroup/check";
+
+	
 	
 
 	layui.use(['table','form','jquery','common','popup'],function () {
@@ -52,7 +55,7 @@
 		table.render({
 			elem: '#table',
 			url: ROLE_LIST,
-			page: false,
+			page: true,
 			cols: [
 				[
 					{title: 'id', field: 'id', align:'center'},
@@ -79,7 +82,7 @@
 			} else if(obj.event === 'rule'){
 				window.rule(obj);
 			} else if(obj.event === 'auth'){
-				window.power(obj);
+				window.auth(obj);
 			}
 		});
 
@@ -128,7 +131,7 @@
 		window.edit = function(obj){
 			layer.open({
 				type: 2,
-				title: '修改',
+				title: obj.data.name + ' - 修改',
 				shade: 0.1,
 				area: ['400px', '350px'],
 				content: SAVE_FORM_DATA_URL + '?id=' + obj.data.id
@@ -138,17 +141,17 @@
 		window.rule = function(obj){
 			layer.open({
 				type: 2,
-				title: '角色权限',
+				title: obj.data.name + ' - 绑定权限',
 				shade: 0.1,
 				area: ['800px', '100%'],
 				content: ROLE_RULE + '?id=' + obj.data.id
 			});
 		}
 
-		window.power = function(obj){
+		window.auth = function(obj){
 			layer.open({
 				type: 2,
-				title: '授权',
+				title: obj.data.name + ' - 授权',
 				shade: 0.1,
 				area: ['320px', '400px'],
 				content: ROLE_AUTH + '?id=' + obj.data.id
@@ -177,7 +180,7 @@
 		}
 
 		window.refresh = function(){
-			table.reload('table');
+			table.reloadData('table');
 		}
 	})
 </script>

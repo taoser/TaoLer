@@ -18,7 +18,7 @@ use think\exception\ValidateException;
 use app\entity\AuthRole as AuthRoleEntity;
 use app\entity\AuthGroupAccess;
 use app\entity\AuthRule as AuthRuleModel;
-use app\entity\Admin as adminModel;
+use app\entity\Admin;
 use app\entity\AuthRule;
 use app\admin\controller\AdminBaseController;
 
@@ -74,17 +74,53 @@ class AuthRole extends AdminBaseController
 		return json(['code' => 0, 'msg' => '保存成功']);
 	}
 
+	/**
+	 * 角色权限
+	 */
 	public function rule(Request $request): Response | string
 	{
 		if(!$request->isPost()){
 			return View::fetch();
 		}
 
-		$role_id = $request->get('role_id/d');
-		$rules = $request->post('rule_ids');
-		var_dump($role_id,$rules);
+		$data = $request->post(['role_id/d','rule_ids']);
+		$this->entity->saveRoleRule($data);
+		
 		return json(['code'=>0,'msg'=>'保存成功']);
 	}
+	/**
+	 * 获取角色权限
+	 */
+	public function getRoleRules(Request $request): Response
+	{
+		$roleId = $request->get('id/d');
+		$result = $this->entity->getRoleRules($roleId);
+		return json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
+	}
+
+	public function getAdmins(Request $request): Response
+	{
+		$roleId = $request->get('id/d');
+		$admin = new Admin();
+		$role = $this->entity->find($roleId);
+		$ids = $role->admins()->column('admin_id');
+		$admins = Db::name('admin')->field('id,username')->select()->toArray();
+
+		return json(['code' => 0, 'msg' => 'ok', 'data' => ['ids'=>$ids,'admins'=>$admins]]);
+	}
+
+	/**
+	 * 保存角色管理员
+	 */
+	public function saveAuth(Request $request): Response
+	{
+		$data = $request->post(['role_id/d','admin_ids/a']);
+		$this->entity->saveAdminRole($data);
+		return json(['code' => 0, 'msg' => '保存成功']);
+	}
+
+
+
 	
 	public function add(Request $request): Response | string
 	{

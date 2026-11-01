@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-09-13 18:56:17
+ * @LastEditTime: 2026-11-01 07:33:58
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -16,6 +16,7 @@ use think\Request;
 use think\Response;
 use think\facade\Lang;
 use think\facade\Db;
+use app\exception\BusinessException;
 
 class AuthRule extends BaseEntity
 {
@@ -196,7 +197,7 @@ class AuthRule extends BaseEntity
                 $query->field('auth_rule_id,lang,title');
             }
         ])
-        ->field('id,pid,sort,level')
+        ->field('id,pid,title,sort,level')
         ->where(['status'=> 1])
         ->order('sort','asc')
         ->append(['title'])

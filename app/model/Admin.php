@@ -1,4 +1,14 @@
 <?php
+/*
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-11-01 13:53:51
+ * @LastEditors: TaoLer
+ * @Description: 
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\app\model\Admin.php
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+ */
 namespace app\model;
 
 use think\model\concern\SoftDelete;
@@ -15,6 +25,14 @@ class Admin extends BaseModel
             'defaultSoftDelete'     => null,
 		];
 	}
+
+    /**
+     * 管理员多对多关联角色
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(AuthRole::class, AuthAdminRole::class);
+    }
 
 	//管理员关联角色
 /*

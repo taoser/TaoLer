@@ -1,27 +1,16 @@
 {extend name="public/form" /}
 
 {block name="body"}
-
-<form class="layui-form" action="">
-	<div class="mainBox">
-		<div class="main-container">
-
-			<div class="layui-form-item" id="test">
-				<label class="layui-form-label">{$role.title}</label>             
-					{volist name="admin" id="vo"}
-					<ul class="layui-input-block" style="margin-top: 10px ;">
-						<li>
-							<input type="checkbox" name="uid" class="parent"  lay-skin="primary" value="{$vo.id}" title="{$vo.username}" {if (in_array($vo.id, $uidAccess))} checked {/if}>
-						</li>
-					</ul>
-					{/volist}
-			</div>
+	<div class="layui-card">
+		<div class="layui-card-body">
+			<div id="tree"></div>
 		</div>
 	</div>
-	<div class="bottom">
+
+	<div class="bottom" style="position: fixed">
 		<div class="button-container">
-			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
-				lay-filter="auth-save">
+			<button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" id="save"
+				lay-filter="user-save">
 				<i class="layui-icon layui-icon-ok"></i>
 				提交
 			</button>
@@ -31,55 +20,90 @@
 			</button>
 		</div>
 	</div>
-</form>
+
 
 {__block__}
 
 <script>
-	// 数据接口
-	const AUTHGROUP_EDIT = MODULE_NAME + '/system/AuthGroup/auth';
+	const ADMIN_LIST = MODULE_NAME + '/system/AuthRole/getAdmins' + location.search;
+	const SAVE_RULE = MODULE_NAME + '/system/AuthRole/saveAuth';
 
-	layui.use(['form', 'jquery','popup'], function() {
-		let form = layui.form;
-		let $ = layui.jquery;
-		let popup = layui.popup;
-		
-		// 编辑
-		form.on('submit(auth-save)', function(data) {
+	layui.use(['tree','layer','jquery'], function(){
+		const tree = layui.tree;
+		const layer = layui.layer;
+		const $ = layui.jquery;
 
-			//checkbox 父子级级联或取id
-			var mId = "";
-			var e = $(":checkbox");
-			e.each(function () {
-				if($(this).next().hasClass("layui-form-checked")){
-					mId+=$(this).val()+",";
-				};
-			})
+		let roleId = layui.url().search.id;
+		// 选中的用户id数组
+		let selectedIds = [];
+		// 编辑回显：后端输出已授权id数组，如 let defaultCheckedIds = [1,3];
+		let defaultCheckedIds = [];
 
-			data.field.uid = mId.substring(0,mId.length-1);	
-			data.field.group_id = "{$role.id}";
-
-			$.ajax({
-				url: AUTHGROUP_EDIT,
-				data: JSON.stringify(data.field),
-				// data:{"rules":rules,"title":field.title,"descr":field.descr},
-				dataType: 'json',
-				contentType: 'application/json',
-				type: 'post',
-				success: function(res) {
-					if(res.code) {
-						return popup.failure(res.msg);
-					}
-					return popup.success(res.msg, function() {
-						parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-						parent.layui.table.reload("role-table");
-					});
+		// 后端直接返回：[{"id":1,"username":"admin"},{"id":2,"username":"test"}]
+		$.get(ADMIN_LIST, function(res) {
+			defaultCheckedIds = res.data.ids;
+			tree.render({
+				elem:'#tree',
+				id: 'tree',
+				data: res.data.admins,
+				showCheckbox:true,
+				spread: false,
+				onlyIconControl:true,
+				// ✅ 核心：字段映射，不再需要map
+				customName: {
+					id: 'id',
+					title: 'username',
+					children: 'children'
 				}
-			})
-			return false;
-		});
+			});
 
-	})
+			// 回显勾选
+			if(defaultCheckedIds.length>0){
+				tree.setChecked('tree', defaultCheckedIds);
+			}
+
+		},'json');
+
+		$('#save').click(function () {
+			// 获取选中的节点数据
+			const checkedNodes = tree.getChecked('tree');
+			selectedIds = checkedNodes.map(item=>item.id);
+
+			$.post(SAVE_RULE, {
+				role_id: roleId,
+				admin_ids: selectedIds
+			}, res =>{
+				layer.msg(res.msg, {icon: res.code === 0 ? 1 : 2});
+			},'json');
+
+			// $.ajax({
+			// 	url: SAVE_RULE,
+			// 	method: 'POST',
+			// 	data: { role_id: roleId, admin_ids: selectedIds },
+			// 	success(res) {
+			// 		if (res.code === 200) {
+			// 			layer.msg('保存成功');
+			// 		} else {
+			// 			layer.msg(res.msg || '保存失败');
+			// 		}
+			// 	}
+			// })
+		})
+
+		// 提交示例
+		/*
+		$.post('/admin/role/authUser',{
+			role_id: 1,
+			user_ids: selectedIds
+		},res=>{
+			layer.msg(res.msg,{icon:res.code===1?1:2});
+		},'json');
+		*/
+	});
 </script>
+
+</body>
+</html>
+
  
 {/block}
