@@ -22,7 +22,6 @@
         "topthink/think-filesystem": "^3.0",
         "topthink/think-captcha": "^3.0",
         "topthink/think-throttle": "^3.0",
-        "taoser/think-auth": "^2.0",
         "taoser/think-setarr": "^0.0.5",
         "firebase/php-jwt": "^7.1",
         "guzzlehttp/guzzle": "^7.14",

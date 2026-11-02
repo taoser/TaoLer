@@ -4,7 +4,6 @@ use taoser\SetArr;
 use think\Request;
 use think\facade\Db;
 use think\facade\Session;
-use taoser\think\Auth;
 
 if(!function_exists('system_config'))
 {
@@ -215,15 +214,8 @@ function getLimtTime(string $create_time)
 //按钮权限检查
 function checkRuleButton(string $rules_button)
 {
-	$admin_id = Session::get('admin.id');
-	$auth = new Auth();
-	$res = $auth->check($rules_button, $admin_id );
-	
-	if($res || $admin_id == 1){
-		return true;
-	} else {
-		return false;
-	}
+	return request()->admin->hasPerm($rules_button);
+
 }
 
 //提取内容第一张图片

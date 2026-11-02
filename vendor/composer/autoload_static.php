@@ -43,7 +43,6 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
             'think\\dumper\\' => 13,
             'think\\captcha\\' => 14,
             'think\\' => 6,
-            'taoser\\think\\' => 13,
             'taoser\\' => 7,
         ),
         'l' =>
@@ -173,10 +172,6 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
             5 => __DIR__ . '/..' . '/topthink/think-container/src',
             6 => __DIR__ . '/..' . '/topthink/think-helper/src',
         ),
-        'taoser\\think\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/taoser/think-auth/src',
-        ),
         'taoser\\' =>
         array (
             0 => __DIR__ . '/..' . '/taoser/think-setarr/src',
@@ -212,8 +207,8 @@ class ComposerStaticInit16315b3a90c4ab7453f06759663346b7
         ),
         'Workerman\\' =>
         array (
-            0 => __DIR__ . '/..' . '/workerman/coroutine/src',
-            1 => __DIR__ . '/..' . '/workerman/workerman/src',
+            0 => __DIR__ . '/..' . '/workerman/workerman/src',
+            1 => __DIR__ . '/..' . '/workerman/coroutine/src',
         ),
         'Symfony\\Polyfill\\Php86\\' =>
         array (

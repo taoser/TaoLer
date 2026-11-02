@@ -33,18 +33,12 @@
 <script>
 	// 数据接口
 	const ROLE_LIST = MODULE_NAME + "/system/AuthRole/list";
-	const SAVE_FORM_DATA_URL = MODULE_NAME + "/system/AuthRole/form";
+	const SAVE_FORM = MODULE_NAME + "/system/AuthRole/form";
 	const ROLE_AUTH = MODULE_NAME + "/system/AuthRole/auth";
 	const RULE_LIST = MODULE_NAME + "/system/AuthRole/ruleList";
 	const ROLE_RULE = MODULE_NAME + "/system/AuthRole/rule";
-
-	const ROLE_EDIT = MODULE_NAME + "/system/AuthGroup/edit";
-	const ROLE_DELETE = MODULE_NAME + "/system/AuthGroup/delete";
-	
-	const ROLE_CHECK = MODULE_NAME + "/system/AuthGroup/check";
-
-	
-	
+	const ROLE_CHECK = MODULE_NAME + "/system/AuthRole/check";
+	const ROLE_DELETE = MODULE_NAME + "/system/AuthRole/delete";
 
 	layui.use(['table','form','jquery','common','popup'],function () {
 		let table = layui.table;
@@ -58,9 +52,9 @@
 			page: true,
 			cols: [
 				[
-					{title: 'id', field: 'id', align:'center'},
-					{title: '名称', field: 'name', align:'center', width:100},
-					{title: '备注', field: 'remark', align:'center'},
+					{title: 'id', field: 'id', align:'center', width:80},
+					{title: '名称', field: 'name', width:200},
+					{title: '备注', field: 'remark'},
 					{title: '状态', field: 'status', align:'center', templet:'#role-status'},
 					{title: '操作', toolbar: '#bar', align:'center', width:200}
 				]
@@ -124,7 +118,7 @@
 				title: '新增',
 				shade: 0.1,
 				area: ['400px', '350px'],
-				content: SAVE_FORM_DATA_URL
+				content: SAVE_FORM
 			});
 		}
 
@@ -134,7 +128,7 @@
 				title: obj.data.name + ' - 修改',
 				shade: 0.1,
 				area: ['400px', '350px'],
-				content: SAVE_FORM_DATA_URL + '?id=' + obj.data.id
+				content: SAVE_FORM + '?id=' + obj.data.id
 			});
 		}
 

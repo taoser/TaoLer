@@ -1,7 +1,7 @@
 <!--
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-31 09:06:30
+ * @LastEditTime: 2026-11-01 20:31:14
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -89,9 +89,9 @@
 				url: EDIT_URL,
 				data: data.field,
 				dataType: 'json',
-				success: function(result) {
-					if (result.code === 0) {
-						layer.msg(result.msg, {
+				success: function(res) {
+					if (res.code === 0) {
+						layer.msg(res.msg, {
 							icon: 1,
 							time: 1000
 						}, function() {
@@ -99,7 +99,7 @@
 							parent.layui.table.reloadData("table");
 						});
 					} else {
-						layer.msg(result.msg, {
+						layer.msg(res.msg, {
 							icon: 2,
 							time: 1000
 						});

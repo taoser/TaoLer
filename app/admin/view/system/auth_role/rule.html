@@ -275,14 +275,18 @@
 
 		$('#saveAuth').click(function () {
 			const ruleIds = getCheckedIds();
-			console.log('选中ID：', ruleIds);
 			$.ajax({
 				url: SAVE_RULE,
 				method: 'POST',
 				data: { role_id: roleId, rule_ids: ruleIds },
 				success(res) {
-					if (res.code === 200) {
-						layer.msg('保存成功');
+					if (res.code === 0) {
+						layer.msg(res.msg, {
+							icon: 1,
+							time: 1000
+						}, function() {
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+						});
 					} else {
 						layer.msg(res.msg || '保存失败');
 					}
@@ -292,16 +296,18 @@
 
 		$('#save').click(function () {
 			const ruleIds = getCheckedIds();
-			console.log('选中ID：', ruleIds);
-			console.log('角色ID：', roleId);
-
 			$.ajax({
 				url: SAVE_RULE,
 				method: 'POST',
 				data: { role_id: roleId, rule_ids: ruleIds },
 				success(res) {
-					if (res.code === 200) {
-						layer.msg('保存成功');
+					if (res.code === 0) {
+						layer.msg(res.msg, {
+							icon: 1,
+							time: 1000
+						}, function() {
+							parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+						});
 					} else {
 						layer.msg(res.msg || '保存失败');
 					}

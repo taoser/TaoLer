@@ -24,14 +24,14 @@ class AuthRule extends AdminBaseController
 	 * 权限模型
 	 * @var AuthRuleEntity
 	 */
-	protected $model;
+	protected $entity;
 
     //
     public function initialize()
     {
 		parent::initialize();
 
-        $this->model = new AuthRuleEntity();
+        $this->entity = new AuthRuleEntity();
     }
 
     /**
@@ -45,7 +45,7 @@ class AuthRule extends AdminBaseController
 	// 可能要废弃 ??? 2026.6.23
 	public function list()
 	{
-		return $this->model->getAuthRuleArray();
+		return $this->entity->getAuthRuleArray();
 	}
 
 	//添加权限
@@ -58,7 +58,7 @@ class AuthRule extends AdminBaseController
 		$data = $request->post(['pid/d','title','name','icon','sort/d','type/d']);
 
 
-		$this->model->add($data);
+		$this->entity->add($data);
 		
 		return json(['code' => 0,'msg' => 'ok']);
 		
@@ -73,7 +73,7 @@ class AuthRule extends AdminBaseController
 
 		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','type/d']);
 	
-		$this->model->edit($data);
+		$this->entity->edit($data);
 		
 		return json(['code' => 0,'msg' => 'ok']);
 		
@@ -82,7 +82,7 @@ class AuthRule extends AdminBaseController
 	// 权限树列表 + 2026.6.23
 	public function getRuleTreeList()
 	{
-		$data = $this->model->getRuleTree();
+		$data = $this->entity->getRuleTree();
 
 		return json(['code' => 0,'msg' => 'ok','data' => $data]);
 
@@ -94,7 +94,7 @@ class AuthRule extends AdminBaseController
      */
 	public function ruleTree(Request $request): Response
 	{
-		$data = $this->model->getRuleTree();
+		$data = $this->entity->getRuleTree();
 
 		return json([
 			'code'	=> 0,
@@ -122,7 +122,7 @@ class AuthRule extends AdminBaseController
 	{	
 		$id = $request->delete('id/d');
 
-		$this->model->del($id);
+		$this->entity->del($id);
 		
 		return json(['code'=>0,'msg'=>'删除成功']);
 	}
@@ -135,7 +135,7 @@ class AuthRule extends AdminBaseController
 	public function getInfo(Request $request): Response
 	{
 		$id = $request->get('id/d');
-		$rules = $this->model->find($id);
+		$rules = $this->entity->find($id);
 		
 		return json(['code' => 0, 'msg' => 'ok', 'data' => $rules]);
 	}

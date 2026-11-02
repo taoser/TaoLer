@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7c99770d3e65a51044c60e75bb67ce6",
+    "content-hash": "13f042c4b30a84a541061c15f7ff658e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2813,59 +2813,6 @@
                 "source": "https://github.com/taoser/think-addons/tree/v3.0.2"
             },
             "time": "2026-08-23T02:25:31+00:00"
-        },
-        {
-            "name": "taoser/think-auth",
-            "version": "v2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/taoser/think-auth.git",
-                "reference": "db57156530dd8e2c020afc6e64abc1ad64e9e06c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/taoser/think-auth/zipball/db57156530dd8e2c020afc6e64abc1ad64e9e06c",
-                "reference": "db57156530dd8e2c020afc6e64abc1ad64e9e06c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.0.0",
-                "topthink/framework": "^8.0"
-            },
-            "type": "think-extend",
-            "extra": {
-                "think": {
-                    "config": {
-                        "auth": "src/config/auth.php"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "taoser\\think\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "taoser",
-                    "email": "changlin_zhao@qq.com"
-                }
-            ],
-            "description": "The Auth package forThinkphp6,ThinkPHP6的Auth权限扩展",
-            "homepage": "https://github.com/taoser/think-auth",
-            "keywords": [
-                "think-auth",
-                "thinkphp8"
-            ],
-            "support": {
-                "issues": "https://github.com/taoser/think-auth/issues",
-                "source": "https://github.com/taoser/think-auth/tree/v2.0.0"
-            },
-            "time": "2023-08-02T06:28:49+00:00"
         },
         {
             "name": "taoser/think-setarr",

@@ -20,13 +20,25 @@ class Admin extends AdminBaseController
      * 管理员模型
      * @var AdminEntity
      */
-    protected $model = null;
+    protected $entity = null;
 
     public function initialize()
     {
         parent::initialize();
-        $this->model = new AdminEntity();
+
+        $this->entity = new AdminEntity();
     }
+
+	/**
+	 * 管理员列表页
+	 *
+	 * @param Request $request
+	 * @return string | Response
+	 */
+	public function index(Request $request): string | Response
+	{		
+		return View::fetch();
+	}
 
     /**
      * 管理员列表
@@ -36,7 +48,7 @@ class Admin extends AdminBaseController
 	public function list(Request $request): Response
 	{
 		$account = $request->get('account');
-		$result = $this->model->getList($account);
+		$result = $this->entity->getList($account);
 		return json(['code' =>0, 'msg' => '查询成功', 'count' => $result['count'], 'data' => $result['data']]);
 	}
 	
@@ -53,9 +65,9 @@ class Admin extends AdminBaseController
 		}
 
 		$data = $request->post(['username','email','password','mobile']);
-		$this->model->add($data);
+		$this->entity->add($data);
 		
-		return json(['code' =>0,'msg'=>'添加成功']);
+		return json(['code' => 0, 'msg' => '添加成功']);
 	}
 	
 	/**
@@ -71,7 +83,7 @@ class Admin extends AdminBaseController
 		}
 
 		$data = $request->post(['id/d', 'email', 'password', 'mobile','remarks']);
-		$this->model->edit($data);
+		$this->entity->edit($data);
 		return json(['code' => 0, 'msg' => '编辑成功']);
 	}
 	
@@ -79,7 +91,7 @@ class Admin extends AdminBaseController
 	public function delete(Request $request): Response
 	{
 		$id = $request->get('id');
-		$user = $this->model->find($id);
+		$user = $this->entity->find($id);
 
 		$result = $user->delete();
 		if($result) {
@@ -97,7 +109,7 @@ class Admin extends AdminBaseController
 	public function check(Request $request): Response
 	{
 		$data = $request->post(['id', 'status']);
-		$this->model->audit($data);
+		$this->entity->audit($data);
 		return json(['code' => 0, 'msg' => 'ok', 'icon' => 5]);
 	}
 
@@ -105,7 +117,7 @@ class Admin extends AdminBaseController
 	public function info(Request $request)
 	{
 		$id = $request->get('id');
-		$admin = $this->model->field('id,username,mobile,email,remarks')->find($id);
+		$admin = $this->entity->field('id,username,mobile,email,remarks')->find($id);
 		return json(['code' => 0, 'msg' => 'ok', 'data' => $admin]);
     }
 
@@ -113,7 +125,7 @@ class Admin extends AdminBaseController
 	public function setInfo(Request $request): Response | string
     {
 		$id = $request->aid;
-		$admin = $this->model->field('id,username,mobile,email,remarks')->find($id);
+		$admin = $this->entity->field('id,username,mobile,email,remarks')->find($id);
 
 		if(!$request->isPost()) {
 			return View::fetch('info_edit',['admin' => $admin]);
@@ -135,7 +147,7 @@ class Admin extends AdminBaseController
 		}
 		$data = $request->post(['currentPassword','password','confirm_password']);
 		$data['id'] = $request->aid;
-		$this->model->setNewPassword($data);
+		$this->entity->setNewPassword($data);
 		return json(['code' => 0, 'msg' => '修改成功']);
 	}
 
@@ -148,7 +160,7 @@ class Admin extends AdminBaseController
 		Cache::clear();
 		// 清除临时文件
 		$temp = str_replace('\\',"/", runtime_path().'temp/');
-		$res =FileHelper::emptyDir($temp);
+		$res = FileHelper::emptyDir($temp);
 		if(!$res){
 			return json(['code' => -1, 'msg' => '清除缓存失败']);
 		}
@@ -161,6 +173,19 @@ class Admin extends AdminBaseController
 		// 清空Session
 		Session::clear();
 		return json(['code' => 0, 'msg'=>'退出成功' ]);
+	}
+
+	public function getPermission(Request $request): Response
+	{
+		$admin = $this->entity->find($request->aid);
+
+		$permission = $admin->getPermission();
+
+		array_walk($permission, function(&$item) {
+			$item = str_replace('/', '.', strtolower(trim($item)));
+		});
+		return json(['code' => 0, 'msg' => 'ok', 'data' => $permission]);
+	
 	}
 
 	/**

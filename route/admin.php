@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-31 10:19:13
+ * @LastEditTime: 2026-11-02 14:59:39
  * @LastEditors: TaoLer
  * @Description: admin模块 后台路由
  * @Version: V4.0.0
@@ -21,6 +21,7 @@ Route::rule('data/storage/[:id]/licence_pic/:name$', 'addons.jida.Lawyer/showImg
 $adminModuleName = '/' . trim(system_config('admin_module', 'admin'), '/');
 
 Route::group($adminModuleName, function () {
+    // 首页
     Route::get('/','index/index');
     Route::get('index','index/index')->name('admin-index');
 
@@ -52,11 +53,12 @@ Route::group($adminModuleName, function () {
         
         // 管理员管理
         Route::group('admin', function () {
-             // 管理员列表
-            Route::get('index', function () {
-                return view('system/admin/index');
-            });
+             
         });
+
+        Route::get('config','system.Service/siteConfig')->name('site_config');
+        // 获取菜单接口
+	    Route::get('menu$','system.Service/getMenu')->name('get_menu');
         
     });
 
@@ -67,18 +69,13 @@ Route::group($adminModuleName, function () {
     Route::rule('register$','login/register')->name('admin-register');
     // 忘记密码接口
     Route::rule('forget$','login/forget')->name('admin-forget');
-    
     // 退出登录
     Route::rule('logout$','system.admin/logout')->name('admin-logout');
-    // 修改密码
-    Route::rule('system/repass$','system.admin/repass')->name('admin-repass');
+   
 
     // 清理缓存接口
     Route::post('system/clearcache$','system.admin/clearCache')->name('clear_cache');
-    // 获取菜单接口
-	Route::get('system/getmenu$','system.menu/getMenu')->name('get_menu');
-    // 获取导航接口
-    Route::get('system/getnav$','system.menu/getnav')->name('get_nav');
+    
 
     Route::get('addons', 'Addons/index');
     Route::get('addons_config/:name', 'Addons/config');

@@ -26,7 +26,7 @@
 
 <script>
 	const ADMIN_LIST = MODULE_NAME + '/system/AuthRole/getAdmins' + location.search;
-	const SAVE_RULE = MODULE_NAME + '/system/AuthRole/saveAuth';
+	const SAVE_AUTH = MODULE_NAME + '/system/AuthRole/auth';
 
 	layui.use(['tree','layer','jquery'], function(){
 		const tree = layui.tree;
@@ -69,15 +69,20 @@
 			const checkedNodes = tree.getChecked('tree');
 			selectedIds = checkedNodes.map(item=>item.id);
 
-			$.post(SAVE_RULE, {
+			$.post(SAVE_AUTH, {
 				role_id: roleId,
 				admin_ids: selectedIds
 			}, res =>{
-				layer.msg(res.msg, {icon: res.code === 0 ? 1 : 2});
+				layer.msg(res.msg, {
+					icon: 1,
+					time: 1000
+				}, function() {
+					parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+				});
 			},'json');
 
 			// $.ajax({
-			// 	url: SAVE_RULE,
+			// 	url: SAVE_AUTH,
 			// 	method: 'POST',
 			// 	data: { role_id: roleId, admin_ids: selectedIds },
 			// 	success(res) {
@@ -90,15 +95,6 @@
 			// })
 		})
 
-		// 提交示例
-		/*
-		$.post('/admin/role/authUser',{
-			role_id: 1,
-			user_ids: selectedIds
-		},res=>{
-			layer.msg(res.msg,{icon:res.code===1?1:2});
-		},'json');
-		*/
 	});
 </script>
 

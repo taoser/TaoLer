@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2026-09-13 18:05:05
+ * @LastEditTime: 2026-11-02 17:31:03
  * @LastEditors: TaoLer
  * @Description: 后台控制器设置
  * @FilePath: \TaoLer\app\admin\controller\AdminBaseController.php
@@ -12,13 +12,8 @@ declare (strict_types = 1);
 
 namespace app\admin\controller;
 
-use think\facade\Session;
 use think\facade\View;
-use think\facade\Db;
-use taoser\think\Auth;
 use think\facade\Lang;
-use think\facade\Cookie;
-use think\facade\Config;
 
 /**
  * 控制器基础类
@@ -26,7 +21,7 @@ use think\facade\Config;
 class AdminBaseController extends \app\BaseController
 {
 
-    protected int|string|null $aid = null;
+    protected ?int $aid = null;
 
     /**
      * 初始化菜单
@@ -34,7 +29,7 @@ class AdminBaseController extends \app\BaseController
     protected function initialize()
     {
 		//权限auth检查
-        $this->aid = Session::get('admin.id');
+        $this->aid = request()->aid;
 
 		//系统配置
         $sys = $this->getSystem();
@@ -47,7 +42,6 @@ class AdminBaseController extends \app\BaseController
         // $adminModuleName = '/' . trim($moduleName, '/');
 
         View::assign([
-            // 'moduleName'    => $adminModuleName,
             'domain'        => $this->getDomain(),
             'insurl'        => $sys['domain'],
             'syscy'         => $syscy,
@@ -91,28 +85,6 @@ class AdminBaseController extends \app\BaseController
         }
        
         return $tree;
-    }
-
-    /**
-     * 获取侧边栏菜单
-     */
-    protected function getMenu()
-    {
-        $menu     = [];
-        $admin_id = $this->aid;
-        $auth     = new Auth();
-
-        $auth_rule_list = Db::name('auth_rule')
-        ->where(['status' => 1, 'type' => 1, 'delete_time'=> 0])
-        ->select();
-
-        foreach ($auth_rule_list as $value) {
-            if ($auth->check($value['name'], $admin_id) || $admin_id == 1) {
-                $menu[] = $value;
-            }
-        }
-
-        return !empty($menu) ? build_tree($menu) : [];
     }
 	
 

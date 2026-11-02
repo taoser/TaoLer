@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2026-10-31 12:35:28
+ * @LastEditTime: 2026-11-02 17:37:45
  * @LastEditors: TaoLer
  * @Description: 管理员认证中间件
  * @FilePath: \TaoLer\app\middleware\AdminAuth.php
@@ -17,8 +17,8 @@ use think\Response;
 use think\facade\Lang;
 use think\facade\View;
 use think\facade\Session;
-use think\facade\Config;
-use taoser\think\Auth as UserAuth;
+
+use app\entity\Admin;
 
 class AdminAuth
 {
@@ -36,6 +36,8 @@ class AdminAuth
 
         $controller = $request->controller();
         $action = $request->action();
+
+        // var_dump($controller, $action);
   
         View::assign('moduleName', $adminModuleName);
 
@@ -70,50 +72,61 @@ class AdminAuth
 
         $isLogin = Session::has('admin');
         $isPublic = in_array($path, $publicActions);
-
-        // 未登录，且不是公共页面 → 跳登录
-        if (!$isLogin && !$isPublic) {
+        
+        // 未登录
+        if (!$isLogin) {
+            // 未登录，访问公共页面 → 放行
+            if ($isPublic) {
+                return $next($request);
+            } 
+            // 未登录，访问非公共页面 → 跳登录
             return redirect((string)url('admin-login'));
         }
+
         // 已登录，访问公共页面 → 跳后台首页
-        if ($isLogin && $isPublic) {
+        if ($isPublic) {
             return redirect((string)url('admin-index'));
         }
 
-        $admin_id = Session::get('admin.id');
-        $request->aid = $admin_id;
+        $adminId = Session::get('admin.id');
+        
+        $admin = Admin::find($adminId);
+       
+        if (!$admin || $admin->status != 1) {
+            return json(['code' => 401, 'msg' => '用户不存在或已禁用']);
+        }
 
-        if($admin_id !==1) {
-            // 排除公共权限
-            $not_check_list = [
-                'admin/login',
-                'login/index',
-                'login/register',
-                'admin/index',
-                'system/menu/getnav',
-                'index/index',
-                'index/console1',
-                'index/console2',
-                'index/news',
-                'menu/getmenunavbar',
-                'index/home',
-                'admin/info',
-                'system/admin/repass',
-                'system/admin/logout',
-                'system/admin/setInfo',
-                'system/menu/getmenujsondata',
-                'index/cunsult',
-                'index/replys',
-                'index/reply',
-            ];
+        // 白名单路由
+        $whiteList = [
+            // 管理主页
+            'index/index',
+            'index/console1',
+            'index/console2',
+            // 网站配置
+            'system/service/siteConfig',
+            // 权限菜单
+            'system/Service/getMenu',
+            // 个人权限按钮组
+            'system/admin/getPermission',
+            // 更新管理员信息
+            'system/admin/setInfo',
+            // 重置密码
+            'system/admin/newPassword',
+            // 退出登录
+            'system/admin/logout',
 
-            if (!in_array($path, $not_check_list)) {
-                $auth     = new UserAuth();
-                if (!$auth->check($path, $admin_id)) {
-                    return response("<script>alert('没有操作权限')</script>");
-                }
+        ];
+
+        // 检查权限
+        if (!in_array($path, array_map('strtolower', $whiteList)) ) {
+            if (!$admin->hasPerm($path)) {
+                return response("<script>alert('没有操作权限')</script>");
             }
         }
+
+        // 将管理员信息和ID存入请求对象，方便后续使用
+        $request->aid = $adminId;
+        $request->admin = $admin;
         
 		return $next($request);	
     }

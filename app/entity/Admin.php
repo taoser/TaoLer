@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-31 12:45:32
+ * @LastEditTime: 2026-11-02 17:39:38
  * @LastEditors: TaoLer
  * @Description: 管理员实体类
  * @Version: V4.0.0
@@ -11,7 +11,8 @@
  */
 namespace app\entity;
 
-
+use think\facade\Db;
+use think\facade\Cache;
 use think\facade\Session;
 use think\facade\Config;
 use think\exception\ValidateException;
@@ -19,9 +20,9 @@ use app\common\helper\PasswordHash;
 use app\admin\validate\Admin as AdminValidate;
 use app\exception\BusinessException;
 
-
 class Admin extends BaseEntity
 {
+
 	/**
 	 * 登陆校验
 	 * @param array $data
@@ -178,7 +179,7 @@ class Admin extends BaseEntity
 	 */
 	public function audit(array $data): bool
 	{
-		if($admin == 1) {
+		if($data['id'] == 1) {
             throw new BusinessException('超级管理员禁止操作');
         }
 
@@ -194,6 +195,117 @@ class Admin extends BaseEntity
 			throw new BusinessException('审核失败');
 		}
 		return $res;
+	}
+
+	/**
+	 * 获取管理员权限名称
+	 * 查询构造器方法
+	 * @param int $adminId 管理员ID
+	 * @return array
+	 */
+	public function getRulesById(int $adminId): array
+	{
+		$rules = Cache::get('rules_'.$adminId);
+		if ($rules !== null) {
+			return $rules;
+		}
+
+		// 超级管理员返回全部权限
+		if ($adminId === 1) {
+            $permissions = AuthRule::field('id,pid,name,type,title,icon,sort')
+			->with(['lang' => function($query) {
+					$query->field('auth_rule_id,lang,title');
+				}
+			])
+			->where('status', 1)
+			->select();
+        } else {
+			// 获取用户的权限
+			$permissions = AuthRule::with([
+				'lang' => function($query) {
+						$query->field('auth_rule_id,lang,title');
+				}
+			])
+			->distinct(true) // 去重
+			->alias('ru')
+			->field('ru.id,ru.pid,ru.name,ru.type,ru.title,ru.icon,ru.sort')
+			->join('auth_role_rule rr', 'rr.auth_rule_id = ru.id')
+			->join('auth_admin_role ro', 'ro.auth_role_id = rr.auth_role_id')
+			->where('ro.admin_id', $adminId)
+			->where('ru.status', 1)
+			->select();
+		}
+		$adminModuleName = '/' . trim(system_config('admin_module', 'admin'), '/');
+
+		$data = [
+			// 路径
+			'path'			=> [],
+			// 按钮权限
+			'permission' 	=> [],
+			// 菜单
+			'menu'			=> []
+		];
+		foreach ($permissions as  $v) {
+			// 路径权限: 处理权限名称，将斜杠替换为点，并转换为小写
+			$data['path'][] = str_replace('.', '/', strtolower(trim($v['name'])));
+			// 按钮权限: 处理权限名称，将斜杠替换为点，并转换为小写
+			if($v['type'] == 2) {
+				$data['permission'][] = str_replace('/', '.', strtolower(trim($v['name'])));
+			}
+			// 菜单: 处理权限名称，将斜杠替换为点，并转换为小写
+			$data['menu'][] = [
+				'id'	=> $v['id'],
+				'title' => $v['title'],
+				'icon'  => $v['icon'],
+				'href'  => (string) url($adminModuleName . '/' . str_replace('.', '/', $v['name'])),
+				'pid'   => $v['pid'],
+				'sort'  => $v['sort'],
+				'type'  => $v['type']
+			];
+		}
+
+		Cache::set('rules_'.$adminId, $data, 5 * 60); // 缓存5小时
+
+		return $data;
+	}
+
+	/**
+	 * 获取管理员按钮权限
+	 * 模型方法
+	 * @return array
+	 */
+	public function getPermission(): array
+	{
+		$rules = $this->getRulesById($this->id);
+		return $rules['permission'];
+	}
+
+	/**
+	 * 获取管理员菜单权限
+	 * 模型方法
+	 * @return array
+	 */
+	public function getMenu(): array
+	{
+		$rules = $this->getRulesById($this->id);
+		return $rules['menu'];
+	}
+
+	/**
+	 * 检查管理员是否有某个权限
+	 * @param string $name 权限名称
+	 * @return bool
+	 */
+	public function hasPerm(string $name): bool
+	{
+		// 超级管理员返回true
+		if ($this->id === 1) {
+			return true;
+		}
+	
+		$rulePaths = $this->getRulesById($this->id)['path'];
+
+        return in_array($name, $rulePaths);
 	}
 	
 }
