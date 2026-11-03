@@ -12,7 +12,7 @@ class Service extends AdminBaseController
 {
     protected  string $adminModuleName = '';
 
-    #[Override]
+
     public function initialize()
     {
         parent::initialize();

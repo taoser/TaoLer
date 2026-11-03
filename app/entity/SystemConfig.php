@@ -217,21 +217,21 @@ class SystemConfig extends BaseEntity
 
     /**
      * 更新配置项排序
-     * @param int $id 配置项ID
-     * @param int $sort 排序值
+     * @param array $data ['id'=>1,'sort'=>100]
      * @return bool
      */
-    public function updateSort(int $id, int $sort): bool
+    public function updateSort(array $data): bool
     {
-        if ($sort < 0) {
+        if ($data['sort'] < 0) {
             throw new ValidateException('排序值不能为负数');
         }
-        $row = $this->find($id);
+        $row = $this->find($data['id']);
         if (!$row) {
             throw new ValidateException('配置项不存在');
         }
-        $row->sort = $sort;
+        $row->sort = $data['sort'];
         $row->save();
+
         $this->clearCache(); // 排序影响展示顺序，需清缓存
         return true;
     }

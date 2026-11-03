@@ -104,44 +104,20 @@ class Config extends AdminBaseController
     }
 
     /**
-     * 获取单个配置值，API对外调用
-     */
-    public function getConfig(Request $request): Response
-    {
-        $name = $request->get('name','');
-        $val = $this->config->getValue($name);
-        return json(['code'=>0,'data'=>$val]);
-    }
-
-    /**
-     * 获取全部配置键值对，给前台使用
-     */
-    public function getAll(): Response
-    {
-        return json(['code'=>0,'data'=>$this->config->getAllConfig()]);
-    }
-
-    /**
      * 更新配置项排序（表格双击编辑sort）
      */
-    public function updateSort(Request $request): Response
+    public function sort(Request $request): Response
     {
-        $id   = (int)$request->post('id', 0);
-        $sort = (int)$request->post('sort', 0);
+        $data = $request->post(['id/d','sort/d']);
 
-        if ($id <= 0) {
-            return json(['code' => 1, 'msg' => '参数错误']);
-        }
-
-        $this->config->updateSort($id, $sort);
+        $this->config->updateSort($data);
         return json(['code' => 0, 'msg' => '排序已更新']);
-        
     }
 
     /**
      * 更新配置项启用状态（表格内switch开关）
      */
-    public function updateStatus(Request $request): Response
+    public function status(Request $request): Response
     {
         $id     = (int)$request->post('id', 0);
         $status = (int)$request->post('status', 0);
@@ -153,6 +129,25 @@ class Config extends AdminBaseController
         $this->config->updateStatus($id, $status);
         return json(['code' => 0, 'msg' => '状态已更新']);
         
+    }
+
+    /**
+     * 获取单个配置值，API对外调用
+     */
+    public function getConfig(Request $request): Response
+    {
+        $name = $request->get('name','');
+        $val = $this->config->getValue($name);
+        return json(['code' => 0, 'msg' => 'ok', 'data' => $val]);
+    }
+
+    /**
+     * 获取全部配置键值对，给前台使用
+     */
+    public function getAll(): Response
+    {
+        $data = $this->config->getAllConfig();
+        return json(['code' => 0, 'msg' => 'ok', 'count' => count($data), 'data'=>$data]);
     }
 
     public function addGroup(Request $request): Response
@@ -167,6 +162,14 @@ class Config extends AdminBaseController
         $id = $entity->add($data);
         return json(['code'=>0,'msg'=>'新增成功','data'=>['id'=>$id]]);
     }
+
+    
+
+    
+
+    
+
+   
 
 
 
