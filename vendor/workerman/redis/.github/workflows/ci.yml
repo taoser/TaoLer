@@ -1,0 +1,167 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+# Force any JS action still declaring `using: node20` (e.g. the artifact,
+# codecov, setup-php actions) to run on Node 24, silencing the
+# "Node.js 20 actions are deprecated" runner warnings. checkout/cache are
+# additionally bumped to their Node-24-native majors below.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  test:
+    name: PHPUnit + PHPStan (PHP ${{ matrix.php }} / ${{ matrix.backend }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 7.2/7.3/7.4 prove the advertised `php: ">=7.2"` floor: there
+        # composer resolves PHPUnit 8.5 (on 7.2) or 9.6 (on 7.3/7.4) + Workerman 4
+        # (the dev deps that gate the floor — phpstan, revolt — are stripped in
+        # the install step). 8.1/8.2/8.3/8.5 resolve the newest of everything
+        # (PHPUnit 12, Workerman 5).
+        php: ['7.2', '7.3', '7.4', '8.1', '8.2', '8.3', '8.5']
+        # Run the full suite against BOTH engines. The redis leg uses
+        # redis-stack-server so JSON/BF/CMS/TopK/FT module commands run there too.
+        backend: [dragonfly, redis]
+    env:
+      REDIS_URL: redis://127.0.0.1:6379
+      REDIS_BACKEND: ${{ matrix.backend }}
+    # NOTE on per-leg engine selection: GitHub Actions `services:` can't be
+    # conditionally enabled per matrix value — listing both would start both and
+    # the two engines would clash on 6379. So we deliberately do NOT use the
+    # `services:` key and instead start exactly ONE engine container per leg in a
+    # step gated on `matrix.backend`, both bound to 127.0.0.1:6379. Only one leg
+    # runs per matrix combination, so the shared host port never clashes, and
+    # each leg provably talks to the right engine on redis://127.0.0.1:6379.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Start Dragonfly
+        if: matrix.backend == 'dragonfly'
+        run: |
+          docker run -d --name redis-engine \
+            -p 6379:6379 \
+            --ulimit memlock=-1 \
+            docker.dragonflydb.io/dragonflydb/dragonfly
+
+      - name: Start Redis (redis-stack-server, with modules)
+        if: matrix.backend == 'redis'
+        run: |
+          # redis-stack-server ships RedisJSON, RedisBloom (incl. CMS/TopK) and
+          # RediSearch on 6379 (RedisInsight on 8001 is irrelevant here).
+          docker run -d --name redis-engine \
+            -p 6379:6379 \
+            --health-cmd "redis-cli ping" \
+            --health-interval 5s \
+            --health-timeout 3s \
+            --health-retries 20 \
+            redis/redis-stack-server:latest
+
+      - name: Wait for the engine to accept connections
+        run: |
+          for i in $(seq 1 60); do
+            if (exec 3<>/dev/tcp/127.0.0.1/6379) 2>/dev/null; then
+              echo "engine is up on 127.0.0.1:6379"; exit 0
+            fi
+            echo "waiting for engine on 6379 ($i)..."; sleep 2
+          done
+          echo "engine did not come up on 6379" >&2
+          docker logs redis-engine || true
+          exit 1
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pcntl, posix, sockets, json
+          # Coverage instrumentation is only needed on the single coverage leg.
+          coverage: ${{ (matrix.php == '8.3' && matrix.backend == 'dragonfly') && 'pcov' || 'none' }}
+          tools: composer:v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php }}-composer-
+
+      - name: Install Composer dependencies
+        # No composer.lock in the repo (it's a library; legs need different
+        # resolutions), so always `composer update`. On PHP < 8.1 first strip
+        # the dev deps that gate the floor — phpstan/phpstan needs >=7.4 and
+        # revolt/event-loop needs >=8.1 — so Composer's platform check can
+        # auto-select PHPUnit 8.5 (PHP 7.2) or 9.6 (PHP 7.3/7.4) + Workerman 4.
+        # No version is hard-pinned.
+        run: |
+          case "${{ matrix.php }}" in
+            7.*)
+              composer remove --dev --no-update phpstan/phpstan revolt/event-loop
+              ;;
+          esac
+          composer update --prefer-dist --no-progress --no-interaction
+
+      - name: Run PHPStan
+        # PHPStan 2 won't install on 7.x (and only needs to run once); gate it
+        # to 8.x. It was stripped from the dev set on the 7.x legs above.
+        if: ${{ !startsWith(matrix.php, '7.') }}
+        run: composer analyze
+
+      # Test execution. Coverage runs on exactly ONE leg (php=8.3 &&
+      # backend=dragonfly) via the merge pipeline, which captures Client.php
+      # (subprocess coverage). The 7.x legs use the legacy config
+      # (phpunit9.xml.dist: testsuites + env only, no <coverage>/cacheDirectory,
+      # so it validates under PHPUnit 8.5 and 9.x alike); the 8.x non-coverage
+      # legs use the default config (phpunit.xml.dist, PHPUnit 10+). Coroutine
+      # tests self-skip below 8.1 via coroutineSupported(), so no CI exclusion.
+      - name: Run PHPUnit (PHP 7.x, legacy config)
+        if: ${{ startsWith(matrix.php, '7.') }}
+        run: vendor/bin/phpunit -c phpunit9.xml.dist --colors=never
+
+      - name: Run PHPUnit (PHP 8.x, non-coverage legs)
+        if: ${{ !startsWith(matrix.php, '7.') && !(matrix.php == '8.3' && matrix.backend == 'dragonfly') }}
+        run: vendor/bin/phpunit --colors=never
+
+      - name: Run PHPUnit with merged coverage (canonical floor gate)
+        if: ${{ matrix.php == '8.3' && matrix.backend == 'dragonfly' }}
+        # composer test:coverage runs bin/run-coverage.sh -> merge-coverage.php
+        # --min=<floor>, which produces coverage.xml AND fails the build if the
+        # merged total line coverage drops below the floor (currently 90).
+        run: composer test:coverage
+
+      - name: Upload coverage artifact
+        if: ${{ matrix.php == '8.3' && matrix.backend == 'dragonfly' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-clover
+          path: coverage.xml
+          retention-days: 7
+
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.php == '8.3' && matrix.backend == 'dragonfly' }}
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: phpunit
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Stop the engine
+        if: always()
+        run: docker rm -f redis-engine || true

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <!-- No <coverage> block: the 7.x legs don't run coverage, and omitting it
+         keeps this config valid under PHPUnit 8.5 (PHP 7.2 leg), which predates
+         the <coverage> element, as well as PHPUnit 9.x (PHP 7.3/7.4 legs). -->
+    <php>
+        <env name="REDIS_URL" value="redis://127.0.0.1:6379"/>
+    </php>
+</phpunit>

@@ -42,50 +42,41 @@ class AuthRule extends AdminBaseController
 		return View::fetch();	
 	}
 
-	// 可能要废弃 ??? 2026.6.23
-	public function list()
-	{
-		return $this->entity->getAuthRuleArray();
-	}
-
-	//添加权限
-	public function add(Request $request): Response | string
-	{
-		if(!$request->isPost()){
-			return View::fetch();
-		}
-
-		$data = $request->post(['pid/d','title','name','icon','sort/d','type/d']);
-
-
-		$this->entity->add($data);
-		
-		return json(['code' => 0,'msg' => 'ok']);
-		
-	}
-	
-	//权限编辑
-	public function edit(Request $request): Response | string
-	{
-		if(!$request->isPost()){
-			return View::fetch();
-		}
-
-		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','type/d']);
-	
-		$this->entity->edit($data);
-		
-		return json(['code' => 0,'msg' => 'ok']);
-		
-	}
-
 	// 权限树列表 + 2026.6.23
 	public function getRuleTreeList()
 	{
 		$data = $this->entity->getRuleTree();
 
 		return json(['code' => 0,'msg' => 'ok','data' => $data]);
+	}
 
+	/**
+	 * 权限添加/编辑
+	 */
+	public function form(Request $request): Response | string
+	{
+		if(!$request->isPost()) {
+			return View::fetch();
+		}
+
+		$data = $request->post(['id/d','pid/d','title','name','icon','sort/d','type/d']);
+		$this->entity->saveData($data);
+		
+		return json(['code' => 0,'msg' => 'ok']);
+	}
+
+	/**
+	 * 删除权限
+	 * 
+	 * @return Response
+	 */
+	public function delete(Request $request): Response
+	{	
+		$id = $request->delete('id/d');
+
+		$this->entity->del($id);
+		
+		return json(['code'=>0,'msg'=>'删除成功']);
 	}
 
     /**
@@ -113,19 +104,7 @@ class AuthRule extends AdminBaseController
 	}
 
 	
-	/**
-	 * 删除权限
-	 * 
-	 * @return Response
-	 */
-	public function delete(Request $request): Response
-	{	
-		$id = $request->delete('id/d');
-
-		$this->entity->del($id);
-		
-		return json(['code'=>0,'msg'=>'删除成功']);
-	}
+	
 
 	/**
 	 * 获取权限详情

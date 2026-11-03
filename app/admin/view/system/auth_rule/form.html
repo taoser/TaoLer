@@ -5,6 +5,7 @@
 <form class="layui-form" lay-filter="form-val-filter">
 	<div class="mainBox">
 		<div class="main-container">
+			<input type="hidden" name="id" value="">
 			<div class="layui-form-item">
 				<label class="layui-form-label">上级菜单</label>
 				<div class="layui-input-block">
@@ -62,11 +63,12 @@
 {__block__}
 
 <script>
-	const RULE_EDIT = MODULE_NAME + '/system/authrule/edit';
-	const RULE_TREE = MODULE_NAME + '/system/authrule/ruleTree';
-	const INFO_URL = MODULE_NAME + '/system/authrule/getInfo' + location.search;
 
-	layui.use(['xmSelect', 'iconPicker','dtree','popup','treeTable'], function(){
+	const RULE_TREE = MODULE_NAME + '/system/AuthRule/ruleTree';
+	const INFO_URL = MODULE_NAME + '/system/AuthRule/getInfo' + location.search;
+	const SAVE_RULE = MODULE_NAME + '/system/AuthRule/form';
+
+	layui.use(['xmSelect', 'iconPicker','dtree','popup','treeTable'], function() {
 		let $ = layui.jquery;
 		let form = layui.form ;
 		let xmSelect = layui.xmSelect;
@@ -80,37 +82,15 @@
 		$.get(INFO_URL, function(res){
 			if(res.code === 0) {
 				form.val('form-val-filter', res.data);
-				INIT_PID = res.data.pid;
+				if(res.data){
+					INIT_PID = res.data.pid;
+				}
 			}
-		});
 
-		// dtree.render({
-		// 	elem: "#Tree2",
-		// 	initLevel: "1",
-		// 	method: 'get',
-		// 	url: "/static/admin/data/dtree.json",
-		// 	select: true
-		// });
-		
-		//初始化图标选择
-		iconPicker.render({
-			elem: '#iconPicker',
-			type: 'fontClass',
-			search: false,
-			page: true,
-			limit: 12,
-			click: function (data) {
-				//console.log(data);
-			}
-		});
-			
-		//权限菜单结构
-		$.ajax({
-			type: "get",
-			url: RULE_TREE, 
-			success: function(res) {
+			//权限菜单结构
+			$.get(RULE_TREE, res => {
 				var data = res.data;
-			
+				
 				// 渲染下拉树
 				xmSelect.render({
 					el: '#menuSelectBox',
@@ -142,17 +122,28 @@
 				});
 				
 				form.render();
-			}
+			});
 			
 		});
 		
+		//初始化图标选择
+		iconPicker.render({
+			elem: '#iconPicker',
+			type: 'fontClass',
+			search: false,
+			page: true,
+			limit: 12,
+			click: function (data) {
+				//console.log(data);
+			}
+		});
 
 		// 提交表单
 		form.on('submit(save)', function(data) {
 			data.field.id = layui.url().search['id'];
 			$.ajax({
 				type: 'POST',
-				url: RULE_EDIT,
+				url: SAVE_RULE,
 				data: data.field,
 				dataType: 'json',
 				success: function(res) {

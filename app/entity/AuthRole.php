@@ -98,6 +98,16 @@ class AuthRole extends BaseEntity
 		return build_tree($authRules);
 	}
 
+	public function getAdmins(int $role_id): array
+	{
+		$role = $this->find($role_id);
+		// 选中的管理员ID数组
+		$ids = $role->admins()->column('admin_id');
+		$admins = Db::name('admin')->field('id,username')->select()->toArray();
+		
+		return ['ids' => $ids, 'admins'	=> $admins];
+	}
+
 	/**
 	 * 保存角色权限
 	 *
@@ -155,29 +165,4 @@ class AuthRole extends BaseEntity
 	}
 
 
-
-
-
-
-
-	
-
-	//登陆校验
-    public function authRuleTree()
-    {
-		$authRules = $this->order('sort asc')->select();
-		return $this->sort($authRules);
-	}
-	
-	public function sort($data,$pid=0)
-	{
-		static $arr = array();
-		foreach($data as $k=> $v){
-			if($v['pid']==$pid){
-				$arr[] = $v;
-				$this->sort($data,$v['id']);	
-			}
-		}
-		return $arr;
-	}
 }

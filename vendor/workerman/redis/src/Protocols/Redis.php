@@ -22,66 +22,89 @@ use Workerman\Redis\Exception;
 class Redis
 {
     /**
-     * Check the integrity of the package.
+     * Return the byte length of the next complete RESP frame in $buffer, or 0 if incomplete.
      *
-     * @param string        $buffer
+     * @param string              $buffer
      * @param ConnectionInterface $connection
      * @return int
      */
     public static function input($buffer, ConnectionInterface $connection) {
-        $type = $buffer[0];
-        $pos = \strpos($buffer, "\r\n");
-        if (false === $pos) {
+        $len = self::measure($buffer, 0);
+        if ($len <= 0) {
+            return 0;
+        }
+        return $len;
+    }
+
+    /**
+     * Maximum RESP array nesting accepted by the decoder; guards against stack
+     * exhaustion from a malicious or buggy server.
+     */
+    const MAX_DEPTH = 64;
+
+    /**
+     * Return the byte length of the RESP value at $offset, or 0 if the buffer is incomplete.
+     *
+     * Recurses into nested arrays so multi-bulk replies like SCAN's `[cursor, [keys]]` are
+     * sized correctly. The return value is a length relative to $offset, not an absolute
+     * end position — callers compute `end = $offset + return`.
+     *
+     * @param string $buffer
+     * @param int    $offset
+     * @param int    $depth  Current recursion depth; bounded by MAX_DEPTH.
+     * @return int           0 if incomplete; otherwise bytes consumed from $offset.
+     */
+    protected static function measure($buffer, $offset, $depth = 0)
+    {
+        if ($depth > self::MAX_DEPTH) {
+            // Bail out with the buffer-length sentinel so input() treats the
+            // frame as consumed and the decoder produces a protocol error.
+            return \strlen($buffer) - $offset;
+        }
+        if (!isset($buffer[$offset])) {
+            return 0;
+        }
+        $type = $buffer[$offset];
+        $eol = \strpos($buffer, "\r\n", $offset);
+        if (false === $eol) {
             return 0;
         }
         switch ($type) {
             case ':':
             case '+':
             case '-':
-                return $pos + 2;
+                return $eol + 2 - $offset;
             case '$':
-                if(0 === strpos($buffer, '$-1')) {
+                if (\substr($buffer, $offset, 5) === "$-1\r\n") {
                     return 5;
                 }
-                return $pos + 4 + (int)substr($buffer, 1, $pos);
+                $length = (int)\substr($buffer, $offset + 1, $eol - $offset - 1);
+                if ($length < 0) {
+                    return 0;
+                }
+                // The header already fixes the frame size. Report it before the
+                // body arrives so the connection can reject an oversized bulk
+                // instead of buffering the payload first.
+                return $eol + 2 + $length + 2 - $offset;
             case '*':
-                if(0 === strpos($buffer, '*-1')) {
+                if (\substr($buffer, $offset, 5) === "*-1\r\n") {
                     return 5;
                 }
-                $count = (int)substr($buffer, 1, $pos - 1);
-                while ($count --) {
-                    if (strlen($buffer) < $pos + 2) {
-                        return 0;
-                    }
-                    $next_pos = strpos($buffer, "\r\n", $pos + 2);
-                    if (!$next_pos) {
-                        return 0;
-                    }
-                    $sub_type = $buffer[$pos + 2];
-                    switch ($sub_type) {
-                        case ':':
-                        case '+':
-                        case '-':
-                            $pos = $next_pos;
-                            break;
-                        case '$':
-                            if($pos + 2 === strpos($buffer, '$-1', $pos)) {
-                                $pos = $next_pos;
-                                break;
-                            }
-                            $length = (int)substr($buffer, $pos + 3, $next_pos - $pos -3);
-                            $pos = $next_pos + $length + 2;
-                            if (strlen($buffer) < $pos) {
-                                return 0;
-                            }
-                            break;
-                        default:
-                            return \strlen($buffer);
-                    }
+                $count = (int)\substr($buffer, $offset + 1, $eol - $offset - 1);
+                if ($count < 0) {
+                    return 0;
                 }
-                return $pos + 2;
+                $cursor = $eol + 2;
+                while ($count-- > 0) {
+                    $childLen = self::measure($buffer, $cursor, $depth + 1);
+                    if ($childLen === 0) {
+                        return 0;
+                    }
+                    $cursor += $childLen;
+                }
+                return $cursor - $offset;
             default:
-                return \strlen($buffer);
+                return \strlen($buffer) - $offset;
         }
     }
 
@@ -112,74 +135,89 @@ class Redis
     }
 
     /**
-     * Decode.
+     * Decode one RESP reply from $buffer into a `[type, value]` tuple.
+     *
+     * Supports arbitrary array nesting up to MAX_DEPTH. Returns `['!', <message>]`
+     * on protocol error.
      *
      * @param string $buffer
-     * @return string
+     * @return array
      */
     public static function decode($buffer)
     {
-        $type = $buffer[0];
+        $offset = 0;
+        $result = self::decodeOne($buffer, $offset);
+        if ($result === null) {
+            return ['!', "protocol error, got '" . ($buffer[0] ?? '') . "' as reply type byte. buffer:" . bin2hex($buffer)];
+        }
+        return $result;
+    }
+
+    /**
+     * Decode one RESP value at $offset and advance $offset past the consumed frame.
+     *
+     * Recurses into arrays so nested replies like SCAN's `[bulk_string, [bulk_string, ...]]`
+     * preserve their structure. Returns `null` on incomplete or unrecognised input.
+     *
+     * @param string $buffer
+     * @param int    $offset  Cursor — updated by reference to point past the parsed value.
+     * @param int    $depth   Current recursion depth; bounded by MAX_DEPTH.
+     * @return array|null     `[type, value]` tuple, or null on protocol error.
+     */
+    protected static function decodeOne($buffer, &$offset, $depth = 0)
+    {
+        if ($depth > self::MAX_DEPTH) {
+            return ['!', 'protocol error: max array depth exceeded'];
+        }
+        if (!isset($buffer[$offset])) {
+            return null;
+        }
+        $type = $buffer[$offset];
+        $eol = \strpos($buffer, "\r\n", $offset);
+        if ($eol === false) {
+            return null;
+        }
         switch ($type) {
             case ':':
-                return [$type ,(int) substr($buffer, 1)];
+                $value = (int)\substr($buffer, $offset + 1, $eol - $offset - 1);
+                $offset = $eol + 2;
+                return [$type, $value];
             case '+':
-                return [$type, \substr($buffer, 1, strlen($buffer) - 3)];
             case '-':
-                return [$type, \substr($buffer, 1, strlen($buffer) - 3)];
+                $value = \substr($buffer, $offset + 1, $eol - $offset - 1);
+                $offset = $eol + 2;
+                return [$type, $value];
             case '$':
-                if(0 === strpos($buffer, '$-1')) {
+                if (\substr($buffer, $offset, 5) === "$-1\r\n") {
+                    $offset += 5;
                     return [$type, null];
                 }
-                $pos = \strpos($buffer, "\r\n");
-                return [$type, \substr($buffer, $pos + 2, (int)substr($buffer, 1, $pos))];
+                $length = (int)\substr($buffer, $offset + 1, $eol - $offset - 1);
+                $value = \substr($buffer, $eol + 2, $length);
+                $offset = $eol + 2 + $length + 2;
+                return [$type, $value];
             case '*':
-                if(0 === strpos($buffer, '*-1')) {
+                if (\substr($buffer, $offset, 5) === "*-1\r\n") {
+                    $offset += 5;
                     return [$type, null];
                 }
-                $pos = \strpos($buffer, "\r\n");
+                $count = (int)\substr($buffer, $offset + 1, $eol - $offset - 1);
+                $offset = $eol + 2;
                 $value = [];
-                $count = (int)substr($buffer, 1, $pos - 1);
-                while ($count --) {
-                    if (strlen($buffer) < $pos + 2) {
-                        return 0;
+                while ($count-- > 0) {
+                    $child = self::decodeOne($buffer, $offset, $depth + 1);
+                    if ($child === null) {
+                        return null;
                     }
-                    $next_pos = strpos($buffer, "\r\n", $pos + 2);
-                    if (!$next_pos) {
-                        return 0;
+                    if ($child[0] === '!') {
+                        // Propagate the depth-exceeded protocol error upward.
+                        return $child;
                     }
-                    $sub_type = $buffer[$pos + 2];
-                    switch ($sub_type) {
-                        case ':':
-                            $value[] = (int) substr($buffer, $pos + 3, $next_pos - $pos - 3);
-                            $pos = $next_pos;
-                            break;
-                        case '+':
-                            $value[] = substr($buffer, $pos + 3, $next_pos - $pos - 3);
-                            $pos = $next_pos;
-                            break;
-                        case '-':
-                            $value[] = substr($buffer, $pos + 3, $next_pos - $pos - 3);
-                            $pos = $next_pos;
-                            break;
-                        case '$':
-                            if($pos + 2 === strpos($buffer, '$-1', $pos)) {
-                                $pos = $next_pos;
-                                $value[] = null;
-                                break;
-                            }
-                            $length = (int)substr($buffer, $pos + 3, $next_pos - $pos -3);
-                            $value[] = substr($buffer, $next_pos + 2, $length);
-                            $pos = $next_pos + $length + 2;
-                            break;
-                        default:
-                            return ['!', "protocol error, got '$sub_type' as reply type byte. buffer:".bin2hex($buffer)." pos:$pos"];
-                    }
+                    $value[] = $child[1];
                 }
                 return [$type, $value];
             default:
-                return ['!', "protocol error, got '$type' as reply type byte. buffer:".bin2hex($buffer)];
-
+                return null;
         }
     }
 }

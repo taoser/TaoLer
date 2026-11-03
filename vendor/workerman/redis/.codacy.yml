@@ -1,0 +1,9 @@
+---
+# Exclude the test suite from Codacy static analysis. Test code follows
+# different conventions from production code on purpose — snake_case
+# `test_*` method names (PHPUnit), long inline fixtures, reflection seams,
+# and `runInWorker()` heredoc snippets — so production style/complexity
+# rules produce noise rather than signal here. Coverage is still reported
+# (the Codacy coverage check is unaffected by exclude_paths).
+exclude_paths:
+  - 'tests/**'

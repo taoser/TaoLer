@@ -14,11 +14,6 @@ use app\admin\controller\AdminBaseController;
 use think\Request;
 use think\Response;
 use think\facade\View;
-use think\facade\Db;
-use think\exception\ValidateException;
-
-use app\entity\Admin;
-use app\entity\AuthRule;
 use app\entity\AuthRole as AuthRoleEntity;
 
 class AuthRole extends AdminBaseController
@@ -87,29 +82,9 @@ class AuthRole extends AdminBaseController
 		
 		return json(['code'=>0,'msg'=>'保存成功']);
 	}
-	/**
-	 * 获取角色权限
-	 */
-	public function getRoleRules(Request $request): Response
-	{
-		$roleId = $request->get('id/d');
-		$result = $this->entity->getRoleRules($roleId);
-		return json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
-	}
-
-	public function getAdmins(Request $request): Response
-	{
-		$roleId = $request->get('id/d');
-		$admin = new Admin();
-		$role = $this->entity->find($roleId);
-		$ids = $role->admins()->column('admin_id');
-		$admins = Db::name('admin')->field('id,username')->select()->toArray();
-
-		return json(['code' => 0, 'msg' => 'ok', 'data' => ['ids'=>$ids,'admins'=>$admins]]);
-	}
 
 	/**
-	 * 保存角色管理员
+	 * 角色管理员
 	 */
 	public function auth(Request $request): Response | string
 	{
@@ -122,12 +97,36 @@ class AuthRole extends AdminBaseController
 		return json(['code' => 0, 'msg' => '保存成功']);
 	}
 
+	/**
+	 * 获取角色权限
+	 */
+	public function getRoleRules(Request $request): Response
+	{
+		$roleId = $request->get('id/d');
+		$result = $this->entity->getRoleRules($roleId);
+		return json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
+	}
+
+	/**
+	 * 获取角色管理员
+	 */
+	public function getAdmins(Request $request): Response
+	{
+		$roleId = $request->get('id/d');
+		$result = $this->entity->getAdmins($roleId);
+
+		return json(['code' => 0, 'msg' => 'ok', 'data' => $result]);
+	}
+
+	
+
 
 	//角色删除
 	public function delete(Request $request): Response
 	{
-		
-		
+		$id = $request->get('id/d');
+		$this->entity->delete($id);
+		return json(['code' => 0, 'msg' => '删除成功']);
 	}
 	
 	//角色审核

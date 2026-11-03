@@ -1,0 +1,13 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+        - tests
+    ignoreErrors:
+        # Revolt is an optional runtime dependency; guarded by class_exists() checks at runtime.
+        -
+            message: '#unknown class Revolt\\EventLoop#'
+            reportUnmatched: false

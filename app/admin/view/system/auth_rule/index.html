@@ -47,13 +47,13 @@
 {__block__}
 
 <script>
-    const RULES_URL = MODULE_NAME + '/system/AuthRule/list';
-    const RULES_ADD = MODULE_NAME + '/system/AuthRule/add';
-    const RULES_EDIT = MODULE_NAME + '/system/AuthRule/edit';
-    const RULES_DELETE = MODULE_NAME + '/system/AuthRule/delete';
-    const RULES_ENABLE = MODULE_NAME + '/system/AuthRule/check';
 
     const RULES_TREE_URL = MODULE_NAME + '/system/AuthRule/getRuleTreeList';
+    const FORM_URL = MODULE_NAME + '/system/AuthRule/form';
+    const RULES_DELETE = MODULE_NAME + '/system/AuthRule/delete';
+    const RULES_ENABLE = MODULE_NAME + '/system/AuthRule/check';
+    
+    
 
     layui.use(['popup'],function () {
         let form = layui.form;
@@ -146,20 +146,20 @@
         window.add = function(){
             layer.open({
                 type: 2,
-                title: '新增',
+                title: '新增权限',
                 shade: 0.1,
                 area: ['450px', '500px'],
-                content: RULES_ADD
+                content: FORM_URL
             });
         }
 
         window.edit = function(obj){
             layer.open({
                 type: 2,
-                title: '修改',
+                title: obj.title + '编辑',
                 shade: 0.1,
                 area: ['450px', '500px'],
-                content: RULES_EDIT + '?id=' + obj.data.id
+                content: FORM_URL + '?id=' + obj.data.id
             });
         }
 
