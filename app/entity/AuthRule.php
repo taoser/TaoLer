@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-11-03 13:25:48
+ * @LastEditTime: 2026-11-04 18:59:22
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -180,6 +180,46 @@ class AuthRule extends BaseEntity
             throw new BusinessException($e->getMessage(), $e->getCode());
         }
         
+    }
+
+    /**
+     * 递归刷新某个节点下所有子节点的状态
+     * @param int $parentId 父节点ID
+     * @param int $status 状态值
+     * @return void
+     */
+    function refreshChildStatus(int $parentId, int $status): void
+    {
+        $children = $this->where('pid', $parentId)->select();
+        foreach ($children as $item) {
+            $item->status = $status;
+            $item->save();
+            // 递归刷新它的子节点
+            $this->refreshChildStatus($item->id, $status);
+        }
+    }
+
+    /**
+     * 设置权限状态 包含子权限
+     * @param array $data 
+     * @return bool
+     */
+    public function setStatus(array $data): bool
+    {
+		if($data['id'] === 1 || $data['id'] === 3) {
+			throw new BusinessException('不能关闭重要权限！', 401);
+		}
+		// 更新权限状态
+        $status = $this->find($data['id']);
+        if(is_null($status)){
+            throw new BusinessException('权限不存在！', 401);
+        }
+        $status->status = $data['status'];
+        $status->save();
+        $this->refreshChildStatus($data['id'], $data['status']);
+
+        return true;
+
     }
 
     public function getRuleTree()

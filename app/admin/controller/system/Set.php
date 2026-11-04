@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-07-24 11:06:14
+ * @LastEditTime: 2026-11-04 09:58:37
  * @LastEditors: TaoLer
  * @Description: 设置
- * @FilePath: \TaoLer\app\admin\controller\Set.php
+ * @FilePath: \TaoLer\app\admin\controller\system\Set.php
  * Copyright (c) 2020~2022 http://www.aieok.com All rights reserved.
  */
 
@@ -25,14 +25,32 @@ use think\facade\Cookie;
 use taoser\SetArr;
 use app\common\helper\SetArr as SetArrConf;
 
+use app\entity\SystemConfig;
+use app\entity\SystemGroup;
+
 class Set extends AdminBaseController
 {
 
 	protected $sysInfo = '';
+
+	/**
+	 * 系统配置实体
+	 * @var SystemConfig
+	 */
+	protected $config;
+
+	/**
+	 * 系统分组实体
+	 * @var SystemGroup
+	 */
+	protected $group;
 	
 	public function initialize()
 	{
         parent::initialize();
+
+		$this->config = new SystemConfig();
+		$this->group = new SystemGroup();
 
 		$this->sysInfo = $this->getSystem();
 	}
@@ -47,6 +65,40 @@ class Set extends AdminBaseController
 		
 		return View::fetch();
     }
+
+	/**
+	 * 系统配置
+     */
+    public function config(Request $request): string
+    {
+		return View::fetch();
+    }
+
+	 /**
+     * 获取配置表单页面数据源（分组配置，渲染网站设置表单）
+     */
+    public function configGroupList(Request $request): Response
+    {
+        return json([
+            'code' => 0,
+            'msg' => 'ok',
+            'data' => $this->group->getGroupFormList()
+        ]);
+    }
+
+    /**
+     * 批量保存配置表单的值（网站设置页面提交）
+     */
+    public function batchSaveConfig(Request $request): Response
+    {
+        $post = $request->post();
+        $systemGroupId = $post['_group'];
+        unset($post['_group']); // 移除分组标识，避免当配置项处理
+        
+        $this->config->batchSaveValue($post, $systemGroupId);
+        
+        return json(['code' => 0, 'msg' => '保存成功']);
+    }
 	
     //网站设置
     public function website(Request $request) : Response
@@ -60,185 +112,5 @@ class Set extends AdminBaseController
 		return json(['code'=>-1,'msg'=>$result]);
     }
 	
-	//综合设置
-	public function server()
-	{
-		return View::fetch('set/system/server');
-	}
-
-	/**基础服务配置
-     * parem $id
-     */
-    public function config(Request $request) : Response
-    {
-		$conf = Config::get('taoler.config');
-		
-		$data = $request->post();
-		// halt($data);
-		if(!isset($data['regist_check'])) $data['regist_check'] =1;
-		if(!isset($data['posts_check'])) $data['posts_check'] =1;
-		if(!isset($data['commnets_check'])) $data['commnets_check'] =1;
-		
-		foreach($conf as $c=>$f){
-			if(array_key_exists($c,$data)){
-				$conf[$c] = (int) $data[$c];
-			}else{
-				$conf[$c] = 0;
-			}
-		}
-
-		$value = [
-			'config'=>$conf
-		];
-
-		$result = SetArr::name('taoler')->edit($value);
-		if($result){
-			return json(['code'=>0,'msg'=>'配置成功']);
-		}
-		return json(['code'=>-1,'msg'=>'配置出错！']);	
-    }
-
-	// 域名绑定
-	public function setDomain(Request $request) : Response
-	{
-		$str = file_get_contents(str_replace('\\', '/', app()->getConfigPath() . 'app.php'));
-		
-			$data = $request->post(['index','admin','domain_check']);
-			//$data = $request->param();
-			//dump($data);
-			if($data['domain_check'] == 'on') {
-				
-				// 过滤空项目
-			$domain_bind = [];
-			if(!empty($data['index'])){
-				$domain_bind[$data['index']] ='index';
-				if(config('app.default_app') == $domain_bind[$data['index']]) {
-					if(empty($data['admin'])) {
-						return json(['code'=>-1, 'msg'=>'默认应用和Index一致时必须绑定Admin域名,否则无法进入后台']);
-					}
-				}
-			}
-			if(!empty($data['admin'])){
-				$domain_bind[$data['admin']] ='admin';
-			}
-
-
-			// 匹配整个domain_map数组
-			$pats_domain_bind = '/\'(domain_bind)\'[^\]]*\],/';
-			// 	空数组
-			$rep_domain_null = "'domain_bind'\t=> [\n\t],";
-			$str = preg_replace($pats_domain_bind, $rep_domain_null, $str);
-
-			// 匹配'domain_bind' => [
-			$pats = '/\'(domain_bind)\'\s*=>\s*\[\r?\n/';
-			preg_match($pats,$str,$arr);
-
-			// 拼接数组内字符串
-			$domainArr = '';
-			foreach($domain_bind as $k => $v){
-				$domainArr .= "\t\t'". $k. "'   => '" . $v . "',\n";
-			}
-
-			// 追加组成新数组写入文件
-			$reps = $arr[0].$domainArr;
-			$str = preg_replace($pats, $reps, $str);
-
-			$res = file_put_contents(app()->getConfigPath() . 'app.php', $str);
-
-			// 如果编辑了后台 ，需要清理退出缓存
-			if(!empty($domain_bind[$data['admin']])) {
-				//清空缓存
-				Cookie::delete('adminAuth');
-				Session::clear();
-			}
-		} else {
-			$res = SetArr::name('app')->delete([
-				'domain_bind'=> config('app.domain_bind'),
-			]);		
-		}
-			
-		if($res){
-			return json(['code'=>0,'msg'=>'成功']);
-		}
-		return json(['code'=>-1,'msg'=>'失败']);
-
-	}
-
-	/**
-	 * 绑定应用映射
-	 *
-	 * @return void
-	 */
-	public function bindMap()
-	{
-		$data = Request::post(['index_map','admin_map']);
-		$str = file_get_contents(str_replace('\\', '/', app()->getConfigPath() . 'app.php'));
-
-		// 过滤空项目
-		$app_map = [];
-		if(!empty($data['index_map'])){
-			$app_map[$data['index_map']]='index';
-		}
-		if(!empty($data['admin_map'])){
-			$app_map[$data['admin_map']] ='admin';
-		}
-
-		// 匹配整个app_map数组
-		$pats_app_map = '/\'(app_map)\'[^\]]*\],/';
-		preg_match($pats_app_map,$str,$arr_map);
-
-		// 	空数组
-		$rep_map_null = "'app_map'\t=> [\n\t],";
-		$str = preg_replace($pats_app_map, $rep_map_null, $str);
-
-		// 匹配'app_map' => [
-		$pats = '/\'(app_map)\'\s*=>\s*\[\r?\n/';
-		preg_match($pats,$str,$arr);
-
-		// 拼接数组内字符串
-		$appArr = '';
-		foreach($app_map as $k => $v){
-			$appArr .= "\t\t'". $k. "'   => '" . $v . "',\n";
-		}
-
-		// 追加组成新数组写入文件
-		$reps = $arr[0].$appArr;
-		$str = preg_replace($pats, $reps, $str);
-
-		$res = file_put_contents(app()->getConfigPath() . 'app.php', $str);
-
-		if(!$res) {
-			return json(['code'=>-1,'msg'=>'绑定失败']);
-		}
-		return json(['code'=>0,'msg'=>'绑定成功']);
-		
-	}
-
-	//上传logo
-	public function upload(Request $request)
-	{
-		$param = $request->post('field');
-        $uploads = new \app\common\helper\Uploads();
-        $upRes = $uploads->put('file','SYS_logo',2000,'image|application');
-        $logoJson = $upRes->getData();
-		if($logoJson['status'] == 0){
-			if($param == 'logo'){
-				$result = Db::name('system')->where('id', 1)->cache('system')->update(['logo'=>$logoJson['url']]);
-			} else {
-				//移动端logo
-				$result = Db::name('system')->where('id', 1)->cache('system')->update(['m_logo'=>$logoJson['url']]);
-			}
-			
-			if($result){
-				$res = ['code'=>0,'msg'=>'更新logo成功', 'data' => ['url' => $logoJson['url']]];
-			} else {
-				$res = ['code'=>-1,'msg'=>'上传成功，数据无须更新'];
-			}
-        } else {
-			$res = ['code'=>-1, 'msg'=>$logoJson['msg']];
-		}
-		return json($res);
-	}
-
 		
 }

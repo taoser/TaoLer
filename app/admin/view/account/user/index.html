@@ -14,10 +14,10 @@
 						<input type="text" name="id" placeholder="请输入ID号" autocomplete="off" class="layui-input">
 					</div>
 				</div>
-				<div class="layui-col-md2">
+				<div class="layui-col-md3">
 					<label class="layui-form-label">用户</label>
 					<div class="layui-input-block">
-						<input type="text" name="name" placeholder="用户名" autocomplete="off"  class="layui-input">
+						<input type="text" name="account" placeholder="用户名/电话/邮箱" autocomplete="off"  class="layui-input">
 					</div>
 				</div>
 				<div class="layui-col-md2">
@@ -31,18 +31,12 @@
 					</div>
 				</div>
 				<div class="layui-col-md2">
-					<label class="layui-form-label">邮箱</label>
-					<div class="layui-input-block">
-						<input type="text" name="email" placeholder="邮箱" class="layui-input">
-					</div>
-				</div>
-				<div class="layui-col-md2">
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-block">
 						<select name="status">
 						<option value="">选择状态</option>
 						<option value="1">正常</option>
-						<option value="-1">禁止</option>
+						<option value="2">禁止</option>
 						<option value="0">待审</option>
 						</select>
 					</div>
@@ -96,7 +90,7 @@
 </script>
 
 <script type="text/html" id="user-enable">
-	<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{= d.status == 1 ? 'checked' : '' }} />
+	<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{= d.status == 1 ? 'checked disabled' : '' }} />
 </script>
 
 <script type="text/html" id="buttonAuth">
@@ -129,17 +123,17 @@
 
 <script>
 
-	const USER_LIST = MODULE_NAME + '/user/user/list';
-	const USER_SAVE = MODULE_NAME + '/user/user/save';
-	const USER_ADD = MODULE_NAME + '/user/user/add';
-	const USER_EDIT = MODULE_NAME + '/user/user/edit';
-	const USER_DELETE = MODULE_NAME + '/user/user/delete';
-	const USER_CLEAR = MODULE_NAME + '/user/user/clear';
-	const USER_CHECK = MODULE_NAME + '/user/user/check';
-	const USER_BATCH_REMOVE = MODULE_NAME + '/user/user/batchRemove';
+	const USER_LIST = MODULE_NAME + '/account/user/list';
+	const USER_SAVE = MODULE_NAME + '/account/user/save';
+	const USER_ADD = MODULE_NAME + '/account/user/add';
+	const USER_EDIT = MODULE_NAME + '/account/user/edit';
+	const USER_DELETE = MODULE_NAME + '/account/user/delete';
+	const USER_CLEAR = MODULE_NAME + '/account/user/clear';
+	const USER_CHECK = MODULE_NAME + '/account/user/check';
+	const USER_BATCH_REMOVE = MODULE_NAME + '/account/user/batchRemove';
 
-	const USER_EDIT_VIP_LEVEL = MODULE_NAME + '/user/user/editVipLevel';
-	const USER_EDIT_FIELD = MODULE_NAME + '/user/user/editField';
+	const USER_EDIT_VIP_LEVEL = MODULE_NAME + '/account/user/editVipLevel';
+	const USER_EDIT_FIELD = MODULE_NAME + '/account/user/editField';
 
 	layui.use(['common','admin'], function() {
 		let $ = layui.jquery;

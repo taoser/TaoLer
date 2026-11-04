@@ -41,7 +41,7 @@
 </script>
 
 <script type="text/html" id="power-status">
-    <input type="checkbox" name="status" value="{{d.id}}" {{# if (d.id == 1 || d.id == 31){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="rule-status"  {{ d.status == 1 ? 'checked' : '' }} />
+    <input type="checkbox" name="status" value="{{d.id}}" {{# if (d.id == 1 || d.id == 32){ }} disabled {{# } }} lay-skin="switch" lay-text="启用|禁用" lay-filter="rule-status"  {{ d.status == 1 ? 'checked' : '' }} />
 </script>
 
 {__block__}
@@ -126,6 +126,7 @@
             }
         });
 
+        // 权限状态开关
         form.on('switch(rule-status)', function(obj) {
             var status = obj.elem.checked ? 1 : 0;
             $.ajax({
@@ -137,6 +138,7 @@
                     if(res.code) {
                         return popup.failure(res.msg);
                     }
+                    treeTable.reloadData('table');
                     return popup.success(res.msg);
                 }
             });

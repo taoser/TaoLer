@@ -33,7 +33,7 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">手机</label>
 				<div class="layui-input-block">
-					<input type="text" name="phone" lay-verify="title" autocomplete="off" placeholder="请输入手机号" class="layui-input">
+					<input type="text" name="phone" lay-verify="phone" autocomplete="off" placeholder="请输入手机号" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -63,7 +63,7 @@
 {__block__}
 
 <script>
-	const ADD_URL = MODULE_NAME + '/user/user/add';
+	const ADD_URL = MODULE_NAME + '/account/user/add';
 	const UPLOAD_IMG_URL = MODULE_NAME + '/user/user/upload';
 
 	layui.use(['upload', 'popup'], function() {

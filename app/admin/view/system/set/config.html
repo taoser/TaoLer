@@ -29,8 +29,8 @@
 <script>
     // 文件上传接口（根据你的项目实际地址调整）
     const UPLOAD_URL = MODULE_NAME + '/system/set/upload';
-    const FORM_DATA_URL = MODULE_NAME + '/system/config/getFormData';
-    const BATCH_SAVE_URL = MODULE_NAME + '/system/config/batchSave';
+    const CONFIG_GROUP_LIST = MODULE_NAME + '/system/set/configGroupList';
+    const BATCH_SAVE_CONFIG = MODULE_NAME + '/system/set/batchSaveConfig';
 
 layui.use(['form','jquery','layer','laydate','upload'],function(){
     var $ = layui.jquery;
@@ -264,7 +264,7 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
      * 渲染分组tabs
      */
     function renderForm() {
-        $.post(FORM_DATA_URL, {}, function(res) {
+        $.post(CONFIG_GROUP_LIST, {}, function(res) {
             if(res.code !== 0) return layer.msg(res.msg,{icon:2});
             var groupData = res.data || {};   // [{id, group_name, group_title, config:[] }]
 
@@ -393,9 +393,9 @@ layui.use(['form','jquery','layer','laydate','upload'],function(){
         });
 
         // 只提交当前group的数据
-        $.post(BATCH_SAVE_URL, field, function(res){
+        $.post(BATCH_SAVE_CONFIG, field, function(res){
             if(res.code === 0){
-                layer.msg('保存成功',{icon:1},function(){
+                layer.msg('保存成功',{icon:1}, function(){
                     parent.window.parent.location.reload();
                 });
             } else {

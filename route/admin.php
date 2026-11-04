@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-11-02 14:59:39
+ * @LastEditTime: 2026-11-04 09:32:58
  * @LastEditors: TaoLer
  * @Description: admin模块 后台路由
  * @Version: V4.0.0
@@ -84,8 +84,8 @@ Route::group($adminModuleName, function () {
 
 
    
-    Route::get('system_config/get','system.Config/getConfig');
-    Route::get('system_config/all','system.Config/getAll');
+    // Route::get('system_config/get','system.Config/getConfig');
+    // Route::get('system_config/all','system.Config/getAll');
 
     // 可变路由
     Route::rule(':controller/:action$',':controller/:action');

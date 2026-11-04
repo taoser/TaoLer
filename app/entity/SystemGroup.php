@@ -15,6 +15,7 @@ namespace app\entity;
 use think\facade\Cache;
 use think\exception\ValidateException;
 use app\common\helper\Tpl;
+use app\exception\BusinessException;
 
 class SystemGroup extends BaseEntity
 {
@@ -27,9 +28,12 @@ class SystemGroup extends BaseEntity
      */
     public function add(array $data): int
     {
+        if(empty($data['group_name']) || empty($data['group_title'])){
+            throw new BusinessException('分组名称或标题不能为空');
+        }
+        
         $this->group_name = $data['group_name'];
         $this->group_title = $data['group_title'];
-
         $this->save();
 
         return $this->id;

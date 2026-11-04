@@ -24,44 +24,12 @@ class Config extends AdminBaseController
     public function index()
     {
         $groupList = $this->group->getGroupList();
-
         View::assign('groupList',$groupList);
 
         return View::fetch();
     }
 
-    public function set()
-    {
-        return View::fetch();
-    }
-
-    /**
-     * 获取配置表单页面数据源（分组配置，渲染网站设置表单）
-     */
-    public function getFormData(Request $request): Response
-    {
-        return json([
-            'code' => 0,
-            'msg' => 'ok',
-            'data' => $this->group->getGroupFormList()
-        ]);
-    }
-
-    /**
-     * 批量保存配置表单的值（网站设置页面提交）
-     */
-    public function batchSave(Request $request): Response
-    {
-        $post = $request->post();
-        $systemGroupId = $post['_group'];
-        unset($post['_group']); // 移除分组标识，避免当配置项处理
-        
-        $this->config->batchSaveValue($post, $systemGroupId);
-        
-        return json(['code' => 0, 'msg' => '保存成功']);
-    }
-
-    /**
+     /**
      * 获取配置项管理列表（增删改配置元数据）
      */
     public function list(Request $request): Response
@@ -71,10 +39,10 @@ class Config extends AdminBaseController
         $param = $request->post('search-word','');
         $data = $this->config->getConfigList($param, $page, $limit);
         return json([
-            'code'=>0,
-            'msg'=>'ok',
-            'count'=>$data['total'],
-            'data'=>$data['list']
+            'code'  =>0,
+            'msg'   =>'ok',
+            'count' => $data['total'],
+            'data'  => $data['list']
         ]);
     }
 
@@ -109,8 +77,8 @@ class Config extends AdminBaseController
     public function sort(Request $request): Response
     {
         $data = $request->post(['id/d','sort/d']);
-
         $this->config->updateSort($data);
+
         return json(['code' => 0, 'msg' => '排序已更新']);
     }
 
@@ -131,8 +99,22 @@ class Config extends AdminBaseController
         
     }
 
+    // ------------------ 分组管理 ------------------
+
+    public function addGroup(Request $request): Response
+    {
+        $data = $request->post(['group_name','group_title']);
+
+        $id = $this->group->add($data);
+        return json(['code'=>0,'msg'=>'新增成功','data'=>['id' => $id]]);
+    }
+
+    
+    // ------------------ 配置项data ------------------
+    
+
     /**
-     * 获取单个配置值，API对外调用
+     * 获取单个配置值，API对外调用 [暂时无用]
      */
     public function getConfig(Request $request): Response
     {
@@ -142,35 +124,13 @@ class Config extends AdminBaseController
     }
 
     /**
-     * 获取全部配置键值对，给前台使用
+     * 获取全部配置键值对，给前台使用 [暂时无用]
      */
     public function getAll(): Response
     {
         $data = $this->config->getAllConfig();
         return json(['code' => 0, 'msg' => 'ok', 'count' => count($data), 'data'=>$data]);
     }
-
-    public function addGroup(Request $request): Response
-    {
-        $data = $request->post(['group_name','group_title']);
-        if(empty($data['group_name']) || empty($data['group_title'])){
-            return json(['code'=>1,'msg'=>'分组名称或标题不能为空']);
-        }
-
-        $entity = new \app\entity\SystemGroup();
-
-        $id = $entity->add($data);
-        return json(['code'=>0,'msg'=>'新增成功','data'=>['id'=>$id]]);
-    }
-
-    
-
-    
-
-    
-
-   
-
 
 
 }

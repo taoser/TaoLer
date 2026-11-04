@@ -1,18 +1,18 @@
 <?php
 /**
  * @Program: TaoLer 2023/3/11
- * @FilePath: app\admin\controller\user\User.php
- * @Description: User用户管理
+ * @FilePath: app\admin\controller\account\User.php
+ * @Description: Account用户管理
  * @LastEditTime: 2023-03-11 10:20:47
  * @Author: Taoker <317927823@qq.com>
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  */
+declare(strict_types=1);
 
-namespace app\admin\controller\user;
+namespace app\admin\controller\account;
 
 use app\admin\controller\AdminBaseController;
 use Exception;
-use think\exception\ValidateException;
 use think\Request;
 use think\Response;
 use think\facade\View;
@@ -22,28 +22,25 @@ use think\facade\Cookie;
 use think\facade\Config;
 use app\facade\Article;
 use app\facade\Comment;
-use app\facade\User as UserModel;
+use app\entity\User as UserEntity;
 use app\common\helper\Uploads;
-use app\common\validate\User as userValidate;
 
 use app\common\facade\HttpHelper;
-use app\common\helper\PasswordHash;
-use think\response\Json;
 
 class User extends AdminBaseController
 {
 	/**
 	 * 用户模型	
-	 * @var UserModel
+	 * @var UserEntity
 	 * @access private
 	 */
-	private $model;
+	private $entity = null;
 
 	public function initialize()
 	{
 		parent::initialize();
 
-		$this->model = new UserModel();
+		$this->entity = new UserEntity();
 	}
 
 	/**
@@ -61,46 +58,11 @@ class User extends AdminBaseController
 	{
 		$page = $request->get('page/d', 1);
 		$limit = $request->get('limit/d', 10);
-		$param = $request->get(['id/d','name','email','sex','status']);
+		$param = $request->get(['id/d', 'account', 'sex', 'status']);
 
-		$query = Db::name('user')
-		->alias('u')
-		->join('user_viprule v', 'u.vip = v.vip')
-		->field('u.id,name,nickname,avatar,phone,email,sex,last_login_ip,city,point,last_login_time,u.create_time,status,auth,note,v.nick as vipnick,u.vip');
+		$result = $this->entity->getList($param, $page, $limit);
 
-		if(!empty($param['id'])) {
-			$query->where('u.id', $param['id']);
-		}
-		if(!empty($param['name'])){
-			$query->where('u.name|u.nickname', 'like', "%{$param['name']}%");
-		}
-		if(!empty($param['email'])){
-			$query->where('u.email', 'like', "%{$param['email']}%");
-		}
-		if(!empty($param['sex'])){
-			$query->where('u.sex', $param['sex']);
-		}
-		if(!empty($param['status'])){
-			$query->where('u.status', $param['status']);
-		}
-
-		$user = $query
-		->whereNull('u.delete_time')
-		->order('u.id desc');
-
-		$count = $user->count();
-
-		$users = $user->page($page, $limit)
-		->select()
-		->toArray();
-
-		if(!$count){
-			return json(['code' => -1, 'msg'=>'no data']);
-		}
-
-		$vipList = Db::name('user_viprule')->field('id,vip,nick as title')->select();
-
-		return json(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $users, 'viplist' => $vipList]);
+		return json(['code' => 0, 'msg' => 'ok', ...$result]);
 		
 	}
 	
@@ -110,66 +72,52 @@ class User extends AdminBaseController
 		if(!$request->isPost()){
 			return View::fetch();
 		}
-
 		$data = $request->post(['name','email','avatar','password','phone','sex']);
-		try{
-			validate(userValidate::class)->scene('userReg')->check($data);
-
-			// 密码
-			$data['password'] = PasswordHash::make($data['password']);
-
-			$this->model::save($data);
-
-			return json(['code'=>0,'msg'=>'添加成功']);
-
-		} catch (ValidateException $e) {
-			return json(['code'=>-1,'msg'=>$e->getError()]);
-		} catch (\Exception $e) {
-			return json(['code'=>-1, 'msg'=>$e->getMessage()]);
-		}
-
+		$this->entity->saveData($data);
+	
+		return json(['code'=>0,'msg'=>'添加成功']);
 	}
 	
-	//编辑用户
+	/**
+	 * 编辑用户
+	 * 
+	 */
 	public function edit(Request $request): Response | string
 	{
 		if(!$request->isPost()){
 			$id = $request->get('id/d');
-			$user = $this->model::find($id);
-			View::assign('user',$user);
+			$user = $this->entity::find($id);
+
+			View::assign('user', $user);
 			return View::fetch();
 		}
 		
 		$data = $request->post(['id/d','name','email','avatar','password','phone','sex']);
+		$this->entity->saveData($data);
+		return json(['code'=>0,'msg'=>'编辑成功']);
 
-		if(empty($data['password'])) {
-			unset($data['password']);
-		} else {
-			$data['password'] = PasswordHash::make($data['password']);
-		}
-
-		try{
-			Db::name('user')->update($data);
-			return json(['code'=>0,'msg'=>'编辑成功']);
-		} catch (\Exception $e) {
-			return json(['code'=> -1,'msg'=>$e->getMessage()]);
-		}
-		
 	}
-	
-	//删除用户
+
+	/**
+	 * 删除用户
+	 *
+	 * @param Request $request
+	 * @return Response
+	 */
 	public function delete(Request $request): Response
 	{
 		$id = $request->get('id');
 		$ids = explode(',', $id);
 		
-		$result = $this->model::destroy($ids);
+		$result = $this->entity::destroy($ids);
 		
 		if($result){
 			return json(['code'=>0,'msg'=>'删除成功']);
 		}
 		return json(['code'=>-1,'msg'=>'删除失败']);
 	}
+	
+	
 
 	//清除用户资源
 	public function clear(Request $request): Response
@@ -215,14 +163,10 @@ class User extends AdminBaseController
 	//审核用户
 	public function check(Request $request): Response
 	{
-		$data = $request->post(['id','status']);
-		//获取状态
-		$res = Db::name('user')->save(['status' => $data['status'], 'id' => $data['id']]);
-		if($res){
-			return json(['code'=>0,'msg'=> $data['status'] == 1 ? '审核通过' : '已被禁用', 'icon'=>6]);
-		}
+		$data = $request->post(['id/d','status/d']);
+		$this->entity->updataStatus($data);
 
-		return json(['code' => -1, 'msg' => '审核出错']);
+		return json(['code' => 0, 'msg' => 'ok']);
 	}
 	
 	//超级管理员
@@ -292,7 +236,7 @@ class User extends AdminBaseController
 		return json(['code' => -1, 'msg' => '修改失败']);
 	}
 
-	    /**
+	/**
      * 用户登录
      * @return mixed|Json
      */

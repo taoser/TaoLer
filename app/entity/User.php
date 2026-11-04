@@ -3,7 +3,8 @@ namespace app\entity;
 
 use Exception;
 use think\exception\ValidateException;
-use app\exception\BusinessException;
+
+use think\facade\Db;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\facade\Config;
@@ -15,10 +16,49 @@ use app\common\helper\JwtAuth;
 use app\common\helper\PasswordHash;
 use app\validate\User as UserValidate;
 
-
-
+use app\exception\BusinessException;
 class User extends BaseEntity
 {
+
+    public function getList(array $data, int $page, int $limit): array
+    {
+        $query = Db::name('user')
+		->alias('u')
+		->join('user_viprule v', 'u.vip = v.vip')
+		->field('u.id,name,nickname,avatar,phone,email,sex,last_login_ip,city,point,last_login_time,u.create_time,status,auth,note,v.nick as vipnick,u.vip');
+
+        if(!empty($data['id'])) {
+			$query->where('u.id', $data['id']);
+		}
+
+        if(!empty($data['account'])) {
+            $qustion = $data['account'];
+            $query->where( function ($q) use($qustion) {
+                $q->where('u.name', $qustion)
+                ->whereOr('u.phone', $qustion)
+                ->whereOr('u.email', $qustion)
+                ->whereOr('u.nickname',$qustion);
+            });
+        }
+
+		if(!empty($data['sex'])){
+			$query->where('u.sex', $data['sex']);
+		}
+		if(!empty($data['status'])){
+			$query->where('u.status', $data['status']);
+		}
+
+		$user = $query->whereNull('u.delete_time')->order('u.id desc');
+
+		$count = $user->count();
+
+		$users = $user->page($page, $limit)->select()->toArray();
+
+        $vipList = Db::name('user_viprule')->field('id,vip,nick as title')->select();
+
+        return ['count'=>$count,'data' => $users, 'viplist' => $vipList];
+    }
+
 
     /**
      * 根据标识符查询用户
@@ -34,7 +74,7 @@ class User extends BaseEntity
         } elseif (preg_match('/^1[3-9]\d{9}$/', $identifier)) {
             return $this->where('phone', $identifier)->find();
         } else {
-            return $this->where('nickname', $identifier)->find();
+            return $this->where('name', $identifier)->whereOr('nickname', $identifier)->find();
         }
     }
 	
@@ -216,11 +256,59 @@ class User extends BaseEntity
 
     }
 
-    //更新数据
-    public function updata($data)
+    /**
+     * 添加和更新用户数据
+     * @param array $data ['id','name','email','phone','password','nickname','city','sex','auth','note']
+     * @return bool
+     */
+    public function saveData(array $data): bool
     {
-        //dump($data);
+        try {
+            if(isset($data['id'])){
+                // 编辑
+                $user = $this->find($data['id']);
+                
+                if(empty($data['password'])) {
+                    unset($data['password']);
+                } else {
+                    $data['password'] = PasswordHash::make($data['password']);
+                }
+
+                $user->save($data);
+
+            } else {
+                // 添加
+                validate(userValidate::class)->scene('userReg')->check($data);
+                // 密码
+                $data['password'] = PasswordHash::make($data['password']);
+
+                $this->save($data);
+            }
+            
+        } catch (ValidateException $e) {
+			throw new BusinessException($e->getError(), 401);
+		} catch (\Exception $e) {
+			throw new BusinessException($e->getMessage(), 401);
+		}
+        
+        return true;
     }
+
+    public function updataStatus(array $data): bool
+    {
+        if(!isset($data['id']) || !isset($data['status'])){
+            throw new BusinessException("参数错误", -1);
+        }
+        if($data['id'] === 1 && $data['status'] === 2){
+            throw new BusinessException("不能禁用管理员", 401);
+        }
+
+        $user = $this->find($data['id']);
+        $user->status = $data['status'];
+        
+		return $user->save();
+    }
+
 	
 	/**
      * 重置密码

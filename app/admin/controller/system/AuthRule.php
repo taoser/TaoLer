@@ -127,16 +127,9 @@ class AuthRule extends AdminBaseController
 	public function check(Request $request) : Response
 	{
 		$data = $request->post(['id/d','status/d']);
-		if($data['id'] == 1 || $data['id'] == 31) {
-			return json(['code' => -1, 'msg' => '不能关闭重要权限！']);
-		}
+		$this->entity->setStatus($data);
 
-		//获取状态
-		$res = Db::name('auth_rule')->save($data);
-		if($res){
-			return json(['code'=>0,'msg'=> $data['status'] == 1 ? '权限开启':'权限禁用']);
-		}
-		return json(['code'=>-1,'msg'=>'审核出错']);
+		return json(['code'=>0,'msg'=>'审核成功']);
 	}
 	
 	//排序
