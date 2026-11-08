@@ -168,6 +168,21 @@ class User extends AdminBaseController
 
 		return json(['code' => 0, 'msg' => 'ok']);
 	}
+
+	// 编辑用户会员等级
+	public function setLevel(Request $request): Response
+	{
+		$param = $request->post(['id/d','vip/d']);
+		$res = Db::name('user')
+		->where('id', $param['id'])
+		->update(['vip' => $param['vip']]);
+		
+		if($res) {
+			return json(['code' => 0, 'msg' => '修改成功']);
+		}
+
+		return json(['code' => -1, 'msg' => '修改失败']);
+	}
 	
 	//超级管理员
 	public function auth(Request $request): Response
@@ -220,6 +235,8 @@ class User extends AdminBaseController
 
 		return json(['code' => -1, 'msg' => '修改失败']);
 	}
+
+	
 	
 	// 编辑用户会员等级
 	public function editVipLevel(Request $request): Response
@@ -235,6 +252,8 @@ class User extends AdminBaseController
 
 		return json(['code' => -1, 'msg' => '修改失败']);
 	}
+
+	
 
 	/**
      * 用户登录

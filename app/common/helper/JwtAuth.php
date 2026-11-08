@@ -82,6 +82,27 @@ class JwtAuth
             throw new Exception('Failed to generate token: ' . $e->getMessage(), 500);
         }
     }
+
+    /**
+     * 仅解码token（不验证过期时间）
+     * @param string $token JWT令牌
+     * @return object 解码后的数据
+     */
+    public static function decode(string $token): object
+    {
+        self::init();
+        try {
+            // 使用宽松模式解码，不验证过期时间
+            $decoded = JWT::decode(
+                $token, 
+                new Key(self::$key, self::$alg)
+            );
+            return $decoded->data;
+            
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage(), 401);
+        }
+    }
     
     /**
      * 对token进行解码验证
@@ -105,27 +126,6 @@ class JwtAuth
             throw new Exception('Invalid token signature', 401);
         } catch (Exception $e) {
             throw new Exception('Invalid token: ' . $e->getMessage(), 401);
-        }
-    }
-
-    /**
-     * 仅解码token（不验证过期时间）
-     * @param string $token JWT令牌
-     * @return object 解码后的数据
-     */
-    public static function decode(string $token): object
-    {
-        self::init();
-        try {
-            // 使用宽松模式解码，不验证过期时间
-            $decoded = JWT::decode(
-                $token, 
-                new Key(self::$key, self::$alg)
-            );
-            return $decoded->data;
-            
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage(), 401);
         }
     }
 

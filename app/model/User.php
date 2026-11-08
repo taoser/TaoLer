@@ -12,14 +12,6 @@
 namespace app\model;
 
 use think\model\concern\SoftDelete;
-use think\facade\Session;
-use think\facade\Cookie;
-use think\facade\Config;
-use think\facade\Lang;
-use app\event\UserLogin;
-use app\common\helper\FileHelper;
-use app\common\helper\JwtAuth;
-use Exception;
 
 class User extends BaseModel
 {
@@ -36,6 +28,11 @@ class User extends BaseModel
     }
 
     protected $loggedUser;
+
+    public function article()
+    {
+        return $this->hasMany(Article::class);
+    }
 	
 	//用户关联评论
 	public function comments()
@@ -49,10 +46,7 @@ class User extends BaseModel
         return $this->belongsTo('UserArea','user_raea_id','id');
     }
 
-    public function article()
-    {
-        return $this->hasMany(Article::class);
-    }
+    
 
     // 登录用户
     public function getLoggedUser(){

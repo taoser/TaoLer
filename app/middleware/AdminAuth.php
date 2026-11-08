@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <alipey_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2026-11-02 17:37:45
+ * @LastEditTime: 2026-11-08 15:29:23
  * @LastEditors: TaoLer
  * @Description: 管理员认证中间件
  * @FilePath: \TaoLer\app\middleware\AdminAuth.php
@@ -17,6 +17,9 @@ use think\Response;
 use think\facade\Lang;
 use think\facade\View;
 use think\facade\Session;
+use think\facade\Cookie;
+use app\exception\BusinessException;
+use app\common\helper\JwtAuth;
 
 use app\entity\Admin;
 
@@ -61,26 +64,33 @@ class AdminAuth
             'view_dir_name' => 'view'
         ]);
 
-        // 【公共免登录路由】已登录不能访问这些
+        // 公共免登录路由，已登录不能访问这些
         $publicActions = [
             'login/index',
             'login/register',
             'login/forget',
         ];
 
-        // dump(session('admin'));
-
         $isLogin = Session::has('admin');
         $isPublic = in_array($path, $publicActions);
-        
+        $token = Cookie::get('admin_token');
+
         // 未登录
         if (!$isLogin) {
-            // 未登录，访问公共页面 → 放行
-            if ($isPublic) {
-                return $next($request);
-            } 
-            // 未登录，访问非公共页面 → 跳登录
-            return redirect((string)url('admin-login'));
+            // 检查是否有token
+            if($token) {
+                $admin = JwtAuth::verify($token);
+                if($admin) {
+                    Session::set('admin', ['id' => $admin->id, 'username' => $admin->username]);
+                }
+            } else {
+                // 未登录，访问公共页面 → 放行
+                if ($isPublic) {
+                    return $next($request);
+                }
+                // 未登录，访问非公共页面 → 跳登录
+                return redirect((string)url('admin-login'));
+            }
         }
 
         // 已登录，访问公共页面 → 跳后台首页

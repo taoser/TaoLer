@@ -48,9 +48,6 @@ class User extends IndexBaseController
 		$data = $request->post(['title','content','category_id/d','description','tag_ids']);
 		$data['user_id'] = $this->uid;
 
-		// var_dump($data);
-		// return;
-
 		$result = Article::addData($data);
 
 		return json(['code' => 0, 'msg' => Lang::get('add success'), 'data' => []]);
@@ -68,7 +65,13 @@ class User extends IndexBaseController
 
 	public function editArticle(Request $request)
 	{
-		$data = $request->post(['id/d','title','content','category_id/d','description','tag_ids']);
+		$action = $request->action();
+		$controller = $request->controller();
+
+		var_dump($action);
+		var_dump($controller);
+		return json(['code'=>-1,'msg'=>'success']);
+		$data = $request->post(['id/d', 'title', 'content', 'category_id/d', 'description', 'tag_ids']);
 
 		$result = Article::editData($data);
 

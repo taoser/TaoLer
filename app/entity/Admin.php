@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-11-02 17:39:38
+ * @LastEditTime: 2026-11-06 16:32:36
  * @LastEditors: TaoLer
  * @Description: 管理员实体类
  * @Version: V4.0.0
@@ -14,11 +14,13 @@ namespace app\entity;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Session;
+use think\facade\Cookie;
 use think\facade\Config;
 use think\exception\ValidateException;
-use app\common\helper\PasswordHash;
-use app\admin\validate\Admin as AdminValidate;
 use app\exception\BusinessException;
+use app\admin\validate\Admin as AdminValidate;
+use app\common\helper\JwtAuth;
+use app\common\helper\PasswordHash;
 
 class Admin extends BaseEntity
 {
@@ -67,11 +69,18 @@ class Admin extends BaseEntity
         }
 
 		$adminInfo = ['id' => $admin['id'], 'username' => $admin['username']];
+		Session::set('admin', $adminInfo);
 		//将用户数据写入Session
 		if(!empty($data['remember'])) {
-			Session::set('admin', $adminInfo, 7 * 24 * 3600);
+			$token = JwtAuth::encode([
+                'id'		=> $admin['id'],
+                'username'  => $admin['username']
+            ]);
+			// admin模块名
+        	$adminModuleName = '/' . trim(system_config('admin_module', 'admin'), '/');
+			Cookie::set('admin_token', $token, ['expire' => 7 * 24 * 3600, 'path' => $adminModuleName]);
 		} else {
-			Session::set('admin', $adminInfo);
+			Cookie::delete('admin_token');
 		}
 
 		$admin->last_login_time = date('Y-m-d H:i:s');

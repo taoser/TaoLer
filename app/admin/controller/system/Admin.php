@@ -6,9 +6,9 @@ use think\Request;
 use think\Response;
 use think\facade\View;
 use think\facade\Db;
-use think\facade\Session;
-use think\facade\Cookie;
 use think\facade\Cache;
+use think\facade\Cookie;
+use think\facade\Session;
 use app\common\helper\FileHelper;
 use app\common\helper\PasswordHash;
 use app\entity\Admin as AdminEntity;
@@ -170,6 +170,8 @@ class Admin extends AdminBaseController
 	// 退出登陆
 	public function logout(Request $request): Response
 	{
+		// 清空Cookie
+		Cookie::delete('admin_token');
 		// 清空Session
 		Session::clear();
 		return json(['code' => 0, 'msg'=>'退出成功' ]);

@@ -8,7 +8,7 @@
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
  */
 
-namespace app\admin\controller\user;
+namespace app\admin\controller\account;
 
 use app\admin\controller\AdminBaseController;
 use think\Request;
