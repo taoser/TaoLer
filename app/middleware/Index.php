@@ -7,6 +7,9 @@ use think\facade\View;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Lang;
+use app\common\helper\JwtAuth;
+use think\facade\Session;
+use think\facade\Cookie;
 
 class Index
 {
@@ -22,9 +25,9 @@ class Index
 	 */
     public function handle(Request $request, \Closure $next)
     {
+		$currentPath = $request->pathinfo();
         // 检查系统是否安装
-        $path = $request->pathinfo();
-		if(!file_exists(public_path().'install.lock') && !str_starts_with($path, 'install/')) {
+		if(!file_exists(public_path().'install.lock') && !str_starts_with($currentPath, 'install/')) {
 			return redirect('/install/index');
 		}
 
@@ -44,6 +47,42 @@ class Index
 			'view_dir_name'		=> 'view' . DIRECTORY_SEPARATOR . $tpl,
 			'taglib_pre_load'	=> $this->setTaglibPreLoad(),
         ]);
+
+		// 公共免登录路由，已登录不能访问这些
+        $publicPages = [
+            'login',
+            'register',
+            'forget',
+        ];
+        $isPublic = in_array($currentPath, $publicPages);
+		
+		$isLogin = Session::has('user_id');
+        
+		if(!$isLogin) {
+			$token = Cookie::get('user_token');
+			if($token) {
+				 $user = JwtAuth::verify($token);
+                if($user) {
+                    // Session::set('user', ['id' => $user->id, 'name' => $user->name]);
+                    Session::set('user_id', $user->id);
+					Session::set('user_name', $user->name);
+                }
+			} else {
+				// 未登录，访问公共页面 → 放行
+                if ($isPublic) {
+                    return $next($request);
+                }
+                // 未登录，访问user/*页面 → 跳登录
+				if(str_starts_with($currentPath, 'user')) {
+					return redirect((string)url('login_page'));
+				}
+			} 
+		}
+
+		// 已登录，访问公共页面 → 跳后台首页
+        if ($isPublic) {
+            return redirect((string)url('user_page'));
+        }
 
 		// 从session中获取用户ID 存储到$request中
 		$request->uid = $request->session('user_id');

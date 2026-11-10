@@ -145,7 +145,7 @@ class Admin extends AdminBaseController
 		if(!$request->isPost()) {
 			return view('new_pass');
 		}
-		$data = $request->post(['currentPassword','password','confirm_password']);
+		$data = $request->post(['current_password','password','confirm_password']);
 		$data['id'] = $request->aid;
 		$this->entity->setNewPassword($data);
 		return json(['code' => 0, 'msg' => '修改成功']);

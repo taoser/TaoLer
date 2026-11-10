@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-19 13:00:41
+ * @LastEditTime: 2026-11-10 10:27:24
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -50,6 +50,9 @@ Route::group('',function () {
 		Route::get('', function() {
 			return view('user/index');
 		})->name('user_page');
+		
+		// Route::post('save-info', 'user/saveInfo');
+
 		// 添加文章
 		Route::get('add-article$', function() {
 			if(system_config('publish_open') == '0') {
@@ -91,7 +94,7 @@ Route::group('',function () {
 		Route::get('uploadHeadImg$', 'user/uploadHeadImg');
 		Route::get('logout$', 'user/logout')->name('user_logout');
 
-	})->middleware(\app\middleware\LoginCheck::class);
+	});
 
 	// auth注册/登录/找回密码/发送验证码
 	Route::group(function () {
@@ -117,7 +120,7 @@ Route::group('',function () {
 		Route::post('sentemailcode$', 'auth/sentMailCode');
 		Route::post('respass$', 'auth/respass');
 
-	})->middleware(\app\middleware\LogedCheck::class);
+	});
 
 	Route::post('language$', 'index/language')->name('language');
 

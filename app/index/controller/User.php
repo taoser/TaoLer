@@ -12,7 +12,7 @@ use think\facade\View;
 use think\response\Json;
 use think\facade\Lang;
 use app\facade\Article;
-use app\facade\User as userModel;
+use app\facade\User as UserEntity;
 use app\model\Collection;
 use app\common\controller\BaseController;
 use app\common\validate\User as userValidate;
@@ -26,7 +26,45 @@ use Intervention\Image\Format;
 
 
 class User extends IndexBaseController
-{	
+{
+
+	public function info(Request $request)
+	{
+		if(!$request->isPost()) {
+			$user = UserEntity::field('name,nickname,phone,email,sex,sign,avatar')->find($this->uid);
+			View::assign('user', $user);
+			return View::fetch();
+		}
+		
+		$data = $request->post(['name','nickname','phone','email','sex','sign']);
+		$data['id'] = $this->uid;
+		UserEntity::saveInfo($data);
+		return json(['code' => 0, 'msg' => 'success']);
+	}
+
+	public function avatar(Request $request)
+	{
+		if(!$request->isPost()) {
+			$avatar = UserEntity::where('id', $this->uid)->value('avatar');
+			View::assign('avatar', $avatar);
+			return View::fetch();
+		}
+		$data = $request->post(['avatar']);
+		$data['id'] = $this->uid;
+		UserEntity::saveInfo($data);
+		return json(['code' => 0, 'msg' => 'success']);
+	}
+
+	public function password(Request $request)
+	{
+		if(!$request->isPost()) {
+			return View::fetch();
+		}
+		$data = $request->post(['current_password','new_password','confirm_password']);
+		$data['id'] = $this->uid;
+		UserEntity::setNewPassword($data);
+		return json(['code' => 0, 'msg' => 'success']);
+	}
 	
 		
 	// 我的发帖list
@@ -444,6 +482,7 @@ class User extends IndexBaseController
 	{
 		Session::delete('user_id');
 		Session::delete('user_name');
+		Cookie::delete('user_token');
 
 		if(Session::has('user_id')){
 			return json(['code' => 1, 'msg' => '退出失败']);

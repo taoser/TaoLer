@@ -59,6 +59,24 @@ class User extends BaseEntity
         return ['count'=>$count,'data' => $users, 'viplist' => $vipList];
     }
 
+    public function getInfo(int $uid): array
+    {
+        return $this->where('id', $uid)->find()->toArray();
+    }
+
+    public function saveInfo(array $data): bool
+    {
+        $user = $this->find($data['id']);
+        if($user->isEmpty()) {
+            throw new BusinessException("user not found");
+        }
+        $res = $user->save($data);
+        if(!$res) {
+            throw new BusinessException("save info failed");
+        }
+        return true;
+    }
+
 
     /**
      * 根据标识符查询用户
@@ -163,24 +181,21 @@ class User extends BaseEntity
         Session::set('user_id', $user['id']);
         Session::set('user_name', $user['name']);
 
+        $token = JwtAuth::encode([
+            'id'        => $user['id'],
+            'name'      => $user['name'],
+            'avatar'    => $user['avatar']
+        ]);
+
         //记住密码
         if(isset($data['remember'])) {
-            $salt = Config::get('taoler.salt');
-            //加密auth存入cookie
-            $auth = md5($user['name'].$salt).":".$user['id'];
-            Cookie::set('auth',$auth,604800);
+            Cookie::set('user_token', $token, 7 * 24 * 60 * 60);
         }
 
         event(new UserLogin(['type'=>'log','id'=>$user->id]));
 
         //查询结果1表示有用户，用户名密码正确
         $this->loggedUser = $user;
-
-        $token = JwtAuth::encode([
-            'uid'       => $user['id'],
-            'username'  => $user['name'],
-            'avatar'    => $user['avatar']
-        ]);
 
         // 过期时间
         $expireTime = JwtAuth::getExpireTime();
@@ -308,6 +323,37 @@ class User extends BaseEntity
         
 		return $user->save();
     }
+
+    /**
+	 * 设置新密码
+	 * @param array $data
+	 * @return bool
+	 */
+	public function setNewPassword(array $data)
+	{
+		if($data['new_password'] !== $data['confirm_password']) {
+			throw new BusinessException('两次密码不一致');
+		}
+
+		if($data['new_password'] == $data['current_password']) {
+			throw new BusinessException('新密码和当前密码不能相同');
+		}
+
+		$user = $this->field('id,password')->find($data['id']);
+
+		if(!password_verify($data['current_password'], $user['password'])) {
+			throw new BusinessException('当前密码错误');
+		}
+		$password = PasswordHash::make($data['new_password']);
+		$user->password = $password;
+
+		$res = $user->save();
+		if(!$res){
+			throw new BusinessException('设置新密码失败');
+		}
+		return $res;
+	
+	}
 
 	
 	/**

@@ -138,12 +138,12 @@ class Admin extends BaseEntity
 			throw new BusinessException('两次密码不一致');
 		}
 
-		if($data['password'] == $data['currentPassword']) {
+		if($data['password'] == $data['current_password']) {
 			throw new BusinessException('新密码和当前密码不能相同');
 		}
 
 		$admin = $this->find($data['id']);
-		if(!password_verify($data['currentPassword'], $admin['password'])) {
+		if(!password_verify($data['current_password'], $admin['password'])) {
 			throw new BusinessException('当前密码错误');
 		}
 		$data['password'] = PasswordHash::make($data['password']);

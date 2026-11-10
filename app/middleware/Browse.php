@@ -13,6 +13,7 @@ class Browse
 		$agent = $request->header('user-agent');
 		$ip = $request->ip();
 		$url = $request->url(true);
+		
 		Log::channel('browse')->info('browse:{agent} {ip} {url}',['agent'=>$agent,'url'=>$url,'ip'=>$ip]);
 		
 		return $next($request);

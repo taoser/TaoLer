@@ -10,6 +10,4 @@ class User extends Facade
 		return 'app\entity\User';
 	}
 
-
-
 }
