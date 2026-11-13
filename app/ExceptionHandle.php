@@ -73,6 +73,26 @@ class ExceptionHandle extends Handle
             return $this->renderApiResponse($e);
         }
 
+        // HTTP异常（404/403）
+        if (!env('app_debug', false) && $e instanceof BusinessException) {
+            $code = $e->getCode();
+
+            // // ajax/json请求返回json
+            // if ($request->isAjax() || $request->isJson()) {
+            //     return json(['code'=>$code,'msg'=>$e->getMessage()], $code);
+            // }
+
+            // 视图页面，加载对应错误模板
+            $tpl = match ($code) {
+                404 => '../../public/404',
+                402 => '../../public/402',
+                403 => '../../public/403',
+                500 => '../../public/500',
+                default => '../../public/500'
+            };
+            return view($tpl, ['code'=>$code,'msg'=>$e->getMessage()], $code);
+        }
+
         // 其他错误交给系统处理
         return parent::render($request, $e);
     }
@@ -91,7 +111,8 @@ class ExceptionHandle extends Handle
             || $request->isPut()
             || $request->isDelete()
             || $request->isOptions()
-            || $request->isAjax();
+            || $request->isAjax()
+            || $request->isJson();
 
  
 

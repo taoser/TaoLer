@@ -1,9 +1,19 @@
+<!--
+ * @Author: TaoLer <317927823@qq.com>
+ * @Date: 2026-09-05 08:12:25
+ * @LastEditTime: 2026-11-13 22:05:14
+ * @LastEditors: TaoLer
+ * @Description: 404 页面
+ * @Version: V4.0.0
+ * @FilePath: \TaoLer\public\404.html
+ * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
+-->
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title></title>
-		<link href="/static/component/pear/css/pear.css" rel="stylesheet" />
+		<title>404</title>
+		<link href="/static/layui/css/layui.css" rel="stylesheet" />
 		<link href="/static/admin/css/other/error.css" rel="stylesheet" />
 	</head>
 	<body>
@@ -12,14 +22,13 @@
 			<div class="content-r">
 				<h1>404</h1>
 				<p>抱歉，你访问的页面不存在或仍在开发中</p>
-				<button class="pear-btn pear-btn-primary">返回首页...</button>
+				<button type="button" class="layui-btn">返回首页...</button>
 			</div>
 		</div>
 		<script src="/static/layui/layui.js"></script>
-		<script src="/static/component/pear/pear.js"></script>
 		<script>
 			layui.use(function(){
-				layui.jquery('.pear-btn-primary').on('click', function(){
+				layui.jquery('.layui-btn').on('click', function(){
 					window.location.href = '/';
 				});
 			});

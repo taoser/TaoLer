@@ -567,7 +567,7 @@ class Request implements Stringable
         static $cache = [];
         $this->data['post'] = $this->data['files'] = [];
         $contentType = $this->header('content-type', '');
-        if (preg_match('/boundary="?(\S+)"?/', $contentType, $match)) {
+        if (preg_match('/boundary=(?|"([^"]+)"|([^\s";,]+))/i', $contentType, $match)) {
             $httpPostBoundary = '--' . $match[1];
             $this->parseUploadFiles($httpPostBoundary);
             return;
@@ -576,18 +576,20 @@ class Request implements Stringable
         if ($bodyBuffer === '') {
             return;
         }
+        $isJson = str_contains($contentType, 'json');
         $cacheable = !isset($bodyBuffer[static::MAX_CACHE_STRING_LENGTH]);
-        if ($cacheable && isset($cache[$bodyBuffer])) {
-            $this->data['post'] = $cache[$bodyBuffer];
+        $cacheKey = $cacheable ? ($isJson ? 'json:' : 'form:') . $bodyBuffer : '';
+        if ($cacheable && isset($cache[$cacheKey])) {
+            $this->data['post'] = $cache[$cacheKey];
             return;
         }
-        if (str_contains($contentType, 'json')) {
+        if ($isJson) {
             $this->data['post'] = (array)json_decode($bodyBuffer, true);
         } else {
             parse_str($bodyBuffer, $this->data['post']);
         }
         if ($cacheable) {
-            $cache[$bodyBuffer] = $this->data['post'];
+            $cache[$cacheKey] = $this->data['post'];
             if (count($cache) > static::MAX_CACHE_SIZE) {
                 unset($cache[key($cache)]);
             }
@@ -602,7 +604,6 @@ class Request implements Stringable
      */
     protected function parseUploadFiles(string $httpPostBoundary): void
     {
-        $httpPostBoundary = trim($httpPostBoundary, '"');
         $buffer = $this->buffer;
         $postEncodeString = '';
         $filesEncodeString = '';

@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-11-02 20:17:44
+ * @LastEditTime: 2026-11-13 21:24:09
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -36,10 +36,13 @@ return [
     'show_error_msg'   => false,
     // 定义HTTP异常模板文件地址
     'http_exception_template'    =>  [
+        // 内容待审核
+        402 =>  public_path() . '402.html',
         // 定义403错误的模板文件地址
         403 =>  public_path() . '403.html',
         // 还可以定义其它的HTTP status
         404 =>  public_path() . '404.html',
+        
         // 服务器内部错误
         500 =>  public_path() . '500.html',
     ],

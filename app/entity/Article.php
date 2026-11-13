@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-10-23 16:35:13
+ * @LastEditTime: 2026-11-13 21:41:26
  * @LastEditors: TaoLer
  * @Description: 
  * @Version: V4.0.0
@@ -32,6 +32,7 @@ use app\common\observer\TagObserver;
 use app\common\observer\MailObserver;
 use app\service\ArticleCache;
 use app\exception\BusinessException;
+use think\exception\HttpException;
 
 class Article extends BaseEntity
 {
@@ -424,7 +425,10 @@ class Article extends BaseEntity
             }
 
             if($detail['status'] == 0) {
-                throw new BusinessException('内容待审核', 2);
+                // 自定义402异常
+                throw new BusinessException('内容待审核', 403);
+                // http 402 异常
+                // throw new HttpException(403, '内容待审核');
             }
 
             // 缓存文章详情
@@ -705,32 +709,48 @@ class Article extends BaseEntity
 
     /**
      * 获取用户发帖列表
-     * @param array $data
+     * @param int $uid 用户id
+     * @param int $page 页码
+     * @param int $limit 每页数量
      * @return array
      */
-    public function getMyList(array $data): array
+    public function getMyList(int $uid, int $page, int $limit): array
     {
-        $query = $this->where(['user_id' => $data['uid']]);
+        // 边界校验，防止页码、条数负数
+        $page  = max(1, $page);
+        $limit = max(1, min($limit, 100)); // 限制最大每页100，防止恶意大limit拖库
 
-        $count = $query->count();
+        // 基础查询条件，单独抽where数组，count和列表各自新建查询，互不干扰
+        $where = ['user_id' => $uid];
 
-        if($count === 0) {
+        // 总数查询（独立查询构造器）
+        $count = $this->where($where)->count();
+        if ($count === 0) {
             return ['count' => $count, 'data' => []];
         }
-        
-        $data =$query->with(['category' => function($query) {
-            $query->field('id,ename,name');
-        }])
-        ->field('id,category_id,title,status,create_time,pv')
-        ->page($data['page'])
-        ->limit($data['limit'])
-        ->order('id','desc')
-        ->append(['url'])
-        ->select()
-        ->toArray();
 
-        return ['count' => $count, 'data' => $data];
+        // 列表查询（全新query，不受count影响）
+        $data = $this
+            ->where($where)
+            ->with([
+                'category' => function ($query) {
+                    // 关联只取需要字段，必须带上关联主键id，否则关联匹配失效！
+                    $query->field('id,ename,name');
+                }
+            ])
+            ->field('id,category_id,title,status,create_time,pv')
+            ->order('id desc')
+            ->page($page, $limit) // 推荐合并 page+limit，可读性更好
+            ->append(['url'])
+            ->select()
+            ->toArray();
+
+        return [
+            'count' => $count,
+            'data'  => $data
+        ];
     }
+
 
     // 获取搜索文章
     public function getSearchKeyWord(string $keywords)

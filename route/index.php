@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-11-10 10:27:24
+ * @LastEditTime: 2026-11-13 22:24:27
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -181,7 +181,7 @@ Route::group('',function () {
 	// Route::miss('index/miss');
 
 	Route::miss(function() {
-		return response('404 Not Found!', 404);
+		return response('404 Not Found!!', 404);
 	});
 
 })

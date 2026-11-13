@@ -28,6 +28,7 @@ use Intervention\Image\Format;
 class User extends IndexBaseController
 {
 
+	// 用户信息
 	public function info(Request $request)
 	{
 		if(!$request->isPost()) {
@@ -42,6 +43,7 @@ class User extends IndexBaseController
 		return json(['code' => 0, 'msg' => 'success']);
 	}
 
+	// 头像
 	public function avatar(Request $request)
 	{
 		if(!$request->isPost()) {
@@ -55,6 +57,7 @@ class User extends IndexBaseController
 		return json(['code' => 0, 'msg' => 'success']);
 	}
 
+	// 密码
 	public function password(Request $request)
 	{
 		if(!$request->isPost()) {
@@ -72,15 +75,27 @@ class User extends IndexBaseController
 	{
 		$page = $request->get('page/d', 1);
 		$limit = $request->get('limit/d', 20);
+		$result = Article::getMyList($this->uid, $page, $limit);
 
-		$result = Article::getMyList(['uid' => $this->uid, 'page' => $page, 'limit' => $limit]);
-
-		if($result['count'] > 0){
-			return json(['code'=>0,'msg'=>'success','count'=>$result['count'],'data'=>$result['data']]);
-		}
-		return json(['code'=>1,'msg'=>Lang::get('no data')]);				
+		return json(['code' => 0, 'msg'	=>	'success', ...$result]);
+					
 	}
 
+	/**
+	 * 获取文章详情
+	 */
+	public function getArticleInfo(Request $request)
+	{
+		$id = $request->get('id/d');
+
+		$article = Article::getInfo($id);
+
+		return json(['code' => 0, 'msg' => Lang::get('get success'), 'data' => $article]);
+	}
+
+	/**
+	 * 添加文章
+	 */
 	public function addArticle(Request $request)
 	{
 		$data = $request->post(['title','content','category_id/d','description','tag_ids']);
@@ -91,30 +106,19 @@ class User extends IndexBaseController
 		return json(['code' => 0, 'msg' => Lang::get('add success'), 'data' => []]);
 		
 	}
-
-	public function getArticleInfo(Request $request)
-	{
-		$id = $request->get('id/d');
-
-		$article = Article::getInfo($id);
-
-		return json(['code' => 0, 'msg' => Lang::get('get success'), 'data' => $article]);
-	}
-
+	
+	/**
+	 * 编辑文章
+	 */
 	public function editArticle(Request $request)
 	{
 		$action = $request->action();
 		$controller = $request->controller();
-
-		var_dump($action);
-		var_dump($controller);
-		return json(['code'=>-1,'msg'=>'success']);
 		$data = $request->post(['id/d', 'title', 'content', 'category_id/d', 'description', 'tag_ids']);
 
 		$result = Article::editData($data);
 
 		return json(['code' => 0, 'msg' => Lang::get('edit success'), 'data' => []]);
-		
 	}
 
 	/**
@@ -129,22 +133,6 @@ class User extends IndexBaseController
 		return json(['code' => 0, 'msg' => Lang::get('delete success')]);
 	}
 
-	// 文章状态
-	private function artStatus($status)
-	{
-		switch ($status) {
-			case 1:
-				$res = '正常';
-				break;
-			case -1:
-				$res = '禁止';
-				break;
-			default:
-				$res = '待审';
-				break;
-		}
-		return $res;
-	}
 	
 	// 收藏list
 	public function myCollect()
@@ -174,14 +162,6 @@ class User extends IndexBaseController
 		return json(['code'=>-1,'msg'=>'无数据']);		
 	}
 	
-	
-	
-	//文章管理
-	public function post()
-	{
-        return View::fetch();
-    }
-
 	// 编辑pv
 	public function edtiPv(Request $request)
 	{
@@ -272,51 +252,6 @@ class User extends IndexBaseController
 			return json($res);
 		}
 	}
-
-	//用户设置-我的资料
-	public function set(Request $request)
-	{
-		if($request->isPost()){
-			$data = $request->post(['email','phone','nickname','sex','city','area_id','sign']);
-            $data['user_id'] = $this->uid;
-			// 过滤
-			$sign = strtolower($data['sign']);
-			if(strstr($sign, 'script')) return json(['code'=>-1,'msg'=>'包含有非法字符串script脚本']);
-			if(strstr($sign, 'alert')) return json(['code'=>-1,'msg'=>'包含有非法字符alert']);
-			if(strstr($sign, 'img')) return json(['code'=>-1,'msg'=>'禁用img标签']);
-			if(strstr($sign, 'body')) return json(['code'=>-1,'msg'=>'禁用img标签']);
-			if(strstr($sign, 'video')) return json(['code'=>-1,'msg'=>'禁用video标签']);
-
-			// 验证
-			$validate = new userValidate;
-			$result = $validate->scene('Set')->check($data);
-			if(!$result){
-				return json(['code'=>-1,'msg' =>$validate->getError()]);
-			} else {
-				//防止重复的email
-				$resEmail = Db::name('user')->where('email',$data['email'])->where('id','<>',$this->uid)->find();
-				if(!is_null($resEmail)){
-					return ['code'=>-1,'msg'=>'email已存在,请更换！'];
-				}
-				//若更换email，需重新激活
-				$mail = Db::name('user')->where('id',$this->uid)->value('email');
-				if($data['email'] !== $mail){
-					$data['active'] = 0;
-				}
-
-                $result = userModel::setNew($data);
-				if($result == 1){
-					Cache::tag('user')->clear();
-				    return json(['code'=>0,'msg'=>'资料更新成功']);
-				} else {
-                    return json(['code'=>-1,'msg' =>$result]);
-				}
-			}
-		}
-		$area = Db::name('user_area')->select();
-		View::assign(['area'=>$area]);
-		return View::fetch();
-    }
 
 	/**
 	 * 更换头像
@@ -420,11 +355,6 @@ class User extends IndexBaseController
         return View::fetch();
     }
 	
-	
-    public function layout()
-    {
-        return View::fetch();
-    }
 
 	//邮箱激活
 	public function activate()
@@ -447,29 +377,6 @@ class User extends IndexBaseController
 				return json(['status'=>0]);
 			}
 			return json(['status'=>-1,'发送邮件出错！']);
-		}
-	}
-	
-	//修改密码
-	public function setPass(Request $request)
-	{
-		if($request->isPost()){
-			$data = $request->post();
-			$validate = new userValidate;
-			$res = $validate->scene('setPass')->check($data);
-			if(!$res){
-                return json(['code'=>-1,'msg' =>$validate->getError()]);
-
-			}
-
-			$result = userModel::setpass($data);
-			if($result == 1) {
-				Session::clear();
-				Cookie::delete('auth');
-				return json(['code' => 1, 'msg' => '密码修改成功', 'data' => ['url' => (string) url('login/index')]]);
-			}
-
-            return json(['code' => -1,'msg' =>$result]);
 		}
 	}
 	

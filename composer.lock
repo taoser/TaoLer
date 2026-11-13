@@ -613,16 +613,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.13.2",
+            "version": "2.13.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "adee536f95101929f262b8c59e8a61472f347d58"
+                "reference": "6d3cd8285a97eaa352956a4ada92fa03ecce1c4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/adee536f95101929f262b8c59e8a61472f347d58",
-                "reference": "adee536f95101929f262b8c59e8a61472f347d58",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/6d3cd8285a97eaa352956a4ada92fa03ecce1c4e",
+                "reference": "6d3cd8285a97eaa352956a4ada92fa03ecce1c4e",
                 "shasum": ""
             },
             "require": {
@@ -712,7 +712,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.13.2"
+                "source": "https://github.com/guzzle/psr7/tree/2.13.3"
             },
             "funding": [
                 {
@@ -728,21 +728,21 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-17T23:49:46+00:00",
-            "published-time": "2026-10-17T23:51:00+00:00"
+            "time": "2026-11-12T15:57:42+00:00",
+            "published-time": "2026-11-12T15:58:42+00:00"
         },
         {
             "name": "illuminate/collections",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "3170236055eb67e860b9d2c01c664d1876fa1652"
+                "reference": "ac19e4e945513b1bad6744f8ea2626974a036bc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/3170236055eb67e860b9d2c01c664d1876fa1652",
-                "reference": "3170236055eb67e860b9d2c01c664d1876fa1652",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/ac19e4e945513b1bad6744f8ea2626974a036bc0",
+                "reference": "ac19e4e945513b1bad6744f8ea2626974a036bc0",
                 "shasum": ""
             },
             "require": {
@@ -789,12 +789,12 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-10-30T21:24:02+00:00",
-            "published-time": "2026-11-03T15:07:42+00:00"
+            "time": "2026-11-04T19:47:22+00:00",
+            "published-time": "2026-11-10T15:54:52+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -837,11 +837,11 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-10-06T02:42:44+00:00",
-            "published-time": "2026-11-03T15:07:44+00:00"
+            "published-time": "2026-11-10T15:54:56+00:00"
         },
         {
             "name": "illuminate/container",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -900,11 +900,11 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-10-20T10:26:12+00:00",
-            "published-time": "2026-11-03T15:07:52+00:00"
+            "published-time": "2026-11-10T15:55:04+00:00"
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -949,11 +949,11 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-10-29T13:51:55+00:00",
-            "published-time": "2026-11-03T15:07:54+00:00"
+            "published-time": "2026-11-10T15:55:07+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -996,11 +996,11 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-10-06T02:42:44+00:00",
-            "published-time": "2026-11-03T15:08:15+00:00"
+            "published-time": "2026-11-10T15:56:01+00:00"
         },
         {
             "name": "illuminate/reflection",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/reflection.git",
@@ -1048,7 +1048,7 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-10-06T02:42:44+00:00",
-            "published-time": "2026-11-03T15:08:28+00:00"
+            "published-time": "2026-11-10T15:55:57+00:00"
         },
         {
             "name": "intervention/gif",
@@ -3661,16 +3661,16 @@
         },
         {
             "name": "workerman/workerman",
-            "version": "v5.2.3",
+            "version": "v5.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/walkor/workerman.git",
-                "reference": "8fd5c148ff7dcd7bbc88621e1712eeb1f66b7f56"
+                "reference": "4c817dec82c9ea223879b019600db58f62199abc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/workerman/zipball/8fd5c148ff7dcd7bbc88621e1712eeb1f66b7f56",
-                "reference": "8fd5c148ff7dcd7bbc88621e1712eeb1f66b7f56",
+                "url": "https://api.github.com/repos/walkor/workerman/zipball/4c817dec82c9ea223879b019600db58f62199abc",
+                "reference": "4c817dec82c9ea223879b019600db58f62199abc",
                 "shasum": ""
             },
             "require": {
@@ -3684,7 +3684,7 @@
             "require-dev": {
                 "guzzlehttp/guzzle": "^7.10",
                 "mockery/mockery": "^1.6.12",
-                "pestphp/pest": "^2.36 || ^3 || ^4",
+                "pestphp/pest": "^2.36 || ^3 || ^4 || ^5",
                 "phpstan/phpstan": "^2.1"
             },
             "suggest": {
@@ -3733,8 +3733,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-09T01:12:31+00:00",
-            "published-time": "2026-10-09T01:23:10+00:00"
+            "time": "2026-11-13T11:24:29+00:00",
+            "published-time": "2026-11-13T12:04:14+00:00"
         },
         {
             "name": "yansongda/artful",
