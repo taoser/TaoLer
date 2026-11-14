@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2022-08-16 12:18:29
+ * @LastEditTime: 2026-11-14 08:38:54
  * @LastEditors: TaoLer
  * @Description: 评论模型
- * @FilePath: \TaoLer\app\common\model\Comment.php
+ * @FilePath: \TaoLer\app\entity\Comment.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 
@@ -161,53 +161,42 @@ class Comment extends BaseEntity
 
     }
 
-    // 获取url
-    public function getUrlAttr($value,$data)
-    {
-        // dump($data);
-        if(config('taoler.url_rewrite.article_as') == '<ename>/') {
-            
-            $article = Article::field('id,category_id')
-            ->with(['category' => function($query){
-                $query->withField('id,ename')->where(['status' => 1]);
-            }])
-            ->find($data['article_id']);
-
-            return (string) url('detail', ['id' => $data['article_id'], 'ename' => $article->cate->ename]);
-        } else {
-            return (string) url('detail',['id' => $data['id']]);
-        }
-    }
-
-    // 获取to_user_id
-    public function getTouserAttr($value, $data)
-    {
-        if(isset($data['to_user_id'])) {
-            return User::where('id', $data['to_user_id'])->value('name');
-        }
-        return '';
-    }
-
-
     /**
-     * 评论没有被删除正常显示
-     * 评论被删除，但它下面有跟评时自身会显示为“评论已删除”，跟评会显示，无跟评且已删除则不显示
-     * @param $value
-     * @param $data
-     * @return string
+     * 获取用户评论列表
+     *
+     * @param int $uid 用户ID
+     * @param int $page 页码
+     * @param int $limit 每页数量   
+     * @return array
      */
-    public function getContentAttr($value,$data)
+    public function getMyCommentList(int $uid, int $page = 1, int $limit = 20): array
     {
-        if($data['delete_time'] == null) {
-            return $value;
-        } else {
-            if($this::getByPid($data['id'])) {
-                return '<span style="text-decoration:line-through;">评论已删除</span>';
-            } else {
-                return '';
-            }
+        $page = max(1, $page);
+        $limit = max(1, min($limit, 100));
 
+        $count = $this->where('user_id', $uid)->count();
+        if($count === 0) {
+            return ['count' => 0, 'data' => []];
         }
+
+        $data = $this->with([
+            'user'=> function($query) {
+                    $query->field('id,name,avatar');
+                },
+                'article' => function($query) {
+                    $query->field('id,title');
+                }
+            ])
+            ->where('user_id', $uid)
+            ->order(['create_time' => 'desc'])
+            ->page($page, $limit)
+            ->select()
+            ->toArray();
+        
+        return ['count' => $count, 'data' => $data];
+
     }
+
+
 
 }

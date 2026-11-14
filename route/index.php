@@ -2,7 +2,7 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-11-13 22:24:27
+ * @LastEditTime: 2026-11-14 08:54:08
  * @LastEditors: TaoLer
  * @Description: index模块 前台路由
  * @Version: V4.0.0
@@ -66,15 +66,23 @@ Route::group('',function () {
 			$info = \app\facade\Article::getInfo($id);
 			return view('user/edit_article', ['info' => $info]);
 		})->name('edit_article_page');
-		// 文章列表
-		Route::get('article-list$', function() {
-			return view('user/article_list');
-		})->name('article_list_page');
+		// 我的文章
+		Route::get('my-article$', function() {
+			return view('user/my_article');
+		})->name('my_article_page');
+		// 我的评论
+		Route::get('my-comment$', function() {
+			return view('user/my_comment');
+		})->name('my_comment_page');
+
+
+		// 我的评论列表
+		Route::get('comment-list$', 'user/myComments')->name('comment_list');
 		
 		// 获取文章详情
 		Route::get('get-article-info$', 'user/getArticleInfo')->name('get_article_info');
-		
-		Route::get('articles$', 'user/myArticles')->name('article_list');
+		// 我的文章列表
+		Route::get('article-list$', 'user/myArticles')->name('article_list');
 		Route::post('add-article', 'user/addArticle')->name('add_article');
 		Route::post('edit-article', 'user/editArticle')->name('edit_article');
 		Route::delete('delete-article$', 'user/deleteArticle')->name('delete_article');

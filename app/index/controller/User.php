@@ -12,6 +12,7 @@ use think\facade\View;
 use think\response\Json;
 use think\facade\Lang;
 use app\facade\Article;
+use app\facade\Comment;
 use app\facade\User as UserEntity;
 use app\model\Collection;
 use app\common\controller\BaseController;
@@ -27,6 +28,55 @@ use Intervention\Image\Format;
 
 class User extends IndexBaseController
 {
+	// 我的发帖list
+	public function myArticles(Request $request)
+	{
+		$page = $request->get('page/d', 1);
+		$limit = $request->get('limit/d', 20);
+		$result = Article::getMyList($this->uid, $page, $limit);
+
+		return json(['code' => 0, 'msg'	=>	'success', ...$result]);
+					
+	}
+
+	// 我的评论list
+	public function myComments(Request $request)
+	{
+		$page = $request->get('page/d', 1);
+		$limit = $request->get('limit/d', 20);
+		$result = Comment::getMyCommentList($this->uid, $page, $limit);
+
+		return json(['code' => 0, 'msg'	=>	'success', ...$result]);
+					
+	}
+
+	// 收藏list
+	public function myCollect()
+	{
+		//收藏的帖子
+		$collect = Collection::with(['article'=>function($query){
+			$query->withTrashed();
+		}])->where('user_id',$this->uid)->order('id','desc')->paginate(10);
+		$count =$collect->total();
+
+		if($count){
+			$res = [];
+			$res['code'] = 0;
+			$res['count'] = $count ;
+			foreach($collect as $v){
+				$res['data'][] = [
+					'id' 	=>$v['id'],
+					'title'	=> htmlspecialchars($v['collect_title']),
+					'url'	=> $this->getRouteUrl($v['article_id'], $v->article->cate->ename),
+					'auther' => $v['auther'],
+					'status' => is_null(Db::name('article')->field('id')->where('delete_time',0)->find($v['article_id'])) ? '已失效' : '正常',
+					'ctime' =>	$v['create_time']
+				]; 
+			}
+			return json($res);
+		}
+		return json(['code'=>-1,'msg'=>'无数据']);		
+	}
 
 	// 用户信息
 	public function info(Request $request)
@@ -67,18 +117,6 @@ class User extends IndexBaseController
 		$data['id'] = $this->uid;
 		UserEntity::setNewPassword($data);
 		return json(['code' => 0, 'msg' => 'success']);
-	}
-	
-		
-	// 我的发帖list
-	public function myArticles(Request $request)
-	{
-		$page = $request->get('page/d', 1);
-		$limit = $request->get('limit/d', 20);
-		$result = Article::getMyList($this->uid, $page, $limit);
-
-		return json(['code' => 0, 'msg'	=>	'success', ...$result]);
-					
 	}
 
 	/**
@@ -134,33 +172,7 @@ class User extends IndexBaseController
 	}
 
 	
-	// 收藏list
-	public function myCollect()
-	{
-		//收藏的帖子
-		$collect = Collection::with(['article'=>function($query){
-			$query->withTrashed();
-		}])->where('user_id',$this->uid)->order('id','desc')->paginate(10);
-		$count =$collect->total();
-
-		if($count){
-			$res = [];
-			$res['code'] = 0;
-			$res['count'] = $count ;
-			foreach($collect as $v){
-				$res['data'][] = [
-					'id' 	=>$v['id'],
-					'title'	=> htmlspecialchars($v['collect_title']),
-					'url'	=> $this->getRouteUrl($v['article_id'], $v->article->cate->ename),
-					'auther' => $v['auther'],
-					'status' => is_null(Db::name('article')->field('id')->where('delete_time',0)->find($v['article_id'])) ? '已失效' : '正常',
-					'ctime' =>	$v['create_time']
-				]; 
-			}
-			return json($res);
-		}
-		return json(['code'=>-1,'msg'=>'无数据']);		
-	}
+	
 	
 	// 编辑pv
 	public function edtiPv(Request $request)

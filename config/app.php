@@ -2,16 +2,13 @@
 /*
  * @Author: TaoLer <317927823@qq.com>
  * @Date: 2026-09-05 08:12:25
- * @LastEditTime: 2026-11-13 21:24:09
+ * @LastEditTime: 2026-11-14 07:59:47
  * @LastEditors: TaoLer
- * @Description: 
+ * @Description: 应用设置
  * @Version: V4.0.0
  * @FilePath: \TaoLer\config\app.php
  * @Copyright: (c) 2020~2026 https://www.aieok.com All rights reserved.
  */
-// +----------------------------------------------------------------------
-// | 应用设置
-// +----------------------------------------------------------------------
 
 return [
     // 应用的命名空间
@@ -29,20 +26,17 @@ return [
     // 禁止URL访问的应用列表（自动多应用模式有效）
     'deny_app_list'    => [],
     // 异常页面的模板文件
-    'exception_tmpl' => env('app_debug') ? app()->getThinkPath() . 'tpl/think_exception.tpl' : public_path() . '400.html',
+    'exception_tmpl' => env('app_debug') ? app()->getThinkPath() . 'tpl/think_exception.tpl' : public_path() . '404.html',
     // 错误显示信息,非调试模式有效
     'error_message'    => '页面错误！请稍后再试～',
     // 显示错误信息
     'show_error_msg'   => false,
     // 定义HTTP异常模板文件地址
     'http_exception_template'    =>  [
-        // 内容待审核
-        402 =>  public_path() . '402.html',
-        // 定义403错误的模板文件地址
+        // 没有权限查看
         403 =>  public_path() . '403.html',
-        // 还可以定义其它的HTTP status
+        // 资源不存在
         404 =>  public_path() . '404.html',
-        
         // 服务器内部错误
         500 =>  public_path() . '500.html',
     ],

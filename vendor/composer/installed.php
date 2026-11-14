@@ -3,7 +3,7 @@
         'name' => 'taoser/taoler',
         'pretty_version' => '4.0.x-dev',
         'version' => '4.0.9999999.9999999-dev',
-        'reference' => 'ac75d245bb1bcb38130266e26b369a401402767b',
+        'reference' => '7f73c391ebbef4fce24dcc4c3d5c798d301b48c0',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -421,7 +421,7 @@
         'taoser/taoler' => array(
             'pretty_version' => '4.0.x-dev',
             'version' => '4.0.9999999.9999999-dev',
-            'reference' => 'ac75d245bb1bcb38130266e26b369a401402767b',
+            'reference' => '7f73c391ebbef4fce24dcc4c3d5c798d301b48c0',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
