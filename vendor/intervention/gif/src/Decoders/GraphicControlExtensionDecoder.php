@@ -35,7 +35,7 @@ class GraphicControlExtensionDecoder extends AbstractPackedBitDecoder
 
         // byte #7
         $result->setTransparentColorIndex($this->decodeTransparentColorIndex(
-            $this->nextByteOrFail()
+            $this->nextByteOrFail(),
         ));
 
         // byte #8 (terminator)
@@ -53,7 +53,7 @@ class GraphicControlExtensionDecoder extends AbstractPackedBitDecoder
     {
         try {
             return DisposalMethod::from(
-                intval(bindec($this->packedBits($byte, 3, 3)))
+                intval(bindec($this->packedBits($byte, 3, 3))),
             );
         } catch (TypeError | ValueError $e) {
             throw new DecoderException(

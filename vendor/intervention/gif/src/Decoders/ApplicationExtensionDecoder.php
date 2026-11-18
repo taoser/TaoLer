@@ -34,12 +34,12 @@ class ApplicationExtensionDecoder extends AbstractDecoder
 
             try {
                 $result->setBlocks([
-                    new DataSubBlock($this->nextBytesOrFail(3))
+                    new DataSubBlock($this->nextBytesOrFail(3)),
                 ]);
             } catch (InvalidArgumentException $e) {
                 throw new DecoderException(
                     'Failed to decode image data sub block of image data',
-                    previous: $e
+                    previous: $e,
                 );
             }
 
@@ -59,7 +59,7 @@ class ApplicationExtensionDecoder extends AbstractDecoder
             } catch (InvalidArgumentException $e) {
                 throw new DecoderException(
                     'Failed to decode image data sub block of image data',
-                    previous: $e
+                    previous: $e,
                 );
             }
 

@@ -31,7 +31,7 @@ class DataSubBlockDecoder extends AbstractDecoder
         } catch (InvalidArgumentException $e) {
             throw new DecoderException(
                 'Failed to decode image data sub block of image data',
-                previous: $e
+                previous: $e,
             );
         }
     }

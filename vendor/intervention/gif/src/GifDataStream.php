@@ -25,7 +25,7 @@ class GifDataStream extends AbstractEntity
         protected LogicalScreenDescriptor $logicalScreenDescriptor = new LogicalScreenDescriptor(),
         protected ?ColorTable $globalColorTable = null,
         protected array $frames = [],
-        protected array $comments = []
+        protected array $comments = [],
     ) {
         //
     }
@@ -82,7 +82,7 @@ class GifDataStream extends AbstractEntity
         $this->globalColorTable = $table;
         $this->logicalScreenDescriptor->setGlobalColorTableExistance(true);
         $this->logicalScreenDescriptor->setGlobalColorTableSize(
-            $table->logicalSize()
+            $table->logicalSize(),
         );
 
         return $this;

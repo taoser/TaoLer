@@ -84,7 +84,7 @@ class Builder
         // make sure a netscape extension is present to store the loop count
         if ($this->gif->firstFrame()?->netscapeExtension() === null) {
             $this->gif->firstFrame()?->addApplicationExtension(
-                new NetscapeApplicationExtension()
+                new NetscapeApplicationExtension(),
             );
         }
 
@@ -112,7 +112,7 @@ class Builder
         float $delay = 0,
         int $left = 0,
         int $top = 0,
-        bool $interlaced = false
+        bool $interlaced = false,
     ): self {
         $frame = new FrameBlock();
         $source = Decoder::decode($source);
@@ -121,13 +121,13 @@ class Builder
         $frame->setGraphicControlExtension(
             $this->buildGraphicControlExtension(
                 $source,
-                intval($delay * 100)
-            )
+                intval($delay * 100),
+            ),
         );
 
         // store image
         $frame->setTableBasedImage(
-            $this->buildTableBasedImage($source, $left, $top, $interlaced)
+            $this->buildTableBasedImage($source, $left, $top, $interlaced),
         );
 
         // add frame
@@ -142,7 +142,7 @@ class Builder
     protected function buildGraphicControlExtension(
         GifDataStream $source,
         int $delay,
-        DisposalMethod $disposalMethod = DisposalMethod::BACKGROUND
+        DisposalMethod $disposalMethod = DisposalMethod::BACKGROUND,
     ): GraphicControlExtension {
         // create extension
         $extension = new GraphicControlExtension($delay, $disposalMethod);
@@ -152,7 +152,7 @@ class Builder
         if ($control !== null && $control->transparentColorExistance()) {
             $extension->setTransparentColorExistance();
             $extension->setTransparentColorIndex(
-                $control->transparentColorIndex()
+                $control->transparentColorIndex(),
             );
         }
 
@@ -168,7 +168,7 @@ class Builder
         GifDataStream $source,
         int $left,
         int $top,
-        bool $interlaced
+        bool $interlaced,
     ): TableBasedImage {
         $block = new TableBasedImage();
         $block->setImageDescriptor(new ImageDescriptor());
@@ -186,22 +186,22 @@ class Builder
         $block->setColorTable($globalColorTable);
 
         $block->imageDescriptor()->setLocalColorTableSorted(
-            $source->logicalScreenDescriptor()->globalColorTableSorted()
+            $source->logicalScreenDescriptor()->globalColorTableSorted(),
         );
 
         try {
             $block->imageDescriptor()->setLocalColorTableSize(
-                $source->logicalScreenDescriptor()->globalColorTableSize()
+                $source->logicalScreenDescriptor()->globalColorTableSize(),
             );
 
             $block->imageDescriptor()->setSize(
                 $source->logicalScreenDescriptor()->width(),
-                $source->logicalScreenDescriptor()->height()
+                $source->logicalScreenDescriptor()->height(),
             );
         } catch (InvalidArgumentException $e) {
             throw new DecoderException(
                 'Failed to decode image source',
-                previous: $e
+                previous: $e,
             );
         }
 
@@ -215,7 +215,7 @@ class Builder
         $block->setImageData(
             $source->firstFrame()?->imageData() ?: throw new DecoderException(
                 'Failed to build table based image. Unable to find image data',
-            )
+            ),
         );
 
         return $block;

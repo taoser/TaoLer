@@ -17,7 +17,7 @@ class Color extends AbstractEntity
     public function __construct(
         protected int $r = 0,
         protected int $g = 0,
-        protected int $b = 0
+        protected int $b = 0,
     ) {
         if ($r < 0 || $r > 255) {
             throw new InvalidArgumentException('Color channel red must be in range 0 to 255');

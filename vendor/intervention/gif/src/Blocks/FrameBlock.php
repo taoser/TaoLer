@@ -51,7 +51,7 @@ class FrameBlock extends AbstractEntity
 
     public function __construct(
         protected ImageDescriptor $imageDescriptor = new ImageDescriptor(),
-        protected ImageData $imageData = new ImageData()
+        protected ImageData $imageData = new ImageData(),
     ) {
         //
     }

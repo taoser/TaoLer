@@ -18,7 +18,7 @@ class DataSubBlock extends AbstractEntity
     {
         if ($this->size() > 255) {
             throw new InvalidArgumentException(
-                'Data Sub-Block can not have a block size larger than 255 bytes'
+                'Data Sub-Block can not have a block size larger than 255 bytes',
             );
         }
     }

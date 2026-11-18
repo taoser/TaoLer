@@ -23,13 +23,13 @@ class ImageDescriptorDecoder extends AbstractPackedBitDecoder
 
         $descriptor->setPosition(
             $this->decodeMultiByte($this->nextBytesOrFail(2)),
-            $this->decodeMultiByte($this->nextBytesOrFail(2))
+            $this->decodeMultiByte($this->nextBytesOrFail(2)),
         );
 
         try {
             $descriptor->setSize(
                 $this->decodeMultiByte($this->nextBytesOrFail(2)),
-                $this->decodeMultiByte($this->nextBytesOrFail(2))
+                $this->decodeMultiByte($this->nextBytesOrFail(2)),
             );
         } catch (InvalidArgumentException $e) {
             throw new DecoderException('Failed to decode image size of image descriptor', previous: $e);
@@ -38,19 +38,19 @@ class ImageDescriptorDecoder extends AbstractPackedBitDecoder
         $packedField = $this->nextByteOrFail();
 
         $descriptor->setLocalColorTableExistance(
-            $this->decodeLocalColorTableExistance($packedField)
+            $this->decodeLocalColorTableExistance($packedField),
         );
 
         $descriptor->setLocalColorTableSorted(
-            $this->decodeLocalColorTableSorted($packedField)
+            $this->decodeLocalColorTableSorted($packedField),
         );
 
         $descriptor->setLocalColorTableSize(
-            $this->decodeLocalColorTableSize($packedField)
+            $this->decodeLocalColorTableSize($packedField),
         );
 
         $descriptor->setInterlaced(
-            $this->decodeInterlaced($packedField)
+            $this->decodeInterlaced($packedField),
         );
 
         return $descriptor;

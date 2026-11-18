@@ -27,7 +27,7 @@ class Decoder
             is_string($input) => self::streamFromData($input),
             self::isStream($input) => $input,
             default => throw new InvalidArgumentException(
-                'Decoder input must be either file path, stream resource or binary data'
+                'Decoder input must be either file path, stream resource or binary data',
             )
         };
 

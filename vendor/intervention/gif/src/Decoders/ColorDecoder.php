@@ -26,7 +26,7 @@ class ColorDecoder extends AbstractDecoder
         } catch (InvalidArgumentException $e) {
             throw new DecoderException(
                 'Failed to decode color channel values',
-                previous: $e
+                previous: $e,
             );
         }
     }

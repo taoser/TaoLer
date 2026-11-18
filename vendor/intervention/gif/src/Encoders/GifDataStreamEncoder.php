@@ -70,7 +70,7 @@ class GifDataStreamEncoder extends AbstractEncoder
     {
         return implode('', array_map(
             fn(CommentExtension $commentExtension): string => $commentExtension->encode(),
-            $this->entity->comments()
+            $this->entity->comments(),
         ));
     }
 }

@@ -27,13 +27,13 @@ class TableBasedImageDecoder extends AbstractDecoder
             $block->setColorTable(
                 ColorTable::decode(
                     $this->stream,
-                    $block->imageDescriptor()->localColorTableByteSize()
-                )
+                    $block->imageDescriptor()->localColorTableByteSize(),
+                ),
             );
         }
 
         $block->setImageData(
-            ImageData::decode($this->stream)
+            ImageData::decode($this->stream),
         );
 
         return $block;

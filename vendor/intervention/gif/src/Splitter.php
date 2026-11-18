@@ -146,7 +146,7 @@ class Splitter implements IteratorAggregate
             try {
                 $gif = Builder::canvas(
                     $this->gif->logicalScreenDescriptor()->width(),
-                    $this->gif->logicalScreenDescriptor()->height()
+                    $this->gif->logicalScreenDescriptor()->height(),
                 )->gifDataStream();
             } catch (InvalidArgumentException $e) {
                 throw new SplitterException('Failed to create separate stream resource for each frame', previous: $e);
@@ -159,23 +159,23 @@ class Splitter implements IteratorAggregate
                 $gif->logicalScreenDescriptor()->setGlobalColorTableExistance(true);
 
                 $gif->logicalScreenDescriptor()->setGlobalColorTableSorted(
-                    $this->gif->logicalScreenDescriptor()->globalColorTableSorted()
+                    $this->gif->logicalScreenDescriptor()->globalColorTableSorted(),
                 );
 
                 $gif->logicalScreenDescriptor()->setGlobalColorTableSize(
-                    $this->gif->logicalScreenDescriptor()->globalColorTableSize()
+                    $this->gif->logicalScreenDescriptor()->globalColorTableSize(),
                 );
 
                 $gif->logicalScreenDescriptor()->setBackgroundColorIndex(
-                    $this->gif->logicalScreenDescriptor()->backgroundColorIndex()
+                    $this->gif->logicalScreenDescriptor()->backgroundColorIndex(),
                 );
 
                 $gif->logicalScreenDescriptor()->setPixelAspectRatio(
-                    $this->gif->logicalScreenDescriptor()->pixelAspectRatio()
+                    $this->gif->logicalScreenDescriptor()->pixelAspectRatio(),
                 );
 
                 $gif->logicalScreenDescriptor()->setBitsPerPixel(
-                    $this->gif->logicalScreenDescriptor()->bitsPerPixel()
+                    $this->gif->logicalScreenDescriptor()->bitsPerPixel(),
                 );
             }
 
@@ -193,7 +193,7 @@ class Splitter implements IteratorAggregate
     }
 
     /**
-     * Transform current frames to an a rray of transparency flattened GdImage objects for each frame.
+     * Transform current frames to an array of transparency flattened GdImage objects for each frame.
      *
      * @throws SplitterException
      * @throws CoreException
@@ -214,104 +214,40 @@ class Splitter implements IteratorAggregate
         // get main image size
         $width = imagesx($gdImages[0]);
         $height = imagesy($gdImages[0]);
-        $transparent = imagecolortransparent($gdImages[0]);
 
         foreach ($gdImages as $key => $gdImage) {
+            // first frame has no previous frame to fall back to
+            if ($key === 0) {
+                imagealphablending($gdImage, true);
+                $gdImages[$key] = $gdImage;
+                continue;
+            }
+
             // get meta data of frame
-            $gif = $frames[$key];
-            $descriptor = $gif->firstFrame()?->imageDescriptor();
+            $descriptor = $frames[$key]->firstFrame()?->imageDescriptor();
             $offsetX = $descriptor?->left() ?: 0;
             $offsetY = $descriptor?->top() ?: 0;
             $w = $descriptor?->width() ?: 0;
             $h = $descriptor?->height() ?: 0;
 
-            if (in_array($this->disposalMethod($gif), [DisposalMethod::NONE, DisposalMethod::PREVIOUS])) {
-                if ($key >= 1) {
-                    // create normalized gd image
-                    $canvas = imagecreatetruecolor($width, $height);
-
-                    if ($canvas === false) {
-                        throw new CoreException('Failed to create new image instance for animation frame #' . $key);
-                    }
-
-                    if (imagecolortransparent($gdImage) !== -1) {
-                        $transparent = imagecolortransparent($gdImage);
-                    } else {
-                        $transparent = imagecolorallocatealpha($gdImage, 255, 0, 255, 127);
-                    }
-
-                    if (!is_int($transparent)) {
-                        throw new CoreException(
-                            'Failed to allocate transparent color in animation frame #' . $key,
-                        );
-                    }
-
-                    // fill with transparent
-                    imagefill($canvas, 0, 0, $transparent);
-                    imagecolortransparent($canvas, $transparent);
-                    imagealphablending($canvas, true);
-
-                    // insert last as base
-                    imagecopy(
-                        $canvas,
-                        $gdImages[$key - 1],
-                        0,
-                        0,
-                        0,
-                        0,
-                        $width,
-                        $height
-                    );
-
-                    // insert gd image
-                    imagecopy(
-                        $canvas,
-                        $gdImage,
-                        $offsetX,
-                        $offsetY,
-                        0,
-                        0,
-                        $w,
-                        $h
-                    );
-                } else {
-                    imagealphablending($gdImage, true);
-                    $canvas = $gdImage;
-                }
-            } else {
-                // create normalized gd image
-                $canvas = imagecreatetruecolor($width, $height);
-                if ($canvas === false) {
-                    throw new CoreException('Failed to create new image instance for animation frame #' . $key);
-                }
-
-                if (imagecolortransparent($gdImage) !== -1) {
-                    $transparent = imagecolortransparent($gdImage);
-                } else {
-                    $transparent = imagecolorallocatealpha($gdImage, 255, 0, 255, 127);
-                }
-
-                if (!is_int($transparent)) {
-                    throw new CoreException('Animation frames cannot be converted into GdImage objects');
-                }
-
-                // fill with transparent
-                imagefill($canvas, 0, 0, $transparent);
-                imagecolortransparent($canvas, $transparent);
-                imagealphablending($canvas, true);
-
-                // insert frame gd image
-                imagecopy(
-                    $canvas,
-                    $gdImage,
-                    $offsetX,
-                    $offsetY,
-                    0,
-                    0,
-                    $w,
-                    $h
-                );
+            try {
+                // create normalized, transparency filled canvas
+                $canvas = $this->createTransparentCanvas($width, $height, $gdImage, $key);
+            } catch (InvalidArgumentException $e) {
+                throw new SplitterException('Failed to flatten image', previous: $e);
             }
+
+            // whether the previous frame remains visible as the base of this frame
+            // depends on the previous frame's disposal method, not this frame's own
+            $previousDisposalMethod = $this->disposalMethod($frames[$key - 1]);
+
+            if (in_array($previousDisposalMethod, [DisposalMethod::NONE, DisposalMethod::PREVIOUS])) {
+                // insert last as base
+                imagecopy($canvas, $gdImages[$key - 1], 0, 0, 0, 0, $width, $height);
+            }
+
+            // insert gd image
+            imagecopy($canvas, $gdImage, $offsetX, $offsetY, 0, 0, $w, $h);
 
             $gdImages[$key] = $canvas;
         }
@@ -319,6 +255,40 @@ class Splitter implements IteratorAggregate
         $this->frames = $gdImages;
 
         return $this;
+    }
+
+    /**
+     * Create a truecolor canvas of given size, filled entirely with a transparent color
+     * resolved from the given gd image.
+     *
+     * @throws InvalidArgumentException
+     * @throws CoreException
+     */
+    private function createTransparentCanvas(int $width, int $height, GdImage $gdImage, int $key): GdImage
+    {
+        if ($width < 1 || $height < 1) {
+            throw new InvalidArgumentException('Width and height must be greater than 0');
+        }
+
+        $canvas = imagecreatetruecolor($width, $height);
+
+        if ($canvas === false) {
+            throw new CoreException('Failed to create new image instance for animation frame #' . $key);
+        }
+
+        $transparent = imagecolortransparent($gdImage) !== -1
+            ? imagecolortransparent($gdImage)
+            : imagecolorallocatealpha($gdImage, 255, 0, 255, 127);
+
+        if (!is_int($transparent)) {
+            throw new CoreException('Failed to allocate transparent color in animation frame #' . $key);
+        }
+
+        imagefill($canvas, 0, 0, $transparent);
+        imagecolortransparent($canvas, $transparent);
+        imagealphablending($canvas, true);
+
+        return $canvas;
     }
 
     /**

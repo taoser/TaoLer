@@ -39,7 +39,7 @@ class NetscapeApplicationExtension extends ApplicationExtension
         } catch (StateException $e) {
             throw new DecoderException(
                 'Failed to decode loop count of netscape extension',
-                previous: $e
+                previous: $e,
             );
         }
 
@@ -58,7 +58,7 @@ class NetscapeApplicationExtension extends ApplicationExtension
     public function setLoops(int $loops): self
     {
         $this->setBlocks([
-            new DataSubBlock(self::SUB_BLOCK_PREFIX . pack('v*', $loops))
+            new DataSubBlock(self::SUB_BLOCK_PREFIX . pack('v*', $loops)),
         ]);
 
         return $this;

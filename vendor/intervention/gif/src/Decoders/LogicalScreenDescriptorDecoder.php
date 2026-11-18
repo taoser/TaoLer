@@ -23,7 +23,7 @@ class LogicalScreenDescriptorDecoder extends AbstractPackedBitDecoder
         try {
             $logicalScreenDescriptor->setSize(
                 $this->decodeWidth($this->nextBytesOrFail(2)),
-                $this->decodeHeight($this->nextBytesOrFail(2))
+                $this->decodeHeight($this->nextBytesOrFail(2)),
             );
         } catch (InvalidArgumentException $e) {
             throw new DecoderException('Failed to decode image size of logical screen descriptor', previous: $e);
@@ -33,29 +33,29 @@ class LogicalScreenDescriptorDecoder extends AbstractPackedBitDecoder
         $packedField = $this->nextByteOrFail();
 
         $logicalScreenDescriptor->setGlobalColorTableExistance(
-            $this->decodeGlobalColorTableExistance($packedField)
+            $this->decodeGlobalColorTableExistance($packedField),
         );
 
         $logicalScreenDescriptor->setBitsPerPixel(
-            $this->decodeBitsPerPixel($packedField)
+            $this->decodeBitsPerPixel($packedField),
         );
 
         $logicalScreenDescriptor->setGlobalColorTableSorted(
-            $this->decodeGlobalColorTableSorted($packedField)
+            $this->decodeGlobalColorTableSorted($packedField),
         );
 
         $logicalScreenDescriptor->setGlobalColorTableSize(
-            $this->decodeGlobalColorTableSize($packedField)
+            $this->decodeGlobalColorTableSize($packedField),
         );
 
         // byte 6
         $logicalScreenDescriptor->setBackgroundColorIndex(
-            $this->decodeBackgroundColorIndex($this->nextByteOrFail())
+            $this->decodeBackgroundColorIndex($this->nextByteOrFail()),
         );
 
         // byte 7
         $logicalScreenDescriptor->setPixelAspectRatio(
-            $this->decodePixelAspectRatio($this->nextByteOrFail())
+            $this->decodePixelAspectRatio($this->nextByteOrFail()),
         );
 
         return $logicalScreenDescriptor;
