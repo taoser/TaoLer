@@ -7,6 +7,7 @@ namespace Revolt\EventLoop;
 // @codeCoverageIgnoreStart
 use Revolt\EventLoop\Driver\EvDriver;
 use Revolt\EventLoop\Driver\EventDriver;
+use Revolt\EventLoop\Driver\IoPollDriver;
 use Revolt\EventLoop\Driver\StreamSelectDriver;
 use Revolt\EventLoop\Driver\TracingDriver;
 use Revolt\EventLoop\Driver\UvDriver;
@@ -37,6 +38,12 @@ final class DriverFactory
 
             if (EventDriver::isSupported()) {
                 return new EventDriver();
+            }
+
+            // Below PHP 8.6, IoPollDriver runs on symfony/polyfill-io-poll, which is backed by
+            // stream_select() and therefore slower than StreamSelectDriver.
+            if (\PHP_VERSION_ID >= 80600 && IoPollDriver::isSupported()) {
+                return new IoPollDriver();
             }
 
             return new StreamSelectDriver();
