@@ -60,12 +60,10 @@ PHP
         );
 
         $this->assertIsArray($result);
-        // hTtl returns an integer per requested field. On Dragonfly the
-        // remaining TTL is reported in seconds — just confirm it's a sane
-        // positive integer (not -1 = no ttl, not -2 = no such field).
         $this->assertIsInt($result[0]);
         $this->assertGreaterThan(0, $result[0]);
-        $this->assertLessThanOrEqual(200, $result[0]);
+        // Dragonfly can round the field expiration deadline up by one second.
+        $this->assertLessThanOrEqual(currentBackend() === 'dragonfly' ? 201 : 200, $result[0]);
     }
 
     public function test_hexpire_reports_2_for_fields_that_do_not_exist(): void

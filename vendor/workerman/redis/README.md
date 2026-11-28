@@ -170,47 +170,31 @@ Calling `rawCommand()` with no args (or only a callback) throws `InvalidArgument
 
 ## Pub/Sub
 
-`subscribe()` / `pSubscribe()` / `sSubscribe()` put the connection into
-subscribe mode and stream messages to your callback. Once subscribed, the
-connection is *locked* — Redis only allows (un)subscribe commands on it — so
-the matching `unsubscribe()` / `pUnsubscribe()` / `sUnsubscribe()` methods are
-how you hand it back for ordinary commands. They write the teardown frame
-straight to the socket (bypassing the lock), and the connection resumes normal
-work as soon as the server confirms zero remaining subscriptions.
+Use `subscribe()` and `pSubscribe()` to add channels and patterns to the same
+connection, including while it is already subscribed. Each message goes to the
+callback registered for its channel or pattern. Subscribing to an existing name
+again replaces its callback once the server acknowledges the subscription.
 
 ```php
-$redis->subscribe(['news', 'sport'], function ($channel, $message) {
-    // fires for every published message
+$redis->subscribe('news', function ($channel, $message) {
+    // Handle news.
 });
 
-// Later — e.g. from a Timer — drop the subscription and resume normal use.
-$redis->unsubscribe();                      // omit args to drop every channel
-$redis->get('some:key', function ($value) {
-    // runs now that the connection is no longer locked
+$redis->subscribe('sport', function ($channel, $message) {
+    // Handle sport.
 });
+
+$redis->unsubscribe('news'); // Keep listening to sport.
 ```
 
-`unsubscribe()` takes an optional list of channels (omit to drop them all) and
-an optional trailing callback that fires with `(true, $client)` once the
-connection has fully left subscribe mode. That callback means "back to normal
-command mode" — on a partial unsubscribe (dropping some of several channels) it
-is held until the last channel goes too, so track per-channel state in your
-subscribe callback if you need it. `pUnsubscribe()` mirrors it for
-`pSubscribe()` patterns, and `sUnsubscribe()` for `sSubscribe()` shard
-channels. Calling them when not subscribed is a no-op that still invokes the
-callback. To stop listening entirely you can also just `close()` the client.
+`unsubscribe()`, `pUnsubscribe()` and `sUnsubscribe()` accept names to remove.
+Omit the names to remove every subscription of that kind. An optional trailing
+callback fires with `(true, $client)` once all subscriptions on the connection
+have ended. The client restores active subscriptions after reconnecting.
 
-> **One stream per connection.** A `Client` pins a single streaming entry and
-> routes every incoming message to its callback, so a connection can host **one**
-> active subscription at a time. Subscribe to every channel/pattern you need in a
-> single call — `subscribe(['a', 'b', 'c'], $cb)`. A second `subscribe()` /
-> `pSubscribe()` / `sSubscribe()` (or mixing the families) on a connection that
-> already has an active or pending stream throws a `Workerman\Redis\Exception`
-> rather than silently doing nothing; use a separate `Client` for an additional
-> stream. The same one-stream rule applies in coroutine mode: issuing an ordinary
-> (suspending) command while the connection is subscribe/monitor-locked throws,
-> because its reply could never arrive to resume the fiber — run ordinary
-> commands on a different `Client`.
+Ordinary commands with callbacks wait until the connection leaves subscribe
+mode. In coroutine mode, use a separate client for ordinary commands while
+subscribed.
 
 ## Monitor
 
@@ -218,9 +202,8 @@ callback. To stop listening entirely you can also just `close()` the client.
 debugging counterpart to `redis-cli MONITOR`. Like `subscribe()` it locks the
 connection (its own internal flag); there is no "unmonitor", so you stop it by
 `close()`ing the client. The opening `+OK` handshake is swallowed; each later
-call is one raw monitor line. Like the subscribe family it is one-stream-per-
-connection — calling `monitor()` on a connection that already has an active or
-pending stream is ignored.
+call is one raw monitor line. Calling `monitor()` on a connection that already
+has an active or pending monitor or Pub/Sub stream is ignored.
 
 ```php
 $debug = new Client('redis://127.0.0.1:6379');

@@ -28,12 +28,47 @@ class Article extends BaseModel
 
 
     /**
+     * 文章相对关联用户
+     */
+	public function user()
+	{
+		return $this->belongsTo(User::class);
+	}
+
+    /**
+     * 文章相对关联栏目
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class); // 内连接：无匹配分类的文章会被过滤;
+    }
+
+    /**
      * 文章关联标签表
      */
     public function flag()
     {
         return $this->hasMany(ArticleFlag::class);
-    }
+    }    
+	
+	/**
+     * 文章一对多关联评论表
+     */
+	public function comments()
+	{
+		return $this->hasMany(Comment::class);
+	}
+
+    /**
+     * 文章一对多关联收藏表
+     */
+	public function favorites()
+	{
+		return $this->hasMany(UserFavorite::class, 'target_id', 'id');
+	}
+
+
+
 
     /**
      * 多对多关联标签
@@ -43,35 +78,13 @@ class Article extends BaseModel
     {
         return $this->belongsToMany(Tag::class, ArticleTag::class);
     }
+	
 
-    //文章关联栏目表
-    public function category()
-    {
-        return $this->belongsTo(Category::class); // 内连接：无匹配分类的文章会被过滤;
-    }
-	
-	//文章关联评论
-	public function comments()
-	{
-		return $this->hasMany(Comment::class);
-	}
-	
-	//文章关联收藏
-	public function collection()
-	{
-		return $this->hasMany(Collection::class);
-	}
 
     //文章关联用户点赞
 	public function userzan()
 	{
 		return $this->hasMany(UserZan::class);
-	}
-	
-	//文章关联用户
-	public function user()
-	{
-		return $this->belongsTo(User::class);
 	}
 
     //文章关联Tag表

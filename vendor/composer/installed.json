@@ -750,8 +750,8 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v13.43.0",
-            "version_normalized": "13.43.0.0",
+            "version": "v13.44.1",
+            "version_normalized": "13.44.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -777,7 +777,7 @@
                 "symfony/var-dumper": "Required to use the dump method (^7.4 || ^8.0)."
             },
             "time": "2026-11-17T09:00:38+00:00",
-            "published-time": "2026-11-17T14:58:59+00:00",
+            "published-time": "2026-11-24T16:10:23+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -814,8 +814,8 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v13.43.0",
-            "version_normalized": "13.43.0.0",
+            "version": "v13.44.1",
+            "version_normalized": "13.44.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -831,7 +831,7 @@
                 "php": "^8.3"
             },
             "time": "2026-10-06T02:42:44+00:00",
-            "published-time": "2026-11-17T14:59:13+00:00",
+            "published-time": "2026-11-24T16:10:25+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -864,8 +864,8 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v13.43.0",
-            "version_normalized": "13.43.0.0",
+            "version": "v13.44.1",
+            "version_normalized": "13.44.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -897,7 +897,7 @@
                 "illuminate/log": "Required to use the Log or Context attributes"
             },
             "time": "2026-10-20T10:26:12+00:00",
-            "published-time": "2026-11-17T14:59:15+00:00",
+            "published-time": "2026-11-24T16:10:32+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -930,8 +930,8 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.43.0",
-            "version_normalized": "13.43.0.0",
+            "version": "v13.44.1",
+            "version_normalized": "13.44.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -949,7 +949,7 @@
                 "psr/simple-cache": "^1.0 || ^2.0 || ^3.0"
             },
             "time": "2026-10-29T13:51:55+00:00",
-            "published-time": "2026-11-17T14:59:20+00:00",
+            "published-time": "2026-11-24T16:10:33+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -982,8 +982,8 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v13.43.0",
-            "version_normalized": "13.43.0.0",
+            "version": "v13.44.1",
+            "version_normalized": "13.44.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -999,7 +999,7 @@
                 "php": "^8.2"
             },
             "time": "2026-10-06T02:42:44+00:00",
-            "published-time": "2026-11-17T14:59:51+00:00",
+            "published-time": "2026-11-24T16:10:52+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1032,8 +1032,8 @@
         },
         {
             "name": "illuminate/reflection",
-            "version": "v13.43.0",
-            "version_normalized": "13.43.0.0",
+            "version": "v13.44.1",
+            "version_normalized": "13.44.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/reflection.git",
@@ -1051,7 +1051,7 @@
                 "php": "^8.3"
             },
             "time": "2026-10-06T02:42:44+00:00",
-            "published-time": "2026-11-17T15:00:10+00:00",
+            "published-time": "2026-11-24T16:11:02+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2219,17 +2219,17 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v8.1.11",
-            "version_normalized": "8.1.11.0",
+            "version": "v8.1.13",
+            "version_normalized": "8.1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "a2902e479ba5691d20d51d100a715ea19ad2c837"
+                "reference": "5dc8602a3ad3430a97efb70f9d7e9f0aec1410dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/a2902e479ba5691d20d51d100a715ea19ad2c837",
-                "reference": "a2902e479ba5691d20d51d100a715ea19ad2c837",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/5dc8602a3ad3430a97efb70f9d7e9f0aec1410dc",
+                "reference": "5dc8602a3ad3430a97efb70f9d7e9f0aec1410dc",
                 "shasum": ""
             },
             "require": {
@@ -2238,8 +2238,8 @@
             "require-dev": {
                 "symfony/filesystem": "^7.4|^8.0"
             },
-            "time": "2026-11-02T10:58:30+00:00",
-            "published-time": "2026-11-04T11:31:20+00:00",
+            "time": "2026-11-27T14:07:58+00:00",
+            "published-time": "2026-11-27T14:50:47+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2267,7 +2267,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v8.1.11"
+                "source": "https://github.com/symfony/finder/tree/v8.1.13"
             },
             "funding": [
                 {
@@ -2806,17 +2806,17 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v8.1.10",
-            "version_normalized": "8.1.10.0",
+            "version": "v8.1.12",
+            "version_normalized": "8.1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "3412a5af7d34a19515a77890fc804fe8e50d1a4f"
+                "reference": "f681b9e07afd027556e5b1eda96fcad5a27a2b98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3412a5af7d34a19515a77890fc804fe8e50d1a4f",
-                "reference": "3412a5af7d34a19515a77890fc804fe8e50d1a4f",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/f681b9e07afd027556e5b1eda96fcad5a27a2b98",
+                "reference": "f681b9e07afd027556e5b1eda96fcad5a27a2b98",
                 "shasum": ""
             },
             "require": {
@@ -2834,7 +2834,8 @@
                 "symfony/uid": "^7.4|^8.0",
                 "twig/twig": "^3.12|^4.0"
             },
-            "time": "2026-10-26T21:55:04+00:00",
+            "time": "2026-11-12T10:29:11+00:00",
+            "published-time": "2026-11-25T09:30:09+00:00",
             "bin": [
                 "Resources/bin/var-dump-server"
             ],
@@ -2872,7 +2873,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v8.1.10"
+                "source": "https://github.com/symfony/var-dumper/tree/v8.1.12"
             },
             "funding": [
                 {
@@ -3919,17 +3920,17 @@
         },
         {
             "name": "workerman/redis",
-            "version": "v2.1.0",
-            "version_normalized": "2.1.0.0",
+            "version": "v2.1.1",
+            "version_normalized": "2.1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/workerman-php/redis.git",
-                "reference": "36b16ab963b820aec94b819a1fdf84a04e005d11"
+                "reference": "9473ca8a1ac066af6cc8208d3a6bec1e0359d943"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/workerman-php/redis/zipball/36b16ab963b820aec94b819a1fdf84a04e005d11",
-                "reference": "36b16ab963b820aec94b819a1fdf84a04e005d11",
+                "url": "https://api.github.com/repos/workerman-php/redis/zipball/9473ca8a1ac066af6cc8208d3a6bec1e0359d943",
+                "reference": "9473ca8a1ac066af6cc8208d3a6bec1e0359d943",
                 "shasum": ""
             },
             "require": {
@@ -3944,7 +3945,8 @@
             "suggest": {
                 "revolt/event-loop": "Enables coroutine-style synchronous return values when no callback is provided (requires PHP >=8.1)."
             },
-            "time": "2026-10-28T03:42:00+00:00",
+            "time": "2026-11-26T15:27:41+00:00",
+            "published-time": "2026-11-26T15:30:32+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3976,7 +3978,7 @@
             ],
             "support": {
                 "issues": "https://github.com/workerman-php/redis/issues",
-                "source": "https://github.com/workerman-php/redis/tree/v2.1.0"
+                "source": "https://github.com/workerman-php/redis/tree/v2.1.1"
             },
             "install-path": "../workerman/redis"
         },

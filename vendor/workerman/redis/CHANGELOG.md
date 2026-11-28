@@ -20,6 +20,12 @@ coroutine) are supported throughout.
 
 ---
 
+## [v2.1.1] — 2026-11-26
+
+- Allow adding channels and patterns to an existing Pub/Sub connection, with
+  callbacks dispatched per subscription. Preserve active subscriptions across
+  reconnects and resume queued commands after the last unsubscribe. See [#14](https://github.com/workerman-php/redis/issues/14).
+
 ## [Unreleased] — Dragonfly-complete command surface
 
 ### Summary

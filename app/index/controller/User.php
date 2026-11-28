@@ -1,7 +1,6 @@
 <?php
 namespace app\index\controller;
 
-use Exception;
 use think\Request;
 use think\Response;
 use think\facade\Db;
@@ -9,13 +8,14 @@ use think\facade\Session;
 use think\facade\Cache;
 use think\facade\Cookie;
 use think\facade\View;
-use think\response\Json;
 use think\facade\Lang;
+
 use app\facade\Article;
-use app\facade\Comment;
 use app\facade\User as UserEntity;
-use app\model\Collection;
-use app\common\controller\BaseController;
+
+use app\entity\UserComment;
+use app\entity\UserFavorite;
+
 use app\common\validate\User as userValidate;
 use taoler\com\Message;
 
@@ -44,7 +44,23 @@ class User extends IndexBaseController
 	{
 		$page = $request->get('page/d', 1);
 		$limit = $request->get('limit/d', 20);
-		$result = Comment::getMyCommentList($this->uid, $page, $limit);
+
+		$comment = new UserComment();
+		$result = $comment->getMyList($this->uid, $page, $limit);
+
+		return json(['code' => 0, 'msg'	=>	'success', ...$result]);
+					
+	}
+
+	/**
+	 * 获取用户收藏列表
+	 */
+	public function myFavorites(Request $request)
+	{
+		$page = $request->get('page/d', 1);
+		$limit = $request->get('limit/d', 20);
+		$favorite = new UserFavorite();
+		$result = $favorite->getList(['user_id' => $this->uid, 'page' => $page, 'limit' => $limit]);
 
 		return json(['code' => 0, 'msg'	=>	'success', ...$result]);
 					
@@ -322,7 +338,7 @@ class User extends IndexBaseController
 
 			Cache::tag(['user','tagArtDetail','tagArt'])->clear();
 
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			return json(['code' => 1,'msg'=>'头像更新失败'.$e->getMessage()]);
 		}
 
@@ -352,7 +368,7 @@ class User extends IndexBaseController
 		// $commont = new Comment();
 		// $reys = $commont->getUserCommentList((int) $id);
 
-        $reys = Db::name('comment')
+        $reys = Db::name('user_comment')
 		->alias('c')
 		->join('article a', 'c.article_id = a.id')
 		->join('cate t', 'a.category_id = t.id')

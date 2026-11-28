@@ -1,22 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| UNSUBSCRIBE / PUNSUBSCRIBE / SUNSUBSCRIBE
-|--------------------------------------------------------------------------
-|
-| subscribe()/pSubscribe()/sSubscribe() lock the connection: process()
-| refuses to send anything while $this->_subscribe is true. The explicit
-| unsubscribe* methods write the teardown frame straight to the socket
-| (bypassing that lock), and the subscribe callback's new unsubscribe-ack
-| case clears the lock once the server reports zero remaining subscriptions.
-|
-| The proof in every test below is the same: subscribe, then a Workerman
-| Timer fires the unsubscribe a few hundred ms later (after the SUBSCRIBE
-| ack has registered), and a *subsequent ordinary command* on the SAME
-| client actually completes — which can only happen if the lock cleared.
-*/
-
 final class UnsubscribeTest extends \Tests\RedisTestCase
 {
     public function test_unsubscribe_clears_the_lock_so_a_later_command_fires(): void
@@ -91,8 +74,7 @@ PHP
         // Subscribed to two channels. Dropping one leaves a subscription, so the
         // connection stays locked and a queued PING must NOT fire yet. Dropping the
         // second clears the lock and the PING finally goes through. This both
-        // proves the partial-vs-full teardown contract and exercises the
-        // remaining > 0 branch of handleUnsubscribeAck().
+        // proves that the client stays subscribed until the last channel is gone.
         $result = runInWorker(<<<'PHP'
             $redis->subscribe(['pest:unsub:t6:a', 'pest:unsub:t6:b'], function ($channel, $message) {});
             \Workerman\Timer::add(0.3, function () use ($redis, $emit) {

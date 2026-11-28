@@ -2,7 +2,7 @@
 /**
  * @Program: TaoLer 2023/3/14
  * @FilePath: app\admin\controller\content\Comment.php
- * @Description: Comment
+ * @Description: 评论控制器
  * @LastEditTime: 2023-03-14 15:38:55
  * @Author: Taoker <317927823@qq.com>
  * @Copyright (c) 2020~2023 https://www.aieok.com All rights reserved.
@@ -10,13 +10,14 @@
 
 namespace app\admin\controller\content;
 
-use app\admin\controller\AdminBaseController;
-use think\App;
+
 use think\Request;
 use think\facade\View;
 use think\facade\Db;
-use app\facade\Comment as CommentModel;
 use think\facade\Log;
+use app\facade\Comment as CommentModel;
+
+use app\admin\controller\AdminBaseController;
 
 class Comment extends AdminBaseController
 {
@@ -54,87 +55,74 @@ class Comment extends AdminBaseController
 	 */
 	public function list(Request $request)
 	{
-        try {
-            // 获取请求参数并进行安全过滤
-            $page = max(1, $request->get('page/d', 1));
-            $limit = min(100, $request->get('limit/d', 10));
-            $name = trim($request->get('name', ''));
-            $content = trim($request->get('content', ''));
-            $status = $request->get('status', '');
-            
-            // 构建查询条件
-            $where = [];
-            
-            // 内容搜索 - 使用参数绑定防止SQL注入
-            if (!empty($content)) {
-                $where[] = ['a.content', 'like', '%' . $content . '%'];
-            }
-            
-            // 状态筛选
-            if ($status !== '') {
-                $where[] = ['a.status', '=', (int)$status];
-            }
-            
-            // 用户名搜索
-            if (!empty($name)) {
-                $where[] = ['u.name', 'like', '%' . $name . '%'];
-            }
-            
-            // 构建查询
-            $query = Db::name('comment')
-                ->alias('a')
-                ->join('user u', 'a.user_id = u.id')
-                ->join('article c', 'a.article_id = c.id')
-                ->join('category cate', 'c.category_id = cate.id')
-                ->field('a.id as aid, u.name, cate.ename, c.title, u.avatar, a.content, a.create_time, a.status as astatus, c.id as cid')
-                ->where($where)
-                ->whereNull('a.delete_time')
-                ->order('a.create_time', 'desc');
-            
-            // 执行分页查询
-            $replys = $query->paginate([
-                'list_rows' => $limit,
-                'page' => $page
-            ]);
-            
-            // 处理返回数据
-            $count = $replys->total();
-            $data = [];
-            
-            if ($count) {  
-                foreach ($replys as $v) {
-                    $data[] = [
-                        'id'        => (int)$v['aid'],
-                        'replyer'   => htmlspecialchars($v['name']),
-                        'title'     => htmlspecialchars($v['title']),
-                        'avatar'    => $v['avatar'],
-                        'content'   => mb_substr(strip_tags($v['content']), 0, 100, 'UTF-8'),
-                        'replytime' => $v['create_time'],
-                        'check'     => (int)$v['astatus'],
-                        'url'       => (string) url('article_detail', ['id' => $v['cid'], 'ename' => $v['ename']])
-                    ];
-                }
-            }
-            
-            // 统一返回格式
-            return json([
-                'code'  => 0,
-                'msg'   => $count ? 'ok' : 'no data',
-                'count' => $count,
-                'data'  => $data
-            ]);
-        } catch (\Exception $e) {
-            // 捕获异常并记录日志
-            	Log::error('Comment list error: ' . $e->getMessage());
-            
-            // 返回错误信息
-            return json([
-                'code' => -1,
-                'msg' => '系统错误，请稍后重试',
-                'count' => 0,
-                'data' => []
-            ]);
+        // 获取请求参数并进行安全过滤
+        $page = max(1, $request->get('page/d', 1));
+        $limit = min(100, $request->get('limit/d', 10));
+        $name = trim($request->get('name', ''));
+        $content = trim($request->get('content', ''));
+        $status = $request->get('status', '');
+        
+        // 构建查询条件
+        $where = [];
+        
+        // 内容搜索 - 使用参数绑定防止SQL注入
+        if (!empty($content)) {
+            $where[] = ['a.content', 'like', '%' . $content . '%'];
         }
+        
+        // 状态筛选
+        if ($status !== '') {
+            $where[] = ['a.status', '=', (int)$status];
+        }
+        
+        // 用户名搜索
+        if (!empty($name)) {
+            $where[] = ['u.name', 'like', '%' . $name . '%'];
+        }
+        
+        // 构建查询
+        $query = Db::name('user_comment')
+            ->alias('a')
+            ->join('user u', 'a.user_id = u.id')
+            ->join('article c', 'a.article_id = c.id')
+            ->join('category cate', 'c.category_id = cate.id')
+            ->field('a.id as aid, u.name, cate.ename, c.title, u.avatar, a.content, a.create_time, a.status as astatus, c.id as cid')
+            ->where($where)
+            ->whereNull('a.delete_time')
+            ->order('a.create_time', 'desc');
+        
+        // 执行分页查询
+        $replys = $query->paginate([
+            'list_rows' => $limit,
+            'page' => $page
+        ]);
+        
+        // 处理返回数据
+        $count = $replys->total();
+        $data = [];
+        
+        if ($count) {  
+            foreach ($replys as $v) {
+                $data[] = [
+                    'id'        => (int)$v['aid'],
+                    'replyer'   => htmlspecialchars($v['name']),
+                    'title'     => htmlspecialchars($v['title']),
+                    'avatar'    => $v['avatar'],
+                    'content'   => mb_substr(strip_tags($v['content']), 0, 100, 'UTF-8'),
+                    'replytime' => $v['create_time'],
+                    'check'     => (int)$v['astatus'],
+                    'url'       => (string) url('article_detail', ['id' => $v['cid'], 'ename' => $v['ename']])
+                ];
+            }
+        }
+        
+        // 统一返回格式
+        return json([
+            'code'  => 0,
+            'msg'   => $count ? 'ok' : 'no data',
+            'count' => $count,
+            'data'  => $data
+        ]);
 	}
 	
 	/**

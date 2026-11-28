@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2026-11-14 08:38:54
+ * @LastEditTime: 2026-11-28 18:14:40
  * @LastEditors: TaoLer
  * @Description: 评论模型
- * @FilePath: \TaoLer\app\entity\Comment.php
+ * @FilePath: \TaoLer\app\entity\UserComment.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 
@@ -14,7 +14,7 @@ namespace app\entity;
 use Exception;
 use think\facade\Cache;
 
-class Comment extends BaseEntity
+class UserComment extends BaseEntity
 {	
 
     /**
@@ -169,7 +169,7 @@ class Comment extends BaseEntity
      * @param int $limit 每页数量   
      * @return array
      */
-    public function getMyCommentList(int $uid, int $page = 1, int $limit = 20): array
+    public function getMyList(int $uid, int $page = 1, int $limit = 20): array
     {
         $page = max(1, $page);
         $limit = max(1, min($limit, 100));
@@ -188,13 +188,12 @@ class Comment extends BaseEntity
                 }
             ])
             ->where('user_id', $uid)
-            ->order(['create_time' => 'desc'])
+            ->order(['id' => 'desc'])
             ->page($page, $limit)
             ->select()
             ->toArray();
         
         return ['count' => $count, 'data' => $data];
-
     }
 
 

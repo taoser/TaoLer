@@ -2,10 +2,10 @@
 /*
  * @Author: TaoLer <alipay_tao@qq.com>
  * @Date: 2021-12-06 16:04:50
- * @LastEditTime: 2026-11-14 08:08:45
+ * @LastEditTime: 2026-11-28 18:17:40
  * @LastEditors: TaoLer
  * @Description: 评论模型
- * @FilePath: \TaoLer\app\model\Comment.php
+ * @FilePath: \TaoLer\app\model\UserComment.php
  * Copyright (c) 2020~2022 https://www.aieok.com All rights reserved.
  */
 
@@ -14,9 +14,9 @@ namespace app\model;
 use think\model\concern\SoftDelete;
 use think\facade\Cache;
 
-class Comment extends BaseModel
+class UserComment extends BaseModel
 {	
-	//软删除
+	// 软删除
 	use SoftDelete;
     
     protected function getOptions(): array 
@@ -27,6 +27,14 @@ class Comment extends BaseModel
             'defaultSoftDelete'     => null,
         ];
     }
+
+    /**
+     * 评论相对关联用户
+     */
+	public function user()
+	{
+		return $this->belongsTo(User::class);
+	}
 	
     //评论关联文章
 	public function article()
@@ -34,11 +42,6 @@ class Comment extends BaseModel
 		return $this->belongsTo(Article::class);
 	}
 	
-    //评论关联用户
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
 
     // 获取url
     public function getUrlAttr($value,$data)

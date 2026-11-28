@@ -21,7 +21,7 @@ use think\facade\Config;
 use app\common\facade\HttpHelper;
 use app\common\PayContainer;
 use app\admin\model\Cunsult;
-use app\model\Comment;
+use app\model\UserComment;
 use think\response\Json;
 use Yansongda\Pay\Pay;
 use think\Container;
@@ -61,7 +61,7 @@ class Index extends AdminBaseController
 	public function console1()
 	{
 		// 评论、帖子状态
-        $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
+        $comm = Db::name('user_comment')->where(['delete_time'=>0,'status'=>0])->count();
         $forum = Db::name('article')->where('status', 0)->whereNull('delete_time')->count();
         $user = Db::name('user')->where('status', 0)->whereNull('delete_time')->count();
 
@@ -77,11 +77,11 @@ class Index extends AdminBaseController
 	public function console2()
 	{
         // 评论、帖子状态
-        $comm = Db::name('comment')->where(['delete_time'=>0,'status'=>0])->count();
+        $comm = Db::name('user_comment')->where(['delete_time'=>0,'status'=>0])->count();
         $forum = Db::name('article')->field('id')->whereNull('delete_time')->count();
         $user = Db::name('user')->where('status', 0)->whereNull('delete_time')->count();
 		// 回复评论
-		$comments = Comment::field('id,article_id,content,create_time,delete_time')->order('id desc')->limit(10)->select();
+		$comments = UserComment::field('id,article_id,content,create_time,delete_time')->order('id desc')->limit(10)->select();
 		$commData = [];
 		foreach($comments as $v) {
 			if(!is_null($v->article)) {
@@ -117,7 +117,7 @@ class Index extends AdminBaseController
     public function home()
 	{
 		// 评论、帖子状态
-		$comm = Db::name('comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
+		$comm = Db::name('user_comment')->field('id')->where(['delete_time'=>0,'status'=>0])->select();
 		$forum = Db::name('article')->field('id')->where('status', 0)->whereNull('delete_time')->select();
 		$comms = count($comm);
 		$forums = count($forum);
